@@ -1,0 +1,81 @@
+<div class="login-wrapper rounded-lg bg-white shadow w-full p-10">
+  <img src="./assets/images/logo--small--colored.svg" alt="" class="h-10" srcset="">
+  <h2 class="text-2xl font-bold mt-8 mb-0">Hola de nuevo</h2>
+  <p class="mb-6 text-sm">Ingresa rus credenciales para acceder al sistema...</p>
+
+  <!-- <code>{{ hasValidUser | json}}</code> -->
+
+  <form nz-form [formGroup]="loginForm" [nzLayout]="'vertical'" class="login-form">
+    <nz-form-item class="mb-4">
+      <nz-form-label class="m-0 p-0" nzFor="usuario">Usuario</nz-form-label>
+      <nz-form-control nzErrorTip="Ingrese su usuario">
+        <nz-input-group [nzSuffix]="suffixUsr" nzSize="large" class="rounded-lg">
+          <input (ngModelChange)="onUsuarioChange($event)" type="text" nz-input formControlName="usuario"
+            placeholder="Ingrese su usuario o DNI" #usr class="rounded-lg" (keypress)="onEnter($event)" />
+        </nz-input-group>
+        <ng-template #suffixUsr>
+          <span (click)="onNext()" class="cursor-pointer"
+            *ngIf="!hasValidUser && loginForm.get('usuario')?.value != '' && loginForm.get('usuario')?.value != null"
+            nz-icon [nzType]="loading ? 'loading' : 'arrow-right'" nzTheme="outline"></span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <!-- <ng-container
+      *ngIf="hasValidUser && loginForm.get('usuario')?.value != '' && loginForm.get('usuario')?.value != null"> -->
+    <nz-form-item>
+      <nz-form-label class="m-0 p-0" nzFor="clave">Clave</nz-form-label>
+      <nz-form-control nzErrorTip="Por favor, ingrese su clave">
+        <nz-input-group [nzSuffix]="suffixPwd" nzSize="large" class="rounded-lg">
+          <input [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="clave" #pwd
+            placeholder="Ingrese su contraseña" />
+        </nz-input-group>
+        <ng-template #suffixPwd>
+          <i class="cursor-pointer" nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+            (click)="passwordVisible = !passwordVisible"></i>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <!-- <div nz-row nzAlign="middle" style="margin-top: 2rem;">
+        <div nz-col nzSpan="12">
+          <label nz-checkbox formControlName="recordar" ngDefaultControl>
+            <span>Recordar usuario</span>
+          </label>
+        </div>
+        <div nz-col nzSpan="8" nzOffset="4">
+          <button nzBlock [nzLoading]="loading" (click)="onLogin()" [disabled]="!loginForm.valid" nz-button
+            nzSize="large" class="rounded-lg" [nzType]="'primary'" (keypress)="onEnter($event)">Ingresar</button>
+        </div>
+      </div> -->
+
+    <div nz-row nzAlign="middle" style="margin-top: 2rem;">
+      <div nz-col nzSpan="12">
+        <label nz-checkbox formControlName="recordar" ngDefaultControl>
+          <span>Recordar usuario</span>
+        </label>
+      </div>
+      <div nz-col nzSpan="8" nzOffset="4">
+        <p style="text-align: right; margin-bottom: 0;">
+          <button [nzLoading]="loading" [disabled]="!loginForm.valid" style="margin-bottom: 0;" nz-button nzSize="large"
+            nzShape="round" class="rounded-lg" [nzType]="'primary'" (click)="onLogin()"
+            (keypress)="onEnter($event)">Ingresar</button>
+        </p>
+      </div>
+    </div>
+    <!-- </ng-container> -->
+
+
+  </form>
+  <!-- <code>
+  {{hasValidUser | json}}
+  </code>
+  <br> 
+  <code>
+  {{loginForm.valid | json}}
+  </code>
+  <br>
+  <code>
+  {{loginForm.value | json}}
+</code>-->
+</div>

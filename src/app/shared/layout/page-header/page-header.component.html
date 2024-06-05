@@ -1,0 +1,70 @@
+<nz-page-header class="site-page-header">
+    <!--extra-->
+    <nz-page-header-extra>
+        <!--breadcrumb-->
+        @if(breadcrumbs) {
+        <nz-space>
+            <nz-breadcrumb nz-page-header-breadcrumb>
+                <nz-breadcrumb-item>
+                    <a href="/">Inicio</a>
+                </nz-breadcrumb-item>
+                @for (item of breadcrumbs; track $index) {
+                <nz-breadcrumb-item>
+                    @if(item.href != ''){
+                    <a [href]="item.href">{{ item.title }}</a>
+                    }@else{
+                    {{ item.title }}
+                    }
+                </nz-breadcrumb-item>
+                }
+            </nz-breadcrumb>
+        </nz-space>
+        }
+        @if(buttons) {
+        <nz-space>
+            @for (item of buttons; track $index) {
+            <button [routerLink]="item.href" *nzSpaceItem nz-button [nzType]="item.type!">
+                <span *ngIf="item.icon" nz-icon [nzType]="item.icon" nzTheme="outline"></span>
+                <span>{{item.title}}</span>
+            </button>
+            }
+        </nz-space>
+        }
+    </nz-page-header-extra>
+
+    <!--content-->
+    <nz-page-header-content>
+        <div nz-row>
+            <div class="content">
+
+                <!--title-->
+                <nz-page-header-title>{{ title }}</nz-page-header-title>
+
+
+                @if (description) {
+                <p nz-paragraph>
+                    {{ description }}
+                </p>
+                }
+
+                @if(links){
+                <div class="content-link">
+                    @for (link of links; track $index) {
+                    <a [href]="link.href">
+                        <span *ngIf="link.icon" nz-icon [nzType]="link.icon" nzTheme="outline"></span>
+                        <span>{{link.title}}</span>
+                    </a>
+                    }
+                </div>
+                }
+            </div>
+
+            @if(img) {
+            <div class="content-image">
+                <!-- <img src="https://gw.alipayobjects.com/zos/antfincdn/K%24NnlsB%26hz/pageHeader.svg" alt="content" /> -->
+                <img [src]="img" alt="content" />
+            </div>
+            }
+        </div>
+    </nz-page-header-content>
+</nz-page-header>
