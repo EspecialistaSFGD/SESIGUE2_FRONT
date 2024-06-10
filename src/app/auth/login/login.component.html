@@ -7,27 +7,29 @@
 
   <form nz-form [formGroup]="loginForm" [nzLayout]="'vertical'" class="login-form">
     <nz-form-item class="mb-4">
-      <nz-form-label class="m-0 p-0" nzFor="usuario">Usuario</nz-form-label>
-      <nz-form-control nzErrorTip="Ingrese su usuario">
-        <nz-input-group [nzSuffix]="suffixUsr" nzSize="large" class="rounded-lg">
-          <input (ngModelChange)="onUsuarioChange($event)" type="text" nz-input formControlName="usuario"
-            placeholder="Ingrese su usuario o DNI" #usr class="rounded-lg" (keypress)="onEnter($event)" />
-        </nz-input-group>
-        <ng-template #suffixUsr>
+      <!-- <label for="usuario" class="mb-1 cursor-pointer" nzRequired>Usuario</label> -->
+      <nz-form-label nzFor="usuario" nzRequired>Usuario</nz-form-label>
+      <nz-form-control nzErrorTip="Por favor, ingrese su usuario">
+        <!-- <nz-input-group [nzSuffix]="suffixUsr" nzSize="large" class="rounded-lg"> -->
+        <input id="usuario" (ngModelChange)="onUsuarioChange($event)" type="text" nz-input formControlName="usuario"
+          placeholder="Ingrese su usuario o DNI" #usr class="rounded-lg" nzSize="large" (keypress)="onEnter($event)" />
+        <!-- </nz-input-group> -->
+        <!-- <ng-template #suffixUsr>
           <span (click)="onNext()" class="cursor-pointer"
             *ngIf="!hasValidUser && loginForm.get('usuario')?.value != '' && loginForm.get('usuario')?.value != null"
             nz-icon [nzType]="loading ? 'loading' : 'arrow-right'" nzTheme="outline"></span>
-        </ng-template>
+        </ng-template> -->
       </nz-form-control>
     </nz-form-item>
 
     <!-- <ng-container
       *ngIf="hasValidUser && loginForm.get('usuario')?.value != '' && loginForm.get('usuario')?.value != null"> -->
     <nz-form-item>
-      <nz-form-label class="m-0 p-0" nzFor="clave">Clave</nz-form-label>
+      <!-- <label for="clave" class="mb-1 cursor-pointer">Clave</label> -->
+      <nz-form-label nzFor="clave" nzRequired>Clave</nz-form-label>
       <nz-form-control nzErrorTip="Por favor, ingrese su clave">
         <nz-input-group [nzSuffix]="suffixPwd" nzSize="large" class="rounded-lg">
-          <input [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="clave" #pwd
+          <input id="clave" [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="clave" #pwd
             placeholder="Ingrese su contraseña" />
         </nz-input-group>
         <ng-template #suffixPwd>

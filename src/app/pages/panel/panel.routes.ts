@@ -4,7 +4,7 @@ import { AuthGuard } from '../../libs/guards/auth.guard';
 
 export const WELCOME_ROUTES: Routes = [
   {
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     path: '', component: InicioComponent
   },
   // { path: 'requerimiento/:id', component: RequerimientoComponent },

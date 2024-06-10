@@ -31,7 +31,10 @@
             fill="#ECF1F4"></path>
           <line x1="60.5" y1="7.61523" x2="60.5" y2="39.6152" stroke="white" stroke-opacity="0.15"></line>
         </svg> -->
-        <h1 *ngIf="!isCollapsed">SeSigue</h1>
+        <figure>
+          <img src="./assets/images/isotipo--small--colored.svg" alt="SeSigue" class="w-8" srcset="">
+        </figure>
+        <h1 class="text-white font-semibold mt-3 ml-2" *ngIf="!isCollapsed">SeSigue</h1>
       </a>
     </div>
     <!-- <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
@@ -63,7 +66,7 @@
     <br> -->
 
     @if (menuItems != null && menuItems!= undefined && menuItems.length > 0){
-    <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+    <ul class="mt-8" nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
       @for (item of menuItems; track item.id) {
       @if(item.opciones != null && item.opciones != undefined && item.opciones.length > 0) {
       <li nz-submenu nzOpen [nzTitle]="item.nombre" [nzIcon]="item.icono!">
@@ -94,9 +97,9 @@
       </div>
     </nz-header>
     <nz-content>
-      <div class="inner-content">
-        <router-outlet></router-outlet>
-      </div>
+      <!-- <div class="inner-content"> -->
+      <router-outlet></router-outlet>
+      <!-- </div> -->
     </nz-content>
   </nz-layout>
 </nz-layout>

@@ -30,3 +30,7 @@ menu {
     margin: revert;
     padding: revert;
 }
+
+.anticon {
+    vertical-align: middle;
+}

@@ -50,7 +50,55 @@ export class PagesComponent implements OnInit, OnChanges {
       this.menuItems = JSON.parse(storedMenu);
     } else {
       // Inicializar con un valor predeterminado si el menú no está presente
-      this.menuItems = [];
+      this.menuItems = [
+        {
+          id: '1',
+          nombre: 'Inicio',
+          icono: 'home',
+          url: '/panel/inicio',
+          opciones: []
+        },
+        {
+          id: '2',
+          nombre: 'Pedidos',
+          icono: 'ordered-list',
+          url: '/pedidos',
+          opciones: [
+            {
+              id: '2.1',
+              nombre: 'Nuevo Pedido',
+              url: '/pedidos/nuevo',
+              opciones: []
+            },
+            {
+              id: '2.2',
+              nombre: 'Listado de Pedidos',
+              url: '/pedidos/listado',
+              opciones: []
+            }
+          ]
+        },
+        {
+          id: '3',
+          nombre: 'Acuerdos',
+          icono: 'audit',
+          url: '/acuerdos',
+          opciones: [
+            {
+              id: '3.1',
+              nombre: 'Nuevo Acuerdo',
+              url: '/acuerdos/nuevo',
+              opciones: []
+            },
+            {
+              id: '3.2',
+              nombre: 'Listado de Acuerdos',
+              url: '/acuerdos/listado',
+              opciones: []
+            }
+          ]
+        },
+      ];
     }
   }
 
