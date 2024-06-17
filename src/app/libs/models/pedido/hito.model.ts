@@ -1,4 +1,4 @@
-import { SelectModel } from "../select.model";
+import { SelectModel } from "../shared/select.model";
 
 export class HitoAcuerdoModel {
     constructor(

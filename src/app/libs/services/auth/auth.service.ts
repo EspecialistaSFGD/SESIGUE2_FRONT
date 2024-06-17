@@ -2,12 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Usuario } from '../../models/auth/usuario.model';
+import { UsuarioModel, UsuarioRequestModel } from '../../models/auth/usuario.model';
 import { environment } from '../../../../environments/environment.development';
 import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { Token } from '../../models/auth/token.model';
 import { parseISO } from 'date-fns';
-import { ResponseModel } from '../../models/response.model';
+import { ResponseModel } from '../../models/shared/response.model';
 import { MenuModel } from '../../models/shared/menu.model';
 
 interface State {
@@ -15,7 +15,7 @@ interface State {
   token: string | null | undefined;
   refreshToken: string | null | undefined;
   perfil: string | null | undefined;
-  opciones: MenuModel[] | null | undefined;
+  menus: MenuModel[] | null | undefined;
   isLoading: boolean;
 }
 
@@ -32,7 +32,7 @@ export class AuthService {
     token: null,
     refreshToken: null,
     perfil: null,
-    opciones: null,
+    menus: null,
     isLoading: false,
   });
 
@@ -53,18 +53,48 @@ export class AuthService {
     // });
   }
 
-  login(user: any): Observable<ResponseModel | null> {
+  login(user: UsuarioRequestModel): Observable<ResponseModel | null> {
     // Aquí realiza tu llamada HTTP para iniciar sesión
     return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, user).pipe(
       tap((resp: ResponseModel) => {
         if (resp.success && resp.data != null) {
+          if (resp.data.menus != null) {
+            const menusTransformados = this.transformarMenuParaNgZorro(resp.data.menus);
+            resp.data.menus = menusTransformados;
+
+            localStorage.setItem('menus', JSON.stringify(resp.data.menus));
+
+            this.#usuario.update((v) => ({
+              ...v,
+              menus: resp.data.menus,
+            }));
+          }
+
           this.guardarLocalStorage(resp.data.token, resp.data.refreshToken);
 
-          this.#usuario.update((v) => ({ ...v, isLoading: false }));
+          // this.#usuario.update((v) => ({ ...v, isLoading: false }));
+          //console.log(resp);
+
         }
       }),
       catchError(() => of(null))
     );
+  }
+
+  transformarMenuParaNgZorro(menusApi: MenuModel[]) {
+    const menusPrincipales = menusApi.filter(menu => menu.parentMenu === 0);
+    const menusTransformados = menusPrincipales.map(menuPrincipal => {
+      const subMenus = menusApi.filter(subMenu => subMenu.parentMenu === menuPrincipal.codigoMenu);
+      return {
+        ...menuPrincipal,
+        children: subMenus.map(subMenu => ({
+          ...subMenu,
+          // Aquí puedes añadir más propiedades o transformaciones si es necesario
+        }))
+      };
+    });
+
+    return menusTransformados;
   }
 
   obtenerPerfil(): Observable<ResponseModel | null> {
@@ -97,31 +127,31 @@ export class AuthService {
       );
   }
 
-  loginFull(credentials: any): Observable<ResponseModel | null> {
-    return this.login(credentials).pipe(
-      switchMap((response: any) => {
-        return this.obtenerPerfil().pipe(
-          switchMap((perfil) => {
-            //console.log(perfil);
+  // loginFull(credentials: any): Observable<ResponseModel | null> {
+  //   return this.login(credentials).pipe(
+  //     switchMap((response: any) => {
+  //       return this.obtenerPerfil().pipe(
+  //         switchMap((perfil) => {
+  //           //console.log(perfil);
 
-            if (perfil == null) {
-              return of(null);
-            }
-            return this.obtenerOpciones(perfil.data[0].id).pipe(
-              map((opciones) => {
-                //console.log(opciones);
+  //           if (perfil == null) {
+  //             return of(null);
+  //           }
+  //           return this.obtenerOpciones(perfil.data[0].id).pipe(
+  //             map((opciones) => {
+  //               //console.log(opciones);
 
-                if (opciones == null) {
-                  return null;
-                }
-                return response;
-              })
-            );
-          }),
-        );
-      }),
-    );
-  }
+  //               if (opciones == null) {
+  //                 return null;
+  //               }
+  //               return response;
+  //             })
+  //           );
+  //         }),
+  //       );
+  //     }),
+  //   );
+  // }
 
   logout(): Observable<any> {
     return this.http.get(`${environment.api}/Login/CerrarSesion`)
@@ -233,7 +263,7 @@ export class AuthService {
       token: null,
       refreshToken: null,
       perfil: null,
-      opciones: null,
+      menus: null,
       isLoading: false,
     });
   }

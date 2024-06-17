@@ -134,11 +134,11 @@ export class LoginComponent {
   }
 
   onLogin() {
-    this.authService.loginFull(this.loginForm.value).subscribe(
+    this.authService.login(this.loginForm.value).subscribe(
       {
         next: (result: any) => {
           if (result.success) {
-            this.hasValidUser = true;
+            // this.hasValidUser = true;
 
             if (this.loginForm.get('recordar')?.value != null && this.loginForm.get('recordar')?.value == true) {
               localStorage.setItem('usuario', this.loginForm.get('usuario')?.value);

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { ActivationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
@@ -24,13 +24,14 @@ import { filter, map } from 'rxjs';
   templateUrl: './pages.component.html',
   styleUrl: './pages.component.less'
 })
-export class PagesComponent implements OnInit, OnChanges {
-  isCollapsed = false;
+export class PagesComponent implements OnInit, AfterViewInit {
+  isCollapsed: boolean = true;
 
   public authService = inject(AuthService);
   private router = inject(Router);
   public title = inject(Title);
   public meta = inject(Meta);
+  private cdr = inject(ChangeDetectorRef);
 
   menuItems: MenuModel[] = [];
   pageTitle: string | undefined;
@@ -42,65 +43,17 @@ export class PagesComponent implements OnInit, OnChanges {
       this.title.setTitle(this.pageTitle!);
       //this.menuItems = JSON.parse(localStorage.getItem('opciones')!);
     });
-  }
-  ngOnInit(): void {
-    const storedMenu = localStorage.getItem('opciones');
 
-    if (storedMenu) {
-      this.menuItems = JSON.parse(storedMenu);
-    } else {
-      // Inicializar con un valor predeterminado si el menú no está presente
-      this.menuItems = [
-        {
-          id: '1',
-          nombre: 'Inicio',
-          icono: 'home',
-          url: '/panel/inicio',
-          opciones: []
-        },
-        {
-          id: '2',
-          nombre: 'Pedidos',
-          icono: 'ordered-list',
-          url: '/pedidos',
-          opciones: [
-            {
-              id: '2.1',
-              nombre: 'Nuevo Pedido',
-              url: '/pedidos/nuevo',
-              opciones: []
-            },
-            {
-              id: '2.2',
-              nombre: 'Listado de Pedidos',
-              url: '/pedidos/listado',
-              opciones: []
-            }
-          ]
-        },
-        {
-          id: '3',
-          nombre: 'Acuerdos',
-          icono: 'audit',
-          url: '/acuerdos',
-          opciones: [
-            {
-              id: '3.1',
-              nombre: 'Nuevo Acuerdo',
-              url: '/acuerdos/nuevo',
-              opciones: []
-            },
-            {
-              id: '3.2',
-              nombre: 'Listado de Acuerdos',
-              url: '/acuerdos/listado',
-              opciones: []
-            }
-          ]
-        },
-      ];
-    }
+    const storedMenu = localStorage.getItem('menus');
+
+    this.menuItems = (storedMenu) ? JSON.parse(storedMenu) : [];
   }
+
+  ngAfterViewInit() {
+    this.cdr.detectChanges();
+  }
+
+  ngOnInit(): void { }
 
   getDataRoute() {
     return this.router.events.pipe(
@@ -108,12 +61,5 @@ export class PagesComponent implements OnInit, OnChanges {
       filter((e: ActivationEnd) => e.snapshot.firstChild === null),
       map((e: ActivationEnd) => e.snapshot.data)
     );
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    // changes.prop contains the old and the new value...
-    console.log('changes', changes);
-    //this.menuItems = JSON.parse(localStorage.getItem('opciones')!);
-
   }
 }

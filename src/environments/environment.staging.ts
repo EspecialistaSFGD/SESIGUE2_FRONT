@@ -1,5 +1,5 @@
 export const environment = {
     production: false,
-    api: 'http://staging/api',
-    client: 'http://staging',
+    api: 'https://sistema.aulaconia.com/bk/api',
+    client: 'https://sistema.aulaconia.com/bk',
 };

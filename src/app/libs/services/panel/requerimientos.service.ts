@@ -2,16 +2,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { environment } from '../../../../environments/environment.development';
-import { ResponseModel } from '../../models/response.model';
-import { StepModel } from '../../models/step.model';
+import { ResponseModel } from '../../models/shared/response.model';
+import { StepModel } from '../../models/shared/step.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, delay, finalize, map, merge, scan, timer } from 'rxjs';
 import { NzStatusType } from 'ng-zorro-antd/steps';
-import { RequerimientoModel } from '../../models/requerimiento';
+// import { RequerimientoModel } from '../../models/requerimiento';
 
 interface State {
-  requerimientos: RequerimientoModel[];
-  requerimientoSeleccionado: RequerimientoModel | null | undefined;
+  requerimientos: any[];
+  requerimientoSeleccionado: any | null | undefined;
   //idRequerimientoSeleccionado: string | null | undefined;
   isLoading: boolean;
   pageIndex: number;
@@ -168,7 +168,7 @@ export class RequerimientosService {
     this.http.get<ResponseModel>(`${environment.api}/Requerimiento/ListarRequerimiento`, { params })
       .subscribe({
         next: (data) => {
-          this.#requerimientos.update((v) => ({ ...v, requerimientos: data.data, total: data.totalCount! }));
+          this.#requerimientos.update((v) => ({ ...v, requerimientos: data.data }));
         },
         error: (e) => console.error(e),
         complete: () => this.#requerimientos.update((v) => ({ ...v, isLoading: false })),
@@ -176,7 +176,7 @@ export class RequerimientosService {
   }
 
   //Datos Generales
-  actualizarRequerimiento(requerimiento: RequerimientoModel): void {
+  actualizarRequerimiento(requerimiento: any): void {
     this.#requerimientos.update((v) => ({ ...v, isLoading: true }));
 
     if (requerimiento.tipoRequerimiento != null) requerimiento.idTipoRequerimiento = Number(requerimiento.tipoRequerimiento.value);

@@ -3,7 +3,7 @@ import { RequerimientosService } from '../../../libs/services/panel/requerimient
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { CommonModule } from '@angular/common';
 import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
-import { AnchorModel } from '../../../libs/models/anchor.model';
+import { AnchorModel } from '../../../libs/models/shared/anchor.model';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -12,12 +12,12 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { RequerimientoModel } from '../../../libs/models/requerimiento/requerimiento.model';
+// import { RequerimientoModel } from '../../../libs/models/requerimiento/requerimiento.model';
 import { EstadoComponent } from '../../../shared/components/estado/estado.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { TiposService } from '../../../libs/services/shared/tipos.service';
-import { SelectModel } from '../../../libs/models/select.model';
+import { SelectModel } from '../../../libs/models/shared/select.model';
 import { RouterModule } from '@angular/router';
 
 @Component({

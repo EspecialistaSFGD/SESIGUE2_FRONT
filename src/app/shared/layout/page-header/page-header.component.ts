@@ -3,7 +3,7 @@ import { Component, Input, booleanAttribute } from '@angular/core';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
-import { AnchorModel } from '../../../libs/models/anchor.model';
+import { AnchorModel } from '../../../libs/models/shared/anchor.model';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { RouterModule } from '@angular/router';
