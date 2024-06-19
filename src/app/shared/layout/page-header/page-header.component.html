@@ -1,71 +1,25 @@
-<nz-page-header class="site-page-header">
-    <!--extra-->
-    <nz-page-header-extra>
-        <!--breadcrumb-->
-        @if(breadcrumbs) {
-        <nz-space>
-            <nz-breadcrumb nz-page-header-breadcrumb>
-                <nz-breadcrumb-item>
-                    <a href="/">Inicio</a>
-                </nz-breadcrumb-item>
-                @for (item of breadcrumbs; track $index) {
-                <nz-breadcrumb-item>
-                    @if(item.href != ''){
-                    <a [href]="item.href">{{ item.title }}</a>
-                    }@else{
-                    {{ item.title }}
-                    }
-                </nz-breadcrumb-item>
+<div class="site-page-header-ghost-wrapper mb-8">
+    <nz-page-header nzBackIcon [nzGhost]="false">
+        <nz-page-header-title class="whitespace-normal line-height">{{ title }}</nz-page-header-title>
+        @if(subtitle) {
+        <nz-page-header-subtitle>{{ subtitle }}</nz-page-header-subtitle>
+        }
+    @if(buttons) {
+        <nz-page-header-extra>
+            <nz-space>
+                @for (item of buttons; track $index) {
+                    <button [routerLink]="item.href" *nzSpaceItem nz-button [nzType]="item.type!">
+                        <span *ngIf="item.icon" nz-icon [nzType]="item.icon" nzTheme="outline"></span>
+                        <span>{{item.title}}</span>
+                    </button>
                 }
-            </nz-breadcrumb>
-        </nz-space>
-        }
-        @if(buttons) {
-        <nz-space>
-            @for (item of buttons; track $index) {
-            <button [routerLink]="item.href" *nzSpaceItem nz-button [nzType]="item.type!">
-                <span *ngIf="item.icon" nz-icon [nzType]="item.icon" nzTheme="outline"></span>
-                <span>{{item.title}}</span>
-            </button>
-            }
-        </nz-space>
-        }
-    </nz-page-header-extra>
-
-    <!--content-->
+            </nz-space>
+        </nz-page-header-extra>
+    }
+    @if(content) {
     <nz-page-header-content>
-        <div nz-row class="flex flex-col-reverse lg:flex-row">
-            <div class="content ml-0 lg:ml-8">
-
-                <!--title-->
-                <nz-page-header-title class="whitespace-normal line-height">{{ title }}</nz-page-header-title>
-
-
-                @if (description) {
-                <p class="mt-2">
-                    {{ description }}
-                </p>
-                }
-
-                @if(links){
-                <div class="content-link">
-                    @for (link of links; track $index) {
-                    <a [href]="link.href"
-                        class="text-blue-800 hover:text-blue-700 border-b-2 border-blue-800 hover:border-b-0">
-                        <span *ngIf="link.icon" nz-icon [nzType]="link.icon" nzTheme="outline"></span>
-                        <span>{{link.title}}</span>
-                    </a>
-                    }
-                </div>
-                }
-            </div>
-
-            @if(img) {
-            <div class="content-image mb-4 lg:mb-0">
-                <!-- <img src="https://gw.alipayobjects.com/zos/antfincdn/K%24NnlsB%26hz/pageHeader.svg" alt="content" /> -->
-                <img class="w-40" [src]="img" alt="content" />
-            </div>
-            }
-        </div>
+        {{content}}
     </nz-page-header-content>
-</nz-page-header>
+}
+    </nz-page-header>
+</div>

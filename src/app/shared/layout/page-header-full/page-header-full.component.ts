@@ -9,16 +9,18 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-page-header',
+  selector: 'app-page-header-full',
   standalone: true,
   imports: [CommonModule, NzPageHeaderModule, NzBreadCrumbModule, NzSpaceModule, NzIconModule, NzButtonModule, RouterModule],
-  templateUrl: './page-header.component.html',
-  styleUrl: './page-header.component.less',
+  templateUrl: './page-header-full.component.html',
+  styleUrl: './page-header-full.component.less',
 })
-export class PageHeaderComponent {
+export class PageHeaderFullComponent {
   @Input({ required: true }) title!: string;
-  @Input({ required: false }) subtitle!: string;
-  @Input({ required: false }) content!: any;
+  @Input({ required: false }) description!: string;
+  @Input({ required: false }) links!: AnchorModel[];
+  @Input({ required: false }) breadcrumbs!: AnchorModel[];
   @Input({ required: false }) buttons!: AnchorModel[];
+  @Input({ required: false }) img!: string;
   // @Input({ transform: booleanAttribute }) withShadow: boolean = false;
 }

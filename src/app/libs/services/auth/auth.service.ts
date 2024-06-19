@@ -17,6 +17,7 @@ interface State {
   perfil: string | null | undefined;
   menus: MenuModel[] | null | undefined;
   isLoading: boolean;
+  isAuthenticated: boolean;
 }
 
 @Injectable({
@@ -34,10 +35,13 @@ export class AuthService {
     perfil: null,
     menus: null,
     isLoading: false,
+    isAuthenticated: false,
   });
 
   public token = computed(() => this.#usuario().token);
   public reFresh = computed(() => this.#usuario().refreshToken);
+  public isAuthenticated = computed(() => this.#usuario().isAuthenticated);
+  public isLoading = computed(() => this.#usuario().isLoading);
 
   constructor() {
     // effect(() => {
@@ -67,17 +71,25 @@ export class AuthService {
             this.#usuario.update((v) => ({
               ...v,
               menus: resp.data.menus,
+              isAuthenticated: true,
             }));
           }
 
           this.guardarLocalStorage(resp.data.token, resp.data.refreshToken);
+          this.msg.success("Inicio de sesión exitoso");
 
           // this.#usuario.update((v) => ({ ...v, isLoading: false }));
           //console.log(resp);
-
+        }else{
+          this.msg.error("Hubo un error al iniciar sesión");
+          this.#usuario.update((v) => ({ ...v, isLoading: false, isAuthenticated: false}));
         }
       }),
-      catchError(() => of(null))
+      catchError((err) => {
+        this.msg.error("Hubo un error al iniciar sesión", err);
+        this.#usuario.update((v) => ({ ...v, isLoading: false, isAuthenticated: false}));
+        return of(null);
+      })
     );
   }
 
@@ -265,6 +277,7 @@ export class AuthService {
       perfil: null,
       menus: null,
       isLoading: false,
+      isAuthenticated: false,
     });
   }
 }

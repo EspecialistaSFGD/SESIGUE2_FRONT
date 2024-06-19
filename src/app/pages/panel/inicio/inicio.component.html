@@ -1,61 +1,9 @@
-<app-page-header [title]="title"
+<app-page-header-full [title]="title"
     description="Esta plataforma ha sido desarrollada con el objetivo de facilitar el control y seguimiento de los Espacios de Articulación."
     [links]="links" [breadcrumbs]="breadcrumbs" img="./assets/images/logo--big--colored.svg" />
 
 
-<!-- <form nz-form nzLayout="vertical" [formGroup]="searchForm">
-    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="6" nzLg="6" nzXl="6">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="null" nzFor="tipoAdquisicion">Tipo de adquisición</nz-form-label>
-                <nz-form-control nzSpan="null">
-                    <nz-select class="w-full" #tipoAdquisicion formControlName="tipoAdquisicion"
-                        nzPlaceHolder="Seleccionar" nzShowSearch [compareWith]="compareFn" nzAllowClear
-                        (ngModelChange)="onTipoAdquisicionChange($event)">
-                        <nz-option *ngFor="let tReq of this.tiposService.tiposRequerimiento()" [nzValue]="tReq"
-                            [nzLabel]="tReq.label!">
-                        </nz-option>
-                    </nz-select>
-                </nz-form-control>
-            </nz-form-item>
-        </div>
-
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="6" nzLg="6" nzXl="6">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="null" nzFor="estado">Estado</nz-form-label>
-                <nz-form-control nzSpan="null">
-                    <nz-select class="w-full" #estado formControlName="estado" nzPlaceHolder="Seleccionar" nzShowSearch
-                        [compareWith]="compareFn" nzAllowClear (ngModelChange)="onEstadoChange($event)">
-                        <nz-option *ngFor="let tEst of this.tiposService.tiposEstado()" [nzValue]="tEst"
-                            [nzLabel]="tEst.label!">
-                        </nz-option>
-                    </nz-select>
-                </nz-form-control>
-            </nz-form-item>
-        </div>
-
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="6" nzLg="6" nzXl="6">
-            <div class="inner-box">
-                <nz-form-item>
-                    <nz-form-label [nzSpan]="null" nzFor="termino">Buscar</nz-form-label>
-                    <nz-form-control nzSpan="null">
-                        <nz-input-group [nzSuffix]="suffixIconSearch">
-                            <input #termino id="termino" type="search" nz-input formControlName="termino"
-                                placeholder="Buscar" (keyup)="onKeySearch($event)" />
-                        </nz-input-group>
-                        <ng-template #suffixIconSearch>
-                            @if(termino.value !== '' && termino.value !== null && termino.value !== undefined){
-                            <span nz-icon nzType="close" (click)="onClearSearch()"></span>
-                            }@else{
-                            <span nz-icon nzType="search"></span>
-                            }
-                        </ng-template>
-                    </nz-form-control>
-                </nz-form-item>
-            </div>
-        </div>
-    </div>
-</form>
+<!-- 
 
 <nz-table nzShowSizeChanger [nzData]="this.requerimientosService.requerimientos()" [nzFrontPagination]="false"
     [nzLoading]="this.requerimientosService.isLoading()" [nzTotal]="this.requerimientosService.total()"

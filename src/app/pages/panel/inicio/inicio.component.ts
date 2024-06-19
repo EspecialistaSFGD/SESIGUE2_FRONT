@@ -2,7 +2,6 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RequerimientosService } from '../../../libs/services/panel/requerimientos.service';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { CommonModule } from '@angular/common';
-import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
 import { AnchorModel } from '../../../libs/models/shared/anchor.model';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -19,6 +18,7 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { TiposService } from '../../../libs/services/shared/tipos.service';
 import { SelectModel } from '../../../libs/models/shared/select.model';
 import { RouterModule } from '@angular/router';
+import { PageHeaderFullComponent } from '../../../shared/layout/page-header-full/page-header-full.component';
 
 @Component({
   selector: 'app-inicio',
@@ -27,7 +27,7 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     RouterModule,
     NzTableModule,
-    PageHeaderComponent,
+    PageHeaderFullComponent,
     ReactiveFormsModule,
     NzFormModule,
     NzSelectModule,

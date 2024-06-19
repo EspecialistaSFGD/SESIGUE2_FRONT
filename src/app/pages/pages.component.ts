@@ -53,7 +53,9 @@ export class PagesComponent implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void { 
+
+  }
 
   getDataRoute() {
     return this.router.events.pipe(

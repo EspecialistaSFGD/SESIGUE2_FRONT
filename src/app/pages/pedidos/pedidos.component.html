@@ -1,0 +1,172 @@
+<app-page-header [title]="title.toUpperCase()" />
+    <nz-table [nzTitle]="Header" nzShowSizeChanger nzSize="small" [nzData]="this.pedidosService.pedidos()" [nzFrontPagination]="false"
+    [nzLoading]="this.pedidosService.isLoading()" [nzTotal]="this.pedidosService.total()"
+    [nzPageSize]="this.pedidosService.pageSize()" [nzPageIndex]="this.pedidosService.pageIndex()"
+    (nzQueryParams)="onQueryParamsChange($event)">
+        <thead>
+            <tr>
+                <th nzColumnKey="aspectoCriticoResolver">Pedido</th>
+                <th nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+                <th nzColumnKey="espacio" [nzSortFn]="true">espacio</th>
+                <th nzColumnKey="intervencionesEstrategicas">Intervenciones estrategicas</th>
+                <th nzColumnKey="cantidadPreAcuerdos">Pre-acuerdos</th>
+                <th nzColumnKey="acciones">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (data of this.pedidosService.pedidos(); track data.email) {
+            <tr>
+                <td>{{ data.aspectoCriticoResolver }}</td>
+                <td>{{ data.sector }}</td>
+                <td>{{ data.espacio }}</td>
+                <td>{{ data.intervencionesEstrategicas }}</td>
+                <td>{{ data.cantidadPreAcuerdos }}</td>
+                <td>
+                    <nz-space>
+                        <button [routerLink]="['/requerimiento', data.email]"
+                            routerLinkActive="router-link-active" *nzSpaceItem nz-button nzType="link">
+                            editar
+                        </button>
+                        <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(data)">
+                            eliminar
+                        </button>
+                    </nz-space>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </nz-table>
+
+<ng-template #Header>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+        <p class="mb-2 sm:mb-0">Resultados ({{this.pedidosService.total()}})</p>
+        <div>
+            <nz-space>
+                
+                <button *nzSpaceItem nz-button (click)="onOpenDrawer()">
+                    <span nz-icon nzType="filter" nzTheme="outline"></span>
+                    <span class="button-text">Filtrar</span>
+                    <nz-badge class="button-text pl-1"
+                        nzStandalone
+                        [nzCount]="4"
+                    ></nz-badge>
+                </button>
+
+                <button *nzSpaceItem nz-button>
+                    <span nz-icon nzType="printer" nzTheme="outline"></span>
+                    <span class="button-text">Imprimir acuerdos</span>
+                </button>
+
+                <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu">
+                    <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+                    <span class="button-text">Exportar</span>
+                    <span nz-icon nzType="down"></span>
+                </button>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>
+                    <li nz-menu-item>
+                    <a>Exportar pedidos</a>
+                    </li>
+                    <li nz-menu-item>
+                    <a>Exportar acuerdos</a>
+                    </li>
+                </ul>
+                </nz-dropdown-menu>
+                
+                <button *nzSpaceItem nz-button nzType="primary" [routerLink]="['/pedidos/nuevo']">
+                    <span nz-icon nzType="plus" nzTheme="outline"></span>
+                    <span class="button-text">Nuevo pedido</span>
+                </button>
+            </nz-space>
+        </div>
+    </div>
+</ng-template>
+
+<nz-drawer
+      [nzBodyStyle]="{ overflow: 'auto' }"
+      [nzMaskClosable]="false"
+      [nzVisible]="isDrawervisible"
+      nzTitle="Filtrar los resultados"
+      [nzFooter]="footerTpl"
+      (nzOnClose)="onCloseDrawer()"
+    >
+    <form nz-form *nzDrawerContent nzLayout="vertical" [formGroup]="searchForm">
+        <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null" nzFor="espacio">Espacio</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-select class="w-full" #espacio formControlName="espacio"
+                            nzPlaceHolder="Todos" nzShowSearch [compareWith]="compareFn" nzAllowClear
+                            (ngModelChange)="onEspacioChange($event)">
+                            <!-- <nz-option *ngFor="let tReq of this.tiposService.tiposRequerimiento()" [nzValue]="tReq"
+                                [nzLabel]="tReq.label!">
+                            </nz-option> -->
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+    
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null" nzFor="sector">Sector</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-select class="w-full" #sector formControlName="sector" nzPlaceHolder="Todos" nzShowSearch
+                            [compareWith]="compareFn" nzAllowClear (ngModelChange)="onSectorChange($event)">
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+    
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null" nzFor="dep">Departamento</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-select class="w-full" #dep formControlName="dep" nzPlaceHolder="Todos" nzShowSearch
+                            [compareWith]="compareFn" nzAllowClear (ngModelChange)="onDepChange($event)">
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+    
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null" nzFor="prov">Provincia</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-select class="w-full" #prov formControlName="prov" nzPlaceHolder="Todas" nzShowSearch
+                            [compareWith]="compareFn" nzAllowClear (ngModelChange)="onProvChange($event)">
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+    
+            <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <div class="inner-box">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="null" nzFor="termino">Buscar</nz-form-label>
+                        <nz-form-control nzSpan="null">
+                            <nz-input-group [nzSuffix]="suffixIconSearch">
+                                <input #termino id="termino" type="search" nz-input formControlName="termino"
+                                    placeholder="Buscar" (keyup)="onKeySearch($event)" />
+                            </nz-input-group>
+                            <ng-template #suffixIconSearch>
+                                @if(termino.value !== '' && termino.value !== null && termino.value !== undefined){
+                                <span nz-icon nzType="close" (click)="onClearSearch()"></span>
+                                }@else{
+                                <span nz-icon nzType="search"></span>
+                                }
+                            </ng-template>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div> -->
+        </div>
+    </form>
+
+      <ng-template #footerTpl>
+        <div style="float: right">
+          <!-- <button nz-button style="margin-right: 8px;" (click)="onCloseDrawer()">Cancel</button> -->
+          <button nz-button nzType="primary" (click)="onCloseDrawer()"><span nz-icon nzType="filter" nzTheme="outline"></span> Filtrar</button>
+        </div>
+      </ng-template>
+</nz-drawer>

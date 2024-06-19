@@ -32,8 +32,11 @@ export class LoginComponent {
   @ViewChild('usr') usrElement!: ElementRef;
   @ViewChild('pwd') pwdElement!: ElementRef;
 
+  isLoading: boolean = false;
+  isAuthenticated: boolean = true;
+
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
+  public authService = inject(AuthService);
   private message = inject(NzMessageService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -41,7 +44,10 @@ export class LoginComponent {
   constructor() {
     this.authService.validarToken().subscribe(estaAutenticado => {
       if (estaAutenticado) {
+        this.isAuthenticated = true;
         this.router.navigateByUrl('/panel');
+      } else {
+        this.isAuthenticated = false;
       }
     });
 
@@ -134,6 +140,7 @@ export class LoginComponent {
   }
 
   onLogin() {
+    this.isLoading = true;
     this.authService.login(this.loginForm.value).subscribe(
       {
         next: (result: any) => {
@@ -174,7 +181,7 @@ export class LoginComponent {
               this.pwdElement.nativeElement.focus();
             }, 100);
             this.message.error(result.message);
-            this.loading = false;
+            this.isLoading = false;
           }
         },
         error: (error) => {
@@ -183,23 +190,19 @@ export class LoginComponent {
         complete: () => {
           const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
           this.router.navigateByUrl(returnUrl);
+          this.isLoading = false;
         }
       }
     );
   }
 
   ngOnInit(): void {
-    // this.validateUserForm = this.fb.group({
-    //   // usuario: [this.usuario?.nombreUsuario, [Validators.required]],
-    //   usuario: [localStorage.getItem('usuario') || '', [Validators.required]],
-    // });
-
     setTimeout(() => {
       if (localStorage.getItem('usuario') != null) {
         this.onNext();
       } else {
         this.hasValidUser = false;
-        this.usrElement.nativeElement.focus();
+        // this.usrElement.nativeElement.focus();
       }
     }, 100);
   }
