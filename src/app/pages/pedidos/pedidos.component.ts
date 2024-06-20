@@ -305,7 +305,7 @@ export class PedidosComponent implements OnInit {
 
     this.traerPedidos({
       pageIndex,
-      pageSize,
+      pageSize: 10,
       sortField,
       sortOrder
     });

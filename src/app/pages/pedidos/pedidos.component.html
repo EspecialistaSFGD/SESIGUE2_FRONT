@@ -25,10 +25,12 @@
                 <nz-space>
                     <button [routerLink]="['/requerimiento', data.email]" routerLinkActive="router-link-active"
                         *nzSpaceItem nz-button nzType="link">
-                        editar
+                        <!-- icono de editar -->
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
                     <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(data)">
-                        eliminar
+                        <!-- icono de eliminar de color rojo -->
+                        <span nz-icon nzType="delete" nzTheme="outline"></span>
                     </button>
                 </nz-space>
             </td>
