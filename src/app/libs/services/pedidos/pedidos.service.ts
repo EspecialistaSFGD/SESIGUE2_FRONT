@@ -10,21 +10,18 @@ import { ResponseModelPaginated } from '../../models/shared/response.model';
 interface State {
     pedidos: any[];
     pedidoSeleccionado: any | null | undefined;
-    //idpedidoSeleccionado: string | null | undefined;
     isLoading: boolean;
     pageIndex: number;
     pageSize: number;
     total: number;
     sortField: string | null;
     sortOrder: string | null;
-  }
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class PedidosService {
-
-    api:string = 'https://api.randomuser.me/';
 
     public msg = inject(NzMessageService);
     public http = inject(HttpClient);
@@ -33,7 +30,6 @@ export class PedidosService {
     #pedidosResult = signal<State>({
         pedidos: [],
         pedidoSeleccionado: null,
-        //idpedidoSeleccionado: null,
         isLoading: true,
         pageIndex: 1,
         pageSize: 10,
@@ -50,53 +46,35 @@ export class PedidosService {
 
     constructor() { }
 
-    traerPedidos(pageIndex: number = 1, pageSize: number = 10, sortField: string | null = null, sortOrder: string | null = null): void {
+    listarPedidos(espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
+        let params = new HttpParams();
+
         this.#pedidosResult.update((state) => ({
             ...state,
             isLoading: true,
         }));
 
-        let params = new HttpParams();
 
-        params = params.append('page', `${pageIndex}`);
-        params = params.append('results', `${pageSize}`)
-        params = params.append('sortField', `${sortField}`)
-        params = params.append('sortOrder', `${sortOrder}`);
+        if (espacio != null && espacio.length > 0) {
+            espacio.forEach((esp: SelectModel) => {
+                params = params.append('eventoId[]', `${esp.value}`);
+            });
+        }
 
-        this.http.get<any>(`${this.api}`, {params}).subscribe({
-            next: (data) => {
-                // console.log(data);
-                
-                this.#pedidosResult.update((v) => ({ ...v, pedidos: data.results, isLoading: false }));
-            },
-            error: (e) => console.log(e),
-            complete: () => this.#pedidosResult.update((v) => ({ ...v, isLoading: false })),
-        });
-    }
-
-    listarPedidos(pageIndex: number = 1, pageSize: number = 10, sortField: string | null = null, sortOrder: string | null = null): void {
-        this.#pedidosResult.update((state) => ({
-            ...state,
-            isLoading: true,
-        }));
-
-        let params = new HttpParams();
+        if (sector != null && sector.length > 0) {
+            sector.forEach((esp: SelectModel) => {
+                params = params.append('grupoID[]', `${esp.value}`);
+            });
+        }
 
         params = (pageIndex !== null) ? params.append('piCurrentPage', `${pageIndex}`) : params;
         params = (pageSize !== null) ? params.append('piPageSize', `${pageSize}`) : params;
         params = (sortField !== null) ? params.append('columnSort', `${sortField}`) : params;
         params = (sortOrder !== null) ? params.append('typeSort', `${sortOrder}`) : params;
 
-        // params = params.append('piCurrentPage', `${pageIndex}`);
-        // params = params.append('piPageSize', `${pageSize}`)
-        // params = params.append('columnSort', `${sortField}`)
-        // params = params.append('typeSort', `${sortOrder}`);
-
-        this.http.get<any>(`${environment.api}/PrioridadAcuerdo/Listar`, {params}).subscribe({
+        this.http.get<any>(`${environment.api}/PrioridadAcuerdo/Listar`, { params }).subscribe({
             next: (data) => {
-                console.log(data);
-                
-                this.#pedidosResult.update((v) => ({ ...v, pedidos: data.data, isLoading: false, total: data.info.total}));
+                this.#pedidosResult.update((v) => ({ ...v, pedidos: data.data, isLoading: false, total: data.info.total }));
             },
             error: (e) => console.log(e),
             complete: () => this.#pedidosResult.update((v) => ({ ...v, isLoading: false })),

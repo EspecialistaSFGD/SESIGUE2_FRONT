@@ -75,6 +75,14 @@ export class AuthService {
             }));
           }
 
+          if(resp.data.nombreTrabajador != null){
+            if(resp.data.nombreTrabajador != "") {
+              localStorage.setItem('trabajador', resp.data.nombreTrabajador);
+            }else{
+              localStorage.setItem('trabajador', 'Administrador');
+            }
+          }
+
           this.guardarLocalStorage(resp.data.token, resp.data.refreshToken);
           this.msg.success("Inicio de sesión exitoso");
 
@@ -268,7 +276,7 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('refresh');
     localStorage.removeItem('perfil');
-    localStorage.removeItem('opciones');
+    localStorage.removeItem('menus');
 
     this.#usuario.set({
       usuario: null,

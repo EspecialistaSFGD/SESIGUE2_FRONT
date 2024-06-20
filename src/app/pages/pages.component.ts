@@ -8,6 +8,10 @@ import { AuthService } from '../libs/services/auth/auth.service';
 import { MenuModel } from '../libs/models/shared/menu.model';
 import { Meta, Title } from '@angular/platform-browser';
 import { filter, map } from 'rxjs';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+
+
 
 @Component({
   selector: 'app-pages',
@@ -20,6 +24,8 @@ import { filter, map } from 'rxjs';
     NzLayoutModule,
     NzMenuModule,
     NzIconModule,
+    NzAvatarModule,
+    NzDropDownModule,
   ],
   templateUrl: './pages.component.html',
   styleUrl: './pages.component.less'
@@ -35,6 +41,9 @@ export class PagesComponent implements OnInit, AfterViewInit {
 
   menuItems: MenuModel[] = [];
   pageTitle: string | undefined;
+  trabajador: string | undefined;
+  selectedTheme: string = localStorage['theme'] || 'system';;
+
 
   constructor() {
     this.getDataRoute().subscribe((data) => {
@@ -47,14 +56,49 @@ export class PagesComponent implements OnInit, AfterViewInit {
     const storedMenu = localStorage.getItem('menus');
 
     this.menuItems = (storedMenu) ? JSON.parse(storedMenu) : [];
+
+    const storedTrabajador = localStorage.getItem('trabajador');
+
+    this.trabajador = (storedTrabajador) ? storedTrabajador : 'Administrador';
+
+    this.initTheme();
   }
 
   ngAfterViewInit() {
     this.cdr.detectChanges();
   }
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
+    this.selectedTheme = localStorage['theme'] || 'system';
+    this.initTheme();
+  }
 
+  initTheme(): void {
+    if (this.selectedTheme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
+
+  switchTheme(theme: string): void {
+    this.selectedTheme = theme;
+
+    if (theme === 'dark') {
+      localStorage['theme'] = 'dark';
+    } else if (theme === 'light') {
+      localStorage['theme'] = 'light';
+    } else {
+      localStorage.removeItem('theme');
+    }
+
+    this.initTheme();
+  }
+
+  onLogout():void{
+    this.authService.removerLocalStorage();
+
+    this.router.navigate(['/login']);
   }
 
   getDataRoute() {
