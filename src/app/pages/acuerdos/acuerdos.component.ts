@@ -10,7 +10,6 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
-import { PedidosService } from '../../libs/services/pedidos/pedidos.service';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { SelectModel } from '../../libs/models/shared/select.model';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
@@ -18,10 +17,13 @@ import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { EspaciosStore } from '../../libs/stores/shared/espacios.store';
 import { SectoresStore } from '../../libs/stores/shared/sectores.store';
 import { UbigeosStore } from '../../libs/stores/shared/ubigeos.store';
-import { TraerPedidosInterface } from '../../libs/interfaces/pedido/pedido.interface';
+import { TraerAcuerdosInterface } from '../../libs/interfaces/pedido/pedido.interface';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { AcuerdosService } from '../../libs/services/pedidos/acuerdos.service';
+import { ClasificacionesStore } from '../../libs/stores/shared/clasificaciones.store';
+import { EstadosStore } from '../../libs/stores/shared/estados.store';
 
 @Component({
   selector: 'app-pedidos',
@@ -43,37 +45,45 @@ import { Subject } from 'rxjs';
     NzBadgeModule,
     NzToolTipModule,
   ],
-  templateUrl: './pedidos.component.html',
-  styleUrl: './pedidos.component.less'
+  templateUrl: './acuerdos.component.html',
+  styleUrl: './acuerdos.component.less'
 })
-export class PedidosComponent implements OnInit {
+export class AcuerdosComponent implements OnInit {
   searchForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
   entidadSeleccionada: SelectModel = { value: 1, label: 'GOBIERNO REGIONAL DE LORETO' };
-  title: string = `Lista de pedidos de ${this.entidadSeleccionada.label}`;
+  title: string = `Lista de acuerdos y compromisos de ${this.entidadSeleccionada.label}`;
 
   pageIndex: number = 1;
   pageSize: number = 10;
-  // total: number | null = 0;
-  sortField: string | null = 'prioridadID';
+  sortField: string | null = 'acuerdoID';
   sortOrder: string | null = 'descend';
   isDrawervisible: boolean = false;
 
+  cui: string | null = null;
+  clasificacionesSeleccionadas: SelectModel[] | null = null;
+  tipoSeleccionado: SelectModel | null = null;
+  estadosSelecionados: SelectModel[] | null = null;
   espaciosSeleccionados: SelectModel[] | null = null;
   sectoresSeleccionados: SelectModel[] | null = null;
   depSeleccionado: SelectModel | null = null;
   provSeleccionada: SelectModel | null = null;
+
   filterCounter = signal<number>(0);
 
-  private updateParamsSubject = new Subject<void>();
-  private updatingParams = false;
-  private clearingFilters = false;
+  private updateParamsSubject: Subject<void> = new Subject<void>();
+  private updatingParams: boolean = false;
+  private clearingFilters: boolean = false;
+  private timeout: any;
 
-  public pedidosService = inject(PedidosService);
+  public acuerdosService = inject(AcuerdosService);
   private fb = inject(UntypedFormBuilder);
   public espaciosStore = inject(EspaciosStore);
   public sectoresStore = inject(SectoresStore);
   public ubigeosStore = inject(UbigeosStore);
+  public clasificacionesStore = inject(ClasificacionesStore);
+  public estadosStore = inject(EstadosStore);
+
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
 
@@ -83,6 +93,24 @@ export class PedidosComponent implements OnInit {
     // Obtener los valores de los queryParams en la primera carga
     this.activatedRoute.queryParams.subscribe((params) => {
       if (!this.updatingParams) {
+        if (params['cui'] != null) {
+          this.cui = params['cui'];
+        }
+
+        if (params['clasificacion'] != null) {
+          const selectedValues = Array.isArray(params['clasificacion']) ? params['clasificacion'] : [params['clasificacion']];
+          this.clasificacionesSeleccionadas = selectedValues.map(value => ({ value: Number(value) }));
+        }
+
+        if (params['tipo'] != null) {
+          this.tipoSeleccionado = { value: params['prov'] };
+        }
+
+        if (params['estado'] != null) {
+          const selectedValues = Array.isArray(params['estado']) ? params['estado'] : [params['estado']];
+          this.estadosSelecionados = selectedValues.map(value => ({ value: Number(value) }));
+        }
+
         if (params['espacio'] != null) {
           const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
           this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
@@ -120,6 +148,10 @@ export class PedidosComponent implements OnInit {
 
         // Inicializar el contador con la suma de las selecciones iniciales
         this.filterCounter.set(
+          (this.cui ? 1 : 0) +
+          (this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.length : 0) +
+          (this.tipoSeleccionado ? 1 : 0) +
+          (this.estadosSelecionados ? this.estadosSelecionados.length : 0) +
           (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
           (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
           (this.depSeleccionado ? 1 : 0) +
@@ -136,6 +168,10 @@ export class PedidosComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchForm.patchValue({
+      cui: this.cui,
+      clasificacion: this.clasificacionesSeleccionadas,
+      tipo: this.tipoSeleccionado,
+      estado: this.estadosSelecionados,
       espacio: this.espaciosSeleccionados,
       sector: this.sectoresSeleccionados,
       dep: this.depSeleccionado,
@@ -143,8 +179,12 @@ export class PedidosComponent implements OnInit {
     });
   }
 
-  traerPedidos(
+  traerAcuerdos(
     {
+      cui = this.cui,
+      clasificacionesSeleccionadas = this.clasificacionesSeleccionadas,
+      tipoSeleccionado = this.tipoSeleccionado,
+      estadosSelecionados = this.estadosSelecionados,
       espaciosSeleccionados = this.espaciosSeleccionados,
       sectoresSeleccionados = this.sectoresSeleccionados,
       depSeleccionado = this.depSeleccionado,
@@ -153,9 +193,9 @@ export class PedidosComponent implements OnInit {
       pageSize = this.pageSize,
       sortField = this.sortField,
       sortOrder = this.sortOrder
-    }: TraerPedidosInterface
+    }: TraerAcuerdosInterface
   ): void {
-    this.pedidosService.listarPedidos(espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
+    this.acuerdosService.listarAcuerdos(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
   }
 
   onEspacioChange(value: SelectModel[] | null): void {
@@ -169,7 +209,7 @@ export class PedidosComponent implements OnInit {
     const newSelectedCount = value.length;
 
     this.espaciosSeleccionados = value;
-    this.traerPedidos({ espaciosSeleccionados: value });
+    this.traerAcuerdos({ espaciosSeleccionados: value });
 
     this.filterCounter.update(x => x + (newSelectedCount - prevSelectedCount));
 
@@ -187,7 +227,7 @@ export class PedidosComponent implements OnInit {
     const newSelectedCount = value.length;
 
     this.sectoresSeleccionados = value;
-    this.traerPedidos({ sectoresSeleccionados: value });
+    this.traerAcuerdos({ sectoresSeleccionados: value });
 
     this.filterCounter.update(x => x + (newSelectedCount - prevSelectedCount));
 
@@ -202,7 +242,7 @@ export class PedidosComponent implements OnInit {
     const wasPreviouslySelected = this.depSeleccionado != null;
 
     this.depSeleccionado = value;
-    this.traerPedidos({ depSeleccionado: value });
+    this.traerAcuerdos({ depSeleccionado: value });
 
     if (value != null) {
       this.ubigeosStore.listarProvincias(Number(value.value));
@@ -233,7 +273,7 @@ export class PedidosComponent implements OnInit {
     const wasPreviouslySelected = this.provSeleccionada != null;
 
     this.provSeleccionada = value;
-    this.traerPedidos({ provSeleccionada: value });
+    this.traerAcuerdos({ provSeleccionada: value });
 
     if (value == null && wasPreviouslySelected) {
       this.filterCounter.update(x => x - 1);
@@ -244,10 +284,86 @@ export class PedidosComponent implements OnInit {
     this.updateParamsSubject.next();
   }
 
+  onClasificacionAcuerdosChange(value: SelectModel[] | null) {
+    if (this.clearingFilters) {
+      return;
+    }
+
+    value = value || [];
+
+    const prevSelectedCount = this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.length : 0;
+    const newSelectedCount = value.length;
+
+    this.clasificacionesSeleccionadas = value;
+    this.traerAcuerdos({ clasificacionesSeleccionadas: value });
+
+    this.filterCounter.update(x => x + (newSelectedCount - prevSelectedCount));
+
+    this.updateParamsSubject.next();
+  }
+
+  onTipoAcuerdosChange(value: any) {
+    console.log('onTipoAcuerdosChange', { value });
+
+    if (this.clearingFilters) {
+      return;
+    }
+
+    const wasPreviouslySelected = this.tipoSeleccionado != null;
+    this.tipoSeleccionado = { value };
+    this.traerAcuerdos({ tipoSeleccionado: { value } });
+
+    if (value == null && wasPreviouslySelected) {
+      this.filterCounter.update(x => x - 1);
+    } else if (value != null && !wasPreviouslySelected) {
+      this.filterCounter.update(x => x + 1);
+    }
+
+    this.updateParamsSubject.next();
+  }
+
+  onEstadoAcuerdosChange(value: SelectModel[]) {
+    if (this.clearingFilters) {
+      return;
+    }
+
+    value = value || [];
+
+    const prevSelectedCount = this.estadosSelecionados ? this.estadosSelecionados.length : 0;
+    const newSelectedCount = value.length;
+
+    this.estadosSelecionados = value;
+    this.traerAcuerdos({ estadosSelecionados: value });
+
+    this.filterCounter.update(x => x + (newSelectedCount - prevSelectedCount));
+
+    this.updateParamsSubject.next();
+  }
+
+  onCuiChange(event: any) {
+    clearTimeout(this.timeout);
+    var $this = this;
+    this.timeout = setTimeout(function () {
+      if (event.keyCode != 13) {
+        $this.executeCuiListing(event.target.value);
+      }
+    }, 500);
+  }
+
+  private executeCuiListing(value: string) {
+    this.cui = value;
+    this.traerAcuerdos({ cui: value });
+    this.updateParamsSubject.next();
+  }
+
   updateQueryParams() {
     this.updatingParams = true;
 
     const queryParams = {
+      cui: this.cui,
+      clasificacion: this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.map(x => x.value) : null,
+      tipo: this.tipoSeleccionado ? this.tipoSeleccionado.value : null,
+      estado: this.estadosSelecionados ? this.estadosSelecionados.map(x => x.value) : null,
       espacio: this.espaciosSeleccionados ? this.espaciosSeleccionados.map(x => x.value) : null,
       sector: this.sectoresSeleccionados ? this.sectoresSeleccionados.map(x => x.value) : null,
       dep: this.depSeleccionado ? this.depSeleccionado.value : null,
@@ -271,7 +387,10 @@ export class PedidosComponent implements OnInit {
     this.clearingFilters = true;
 
     this.searchForm.reset();
-
+    this.cui = null;
+    this.clasificacionesSeleccionadas = [];
+    this.tipoSeleccionado = null;
+    this.estadosSelecionados = [];
     this.espaciosSeleccionados = [];
     this.sectoresSeleccionados = [];
     this.depSeleccionado = null;
@@ -281,8 +400,12 @@ export class PedidosComponent implements OnInit {
 
     this.filterCounter.set(0);
 
-    // Hacer una sola llamada a traerPedidos con los parámetros vacíos
-    this.traerPedidos({
+    // Hacer una sola llamada a traerAcuerdos con los parámetros vacíos
+    this.traerAcuerdos({
+      cui: null,
+      clasificacionesSeleccionadas: [],
+      tipoSeleccionado: null,
+      estadosSelecionados: [],
       espaciosSeleccionados: [],
       sectoresSeleccionados: [],
       depSeleccionado: null,
@@ -297,12 +420,21 @@ export class PedidosComponent implements OnInit {
       [],
       {
         relativeTo: this.activatedRoute,
-        queryParams: { espacio: null, sector: null, dep: null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
+        queryParams: { cui: null, clasificacion: null, tipo: null, estado: null, espacio: null, sector: null, dep: null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
         queryParamsHandling: 'merge',
       }
     ).finally(() => {
       this.clearingFilters = false;
     });
+  }
+
+  onGestionarHitoAcuerdo(codigo: number): void {
+    if (codigo == null) {
+      return;
+    }
+
+    //Navegar hacia la página de gestión de hitos en /acuerdos/acuerdo/:codigo
+    this.router.navigate(['acuerdos', 'acuerdo', codigo]);
   }
 
   onDelete(value: any): void { }
@@ -317,6 +449,10 @@ export class PedidosComponent implements OnInit {
 
   crearSearForm(): void {
     this.searchForm = this.fb.group({
+      cui: [null],
+      clasificacion: [null],
+      tipo: [null],
+      estado: [null],
       espacio: [null],
       sector: [null],
       dep: [null],
@@ -335,7 +471,7 @@ export class PedidosComponent implements OnInit {
       this.sortField = (currentSort && currentSort.key) || this.sortField;
       this.sortOrder = (currentSort && currentSort.value) || this.sortOrder;
 
-      this.traerPedidos({
+      this.traerAcuerdos({
         pageIndex,
         pageSize,
         sortField: this.sortField,

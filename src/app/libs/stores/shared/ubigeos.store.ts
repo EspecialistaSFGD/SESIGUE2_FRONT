@@ -4,6 +4,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { environment } from '../../../../environments/environment.development';
 import { ResponseModel } from '../../models/shared/response.model';
 import { SelectModel } from '../../models/shared/select.model';
+import { DepartamentoModel, ProvinciaModel } from '../../models/shared/ubigeo.model';
 
 interface State {
   departamentos: SelectModel[];
@@ -34,12 +35,13 @@ export class UbigeosStore {
   listarDepartamentos(): void {
     this.http.get<ResponseModel>(`${environment.api}/Ubigeo/ListarDepartamento`).subscribe(
       {
-        next: (v) => {
-          if (v.data == null) return;
+        next: (v: ResponseModel) => {
+          const res: DepartamentoModel[] = v.data;
+          if (res == null) return;
 
           let departamentosRes: SelectModel[] = [];
 
-          v.data.forEach((x: any) => {
+          res.forEach((x: DepartamentoModel) => {
             departamentosRes.push(new SelectModel(Number(x.departamentoId), x.departamento));
           });
 
@@ -53,21 +55,22 @@ export class UbigeosStore {
     );
   }
 
-  listarProvincias(idDep: number, tipo: number = 1): void {
+  listarProvincias(idDep: number, tipo: number = 0): void {
     let params = new HttpParams();
 
     params = (idDep !== null) ? params.append('departamento', `${idDep}`) : params;
     params = (tipo !== null) ? params.append('tipo', `${tipo}`) : params;
 
-    this.http.get<ResponseModel>(`${environment.api}/Ubigeo/ListarProvincia?departamento=${idDep}&tipo=${tipo}`, { params }).subscribe(
+    this.http.get<ResponseModel>(`${environment.api}/Ubigeo/ListarProvincia`, { params }).subscribe(
       {
         next: (v) => {
-          if (v.data == null) return;
+          const res: ProvinciaModel[] = v.data;
+          if (res == null) return;
 
           let provinciasRes: SelectModel[] = [];
 
-          v.data.forEach((x: any) => {
-            provinciasRes.push(new SelectModel(Number(x.provinciaId), x.provincia));
+          res.forEach((x: ProvinciaModel) => {
+            provinciasRes.push(new SelectModel(x.provinciaId, x.provincia));
           });
 
           this.#ubigeosResult.set({

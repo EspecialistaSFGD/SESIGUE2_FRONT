@@ -4,6 +4,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { environment } from '../../../../environments/environment.development';
 import { ResponseModel } from '../../models/shared/response.model';
 import { SelectModel } from '../../models/shared/select.model';
+import { EspacioModel } from '../../models/shared/espacio.model';
 
 interface State {
   espacios: SelectModel[];
@@ -23,7 +24,6 @@ export class EspaciosStore {
 
   public espacios = computed(() => this.#espaciosResult().espacios);
 
-
   constructor() {
     this.listarEspacios();
   }
@@ -35,13 +35,14 @@ export class EspaciosStore {
       .append('tipo', `${tipo}`)
       ;
 
-    this.http.get<ResponseModel>(`${environment.api}/Evento?eventoId=${id}&tipo=${tipo}`, { params }).subscribe(
+    this.http.get<ResponseModel>(`${environment.api}/Evento`, { params }).subscribe(
       {
-        next: (v) => {
+        next: (v: ResponseModel) => {
+          const res: EspacioModel[] = v.data;
           let espaciosRes: SelectModel[] = [];
 
-          if (v.data == null) return;
-          v.data.forEach((x: any) => {
+          if (res == null) return;
+          res.forEach((x: EspacioModel) => {
             espaciosRes.push(new SelectModel(Number(x.eventoId), x.nombre));
           });
 

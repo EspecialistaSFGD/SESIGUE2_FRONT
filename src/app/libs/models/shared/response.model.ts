@@ -15,5 +15,6 @@ export class ResponseModelPaginated {
         public message?: any,
         public data?: any,
         public errors?: any,
+        public info?: any,
     ) { }
 }

@@ -1,44 +1,53 @@
 <app-page-header [title]="title.toUpperCase()" />
-<nz-table [nzScroll]="{ x: '1150px', y: '450px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-    [nzData]="this.pedidosService.pedidos()" [nzFrontPagination]="false" [nzLoading]="this.pedidosService.isLoading()"
-    [nzTotal]="this.pedidosService.total()" [nzPageSize]="this.pageSize" [nzPageIndex]="this.pageIndex"
-    (nzQueryParams)="onQueryParamsChange($event)">
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+    [nzData]="this.acuerdosService.acuerdos()" [nzFrontPagination]="false"
+    [nzLoading]="this.acuerdosService.isLoading()" [nzTotal]="this.acuerdosService.total()" [nzPageSize]="this.pageSize"
+    [nzPageIndex]="this.pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
-            <th nzLeft class="w-28 sm:w-56" nzColumnKey="aspectoCriticoResolver">Pedido</th>
+            <th nzColumnKey="codigo" [nzSortFn]="true" nzLeft>Código</th>
+            <th nzLeft class="w-28 sm:w-56" nzColumnKey="acuerdo">Pedido</th>
             <th nzColumnKey="sector" [nzSortFn]="true">Sector</th>
             <th nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
+            <th nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
             <th nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
             <th nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
             <th nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
-            <th nzColumnKey="cantidadPreAcuerdos">Pre-acuerdos</th>
             <th nzColumnKey="cuis">CUI</th>
-            <th nzRight nzColumnKey="acciones">Acciones</th>
+            <th nzColumnKey="acciones" nzRight class="w-40"></th>
         </tr>
     </thead>
     <tbody>
-        @for (data of this.pedidosService.pedidos(); track data.prioridadID) {
+        @for (data of this.acuerdosService.acuerdos(); track data.codigo) {
         <tr>
+            <td nzLeft>{{ data.codigo }}</td>
             <td nzLeft class="w-28 sm:w-56">
-                <p class="truncate cursor-help" nz-tooltip [nzTooltipTitle]="data.aspectoCriticoResolver">{{
-                    data.aspectoCriticoResolver }}</p>
+                <p class="truncate cursor-help" nz-tooltip [nzTooltipTitle]="data.acuerdo">{{
+                    data.acuerdo }}</p>
             </td>
             <td>{{ data.sector }}</td>
             <td>{{ data.region }}</td>
+
+            <td>{{ data.clasificacion }}</td>
+
             <td>{{ data.espacio }}</td>
             <td>{{ data.objetivoEstrategicoTerritorial }}</td>
             <td>{{ data.intervencionesEstrategicas }}</td>
-            <td>{{ data.cantidadPreAcuerdos }}</td>
             <td>{{ data.cuis }}</td>
-            <td nzRight>
+            <td nzRight class="w-40">
                 <nz-space>
-                    <button [routerLink]="['/requerimiento', data.email]" routerLinkActive="router-link-active"
-                        *nzSpaceItem nz-button nzType="link">
-                        <!-- icono de editar -->
-                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                    <button (click)="onGestionarHitoAcuerdo(data.acuerdoId)" *nzSpaceItem nz-button nzType="link"
+                        nz-tooltip nzTooltipTitle="Ver detalle">
+                        <span nz-icon nzType="eye" nzTheme="outline"></span>
                     </button>
-                    <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(data)">
-                        <!-- icono de eliminar de color rojo -->
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar hito">
+                        <span nz-icon nzType="appstore-add" nzTheme="outline"></span>
+                    </button>
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Desestimar acuerdo">
+                        <span nz-icon nzType="stop" nzTheme="outline"></span>
+                    </button>
+                    <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(data)" nz-tooltip
+                        nzTooltipTitle="Eliminar">
                         <span nz-icon nzType="delete" nzTheme="outline"></span>
                     </button>
                 </nz-space>
@@ -50,20 +59,21 @@
 
 <ng-template #Header>
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
-        <p class="mb-2 sm:mb-0">Resultados ({{this.pedidosService.total()}})</p>
+        <p class="mb-2 sm:mb-0">Resultados ({{this.acuerdosService.total()}})</p>
         <div>
             <nz-space>
 
                 <button *nzSpaceItem nz-button (click)="onOpenDrawer()">
                     <span nz-icon nzType="filter" nzTheme="outline"></span>
                     <span class="button-text">Filtros</span>
+                    <!-- {{filterCounter()|json}} -->
                     <nz-badge class="button-text pl-1" nzStandalone [nzCount]="filterCounter()"></nz-badge>
                 </button>
 
-                <button *nzSpaceItem nz-button>
+                <!-- <button *nzSpaceItem nz-button>
                     <span nz-icon nzType="printer" nzTheme="outline"></span>
                     <span class="button-text">Imprimir acuerdos</span>
-                </button>
+                </button> -->
 
                 <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu">
                     <span nz-icon nzType="file-excel" nzTheme="outline"></span>
@@ -73,10 +83,10 @@
                 <nz-dropdown-menu #menu="nzDropdownMenu">
                     <ul nz-menu>
                         <li nz-menu-item>
-                            <a>Exportar pedidos</a>
+                            <a>Exportar acuerdos</a>
                         </li>
                         <li nz-menu-item>
-                            <a>Exportar acuerdos</a>
+                            <a>Exportar hitos</a>
                         </li>
                     </ul>
                 </nz-dropdown-menu>
@@ -95,15 +105,73 @@
     <form nz-form *nzDrawerContent nzLayout="vertical" [formGroup]="searchForm">
         <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
             <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
-                <!-- {{espaciosStore.espacios() | json}} -->
-                <!-- {{sectoresStore.sectores() | json}}
-                {{ubigeosStore.departamentos() | json}}
-                {{ubigeosStore.provincias() | json}} -->
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null" nzFor="cui">Código de acuerdo o CUI</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" #cui id="cui" formControlName="cui" nz-input
+                                (keyup)="onCuiChange($event)" placeholder="Ingrese código a buscar" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <span nz-icon nzType="search"></span>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null">Clasificación</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-select [nzMaxTagCount]="3" id="clasificacion"
+                            [nzMaxTagPlaceholder]="tagClasificacionesPlaceHolder" nzMode="multiple"
+                            nzPlaceHolder="Todos" #clasificacion formControlName="clasificacion"
+                            [compareWith]="compareFn" nzAllowClear
+                            (ngModelChange)="onClasificacionAcuerdosChange($event)">
+                            <nz-option *ngFor="let clas of this.clasificacionesStore.clasificaciones()"
+                                [nzLabel]="clas.label!" [nzValue]="clas"></nz-option>
+                        </nz-select>
+                        <ng-template #tagClasificacionesPlaceHolder let-selectedList>y {{ selectedList.length }} más
+                            seleccionadas</ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null">Tipo</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-select nzPlaceHolder="Todos" id="tipo" #tipo formControlName="tipo" nzAllowClear
+                            (ngModelChange)="onTipoAcuerdosChange($event)">
+                            <nz-option nzValue="1" nzLabel="Acuerdo"></nz-option>
+                            <nz-option nzValue="2" nzLabel="Compromiso"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null">Estado</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-select [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagEstadosPlaceHolder" nzMode="multiple"
+                            nzPlaceHolder="Todos" id="estado" #estado formControlName="estado" [compareWith]="compareFn"
+                            nzAllowClear (ngModelChange)="onEstadoAcuerdosChange($event)">
+                            <nz-option *ngFor="let est of this.estadosStore.estados()" [nzLabel]="est.label!"
+                                [nzValue]="est"></nz-option>
+                        </nz-select>
+                        <ng-template #tagEstadosPlaceHolder let-selectedList>y {{ selectedList.length }} más
+                            seleccionadas</ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Espacio</nz-form-label>
                     <nz-form-control nzSpan="null">
-                        <nz-select [nzMaxTagCount]="3" id="espacio" [nzMaxTagPlaceholder]="tagPlaceHolder"
-                            nzMode="multiple" nzPlaceHolder="Todos" #espacio formControlName="espacio"
+                        <nz-select [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagPlaceHolder" nzMode="multiple"
+                            nzPlaceHolder="Todos" id="espacio" #espacio formControlName="espacio"
                             [compareWith]="compareFn" nzAllowClear (ngModelChange)="onEspacioChange($event)">
                             <nz-option *ngFor="let esp of this.espaciosStore.espacios()" [nzLabel]="esp.label!"
                                 [nzValue]="esp"></nz-option>
@@ -118,9 +186,9 @@
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Sector</nz-form-label>
                     <nz-form-control nzSpan="null">
-                        <nz-select [nzMaxTagCount]="3" id="sector" [nzMaxTagPlaceholder]="tagSectorPlaceHolder"
-                            nzMode="multiple" nzPlaceHolder="Todos" #sector formControlName="sector"
-                            [compareWith]="compareFn" nzAllowClear (ngModelChange)="onSectorChange($event)">
+                        <nz-select [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagSectorPlaceHolder" nzMode="multiple"
+                            nzPlaceHolder="Todos" id="sector" #sector formControlName="sector" [compareWith]="compareFn"
+                            nzAllowClear (ngModelChange)="onSectorChange($event)">
                             <nz-option *ngFor="let sec of this.sectoresStore.sectores()" [nzLabel]="sec.label!"
                                 [nzValue]="sec"></nz-option>
                         </nz-select>
@@ -135,7 +203,7 @@
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Departamento</nz-form-label>
                     <nz-form-control nzSpan="null">
-                        <nz-select [nzDisabled]="provSeleccionada!=null" id="dep" class="w-full" #dep
+                        <nz-select id="dep" [nzDisabled]="provSeleccionada!=null" class="w-full" #dep
                             formControlName="dep" nzPlaceHolder="Todos" nzShowSearch [compareWith]="compareFn"
                             nzAllowClear (ngModelChange)="onDepChange($event)">
                             <nz-option *ngFor="let ubg of this.ubigeosStore.departamentos()" [nzValue]="ubg"
@@ -151,7 +219,7 @@
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Provincia</nz-form-label>
                     <nz-form-control nzSpan="null">
-                        <nz-select class="w-full" #prov id="prov" formControlName="prov" nzPlaceHolder="Todas"
+                        <nz-select id="prov" class="w-full" #prov formControlName="prov" nzPlaceHolder="Todas"
                             nzShowSearch [compareWith]="compareFn" nzAllowClear (ngModelChange)="onProvChange($event)">
                             <nz-option *ngFor="let prov of this.ubigeosStore.provincias()" [nzValue]="prov"
                                 [nzLabel]="prov.label!">

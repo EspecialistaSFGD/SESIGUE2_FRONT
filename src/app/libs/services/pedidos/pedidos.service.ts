@@ -11,8 +11,6 @@ interface State {
     pedidos: any[];
     pedidoSeleccionado: any | null | undefined;
     isLoading: boolean;
-    pageIndex: number;
-    pageSize: number;
     total: number;
     sortField: string | null;
     sortOrder: string | null;
@@ -25,14 +23,11 @@ export class PedidosService {
 
     public msg = inject(NzMessageService);
     public http = inject(HttpClient);
-    private router = inject(Router);
 
     #pedidosResult = signal<State>({
         pedidos: [],
         pedidoSeleccionado: null,
         isLoading: true,
-        pageIndex: 1,
-        pageSize: 10,
         total: 0,
         sortField: null,
         sortOrder: null,
@@ -40,13 +35,14 @@ export class PedidosService {
 
     public pedidos = computed(() => this.#pedidosResult().pedidos);
     public isLoading = computed(() => this.#pedidosResult().isLoading);
-    public pageIndex = computed(() => this.#pedidosResult().pageIndex);
-    public pageSize = computed(() => this.#pedidosResult().pageSize);
     public total = computed(() => this.#pedidosResult().total);
 
     constructor() { }
 
     listarPedidos(espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
+        // console.log(dep);
+
+
         let params = new HttpParams();
 
         this.#pedidosResult.update((state) => ({
@@ -67,12 +63,14 @@ export class PedidosService {
             });
         }
 
+        params = (dep !== null && prov === null) ? params.append('ubigeo[]', `${dep.value}`) : params;
+        params = (prov !== null) ? params.append('ubigeo[]', `${prov.value}`) : params;
         params = (pageIndex !== null) ? params.append('piCurrentPage', `${pageIndex}`) : params;
         params = (pageSize !== null) ? params.append('piPageSize', `${pageSize}`) : params;
         params = (sortField !== null) ? params.append('columnSort', `${sortField}`) : params;
         params = (sortOrder !== null) ? params.append('typeSort', `${sortOrder}`) : params;
 
-        this.http.get<any>(`${environment.api}/PrioridadAcuerdo/Listar`, { params }).subscribe({
+        this.http.get<ResponseModelPaginated>(`${environment.api}/PrioridadAcuerdo/Listar`, { params }).subscribe({
             next: (data) => {
                 this.#pedidosResult.update((v) => ({ ...v, pedidos: data.data, isLoading: false, total: data.info.total }));
             },

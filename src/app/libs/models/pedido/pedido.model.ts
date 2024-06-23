@@ -1,21 +1,22 @@
-import { SelectModel } from "../shared/select.model";
-
 export class PedidoModel {
     constructor(
-        public idPedido?: number,
-        public idSector?: number,
-        public sector?: SelectModel,
-        public idUbicacion?: number,
-        public ubicacion?: SelectModel,
-        public idEjeEstrategico?: number,
-        public ejeEstrategico?: SelectModel,
-        public idTipoIntervencion?: number,
-        public tipoIntervencion?: SelectModel,
-        public pedido?: string,
-        public cui?: string,
+        public prioridadID?: number,
+        public espacio?: string,
+        public sector?: string,
+        public ubigeo?: string,
+        public region?: string,
+        public provincia?: string,
+        public objetivoEstrategicoTerritorial?: string,
+        public intervencionesEstrategicas?: string,
+        public aspectoCriticoResolver?: string,
+        public validado?: number,
+        public cuis?: string,
         public cantidadPreAcuerdos?: number,
-        public comentarioPcm?: string,
-        //TODO: validar si es necesario
-        public estado?: SelectModel,
+        public cantidadAcuerdos?: number,
+        public eventoId?: number,
+        public sectorid?: number,
+        public depaid?: number,
+        public provid?: number,
+
     ) { }
 }

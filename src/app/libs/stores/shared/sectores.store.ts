@@ -4,6 +4,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { environment } from '../../../../environments/environment.development';
 import { ResponseModel } from '../../models/shared/response.model';
 import { SelectModel } from '../../models/shared/select.model';
+import { SectorModel } from '../../models/shared/sector.model';
 
 interface State {
   sectores: SelectModel[];
@@ -34,23 +35,21 @@ export class SectoresStore {
       .append('tipo', `${tipo}`)
       ;
 
-    this.http.get<ResponseModel>(`${environment.api}/Sector?grupoId=${id}&tipo=${tipo}`, { params }).subscribe(
+    this.http.get<ResponseModel>(`${environment.api}/Sector`, { params }).subscribe(
       {
-        next: (v) => {
-          if (v.data == null) return;
+        next: (v: ResponseModel) => {
+          const res: SectorModel[] = v.data;
+          if (res == null) return;
 
           let sectoresRes: SelectModel[] = [];
 
-          v.data.forEach((x: any) => {
+          v.data.forEach((x: SectorModel) => {
             sectoresRes.push(new SelectModel(Number(x.grupoID), x.nombre));
           });
 
           this.#sectoresResult.set({
             sectores: sectoresRes,
           });
-
-          // console.log(v.data);
-
         },
         error: (e) => console.error(e),
       }

@@ -37,11 +37,12 @@
     <nz-header>
       <div class="app-header flex items-center justify-between px-6 bg-white dark:bg-black">
         <span class="header-trigger ml-6" (click)="isCollapsed = !isCollapsed">
-          <span class="trigger text-black dark:text-white" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
+          <span class="trigger text-black dark:text-white" nz-icon
+            [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
         </span>
 
         <div class="header-right-content mr-6 flex items-center text-gray-500 dark:text-white">
-          <div class="h-full mr-4">
+          <!-- <div class="h-full mr-4">
             <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="themeSwitcherList">
               <span class="text-[24px]" nz-icon nzType="clear" nzTheme="outline"></span>
             </div>
@@ -62,19 +63,20 @@
                     [nzSelected]="selectedTheme === 'system'">Según sistema</li>
               </ul>
             </nz-dropdown-menu>
-          </div>
+          </div> -->
 
           <div class="h-full">
-              <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="menu">
-                <nz-avatar nzSize="small" nzIcon="user"></nz-avatar>
-                <span class="ml-1"><span class="anticon">{{trabajador}}</span></span>
-              </div>
+            <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="menu">
+              <nz-avatar nzSize="small" nzIcon="user"></nz-avatar>
+              <span class="ml-1"><span class="anticon">{{trabajador}}</span></span>
+            </div>
 
-              <nz-dropdown-menu #menu="nzDropdownMenu">
-                <ul nz-menu class="bg-white dark:bg-black">
-                  <li class="text-gray-500 dark:text-white hover:bg-inherit" nz-menu-item (click)="onLogout()"><span nz-icon nzType="poweroff" nzTheme="outline"></span> Cerrar sesión</li>
-                </ul>
-              </nz-dropdown-menu>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu class="bg-white dark:bg-black">
+                <li class="text-gray-500 dark:text-white hover:bg-inherit" nz-menu-item (click)="onLogout()"><span
+                    nz-icon nzType="poweroff" nzTheme="outline"></span> Cerrar sesión</li>
+              </ul>
+            </nz-dropdown-menu>
           </div>
         </div>
       </div>

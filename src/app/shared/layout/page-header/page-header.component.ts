@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, booleanAttribute } from '@angular/core';
+import { Component, Input, TemplateRef, booleanAttribute } from '@angular/core';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
@@ -11,14 +11,22 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-page-header',
   standalone: true,
-  imports: [CommonModule, NzPageHeaderModule, NzBreadCrumbModule, NzSpaceModule, NzIconModule, NzButtonModule, RouterModule],
+  imports: [
+    CommonModule,
+    NzPageHeaderModule,
+    NzBreadCrumbModule,
+    NzSpaceModule,
+    NzIconModule,
+    NzButtonModule,
+    RouterModule,
+  ],
   templateUrl: './page-header.component.html',
   styleUrl: './page-header.component.less',
 })
 export class PageHeaderComponent {
   @Input({ required: true }) title!: string;
   @Input({ required: false }) subtitle!: string;
-  @Input({ required: false }) content!: any;
+  @Input({ required: false }) content!: TemplateRef<any>;
   @Input({ required: false }) buttons!: AnchorModel[];
   // @Input({ transform: booleanAttribute }) withShadow: boolean = false;
 }

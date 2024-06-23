@@ -2,13 +2,16 @@ import { SelectModel } from "../shared/select.model";
 
 export class AvanceHitoModel {
     constructor(
-        public idAvanceHito?: number,
-        public idHito?: number,
-        public hito?: SelectModel,
-        public fechaEjecucion?: Date,
-        public descripcionAvance?: string,
-        public idEvidenciaAvance?: string,
-        public evidenciaAvance?: File,
-        public estadoHito?: SelectModel,
+        public avanceId?: number,
+        public hitdoId?: number,
+        public fecha?: string,
+        public avance?: string,
+        public evidencia?: string,
+        public comentarioSD?: null,
+        public comentarioSector?: null,
+        public comentario?: string,
+        public estado?: number,
+        public entidadID?: number,
+        public validado?: number,
     ) { }
 }

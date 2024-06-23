@@ -4,22 +4,21 @@
         @if(subtitle) {
         <nz-page-header-subtitle>{{ subtitle }}</nz-page-header-subtitle>
         }
-    @if(buttons) {
+        @if(buttons) {
         <nz-page-header-extra>
             <nz-space>
                 @for (item of buttons; track $index) {
-                    <button [routerLink]="item.href" *nzSpaceItem nz-button [nzType]="item.type!">
-                        <span *ngIf="item.icon" nz-icon [nzType]="item.icon" nzTheme="outline"></span>
-                        <span>{{item.title}}</span>
-                    </button>
+                <button [routerLink]="item.href" *nzSpaceItem nz-button [nzType]="item.type!">
+                    <span *ngIf="item.icon" nz-icon [nzType]="item.icon" nzTheme="outline"></span>
+                    <span>{{item.title}}</span>
+                </button>
                 }
             </nz-space>
         </nz-page-header-extra>
-    }
-    @if(content) {
-    <nz-page-header-content>
-        {{content}}
-    </nz-page-header-content>
-}
+        }
+        <nz-page-header-content *ngIf="content">
+
+            <ng-container *ngTemplateOutlet="content"></ng-container>
+        </nz-page-header-content>
     </nz-page-header>
 </div>
