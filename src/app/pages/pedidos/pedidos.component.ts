@@ -54,7 +54,6 @@ export class PedidosComponent implements OnInit {
 
   pageIndex: number = 1;
   pageSize: number = 10;
-  // total: number | null = 0;
   sortField: string | null = 'prioridadID';
   sortOrder: string | null = 'descend';
   isDrawervisible: boolean = false;

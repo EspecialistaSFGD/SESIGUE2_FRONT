@@ -1,0 +1,136 @@
+<app-page-header [title]="title.toUpperCase()" />
+
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+    [nzData]="this.usuariosService.usuarios()" [nzFrontPagination]="false"
+    [nzLoading]="this.usuariosService.isLoading()" [nzTotal]="this.usuariosService.total()" [nzPageSize]="this.pageSize"
+    [nzPageIndex]="this.pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+        <tr>
+            <th nzLeft nzColumnKey="nombreUsuario">Usuario</th>
+            <th nzColumnKey="nombresPersona" [nzSortFn]="true">Nombre</th>
+            <th nzColumnKey="apellidoPaterno" [nzSortFn]="true">Primer apellido</th>
+            <th nzColumnKey="apellidoMaterno" [nzSortFn]="true">Segundo apellido</th>
+            <th nzColumnKey="descripcionPerfil" [nzSortFn]="true">Perfil</th>
+            <th nzColumnKey="esActivo">Estado</th>
+            <th nzRight nzColumnKey="acciones">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (data of this.usuariosService.usuarios(); track data.codigoUsuario) {
+        <tr>
+            <td nzLeft>{{ data.nombreUsuario }}</td>
+            <td>{{ data.nombresPersona }}</td>
+            <td>{{ data.apellidoPaterno }}</td>
+            <td>{{ data.apellidoMaterno }}</td>
+            <td>{{ data.descripcionPerfil }}</td>
+            <td> <nz-badge [nzStatus]="data.esActivo?'success':'error'"
+                    [nzText]="data.esActivo?'Activo':'Inactivo'"></nz-badge>
+            </td>
+            <td nzRight>
+                <nz-space>
+                    <button *nzSpaceItem nz-button nzType="link">
+                        <!-- icono de editar -->
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                    </button>
+                    <button *nzSpaceItem nz-button nzDanger nzType="link">
+                        <!-- icono de eliminar de color rojo -->
+                        <span nz-icon nzType="delete" nzTheme="outline"></span>
+                    </button>
+                </nz-space>
+            </td>
+        </tr>
+        }
+    </tbody>
+</nz-table>
+
+<ng-template #Header>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+        <p class="mb-2 sm:mb-0">Resultados ({{this.usuariosService.total()}})</p>
+        <div>
+            <nz-space>
+
+                <button *nzSpaceItem nz-button (click)="onOpenDrawer()">
+                    <span nz-icon nzType="filter" nzTheme="outline"></span>
+                    <span class="button-text">Filtros</span>
+                    <nz-badge class="button-text pl-1" nzStandalone [nzCount]="filterCounter()"></nz-badge>
+                </button>
+
+                <button *nzSpaceItem nz-button>
+                    <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+                    <span class="button-text">Exportar usuarios</span>
+                </button>
+
+                <button *nzSpaceItem nz-button nzType="primary">
+                    <span nz-icon nzType="plus" nzTheme="outline"></span>
+                    <span class="button-text">Nuevo usuario</span>
+                </button>
+            </nz-space>
+        </div>
+    </div>
+</ng-template>
+
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzVisible]="isDrawervisible"
+    nzTitle="Filtrar los resultados" [nzFooter]="footerTpl" (nzOnClose)="onCloseDrawer()">
+    <form nz-form *nzDrawerContent nzLayout="vertical" [formGroup]="searchForm">
+        <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null" nzFor="nombreUsuario">Usuario</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" #nombreUsuario id="nombreUsuario" formControlName="nombreUsuario"
+                                nz-input (keyup)="onNombreUsuarioChange($event)"
+                                placeholder="Ingrese usuario a buscar" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <span nz-icon [nzType]="this.usuariosService.isLoading()?'loading':'search'"></span>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null" nzFor="nombreTrabajador">Trabajador</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" #nombreTrabajador id="nombreTrabajador"
+                                formControlName="nombreTrabajador" nz-input (keyup)="onNombreTrabajadorChange($event)"
+                                placeholder="Ingrese trabajador a buscar" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <span nz-icon [nzType]="this.usuariosService.isLoading()?'loading':'search'"></span>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null">Perfil</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-select class="w-full" #perfil id="perfil" formControlName="perfil" nzPlaceHolder="Todos"
+                            nzShowSearch [compareWith]="compareFn" nzAllowClear
+                            (ngModelChange)="onPerfilChange($event)">
+                            <!-- <nz-option *ngFor="let prov of this.ubigeosStore.provincias()" [nzValue]="prov"
+                                [nzLabel]="prov.label!">
+                            </nz-option> -->
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <!-- <code>{{searchForm.valid | json}}<br>
+        {{searchForm.value | json}}</code> -->
+    </form>
+
+
+    <ng-template #footerTpl>
+        <div style="float: right">
+            <button nz-button style="margin-right: 8px;" (click)="onClearFilters();">Limpiar filtros</button>
+            <button nz-button nzType="primary" (click)="onCloseDrawer()"><span nz-icon nzType="save"
+                    nzTheme="outline"></span> Guardar filtros</button>
+        </div>
+    </ng-template>
+</nz-drawer>

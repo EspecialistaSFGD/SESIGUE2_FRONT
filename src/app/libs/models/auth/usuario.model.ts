@@ -13,6 +13,24 @@ export class UsuarioModel {
     ) { }
 }
 
+export class UsuarioResponseModel {
+    constructor(
+        public codigoUsuario?: number,
+        public nombreUsuario?: string,
+        public contrasena?: string,
+        public correoNotificacion?: string,
+        public nombresPersona?: string,
+        public apellidoMaterno?: string,
+        public apellidoPaterno?: string,
+        public tipoDocumento?: number,
+        public numeroDocumento?: string,
+        public codigoPerfil?: number,
+        public descripcionPerfil?: string,
+        public esActivo?: boolean,
+        public descripcionEstado?: string,
+    ) { }
+}
+
 export class UsuarioRequestModel {
     constructor(
         public nombreUsuario?: string,

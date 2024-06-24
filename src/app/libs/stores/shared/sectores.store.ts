@@ -29,7 +29,7 @@ export class SectoresStore {
   }
 
 
-  listarSectores(id: number = 0, tipo: number = 0): void {
+  listarSectores(id: number = 0, tipo: number = 2): void {
     let params = new HttpParams()
       .append('grupoId', `${id}`)
       .append('tipo', `${tipo}`)

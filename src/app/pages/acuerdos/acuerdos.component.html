@@ -113,7 +113,7 @@
                                 (keyup)="onCuiChange($event)" placeholder="Ingrese código a buscar" />
                         </nz-input-group>
                         <ng-template #suffixIconSearch>
-                            <span nz-icon nzType="search"></span>
+                            <span nz-icon [nzType]="this.acuerdosService.isLoading()?'loading':'search'"></span>
                         </ng-template>
                     </nz-form-control>
                 </nz-form-item>

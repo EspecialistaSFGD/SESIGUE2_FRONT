@@ -75,27 +75,27 @@ export class AuthService {
             }));
           }
 
-          if(resp.data.nombreTrabajador != null){
-            if(resp.data.nombreTrabajador != "") {
+          if (resp.data.nombreTrabajador != null) {
+            if (resp.data.nombreTrabajador != "") {
               localStorage.setItem('trabajador', resp.data.nombreTrabajador);
-            }else{
+            } else {
               localStorage.setItem('trabajador', 'Administrador');
             }
           }
 
           this.guardarLocalStorage(resp.data.token, resp.data.refreshToken);
-          this.msg.success("Inicio de sesión exitoso");
+          // this.msg.success("Inicio de sesión exitoso");
 
           // this.#usuario.update((v) => ({ ...v, isLoading: false }));
           //console.log(resp);
-        }else{
+        } else {
           this.msg.error("Hubo un error al iniciar sesión");
-          this.#usuario.update((v) => ({ ...v, isLoading: false, isAuthenticated: false}));
+          this.#usuario.update((v) => ({ ...v, isLoading: false, isAuthenticated: false }));
         }
       }),
       catchError((err) => {
         this.msg.error("Hubo un error al iniciar sesión", err);
-        this.#usuario.update((v) => ({ ...v, isLoading: false, isAuthenticated: false}));
+        this.#usuario.update((v) => ({ ...v, isLoading: false, isAuthenticated: false }));
         return of(null);
       })
     );

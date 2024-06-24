@@ -15,6 +15,8 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { AvancesService } from '../../../libs/services/pedidos/avances.service';
+import { HitoAcuerdoModel } from '../../../libs/models/pedido';
+import { Subject, debounceTime } from 'rxjs';
 
 @Component({
   selector: 'app-acuerdo',
@@ -50,10 +52,13 @@ export class AcuerdoComponent implements OnInit {
   pageSizeAvance: number = 10;
   sortFieldAvance: string = 'avanceId';
   sortOrderAvance: string = 'ascend';
-  selectedHitoId: number | null = null; // ID del hito seleccionado
+  hitoSeleccionadoId: number | null = null; // ID del hito seleccionado
+  hitoSeleccionado: HitoAcuerdoModel | null = null;
   queryParamsChangeEventCnt = 0;
   evidenciaBaseUrl = 'https://sesigue.com/SESIGUE/SD/evidencia/';
 
+  private updateParamsSubject: Subject<void> = new Subject<void>();
+  private updatingParams: boolean = false;
 
   public acuerdosService = inject(AcuerdosService);
   public hitosService = inject(HitosService);
@@ -63,6 +68,7 @@ export class AcuerdoComponent implements OnInit {
 
   constructor() {
     this.id = this.activatedRoute.snapshot.paramMap.get('id');
+
     if (!this.id) {
       // Maneja la ausencia del ID, por ejemplo, redirigiendo a otra página o mostrando un mensaje de error
       this.router.navigate(['/panel']); // Redirige a una página de error
@@ -73,10 +79,24 @@ export class AcuerdoComponent implements OnInit {
       this.acuerdosService.listarAcuerdo(Number(this.id));
       // this.hitosService.listarHitos(Number(this.id));
     }
+
+    this.activatedRoute.queryParams.subscribe((params) => {
+      if (!this.updatingParams) {
+        if (!this.updatingParams) {
+          if (params['hito'] != null) {
+            this.hitoSeleccionadoId = Number(params['hito']);
+          }
+        }
+      }
+    });
+
+    // Debounce los cambios de parámetros de la URL
+    this.updateParamsSubject.pipe(debounceTime(300)).subscribe(() => {
+      this.updateQueryParams();
+    });
   }
 
   ngOnInit(): void {
-
   }
 
   traerHitos({
@@ -101,7 +121,25 @@ export class AcuerdoComponent implements OnInit {
 
   onHitoSelected(hitoId: number): void {
     if (hitoId == null) return;
+    this.hitoSeleccionadoId = hitoId;
     this.traerAvances({ hitoId: Number(hitoId) });
+    this.updateParamsSubject.next();
+  }
+
+  updateQueryParams() {
+    this.updatingParams = true;
+
+    const queryParams = {
+      hito: this.hitoSeleccionadoId,
+    };
+
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams,
+      queryParamsHandling: 'merge'
+    }).finally(() => {
+      this.updatingParams = false;
+    });
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
@@ -113,6 +151,7 @@ export class AcuerdoComponent implements OnInit {
     this.sortOrder = (currentSort && currentSort.value) || this.sortOrder;
 
     this.traerHitos({
+      acuerdoID: Number(this.id),
       pageIndex,
       pageSize,
       sortField: this.sortField,
@@ -121,18 +160,27 @@ export class AcuerdoComponent implements OnInit {
   }
 
   onQueryParamsChangeAvances(params: NzTableQueryParams): void {
-    if (++this.queryParamsChangeEventCnt == 1) return;
-    const { pageSize, pageIndex, sort } = params;
-    const currentSort = sort.find(item => item.value !== null);
-    this.pageIndexAvance = pageIndex;
-    this.pageSizeAvance = pageSize;
-    this.sortFieldAvance = (currentSort && currentSort.key) || this.sortFieldAvance;
-    this.sortOrderAvance = (currentSort && currentSort.value) || this.sortOrderAvance;
-    this.traerAvances({
-      pageIndex,
-      pageSize,
-      sortField: this.sortFieldAvance,
-      sortOrder: this.sortOrderAvance
-    });
+    // if (++this.queryParamsChangeEventCnt == 1) return;
+
+    if (!this.updatingParams) {
+
+      const { pageSize, pageIndex, sort } = params;
+      const currentSort = sort.find(item => item.value !== null);
+      this.pageIndexAvance = pageIndex;
+      this.pageSizeAvance = pageSize;
+      this.sortFieldAvance = (currentSort && currentSort.key) || this.sortFieldAvance;
+      this.sortOrderAvance = (currentSort && currentSort.value) || this.sortOrderAvance;
+      this.traerAvances({
+        hitoId: this.hitoSeleccionadoId,
+        pageIndex,
+        pageSize,
+        sortField: this.sortFieldAvance,
+        sortOrder: this.sortOrderAvance
+      });
+
+      // Emitir cambios de parámetros
+      this.updateParamsSubject.next();
+    }
+
   }
 }
