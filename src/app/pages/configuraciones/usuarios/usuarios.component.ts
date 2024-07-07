@@ -17,6 +17,8 @@ import { SelectModel } from '../../../libs/models/shared/select.model';
 import { Subject, debounceTime } from 'rxjs';
 import { TraerUsuariosInterface } from '../../../libs/interfaces/configuracion/usuario.interface';
 import { UsuariosService } from '../../../libs/services/configuraciones/usuarios.service';
+import { PerfilesService } from '../../../libs/services/configuraciones/perfiles.service';
+import { PerfilesStore } from '../../../libs/stores/shared/perfiles.store';
 
 @Component({
   selector: 'app-usuarios',
@@ -57,6 +59,7 @@ export class UsuariosComponent implements OnInit {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   public usuariosService = inject(UsuariosService);
+  public perfilesStore = inject(PerfilesStore);
   public filterCounter = signal<number>(0);
 
   private updateParamsSubject = new Subject<void>();

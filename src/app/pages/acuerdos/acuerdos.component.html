@@ -1,42 +1,55 @@
 <app-page-header [title]="title.toUpperCase()" />
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-    [nzData]="this.acuerdosService.acuerdos()" [nzFrontPagination]="false"
+    [nzData]="this.acuerdosService.acuerdos()!" [nzFrontPagination]="false"
     [nzLoading]="this.acuerdosService.isLoading()" [nzTotal]="this.acuerdosService.total()" [nzPageSize]="this.pageSize"
     [nzPageIndex]="this.pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
-            <th nzColumnKey="codigo" [nzSortFn]="true" nzLeft>Código</th>
-            <th nzLeft class="w-28 sm:w-56" nzColumnKey="acuerdo">Pedido</th>
-            <th nzColumnKey="sector" [nzSortFn]="true">Sector</th>
-            <th nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
-            <th nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
-            <th nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
-            <th nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
-            <th nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
-            <th nzColumnKey="cuis">CUI</th>
-            <th nzColumnKey="acciones" nzRight class="w-40"></th>
+            <th nzWidth="100px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+            <th nzWidth="120px" nzAlign="center" nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
+            <th nzWidth="300px" nzAlign="center" nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
+            <th nzWidth="300px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
+            <!-- <th nzColumnKey="pedido">Pedido</th> -->
+            <th nzWidth="150px" nzAlign="center" nzColumnKey="cuis">CUI</th>
+            <th nzWidth="150px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código</th>
+            <th class="w-28 sm:w-full" nzColumnKey="acuerdo">Acuerdo</th>
+            <!-- <th nzWidth="120px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th> -->
+            <!-- <th nzWidth="120px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th> -->
+            <th nzWidth="120px" nzAlign="center" nzColumnKey="plazo" [nzSortFn]="true">Plazo</th>
+            <th nzColumnKey="acciones" nzRight nzWidth="150px" nzAlign="center"></th>
         </tr>
     </thead>
     <tbody>
         @for (data of this.acuerdosService.acuerdos(); track data.codigo) {
         <tr>
-            <td nzLeft>{{ data.codigo }}</td>
-            <td nzLeft class="w-28 sm:w-56">
-                <p class="truncate cursor-help" nz-tooltip [nzTooltipTitle]="data.acuerdo">{{
+            <td nzWidth="100px" nzAlign="center">{{ data.sector }}</td>
+            <td nzWidth="120px" nzAlign="center">{{ data.region }}</td>
+            <td nzWidth="150px" nzAlign="center">
+                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip
+                    [nzTooltipTitle]="data.objetivoEstrategicoTerritorial">
+                    {{ data.objetivoEstrategicoTerritorial }}
+                </p>
+            </td>
+            <td nzWidth="150px" nzAlign="center">
+                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.intervencionesEstrategicas">
+                    {{ data.intervencionesEstrategicas }}
+                </p>
+            </td>
+            <!-- <td>{{ data.pedido }}</td> -->
+            <td nzWidth="150px" nzAlign="center">{{ data.cuis }}</td>
+            <td nzWidth="150px" nzAlign="center">{{ data.codigo }}</td>
+            <td class="w-28 sm:w-full">
+                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.acuerdo">{{
                     data.acuerdo }}</p>
             </td>
-            <td>{{ data.sector }}</td>
-            <td>{{ data.region }}</td>
 
-            <td>{{ data.clasificacion }}</td>
+            <!-- <td nzWidth="120px" nzAlign="center">{{ data.clasificacion }}</td>
 
-            <td>{{ data.espacio }}</td>
-            <td>{{ data.objetivoEstrategicoTerritorial }}</td>
-            <td>{{ data.intervencionesEstrategicas }}</td>
-            <td>{{ data.cuis }}</td>
-            <td nzRight class="w-40">
+            <td nzWidth="120px" nzAlign="center">{{ data.espacio }}</td> -->
+            <td nzWidth="120px" nzAlign="center">{{ data.plazo }}</td>
+            <td nzRight nzWidth="150px" nzAlign="center">
                 <nz-space>
-                    <button (click)="onGestionarHitoAcuerdo(data.acuerdoId)" *nzSpaceItem nz-button nzType="link"
+                    <button (click)="onGestionarHitoAcuerdo(data.acuerdoId!)" *nzSpaceItem nz-button nzType="link"
                         nz-tooltip nzTooltipTitle="Ver detalle">
                         <span nz-icon nzType="eye" nzTheme="outline"></span>
                     </button>

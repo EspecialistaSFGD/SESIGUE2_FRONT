@@ -1,22 +1,32 @@
 // Custom Theming for NG-ZORRO
 // For more information: https://ng.ant.design/docs/customize-theme/en
-@import "../node_modules/ng-zorro-antd/ng-zorro-antd.less";
-// @import "../node_modules/ng-zorro-antd/ng-zorro-antd.compact.less";
+// @import "../node_modules/ng-zorro-antd/ng-zorro-antd.less";
+@import "../node_modules/ng-zorro-antd/ng-zorro-antd.compact.less";
 // @import "../node_modules/ng-zorro-antd/ng-zorro-antd.dark.less";
 // Override less variables to here
 // View all variables: https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/style/themes/default.less
 
 @primary-color: #002C8C;
-@layout-sider-background: #002C8C;
+// @layout-sider-background: #002C8C;
+// @layout-sider-background-light: #fff;
 @form-vertical-label-padding: 0 0 4px;
 
 // dark theme
-@menu-dark-bg: @primary-color;
-@menu-dark-arrow-color: #fff;
-@menu-dark-inline-submenu-bg: @primary-color;
-@menu-dark-item-active-bg: #001D66;
+@menu-dark-item-active-bg: #111;
+// @menu-dark-item-active-danger-bg: @error-color;
+// @menu-dark-selected-item-icon-color: @white;
+// @menu-dark-selected-item-text-color: @white;
+// @menu-dark-item-hover-bg: transparent;
 
 // dark theme
+// @menu-dark-bg: @primary-color;
+// @menu-dark-arrow-color: #fff;
+// @menu-dark-inline-submenu-bg: @primary-color;
+// @menu-dark-item-active-bg: #001D66;
+
+// @layout-body-background: #eee;
+
+
 
 /* You can add global styles to this file, and also import other style files */
 .d-block {
@@ -33,6 +43,11 @@
 
 .ant-layout {
     min-height: 100vh;
+}
+
+.ant-layout-header {
+    height: 56px;
+    line-height: 56px;
 }
 
 

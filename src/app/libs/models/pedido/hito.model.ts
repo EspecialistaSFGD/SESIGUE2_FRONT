@@ -2,20 +2,35 @@ import { SelectModel } from "../shared/select.model";
 
 export class HitoAcuerdoModel {
     constructor(
-        public hito?: string,
-        public responsable?: string,
-        public plazo?: string,
-        public comentarioSD?: string,
-        public estado?: number,
-        public estadoRegistro?: number,
-        public hitoId?: number,
-        public acuerdoID?: number,
-        public responsableID?: number,
-        public nomEstado?: string,
-        public entidadId?: number,
-        public validado?: number,
-        public fechaValidacion?: string,
-        public nomContacto?: string,
-        public telefContacto?: string,
+        public codigoUsuario?: string | null,
+        public hito?: string | null,
+        public responsableID?: number | null,
+        public responsableId?: number | null,
+        public responsable?: string | null,
+        public responsableSelect?: SelectModel | null,
+        public plazo?: string | null,
+        public plazoFecha?: Date | null,
+        public comentarioSD?: string | null,
+        public estado?: number | null,
+        public estadoRegistro?: number | null,
+        public hitoId?: number | null,
+        public acuerdoID?: number | null,
+        public acuerdoId?: number | null,
+        public nomEstado?: string | null,
+        public entidadId?: number | null,
+        public entidad?: string,
+        public entidadSelect?: SelectModel | null,
+        public validado?: number | null,
+        public fechaValidacion?: string | null,
+        public nomContacto?: string | null,
+        public telefContacto?: string | null,
+        public accesoId?: number | null,
+    ) { }
+}
+
+export class HitoAcuerdoRequestModel {
+    constructor(
+        public accesoId?: number | null,
+        public hitoId?: number | null,
     ) { }
 }

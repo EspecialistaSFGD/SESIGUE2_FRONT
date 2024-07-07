@@ -1,8 +1,8 @@
-<div class="site-page-header-ghost-wrapper mb-8">
-    <nz-page-header nzBackIcon [nzGhost]="false">
-        <nz-page-header-title class="whitespace-normal line-height">{{ title }}</nz-page-header-title>
+<div class="site-page-header-ghost-wrapper mb-4">
+    <nz-page-header nzBackIcon [nzGhost]="false" class="dark:bg-gray-900 dark:text-white">
+        <nz-page-header-title class="whitespace-normal line-height dark:text-white">{{ title }}</nz-page-header-title>
         @if(subtitle) {
-        <nz-page-header-subtitle>{{ subtitle }}</nz-page-header-subtitle>
+        <nz-page-header-subtitle class="dark:text-white">{{ subtitle }}</nz-page-header-subtitle>
         }
         @if(buttons) {
         <nz-page-header-extra>

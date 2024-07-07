@@ -31,7 +31,159 @@ menu {
     padding: revert;
 }
 
-.anticon {
+.ant-btn>.anticon {
+    line-height: 0;
     vertical-align: middle;
 }
 
+/* Dark theme */
+/* .dark .ant-table {
+    @apply bg-neutral-950 text-gray-100;
+}
+
+.dark .ant-table-thead>tr>th {
+    @apply bg-neutral-900 text-gray-50;
+}
+
+.dark .ant-table-tbody>tr>td {
+    @apply border-neutral-800 border-b border-solid;
+}
+
+.dark .ant-table-tbody>tr.ant-table-row:hover>td,
+.dark .ant-table-tbody>tr>td.ant-table-cell-row-hover,
+.dark .ant-table-thead th.ant-table-column-has-sorters:hover {
+    @apply bg-neutral-800;
+}
+
+.dark .ant-table-cell-fix-left,
+.dark .ant-table-cell-fix-right {
+    @apply bg-neutral-950;
+} */
+
+/* Buttons */
+/* .dark .ant-btn-link:not(.ant-btn-dangerous) {
+    @apply text-blue-500;
+} */
+
+/* End Buttons */
+
+/* Drawe */
+/* .dark .ant-drawer-content,
+.dark .ant-drawer-header {
+    @apply bg-neutral-950 text-white;
+}
+
+.dark .ant-drawer-title,
+.dark .ant-drawer-close {
+    @apply text-white;
+} */
+
+/* Drawer end */
+
+/* Form newgins */
+/* .dark .ant-form-item-label>label {
+    @apply text-white;
+}
+
+.dark .ant-input-affix-wrapper {
+    @apply text-white;
+}
+
+.dark .ant-input {
+    @apply bg-transparent text-white;
+}
+
+.dark .ant-input-focused,
+.dark .ant-input:focus {
+    @apply border-blue-500;
+} */
+
+/* Form ends */
+
+nz-sider .ant-menu-item a {
+    @apply text-white;
+}
+
+nz-sider .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    @apply bg-blue-950;
+}
+
+.dark nz-sider .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    @apply bg-gray-950;
+}
+
+nz-sider .ant-menu.ant-menu-dark,
+nz-sider .ant-menu-dark .ant-menu-sub,
+nz-sider .ant-menu.ant-menu-dark .ant-menu-sub {
+    @apply bg-transparent;
+}
+
+nz-sider .ant-menu-submenu>.ant-menu {
+    @apply bg-blue-800;
+}
+
+.dark nz-sider .ant-menu-submenu>.ant-menu {
+    @apply bg-neutral-900;
+}
+
+nz-sider .ant-menu-inline.ant-menu-root .ant-menu-item,
+nz-sider .ant-menu-inline.ant-menu-root .ant-menu-submenu-title {
+    @apply text-white;
+}
+
+nz-sider .ant-menu-vertical .ant-menu-submenu,
+nz-sider .ant-menu-vertical-left .ant-menu-submenu,
+nz-sider .ant-menu-vertical-right .ant-menu-submenu,
+nz-sider .ant-menu-inline .ant-menu-submenu {
+    @apply text-white;
+}
+
+.ant-dropdown-menu-item-selected,
+.ant-dropdown-menu-item-selected:hover,
+.ant-dropdown-menu-submenu-title-selected,
+.ant-dropdown-menu-submenu-title-selected:hover {
+    @apply text-blue-900 bg-blue-200;
+}
+
+.dark .ant-dropdown-menu-item-selected,
+.dark .ant-dropdown-menu-item-selected:hover,
+.dark .ant-dropdown-menu-submenu-title-selected,
+.dark .ant-dropdown-menu-submenu-title-selected:hover {
+    @apply bg-neutral-900 text-gray-200;
+}
+
+.dark .ant-page-header-back-button {
+    @apply text-gray-200;
+}
+
+.dark .ant-page-header-back-button:hover {
+    @apply text-white;
+}
+
+.dark .ant-card {
+    @apply bg-neutral-900 text-white;
+}
+
+.dark .ant-card-head {
+    @apply text-white border-b border-solid border-neutral-800;
+}
+
+.dark .ant-card-bordered {
+    @apply border-neutral-800;
+}
+
+.ant-table-tbody>tr.selected-row>td {
+    @apply bg-blue-100 text-blue-800 border-blue-200;
+}
+
+.ant-table-tbody>tr.selected-row>td .ant-badge-status-text {
+    @apply text-blue-800;
+}
+
+.ant-table-tbody>tr.selected-row:hover>td {
+    @apply bg-blue-100;
+}
+
+.ant-table-tbody>tr.selected-row {
+    cursor: default;
+}

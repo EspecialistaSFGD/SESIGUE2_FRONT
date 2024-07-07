@@ -2,6 +2,7 @@ import { SelectModel } from "../../models/shared/select.model";
 
 export class TraerPedidosInterface {
     constructor(
+        public cui?: string | null,
         public espaciosSeleccionados?: SelectModel[] | null,
         public sectoresSeleccionados?: SelectModel[] | null,
         public depSeleccionado?: SelectModel | null,
@@ -33,6 +34,7 @@ export class TraerAcuerdosInterface {
 export class TraerHitosInterface {
     constructor(
         public acuerdoID?: number | null,
+        public hitoID?: number | null,
         public pageIndex?: number | null | undefined,
         public pageSize?: number | null | undefined,
         public sortField?: string | null,

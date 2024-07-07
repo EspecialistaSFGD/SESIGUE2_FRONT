@@ -1,0 +1,64 @@
+<form [formGroup]="hitoForm" nz-form nzLayout="vertical">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="hito">Descripción del hito</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <textarea nz-input id="hito" formControlName="hito" placeholder="Ingrese la descripción del hito"
+                        nzAutosize></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Responsable</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <nz-select nzPlaceHolder="Seleccione" id="responsableSelect" #responsableSelect nzAllowClear
+                        formControlName="responsableSelect" (ngModelChange)="onResponsableIDChange($event)"
+                        [compareWith]="compareFn">
+                        <nz-option *ngFor="let tEnt of this.sectoresStore.tiposEntidades()" [nzLabel]="tEnt.label!"
+                            [nzValue]="tEnt"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label nzRequired="" [nzSpan]="null">Plazo</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <nz-date-picker [nzDisabledDate]="disabledDate" class="w-full" formControlName="plazo"
+                        nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy"></nz-date-picker>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    @if(this.hitoForm.get('responsableSelect')?.value != null){
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired="" [nzSpan]="null">Entidad</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <nz-select nzPlaceHolder="Seleccione" id="entidadSelect" #entidadSelect
+                        formControlName="entidadSelect" nzAllowClear nzShowSearch
+                        (ngModelChange)="onEntidadIDChange($event)" [compareWith]="compareFn">
+                        <nz-option *ngFor="let sect of this.sectoresStore.entidadesResponsables()"
+                            [nzLabel]="sect.label!" [nzValue]="sect"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    }
+
+    <!-- {{this.hitoForm.value|json}} -->
+
+    <!-- {{this.hitosService.isEditing()|json }} -->
+
+    <!-- {{this.acuerdosService.acuerdoSeleccionado().acuerdoId|json }} -->
+</form>

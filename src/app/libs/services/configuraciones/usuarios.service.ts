@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ResponseModelPaginated } from '../../models/shared/response.model';
 import { SelectModel } from '../../models/shared/select.model';

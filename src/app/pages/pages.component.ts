@@ -12,7 +12,6 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 
-
 @Component({
   selector: 'app-pages',
   standalone: true,
@@ -38,12 +37,12 @@ export class PagesComponent implements OnInit, AfterViewInit {
   public title = inject(Title);
   public meta = inject(Meta);
   private cdr = inject(ChangeDetectorRef);
+  public isSiderCollapsed = localStorage.getItem('isSiderCollapsed') === 'true' ? true : false;
 
   menuItems: MenuModel[] = [];
   pageTitle: string | undefined;
   trabajador: string | undefined;
-  selectedTheme: string = localStorage['theme'] || 'system';;
-
+  selectedTheme: string = localStorage['theme'] || 'system';
 
   constructor() {
     this.getDataRoute().subscribe((data) => {
@@ -95,7 +94,7 @@ export class PagesComponent implements OnInit, AfterViewInit {
     this.initTheme();
   }
 
-  onLogout():void{
+  onLogout(): void {
     this.authService.removerLocalStorage();
 
     this.router.navigate(['/login']);
@@ -107,5 +106,19 @@ export class PagesComponent implements OnInit, AfterViewInit {
       filter((e: ActivationEnd) => e.snapshot.firstChild === null),
       map((e: ActivationEnd) => e.snapshot.data)
     );
+  }
+
+
+  switchCollapseSider(): void {
+    if (this.isSiderCollapsed) {
+      this.isSiderCollapsed = false;
+    } else {
+      this.isSiderCollapsed = true;
+    }
+
+    localStorage.setItem('isSiderCollapsed', this.isSiderCollapsed.toString());
+    // this.isSiderCollapsed = !this.isSiderCollapsed;
+    // localStorage.setItem('isSiderCollapsed', this.isSiderCollapsed.toString());
+    // this.isCollapsed = !this.isCollapsed
   }
 }

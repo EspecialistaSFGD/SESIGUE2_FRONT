@@ -6,6 +6,7 @@ export class AcuerdoPedidoModel {
         public acuerdo?: string,
         public clasificacion?: string,
         public responsable?: string,
+        public responsableSelect?: SelectModel,
         public plazo?: string,
         public espacio?: string,
         public sector?: string,
@@ -31,7 +32,9 @@ export class AcuerdoPedidoModel {
         public nomEstadoRegistro?: string,
         public entidadId?: number,
         public entidad?: string,
+        public entidadSelect?: SelectModel,
         public estadoRegistroInterno?: number,
         public tipo?: string,
+        public estado?: string,
     ) { }
 }

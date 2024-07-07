@@ -1,36 +1,46 @@
 <app-page-header [title]="title.toUpperCase()" />
-<nz-table [nzScroll]="{ x: '1150px', y: '450px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
     [nzData]="this.pedidosService.pedidos()" [nzFrontPagination]="false" [nzLoading]="this.pedidosService.isLoading()"
     [nzTotal]="this.pedidosService.total()" [nzPageSize]="this.pageSize" [nzPageIndex]="this.pageIndex"
     (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
-            <th nzLeft class="w-28 sm:w-56" nzColumnKey="aspectoCriticoResolver">Pedido</th>
-            <th nzColumnKey="sector" [nzSortFn]="true">Sector</th>
-            <th nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
-            <th nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
-            <th nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
-            <th nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
-            <th nzColumnKey="cantidadPreAcuerdos">Pre-acuerdos</th>
-            <th nzColumnKey="cuis">CUI</th>
-            <th nzRight nzColumnKey="acciones">Acciones</th>
+            <th nzWidth="120px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+            <th nzWidth="150px" nzAlign="center" nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
+            <th nzWidth="300px" nzAlign="center" nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
+            <th nzWidth="300px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
+            <th nzLeft class="w-20 sm:w-56" nzColumnKey="aspectoCriticoResolver">Pedido</th>
+            <th nzWidth="80px" nzAlign="center" nzColumnKey="cuis">CUI</th>
+            <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadPreAcuerdos">Pre-acuerdos</th>
+            <!-- <th nzWidth="120px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th> -->
+            <th nzRight nzWidth="72px" nzAlign="center" nzColumnKey="acciones"></th>
         </tr>
     </thead>
     <tbody>
         @for (data of this.pedidosService.pedidos(); track data.prioridadID) {
         <tr>
-            <td nzLeft class="w-28 sm:w-56">
-                <p class="truncate cursor-help" nz-tooltip [nzTooltipTitle]="data.aspectoCriticoResolver">{{
+            <td nzWidth="120px" nzAlign="center">{{ data.sector }}</td>
+            <td nzWidth="150px" nzAlign="center">{{ data.region }}</td>
+            <td nzWidth="300px" nzAlign="center">
+                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip
+                    [nzTooltipTitle]="data.objetivoEstrategicoTerritorial">
+                    {{ data.objetivoEstrategicoTerritorial }}
+                </p>
+            </td>
+            <td nzWidth="300px" nzAlign="center">
+                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.intervencionesEstrategicas">
+                    {{ data.intervencionesEstrategicas }}
+                </p>
+            </td>
+            <td nzLeft class="w-20 sm:w-56">
+                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.aspectoCriticoResolver">
+                    {{
                     data.aspectoCriticoResolver }}</p>
             </td>
-            <td>{{ data.sector }}</td>
-            <td>{{ data.region }}</td>
-            <td>{{ data.espacio }}</td>
-            <td>{{ data.objetivoEstrategicoTerritorial }}</td>
-            <td>{{ data.intervencionesEstrategicas }}</td>
-            <td>{{ data.cantidadPreAcuerdos }}</td>
-            <td>{{ data.cuis }}</td>
-            <td nzRight>
+            <td nzWidth="80px" nzAlign="center">{{ data.cuis }}</td>
+            <td nzWidth="100px" nzAlign="center">{{ data.cantidadPreAcuerdos }}</td>
+            <!-- <td nzWidth="120px" nzAlign="center">{{ data.espacio }}</td> -->
+            <td nzRight nzWidth="72px" nzAlign="center">
                 <nz-space>
                     <button [routerLink]="['/requerimiento', data.email]" routerLinkActive="router-link-active"
                         *nzSpaceItem nz-button nzType="link">
@@ -94,6 +104,21 @@
     nzTitle="Filtrar los resultados" [nzFooter]="footerTpl" (nzOnClose)="onCloseDrawer()">
     <form nz-form *nzDrawerContent nzLayout="vertical" [formGroup]="searchForm">
         <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null" nzFor="cui">Código de acuerdo o CUI</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" #cui id="cui" formControlName="cui" nz-input
+                                (keyup)="onCuiChange($event)" placeholder="Ingrese código a buscar" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <span nz-icon [nzType]="this.pedidosService.isLoading()?'loading':'search'"></span>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
             <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <!-- {{espaciosStore.espacios() | json}} -->
                 <!-- {{sectoresStore.sectores() | json}}

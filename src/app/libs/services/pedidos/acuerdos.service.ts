@@ -1,14 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { SelectModel } from '../../models/shared/select.model';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ResponseModelPaginated } from '../../models/shared/response.model';
 import { AcuerdoPedidoModel } from '../../models/pedido';
 
 interface State {
-    acuerdos: any[];
-    acuerdoSeleccionado: any | null | undefined;
+    acuerdos: AcuerdoPedidoModel[] | null;
+    acuerdoSeleccionado: AcuerdoPedidoModel | null;
     isLoading: boolean;
     total: number;
     sortField: string | null;
@@ -40,6 +40,7 @@ export class AcuerdosService {
     constructor() { }
 
     listarAcuerdos(cui: string | null = null, clasificacion: SelectModel[] | null = null, tipo: SelectModel | null = null, estadoAcuerdo: SelectModel[] | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
+        // debugger;
         let params = new HttpParams();
 
         this.#acuerdosResult.update((state) => ({
@@ -47,7 +48,7 @@ export class AcuerdosService {
             isLoading: true,
         }));
 
-        params = (cui !== null) ? params.append('cui', `${cui}`) : params;
+        params = (cui != null) ? params.append('codigo', `${cui}`) : params;
 
         if (clasificacion != null && clasificacion.length > 0) {
             clasificacion.forEach((clas: SelectModel) => {
@@ -55,7 +56,7 @@ export class AcuerdosService {
             });
         }
 
-        params = (tipo !== null) ? params.append('tipo', `${tipo.value}`) : params;
+        params = (tipo != null) ? params.append('tipoId', `${tipo.value}`) : params;
 
         if (estadoAcuerdo != null && estadoAcuerdo.length > 0) {
             estadoAcuerdo.forEach((est: SelectModel) => {
@@ -110,10 +111,19 @@ export class AcuerdosService {
             next: (data: ResponseModelPaginated) => {
                 const res: AcuerdoPedidoModel[] = data.data;
 
-                // console.log(res[0]);
+                if (res.length === 0) return;
+
+                res.forEach((acuerdo) => {
+                    if (acuerdo.responsable && acuerdo.responsableId) {
+                        acuerdo.responsableSelect = new SelectModel(acuerdo.responsableId, acuerdo.responsable);
+                        acuerdo.entidadSelect = new SelectModel(acuerdo.entidadId, acuerdo.entidad);
+                    }
+                });
+
 
 
                 this.#acuerdosResult.update((v) => ({ ...v, acuerdoSeleccionado: res[0], isLoading: false }));
+                // console.log(this.acuerdoSeleccionado());
             },
             error: (e) => console.log(e),
             complete: () => this.#acuerdosResult.update((v) => ({ ...v, isLoading: false })),

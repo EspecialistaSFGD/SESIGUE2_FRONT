@@ -58,6 +58,7 @@ export class PedidosComponent implements OnInit {
   sortOrder: string | null = 'descend';
   isDrawervisible: boolean = false;
 
+  cui: string | null = null;
   espaciosSeleccionados: SelectModel[] | null = null;
   sectoresSeleccionados: SelectModel[] | null = null;
   depSeleccionado: SelectModel | null = null;
@@ -67,6 +68,7 @@ export class PedidosComponent implements OnInit {
   private updateParamsSubject = new Subject<void>();
   private updatingParams = false;
   private clearingFilters = false;
+  private timeout: any;
 
   public pedidosService = inject(PedidosService);
   private fb = inject(UntypedFormBuilder);
@@ -82,6 +84,10 @@ export class PedidosComponent implements OnInit {
     // Obtener los valores de los queryParams en la primera carga
     this.activatedRoute.queryParams.subscribe((params) => {
       if (!this.updatingParams) {
+        if (params['cui'] != null) {
+          this.cui = params['cui'];
+        }
+
         if (params['espacio'] != null) {
           const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
           this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
@@ -119,6 +125,7 @@ export class PedidosComponent implements OnInit {
 
         // Inicializar el contador con la suma de las selecciones iniciales
         this.filterCounter.set(
+          (this.cui ? 1 : 0) +
           (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
           (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
           (this.depSeleccionado ? 1 : 0) +
@@ -135,6 +142,7 @@ export class PedidosComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchForm.patchValue({
+      cui: this.cui,
       espacio: this.espaciosSeleccionados,
       sector: this.sectoresSeleccionados,
       dep: this.depSeleccionado,
@@ -144,6 +152,7 @@ export class PedidosComponent implements OnInit {
 
   traerPedidos(
     {
+      cui = this.cui,
       espaciosSeleccionados = this.espaciosSeleccionados,
       sectoresSeleccionados = this.sectoresSeleccionados,
       depSeleccionado = this.depSeleccionado,
@@ -154,7 +163,7 @@ export class PedidosComponent implements OnInit {
       sortOrder = this.sortOrder
     }: TraerPedidosInterface
   ): void {
-    this.pedidosService.listarPedidos(espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
+    this.pedidosService.listarPedidos(cui, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
   }
 
   onEspacioChange(value: SelectModel[] | null): void {
@@ -243,10 +252,27 @@ export class PedidosComponent implements OnInit {
     this.updateParamsSubject.next();
   }
 
+  onCuiChange(event: any) {
+    clearTimeout(this.timeout);
+    var $this = this;
+    this.timeout = setTimeout(function () {
+      if (event.keyCode != 13) {
+        $this.executeCuiListing(event.target.value);
+      }
+    }, 500);
+  }
+
+  private executeCuiListing(value: string) {
+    this.cui = value;
+    this.traerPedidos({ cui: value });
+    this.updateParamsSubject.next();
+  }
+
   updateQueryParams() {
     this.updatingParams = true;
 
     const queryParams = {
+      cui: this.cui,
       espacio: this.espaciosSeleccionados ? this.espaciosSeleccionados.map(x => x.value) : null,
       sector: this.sectoresSeleccionados ? this.sectoresSeleccionados.map(x => x.value) : null,
       dep: this.depSeleccionado ? this.depSeleccionado.value : null,
@@ -271,6 +297,7 @@ export class PedidosComponent implements OnInit {
 
     this.searchForm.reset();
 
+    this.cui = null;
     this.espaciosSeleccionados = [];
     this.sectoresSeleccionados = [];
     this.depSeleccionado = null;
@@ -282,6 +309,7 @@ export class PedidosComponent implements OnInit {
 
     // Hacer una sola llamada a traerPedidos con los parámetros vacíos
     this.traerPedidos({
+      cui: null,
       espaciosSeleccionados: [],
       sectoresSeleccionados: [],
       depSeleccionado: null,
@@ -296,7 +324,7 @@ export class PedidosComponent implements OnInit {
       [],
       {
         relativeTo: this.activatedRoute,
-        queryParams: { espacio: null, sector: null, dep: null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
+        queryParams: { cui: null, espacio: null, sector: null, dep: null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
         queryParamsHandling: 'merge',
       }
     ).finally(() => {
@@ -316,6 +344,7 @@ export class PedidosComponent implements OnInit {
 
   crearSearForm(): void {
     this.searchForm = this.fb.group({
+      cui: [null],
       espacio: [null],
       sector: [null],
       dep: [null],

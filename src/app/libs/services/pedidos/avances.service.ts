@@ -1,13 +1,18 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { ResponseModelPaginated } from '../../models/shared/response.model';
+import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
+import { AvanceHitoModel } from '../../models/pedido';
+import { UtilesService } from '../shared/utiles.service';
+import { SelectModel } from '../../models/shared/select.model';
+const accesoId = localStorage.getItem('codigoUsuario') || null;
 
 interface State {
     avances: any[];
     avanceSeleccionado: any | null | undefined;
     isLoading: boolean;
+    isEditing: boolean;
     total: number;
     sortField: string | null;
     sortOrder: string | null;
@@ -20,21 +25,56 @@ export class AvancesService {
 
     public msg = inject(NzMessageService);
     public http = inject(HttpClient);
+    private utilesService = inject(UtilesService);
 
     #avancesResult = signal<State>({
         avances: [],
         avanceSeleccionado: null,
         isLoading: true,
+        isEditing: false,
         total: 0,
         sortField: null,
         sortOrder: null,
     });
 
     public avances = computed(() => this.#avancesResult().avances);
+    public avanceSeleccionado = computed(() => this.#avancesResult().avanceSeleccionado);
     public isLoading = computed(() => this.#avancesResult().isLoading);
+    public isEditing = computed(() => this.#avancesResult().isEditing);
     public total = computed(() => this.#avancesResult().total);
 
     constructor() { }
+
+    agregarEditarAvance(avance: AvanceHitoModel): Promise<ResponseModel> {
+        return new Promise((resolve, reject) => {
+            this.#avancesResult.update((state) => ({
+                ...state,
+                isEditing: true,
+            }));
+
+            const ots: AvanceHitoModel = new AvanceHitoModel();
+            if (avance.avanceId != null) ots.avanceId = avance.avanceId;
+            ots.hitoId = avance.hitdoId;
+            ots.fecha = avance.fecha;
+            ots.avance = avance.avance;
+            ots.evidencia = avance.evidencia;
+            ots.entidadId = Number(avance.entidadSelect?.value);
+            ots.accesoId = Number(accesoId);
+
+            this.http.post(`${environment.api}/Avance/RegistrarAvance`, ots).subscribe({
+                next: (data: ResponseModel) => {
+                    this.msg.success(data.message);
+                    this.listarAvances(avance.hitdoId, 1, 10, 'avanceId', 'ascend');
+                    resolve(data);
+                },
+                error: (e) => {
+                    this.msg.error(`Error al agregar hito: ${e}`);
+                    reject(e);
+                },
+                complete: () => this.#avancesResult.update((v) => ({ ...v, isEditing: false })),
+            });
+        });
+    }
 
     listarAvances(hitoID: number | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
         // debugger;
@@ -53,12 +93,66 @@ export class AvancesService {
 
         this.http.get<ResponseModelPaginated>(`${environment.api}/Avance/Listar`, { params }).subscribe({
             next: (data) => {
-                console.log(data);
+                // console.log(data);
 
                 this.#avancesResult.update((v) => ({ ...v, avances: data.data, isLoading: false, total: data.info.total }));
             },
             error: (e) => console.log(e),
             complete: () => this.#avancesResult.update((v) => ({ ...v, isLoading: false })),
         });
+    }
+
+    validarAvance(avance: AvanceHitoModel): void {
+        const avanceRequest: AvanceHitoModel = new AvanceHitoModel();
+        avanceRequest.avanceId = avance.avanceId;
+
+        if (accesoId != null) avanceRequest.accesoId = Number(accesoId);
+
+        this.http.post(`${environment.api}/Avance/Validar`, avanceRequest).subscribe({
+            next: (data) => {
+                this.msg.success('Avance validado correctamente');
+                this.listarAvances(avance.hitdoId, 1, 10, 'avanceId', 'ascend');
+            },
+            error: (e) => {
+                this.msg.error(`Error al validar avance: ${e}`);
+            },
+        });
+    }
+
+    // seleccionarAvance(avance: AvanceHitoModel | null): void {
+    //     if (avance != null && avance.fecha != null && avance.fecha != undefined) {
+    //         avance.fechaDate = this.utilesService.stringToDate(avance.fecha);
+    //     }
+
+    //     if (avance != null && avance.entidadID != null && avance.entidadID != undefined) {
+    //         avance.entidadSelect = new SelectModel(Number(avance.entidadID));
+    //     }
+
+    //     this.#avancesResult.update((v) => ({ ...v, avanceSeleccionado: avance }));
+    // }
+
+    seleccionarAvanceById(avanceId: number | undefined | null): void {
+        if (avanceId != null && avanceId != undefined) {
+            const avance = this.#avancesResult().avances.find((avance: AvanceHitoModel) => avance.avanceId === avanceId) || null;
+
+            if (avance != null && avance.fecha != null && avance.fecha != undefined) {
+                avance.fechaDate = this.utilesService.stringToDate(avance.fecha);
+            }
+
+            if (avance != null && avance.entidadID != null && avance.entidadID != undefined) {
+                avance.entidadSelect = new SelectModel(Number(avance.entidadID));
+            }
+
+            this.#avancesResult.update((v) => ({ ...v, avanceSeleccionado: avance }));
+        } else {
+            this.#avancesResult.update((v) => ({ ...v, avanceSeleccionado: null }));
+        }
+
+
+        // if (avance != null && avance.entidadID != null && avance.entidadID != undefined) {
+        //     avance.entidadSelect = new SelectModel(Number(avance.entidadID));
+        // }
+
+        // this.#avancesResult.update((v) => ({ ...v, avanceSeleccionado: avance }));
     }
 }

@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { SelectModel } from '../../models/shared/select.model';
 import { Observable, catchError, map, of } from 'rxjs';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Router } from '@angular/router';
 import { ResponseModelPaginated } from '../../models/shared/response.model';
@@ -39,7 +39,7 @@ export class PedidosService {
 
     constructor() { }
 
-    listarPedidos(espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
+    listarPedidos(cui: string | null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
         // console.log(dep);
 
 
@@ -50,6 +50,7 @@ export class PedidosService {
             isLoading: true,
         }));
 
+        params = (cui !== null) ? params.append('cui', `${cui}`) : params;
 
         if (espacio != null && espacio.length > 0) {
             espacio.forEach((esp: SelectModel) => {

@@ -1,0 +1,88 @@
+<form [formGroup]="avanceForm" nz-form nzLayout="vertical">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzFor="avance" nzRequired>Descripción del avance</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <textarea nz-input id="avance" formControlName="avance"
+                        placeholder="Ingrese la descripción del avance" nzAutosize></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Responsable</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <nz-select nzDisabled nzPlaceHolder="Seleccione" id="responsableSelect" #responsableSelect
+                        nzAllowClear formControlName="responsableSelect" (ngModelChange)="onResponsableIDChange($event)"
+                        [compareWith]="compareFn">
+                        <nz-option *ngFor="let tEnt of this.sectoresStore.tiposEntidades()" [nzLabel]="tEnt.label!"
+                            [nzValue]="tEnt"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="null">Entidad</nz-form-label>
+            <nz-form-control nzSpan="null">
+                <nz-select nzPlaceHolder="Seleccione" id="entidadSelect" #entidadSelect formControlName="entidadSelect"
+                    nzAllowClear (ngModelChange)="onEntidadIDChange($event)">
+                    <nz-option *ngFor="let sec of this.sectoresStore.sectores()" [nzLabel]="sec.label!"
+                        [nzValue]="sec"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+    </div> -->
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Fecha</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-date-picker class="w-full" formControlName="fecha" nzPlaceHolder="Seleccionar fecha"
+                        nzFormat="dd/MM/yyyy"></nz-date-picker>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    @if(this.avanceForm.get('responsableSelect')?.value != null){
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null">Entidad</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <nz-select nzPlaceHolder="Seleccione" id="entidadSelect" #entidadSelect
+                        formControlName="entidadSelect" nzAllowClear nzShowSearch
+                        (ngModelChange)="onEntidadIDChange($event)" [compareWith]="compareFn">
+                        <nz-option *ngFor="let sect of this.sectoresStore.entidadesResponsables()"
+                            [nzLabel]="sect.label!" [nzValue]="sect"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    }
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired="" nzFor="evidencia">Evidencia del avance</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <textarea nz-input id="evidencia" formControlName="evidencia"
+                        placeholder="Ingrese la evidencia del avance" nzAutosize></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <!-- {{this.avanceForm.value|json}} -->
+    <!-- {{this.hitosService.hitoSeleccionado()|json}} -->
+    <!-- {{this.hitosService.hitoSeleccionado()|json }} -->
+    <!-- {{this.acuerdosService.acuerdoSeleccionado().acuerdoId|json }} -->
+</form>

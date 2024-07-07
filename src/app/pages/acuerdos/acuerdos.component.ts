@@ -103,7 +103,7 @@ export class AcuerdosComponent implements OnInit {
         }
 
         if (params['tipo'] != null) {
-          this.tipoSeleccionado = { value: params['prov'] };
+          this.tipoSeleccionado = { value: params['tipo'] };
         }
 
         if (params['estado'] != null) {
@@ -148,7 +148,7 @@ export class AcuerdosComponent implements OnInit {
 
         // Inicializar el contador con la suma de las selecciones iniciales
         this.filterCounter.set(
-          (this.cui ? 1 : 0) +
+          ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
           (this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.length : 0) +
           (this.tipoSeleccionado ? 1 : 0) +
           (this.estadosSelecionados ? this.estadosSelecionados.length : 0) +
@@ -310,8 +310,12 @@ export class AcuerdosComponent implements OnInit {
     }
 
     const wasPreviouslySelected = this.tipoSeleccionado != null;
-    this.tipoSeleccionado = { value };
-    this.traerAcuerdos({ tipoSeleccionado: { value } });
+    if (value == null) {
+      this.tipoSeleccionado = null;
+    } else {
+      this.tipoSeleccionado = { value };
+    }
+    this.traerAcuerdos({ tipoSeleccionado: this.tipoSeleccionado });
 
     if (value == null && wasPreviouslySelected) {
       this.filterCounter.update(x => x - 1);
@@ -351,7 +355,7 @@ export class AcuerdosComponent implements OnInit {
   }
 
   private executeCuiListing(value: string) {
-    this.cui = value;
+    this.cui = (value == null || value == '' || value == undefined) ? null : value;
     this.traerAcuerdos({ cui: value });
     this.updateParamsSubject.next();
   }
@@ -387,6 +391,7 @@ export class AcuerdosComponent implements OnInit {
     this.clearingFilters = true;
 
     this.searchForm.reset();
+
     this.cui = null;
     this.clasificacionesSeleccionadas = [];
     this.tipoSeleccionado = null;

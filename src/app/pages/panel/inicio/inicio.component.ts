@@ -1,5 +1,4 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { RequerimientosService } from '../../../libs/services/panel/requerimientos.service';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { CommonModule } from '@angular/common';
 import { AnchorModel } from '../../../libs/models/shared/anchor.model';

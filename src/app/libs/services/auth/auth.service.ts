@@ -3,7 +3,7 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { UsuarioModel, UsuarioRequestModel } from '../../models/auth/usuario.model';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { Token } from '../../models/auth/token.model';
 import { parseISO } from 'date-fns';
@@ -58,6 +58,7 @@ export class AuthService {
   }
 
   login(user: UsuarioRequestModel): Observable<ResponseModel | null> {
+    debugger;
     // Aquí realiza tu llamada HTTP para iniciar sesión
     return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, user).pipe(
       tap((resp: ResponseModel) => {
@@ -83,13 +84,20 @@ export class AuthService {
             }
           }
 
+          if (resp.data.codigoUsuario != null && resp.data.codigoUsuario != '') {
+            localStorage.setItem('codigoUsuario', resp.data.codigoUsuario);
+          }
+
+          if (localStorage.getItem('isSiderCollapsed') == null) localStorage.setItem('isSiderCollapsed', 'true');
+
           this.guardarLocalStorage(resp.data.token, resp.data.refreshToken);
-          // this.msg.success("Inicio de sesión exitoso");
 
           // this.#usuario.update((v) => ({ ...v, isLoading: false }));
           //console.log(resp);
-        } else {
-          this.msg.error("Hubo un error al iniciar sesión");
+        }
+
+        if (resp.success == null && resp.data == null) {
+          this.msg.error(resp.message);
           this.#usuario.update((v) => ({ ...v, isLoading: false, isAuthenticated: false }));
         }
       }),
@@ -147,32 +155,6 @@ export class AuthService {
       );
   }
 
-  // loginFull(credentials: any): Observable<ResponseModel | null> {
-  //   return this.login(credentials).pipe(
-  //     switchMap((response: any) => {
-  //       return this.obtenerPerfil().pipe(
-  //         switchMap((perfil) => {
-  //           //console.log(perfil);
-
-  //           if (perfil == null) {
-  //             return of(null);
-  //           }
-  //           return this.obtenerOpciones(perfil.data[0].id).pipe(
-  //             map((opciones) => {
-  //               //console.log(opciones);
-
-  //               if (opciones == null) {
-  //                 return null;
-  //               }
-  //               return response;
-  //             })
-  //           );
-  //         }),
-  //       );
-  //     }),
-  //   );
-  // }
-
   logout(): Observable<any> {
     return this.http.get(`${environment.api}/Login/CerrarSesion`)
       .pipe(
@@ -199,16 +181,20 @@ export class AuthService {
 
       } else {
         if ((refresh == null || refresh == undefined) || (token == null || token == undefined)) {
+          this.removerLocalStorage();
           return of(false);
         }
 
-        return this.renovarAutenticacion(token, refresh).pipe(
-          map((resp: any) => {
-            //this.router.navigateByUrl('/');
-            return true;
-          }),
-          catchError(error => of(false))
-        );
+        this.removerLocalStorage();
+
+        return of(false);
+
+        // return this.renovarAutenticacion(token, refresh).pipe(
+        //   map((resp: any) => {
+        //     return true;
+        //   }),
+        //   catchError(error => of(false))
+        // );
       }
     }
   }
@@ -277,6 +263,8 @@ export class AuthService {
     localStorage.removeItem('refresh');
     localStorage.removeItem('perfil');
     localStorage.removeItem('menus');
+    localStorage.removeItem('codigoUsuario');
+    localStorage.removeItem('trabajador');
 
     this.#usuario.set({
       usuario: null,

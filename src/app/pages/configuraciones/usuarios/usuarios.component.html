@@ -113,9 +113,9 @@
                         <nz-select class="w-full" #perfil id="perfil" formControlName="perfil" nzPlaceHolder="Todos"
                             nzShowSearch [compareWith]="compareFn" nzAllowClear
                             (ngModelChange)="onPerfilChange($event)">
-                            <!-- <nz-option *ngFor="let prov of this.ubigeosStore.provincias()" [nzValue]="prov"
-                                [nzLabel]="prov.label!">
-                            </nz-option> -->
+                            <nz-option *ngFor="let per of this.perfilesStore.perfiles()" [nzValue]="per"
+                                [nzLabel]="per.label!">
+                            </nz-option>
                         </nz-select>
                     </nz-form-control>
                 </nz-form-item>

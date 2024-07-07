@@ -4,7 +4,7 @@ import { provideRouter, withViewTransitions } from '@angular/router';
 import { routes } from './app.routes';
 import { provideNzIcons } from './icons-provider';
 import { es_ES, provideNzI18n } from 'ng-zorro-antd/i18n';
-import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalModule, NzModalRef } from 'ng-zorro-antd/modal';
 import { registerLocaleData } from '@angular/common';
 import es from '@angular/common/locales/es';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -18,8 +18,6 @@ const ngZorroConfig: NzConfig = {
 };
 
 registerLocaleData(es);
-
-
 
 export const appConfig: ApplicationConfig = {
   providers: [

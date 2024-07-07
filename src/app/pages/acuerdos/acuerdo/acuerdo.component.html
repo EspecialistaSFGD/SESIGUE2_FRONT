@@ -1,4 +1,5 @@
-<app-page-header [title]="this.acuerdosService.acuerdoSeleccionado()?.acuerdo" [content]="contentTpl"></app-page-header>
+<app-page-header [title]="this.acuerdosService.acuerdoSeleccionado()?.acuerdo||''"
+    [content]="contentTpl"></app-page-header>
 
 <ng-template #contentTpl>
     <nz-descriptions nzSize="small" [nzColumn]="4" nzBordered>
@@ -28,53 +29,86 @@
 </ng-template>
 
 <nz-table nzSize="small" [nzTitle]="HeaderAcuerdo" nzShowSizeChanger [nzData]="this.hitosService.hitos()"
-    [nzFrontPagination]="false" [nzLoading]="this.hitosService.isLoading()" [nzTotal]="this.hitosService.total()"
-    [nzPageSize]="this.pageSize" [nzPageIndex]="this.pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
+    [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="this.hitosService.isLoading()"
+    [nzTotal]="this.hitosService.total()" [nzPageSize]="this.pageSize" [nzPageIndex]="this.pageIndex"
+    (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
             <th></th>
             <th nzColumnKey="hito" [nzSortFn]="true">Hito</th>
-            <th nzColumnKey="responsable" [nzFilterFn]="true">Entidad responsable</th>
+            <th nzColumnKey="responsable" [nzFilterFn]="true">Responsable</th>
+            <th nzColumnKey="entidad" [nzSortFn]="true">Entidad</th>
+            <th nzColumnKey="comentarioSD" [nzSortFn]="true">Comentario de SD</th>
             <th nzColumnKey="plazo" [nzSortFn]="true">Plazo</th>
-            <th nzColumnKey="nomContacto" [nzSortFn]="true">Contacto</th>
             <th nzColumnKey="acciones"></th>
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let data of this.hitosService.hitos()" [class.bg-yellow-100]="data.hitoId === hitoSeleccionadoId">
+        <tr *ngFor="let data of this.hitosService.hitos()" [class.selected-row]="data.hitoId === hitoSeleccionadoId"
+            (click)="onRowClick($event, data)" class="cursor-pointer">
             <td>
                 <input class="cursor-pointer" type="radio" [id]="'hitoId_' + data.hitoId" name="hitoId"
-                    [value]="data.hitoId" [(ngModel)]="hitoSeleccionadoId"
-                    (ngModelChange)="onHitoSelected(data.hitoId)">
+                    [value]="data.hitoId" [(ngModel)]="hitoSeleccionadoId" (ngModelChange)="onHitoSelected(data)">
             </td>
-            <td>{{ data.hito }} </td>
+            <td>
+                <!-- @if(data.validado==1){
+                <nz-badge nzStatus="success" [nzText]="data.hito"></nz-badge>
+                }@else {
+                <nz-badge nzStatus="default" [nzText]="data.hito"></nz-badge>
+                } -->
+                @switch (data.estado) {
+                @case (0) {
+                <nz-badge nz-tooltip nzTooltipTitle="Desestimado" nzStatus="error" [nzText]="data.hito"></nz-badge>
+                }
+                @case (1) {
+                @if(data.validado==1){
+                <nz-badge nz-tooltip nzTooltipTitle="Validado" nzStatus="success" [nzText]="data.hito"></nz-badge>
+                }@else {
+                <nz-badge nzStatus="default" [nzText]="data.hito"></nz-badge>
+                }
+                }
+                }
+            </td>
             <td>{{ data.responsable }}</td>
+            <td>{{ data.entidad }}</td>
+            <td>{{ data.comentarioSD }}</td>
             <td>{{ data.plazo }}</td>
-            <td>{{ data.nomContacto }}</td>
             <td nzRight class="w-40">
                 <nz-space>
-                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Editar hito">
+                    <button [disabled]="data.validado==1||data.estado==0" *nzSpaceItem nz-button nzType="link"
+                        nz-tooltip
+                        [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede editar':'Editar hito'"
+                        (click)="onHitoAddEdit(data)">
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
                     <!-- Comentario del sector -->
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip
-                        nzTooltipTitle="Agregar comentario del sector">
+                        nzTooltipTitle="Agregar comentario del sector" (click)="onHitoAddComentarioSD(data)">
                         <span nz-icon nzType="comment" nzTheme="outline"></span>
                     </button>
                     <!-- Comentario del sector -->
 
                     <!-- Comentario del responsable del hito -->
-                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar avance">
+                    <!-- <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar avance"
+                        (click)="onAvanceAddEdit(null)">
                         <span nz-icon nzType="file-add" nzTheme="outline"></span>
-                    </button>
+                    </button> -->
                     <!-- Comentario del responsable del hito -->
-                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Reactivar estado">
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Reactivar estado"
+                        (click)="onReactivarEstadoHito(data)">
                         <span nz-icon nzType="rollback" nzTheme="outline"></span>
                     </button>
-                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Validar hito">
-                        <span class="text-green-500" nz-icon nzType="check-circle" nzTheme="outline"></span>
+                    <button [disabled]="data.validado==1||data.estado==0" *nzSpaceItem nz-button nzType="link"
+                        nz-tooltip
+                        [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede validar':'Validar hito'"
+                        (click)="onValidarHito(data)">
+                        <span [class.text-green-500]="data.validado != 1&&data.estado!=0" nz-icon nzType="check-circle"
+                            nzTheme="outline"></span>
                     </button>
-                    <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar">
+                    <button [disabled]="data.validado==1||data.estado==0" *nzSpaceItem nz-button nzDanger nzType="link"
+                        nz-tooltip
+                        [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede desestimar':'Desestimar hito'"
+                        (click)="onEliinarHito(data)">
                         <span nz-icon nzType="delete" nzTheme="outline"></span>
                     </button>
                 </nz-space>
@@ -92,15 +126,13 @@
         <div>
             <nz-space>
                 @if(hitoSeleccionadoId!==null){
-                <button *nzSpaceItem nz-button (click)="hitoSeleccionadoId=null">
+                <button *nzSpaceItem nz-button (click)="onHitoDeselected()">
                     <span nz-icon nzType="close" nzTheme="outline"></span>
                     <span class="button-text">Quitar hito selecionado</span>
                 </button>
                 }
 
-
-
-                <button *nzSpaceItem nz-button nzType="primary">
+                <button *nzSpaceItem nz-button nzType="primary" (click)="onHitoAddEdit(null)">
                     <span nz-icon nzType="plus" nzTheme="outline"></span>
                     <span class="button-text">Nuevo hito</span>
                 </button>
@@ -108,6 +140,27 @@
         </div>
     </div>
 </ng-template>
+
+<!-- <form nz-form>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzFor="email">E-mail</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+            <input nz-input name="email" type="email" id="email" />
+        </nz-form-control>
+    </nz-form-item>
+</form> -->
+
+<!-- <nz-modal [nzVisible]="this.hitosService.EditIsVisible()" nzTitle="The first Modal">
+    <ng-container *nzModalContent>
+        <app-hito></app-hito>
+    </ng-container>
+</nz-modal> -->
+
+
+<!-- {{this.hitosService.hitoSeleccionado()|json}} -->
+<!-- {{this.acuerdosService.acuerdoSeleccionado()|json}} -->
+
+
 
 @if(hitoSeleccionadoId!==null){
 <nz-table nzSize="small" [nzTitle]="HeaderAvance" nzShowSizeChanger [nzData]="this.avancesService.avances()"
@@ -142,13 +195,15 @@
             <td class="text-center">{{ data.comentarioSD || '-' }}</td>
             <td nzRight class="w-40">
                 <nz-space>
-                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Editar avance">
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Editar avance"
+                        (click)="onAvanceAddEdit(data)">
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar comentario">
                         <span nz-icon nzType="comment" nzTheme="outline"></span>
                     </button>
-                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Validar avance">
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Validar avance"
+                        (click)="onValidarAvance(data)">
                         <span class="text-green-500" nz-icon nzType="check-circle" nzTheme="outline"></span>
                     </button>
                     <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar">
@@ -168,7 +223,7 @@
 
         <div>
             <nz-space>
-                <button *nzSpaceItem nz-button nzType="primary">
+                <button *nzSpaceItem nz-button nzType="primary" (click)="onAvanceAddEdit(null)">
                     <span nz-icon nzType="plus" nzTheme="outline"></span>
                     <span class="button-text">Nuevo avance</span>
                 </button>

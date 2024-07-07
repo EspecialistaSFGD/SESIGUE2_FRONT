@@ -1,4 +1,4 @@
-<nz-page-header class="site-page-header mb-8">
+<nz-page-header class="site-page-header mb-4 bg-blue-200 dark:bg-gray-900 dark:text-white">
     <!--extra-->
     <nz-page-header-extra>
         <!--breadcrumb-->
@@ -38,7 +38,8 @@
             <div class="content">
 
                 <!--title-->
-                <nz-page-header-title class="whitespace-normal line-height">{{ title }}</nz-page-header-title>
+                <nz-page-header-title class="whitespace-normal line-height dark:text-white">{{ title
+                    }}</nz-page-header-title>
 
 
                 @if (description) {
@@ -51,7 +52,7 @@
                 <div class="content-link">
                     @for (link of links; track $index) {
                     <a [href]="link.href"
-                        class="text-blue-800 hover:text-blue-700 border-b-2 border-blue-800 hover:border-b-0">
+                        class="text-blue-800 hover:text-blue-700 border-b-2 border-blue-800 hover:border-b-0 dark:text-blue-200 dark:hover:text-blue-50 dark:border-blue-200">
                         <span *ngIf="link.icon" nz-icon [nzType]="link.icon" nzTheme="outline"></span>
                         <span>{{link.title}}</span>
                     </a>

@@ -11,5 +11,5 @@ export const PEDIDOS_ROUTES: Routes = [
       title: 'Acuerdos',
     }
   },
-  { path: 'acuerdo/:id', component: AcuerdoComponent },
+  { canActivate: [AuthGuard], path: 'acuerdo/:id', component: AcuerdoComponent },
 ];

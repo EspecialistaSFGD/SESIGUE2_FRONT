@@ -1,68 +1,100 @@
 <nz-layout class="app-layout">
-  <nz-sider class="menu-sidebar" nzCollapsible nzWidth="256px" [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
+
+  <nz-sider class="menu-sidebar bg-blue-700 dark:bg-gray-800" nzCollapsible [nzCollapsedWidth]="56"
+    [(nzCollapsed)]="this.isSiderCollapsed" [nzTrigger]="null">
     <div class="sidebar-logo">
       <a href="/" class="flex items-center justify-start">
         <figure>
           <img src="./assets/images/isotipo--small--colored--old.svg" alt="SeSigue" class="w-8" srcset="">
         </figure>
-        <h1 class="text-white font-semibold mt-3 ml-2" *ngIf="!isCollapsed">SeSigue</h1>
+        <h1 class="text-white font-semibold mt-3 ml-2" *ngIf="!this.isSiderCollapsed">SeSigue</h1>
       </a>
     </div>
 
     @if (menuItems != null && menuItems!= undefined && menuItems.length > 0){
-    <ul class="mt-8" nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-      @for (item of menuItems; track item.codigoMenu) {
-      @if(item.children != null && item.children != undefined && item.children.length > 0) {
-      <li nz-submenu nzOpen [nzTitle]="item.descripcionItem" [nzIcon]="item.iconoMenu!">
-        <ul>
-          @for (subItem of item.children; track subItem.codigoMenu) {
-          <li nz-menu-item nzMatchRouterExact>
-            <a [routerLink]="subItem.direccionUrl">{{subItem.descripcionItem}}</a>
-          </li>
+    <div class="p-2">
+      <ul class="mt-8 border-r-0 bg-transparent" nz-menu [nzTheme]="(selectedTheme == 'dark' ? 'dark' : 'light' )"
+        nzMode="inline" [nzInlineCollapsed]="this.isSiderCollapsed">
+        @for (item of menuItems; track item.codigoMenu) {
+        @if(item.children != null && item.children != undefined && item.children.length > 0) {
+        <li nz-submenu nzOpen [nzTitle]="item.descripcionItem" [nzIcon]="item.iconoMenu!"
+          routerLinkActive="ant-menu-item-selected" class="my-2">
+          <ul>
+            @for (subItem of item.children; track subItem.codigoMenu) {
+            <li nz-menu-item routerLinkActive="ant-menu-item-selected">
+              <a [routerLink]="subItem.direccionUrl">{{subItem.descripcionItem}}</a>
+            </li>
+            }
+          </ul>
+        </li>
+        } @else {
+        <li nz-menu-item routerLinkActive="ant-menu-item-selected" nzMatchRouterExact>
+          <a class="flex items-center" [routerLink]="item.direccionUrl">
+            <span nz-icon [nzType]="item.iconoMenu!" nzTheme="outline"></span>
+            <span>{{item.descripcionItem}}</span>
+          </a>
           }
-        </ul>
-      </li>
-      } @else {
-      <li nz-menu-item nzMatchRouterExact>
-        <a class="flex items-center" [routerLink]="item.direccionUrl">
-          <span nz-icon [nzType]="item.iconoMenu!" nzTheme="outline"></span>
-          <span>{{item.descripcionItem}}</span>
-        </a>
-        }
-        }
-    </ul>
+          }
+      </ul>
+    </div>
     }
   </nz-sider>
-  <nz-layout>
-    <nz-header>
-      <div class="app-header flex items-center justify-between px-6 bg-white">
-        <span class="header-trigger ml-6" (click)="isCollapsed = !isCollapsed">
-          <span class="trigger text-black " nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
+
+  <nz-layout class="dark:bg-gray-700">
+    <nz-header class="bg-white dark:bg-gray-800">
+      <div class="app-header flex items-center justify-between px-6">
+        <span class="header-trigger ml-6" (click)="switchCollapseSider()">
+          <span class="trigger text-gray-500 dark:text-gray-300" nz-icon
+            [nzType]="this.isSiderCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
         </span>
 
-        <div class="header-right-content mr-6 flex items-center text-gray-500 ">
-          <!-- <div class="h-full mr-4">
-            <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="themeSwitcherList">
-              <span class="text-[24px]" nz-icon nzType="clear" nzTheme="outline"></span>
+        <div class="header-right-content mr-6 flex items-center text-gray-500 dark:text-gray-300">
+          <div class="h-full mr-4">
+            <div class="ant-dropdown-trigger cursor-pointer leading-none" nz-dropdown
+              [nzDropdownMenu]="themeSwitcherList" nzTrigger="click">
+              <span class="material-symbols-outlined">
+                @switch (selectedTheme) {
+                @case ('dark') {
+                dark_mode
+                }
+
+                @case ('light') {
+                light_mode
+                }
+
+                @default {
+                routine
+                }
+                }
+              </span>
             </div>
+            <!-- Dropdown Open by default -->
 
             <nz-dropdown-menu #themeSwitcherList="nzDropdownMenu">
-              <ul nz-menu class="bg-white">
-                <li nz-menu-item 
-                    (click)="switchTheme('dark')" 
-                    class="text-gray-500  hover:bg-inherit"
-                    [nzSelected]="selectedTheme === 'dark'">Tema oscuro</li>
-                <li nz-menu-item 
-                    (click)="switchTheme('light')" 
-                    class="text-gray-500  hover:bg-inherit"
-                    [nzSelected]="selectedTheme === 'light'">Tema claro</li>
-                <li nz-menu-item 
-                    (click)="switchTheme('system')" 
-                    class="text-gray-500  hover:bg-inherit"
-                    [nzSelected]="selectedTheme === 'system'">Según sistema</li>
+              <ul nz-menu class="bg-white dark:bg-gray-700">
+                <li nz-menu-item (click)="switchTheme('system')"
+                  class="text-gray-500  hover:text-gray-950 dark:text-gray-300 dark:hover:text-gray-200 dark:hover:bg-gray-600"
+                  [nzSelected]="selectedTheme === 'system'">
+                  <button class="flex items-center gap-1" (click)="switchTheme('system')">
+                    <span class="material-symbols-outlined">routine</span><span>Sistema</span>
+                  </button>
+                </li>
+                <li nz-menu-item (click)="switchTheme('dark')"
+                  class="text-gray-500  hover:text-gray-950 dark:text-gray-300" [nzSelected]="selectedTheme === 'dark'">
+                  <button class="flex items-center gap-1" (click)="switchTheme('dark')">
+                    <span class="material-symbols-outlined">dark_mode</span><span>Oscuro</span>
+                  </button>
+                </li>
+                <li nz-menu-item
+                  class="text-gray-500 dark:text-gray-300 hover:text-gray-950 dark:hover:text-gray-200 dark:hover:bg-gray-600"
+                  [nzSelected]="selectedTheme === 'light'">
+                  <button class="flex items-center gap-1" (click)="switchTheme('light')">
+                    <span class="material-symbols-outlined">light_mode</span><span>Claro</span>
+                  </button>
+                </li>
               </ul>
             </nz-dropdown-menu>
-          </div> -->
+          </div>
 
           <div class="h-full">
             <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="menu">
@@ -71,9 +103,11 @@
             </div>
 
             <nz-dropdown-menu #menu="nzDropdownMenu">
-              <ul nz-menu class="bg-white">
-                <li class="text-gray-500  hover:bg-inherit" nz-menu-item (click)="onLogout()"><span nz-icon
-                    nzType="poweroff" nzTheme="outline"></span> Cerrar sesión</li>
+              <ul nz-menu class="bg-white dark:bg-gray-700">
+                <li
+                  class="text-gray-500 hover:text-gray-950 dark:text-gray-300 dark:hover:text-gray-200 dark:hover:bg-gray-600"
+                  nz-menu-item (click)="onLogout()"><span nz-icon nzType="poweroff" nzTheme="outline"></span> Cerrar
+                  sesión</li>
               </ul>
             </nz-dropdown-menu>
           </div>

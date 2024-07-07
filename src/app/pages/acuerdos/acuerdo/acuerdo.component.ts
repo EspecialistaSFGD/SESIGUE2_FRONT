@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormsModule, UntypedFormGroup } from '@angular/forms';
+import { Component, OnInit, Signal, ViewContainerRef, inject } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
 import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
@@ -15,8 +15,16 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { AvancesService } from '../../../libs/services/pedidos/avances.service';
-import { HitoAcuerdoModel } from '../../../libs/models/pedido';
+import { AvanceHitoModel, HitoAcuerdoModel } from '../../../libs/models/pedido';
 import { Subject, debounceTime } from 'rxjs';
+import { HitoComponent } from '../../hitos/hito/hito.component';
+import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { AvanceComponent } from '../../avances/avance/avance.component';
+import { ComentarioComponent } from '../../../shared/components/comentario/comentario.component';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
 
 @Component({
   selector: 'app-acuerdo',
@@ -24,6 +32,10 @@ import { Subject, debounceTime } from 'rxjs';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
+    NzFormModule,
+    NzGridModule,
+    NzInputModule,
     PageHeaderComponent,
     NzDescriptionsModule,
     NzTableModule,
@@ -33,6 +45,12 @@ import { Subject, debounceTime } from 'rxjs';
     NzDropDownModule,
     NzIconModule,
     NzRadioModule,
+    HitoComponent,
+    NzModalModule,
+    NzBadgeModule
+  ],
+  providers: [
+
   ],
   templateUrl: './acuerdo.component.html',
   styleUrl: './acuerdo.component.less'
@@ -53,9 +71,10 @@ export class AcuerdoComponent implements OnInit {
   sortFieldAvance: string = 'avanceId';
   sortOrderAvance: string = 'ascend';
   hitoSeleccionadoId: number | null = null; // ID del hito seleccionado
-  hitoSeleccionado: HitoAcuerdoModel | null = null;
+  // hitoSeleccionado: HitoAcuerdoModel | null = null;
   queryParamsChangeEventCnt = 0;
   evidenciaBaseUrl = 'https://sesigue.com/SESIGUE/SD/evidencia/';
+
 
   private updateParamsSubject: Subject<void> = new Subject<void>();
   private updatingParams: boolean = false;
@@ -65,19 +84,20 @@ export class AcuerdoComponent implements OnInit {
   public avancesService = inject(AvancesService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
+  private modal = inject(NzModalService);
+  // private confirmModal = inject(NzModalRef);
+  confirmModal?: NzModalRef; // For testing by now
+  private viewContainerRef = inject(ViewContainerRef);
 
-  constructor() {
+  constructor(
+
+  ) {
     this.id = this.activatedRoute.snapshot.paramMap.get('id');
 
     if (!this.id) {
-      // Maneja la ausencia del ID, por ejemplo, redirigiendo a otra página o mostrando un mensaje de error
-      this.router.navigate(['/panel']); // Redirige a una página de error
-      // O muestra un mensaje de error en el componente
-      console.error('ID no encontrado en la URL');
+      this.router.navigate(['/acuerdos']); // Redirige a una página de error
     } else {
-      // El ID está presente, puedes continuar con tu lógica
       this.acuerdosService.listarAcuerdo(Number(this.id));
-      // this.hitosService.listarHitos(Number(this.id));
     }
 
     this.activatedRoute.queryParams.subscribe((params) => {
@@ -90,7 +110,6 @@ export class AcuerdoComponent implements OnInit {
       }
     });
 
-    // Debounce los cambios de parámetros de la URL
     this.updateParamsSubject.pipe(debounceTime(300)).subscribe(() => {
       this.updateQueryParams();
     });
@@ -101,12 +120,13 @@ export class AcuerdoComponent implements OnInit {
 
   traerHitos({
     acuerdoID = Number(this.id) || null,
+    hitoID = Number(this.hitoSeleccionadoId) || null,
     pageIndex = this.pageIndex,
     pageSize = this.pageSize,
     sortField = this.sortField,
     sortOrder = this.sortOrder
   }: TraerHitosInterface): void {
-    this.hitosService.listarHitos(acuerdoID, pageIndex, pageSize, sortField, sortOrder);
+    this.hitosService.listarHitos(acuerdoID, hitoID, pageIndex, pageSize, sortField, sortOrder);
   }
 
   traerAvances({
@@ -119,12 +139,245 @@ export class AcuerdoComponent implements OnInit {
     this.avancesService.listarAvances(hitoId, pageIndex, pageSize, sortField, sortOrder);
   }
 
-  onHitoSelected(hitoId: number): void {
-    if (hitoId == null) return;
-    this.hitoSeleccionadoId = hitoId;
-    this.traerAvances({ hitoId: Number(hitoId) });
+  onHitoSelected(hito: HitoAcuerdoModel): void {
+    if (hito == null) {
+      this.hitosService.seleccionarHitoById(null);
+
+      return;
+    }
+
+    this.hitoSeleccionadoId = hito.hitoId!;
+    // this.hitoSeleccionado = hito;
+    this.hitosService.seleccionarHitoById(hito.hitoId);
+    this.traerAvances({ hitoId: Number(hito.hitoId) });
+
     this.updateParamsSubject.next();
   }
+
+  onRowClick(event: MouseEvent, hito: HitoAcuerdoModel): void {
+    // Evitar la selección si se hace clic en un botón
+    const target = event.target as HTMLElement;
+
+    if (target.tagName === 'BUTTON' || target.closest('button') || target.tagName === 'A' || target.closest('a')) {
+      return;
+    }
+
+    if (this.hitoSeleccionadoId === hito.hitoId) {
+      return;
+    }
+
+    this.onHitoSelected(hito);
+  }
+
+  onHitoSelectedById(hitoId: number): void {
+    if (hitoId == null) {
+      this.hitosService.seleccionarHitoById(null);
+
+      return;
+    }
+
+    this.hitoSeleccionadoId = hitoId!;
+    this.hitosService.seleccionarHitoById(hitoId);
+    this.traerAvances({ hitoId: Number(hitoId) });
+
+    this.updateParamsSubject.next();
+  }
+
+  onHitoDeselected(): void {
+    this.hitoSeleccionadoId = null;
+    // this.hitoSeleccionado = null;
+    this.hitosService.seleccionarHitoById(null);
+    this.updateParamsSubject.next();
+  }
+
+  onHitoAddEdit(hito: HitoAcuerdoModel | null): void {
+    const title = hito ? `Modificando hito "${hito.hito}"` : 'Registrando nuevo hito';
+    const labelOk = hito ? `Actualizar` : 'Registrar';
+    this.hitosService.seleccionarHitoById(hito?.hitoId);
+
+    const modal = this.modal.create<HitoComponent>({
+      nzTitle: title,
+      nzContent: HitoComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => this.modal.closeAll()
+        },
+        {
+          type: 'primary',
+          label: labelOk,
+          onClick: componentInstance => {
+            return this.hitosService.agregarEditarHito(componentInstance!.hitoForm.value).then((res) => {
+              console.log(res);
+
+              this.onHitoSelectedById(res.data);
+
+              this.modal.closeAll();
+            });
+          },
+          loading: this.hitosService.isEditing(), // Vincular estado de carga
+          disabled: componentInstance => !componentInstance || !componentInstance.hitoForm.valid
+        }]
+    });
+
+    const instance = modal.getContentComponent();
+    modal.afterClose.subscribe(result => {
+      instance.hitoForm.reset();
+    });
+  }
+
+  onHitoAddComentario(hito: HitoAcuerdoModel): void {
+    this.hitosService.seleccionarHitoById(hito?.hitoId);
+
+    const modal = this.modal.create<ComentarioComponent>({
+      nzTitle: `Comentario para el hito "${hito.hito}"`,
+      nzContent: ComentarioComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => this.modal.closeAll()
+        },
+        {
+          type: 'primary',
+          label: 'Comentar',
+          onClick: componentInstance => {
+            return this.hitosService.agregarComentarioHito(componentInstance!.comentarioForm.value).then((res) => {
+              console.log(res);
+              this.modal.closeAll();
+            });
+          },
+          loading: this.hitosService.isEditing(),
+          disabled: componentInstance => !componentInstance || !componentInstance.comentarioForm.valid
+        }]
+    });
+
+    const instance = modal.getContentComponent();
+    modal.afterClose.subscribe(result => {
+      instance.comentarioForm.reset();
+    });
+  }
+
+  onHitoAddComentarioSD(hito: HitoAcuerdoModel): void {
+    this.hitosService.seleccionarHitoById(hito?.hitoId);
+
+    const modal = this.modal.create<ComentarioComponent>({
+      nzTitle: `Comentario de Secretaría Digital para el hito "${hito.hito}"`,
+      nzContent: ComentarioComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => this.modal.closeAll()
+        },
+        {
+          type: 'primary',
+          label: 'Comentar',
+          onClick: componentInstance => {
+            return this.hitosService.agregarComentarioSDHito(componentInstance!.comentarioForm.value).then((res) => {
+              console.log(res);
+              this.modal.closeAll();
+            });
+          },
+          loading: this.hitosService.isEditing(),
+          disabled: componentInstance => !componentInstance || !componentInstance.comentarioForm.valid
+        }]
+    });
+
+    const instance = modal.getContentComponent();
+    modal.afterClose.subscribe(result => {
+      instance.comentarioForm.reset();
+    });
+  }
+
+  onReactivarEstadoHito(hito: HitoAcuerdoModel): void {
+    this.confirmModal = this.modal.confirm({
+      nzTitle: `¿Deseas reactivar el hito: "${hito.hito}"?`,
+      nzContent: 'El hito volverá a estar EN PROCESO.',
+      nzOnOk: () => this.hitosService.reactivarEstadoHito(hito)
+    });
+  }
+
+  onValidarHito(hito: HitoAcuerdoModel): void {
+    this.confirmModal = this.modal.confirm({
+      nzTitle: `¿Deseas validar el hito: "${hito.hito}"?`,
+      nzContent: 'El hito pasará a estar VALIDADO.',
+      nzIconType: 'check-circle',
+      nzOnOk: () => this.hitosService.validarHito(hito)
+    });
+  }
+
+  onValidarAvance(avance: AvanceHitoModel): void {
+    this.confirmModal = this.modal.confirm({
+      nzTitle: `¿Deseas validar el avance: "${avance.avance}"?`,
+      nzContent: 'El avance pasará a estar VALIDADO.',
+      nzIconType: 'check-circle',
+      nzOnOk: () => this.avancesService.validarAvance(avance)
+    });
+  }
+
+  onEliinarHito(hito: HitoAcuerdoModel): void {
+    this.confirmModal = this.modal.confirm({
+      nzTitle: `¿Deseas desestimar el hito: "${hito.hito}"?`,
+      nzContent: 'El hito será desestimado de forma permanente.',
+      nzIconType: 'exclamation-circle',
+      nzOkDanger: true,
+      nzOnOk: () => this.hitosService.eliminarHito(hito)
+    });
+  }
+
+  onAvanceAddEdit(avance: AvanceHitoModel | null): void {
+    const title = avance ? `Modificando avance "${avance.avance}"` : 'Nuevo avance';
+    this.avancesService.seleccionarAvanceById(avance?.avanceId);
+    const labelOk = avance ? `Actualizar` : 'Registrar';
+    // console.log(this.avancesService.avanceSeleccionado());
+
+    const avanceModal = this.modal.create<AvanceComponent>({
+      nzTitle: title,
+      nzContent: AvanceComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      // nzData: hito,
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      // nzOnOk: () => new Promise(resolve => setTimeout(resolve, 1000)),
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => this.modal.closeAll()
+        },
+        {
+          type: 'primary',
+          label: labelOk,
+          onClick: componentInstance => {
+            return this.avancesService.agregarEditarAvance(componentInstance!.avanceForm.value).then((res) => {
+              console.log(res);
+              this.traerAvances({ hitoId: Number(this.hitoSeleccionadoId) });
+              this.modal.closeAll();
+            });
+          },
+          loading: this.avancesService.isEditing(),
+          disabled: componentInstance => !componentInstance || !componentInstance.avanceForm.valid
+        }]
+    });
+    const instance = avanceModal.getContentComponent();
+    //avanceModal.afterOpen.subscribe(() => console.log(instance.hitoForm.value));
+    // Return a result when closed
+    avanceModal.afterClose.subscribe(result => {
+      instance.avanceForm.reset();
+    });
+  }
+
 
   updateQueryParams() {
     this.updatingParams = true;
@@ -152,10 +405,11 @@ export class AcuerdoComponent implements OnInit {
 
     this.traerHitos({
       acuerdoID: Number(this.id),
+      hitoID: Number(this.hitoSeleccionadoId),
       pageIndex,
       pageSize,
       sortField: this.sortField,
-      sortOrder: this.sortOrder
+      sortOrder: this.sortOrder,
     });
   }
 
@@ -184,3 +438,5 @@ export class AcuerdoComponent implements OnInit {
 
   }
 }
+
+
