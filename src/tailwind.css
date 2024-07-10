@@ -187,3 +187,11 @@ nz-sider .ant-menu-inline .ant-menu-submenu {
 .ant-table-tbody>tr.selected-row {
     cursor: default;
 }
+
+.login-container {
+    background: url(../src/assets/images/bg.svg) no-repeat center;
+}
+
+.dark .login-container {
+    background: url(../src/assets/images/bg--dark.svg) no-repeat center;
+}

@@ -18,6 +18,7 @@ interface State {
   menus: MenuModel[] | null | undefined;
   isLoading: boolean;
   isAuthenticated: boolean;
+  selectedTheme: string;
 }
 
 @Injectable({
@@ -36,12 +37,14 @@ export class AuthService {
     menus: null,
     isLoading: false,
     isAuthenticated: false,
+    selectedTheme: localStorage['theme'] || 'system',
   });
 
   public token = computed(() => this.#usuario().token);
   public reFresh = computed(() => this.#usuario().refreshToken);
   public isAuthenticated = computed(() => this.#usuario().isAuthenticated);
   public isLoading = computed(() => this.#usuario().isLoading);
+  public selectedTheme = computed(() => this.#usuario().selectedTheme);
 
   constructor() {
     // effect(() => {
@@ -55,10 +58,35 @@ export class AuthService {
 
 
     // });
+    this.initTheme();
+  }
+
+  initTheme(): void {
+    // console.log(this.selectedTheme());
+
+    if (this.selectedTheme() === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
+
+  switchTheme(theme: string): void {
+    this.#usuario.update((v) => ({ ...v, selectedTheme: theme }));
+
+    if (theme === 'dark') {
+      localStorage['theme'] = 'dark';
+    } else if (theme === 'light') {
+      localStorage['theme'] = 'light';
+    } else {
+      localStorage.removeItem('theme');
+    }
+
+    this.initTheme();
   }
 
   login(user: UsuarioRequestModel): Observable<ResponseModel | null> {
-    debugger;
+    // debugger;
     // Aquí realiza tu llamada HTTP para iniciar sesión
     return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, user).pipe(
       tap((resp: ResponseModel) => {
@@ -274,6 +302,7 @@ export class AuthService {
       menus: null,
       isLoading: false,
       isAuthenticated: false,
+      selectedTheme: localStorage['theme'] || 'system',
     });
   }
 }

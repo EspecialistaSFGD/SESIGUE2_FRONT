@@ -10,6 +10,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AuthService } from '../../libs/services/auth/auth.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     NzInputModule,
     NzCheckboxModule,
     NzIconModule,
+    NzDropDownModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.less'

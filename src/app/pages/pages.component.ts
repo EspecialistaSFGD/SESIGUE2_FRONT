@@ -60,7 +60,7 @@ export class PagesComponent implements OnInit, AfterViewInit {
 
     this.trabajador = (storedTrabajador) ? storedTrabajador : 'Administrador';
 
-    this.initTheme();
+    // this.authService.initTheme();
   }
 
   ngAfterViewInit() {
@@ -68,31 +68,31 @@ export class PagesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.selectedTheme = localStorage['theme'] || 'system';
-    this.initTheme();
+    // this.selectedTheme = localStorage['theme'] || 'system';
+    // this.initTheme();
   }
 
-  initTheme(): void {
-    if (this.selectedTheme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }
+  // initTheme(): void {
+  //   if (this.selectedTheme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  //     document.documentElement.classList.add('dark');
+  //   } else {
+  //     document.documentElement.classList.remove('dark');
+  //   }
+  // }
 
-  switchTheme(theme: string): void {
-    this.selectedTheme = theme;
+  // switchTheme(theme: string): void {
+  //   this.selectedTheme = theme;
 
-    if (theme === 'dark') {
-      localStorage['theme'] = 'dark';
-    } else if (theme === 'light') {
-      localStorage['theme'] = 'light';
-    } else {
-      localStorage.removeItem('theme');
-    }
+  //   if (theme === 'dark') {
+  //     localStorage['theme'] = 'dark';
+  //   } else if (theme === 'light') {
+  //     localStorage['theme'] = 'light';
+  //   } else {
+  //     localStorage.removeItem('theme');
+  //   }
 
-    this.initTheme();
-  }
+  //   this.authService.initTheme();
+  // }
 
   onLogout(): void {
     this.authService.removerLocalStorage();

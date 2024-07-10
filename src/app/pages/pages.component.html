@@ -53,7 +53,7 @@
             <div class="ant-dropdown-trigger cursor-pointer leading-none" nz-dropdown
               [nzDropdownMenu]="themeSwitcherList" nzTrigger="click">
               <span class="material-symbols-outlined">
-                @switch (selectedTheme) {
+                @switch (authService.selectedTheme()) {
                 @case ('dark') {
                 dark_mode
                 }
@@ -72,23 +72,23 @@
 
             <nz-dropdown-menu #themeSwitcherList="nzDropdownMenu">
               <ul nz-menu class="bg-white dark:bg-gray-700">
-                <li nz-menu-item (click)="switchTheme('system')"
+                <li nz-menu-item
                   class="text-gray-500  hover:text-gray-950 dark:text-gray-300 dark:hover:text-gray-200 dark:hover:bg-gray-600"
-                  [nzSelected]="selectedTheme === 'system'">
-                  <button class="flex items-center gap-1" (click)="switchTheme('system')">
+                  [nzSelected]="authService.selectedTheme() === 'system'">
+                  <button class="flex items-center gap-1" (click)="authService.switchTheme('system')">
                     <span class="material-symbols-outlined">routine</span><span>Sistema</span>
                   </button>
                 </li>
-                <li nz-menu-item (click)="switchTheme('dark')"
-                  class="text-gray-500  hover:text-gray-950 dark:text-gray-300" [nzSelected]="selectedTheme === 'dark'">
-                  <button class="flex items-center gap-1" (click)="switchTheme('dark')">
+                <li nz-menu-item class="text-gray-500  hover:text-gray-950 dark:text-gray-300"
+                  [nzSelected]="authService.selectedTheme() === 'dark'">
+                  <button class="flex items-center gap-1" (click)="authService.switchTheme('dark')">
                     <span class="material-symbols-outlined">dark_mode</span><span>Oscuro</span>
                   </button>
                 </li>
                 <li nz-menu-item
                   class="text-gray-500 dark:text-gray-300 hover:text-gray-950 dark:hover:text-gray-200 dark:hover:bg-gray-600"
-                  [nzSelected]="selectedTheme === 'light'">
-                  <button class="flex items-center gap-1" (click)="switchTheme('light')">
+                  [nzSelected]="authService.selectedTheme() === 'light'">
+                  <button class="flex items-center gap-1" (click)="authService.switchTheme('light')">
                     <span class="material-symbols-outlined">light_mode</span><span>Claro</span>
                   </button>
                 </li>
