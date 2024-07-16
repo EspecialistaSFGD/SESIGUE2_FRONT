@@ -9,7 +9,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
 import { AvancesService } from '../../../libs/services/pedidos/avances.service';
-import { SectoresStore } from '../../../libs/stores/shared/sectores.store';
+import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
 import { SelectModel } from '../../../libs/models/shared/select.model';
 
 @Component({

@@ -9,14 +9,16 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AuthService } from '../../libs/services/auth/auth.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { ThemeSwitcherComponent } from '../../libs/shared/components/theme-switcher/theme-switcher.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     FormsModule,
     ReactiveFormsModule,
     NzLayoutModule,
@@ -26,6 +28,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzCheckboxModule,
     NzIconModule,
     NzDropDownModule,
+    ThemeSwitcherComponent
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.less'

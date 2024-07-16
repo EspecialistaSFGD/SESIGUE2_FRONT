@@ -50,56 +50,18 @@
 
         <div class="header-right-content mr-6 flex items-center text-gray-500 dark:text-gray-300">
           <div class="h-full mr-4">
-            <div class="ant-dropdown-trigger cursor-pointer leading-none" nz-dropdown
-              [nzDropdownMenu]="themeSwitcherList" nzTrigger="click">
-              <span class="material-symbols-outlined">
-                @switch (authService.selectedTheme()) {
-                @case ('dark') {
-                dark_mode
-                }
-
-                @case ('light') {
-                light_mode
-                }
-
-                @default {
-                routine
-                }
-                }
-              </span>
-            </div>
-            <!-- Dropdown Open by default -->
-
-            <nz-dropdown-menu #themeSwitcherList="nzDropdownMenu">
-              <ul nz-menu class="bg-white dark:bg-gray-700">
-                <li nz-menu-item
-                  class="text-gray-500  hover:text-gray-950 dark:text-gray-300 dark:hover:text-gray-200 dark:hover:bg-gray-600"
-                  [nzSelected]="authService.selectedTheme() === 'system'">
-                  <button class="flex items-center gap-1" (click)="authService.switchTheme('system')">
-                    <span class="material-symbols-outlined">routine</span><span>Sistema</span>
-                  </button>
-                </li>
-                <li nz-menu-item class="text-gray-500  hover:text-gray-950 dark:text-gray-300"
-                  [nzSelected]="authService.selectedTheme() === 'dark'">
-                  <button class="flex items-center gap-1" (click)="authService.switchTheme('dark')">
-                    <span class="material-symbols-outlined">dark_mode</span><span>Oscuro</span>
-                  </button>
-                </li>
-                <li nz-menu-item
-                  class="text-gray-500 dark:text-gray-300 hover:text-gray-950 dark:hover:text-gray-200 dark:hover:bg-gray-600"
-                  [nzSelected]="authService.selectedTheme() === 'light'">
-                  <button class="flex items-center gap-1" (click)="authService.switchTheme('light')">
-                    <span class="material-symbols-outlined">light_mode</span><span>Claro</span>
-                  </button>
-                </li>
-              </ul>
-            </nz-dropdown-menu>
+            <app-theme-switcher [isAbsolute]="false" [isRounded]="false"
+              [hasInitialDarkBackground]="false"></app-theme-switcher>
           </div>
 
           <div class="h-full">
-            <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="menu">
-              <nz-avatar nzSize="small" nzIcon="user"></nz-avatar>
-              <span class="ml-1"><span class="anticon">{{trabajador}}</span></span>
+            <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
+              <nz-avatar nzSize="small" [nzText]="descripcionTipo" class="bg-blue-700 dark:bg-neutral-700"></nz-avatar>
+              <span class="ml-1">
+                {{ trabajador }} {{ (descripcionSector != undefined && descripcionSector != '') ?
+                ' - ' + descripcionSector :'' }}
+              </span>
+
             </div>
 
             <nz-dropdown-menu #menu="nzDropdownMenu">

@@ -11,13 +11,13 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 // import { RequerimientoModel } from '../../../libs/models/requerimiento/requerimiento.model';
-import { EstadoComponent } from '../../../shared/components/estado/estado.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { TiposService } from '../../../libs/services/shared/tipos.service';
 import { SelectModel } from '../../../libs/models/shared/select.model';
 import { RouterModule } from '@angular/router';
-import { PageHeaderFullComponent } from '../../../shared/layout/page-header-full/page-header-full.component';
+import { PageHeaderFullComponent } from '../../../libs/shared/layout/page-header-full/page-header-full.component';
+import { EstadoComponent } from '../../../libs/shared/components/estado/estado.component';
 
 @Component({
   selector: 'app-inicio',

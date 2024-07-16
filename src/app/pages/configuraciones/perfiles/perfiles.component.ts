@@ -1,5 +1,4 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -16,6 +15,7 @@ import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { Subject, debounceTime } from 'rxjs';
 import { TraerPerfilesInterface } from '../../../libs/interfaces/configuracion/perfil.interface';
 import { PerfilesService } from '../../../libs/services/configuraciones/perfiles.service';
+import { PageHeaderComponent } from '../../../libs/shared/layout/page-header/page-header.component';
 
 @Component({
   selector: 'app-usuarios',

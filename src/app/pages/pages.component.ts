@@ -10,6 +10,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { filter, map } from 'rxjs';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { ThemeSwitcherComponent } from '../libs/shared/components/theme-switcher/theme-switcher.component';
 
 
 @Component({
@@ -25,6 +26,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzIconModule,
     NzAvatarModule,
     NzDropDownModule,
+    ThemeSwitcherComponent
   ],
   templateUrl: './pages.component.html',
   styleUrl: './pages.component.less'
@@ -42,6 +44,8 @@ export class PagesComponent implements OnInit, AfterViewInit {
   menuItems: MenuModel[] = [];
   pageTitle: string | undefined;
   trabajador: string | undefined;
+  descripcionTipo: string | undefined;
+  descripcionSector: string | undefined;
   selectedTheme: string = localStorage['theme'] || 'system';
 
   constructor() {
@@ -59,6 +63,14 @@ export class PagesComponent implements OnInit, AfterViewInit {
     const storedTrabajador = localStorage.getItem('trabajador');
 
     this.trabajador = (storedTrabajador) ? storedTrabajador : 'Administrador';
+
+    const storedDescripcionTipo = localStorage.getItem('descripcionTipo');
+
+    this.descripcionTipo = (storedDescripcionTipo) ? storedDescripcionTipo : '';
+
+    const storedDescripcionSector = localStorage.getItem('descripcionSector');
+
+    this.descripcionSector = (storedDescripcionSector) ? storedDescripcionSector : undefined;
 
     // this.authService.initTheme();
   }
@@ -97,7 +109,7 @@ export class PagesComponent implements OnInit, AfterViewInit {
   onLogout(): void {
     this.authService.removerLocalStorage();
 
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth']);
   }
 
   getDataRoute() {

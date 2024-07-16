@@ -1,1 +1,42 @@
-<router-outlet></router-outlet>
+<nz-layout class="bg-blue-700 dark:bg-neutral-800 auth-wrapper px-8 lg:px-0">
+    <nz-header class="bg-transparent h-20 mb-8 px-0">
+        <div class="flex justify-between items-center m-auto h-full max-w-2xl">
+            <div class="logo">
+                <img src="./assets/images/logo--big--colored--old--on-dark.svg" alt="" class="h-12 m-auto text-center"
+                    srcset="">
+            </div>
+            <app-theme-switcher [isAbsolute]="false" [isRounded]="false" [hasInitialDarkBackground]="true" />
+        </div>
+    </nz-header>
+    <nz-content>
+        <nz-card class="max-w-2xl w-full mx-auto shadow rounded-xl p-6">
+            <header class="mb-8">
+                <h1 class="text-2xl">
+                    {{ (currentAction == 'login') ? 'Bienvenido de nuevo' : 'Registro de usuario' }}
+                </h1>
+                <p>
+                    {{ (currentAction == 'login') ? 'Ingrese sus credenciales para ingresar al sistema' :
+                    'Ingrese
+                    los campos necesarios para registrarse' }}
+                </p>
+            </header>
+            <nz-tabset nzLinkRouter>
+                <nz-tab>
+                    <a *nzTabLink nz-tab-link [routerLink]="['.']" [queryParams]="{ action: 'login' }"
+                        queryParamsHandling="merge">
+                        Iniciar sesión
+                    </a>
+                    <app-login></app-login>
+                </nz-tab>
+                <nz-tab>
+                    <a *nzTabLink nz-tab-link [routerLink]="['.']" [queryParams]="{ action: 'register' }"
+                        queryParamsHandling="merge">
+                        Registrarse
+                    </a>
+                    <app-register></app-register>
+                </nz-tab>
+            </nz-tabset>
+        </nz-card>
+    </nz-content>
+    <nz-footer class="bg-blue-700 dark:bg-neutral-800 text-white text-center">2024 &copy; SeSigue v2</nz-footer>
+</nz-layout>

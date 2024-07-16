@@ -11,7 +11,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { UtilesService } from '../../../libs/services/shared/utiles.service';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
-import { SectoresStore } from '../../../libs/stores/shared/sectores.store';
+import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
 import { SelectModel } from '../../../libs/models/shared/select.model';
 import { differenceInCalendarDays } from 'date-fns';
 

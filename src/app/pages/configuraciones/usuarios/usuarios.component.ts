@@ -1,5 +1,4 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -18,7 +17,8 @@ import { Subject, debounceTime } from 'rxjs';
 import { TraerUsuariosInterface } from '../../../libs/interfaces/configuracion/usuario.interface';
 import { UsuariosService } from '../../../libs/services/configuraciones/usuarios.service';
 import { PerfilesService } from '../../../libs/services/configuraciones/perfiles.service';
-import { PerfilesStore } from '../../../libs/stores/shared/perfiles.store';
+import { PerfilesStore } from '../../../libs/shared/stores/perfiles.store';
+import { PageHeaderComponent } from '../../../libs/shared/layout/page-header/page-header.component';
 
 @Component({
   selector: 'app-usuarios',

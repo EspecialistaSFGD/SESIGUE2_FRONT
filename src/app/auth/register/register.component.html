@@ -1,0 +1,188 @@
+<form nz-form [formGroup]="registerForm" [nzLayout]="'vertical'">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null" nzFor="dni" nzRequired>Nro. DNI</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredDniTpl">
+                    <nz-input-group [nzSuffix]="suffixDni" class="">
+                        <input id="dni" nz-input formControlName="dni" placeholder="Ingrese su dni" #dni
+                            (input)="onDniChange($event)" onlyNumbers />
+                        <ng-template #requiredDniTpl let-control>
+                            @if (control.errors?.['required']) {
+                            Campo requerido
+                            }
+                            @if (control.errors?.['pattern']) {
+                            Debe tener 8 números
+                            }
+                        </ng-template>
+                        <ng-template #suffixDni>
+                            <span nz-icon [nzType]="this.authService.isLoading()?'loading':'search'"></span>
+                        </ng-template>
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="16" nzLg="16" nzXl="16">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null" nzFor="nombre" nzRequired>Nombre completo</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
+                    <input id="nombre" nz-input formControlName="nombre" placeholder="Ingrese su nombre" #nombre
+                        class="" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null" nzFor="correo" nzRequired>Correo electrónico</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredMailTpl">
+                    <input type="text" id="correo" nz-input formControlName="correo" placeholder="Ingrese su correo"
+                        #correo />
+                    <ng-template #requiredMailTpl let-control>
+                        @if (control.errors?.['required']) {
+                        Campo requerido
+                        }
+                        @if (control.errors?.['email']) {
+                        Ingrese un correo válido
+                        }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null" nzFor="clave" nzRequired>Contraseña</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredClaveTpl">
+                    <nz-input-group [nzSuffix]="suffixClave" class="">
+                        <input [type]="passwordVisible ? 'text' : 'password'" id="clave" nz-input
+                            formControlName="clave" placeholder="Ingrese su contraseña" #clave />
+                    </nz-input-group>
+                    <ng-template #suffixClave>
+                        <i class="cursor-pointer" nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                            (click)="passwordVisible = !passwordVisible"></i>
+                    </ng-template>
+                    <ng-template #requiredClaveTpl let-control>
+                        @if (control.errors?.['required']) {
+                        Campo requerido
+                        }
+                        @if (control.errors?.['pattern']) {
+                        6 dígitos alfanuméricos
+                        }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null" nzFor="telefono" nzRequired>Teléfono</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredTelefonoTpl">
+                    <!-- <input id="telefono" nz-input formControlName="telefono" placeholder="Ingrese su telefono" #telefono
+                        (input)="onTelefonoChange($event)" /> -->
+                    <input id="telefono" nz-input formControlName="telefono" placeholder="Ingrese su telefono"
+                        onlyNumbers />
+
+                    <ng-template #requiredTelefonoTpl let-control>
+                        @if (control.errors?.['required']) {
+                        Campo requerido
+                        }
+                        @if (control.errors?.['pattern']) {
+                        Ingrese sólo números
+                        }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-4">
+                <nz-form-label [nzSpan]="null" nzRequired>Tipo</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
+                    <nz-select nzPlaceHolder="Seleccione" id="responsable" #responsable formControlName="responsable"
+                        (ngModelChange)="onResponsableChange($event)" [compareWith]="compareFn">
+                        <nz-option *ngFor="let tEnt of this.sectoresStore.tiposEntidades()" [nzLabel]="tEnt.label!"
+                            [nzValue]="tEnt"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        @if(registerForm.get('responsable')?.value?.label == 'GN') {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-4">
+                <nz-form-label [nzSpan]="null" nzRequired>Sector</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
+                    <nz-select [nzMaxTagCount]="3" id="sector" nzPlaceHolder="Seleccione" #sector
+                        formControlName="sector" [compareWith]="compareFn" nzAllowClear
+                        (ngModelChange)="onSectorChange($event)">
+                        <nz-option *ngFor="let sec of this.sectoresStore.sectores()" [nzLabel]="sec.label!"
+                            [nzValue]="sec"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+
+        @if(registerForm.get('responsable')?.value?.label == 'GR/GL') {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-4">
+                <nz-form-label [nzSpan]="null" nzRequired>Departamento</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
+                    <nz-select id="dep" class="w-full" #dep formControlName="dep" nzPlaceHolder="Todos" nzShowSearch
+                        [compareWith]="compareFn" nzAllowClear (ngModelChange)="onDepChange($event)">
+                        <nz-option *ngFor="let ubg of this.ubigeosStore.departamentos()" [nzValue]="ubg"
+                            [nzLabel]="ubg.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+
+        @if(registerForm.get('dep')?.value != null) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null">Provincia</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select class="w-full" #prov id="prov" formControlName="prov" nzPlaceHolder="Todas" nzShowSearch
+                        [compareWith]="compareFn" nzAllowClear (ngModelChange)="onProvChange($event)">
+                        <nz-option *ngFor="let prov of this.ubigeosStore.provincias()" [nzValue]="prov"
+                            [nzLabel]="prov.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+    </div>
+
+    @if( registerForm.get('prov')?.value != null || registerForm.get('sector')?.value != null) {
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null">Entidad</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select class="w-full" #entidad id="entidad" formControlName="entidad" nzPlaceHolder="Seleccione"
+                        nzShowSearch [compareWith]="compareFn" nzAllowClear (ngModelChange)="onEntidadChange($event)">
+                        <!-- <nz-option *ngFor="let prov of this.ubigeosStore.provincias()" [nzValue]="prov"
+                                        [nzLabel]="prov.label!">
+                                    </nz-option> -->
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    }
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col>
+            <button [nzLoading]="isLoading" [disabled]="!registerForm.valid" style="margin-bottom: 0;" nz-button
+                class="" [nzType]="'primary'" (click)="onRegister()">Registrar</button>
+        </div>
+    </div>
+</form>

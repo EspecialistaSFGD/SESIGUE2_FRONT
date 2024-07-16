@@ -188,10 +188,14 @@ nz-sider .ant-menu-inline .ant-menu-submenu {
     cursor: default;
 }
 
-.login-container {
-    background: url(../src/assets/images/bg.svg) no-repeat center;
+.auth .ant-tabs-content-holder {
+    @apply pt-1;
 }
 
-.dark .login-container {
-    background: url(../src/assets/images/bg--dark.svg) no-repeat center;
+/* .auth-wrapper {
+    background-image: url(../src/assets/images/bg.svg) !important;
 }
+
+.dark .auth-wrapper {
+    background-image: url(../src/assets/images/bg--dark.svg) !important;
+} */

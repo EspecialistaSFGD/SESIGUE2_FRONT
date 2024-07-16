@@ -2,7 +2,6 @@ import { Component, OnInit, Signal, inject, signal } from '@angular/core';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
-import { PageHeaderComponent } from '../../shared/layout/page-header/page-header.component';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -15,13 +14,14 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { SelectModel } from '../../libs/models/shared/select.model';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
-import { EspaciosStore } from '../../libs/stores/shared/espacios.store';
-import { SectoresStore } from '../../libs/stores/shared/sectores.store';
-import { UbigeosStore } from '../../libs/stores/shared/ubigeos.store';
+import { EspaciosStore } from '../../libs/shared/stores/espacios.store';
+import { SectoresStore } from '../../libs/shared/stores/sectores.store';
+import { UbigeosStore } from '../../libs/shared/stores/ubigeos.store';
 import { TraerPedidosInterface } from '../../libs/interfaces/pedido/pedido.interface';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { PageHeaderComponent } from '../../libs/shared/layout/page-header/page-header.component';
 
 @Component({
   selector: 'app-pedidos',
@@ -49,8 +49,8 @@ import { Subject } from 'rxjs';
 export class PedidosComponent implements OnInit {
   searchForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
-  entidadSeleccionada: SelectModel = { value: 1, label: 'GOBIERNO REGIONAL DE LORETO' };
-  title: string = `Lista de pedidos de ${this.entidadSeleccionada.label}`;
+  // entidadSeleccionada: SelectModel = { value: 1, label: 'GOBIERNO REGIONAL DE LORETO' };
+  title: string = `Lista de pedidos`;
 
   pageIndex: number = 1;
   pageSize: number = 10;

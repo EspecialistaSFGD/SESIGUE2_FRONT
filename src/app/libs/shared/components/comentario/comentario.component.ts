@@ -4,8 +4,7 @@ import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup,
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { HitosService } from '../../../libs/services/pedidos/hitos.service';
-import { AvancesService } from '../../../libs/services/pedidos/avances.service';
+import { HitosService } from '../../../services/pedidos/hitos.service';
 
 @Component({
   selector: 'app-comentario',

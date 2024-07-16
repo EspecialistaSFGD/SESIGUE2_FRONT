@@ -9,17 +9,32 @@ import { Token } from '../../models/auth/token.model';
 import { parseISO } from 'date-fns';
 import { ResponseModel } from '../../models/shared/response.model';
 import { MenuModel } from '../../models/shared/menu.model';
+import { PermisoModel } from '../../models/auth/permiso.model';
 
 interface State {
   usuario: string | null | undefined;
   token: string | null | undefined;
   refreshToken: string | null | undefined;
   perfil: string | null | undefined;
-  menus: MenuModel[] | null | undefined;
   isLoading: boolean;
   isAuthenticated: boolean;
   selectedTheme: string;
 }
+
+const DEFAULT_PERMISOS: PermisoModel = {
+  puede_agregar_hito: false,
+  puede_editar_hito: false,
+  puede_eliminar_hito: false,
+  puede_validar_hito: false,
+  puede_desestimar_hito: false,
+  puede_comentar_hito: false,
+  puede_agregar_avance: false,
+  puede_editar_avance: false,
+  puede_eliminar_avance: false,
+  puede_validar_avance: false,
+  puede_desestimar_avance: false,
+  puede_comentar_avance: false,
+};
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +49,6 @@ export class AuthService {
     token: null,
     refreshToken: null,
     perfil: null,
-    menus: null,
     isLoading: false,
     isAuthenticated: false,
     selectedTheme: localStorage['theme'] || 'system',
@@ -86,20 +100,19 @@ export class AuthService {
   }
 
   login(user: UsuarioRequestModel): Observable<ResponseModel | null> {
-    // debugger;
-    // Aquí realiza tu llamada HTTP para iniciar sesión
     return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, user).pipe(
       tap((resp: ResponseModel) => {
         if (resp.success && resp.data != null) {
           if (resp.data.menus != null) {
             const menusTransformados = this.transformarMenuParaNgZorro(resp.data.menus);
-            resp.data.menus = menusTransformados;
+            resp.data.menus = menusTransformados.menusTransformados;
+            resp.data.permisos = menusTransformados.permisos;
 
             localStorage.setItem('menus', JSON.stringify(resp.data.menus));
+            localStorage.setItem('permisos', JSON.stringify(resp.data.permisos));
 
             this.#usuario.update((v) => ({
               ...v,
-              menus: resp.data.menus,
               isAuthenticated: true,
             }));
           }
@@ -114,6 +127,14 @@ export class AuthService {
 
           if (resp.data.codigoUsuario != null && resp.data.codigoUsuario != '') {
             localStorage.setItem('codigoUsuario', resp.data.codigoUsuario);
+          }
+
+          if (resp.data.descripcionTipo != null && resp.data.descripcionTipo != '') {
+            localStorage.setItem('descripcionTipo', resp.data.descripcionTipo);
+          }
+
+          if (resp.data.descripcionSector != null && resp.data.descripcionSector != '') {
+            localStorage.setItem('descripcionSector', resp.data.descripcionSector);
           }
 
           if (localStorage.getItem('isSiderCollapsed') == null) localStorage.setItem('isSiderCollapsed', 'true');
@@ -139,19 +160,71 @@ export class AuthService {
 
   transformarMenuParaNgZorro(menusApi: MenuModel[]) {
     const menusPrincipales = menusApi.filter(menu => menu.parentMenu === 0);
+    const permisos: PermisoModel = { ...DEFAULT_PERMISOS };
+
     const menusTransformados = menusPrincipales.map(menuPrincipal => {
       const subMenus = menusApi.filter(subMenu => subMenu.parentMenu === menuPrincipal.codigoMenu);
+
+      // Procesar los botones del menú principal
+      if (menuPrincipal.botones && menuPrincipal.botones.length > 0) {
+        menuPrincipal.botones.forEach(boton => {
+          switch (boton.descripcionBoton) {
+            case 'Agregar Hito':
+              permisos.puede_agregar_hito = true;
+              break;
+            case 'Editar Hito':
+              permisos.puede_editar_hito = true;
+              break;
+            case 'Eliminar Hito':
+              permisos.puede_eliminar_hito = true;
+              break;
+            case 'Validar Hito':
+              permisos.puede_validar_hito = true;
+              break;
+            case 'Desestimar Hito':
+              permisos.puede_desestimar_hito = true;
+              break;
+            case 'Comentar Hito':
+              permisos.puede_comentar_hito = true;
+              break;
+            case 'Agregar Avance':
+              permisos.puede_agregar_avance = true;
+              break;
+            case 'Editar Avance':
+              permisos.puede_editar_avance = true;
+              break;
+            case 'Eliminar Avance':
+              permisos.puede_eliminar_avance = true;
+              break;
+            case 'Validar Avance':
+              permisos.puede_validar_avance = true;
+              break;
+            case 'Desestimar Avance':
+              permisos.puede_desestimar_avance = true;
+              break;
+            case 'Comentar Avance':
+              permisos.puede_comentar_avance = true;
+              break;
+            default:
+              console.warn(`Descripción de botón no reconocida: ${boton.descripcionBoton}`);
+              break;
+          }
+        });
+      }
+
       return {
         ...menuPrincipal,
         children: subMenus.map(subMenu => ({
           ...subMenu,
-          // Aquí puedes añadir más propiedades o transformaciones si es necesario
-        }))
+          botones: undefined // Eliminar la propiedad botones del submenú
+        })),
+        botones: undefined // Eliminar la propiedad botones del menú principal
       };
     });
 
-    return menusTransformados;
+    return { menusTransformados, permisos };
   }
+
 
   obtenerPerfil(): Observable<ResponseModel | null> {
     return this.http.get<ResponseModel>(`${environment.api}/Login/ObtenerPerfil`)
@@ -188,7 +261,7 @@ export class AuthService {
       .pipe(
         tap((resp: any) => {
           this.removerLocalStorage();
-          this.router.navigateByUrl('/login');
+          this.router.navigateByUrl('/auth/login');
         })
       );
   }
@@ -293,16 +366,19 @@ export class AuthService {
     localStorage.removeItem('menus');
     localStorage.removeItem('codigoUsuario');
     localStorage.removeItem('trabajador');
+    localStorage.removeItem('descripcionTipo');
+    localStorage.removeItem('descripcionSector');
+    localStorage.removeItem('permisos');
 
     this.#usuario.set({
       usuario: null,
       token: null,
       refreshToken: null,
       perfil: null,
-      menus: null,
       isLoading: false,
       isAuthenticated: false,
       selectedTheme: localStorage['theme'] || 'system',
     });
   }
 }
+

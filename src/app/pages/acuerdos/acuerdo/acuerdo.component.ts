@@ -1,6 +1,5 @@
 import { Component, OnInit, Signal, ViewContainerRef, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
-import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,8 +22,12 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { AvanceComponent } from '../../avances/avance/avance.component';
-import { ComentarioComponent } from '../../../shared/components/comentario/comentario.component';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { PageHeaderComponent } from '../../../libs/shared/layout/page-header/page-header.component';
+import { ComentarioComponent } from '../../../libs/shared/components/comentario/comentario.component';
+import { AuthService } from '../../../libs/services/auth/auth.service';
+import { AccionModel } from '../../../libs/models/auth/accion.model';
+import { PermisoModel } from '../../../libs/models/auth/permiso.model';
 
 @Component({
   selector: 'app-acuerdo',
@@ -85,9 +88,12 @@ export class AcuerdoComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private modal = inject(NzModalService);
+
   // private confirmModal = inject(NzModalRef);
   confirmModal?: NzModalRef; // For testing by now
   private viewContainerRef = inject(ViewContainerRef);
+  permiso: PermisoModel | null | undefined = null;
+  storedPermiso = localStorage.getItem('permisos');
 
   constructor(
 
@@ -98,6 +104,15 @@ export class AcuerdoComponent implements OnInit {
       this.router.navigate(['/acuerdos']); // Redirige a una página de error
     } else {
       this.acuerdosService.listarAcuerdo(Number(this.id));
+
+      try {
+        this.permiso = this.storedPermiso ? JSON.parse(this.storedPermiso) : {};
+      } catch (e) {
+        console.error('Error parsing JSON from localStorage', e);
+        this.permiso = null;
+      }
+
+      console.log('Permiso:', this.permiso);
     }
 
     this.activatedRoute.queryParams.subscribe((params) => {
@@ -116,6 +131,7 @@ export class AcuerdoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
   }
 
   traerHitos({
