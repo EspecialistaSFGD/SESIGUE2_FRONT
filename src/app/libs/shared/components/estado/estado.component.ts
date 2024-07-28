@@ -18,8 +18,16 @@ export class EstadoComponent implements OnInit {
 
   public estado = computed(() => {
     switch (this.title) {
-      case 'Pendiente':
+      case 'PENDIENTE':
         return 'warning';
+      case 'CULMINADO':
+        return 'success';
+      case 'Activo':
+        return 'success';
+      case 'EN PROCESO':
+        return 'processing';
+      case 'DESESTIMADO':
+        return 'error';
       default:
         return 'default';
     }

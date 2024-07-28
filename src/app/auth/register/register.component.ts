@@ -15,8 +15,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SectoresStore } from '../../libs/shared/stores/sectores.store';
 import { UbigeosStore } from '../../libs/shared/stores/ubigeos.store';
 import { ThemeSwitcherComponent } from '../../libs/shared/components/theme-switcher/theme-switcher.component';
-import { NumericPipe } from '../../libs/shared/pipes/numeric.pipe';
 import { OnlyNumbersDirective } from '../../libs/shared/directives/only-numbers.directive';
+import { EntidadesStore } from '../../libs/shared/stores/entidades.store';
 
 const dniValidPattern = /^\d{8}$/;
 const claveValidPattern = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\~-]{6,}$/;
@@ -52,6 +52,7 @@ export class RegisterComponent {
   sectoresStore = inject(SectoresStore);
   ubigeosStore = inject(UbigeosStore);
   authService = inject(AuthService);
+  entidadesStore = inject(EntidadesStore);
   // numericPipe = inject(NumericPipe);
 
   registerForm!: UntypedFormGroup;
@@ -62,7 +63,7 @@ export class RegisterComponent {
   isLoading: boolean = false;
 
   constructor() {
-    this.onRegisterForm();
+    this.onCreateRegisterForm();
   }
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
@@ -87,7 +88,19 @@ export class RegisterComponent {
       }
 
       if (value) {
-        this.executeCuiListing(value);
+        this.authService.verificarDisponibilidadDni(value).subscribe({
+          next: (v) => {
+            if (!v?.success) {
+              this.registerForm.get('dni')?.setErrors({ dniNoDisponible: true });
+            } else {
+              this.registerForm.get('dni')?.setErrors(null);
+              this.executeCuiListing(value);
+            }
+          },
+          error: (e) => {
+            console.error(e);
+          },
+        });
       }
     }, 500);
   }
@@ -114,10 +127,14 @@ export class RegisterComponent {
 
   }
 
-  onResponsableChange(event: SelectModel): void {
+  onTipoChange(event: SelectModel): void {
     const sectorControl = this.registerForm.get('sector');
     const depControl = this.registerForm.get('dep');
     const provControl = this.registerForm.get('prov');
+    const perfilControl = this.registerForm.get('perfil');
+    const entidadControl = this.registerForm.get('entidad');
+    perfilControl?.reset();
+    entidadControl?.reset();
 
     if (event === null) return;
 
@@ -138,45 +155,79 @@ export class RegisterComponent {
   }
 
   onSectorChange(event: SelectModel): void {
-    if (event === null) return;
     const entidadControl = this.registerForm.get('entidad');
     entidadControl?.reset();
+
+    if (event === null) return;
+
+    this.entidadesStore.listarEntidades(0, 1, Number(event.value));
+
   }
 
   onDepChange(value: SelectModel): void {
     const provControl = this.registerForm.get('prov');
+    const entidadControl = this.registerForm.get('entidad');
+    const perfilControl = this.registerForm.get('perfil');
 
     provControl?.reset();
+    entidadControl?.reset();
+    perfilControl?.reset();
 
-    // this.depSeleccionado = value;
+    if (value == null) return;
 
-    if (value != null) {
-      this.ubigeosStore.listarProvincias(Number(value.value));
-
-      // if (this.provSeleccionada != null) {
-      //   this.provSeleccionada = null;
-      // }
-    }
+    this.ubigeosStore.listarProvincias(Number(value.value));
+    this, this.entidadesStore.listarEntidades(0, 2, 0, Number(value.value));
   }
 
   onProvChange(value: SelectModel): void {
-    if (value == null) return;
-
     const entidadControl = this.registerForm.get('entidad');
     entidadControl?.reset();
+
+    if (value == null) return;
+
+    this.entidadesStore.listarEntidades(0, 2, 0, Number(value.value));
   }
 
-  onEntidadChange(event: SelectModel): void { }
+  onEntidadChange(event: SelectModel): void {
+    const perfilControl = this.registerForm.get('perfil');
+    perfilControl?.reset();
 
-  onRegister(): void { }
+    if (event == null) return;
 
-  onRegisterForm(): void {
+    this.entidadesStore.listarPerfiles(Number(event.value));
+  }
+
+  onPerfilChange(event: SelectModel): void { }
+
+  onRegister(): void {
+    this.authService.registrarUsuario(this.registerForm.value).subscribe({
+
+
+      next: (v) => {
+        if (v?.success) {
+          if (v.data != 0) {
+            this.router.navigate(['/auth'], { queryParams: { action: 'login' } });
+          }
+        }
+
+      },
+      error: (e) => {
+        console.error(e);
+        // this.msg.error(e.error.message);
+      },
+
+    });
+
+  }
+
+  onCreateRegisterForm(): void {
     this.registerForm = this.fb.group({
-      responsable: [null, [Validators.required]],
+      tipo: [null, [Validators.required]],
       dep: [null],
       prov: [null],
-      entidad: [null],
+      entidad: [null, [Validators.required]],
       sector: [null],
+      perfil: [null, [Validators.required]],
       nombre: [null, [Validators.required]],
       dni: [null, [Validators.required, Validators.pattern(/^\d{8}$/)]],
       correo: [null, [Validators.required, Validators.email]],

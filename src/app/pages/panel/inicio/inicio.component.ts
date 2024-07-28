@@ -13,7 +13,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 // import { RequerimientoModel } from '../../../libs/models/requerimiento/requerimiento.model';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
-import { TiposService } from '../../../libs/services/shared/tipos.service';
+import { TiposService } from '../../../libs/shared/services/tipos.service';
 import { SelectModel } from '../../../libs/models/shared/select.model';
 import { RouterModule } from '@angular/router';
 import { PageHeaderFullComponent } from '../../../libs/shared/layout/page-header-full/page-header-full.component';

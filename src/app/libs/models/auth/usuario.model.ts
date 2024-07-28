@@ -1,17 +1,44 @@
 import { MenuModel } from "../shared/menu.model";
+import { SelectModel } from "../shared/select.model";
 import { Token } from "./token.model";
 
 export class UsuarioModel {
     constructor(
         public nombreUsuario?: string,
         public codigoUsuario?: string,
-        public nombreTrabajador?: string,
-        public perfil?: string,
+        public clave?: string,
+        public correo?: string,
+        public nombre?: string,
+        public dni?: string,
+        public entidad?: SelectModel,
+        public perfil?: SelectModel,
+        public tipo?: SelectModel,
+        public sector?: SelectModel,
+        public dep?: SelectModel,
+        public prov?: SelectModel,
         public token?: Token,
         public refreshToken?: Token,
         public menus?: MenuModel[],
     ) { }
 }
+
+export interface UsuarioRequestModel {
+    codigoPerfil: number;
+    tipo: number;
+    sector: number;
+    codigoDepartamento: string;
+    codigoProvincia: string;
+    entidad: number;
+    codigoUsuario: number;
+    nombreUsuario: string;
+    contrasena: string;
+    correoNotificacion: string;
+    nombresPersona: string;
+    tipoDocumento: number;
+    numeroDocumento: string;
+    esActivo: boolean;
+}
+
 
 export class UsuarioResponseModel {
     constructor(
@@ -31,9 +58,17 @@ export class UsuarioResponseModel {
     ) { }
 }
 
-export class UsuarioRequestModel {
+export class AuthLoginModel {
     constructor(
-        public nombreUsuario?: string,
-        public codigoUsuario?: string,
+        public usuario: string,
+        public clave: string,
+        public recordar?: string,
+    ) { }
+}
+
+export class AuthRequestModel {
+    constructor(
+        public numeroDocumento?: string,
+        public clave?: string,
     ) { }
 }

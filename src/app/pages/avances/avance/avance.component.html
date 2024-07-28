@@ -72,10 +72,18 @@
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
             <nz-form-item>
-                <nz-form-label [nzSpan]="null" nzRequired="" nzFor="evidencia">Evidencia del avance</nz-form-label>
-                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
-                    <textarea nz-input id="evidencia" formControlName="evidencia"
-                        placeholder="Ingrese la evidencia del avance" nzAutosize></textarea>
+                <nz-form-label [nzSpan]="null">Evidencia del avance</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback>
+                    <!-- <textarea nz-input id="evidencia" formControlName="evidencia"
+                        placeholder="Ingrese la evidencia del avance" nzAutosize></textarea> -->
+                    <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload" [nzRemove]="onDeleteFiles"
+                        [nzDownload]="onDownloadFiles">
+                        <button type="button" nz-button *ngIf="this.fileList.length < 1">
+                            <span nz-icon nzType="upload"></span>
+                            Seleccionar
+                        </button>
+
+                    </nz-upload>
                 </nz-form-control>
             </nz-form-item>
         </div>

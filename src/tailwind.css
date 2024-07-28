@@ -192,6 +192,10 @@ nz-sider .ant-menu-inline .ant-menu-submenu {
     @apply pt-1;
 }
 
+.anticon svg {
+    display: block;
+}
+
 /* .auth-wrapper {
     background-image: url(../src/assets/images/bg.svg) !important;
 }

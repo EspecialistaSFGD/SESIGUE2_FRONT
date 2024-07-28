@@ -1,3 +1,4 @@
+import { PaginatedModel } from "../../models/shared/paginated.model";
 import { SelectModel } from "../../models/shared/select.model";
 
 export class TraerPedidosInterface {
@@ -29,6 +30,13 @@ export class TraerAcuerdosInterface {
         public sortField?: string | null,
         public sortOrder?: string | null,
     ) { }
+}
+export class TraerAcuerdosPorPedidoInterface extends PaginatedModel {
+    constructor(
+        public prioridadID?: number | null,
+    ) {
+        super(1, 10, 'acuerdoID', 'descend');
+    }
 }
 
 export class TraerHitosInterface {

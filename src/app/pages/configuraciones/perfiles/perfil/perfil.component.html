@@ -1,0 +1,106 @@
+<form [formGroup]="perfilForm" nz-form nzLayout="vertical">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="descripcionPerfil">Nombre del perfil</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <input nz-input type="text" id="descripcionPerfil" #descripcionPerfil
+                        formControlName="descripcionPerfil" placeholder="Ingrese la descripción del perfil">
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzFor="descripcionExtensa">Descripción del perfil</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <textarea nz-input #descripcionExtensa id="descripcionExtensa" formControlName="descripcionExtensa"
+                        placeholder="Ingrese la descripción del perfil" nzAutosize></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div> -->
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-4">
+                <nz-form-label [nzSpan]="null" nzRequired>Nivel</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
+                    <nz-select nzPlaceHolder="Seleccione" id="nivelSelect" #nivelSelect formControlName="nivelSelect"
+                        (ngModelChange)="onNivelChange($event)" [compareWith]="compareFn">
+                        <nz-option *ngFor="let nivel of this.perfilesStore.niveles()" [nzLabel]="nivel.label!"
+                            [nzValue]="nivel"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        @if(perfilForm.get('nivelSelect')?.value != null) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-4">
+                <nz-form-label [nzSpan]="null">Sub tipo</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select [nzMaxTagCount]="3" id="subTipoSelect" nzPlaceHolder="Seleccione" #subTipoSelect
+                        formControlName="subTipoSelect" [compareWith]="compareFn" nzAllowClear
+                        (ngModelChange)="onSectorChange($event)">
+                        <nz-option *ngFor="let subtipo of this.perfilesStore.subTipos()" [nzLabel]="subtipo.label!"
+                            [nzValue]="subtipo"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+        <!-- 
+        @if(perfilForm.get('tipo')?.value?.label == 'GR/GL') {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-4">
+                <nz-form-label [nzSpan]="null" nzRequired>Departamento</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
+                    <nz-select id="dep" class="w-full" #dep formControlName="dep" nzPlaceHolder="Todos" nzShowSearch
+                        [compareWith]="compareFn" nzAllowClear (ngModelChange)="onDepChange($event)">
+                        <nz-option *ngFor="let ubg of this.ubigeosStore.departamentos()" [nzValue]="ubg"
+                            [nzLabel]="ubg.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+
+        @if(perfilForm.get('dep')?.value != null) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null">Provincia</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select class="w-full" #prov id="prov" formControlName="prov" nzPlaceHolder="Todas" nzShowSearch
+                        [compareWith]="compareFn" nzAllowClear (ngModelChange)="onProvChange($event)">
+                        <nz-option *ngFor="let prov of this.ubigeosStore.provincias()" [nzValue]="prov"
+                            [nzLabel]="prov.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        } -->
+    </div>
+
+    <!-- @if( perfilForm.get('dep')?.value != null ||perfilForm.get('prov')?.value != null ||
+    perfilForm.get('sector')?.value != null) {
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null" nzRequired>Entidad</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
+                    <nz-select class="w-full" #entidad id="entidad" formControlName="entidad" nzPlaceHolder="Seleccione"
+                        nzShowSearch [compareWith]="compareFn" nzAllowClear (ngModelChange)="onEntidadChange($event)">
+                        <nz-option *ngFor="let ent of this.entidadesStore.entidades()" [nzValue]="ent"
+                            [nzLabel]="ent.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    } -->
+</form>
+
+<!-- {{this.perfilForm.value | json}} -->

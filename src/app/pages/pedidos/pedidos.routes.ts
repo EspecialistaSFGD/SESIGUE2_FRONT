@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from '../../libs/guards/auth.guard';
 import { PedidosComponent } from './pedidos.component';
+import { PedidoDetalleComponent } from './pedido-detalle/pedido-detalle.component';
 
 export const PEDIDOS_ROUTES: Routes = [
   {
@@ -10,6 +11,5 @@ export const PEDIDOS_ROUTES: Routes = [
       title: 'Pedidos',
     }
   },
-  // { path: 'requerimiento/:id', component: RequerimientoComponent },
-  // { path: 'requerimiento', component: RequerimientoComponent },
+  { canActivate: [AuthGuard], path: 'pedido/:id', component: PedidoDetalleComponent },
 ];

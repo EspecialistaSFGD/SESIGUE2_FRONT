@@ -5,37 +5,41 @@
     [nzPageIndex]="this.pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
-            <th nzWidth="100px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+            <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
             <th nzWidth="120px" nzAlign="center" nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
-            <th nzWidth="300px" nzAlign="center" nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
+            <th nzWidth="150px" nzAlign="center" nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
             <th nzWidth="300px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
-            <!-- <th nzColumnKey="pedido">Pedido</th> -->
+            <th class="w-28 sm:w-full" nzColumnKey="pedido">Pedido</th>
             <th nzWidth="150px" nzAlign="center" nzColumnKey="cuis">CUI</th>
             <th nzWidth="150px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código</th>
             <th class="w-28 sm:w-full" nzColumnKey="acuerdo">Acuerdo</th>
             <!-- <th nzWidth="120px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th> -->
             <!-- <th nzWidth="120px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th> -->
             <th nzWidth="120px" nzAlign="center" nzColumnKey="plazo" [nzSortFn]="true">Plazo</th>
+            <th nzWidth="120px" nzAlign="center" nzColumnKey="nomEstadoRegistro">Estado</th>
             <th nzColumnKey="acciones" nzRight nzWidth="150px" nzAlign="center"></th>
         </tr>
     </thead>
     <tbody>
         @for (data of this.acuerdosService.acuerdos(); track data.codigo) {
         <tr>
-            <td nzWidth="100px" nzAlign="center">{{ data.sector }}</td>
+            <td nzLeft nzWidth="100px" nzAlign="center">{{ data.sector }}</td>
             <td nzWidth="120px" nzAlign="center">{{ data.region }}</td>
             <td nzWidth="150px" nzAlign="center">
-                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip
+                <p class="line-clamp-1 sm:line-clamp-2" nz-tooltip
                     [nzTooltipTitle]="data.objetivoEstrategicoTerritorial">
                     {{ data.objetivoEstrategicoTerritorial }}
                 </p>
             </td>
             <td nzWidth="150px" nzAlign="center">
-                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.intervencionesEstrategicas">
+                <p class="line-clamp-1 sm:line-clamp-2" nz-tooltip [nzTooltipTitle]="data.intervencionesEstrategicas">
                     {{ data.intervencionesEstrategicas }}
                 </p>
             </td>
-            <!-- <td>{{ data.pedido }}</td> -->
+            <td class="w-28 sm:w-full">
+                <p class="line-clamp-1 sm:line-clamp-2" nz-tooltip [nzTooltipTitle]="data.aspectoCriticoResolver">{{
+                    data.aspectoCriticoResolver }}</p>
+            </td>
             <td nzWidth="150px" nzAlign="center">{{ data.cuis }}</td>
             <td nzWidth="150px" nzAlign="center">{{ data.codigo }}</td>
             <td class="w-28 sm:w-full">
@@ -47,6 +51,7 @@
 
             <td nzWidth="120px" nzAlign="center">{{ data.espacio }}</td> -->
             <td nzWidth="120px" nzAlign="center">{{ data.plazo }}</td>
+            <td nzWidth="120px" nzAlign="center"><app-estado [title]="data.nomEstadoRegistro!" /></td>
             <td nzRight nzWidth="150px" nzAlign="center">
                 <nz-space>
                     <button (click)="onGestionarHitoAcuerdo(data.acuerdoId!)" *nzSpaceItem nz-button nzType="link"
@@ -58,6 +63,10 @@
                     </button>
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Desestimar acuerdo">
                         <span nz-icon nzType="stop" nzTheme="outline"></span>
+                    </button>
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Editar acuerdo"
+                        (click)="onAddEdit(data)">
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
                     <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(data)" nz-tooltip
                         nzTooltipTitle="Eliminar">
@@ -104,9 +113,9 @@
                     </ul>
                 </nz-dropdown-menu>
 
-                <button *nzSpaceItem nz-button nzType="primary" [routerLink]="['/pedidos/nuevo']">
+                <button *nzSpaceItem nz-button nzType="primary" (click)="onAddEdit(null)">
                     <span nz-icon nzType="plus" nzTheme="outline"></span>
-                    <span class="button-text">Nuevo pedido</span>
+                    <span class="button-text">Nuevo acuerdo</span>
                 </button>
             </nz-space>
         </div>

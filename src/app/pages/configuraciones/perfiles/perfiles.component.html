@@ -7,7 +7,8 @@
     <thead>
         <tr>
             <th nzLeft nzColumnKey="descripcionPerfil" [nzSortFn]="true">Perfil</th>
-            <th nzColumnKey="descripcionExtensa">Descripción</th>
+            <th nzColumnKey="descripcionNivel">Nivel</th>
+            <th nzColumnKey="descripcionSubTipo">Sub tipo</th>
             <th nzColumnKey="fechaRegistro">Fecha de regristo</th>
             <th nzColumnKey="esActivo">Estado</th>
             <th nzRight nzColumnKey="acciones">Acciones</th>
@@ -17,18 +18,19 @@
         @for (data of this.perfilesService.perfiles(); track data.codigoPerfil) {
         <tr>
             <td nzLeft>{{ data.descripcionPerfil }}</td>
-            <td>{{ data.descripcionExtensa }}</td>
+            <td>{{ data.descripcionNivel }}</td>
+            <td>{{ data.descripcionSubTipo }}</td>
             <td>{{ data.fechaRegistro }}</td>
             <td> <nz-badge [nzStatus]="data.esActivo?'success':'error'"
                     [nzText]="data.esActivo?'Activo':'Inactivo'"></nz-badge>
             </td>
             <td nzRight>
                 <nz-space>
-                    <button *nzSpaceItem nz-button nzType="link">
+                    <button *nzSpaceItem nz-button nzType="link" (click)="onAddEdit(data)">
                         <!-- icono de editar -->
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
-                    <button *nzSpaceItem nz-button nzDanger nzType="link">
+                    <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(data)">
                         <!-- icono de eliminar de color rojo -->
                         <span nz-icon nzType="delete" nzTheme="outline"></span>
                     </button>
@@ -56,7 +58,7 @@
                     <span class="button-text">Exportar perfiles</span>
                 </button>
 
-                <button *nzSpaceItem nz-button nzType="primary">
+                <button *nzSpaceItem nz-button nzType="primary" (click)="onAddEdit(null)">
                     <span nz-icon nzType="plus" nzTheme="outline"></span>
                     <span class="button-text">Nuevo perfil</span>
                 </button>

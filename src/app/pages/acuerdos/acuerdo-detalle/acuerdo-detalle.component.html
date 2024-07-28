@@ -1,0 +1,234 @@
+<app-page-header [title]="this.acuerdosService.acuerdoSeleccionado()?.acuerdo||''"
+    [content]="contentTpl"></app-page-header>
+
+<ng-template #contentTpl>
+    <nz-descriptions nzSize="small" [nzColumn]="4" nzBordered>
+        <nz-descriptions-item nzTitle="Sector"
+            [nzSpan]="1">{{this.acuerdosService.acuerdoSeleccionado()?.sector}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Departamento"
+            [nzSpan]="1">{{this.acuerdosService.acuerdoSeleccionado()?.region}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Provincia"
+            [nzSpan]="1">{{this.acuerdosService.acuerdoSeleccionado()?.provincia}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="CUI"
+            [nzSpan]="1">{{this.acuerdosService.acuerdoSeleccionado()?.cuis}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Intervenciones Estratégicas"
+            [nzSpan]="4">{{this.acuerdosService.acuerdoSeleccionado()?.intervencionesEstrategicas}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Aspectocrítico a resolver"
+            [nzSpan]="4">{{this.acuerdosService.acuerdoSeleccionado()?.aspectoCriticoResolver}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Código"
+            [nzSpan]="1">{{this.acuerdosService.acuerdoSeleccionado()?.codigo}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Clasificacion"
+            [nzSpan]="1">{{this.acuerdosService.acuerdoSeleccionado()?.clasificacion}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Responsable"
+            [nzSpan]="1">{{this.acuerdosService.acuerdoSeleccionado()?.responsable}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Plazo"
+            [nzSpan]="1">{{this.acuerdosService.acuerdoSeleccionado()?.plazo}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Estado"
+            [nzSpan]="1">{{this.acuerdosService.acuerdoSeleccionado()?.nomEstadoRegistro}}</nz-descriptions-item>
+    </nz-descriptions>
+</ng-template>
+
+<nz-table nzSize="small" [nzTitle]="HeaderAcuerdo" nzShowSizeChanger [nzData]="this.hitosService.hitos()"
+    [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="this.hitosService.isLoading()"
+    [nzTotal]="this.hitosService.total()" [nzPageSize]="this.pageSize" [nzPageIndex]="this.pageIndex"
+    (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+        <tr>
+            <th></th>
+            <th nzColumnKey="hito" [nzSortFn]="true">Hito</th>
+            <th nzColumnKey="responsable" [nzFilterFn]="true">Responsable</th>
+            <th nzColumnKey="entidad" [nzSortFn]="true">Entidad</th>
+            <th nzColumnKey="comentarioSD" [nzSortFn]="true">Comentario de SD</th>
+            <th nzColumnKey="plazo" [nzSortFn]="true">Plazo</th>
+            <th nzColumnKey="acciones"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of this.hitosService.hitos()" [class.selected-row]="data.hitoId === hitoSeleccionadoId"
+            (click)="onRowClick($event, data)" class="cursor-pointer">
+            <td>
+                <input class="cursor-pointer" type="radio" [id]="'hitoId_' + data.hitoId" name="hitoId"
+                    [value]="data.hitoId" [(ngModel)]="hitoSeleccionadoId" (ngModelChange)="onHitoSelected(data)">
+            </td>
+            <td>
+                @switch (data.estado) {
+                @case (0) {
+                <nz-badge nz-tooltip nzTooltipTitle="Desestimado" nzStatus="error" [nzText]="data.hito"></nz-badge>
+                }
+                @case (1) {
+                @if(data.validado==1){
+                <nz-badge nz-tooltip nzTooltipTitle="Validado" nzStatus="success" [nzText]="data.hito"></nz-badge>
+                }@else {
+                <nz-badge nzStatus="default" [nzText]="data.hito"></nz-badge>
+                }
+                }
+                }
+            </td>
+            <td>{{ data.responsable }}</td>
+            <td>{{ data.entidad }}</td>
+            <td>{{ data.comentarioSD }}</td>
+            <td>{{ data.plazo }}</td>
+            <td nzRight class="w-40">
+                <nz-space>
+                    @if(permiso?.puede_editar_hito){
+                    <button [disabled]="(data.validado==1||data.estado==0)" *nzSpaceItem nz-button nzType="link"
+                        nz-tooltip
+                        [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede editar':'Editar hito'"
+                        (click)="onHitoAddEdit(data)">
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                    </button>
+                    }
+                    <!-- Comentario del sector -->
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip
+                        nzTooltipTitle="Agregar comentario del sector" (click)="onHitoAddComentarioSD(data)">
+                        <span nz-icon nzType="comment" nzTheme="outline"></span>
+                    </button>
+                    <!-- Comentario del sector -->
+
+                    <!-- Comentario del responsable del hito -->
+                    <!-- <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar avance"
+                        (click)="onAvanceAddEdit(null)">
+                        <span nz-icon nzType="file-add" nzTheme="outline"></span>
+                    </button> -->
+                    <!-- Comentario del responsable del hito -->
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Reactivar estado"
+                        (click)="onReactivarEstadoHito(data)">
+                        <span nz-icon nzType="rollback" nzTheme="outline"></span>
+                    </button>
+
+                    @if(permiso?.puede_validar_hito){
+                    <button [disabled]="data.validado==1||data.estado==0" *nzSpaceItem nz-button nzType="link"
+                        nz-tooltip
+                        [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede validar':'Validar hito'"
+                        (click)="onValidarHito(data)">
+                        <span [class.text-green-500]="data.validado != 1&&data.estado!=0" nz-icon nzType="check-circle"
+                            nzTheme="outline"></span>
+                    </button>
+                    }
+
+                    @if(permiso?.puede_eliminar_hito){
+                    <button [disabled]="data.validado==1||data.estado==0" *nzSpaceItem nz-button nzDanger nzType="link"
+                        nz-tooltip
+                        [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede desestimar':'Desestimar hito'"
+                        (click)="onEliinarHito(data)">
+                        <span nz-icon nzType="delete" nzTheme="outline"></span>
+                    </button>
+                    }
+                </nz-space>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+<ng-template #HeaderAcuerdo>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+        <p class="mb-2 sm:mb-0 font-semibold text-base">
+            Gestión de hitos
+        </p>
+
+        <div>
+            <nz-space>
+                @if(hitoSeleccionadoId!==null){
+                <button *nzSpaceItem nz-button (click)="onHitoDeselected()">
+                    <span nz-icon nzType="close" nzTheme="outline"></span>
+                    <span class="button-text">Quitar hito selecionado</span>
+                </button>
+                }
+                @if(permiso?.puede_agregar_hito){
+                <button *nzSpaceItem nz-button nzType="primary" (click)="onHitoAddEdit(null)">
+                    <span nz-icon nzType="plus" nzTheme="outline"></span>
+                    <span class="button-text">Nuevo hito</span>
+                </button>
+                }
+            </nz-space>
+        </div>
+    </div>
+</ng-template>
+
+<!-- {{this.hitosService.hitoSeleccionado()|json}} -->
+<!-- {{this.acuerdosService.acuerdoSeleccionado()|json}} -->
+
+
+
+@if(hitoSeleccionadoId!==null){
+<nz-table nzSize="small" [nzTitle]="HeaderAvance" nzShowSizeChanger [nzData]="this.avancesService.avances()"
+    [nzFrontPagination]="false" [nzLoading]="this.avancesService.isLoading()" [nzTotal]="this.avancesService.total()"
+    [nzPageSize]="this.pageSizeAvance" [nzPageIndex]="this.pageIndexAvance"
+    (nzQueryParams)="onQueryParamsChangeAvances($event)" class="mt-8">
+    <thead>
+        <tr>
+            <th nzColumnKey="fecha">Fecha</th>
+            <th nzColumnKey="avance">Avance</th>
+            <th class="text-center" nzColumnKey="evidencia">Evidencia</th>
+            <th class="text-center" nzColumnKey="comentarioSector">Comentario Sector</th>
+            <th class="text-center" nzColumnKey="comentario">Comentario UE/GL</th>
+            <th class="text-center" nzColumnKey="comentarioSD">Comentario PCM</th>
+            <th nzColumnKey="acciones"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of this.avancesService.avances()">
+            <td>{{ data.fecha }} </td>
+            <td>{{ data.avance }}</td>
+            <td class="text-center">
+                @if (data.evidencia) {
+                <a target="_blank" [href]="evidenciaBaseUrl + data.evidencia"><span nz-icon nzType="file-pdf"
+                        nzTheme="outline"></span></a>
+                }@else {
+                -
+                }
+            </td>
+            <td class="text-center">{{ data.comentarioSector || '-' }}</td>
+            <td class="text-center">{{ data.comentario || '-' }}</td>
+            <td class="text-center">{{ data.comentarioSD || '-' }}</td>
+            <td nzRight class="w-40">
+                <nz-space>
+                    @if(permiso?.puede_editar_avance){
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Editar avance"
+                        (click)="onAvanceAddEdit(data)">
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                    </button>
+                    }
+
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar comentario">
+                        <span nz-icon nzType="comment" nzTheme="outline"></span>
+                    </button>
+
+                    @if(permiso?.puede_validar_avance){
+
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Validar avance"
+                        (click)="onValidarAvance(data)">
+                        <span class="text-green-500" nz-icon nzType="check-circle" nzTheme="outline"></span>
+                    </button>
+                    }
+
+                    @if(permiso?.puede_eliminar_avance){
+                    <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar">
+                        <span nz-icon nzType="delete" nzTheme="outline"></span>
+                    </button>
+                    }
+                </nz-space>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+<ng-template #HeaderAvance>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+        <p class="mb-2 sm:mb-0 font-semibold text-base">
+            Gestión de avances del hito # {{ hitoSeleccionadoId}}
+        </p>
+
+        @if(permiso?.puede_agregar_avance){
+        <div>
+            <nz-space>
+                <button *nzSpaceItem nz-button nzType="primary" (click)="onAvanceAddEdit(null)">
+                    <span nz-icon nzType="plus" nzTheme="outline"></span>
+                    <span class="button-text">Nuevo avance</span>
+                </button>
+            </nz-space>
+        </div>
+        }
+    </div>
+</ng-template>
+}

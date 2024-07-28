@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal, inject, signal } from '@angular/core';
+import { Component, OnInit, Signal, ViewContainerRef, inject, signal } from '@angular/core';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -24,6 +24,10 @@ import { AcuerdosService } from '../../libs/services/pedidos/acuerdos.service';
 import { ClasificacionesStore } from '../../libs/shared/stores/clasificaciones.store';
 import { EstadosStore } from '../../libs/shared/stores/estados.store';
 import { PageHeaderComponent } from '../../libs/shared/layout/page-header/page-header.component';
+import { EstadoComponent } from "../../libs/shared/components/estado/estado.component";
+import { AcuerdoPedidoModel } from '../../libs/models/pedido';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { AcuerdoComponent } from './acuerdo/acuerdo.component';
 
 @Component({
   selector: 'app-pedidos',
@@ -44,6 +48,7 @@ import { PageHeaderComponent } from '../../libs/shared/layout/page-header/page-h
     NzDrawerModule,
     NzBadgeModule,
     NzToolTipModule,
+    EstadoComponent
   ],
   templateUrl: './acuerdos.component.html',
   styleUrl: './acuerdos.component.less'
@@ -86,6 +91,10 @@ export class AcuerdosComponent implements OnInit {
 
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
+
+  private modal = inject(NzModalService);
+  confirmModal?: NzModalRef; // For testing by now
+  private viewContainerRef = inject(ViewContainerRef);
 
   constructor() {
     this.crearSearForm();
@@ -440,6 +449,42 @@ export class AcuerdosComponent implements OnInit {
 
     //Navegar hacia la página de gestión de hitos en /acuerdos/acuerdo/:codigo
     this.router.navigate(['acuerdos', 'acuerdo', codigo]);
+  }
+
+  onAddEdit(acuerdo: AcuerdoPedidoModel | null): void {
+    const title = acuerdo ? 'Editar acuerdo' : 'Nuevo acuerdo';
+    const labelOk = acuerdo ? 'Actualizar' : 'Crear';
+
+    this.acuerdosService.seleccionarAcuerdoById(acuerdo?.acuerdoId || null);
+
+    const modal = this.modal.create<AcuerdoComponent>({
+      nzTitle: title,
+      nzContent: AcuerdoComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: labelOk,
+          type: 'primary',
+          onClick: (componentInstance) => {
+            return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then((res) => {
+              this.modal.closeAll();
+            });
+          },
+          loading: this.acuerdosService.isEditing(),
+          disabled: (componentInstance) => !componentInstance?.acuerdoForm.valid,
+        }
+      ]
+    });
+
+    const instance = modal.getContentComponent();
+    modal.afterClose.subscribe(result => {
+      instance.acuerdoForm.reset();
+    });
   }
 
   onDelete(value: any): void { }

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from '../../libs/guards/auth.guard';
 import { AcuerdosComponent } from './acuerdos.component';
-import { AcuerdoComponent } from './acuerdo/acuerdo.component';
+import { AcuerdoDetalleComponent } from './acuerdo-detalle/acuerdo-detalle.component';
 
 export const PEDIDOS_ROUTES: Routes = [
   {
@@ -11,5 +11,5 @@ export const PEDIDOS_ROUTES: Routes = [
       title: 'Acuerdos',
     }
   },
-  { canActivate: [AuthGuard], path: 'acuerdo/:id', component: AcuerdoComponent },
+  { canActivate: [AuthGuard], path: 'acuerdo/:id', component: AcuerdoDetalleComponent },
 ];

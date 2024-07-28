@@ -5,21 +5,22 @@
     (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
-            <th nzWidth="120px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+            <th nzLeft nzWidth="120px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
             <th nzWidth="150px" nzAlign="center" nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
             <th nzWidth="300px" nzAlign="center" nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
             <th nzWidth="300px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
-            <th nzLeft class="w-20 sm:w-56" nzColumnKey="aspectoCriticoResolver">Pedido</th>
+            <th class="w-20 sm:w-56" nzColumnKey="aspectoCriticoResolver">Pedido</th>
             <th nzWidth="80px" nzAlign="center" nzColumnKey="cuis">CUI</th>
-            <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadPreAcuerdos">Pre-acuerdos</th>
-            <!-- <th nzWidth="120px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th> -->
-            <th nzRight nzWidth="72px" nzAlign="center" nzColumnKey="acciones"></th>
+            <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadPreAcuerdos">Pre acuerdos</th>
+            <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadAcuerdos">Acuerdos</th>
+            <th nzWidth="120px" nzAlign="center" nzColumnKey="comentarioPcm">Comentario PCM</th>
+            <th nzRight nzWidth="110px" nzAlign="center" nzColumnKey="acciones"></th>
         </tr>
     </thead>
     <tbody>
         @for (data of this.pedidosService.pedidos(); track data.prioridadID) {
         <tr>
-            <td nzWidth="120px" nzAlign="center">{{ data.sector }}</td>
+            <td nzLeft nzWidth="120px" nzAlign="center">{{ data.sector }}</td>
             <td nzWidth="150px" nzAlign="center">{{ data.region }}</td>
             <td nzWidth="300px" nzAlign="center">
                 <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip
@@ -32,25 +33,52 @@
                     {{ data.intervencionesEstrategicas }}
                 </p>
             </td>
-            <td nzLeft class="w-20 sm:w-56">
+            <td class="w-20 sm:w-56">
                 <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.aspectoCriticoResolver">
                     {{
                     data.aspectoCriticoResolver }}</p>
             </td>
             <td nzWidth="80px" nzAlign="center">{{ data.cuis }}</td>
             <td nzWidth="100px" nzAlign="center">{{ data.cantidadPreAcuerdos }}</td>
-            <!-- <td nzWidth="120px" nzAlign="center">{{ data.espacio }}</td> -->
+            <td nzWidth="100px" nzAlign="center">{{ data.cantidadAcuerdos }}</td>
+            <td nzWidth="120px" nzAlign="center">{{ data.comentarioPcm }}</td>
             <td nzRight nzWidth="72px" nzAlign="center">
                 <nz-space>
-                    <button [routerLink]="['/requerimiento', data.email]" routerLinkActive="router-link-active"
-                        *nzSpaceItem nz-button nzType="link">
+                    <button (click)="onGestionarPedido(data.prioridadID)" *nzSpaceItem nz-button nzType="link"
+                        nz-tooltip nzTooltipTitle="Ver detalle">
+                        <span nz-icon nzType="eye" nzTheme="outline"></span>
+                    </button>
+
+                    @if(permiso?.puede_comentar_pedido_pcm){
+                    <button [disabled]="data.validado==1" *nzSpaceItem nz-button nzType="link" nz-tooltip
+                        nzTooltipTitle="Agregar comentario" (click)="onCommentPCM(data)">
+                        <span nz-icon nzType="comment" nzTheme="outline"></span>
+                    </button>
+                    }
+
+                    @if(permiso?.puede_validar_pedido){
+                    <button [disabled]="data.validado==1" (click)="onValidate(data)" *nzSpaceItem nz-button
+                        nzType="link" nz-tooltip="Validar pedido">
+                        <!-- icono de editar -->
+                        <span nz-icon class="text-green-500" nzType="check" nzTheme="outline"></span>
+                    </button>
+                    }
+
+                    @if(permiso?.puede_editar_pedido){
+                    <button [disabled]="data.validado==1" (click)="onAddEdit(data)" *nzSpaceItem nz-button
+                        nzType="link">
                         <!-- icono de editar -->
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
-                    <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(data)">
+                    }
+
+                    @if(permiso?.puede_eliminar_pedido){
+                    <button [disabled]="data.validado==1" *nzSpaceItem nz-button nzDanger nzType="link"
+                        (click)="onDelete(data)">
                         <!-- icono de eliminar de color rojo -->
                         <span nz-icon nzType="delete" nzTheme="outline"></span>
                     </button>
+                    }
                 </nz-space>
             </td>
         </tr>
@@ -90,11 +118,13 @@
                         </li>
                     </ul>
                 </nz-dropdown-menu>
-
-                <button *nzSpaceItem nz-button nzType="primary" [routerLink]="['/pedidos/nuevo']">
+                @if(permiso?.puede_agregar_pedido){
+                <button *nzSpaceItem nz-button nzType="primary" (click)="onAddEdit(null)">
                     <span nz-icon nzType="plus" nzTheme="outline"></span>
                     <span class="button-text">Nuevo pedido</span>
                 </button>
+
+                }
             </nz-space>
         </div>
     </div>
@@ -127,6 +157,8 @@
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Espacio</nz-form-label>
                     <nz-form-control nzSpan="null">
+                        <!-- {{this.espaciosStore.espacioSeleccionado() | json}} -->
+
                         <nz-select [nzMaxTagCount]="3" id="espacio" [nzMaxTagPlaceholder]="tagPlaceHolder"
                             nzMode="multiple" nzPlaceHolder="Todos" #espacio formControlName="espacio"
                             [compareWith]="compareFn" nzAllowClear (ngModelChange)="onEspacioChange($event)">
@@ -160,8 +192,8 @@
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Departamento</nz-form-label>
                     <nz-form-control nzSpan="null">
-                        <nz-select [nzDisabled]="provSeleccionada!=null" id="dep" class="w-full" #dep
-                            formControlName="dep" nzPlaceHolder="Todos" nzShowSearch [compareWith]="compareFn"
+                        <nz-select [nzDisabled]="!utilesService.isEmptyObject(departamento)" id="dep" class="w-full"
+                            #dep formControlName="dep" nzPlaceHolder="Todos" nzShowSearch [compareWith]="compareFn"
                             nzAllowClear (ngModelChange)="onDepChange($event)">
                             <nz-option *ngFor="let ubg of this.ubigeosStore.departamentos()" [nzValue]="ubg"
                                 [nzLabel]="ubg.label!">

@@ -1,13 +1,14 @@
+import { SeguridadModel } from "../shared/seguridad.model";
 import { SelectModel } from "../shared/select.model";
 
-export class AcuerdoPedidoModel {
+export class AcuerdoPedidoModel extends SeguridadModel {
     constructor(
         public codigo?: string,
         public acuerdo?: string,
         public clasificacion?: string,
         public responsable?: string,
         public responsableSelect?: SelectModel,
-        public plazo?: string,
+        public plazo?: Date | null,
         public espacio?: string,
         public sector?: string,
         public region?: string,
@@ -20,6 +21,7 @@ export class AcuerdoPedidoModel {
         public ubigeo?: string,
         public acuerdoId?: number,
         public clasificacionId?: number,
+        public clasificacionSelect?: SelectModel,
         public responsableId?: number,
         public prioridadId?: number,
         public eventoId?: number,
@@ -34,7 +36,15 @@ export class AcuerdoPedidoModel {
         public entidad?: string,
         public entidadSelect?: SelectModel,
         public estadoRegistroInterno?: number,
+        public tipoId?: number,
         public tipo?: string,
+        public tipoSelect?: SelectModel,
         public estado?: string,
-    ) { }
+        public pre_Acuerdo?: string,
+        public es_preAcuerdo?: boolean,
+        public acuerdoModificado?: string,
+        public acuerdo_original?: string,
+    ) {
+        super();
+    }
 }

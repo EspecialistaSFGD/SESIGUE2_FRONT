@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { UsuarioModel, UsuarioRequestModel } from '../../models/auth/usuario.model';
+import { AuthLoginModel, AuthRequestModel, UsuarioModel, UsuarioRequestModel } from '../../models/auth/usuario.model';
 import { environment } from '../../../../environments/environment';
 import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { Token } from '../../models/auth/token.model';
@@ -10,6 +10,10 @@ import { parseISO } from 'date-fns';
 import { ResponseModel } from '../../models/shared/response.model';
 import { MenuModel } from '../../models/shared/menu.model';
 import { PermisoModel } from '../../models/auth/permiso.model';
+import { SelectModel } from '../../models/shared/select.model';
+
+const codigoUsuario = Number(localStorage.getItem('codigoUsuario')) || 0;
+const codigoPerfil = Number(localStorage.getItem('codigoPerfil')) || 0;
 
 interface State {
   usuario: string | null | undefined;
@@ -28,12 +32,22 @@ const DEFAULT_PERMISOS: PermisoModel = {
   puede_validar_hito: false,
   puede_desestimar_hito: false,
   puede_comentar_hito: false,
+  puede_reactivar_estado_hito: false,
   puede_agregar_avance: false,
   puede_editar_avance: false,
   puede_eliminar_avance: false,
   puede_validar_avance: false,
   puede_desestimar_avance: false,
   puede_comentar_avance: false,
+  puede_agregar_pedido: false,
+  puede_editar_pedido: false,
+  puede_eliminar_pedido: false,
+  puede_validar_pedido: false,
+  puede_comentar_pedido_pcm: false,
+  puede_agregar_acuerdo: false,
+  puede_editar_acuerdo: false,
+  puede_eliminar_acuerdo: false,
+  puede_convertir_preacuerdo: false,
 };
 
 @Injectable({
@@ -99,17 +113,88 @@ export class AuthService {
     this.initTheme();
   }
 
-  login(user: UsuarioRequestModel): Observable<ResponseModel | null> {
-    return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, user).pipe(
-      tap((resp: ResponseModel) => {
-        if (resp.success && resp.data != null) {
-          if (resp.data.menus != null) {
-            const menusTransformados = this.transformarMenuParaNgZorro(resp.data.menus);
-            resp.data.menus = menusTransformados.menusTransformados;
-            resp.data.permisos = menusTransformados.permisos;
+  getCodigoUsuario(): number {
+    return codigoUsuario;
+  }
 
-            localStorage.setItem('menus', JSON.stringify(resp.data.menus));
-            localStorage.setItem('permisos', JSON.stringify(resp.data.permisos));
+  getCodigoPerfil(): number {
+    return codigoPerfil;
+  }
+
+  registrarUsuario(usuario: UsuarioModel): Observable<ResponseModel | null> {
+
+    let ots: UsuarioRequestModel = {} as UsuarioRequestModel;
+
+    if (usuario.perfil) ots.codigoPerfil = Number(usuario.perfil.value);
+    if (usuario.tipo) ots.tipo = Number(usuario.tipo.value);
+    if (usuario.sector) ots.sector = Number(usuario.sector.value);
+    if (usuario.dep != null && usuario.dep != undefined) ots.codigoDepartamento = usuario.dep.value!.toString();
+    if (usuario.prov != null && usuario.prov != undefined) ots.codigoProvincia = usuario.prov.value!.toString();
+    if (usuario.entidad) ots.entidad = Number(usuario.entidad.value);
+    if (usuario.clave) ots.contrasena = usuario.clave;
+    if (usuario.correo) ots.correoNotificacion = usuario.correo;
+    if (usuario.nombre) ots.nombresPersona = usuario.nombre;
+    ots.tipoDocumento = 1;
+    if (usuario.dni) ots.numeroDocumento = usuario.dni;
+    ots.esActivo = true;
+    //TODO: Revisar si se quita
+    ots.nombreUsuario = '';
+
+    return this.http.post<ResponseModel>(`${environment.api}/Usuario/RegistrarUsuario`, ots).pipe(
+      tap((resp: ResponseModel) => {
+        if (resp.success) {
+
+          if (resp.data == 0) {
+            this.msg.error(resp.message);
+          } else {
+            this.msg.success(resp.message);
+          }
+        } else {
+          this.msg.error(resp.message);
+        }
+      }),
+      catchError((err) => {
+        this.msg.error("Hubo un error al registrar el usuario", err);
+        return of(null);
+      })
+    );
+  }
+
+  verificarDisponibilidadDni(numeroDocumento: string): Observable<ResponseModel | null> {
+    this.#usuario.update((v) => ({ ...v, isLoading: true }));
+    return this.http.post<ResponseModel>(`${environment.api}/Login/verificarDisponibilidad`, { numeroDocumento }).pipe(
+      tap((resp: ResponseModel) => {
+        if (!resp.success) {
+          this.msg.error(resp.message);
+        }
+        this.#usuario.update((v) => ({ ...v, isLoading: false }));
+      }),
+      catchError((err) => {
+        this.msg.error("Hubo un error al verificar la disponibilidad", err);
+        this.#usuario.update((v) => ({ ...v, isLoading: false }));
+        return of(null);
+      })
+    );
+  }
+
+  login(user: AuthLoginModel): Observable<ResponseModel | null> {
+    let ots: AuthRequestModel = {} as AuthRequestModel;
+    ots.numeroDocumento = user.usuario;
+    ots.clave = user.clave;
+
+    return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, ots).pipe(
+      tap((resp: ResponseModel) => {
+
+        const data = resp.data;
+
+        if (resp.success && data != null) {
+          if (data.menus != null) {
+            const menusTransformados = this.transformarMenuParaNgZorro(data.menus);
+            data.menus = menusTransformados.menusTransformados;
+            data.permisos = menusTransformados.permisos;
+
+            localStorage.setItem('menus', JSON.stringify(data.menus));
+            localStorage.setItem('permisos', JSON.stringify(data.permisos));
 
             this.#usuario.update((v) => ({
               ...v,
@@ -117,35 +202,54 @@ export class AuthService {
             }));
           }
 
-          if (resp.data.nombreTrabajador != null) {
-            if (resp.data.nombreTrabajador != "") {
-              localStorage.setItem('trabajador', resp.data.nombreTrabajador);
+          if (data.nombreTrabajador != null) {
+            if (data.nombreTrabajador != "") {
+              localStorage.setItem('trabajador', data.nombreTrabajador);
             } else {
               localStorage.setItem('trabajador', 'Administrador');
             }
           }
 
-          if (resp.data.codigoUsuario != null && resp.data.codigoUsuario != '') {
-            localStorage.setItem('codigoUsuario', resp.data.codigoUsuario);
+          if (data.codigoUsuario != null && data.codigoUsuario != '') {
+            localStorage.setItem('codigoUsuario', data.codigoUsuario);
           }
 
-          if (resp.data.descripcionTipo != null && resp.data.descripcionTipo != '') {
-            localStorage.setItem('descripcionTipo', resp.data.descripcionTipo);
+          if (data.codigoPerfil != null && data.codigoPerfil != '') {
+            localStorage.setItem('codigoPerfil', data.codigoPerfil);
           }
 
-          if (resp.data.descripcionSector != null && resp.data.descripcionSector != '') {
-            localStorage.setItem('descripcionSector', resp.data.descripcionSector);
+          if (data.descripcionTipo != null && data.descripcionTipo != '') {
+            localStorage.setItem('descripcionTipo', data.descripcionTipo);
+          }
+
+          if (data.descripcionSector != null && data.descripcionSector != '') {
+            localStorage.setItem('descripcionSector', data.descripcionSector);
+          }
+
+          if (data.codigoDepartamento != null && data.codigoDepartamento != '' && data.departamento != null && data.departamento != '') {
+            const dep = new SelectModel(data.codigoDepartamento, data.departamento);
+            localStorage.setItem('departamento', JSON.stringify(dep));
+          }
+
+          if (data.codigoProvincia != null && data.codigoProvincia != '' && data.provincia != null && data.provincia != '') {
+            const prov = new SelectModel(data.codigoProvincia, data.provincia);
+            localStorage.setItem('provincia', JSON.stringify(prov));
+          }
+
+          if (data.codigoDistrito != null && data.codigoDistrito != '' && data.distrito != null && data.distrito != '') {
+            const dist = new SelectModel(data.codigoDistrito, data.distrito);
+            localStorage.setItem('distrito', JSON.stringify(dist));
           }
 
           if (localStorage.getItem('isSiderCollapsed') == null) localStorage.setItem('isSiderCollapsed', 'true');
 
-          this.guardarLocalStorage(resp.data.token, resp.data.refreshToken);
+          this.guardarLocalStorage(data.token, data.refreshToken);
 
           // this.#usuario.update((v) => ({ ...v, isLoading: false }));
           //console.log(resp);
         }
 
-        if (resp.success == null && resp.data == null) {
+        if (resp.success == null && data == null) {
           this.msg.error(resp.message);
           this.#usuario.update((v) => ({ ...v, isLoading: false, isAuthenticated: false }));
         }
@@ -187,6 +291,9 @@ export class AuthService {
             case 'Comentar Hito':
               permisos.puede_comentar_hito = true;
               break;
+            case 'Reactivar Estado Hito':
+              permisos.puede_reactivar_estado_hito = true;
+              break;
             case 'Agregar Avance':
               permisos.puede_agregar_avance = true;
               break;
@@ -205,6 +312,33 @@ export class AuthService {
             case 'Comentar Avance':
               permisos.puede_comentar_avance = true;
               break;
+            case 'Agregar Pedido':
+              permisos.puede_agregar_pedido = true;
+              break;
+            case 'Editar Pedido':
+              permisos.puede_editar_pedido = true;
+              break;
+            case 'Eliminar Pedido':
+              permisos.puede_eliminar_pedido = true;
+              break;
+            case 'Validar Pedido':
+              permisos.puede_validar_pedido = true;
+              break;
+            case 'Comentar PCM':
+              permisos.puede_comentar_pedido_pcm = true;
+              break;
+            case 'Agregar Acuerdo':
+              permisos.puede_agregar_acuerdo = true;
+              break;
+            case 'Editar Acuerdo':
+              permisos.puede_editar_acuerdo = true;
+              break;
+            case 'Eliminar Acuerdo':
+              permisos.puede_eliminar_acuerdo = true;
+              break;
+            case 'Convertir PreAcuerdo':
+              permisos.puede_convertir_preacuerdo = true;
+              break
             default:
               console.warn(`Descripción de botón no reconocida: ${boton.descripcionBoton}`);
               break;
@@ -365,10 +499,14 @@ export class AuthService {
     localStorage.removeItem('perfil');
     localStorage.removeItem('menus');
     localStorage.removeItem('codigoUsuario');
+    localStorage.removeItem('codigoPerfil');
     localStorage.removeItem('trabajador');
     localStorage.removeItem('descripcionTipo');
     localStorage.removeItem('descripcionSector');
     localStorage.removeItem('permisos');
+    localStorage.removeItem('departamento');
+    localStorage.removeItem('provincia');
+    localStorage.removeItem('distrito');
 
     this.#usuario.set({
       usuario: null,

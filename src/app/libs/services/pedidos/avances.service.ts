@@ -4,7 +4,7 @@ import { environment } from '../../../../environments/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
 import { AvanceHitoModel } from '../../models/pedido';
-import { UtilesService } from '../shared/utiles.service';
+import { UtilesService } from '../../shared/services/utiles.service';
 import { SelectModel } from '../../models/shared/select.model';
 const accesoId = localStorage.getItem('codigoUsuario') || null;
 
@@ -46,22 +46,36 @@ export class AvancesService {
     constructor() { }
 
     agregarEditarAvance(avance: AvanceHitoModel): Promise<ResponseModel> {
+
+        //TODO: Agregar para envio de archivo evidencia
         return new Promise((resolve, reject) => {
             this.#avancesResult.update((state) => ({
                 ...state,
                 isEditing: true,
             }));
 
-            const ots: AvanceHitoModel = new AvanceHitoModel();
-            if (avance.avanceId != null) ots.avanceId = avance.avanceId;
-            ots.hitoId = avance.hitdoId;
-            ots.fecha = avance.fecha;
-            ots.avance = avance.avance;
-            ots.evidencia = avance.evidencia;
-            ots.entidadId = Number(avance.entidadSelect?.value);
-            ots.accesoId = Number(accesoId);
+            let formData: FormData = new FormData();
 
-            this.http.post(`${environment.api}/Avance/RegistrarAvance`, ots).subscribe({
+            if (avance.avanceId != null) formData.append('avanceId', `${avance.avanceId}`);
+            formData.append('hitoId', `${avance.hitdoId}`);
+
+            if (avance.fecha) {
+                const fechaE = new Date(avance.fecha);
+                formData.append('fecha', `${fechaE.toISOString()}`);
+            }
+            // formData.append('fecha', `${avance.fecha}`);
+            formData.append('avance', `${avance.avance}`);
+            if (avance.idEvidencia != null) formData.append('IdArchivo', avance.idEvidencia);
+
+            // Asegúrate de que evidencia no sea undefined
+            if (avance.idEvidencia === null && avance.evidencia instanceof File) {
+                formData.append('evidencia', avance.evidencia, avance.evidencia.name);
+            }
+
+            if (avance.entidadSelect != null) formData.append('entidadID', `${avance.entidadSelect?.value}`);
+            formData.append('accesoId', `${accesoId}`);
+
+            this.http.post(`${environment.api}/Avance/RegistrarAvance`, formData).subscribe({
                 next: (data: ResponseModel) => {
                     this.msg.success(data.message);
                     this.listarAvances(avance.hitdoId, 1, 10, 'avanceId', 'ascend');

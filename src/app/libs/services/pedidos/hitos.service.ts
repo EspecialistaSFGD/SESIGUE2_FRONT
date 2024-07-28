@@ -5,7 +5,7 @@ import { environment } from '../../../../environments/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
 import { HitoAcuerdoModel } from '../../models/pedido';
-import { UtilesService } from '../shared/utiles.service';
+import { UtilesService } from '../../shared/services/utiles.service';
 import { ComentarioHitoModel, ComentarioSDHitoModel } from '../../models/pedido/comentario.model';
 import { HitoAcuerdoRequestModel } from '../../models/pedido/hito.model';
 import { Observable, of } from 'rxjs';

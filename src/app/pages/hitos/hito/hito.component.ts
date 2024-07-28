@@ -8,7 +8,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
-import { UtilesService } from '../../../libs/services/shared/utiles.service';
+import { UtilesService } from '../../../libs/shared/services/utiles.service';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
 import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
@@ -46,7 +46,7 @@ export class HitoComponent {
   private acuerdoSeleccionado = this.acuerdosService.acuerdoSeleccionado();
   private seleccion: SelectModel | null = null;
 
-  public plazo = (this.acuerdoSeleccionado?.plazo != '') ? this.utilesService.stringToDate(this.acuerdoSeleccionado?.plazo || null) : null;
+  public plazo = (this.acuerdoSeleccionado?.plazo != null) ? this.utilesService.stringToDate(this.acuerdoSeleccionado?.plazo.toString() || null) : null;
 
   constructor() {
 

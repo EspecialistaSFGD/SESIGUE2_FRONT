@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -16,6 +16,9 @@ import { Subject, debounceTime } from 'rxjs';
 import { TraerPerfilesInterface } from '../../../libs/interfaces/configuracion/perfil.interface';
 import { PerfilesService } from '../../../libs/services/configuraciones/perfiles.service';
 import { PageHeaderComponent } from '../../../libs/shared/layout/page-header/page-header.component';
+import { PerfilModel } from '../../../libs/models/auth/perfil.model';
+import { PerfilComponent } from './perfil/perfil.component';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-usuarios',
@@ -60,6 +63,11 @@ export class PerfilesComponent implements OnInit {
   private updatingParams = false;
   private clearingFilters = false;
   private timeout: any;
+
+  private modal = inject(NzModalService);
+
+  confirmModal?: NzModalRef; // For testing by now
+  private viewContainerRef = inject(ViewContainerRef);
 
   constructor() {
     this.crearSearForm();
@@ -107,6 +115,8 @@ export class PerfilesComponent implements OnInit {
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
 
   traerPerfiles({
+    codigoPerfil = 0,
+    entidadId = 0,
     nombrePerfilSeleccionado = this.nombrePerfilSeleccionado,
     pageIndex = this.pageIndex,
     pageSize = this.pageSize,
@@ -114,12 +124,65 @@ export class PerfilesComponent implements OnInit {
     sortOrder = this.sortOrder
   }: TraerPerfilesInterface): void {
     this.perfilesService.listarPerfiles(
+      entidadId,
       nombrePerfilSeleccionado,
       pageIndex,
       pageSize,
       sortField,
       sortOrder
     );
+  }
+
+  onAddEdit(value: PerfilModel | null): void {
+    const title = value ? 'Editar perfil' : 'Crear perfil';
+    const labelOk = value ? 'Actualizar' : 'Crear';
+
+    this.perfilesService.seleccionarPerfilById(value?.codigoPerfil);
+
+    const modal = this.modal.create<PerfilComponent>({
+      nzTitle: title,
+      nzContent: PerfilComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: labelOk,
+          type: 'primary',
+          onClick: (componentInstance) => {
+            return this.perfilesService.agregarPerfil(componentInstance!.perfilForm.value).then(() => {
+              this.modal.closeAll();
+            });
+          },
+          loading: this.perfilesService.isEditing(),
+          disabled: (componentInstance) => !componentInstance?.perfilForm.valid,
+        },
+      ]
+    });
+
+    const instance = modal.getContentComponent();
+    modal.afterClose.subscribe(result => {
+      instance.perfilForm.reset();
+    });
+  }
+
+  onDelete(value: PerfilModel): void {
+    if (value == null) return;
+    this.confirmModal = this.modal.confirm({
+      nzTitle: '¿Está seguro de eliminar este perfil?',
+      nzContent: 'Esta acción no se puede deshacer.',
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.perfilesService.eliminarPerfil(value.codigoPerfil!)
+      },
+      nzCancelText: 'Cancelar',
+    });
   }
 
   updateQueryParams(): void {

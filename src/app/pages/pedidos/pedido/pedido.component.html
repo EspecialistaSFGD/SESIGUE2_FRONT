@@ -1,0 +1,94 @@
+<form [formGroup]="pedidoForm" nz-form nzLayout="vertical">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Espacio</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione" #espacioSelect
+                        formControlName="espacioSelect" [compareWith]="compareFn" nzAllowClear
+                        (ngModelChange)="onSectorChange($event)">
+                        <nz-option *ngFor="let esp of this.espaciosStore.espacios()" [nzLabel]="esp.label!"
+                            [nzValue]="esp"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Sector</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-select [nzMaxTagCount]="3" id="sectorSelect" nzPlaceHolder="Seleccione" #sectorSelect
+                        formControlName="sectorSelect" [compareWith]="compareFn" nzAllowClear
+                        (ngModelChange)="onSectorChange($event)">
+                        <nz-option *ngFor="let sec of this.sectoresStore.sectores()" [nzLabel]="sec.label!"
+                            [nzValue]="sec"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null">CUI</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <input #cuis id="cuis" type="text" nz-input formControlName="cuis">
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Eje estratégico</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-select [nzMaxTagCount]="3" id="ejeEstrategicoSelect" nzPlaceHolder="Seleccione"
+                        #ejeEstrategicoSelect formControlName="ejeEstrategicoSelect" [compareWith]="compareFn"
+                        nzAllowClear (ngModelChange)="onEjeEstrategicoChange($event)">
+                        <nz-option *ngFor="let eje of this.pedidosStore.ejesEstrategicos()" [nzLabel]="eje.label!"
+                            [nzValue]="eje"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Tipo de intervención</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-select [nzMaxTagCount]="3" id="tipoIntervencionSelect" nzPlaceHolder="Seleccione"
+                        #tipoIntervencionSelect formControlName="tipoIntervencionSelect" [compareWith]="compareFn"
+                        nzAllowClear (ngModelChange)="onTipoIntervencionChange($event)">
+                        <nz-option *ngFor="let tInt of this.pedidosStore.tiposIntervencion()" [nzLabel]="tInt.label!"
+                            [nzValue]="tInt"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+    </div>
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="aspectoCriticoResolver">Pedido</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <textarea nz-input id="aspectoCriticoResolver" formControlName="aspectoCriticoResolver"
+                        placeholder="Ingrese el pedido" nzAutosize></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+    </div>
+
+
+    <!-- {{this.pedidoForm.value|json}} -->
+
+    <!-- {{this.hitosService.isEditing()|json }} -->
+
+    <!-- {{this.espaciosService.eventoSeleccionado()|json }} -->
+</form>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Signal, ViewContainerRef, inject, signal } from '@angular/core';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -22,6 +22,12 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { PageHeaderComponent } from '../../libs/shared/layout/page-header/page-header.component';
+import { PedidoModel } from '../../libs/models/pedido';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { PedidoComponent } from './pedido/pedido.component';
+import { PermisoModel } from '../../libs/models/auth/permiso.model';
+import { UtilesService } from '../../libs/shared/services/utiles.service';
+import { ComentarioPedidoComponent } from '../../libs/shared/components/comentario-pedido/comentario-pedido.component';
 
 @Component({
   selector: 'app-pedidos',
@@ -44,9 +50,9 @@ import { PageHeaderComponent } from '../../libs/shared/layout/page-header/page-h
     NzToolTipModule,
   ],
   templateUrl: './pedidos.component.html',
-  styleUrl: './pedidos.component.less'
+  styles: ``
 })
-export class PedidosComponent implements OnInit {
+export class PedidosComponent implements OnInit, AfterViewInit {
   searchForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
   // entidadSeleccionada: SelectModel = { value: 1, label: 'GOBIERNO REGIONAL DE LORETO' };
@@ -65,6 +71,12 @@ export class PedidosComponent implements OnInit {
   provSeleccionada: SelectModel | null = null;
   filterCounter = signal<number>(0);
 
+  permiso: PermisoModel | null | undefined = null;
+  storedPermiso = localStorage.getItem('permisos');
+
+  departamento: SelectModel = {} as SelectModel;
+  storedDepartamento = localStorage.getItem('departamento');
+
   private updateParamsSubject = new Subject<void>();
   private updatingParams = false;
   private clearingFilters = false;
@@ -77,9 +89,25 @@ export class PedidosComponent implements OnInit {
   public ubigeosStore = inject(UbigeosStore);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
+  private modal = inject(NzModalService);
+  public utilesService = inject(UtilesService);
+  confirmModal?: NzModalRef; // For testing by now
+  private viewContainerRef = inject(ViewContainerRef);
+
 
   constructor() {
     this.crearSearForm();
+
+    try {
+      this.permiso = this.storedPermiso ? JSON.parse(this.storedPermiso) : {};
+      this.departamento = this.storedDepartamento ? JSON.parse(this.storedDepartamento) : {};
+    } catch (e) {
+      console.error('Error parsing JSON from localStorage', e);
+      this.permiso = null;
+      this.departamento = {} as SelectModel;
+    }
+
+    // console.log('Permiso:', this.permiso);
 
     // Obtener los valores de los queryParams en la primera carga
     this.activatedRoute.queryParams.subscribe((params) => {
@@ -91,6 +119,8 @@ export class PedidosComponent implements OnInit {
         if (params['espacio'] != null) {
           const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
           this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+        } else {
+          this.espaciosSeleccionados = [];
         }
 
         if (params['sector'] != null) {
@@ -150,6 +180,8 @@ export class PedidosComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit(): void { }
+
   traerPedidos(
     {
       cui = this.cui,
@@ -164,6 +196,95 @@ export class PedidosComponent implements OnInit {
     }: TraerPedidosInterface
   ): void {
     this.pedidosService.listarPedidos(cui, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
+  }
+
+  onAddEdit(pedido: PedidoModel | null): void {
+    const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
+    const labelOk = pedido ? 'Actualizar' : 'Agregar';
+    this.pedidosService.seleccionarPedidoById(pedido?.prioridadID);
+
+    const modal = this.modal.create<PedidoComponent>({
+      nzTitle: title,
+      nzContent: PedidoComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: labelOk,
+          type: 'primary',
+          onClick: (componentInstance) => {
+            return this.pedidosService.agregarPedido(componentInstance!.pedidoForm.value).then((res) => {
+              this.modal.closeAll();
+            });
+          },
+          loading: this.pedidosService.isEditing(),
+          disabled: (componentInstance) => !componentInstance?.pedidoForm.valid,
+        }
+      ]
+
+    });
+
+    const instance = modal.getContentComponent();
+    modal.afterClose.subscribe(result => {
+      instance.pedidoForm.reset();
+    });
+  }
+
+  onGestionarPedido(id: number): void {
+    if (id == null) {
+      return;
+    }
+
+    //Navegar hacia la página de gestión de hitos en /acuerdos/acuerdo/:id
+    this.router.navigate(['pedidos', 'pedido', id]);
+  }
+
+  onValidate(pedido: PedidoModel): void {
+    this.confirmModal = this.modal.confirm({
+      nzTitle: 'Validar Pedido',
+      nzContent: '¿Está seguro de validar este pedido?',
+      nzOnOk: () => {
+        //TODO: incluir el servicio de validar pedido
+        this.pedidosService.validarPedido(pedido);
+      }
+    });
+  }
+
+  onCommentPCM(pedido: PedidoModel): void {
+    this.pedidosService.seleccionarPedidoById(pedido.prioridadID);
+
+    const modal = this.modal.create<ComentarioPedidoComponent>({
+      nzTitle: 'Comentario PCM',
+      nzContent: ComentarioPedidoComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Guardar',
+          type: 'primary',
+          onClick: (componentInstance) => {
+            return this.pedidosService.comentarPcmPedido(componentInstance!.comentarioPcmForm.value).then(() => {
+              this.modal.closeAll();
+            });
+          },
+          loading: this.pedidosService.isEditing(),
+          disabled: (componentInstance) => !componentInstance?.comentarioPcmForm.valid,
+        }
+      ]
+    });
+
+    const instance = modal.getContentComponent();
+    modal.afterClose.subscribe(result => {
+      instance.comentarioPcmForm.reset();
+    });
   }
 
   onEspacioChange(value: SelectModel[] | null): void {
@@ -332,7 +453,15 @@ export class PedidosComponent implements OnInit {
     });
   }
 
-  onDelete(value: any): void { }
+  onDelete(value: any): void {
+    this.confirmModal = this.modal.confirm({
+      nzTitle: 'Eliminar Pedido',
+      nzContent: '¿Está seguro de eliminar este pedido?',
+      nzOnOk: () => {
+        this.pedidosService.eliminarPedido(value);
+      },
+    });
+  }
 
   onOpenDrawer(): void {
     this.isDrawervisible = true;
@@ -363,14 +492,35 @@ export class PedidosComponent implements OnInit {
       this.sortField = (currentSort && currentSort.key) || this.sortField;
       this.sortOrder = (currentSort && currentSort.value) || this.sortOrder;
 
+      // Verificar y establecer el valor predeterminado si espaciosSeleccionados está vacío
+      if (!this.espaciosSeleccionados || this.espaciosSeleccionados.length === 0) {
+        const defaultEspacio = this.espaciosStore.espacioSeleccionado();
+        if (defaultEspacio) {
+          this.espaciosSeleccionados = [defaultEspacio];
+          this.searchForm.patchValue({ espacio: this.espaciosSeleccionados });
+          this.filterCounter.update(x => x + 1);
+        }
+      }
+
+      // Verificar y establecer el valor predeterminado si dep está vacío
+      // console.log(this.utilesService.isEmptyObject(this.departamento));
+
+      if (!this.depSeleccionado && !this.utilesService.isEmptyObject(this.departamento)) {
+        const defaultDep = this.departamento;
+        if (defaultDep) {
+          this.depSeleccionado = defaultDep;
+          this.searchForm.patchValue({ dep: this.depSeleccionado });
+          this.filterCounter.update(x => x + 1);
+        }
+      }
+
       this.traerPedidos({
         pageIndex,
         pageSize,
         sortField: this.sortField,
-        sortOrder: this.sortOrder
+        sortOrder: this.sortOrder,
       });
 
-      // Emitir cambios de parámetros
       this.updateParamsSubject.next();
     }
   }

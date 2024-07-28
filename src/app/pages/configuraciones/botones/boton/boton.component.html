@@ -1,0 +1,43 @@
+<form [formGroup]="botonForm" nz-form nzLayout="vertical">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="descripcionBoton">Descripción del botón</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <input nz-input #descripcionBoton id="descripcionBoton" formControlName="descripcionBoton"
+                        placeholder="Ingrese nombre del botón">
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="6" nzLg="6" nzXl="6">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="ordenBoton">Orden</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <input type="text" nz-input id="ordenBoton" formControlName="ordenBoton" #ordenBoton onlyNumbers>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzFor="iconoBoton">Icono</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select id="iconoBoton" formControlName="iconoBoton" #iconoBoton nzShowSearch nzAllowClear
+                        nzPlaceHolder="Seleccionar" style="width: 100%;">
+                        <nz-option *ngFor="let icon of icons" [nzLabel]="icon" [nzValue]="icon" nzCustomContent>
+                            <span nz-icon [nzType]="icon"></span> {{ icon }}
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+    </div>
+
+    <!-- {{this.botonForm.value|json}} -->
+    <!-- <br>
+    {{this.botonesService.botonSeleccionado()|json }} -->
+</form>

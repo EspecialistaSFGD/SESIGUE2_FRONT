@@ -3287,16 +3287,16 @@
     color: #a61d24
 }
 
-.ant-form {
+.dark .ant-form {
     color: rgba(255, 255, 255, .85);
 }
 
-.ant-form legend {
+.dark .ant-form legend {
     color: rgba(255, 255, 255, .45);
     border-bottom: 1px solid #434343
 }
 
-.ant-form output,
+.dark .ant-form output,
 .dark .ant-form-item {
     color: rgba(255, 255, 255, .85);
 }

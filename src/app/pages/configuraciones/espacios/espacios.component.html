@@ -1,0 +1,118 @@
+<app-page-header [title]="title.toUpperCase()" />
+
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderEspacios" nzShowSizeChanger nzSize="small"
+    [nzData]="espaciosService.eventos()!" [nzFrontPagination]="false" [nzLoading]="espaciosService.isLoading()"
+    [nzTotal]="espaciosService.total()" [nzPageSize]="this.pageSize" [nzPageIndex]="this.pageIndex"
+    (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+        <tr>
+            <th nzLeft nzWidth="120px" nzColumnKey="abreviatura" [nzFilterFn]="true">Abreviatura</th>
+            <th class="w-full" nzColumnKey="nombre" [nzSortFn]="true">Nombre</th>
+            <th nzWidth="100px" class="text-center" nzColumnKey="subTipo">Ámbito</th>
+            <th nzWidth="80px" nzColumnKey="fechaEvento" [nzSortFn]="true">Fecha</th>
+            <th nzWidth="80px" nzColumnKey="vigente" class="text-center">Estado</th>
+            <th nzRight nzWidth="120px" nzAlign="center" nzColumnKey="acciones"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (evento of espaciosService.eventos(); track eventoId) {
+        <tr>
+            <td nzLeft>{{evento.abreviatura}}</td>
+            <td>{{evento.nombre}}</td>
+            <td>
+                @switch (evento.subTipo) {
+                @case ('P') {
+                Provincial
+                }
+                @case ('R') {
+                Regional
+                }
+                @default {
+                Distrital
+                }
+                }
+            </td>
+            <td>{{evento.fechaEvento | date: 'dd/MM/yyyy'}}</td>
+            <td class="text-center">
+                {{ evento.descripcionVigente }}
+            </td>
+            <!-- <td><app-estado [title]="evento.descripcionEstado!" /></td> -->
+            <td nzRight nzAlign="center">
+                <nz-space>
+                    @switch (evento.descripcionVigente) {
+                    @case ("No Iniciado") {
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip="Iniciar espacio"
+                        (click)="onActualizarEstado(evento)">
+                        <span nz-icon nzType="play-square" nzTheme="outline"></span>
+                    </button>
+                    }
+
+                    @case ("Iniciado") {
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip="Iniciar seguimiento"
+                        (click)="onActualizarEstado(evento)">
+                        <span nz-icon nzType="branches" nzTheme="outline"></span>
+                    </button>
+                    }
+                    @default {
+                    <button [disabled]="evento.descripcionVigente == null" *nzSpaceItem nz-button nzType="link"
+                        nz-tooltip="Finalizar seguimiento" (click)="onActualizarEstado(evento)">
+                        <span nz-icon nzType="stop" nzTheme="outline"></span>
+                    </button>
+                    }
+                    }
+                    <button *nzSpaceItem nz-button nzType="link" (click)="onAddEdit(evento)">
+                        <!-- icono de editar -->
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                    </button>
+                    <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(evento.eventoId!)">
+                        <!-- icono de eliminar de color rojo -->
+                        <span nz-icon nzType="delete" nzTheme="outline"></span>
+                    </button>
+                </nz-space>
+            </td>
+        </tr>
+        }
+    </tbody>
+</nz-table>
+
+<ng-template #HeaderEspacios>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+        <p class="mb-2 sm:mb-0">Resultados ({{espaciosService.total()}})</p>
+        <div>
+            <nz-space>
+
+                <!-- <button *nzSpaceItem nz-button (click)="onOpenDrawer()">
+                    <span nz-icon nzType="filter" nzTheme="outline"></span>
+                    <span class="button-text">Filtros</span>
+                    <nz-badge class="button-text pl-1" nzStandalone [nzCount]="filterCounter()"></nz-badge>
+                </button> -->
+
+                <!-- <button *nzSpaceItem nz-button>
+                    <span nz-icon nzType="printer" nzTheme="outline"></span>
+                    <span class="button-text">Imprimir acuerdos</span>
+                </button> -->
+
+                <!-- <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu">
+                    <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+                    <span class="button-text">Exportar</span>
+                    <span nz-icon nzType="down"></span>
+                </button>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                    <ul nz-menu>
+                        <li nz-menu-item>
+                            <a>Exportar acuerdos</a>
+                        </li>
+                        <li nz-menu-item>
+                            <a>Exportar hitos</a>
+                        </li>
+                    </ul>
+                </nz-dropdown-menu> -->
+
+                <button *nzSpaceItem nz-button nzType="primary" (click)="onAddEdit(null)">
+                    <span nz-icon nzType="plus" nzTheme="outline"></span>
+                    <span class="button-text">Nuevo espacio de articulación</span>
+                </button>
+            </nz-space>
+        </div>
+    </div>
+</ng-template>

@@ -1,0 +1,68 @@
+<form [formGroup]="menuForm" nz-form nzLayout="vertical">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="6" nzLg="6" nzXl="6">
+            <nz-form-item class="mb-4">
+                <nz-form-label [nzSpan]="null">Menú principal</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select nzPlaceHolder="Seleccione" id="codigoMenuPadre" #codigoMenuPadre
+                        formControlName="codigoMenuPadre" nzAllowClear nzPlaceHolder="Ninguno">
+                        <nz-option *ngFor="let menuD of this.menuesService.menues()" [nzLabel]="menuD.descripcionItem"
+                            [nzValue]="menuD.codigoMenu"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="descripcionItem">Nombre del menu</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <input nz-input #descripcionItem id="descripcionItem" formControlName="descripcionItem"
+                        placeholder="Ingrese nombre del menú">
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="6" nzLg="6" nzXl="6">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="ordenItem">Orden</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <input type="text" nz-input id="ordenItem" formControlName="ordenItem" #ordenItem onlyNumbers>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        @if(menuForm.get('codigoMenuPadre')?.value == 0 || menuForm.get('codigoMenuPadre')?.value == null){
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzFor="iconoItem">Icono</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select id="iconoItem" formControlName="iconoItem" #iconoItem nzShowSearch nzAllowClear
+                        nzPlaceHolder="Seleccionar" style="width: 100%;">
+                        <nz-option *ngFor="let icon of icons" [nzLabel]="icon" [nzValue]="icon" nzCustomContent>
+                            <span nz-icon [nzType]="icon"></span> {{ icon }}
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+
+        @else{
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzFor="direccionUrl">Dirección URL</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <input type="text" nz-input id="direccionUrl" formControlName="direccionUrl" #direccionUrl>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+    </div>
+
+    <!-- {{this.menuForm.value|json}} -->
+
+    <!-- {{this.menuesService.menuSeleccionado()|json }} -->
+</form>

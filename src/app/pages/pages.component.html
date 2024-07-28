@@ -68,8 +68,13 @@
               <ul nz-menu class="bg-white dark:bg-gray-700">
                 <li
                   class="text-gray-500 hover:text-gray-950 dark:text-gray-300 dark:hover:text-gray-200 dark:hover:bg-gray-600"
-                  nz-menu-item (click)="onLogout()"><span nz-icon nzType="poweroff" nzTheme="outline"></span> Cerrar
-                  sesión</li>
+                  nz-menu-item>
+                  <button class="flex items-center gap-1" (click)="onLogout()">
+                    <span class="material-symbols-outlined text-sm">
+                      power_settings_new
+                    </span><span>Cerrar sesión</span>
+                  </button>
+                </li>
               </ul>
             </nz-dropdown-menu>
           </div>

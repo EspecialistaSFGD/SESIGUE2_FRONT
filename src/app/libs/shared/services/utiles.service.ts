@@ -38,4 +38,8 @@ export class UtilesService {
 
         return date;
     }
+
+    isEmptyObject(obj: object): boolean {
+        return Object.keys(obj).length === 0;
+    }
 }

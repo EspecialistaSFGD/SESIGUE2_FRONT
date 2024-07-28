@@ -14,6 +14,9 @@
                             @if (control.errors?.['pattern']) {
                             Debe tener 8 números
                             }
+                            @if (control.errors?.['dniNoDisponible']) {
+                            DNI en uso
+                            }
                         </ng-template>
                         <ng-template #suffixDni>
                             <span nz-icon [nzType]="this.authService.isLoading()?'loading':'search'"></span>
@@ -103,8 +106,8 @@
             <nz-form-item class="mb-4">
                 <nz-form-label [nzSpan]="null" nzRequired>Tipo</nz-form-label>
                 <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
-                    <nz-select nzPlaceHolder="Seleccione" id="responsable" #responsable formControlName="responsable"
-                        (ngModelChange)="onResponsableChange($event)" [compareWith]="compareFn">
+                    <nz-select nzPlaceHolder="Seleccione" id="tipo" #tipo formControlName="tipo"
+                        (ngModelChange)="onTipoChange($event)" [compareWith]="compareFn">
                         <nz-option *ngFor="let tEnt of this.sectoresStore.tiposEntidades()" [nzLabel]="tEnt.label!"
                             [nzValue]="tEnt"></nz-option>
                     </nz-select>
@@ -112,7 +115,7 @@
             </nz-form-item>
         </div>
 
-        @if(registerForm.get('responsable')?.value?.label == 'GN') {
+        @if(registerForm.get('tipo')?.value?.label == 'GN') {
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item class="mb-4">
                 <nz-form-label [nzSpan]="null" nzRequired>Sector</nz-form-label>
@@ -128,7 +131,7 @@
         </div>
         }
 
-        @if(registerForm.get('responsable')?.value?.label == 'GR/GL') {
+        @if(registerForm.get('tipo')?.value?.label == 'GR/GL') {
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item class="mb-4">
                 <nz-form-label [nzSpan]="null" nzRequired>Departamento</nz-form-label>
@@ -161,26 +164,44 @@
         }
     </div>
 
-    @if( registerForm.get('prov')?.value != null || registerForm.get('sector')?.value != null) {
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+        @if( registerForm.get('dep')?.value != null ||registerForm.get('prov')?.value != null ||
+        registerForm.get('sector')?.value != null) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item class="mb-3">
-                <nz-form-label [nzSpan]="null">Entidad</nz-form-label>
-                <nz-form-control nzSpan="null">
+                <nz-form-label [nzSpan]="null" nzRequired>Entidad</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
                     <nz-select class="w-full" #entidad id="entidad" formControlName="entidad" nzPlaceHolder="Seleccione"
                         nzShowSearch [compareWith]="compareFn" nzAllowClear (ngModelChange)="onEntidadChange($event)">
-                        <!-- <nz-option *ngFor="let prov of this.ubigeosStore.provincias()" [nzValue]="prov"
-                                        [nzLabel]="prov.label!">
-                                    </nz-option> -->
+                        <nz-option *ngFor="let ent of this.entidadesStore.entidades()" [nzValue]="ent"
+                            [nzLabel]="ent.label!">
+                        </nz-option>
                     </nz-select>
                 </nz-form-control>
             </nz-form-item>
         </div>
+        }
+
+        @if(registerForm.get('entidad')?.value != null) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null" nzRequired>Perfil</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
+                    <nz-select class="w-full" #perfil id="perfil" formControlName="perfil" nzPlaceHolder="Seleccione"
+                        [compareWith]="compareFn" (ngModelChange)="onPerfilChange($event)">
+                        <nz-option *ngFor="let ent of this.entidadesStore.perfiles()" [nzValue]="ent"
+                            [nzLabel]="ent.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
     </div>
-    }
 
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col>
+            <button class="mr-2" nz-button [routerLink]="[]" [queryParams]="{ action: 'login' }">Cancelar</button>
             <button [nzLoading]="isLoading" [disabled]="!registerForm.valid" style="margin-bottom: 0;" nz-button
                 class="" [nzType]="'primary'" (click)="onRegister()">Registrar</button>
         </div>
