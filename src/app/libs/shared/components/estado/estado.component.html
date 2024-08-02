@@ -1,1 +1,8 @@
-<nz-badge [nzStatus]="estado()">{{ title }}</nz-badge>
+@if(isBadge){
+<nz-badge [nzStatus]="color()">{{ title }}</nz-badge>
+}@else {
+<nz-tag [nzColor]="color()">
+    <span nz-icon [nzType]="iconType()"></span>
+    <span>{{title}}</span>
+</nz-tag>
+}

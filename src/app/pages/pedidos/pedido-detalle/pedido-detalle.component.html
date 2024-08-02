@@ -1,7 +1,4 @@
 <app-page-header title="Detalle de pedido" [content]="pedidoContent" />
-<!-- <code>
-    {{pedidosService.pedidoSeleccionado()|json}}
-</code> -->
 
 <ng-template #pedidoContent>
     <nz-descriptions nzSize="small" nzBordered [nzColumn]="{ xxl: 3, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
@@ -43,7 +40,8 @@
     <thead>
         <tr>
             <th nzColumnKey="codigo" [nzSortFn]="true">Código</th>
-            <th nzColumnKey="" [nzFilterFn]="true">Preacuerdo</th>
+            <th nzColumnKey="tipo">Tipo</th>
+            <th nzColumnKey="" [nzFilterFn]="true">Pre acuerdo</th>
             <th nzColumnKey="acuerdo" [nzSortFn]="true">Acuerdo</th>
             <th nzColumnKey="" [nzSortFn]="true">Modificación</th>
             <th nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
@@ -57,7 +55,8 @@
     <tbody>
         <tr *ngFor="let acuerdo of this.acuerdosService.acuerdos()">
             <td>{{acuerdo.codigo}} </td>
-            <td>{{acuerdo.acuerdo}}</td>
+            <td>{{acuerdo.tipo}} </td>
+            <td>{{acuerdo.pre_acuerdo}}</td>
             <td>{{acuerdo.acuerdo}}</td>
             <!-- //TODO: implementar -->
             <td>-</td>
@@ -71,6 +70,7 @@
                         nz-tooltip
                         [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede desestimar':'Desestimar hito'"
                         (click)="onEliinarHito(data)"> -->
+                    <!-- {{acuerdo.codigo|json}} -->
                     <button [disabled]="acuerdo.codigo != null" nz-tooltip="Convertir a acuerdo" *nzSpaceItem nz-button
                         nzType="link" (click)="onAddEdit(acuerdo, null, true)">
                         <span nz-icon nzType="vertical-align-top" nzTheme="outline"></span>

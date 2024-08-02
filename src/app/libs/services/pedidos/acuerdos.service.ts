@@ -114,6 +114,7 @@ export class AcuerdosService {
         params = params.append('piPageSize', `${pageSize}`);
         params = params.append('columnSort', `${sortField}`);
         params = params.append('typeSort', `${sortOrder}`);
+        // params = params.append('estadoId[]', 1);
 
         this.#acuerdosResult.update((state) => ({
             ...state,
@@ -128,11 +129,11 @@ export class AcuerdosService {
                     if (acuerdo.responsable && acuerdo.responsableId) acuerdo.responsableSelect = new SelectModel(acuerdo.responsableId, acuerdo.responsable);
                     if (acuerdo.entidadId && acuerdo.entidad) acuerdo.entidadSelect = new SelectModel(acuerdo.entidadId, acuerdo.entidad);
                     if (acuerdo.clasificacion && acuerdo.clasificacionId) acuerdo.clasificacionSelect = new SelectModel(acuerdo.clasificacionId, acuerdo.clasificacion);
-                    if (acuerdo.tipo && acuerdo.tipoId) acuerdo.tipoSelect = new SelectModel(acuerdo.tipoId, acuerdo.tipo);
-
+                    if (acuerdo.tipo && acuerdo.tipoId) acuerdo.tipoSelect = acuerdo.tipoId.toString();
                     if (acuerdo.plazo) acuerdo.plazo = this.utilesService.stringToDate(acuerdo.plazo.toString());
                 });
                 this.#acuerdosResult.update((v) => ({ ...v, acuerdos: res, isLoading: false, total: data.info.total }));
+
             },
             error: (e) => console.log(e),
             complete: () => this.#acuerdosResult.update((v) => ({ ...v, isLoading: false })),
@@ -179,16 +180,23 @@ export class AcuerdosService {
         const ots: AcuerdoPedidoModel = {} as AcuerdoPedidoModel;
         ots.prioridadId = acuerdo.prioridadId;
         if (acuerdo.acuerdoId) ots.acuerdoId = acuerdo.acuerdoId;
-        ots.acuerdo = acuerdo.acuerdo;
+
         if (acuerdo.clasificacionSelect) ots.clasificacionId = Number(acuerdo.clasificacionSelect.value);
         if (acuerdo.responsableSelect) ots.responsableId = Number(acuerdo.responsableSelect.value);
         ots.entidadId = (acuerdo.entidadSelect) ? Number(acuerdo.entidadSelect.value) : 0;
-        if (acuerdo.tipoSelect) ots.tipoId = Number(acuerdo.tipoSelect.value);
+        if (acuerdo.tipoSelect) ots.tipoId = Number(acuerdo.tipoSelect);
         ots.accesoId = this.authService.getCodigoUsuario();
-        // ots.codigoUsuario = this.authService.getCodigoUsuario();
         if (acuerdo.plazo) ots.plazo = acuerdo.plazo;
-        ots.pre_Acuerdo = acuerdo.pre_Acuerdo;
-        ots.es_preAcuerdo = acuerdo.es_preAcuerdo;
+        if (acuerdo.es_preAcuerdoBool !== null) {
+            ots.es_preAcuerdo = (acuerdo.es_preAcuerdoBool) ? 1 : 0;
+
+            if (acuerdo.es_preAcuerdoBool) {
+                if (acuerdo.pre_acuerdo) ots.pre_acuerdo = acuerdo.pre_acuerdo;
+            } else {
+                if (acuerdo.acuerdo) ots.acuerdo = acuerdo.acuerdo;
+                if (acuerdo.eventoId) ots.eventoId = acuerdo.eventoId;
+            }
+        }
 
         return new Promise((resolve, reject) => {
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/RegistrarAcuerdo`, ots).subscribe({
@@ -205,9 +213,51 @@ export class AcuerdosService {
         });
     }
 
-    eliminarAcuerdo(acuerdo: AcuerdoPedidoModel): Promise<ResponseModel> {
+    //TODO: Convertir a acuerdo
+    convertirAcuerdo(acuerdo: AcuerdoPedidoModel): Promise<ResponseModel> {
+        if (acuerdo.acuerdoModificado === null || acuerdo.acuerdoModificado === undefined) {
+            return new Promise((resolve, reject) => {
+                this.msg.error('No se ha ingresado un acuerdo para convertir');
+                reject('No se ha ingresado un acuerdo para convertir');
+            });
+        }
+
+        const ots: AcuerdoPedidoModel = {} as AcuerdoPedidoModel;
+        ots.acuerdoId = acuerdo.acuerdoId;
+        ots.eventoId = acuerdo.eventoId;
+        ots.acuerdo = acuerdo.acuerdoModificado;
+        ots.acuerdoModificado = acuerdo.acuerdoModificado;
+        ots.accesoId = this.authService.getCodigoUsuario();
+
         return new Promise((resolve, reject) => {
-            const ots: AcuerdoPedidoModel = {} as AcuerdoPedidoModel;
+            this.http.post<ResponseModel>(`${environment.api}/Acuerdo/ConvertirPreAcuerdo`, ots).subscribe({
+                next: (data) => {
+                    this.msg.success(data.message);
+                    this.listarAcuerdosPorPedido(acuerdo.prioridadId);
+                    resolve(data);
+                },
+                error: (e) => {
+                    this.msg.error(e.message);
+                    reject(e);
+                },
+            });
+        });
+    }
+
+    eliminarAcuerdo(acuerdo: AcuerdoPedidoModel): Promise<ResponseModel> {
+        if (acuerdo.acuerdoId === null || acuerdo.acuerdoId === undefined) {
+            return new Promise((resolve, reject) => {
+                this.msg.error('No se ha seleccionado un acuerdo para eliminar');
+                reject('No se ha seleccionado un acuerdo para eliminar');
+            });
+        }
+
+        const ots: AcuerdoPedidoModel = {} as AcuerdoPedidoModel;
+        ots.acuerdoId = acuerdo.acuerdoId;
+        ots.accesoId = this.authService.getCodigoUsuario();
+
+        return new Promise((resolve, reject) => {
+
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/EliminarAcuerdo`, ots).subscribe({
                 next: (data) => {
                     this.msg.success(data.message);
@@ -222,7 +272,7 @@ export class AcuerdosService {
         });
     }
 
-    seleccionarAcuerdoById(id: number | null | undefined, es_preAcuerdo: boolean | null = null, isConverting: boolean | null = null): void {
+    seleccionarAcuerdoById(id: number | null | undefined, es_preAcuerdoBool: boolean | null = null, isConverting: boolean | null = null): void {
         if (id !== null && id !== undefined) {
             const acuerdo = this.#acuerdosResult().acuerdos?.find((e: AcuerdoPedidoModel) => e.acuerdoId === id) || null;
             this.#acuerdosResult.update((v) => ({ ...v, acuerdoSeleccionado: acuerdo }));
@@ -233,7 +283,7 @@ export class AcuerdosService {
 
         this.#acuerdosResult.update((v) => ({
             ...v,
-            isCreatingPreAcuerdo: (es_preAcuerdo !== null) ? es_preAcuerdo : v.acuerdoSeleccionado?.es_preAcuerdo || null,
+            isCreatingPreAcuerdo: (es_preAcuerdoBool !== null) ? es_preAcuerdoBool : v.acuerdoSeleccionado?.es_preAcuerdoBool || null,
             isConverting: (isConverting !== null) ? isConverting : false,
         }));
 

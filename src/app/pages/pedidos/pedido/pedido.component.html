@@ -6,7 +6,7 @@
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
                     <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione" #espacioSelect
                         formControlName="espacioSelect" [compareWith]="compareFn" nzAllowClear
-                        (ngModelChange)="onSectorChange($event)">
+                        (ngModelChange)="onEspacioChange($event)">
                         <nz-option *ngFor="let esp of this.espaciosStore.espacios()" [nzLabel]="esp.label!"
                             [nzValue]="esp"></nz-option>
                     </nz-select>
@@ -21,8 +21,7 @@
                 <nz-form-label [nzSpan]="null" nzRequired>Sector</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
                     <nz-select [nzMaxTagCount]="3" id="sectorSelect" nzPlaceHolder="Seleccione" #sectorSelect
-                        formControlName="sectorSelect" [compareWith]="compareFn" nzAllowClear
-                        (ngModelChange)="onSectorChange($event)">
+                        formControlName="sectorSelect" [compareWith]="compareFn" nzAllowClear (ngModelChange)="true">
                         <nz-option *ngFor="let sec of this.sectoresStore.sectores()" [nzLabel]="sec.label!"
                             [nzValue]="sec"></nz-option>
                     </nz-select>

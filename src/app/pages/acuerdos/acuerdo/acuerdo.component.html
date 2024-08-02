@@ -1,19 +1,48 @@
 <form [formGroup]="acuerdoForm" nz-form nzLayout="vertical">
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-
+        @if(!isConverting){
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Tipo</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
                     <nz-select nzPlaceHolder="Todos" id="tipoSelect" #tipoSelect formControlName="tipoSelect"
                         nzAllowClear (ngModelChange)="onTipoAcuerdosChange($event)">
-                        <nz-option nzValue="1" nzLabel="Acuerdo"></nz-option>
-                        <nz-option nzValue="2" nzLabel="Compromiso"></nz-option>
+                        <nz-option nzValue="1" nzLabel="ACUERDO"></nz-option>
+                        <nz-option nzValue="2" nzLabel="COMPROMISO"></nz-option>
                     </nz-select>
                 </nz-form-control>
             </nz-form-item>
         </div>
+        }
 
+        @if(isConverting){
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="acuerdoModificado"
+                    nzRequired>acuerdoModificado</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <textarea nz-input id="acuerdoModificado" formControlName="acuerdoModificado"
+                        placeholder="Ingrese el pre acuerdo" nzAutosize></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+        @else {
+
+        @if(isCreatingPreAcuerdo) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="pre_acuerdo" nzRequired>Pre acuerdo</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <textarea nz-input id="pre_acuerdo" formControlName="pre_acuerdo"
+                        placeholder="Ingrese el pre acuerdo" nzAutosize></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        }
+
+        @else {
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
             <nz-form-item>
                 <nz-form-label nzRequired [nzSpan]="null" nzFor="acuerdo" nzRequired>Acuerdo</nz-form-label>
@@ -23,15 +52,7 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
-        <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
-            <nz-form-item>
-                <nz-form-label nzRequired [nzSpan]="null" nzFor="pre_Acuerdo">Pre acuerdo</nz-form-label>
-                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
-                    <textarea nz-input id="pre_Acuerdo" formControlName="pre_Acuerdo"
-                        placeholder="Ingrese el pre acuerdo" nzAutosize></textarea>
-                </nz-form-control>
-            </nz-form-item>
-        </div> -->
+        }
 
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
             <nz-form-item>
@@ -88,10 +109,13 @@
         </div>
         }
 
+        }
+
     </div>
-    <!-- {{this.acuerdoForm.value|json}} -->
+    {{this.acuerdoForm.value|json}}
 
 
     <!-- {{this.acuerdosService.acuerdoSeleccionado()|json }} -->
-    <!-- {{this.acuerdosService.isConverting()|json }} -->
+    <!-- isConverting: {{this.acuerdosService.isConverting()|json }}<br>
+    isCreatingPreAcuerdo: {{this.acuerdosService.isCreatingPreAcuerdo()|json }} -->
 </form>

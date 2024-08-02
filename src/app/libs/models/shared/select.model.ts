@@ -3,6 +3,6 @@ export class SelectModel {
         public value?: number | string,
         public label?: string,
         // public checked?: boolean,
-        // public descripcion?: string,
+        public descripcion?: any,
     ) { }
 }

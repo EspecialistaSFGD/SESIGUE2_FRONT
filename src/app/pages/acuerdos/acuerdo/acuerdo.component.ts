@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -16,6 +16,8 @@ import { EspaciosStore } from '../../../libs/shared/stores/espacios.store';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
 import { ClasificacionesStore } from '../../../libs/shared/stores/clasificaciones.store';
 import { differenceInCalendarDays } from 'date-fns';
+
+
 
 @Component({
   selector: 'app-acuerdo',
@@ -35,7 +37,7 @@ import { differenceInCalendarDays } from 'date-fns';
   templateUrl: './acuerdo.component.html',
   styles: ``
 })
-export class AcuerdoComponent {
+export class AcuerdoComponent implements OnInit {
   acuerdoForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
 
@@ -45,6 +47,7 @@ export class AcuerdoComponent {
   espaciosStore = inject(EspaciosStore);
   clasificacionesStore = inject(ClasificacionesStore);
   private fb = inject(UntypedFormBuilder);
+
 
   pedidoSeleccionado: PedidoModel | null = this.pedidosService.pedidoSeleccionado();
 
@@ -58,11 +61,44 @@ export class AcuerdoComponent {
 
 
   constructor() {
+
+
     this.crearAcuerdoForm();
+
+    // console.log(this.acuerdoSeleccionado?.tipoSelect);
+
 
     if (this.acuerdoSeleccionado?.responsableSelect != null) {
       this.onResponsableAcuerdosChange(this.acuerdoSeleccionado?.responsableSelect);
     }
+
+
+  }
+
+  ngOnInit(): void {
+    const acuerdoModificadoCtrl = this.acuerdoForm.get('acuerdoModificado');
+    const acuerdoCtrl = this.acuerdoForm.get('acuerdo');
+    const preAcuerdoCtrl = this.acuerdoForm.get('pre_acuerdo');
+    const es_preAcuerdoBoolCtrl = this.acuerdoForm.get('es_preAcuerdoBool');
+
+    if (this.isConverting) {
+      acuerdoModificadoCtrl?.setValidators([Validators.required]);
+      es_preAcuerdoBoolCtrl?.patchValue(false);
+    } else {
+      acuerdoModificadoCtrl?.clearValidators();
+
+      if (this.isCreatingPreAcuerdo) {
+        acuerdoCtrl?.clearValidators();
+        preAcuerdoCtrl?.setValidators([Validators.required]);
+      } else {
+        acuerdoCtrl?.setValidators([Validators.required]);
+        preAcuerdoCtrl?.clearValidators();
+      }
+    }
+
+    acuerdoModificadoCtrl?.updateValueAndValidity();
+    acuerdoCtrl?.updateValueAndValidity();
+    preAcuerdoCtrl?.updateValueAndValidity();
   }
 
   onClasificacionAcuerdosChange(value: SelectModel): void {
@@ -96,17 +132,20 @@ export class AcuerdoComponent {
   crearAcuerdoForm(): void {
     this.acuerdoForm = this.fb.group({
       acuerdoId: [this.acuerdoSeleccionado?.acuerdoId],
-      prioridadId: [this.pedidoSeleccionado?.prioridadID],
-      acuerdo: [this.acuerdoSeleccionado?.acuerdo, [Validators.required]],
-      clasificacionSelect: [this.acuerdoSeleccionado?.clasificacionSelect],
-      responsableSelect: [this.acuerdoSeleccionado?.responsableSelect],
+      prioridadId: [this.pedidoSeleccionado?.prioridadID, [Validators.required]],
+      acuerdo: [(!this.isCreatingPreAcuerdo || this.isConverting) ? this.acuerdoSeleccionado?.acuerdo : null],
+      pre_acuerdo: [(this.isCreatingPreAcuerdo || this.isConverting) ? this.acuerdoSeleccionado?.pre_acuerdo : null],
+      clasificacionSelect: [this.acuerdoSeleccionado?.clasificacionSelect, [Validators.required]],
+      responsableSelect: [this.acuerdoSeleccionado?.responsableSelect, [Validators.required]],
       entidadSelect: [this.acuerdoSeleccionado?.entidadSelect],
-      tipoSelect: [this.acuerdoSeleccionado?.tipoSelect],
-      plazo: [this.acuerdoSeleccionado?.plazo],
-      pre_Acuerdo: [this.acuerdoSeleccionado?.pre_Acuerdo],
-      es_preAcuerdo: (this.isCreatingPreAcuerdo != null ? this.isCreatingPreAcuerdo : this.acuerdoSeleccionado?.es_preAcuerdo),
-      acuerdoModificado: [this.acuerdoSeleccionado?.acuerdoModificado],
-      acuerdo_original: [this.acuerdoSeleccionado?.acuerdo_original],
+      tipoSelect: [this.acuerdoSeleccionado?.tipoSelect, [Validators.required]],
+      plazo: [this.acuerdoSeleccionado?.plazo, [Validators.required]],
+      es_preAcuerdoBool: (this.isCreatingPreAcuerdo != null ? this.isCreatingPreAcuerdo : this.acuerdoSeleccionado?.es_preAcuerdoBool),
+      acuerdoModificado: [(this.acuerdoSeleccionado?.acuerdo) ? this.acuerdoSeleccionado?.acuerdo : this.acuerdoSeleccionado?.pre_acuerdo || null],
+      //TODO: tener en cuenta para una edición especial del acuerdo
+      acuerdo_original: [null],
+      eventoId: [this.pedidoSeleccionado?.eventoId || null],
+      // acuerdo_original: [this.acuerdoSeleccionado?.pre_Acuerdo],
     });
   }
 }

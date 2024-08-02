@@ -6,6 +6,7 @@ import { ResponseModel, ResponseModelPaginated } from '../../models/shared/respo
 import { AvanceHitoModel } from '../../models/pedido';
 import { UtilesService } from '../../shared/services/utiles.service';
 import { SelectModel } from '../../models/shared/select.model';
+import { ComentarioAvanceModel, ComentarioModel } from '../../models/pedido/comentario.model';
 const accesoId = localStorage.getItem('codigoUsuario') || null;
 
 interface State {
@@ -46,8 +47,6 @@ export class AvancesService {
     constructor() { }
 
     agregarEditarAvance(avance: AvanceHitoModel): Promise<ResponseModel> {
-
-        //TODO: Agregar para envio de archivo evidencia
         return new Promise((resolve, reject) => {
             this.#avancesResult.update((state) => ({
                 ...state,
@@ -65,10 +64,11 @@ export class AvancesService {
             }
             // formData.append('fecha', `${avance.fecha}`);
             formData.append('avance', `${avance.avance}`);
-            if (avance.idEvidencia != null) formData.append('IdArchivo', avance.idEvidencia);
+
+            if (avance.idEvidencia != null) formData.append('IdEvidencia', avance.idEvidencia);
 
             // Asegúrate de que evidencia no sea undefined
-            if (avance.idEvidencia === null && avance.evidencia instanceof File) {
+            if (avance.idEvidencia === null && avance.evidencia !== null && avance.evidencia !== undefined) {
                 formData.append('evidencia', avance.evidencia, avance.evidencia.name);
             }
 
@@ -78,7 +78,7 @@ export class AvancesService {
             this.http.post(`${environment.api}/Avance/RegistrarAvance`, formData).subscribe({
                 next: (data: ResponseModel) => {
                     this.msg.success(data.message);
-                    this.listarAvances(avance.hitdoId, 1, 10, 'avanceId', 'ascend');
+                    // this.listarAvances(avance.hitdoId, 1, 10, 'avanceId', 'ascend');
                     resolve(data);
                 },
                 error: (e) => {
@@ -91,7 +91,6 @@ export class AvancesService {
     }
 
     listarAvances(hitoID: number | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
-        // debugger;
         let params = new HttpParams();
 
         this.#avancesResult.update((state) => ({
@@ -133,17 +132,40 @@ export class AvancesService {
         });
     }
 
-    // seleccionarAvance(avance: AvanceHitoModel | null): void {
-    //     if (avance != null && avance.fecha != null && avance.fecha != undefined) {
-    //         avance.fechaDate = this.utilesService.stringToDate(avance.fecha);
-    //     }
+    descargarEvidenciaAvance(avanceId: number): Promise<ResponseModel> {
+        return new Promise((resolve, reject) => {
+            this.http.get(`${environment.api}/Avance/Descargar?avanceId=${avanceId}`).subscribe({
+                next: (data: ResponseModel) => {
+                    resolve(data);
+                },
+                error: (e) => {
+                    reject(e);
+                },
+            });
+        });
+    }
 
-    //     if (avance != null && avance.entidadID != null && avance.entidadID != undefined) {
-    //         avance.entidadSelect = new SelectModel(Number(avance.entidadID));
-    //     }
+    agregarComentario(comentario: ComentarioModel): Promise<ResponseModel> {
+        const ots = new ComentarioAvanceModel();
+        ots.avanceId = comentario.id;
+        ots.comentario = comentario.comentario;
+        ots.accesoId = Number(accesoId);
+        ots.tipoComentario = comentario.tipoComentario;
 
-    //     this.#avancesResult.update((v) => ({ ...v, avanceSeleccionado: avance }));
-    // }
+        return new Promise((resolve, reject) => {
+            this.http.post(`${environment.api}/Avance/ComentarioAvance`, ots).subscribe({
+                next: (data: ResponseModel) => {
+                    this.msg.success('Comentario agregado correctamente');
+                    this.listarAvances(this.avanceSeleccionado().hitdoId, 1, 10, 'avanceId', 'ascend');
+                    resolve(data);
+                },
+                error: (e) => {
+                    this.msg.error(`Error al agregar comentario: ${e}`);
+                    reject(e);
+                },
+            });
+        });
+    }
 
     seleccionarAvanceById(avanceId: number | undefined | null): void {
         if (avanceId != null && avanceId != undefined) {

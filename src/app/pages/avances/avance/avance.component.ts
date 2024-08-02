@@ -13,6 +13,8 @@ import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
 import { SelectModel } from '../../../libs/models/shared/select.model';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { UtilesService } from '../../../libs/shared/services/utiles.service';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-avance',
@@ -42,8 +44,10 @@ export class AvanceComponent {
   public acuerdosService = inject(AcuerdosService);
   public avancesService = inject(AvancesService);
   public sectoresStore = inject(SectoresStore);
+  private utilesService = inject(UtilesService);
   private hitoSeleccionado = this.hitosService.hitoSeleccionado();
   private acuerdoSeleccionado = this.acuerdosService.acuerdoSeleccionado();
+  avanceSeleccionado = this.avancesService.avanceSeleccionado();
 
   uploading = false;
   fileList: NzUploadFile[] = [];
@@ -51,45 +55,77 @@ export class AvanceComponent {
   constructor() {
     this.crearAvanceForm();
 
+    if (this.avanceSeleccionado != null && this.avanceSeleccionado.nombreEvidencia != '') {
+      {
+        this.fileList = [{
+          uid: this.avanceSeleccionado.avanceId,
+          name: this.avanceSeleccionado.nombreEvidencia,
+          status: 'done',
+          // url: 'server'
+        }];
+      }
+    }
+
     if (this.hitoSeleccionado?.responsableSelect != null) {
       this.onResponsableIDChange(this.hitoSeleccionado.responsableSelect);
     }
 
   }
-  beforeUpload = (file: NzUploadFile): boolean => {
 
+
+  beforeUpload = (file: NzUploadFile): boolean => {
     if (file == null) return false;
 
+    const originalFile: File | null = this.utilesService.getOriginalFile(file);
+
     this.fileList = [];
-    this.fileList = this.fileList.concat(file);
+
+    this.fileList = this.fileList.concat({
+      ...file,
+      status: 'done',
+      name: file.name,
+      url: URL.createObjectURL(file as any) // Crear una URL para descargar el archivo subido
+    });
 
     if (this.fileList.length > 0) {
-      this.fileList.forEach((file: any) => {
-        this.avanceForm.get('evidencia')?.patchValue(file);
-      });
+      if (originalFile != null) {
+        this.avanceForm.get('evidencia')?.patchValue(originalFile);
+      }
     }
 
-    return false;
+    return false; // Evita la carga automática del archivo
   };
 
   onDeleteFiles = (file: NzUploadFile): boolean => {
     this.fileList = [];
     this.avanceForm.get('evidencia')?.patchValue(null);
+    this.avanceForm.get('nombreEvidencia')?.patchValue(null);
+    console.log('evidencia', this.avanceForm.get('evidencia')?.value);
+
     return false;
   }
 
-  onDownloadFiles = () => {
-    let idArchivo = this.avanceForm.get('idArchivo')?.value;
-    // this.utilService.descargarArchivoFull(idArchivo)
-    //   .subscribe((res: any) => {
-    //     if (res.success == true) {
-    //       var binary_string = this.utilService.base64ToArrayBuffer(res.data.binario);
-    //       var blob = new Blob([binary_string], { type: `application/${res.data.tipo}` });
+  handleDownload = (file: NzUploadFile): void => {
+    const nombreEvidencia = this.avanceForm.get('nombreEvidencia')?.value;
+    const idArchivo = this.avanceForm.get('avanceId')?.value;
 
-    //       saveAs(blob, this.avanceForm.get('nombreArchivo').value);
-    //     }
-    //   });
-  }
+    if (nombreEvidencia != '' && nombreEvidencia != null) { // viene del servidor
+      this.avancesService.descargarEvidenciaAvance(idArchivo).then((res) => {
+        // console.log(res);
+
+        if (res.success == true) {
+          var binary_string = this.utilesService.base64ToArrayBuffer(res.data[0].binario);
+          var blob = new Blob([binary_string], { type: `application/${res.data[0].tipo}` });
+
+          saveAs(blob, res.data[0].nombre);
+        }
+      });
+    } else {
+      if (file.url) {
+        window.open(file.url);
+      }
+    }
+  };
 
   onEntidadIDChange(id: number): void {
     if (id == null) return;
@@ -105,15 +141,16 @@ export class AvanceComponent {
   }
 
   crearAvanceForm(): void {
-    const avanceSeleccionado = this.avancesService.avanceSeleccionado();
 
     this.avanceForm = this.fb.group({
-      avanceId: [avanceSeleccionado?.avanceId],
+      idEvidencia: [this.avanceSeleccionado?.idEvidencia],
+      avanceId: [this.avanceSeleccionado?.avanceId],
       hitdoId: [this.hitoSeleccionado?.hitoId, [Validators.required]],
-      fecha: [avanceSeleccionado?.fechaDate, [Validators.required]],
-      avance: [avanceSeleccionado?.avance, [Validators.required]],
-      evidencia: [avanceSeleccionado?.evidencia],
-      entidadSelect: [avanceSeleccionado?.entidadSelect, [Validators.required]],
+      fecha: [this.avanceSeleccionado?.fechaDate, [Validators.required]],
+      avance: [this.avanceSeleccionado?.avance, [Validators.required]],
+      evidencia: [this.avanceSeleccionado?.evidencia],
+      nombreEvidencia: [this.avanceSeleccionado?.nombreEvidencia],
+      entidadSelect: [this.avanceSeleccionado?.entidadSelect, [Validators.required]],
       responsableSelect: [this.hitoSeleccionado?.responsableSelect, [Validators.required]],
     });
   }

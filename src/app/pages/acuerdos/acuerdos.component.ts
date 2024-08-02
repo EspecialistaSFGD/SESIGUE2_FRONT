@@ -48,7 +48,7 @@ import { AcuerdoComponent } from './acuerdo/acuerdo.component';
     NzDrawerModule,
     NzBadgeModule,
     NzToolTipModule,
-    EstadoComponent
+    EstadoComponent,
   ],
   templateUrl: './acuerdos.component.html',
   styleUrl: './acuerdos.component.less'

@@ -75,106 +75,7 @@ export class AuthService {
   public selectedTheme = computed(() => this.#usuario().selectedTheme);
 
   constructor() {
-    // effect(() => {
-    //   if (this.#usuario().perfil) {
-    //     localStorage.setItem('perfil', JSON.stringify(this.#usuario().perfil));
-    //   }
-
-    //   if (this.#usuario().opciones) {
-    //     localStorage.setItem('opciones', JSON.stringify(this.#usuario().opciones));
-    //   }
-
-
-    // });
     this.initTheme();
-  }
-
-  initTheme(): void {
-    // console.log(this.selectedTheme());
-
-    if (this.selectedTheme() === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }
-
-  switchTheme(theme: string): void {
-    this.#usuario.update((v) => ({ ...v, selectedTheme: theme }));
-
-    if (theme === 'dark') {
-      localStorage['theme'] = 'dark';
-    } else if (theme === 'light') {
-      localStorage['theme'] = 'light';
-    } else {
-      localStorage.removeItem('theme');
-    }
-
-    this.initTheme();
-  }
-
-  getCodigoUsuario(): number {
-    return codigoUsuario;
-  }
-
-  getCodigoPerfil(): number {
-    return codigoPerfil;
-  }
-
-  registrarUsuario(usuario: UsuarioModel): Observable<ResponseModel | null> {
-
-    let ots: UsuarioRequestModel = {} as UsuarioRequestModel;
-
-    if (usuario.perfil) ots.codigoPerfil = Number(usuario.perfil.value);
-    if (usuario.tipo) ots.tipo = Number(usuario.tipo.value);
-    if (usuario.sector) ots.sector = Number(usuario.sector.value);
-    if (usuario.dep != null && usuario.dep != undefined) ots.codigoDepartamento = usuario.dep.value!.toString();
-    if (usuario.prov != null && usuario.prov != undefined) ots.codigoProvincia = usuario.prov.value!.toString();
-    if (usuario.entidad) ots.entidad = Number(usuario.entidad.value);
-    if (usuario.clave) ots.contrasena = usuario.clave;
-    if (usuario.correo) ots.correoNotificacion = usuario.correo;
-    if (usuario.nombre) ots.nombresPersona = usuario.nombre;
-    ots.tipoDocumento = 1;
-    if (usuario.dni) ots.numeroDocumento = usuario.dni;
-    ots.esActivo = true;
-    //TODO: Revisar si se quita
-    ots.nombreUsuario = '';
-
-    return this.http.post<ResponseModel>(`${environment.api}/Usuario/RegistrarUsuario`, ots).pipe(
-      tap((resp: ResponseModel) => {
-        if (resp.success) {
-
-          if (resp.data == 0) {
-            this.msg.error(resp.message);
-          } else {
-            this.msg.success(resp.message);
-          }
-        } else {
-          this.msg.error(resp.message);
-        }
-      }),
-      catchError((err) => {
-        this.msg.error("Hubo un error al registrar el usuario", err);
-        return of(null);
-      })
-    );
-  }
-
-  verificarDisponibilidadDni(numeroDocumento: string): Observable<ResponseModel | null> {
-    this.#usuario.update((v) => ({ ...v, isLoading: true }));
-    return this.http.post<ResponseModel>(`${environment.api}/Login/verificarDisponibilidad`, { numeroDocumento }).pipe(
-      tap((resp: ResponseModel) => {
-        if (!resp.success) {
-          this.msg.error(resp.message);
-        }
-        this.#usuario.update((v) => ({ ...v, isLoading: false }));
-      }),
-      catchError((err) => {
-        this.msg.error("Hubo un error al verificar la disponibilidad", err);
-        this.#usuario.update((v) => ({ ...v, isLoading: false }));
-        return of(null);
-      })
-    );
   }
 
   login(user: AuthLoginModel): Observable<ResponseModel | null> {
@@ -239,6 +140,14 @@ export class AuthService {
           if (data.codigoDistrito != null && data.codigoDistrito != '' && data.distrito != null && data.distrito != '') {
             const dist = new SelectModel(data.codigoDistrito, data.distrito);
             localStorage.setItem('distrito', JSON.stringify(dist));
+          }
+
+          if (data.descripcionNivel != null) {
+            localStorage.setItem('nivel', data.descripcionNivel);
+          }
+
+          if (data.descripcionSubTipo != null) {
+            localStorage.setItem('subTipo', data.descripcionSubTipo);
           }
 
           if (localStorage.getItem('isSiderCollapsed') == null) localStorage.setItem('isSiderCollapsed', 'true');
@@ -359,6 +268,91 @@ export class AuthService {
     return { menusTransformados, permisos };
   }
 
+  initTheme(): void {
+    if (this.selectedTheme() === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
+
+  switchTheme(theme: string): void {
+    this.#usuario.update((v) => ({ ...v, selectedTheme: theme }));
+
+    if (theme === 'dark') {
+      localStorage['theme'] = 'dark';
+    } else if (theme === 'light') {
+      localStorage['theme'] = 'light';
+    } else {
+      localStorage.removeItem('theme');
+    }
+
+    this.initTheme();
+  }
+
+  getCodigoUsuario(): number {
+    return codigoUsuario;
+  }
+
+  getCodigoPerfil(): number {
+    return codigoPerfil;
+  }
+
+  registrarUsuario(usuario: UsuarioModel): Observable<ResponseModel | null> {
+
+    let ots: UsuarioRequestModel = {} as UsuarioRequestModel;
+
+    if (usuario.perfil) ots.codigoPerfil = Number(usuario.perfil.value);
+    if (usuario.tipo) ots.tipo = Number(usuario.tipo.value);
+    if (usuario.sector) ots.sector = Number(usuario.sector.value);
+    if (usuario.dep != null && usuario.dep != undefined) ots.codigoDepartamento = usuario.dep.value!.toString();
+    if (usuario.prov != null && usuario.prov != undefined) ots.codigoProvincia = usuario.prov.value!.toString();
+    if (usuario.entidad) ots.entidad = Number(usuario.entidad.value);
+    if (usuario.clave) ots.contrasena = usuario.clave;
+    if (usuario.correo) ots.correoNotificacion = usuario.correo;
+    if (usuario.nombre) ots.nombresPersona = usuario.nombre;
+    ots.tipoDocumento = 1;
+    if (usuario.dni) ots.numeroDocumento = usuario.dni;
+    ots.esActivo = true;
+    //TODO: Revisar si se quita
+    ots.nombreUsuario = '';
+
+    return this.http.post<ResponseModel>(`${environment.api}/Usuario/RegistrarUsuario`, ots).pipe(
+      tap((resp: ResponseModel) => {
+        if (resp.success) {
+
+          if (resp.data == 0) {
+            this.msg.error(resp.message);
+          } else {
+            this.msg.success(resp.message);
+          }
+        } else {
+          this.msg.error(resp.message);
+        }
+      }),
+      catchError((err) => {
+        this.msg.error("Hubo un error al registrar el usuario", err);
+        return of(null);
+      })
+    );
+  }
+
+  verificarDisponibilidadDni(numeroDocumento: string): Observable<ResponseModel | null> {
+    this.#usuario.update((v) => ({ ...v, isLoading: true }));
+    return this.http.post<ResponseModel>(`${environment.api}/Login/verificarDisponibilidad`, { numeroDocumento }).pipe(
+      tap((resp: ResponseModel) => {
+        if (!resp.success) {
+          this.msg.error(resp.message);
+        }
+        this.#usuario.update((v) => ({ ...v, isLoading: false }));
+      }),
+      catchError((err) => {
+        this.msg.error("Hubo un error al verificar la disponibilidad", err);
+        this.#usuario.update((v) => ({ ...v, isLoading: false }));
+        return of(null);
+      })
+    );
+  }
 
   obtenerPerfil(): Observable<ResponseModel | null> {
     return this.http.get<ResponseModel>(`${environment.api}/Login/ObtenerPerfil`)
@@ -507,6 +501,8 @@ export class AuthService {
     localStorage.removeItem('departamento');
     localStorage.removeItem('provincia');
     localStorage.removeItem('distrito');
+    localStorage.removeItem('nivel');
+    localStorage.removeItem('subTipo');
 
     this.#usuario.set({
       usuario: null,

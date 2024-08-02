@@ -13,7 +13,7 @@
             <th nzWidth="80px" nzAlign="center" nzColumnKey="cuis">CUI</th>
             <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadPreAcuerdos">Pre acuerdos</th>
             <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadAcuerdos">Acuerdos</th>
-            <th nzWidth="120px" nzAlign="center" nzColumnKey="comentarioPcm">Comentario PCM</th>
+            <th nzWidth="120px" nzAlign="center" nzColumnKey="comentarioPCM">Comentario PCM</th>
             <th nzRight nzWidth="110px" nzAlign="center" nzColumnKey="acciones"></th>
         </tr>
     </thead>
@@ -41,7 +41,7 @@
             <td nzWidth="80px" nzAlign="center">{{ data.cuis }}</td>
             <td nzWidth="100px" nzAlign="center">{{ data.cantidadPreAcuerdos }}</td>
             <td nzWidth="100px" nzAlign="center">{{ data.cantidadAcuerdos }}</td>
-            <td nzWidth="120px" nzAlign="center">{{ data.comentarioPcm }}</td>
+            <td nzWidth="120px" nzAlign="center">{{ data.comentarioPCM }}</td>
             <td nzRight nzWidth="72px" nzAlign="center">
                 <nz-space>
                     <button (click)="onGestionarPedido(data.prioridadID)" *nzSpaceItem nz-button nzType="link"
@@ -52,7 +52,9 @@
                     @if(permiso?.puede_comentar_pedido_pcm){
                     <button [disabled]="data.validado==1" *nzSpaceItem nz-button nzType="link" nz-tooltip
                         nzTooltipTitle="Agregar comentario" (click)="onCommentPCM(data)">
-                        <span nz-icon nzType="comment" nzTheme="outline"></span>
+                        <nz-badge [nzDot]="data.comentarioPCM != '' && data.comentarioPCM != null">
+                            <span nz-icon nzType="comment" nzTheme="outline"></span>
+                        </nz-badge>
                     </button>
                     }
 

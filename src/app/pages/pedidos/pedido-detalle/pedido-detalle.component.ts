@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { PermisoModel } from '../../../libs/models/auth/permiso.model';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { PageHeaderComponent } from '../../../libs/shared/layout/page-header/page-header.component';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
@@ -63,7 +62,7 @@ export class PedidoDetalleComponent {
   fechaDateFormat = 'dd/MM/yyyy';
 
   pageIndex: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 20;
   sortField: string = 'prioridadID';
   sortOrder: string = 'descend';
 
@@ -160,9 +159,15 @@ export class PedidoDetalleComponent {
           label: labelOk,
           type: 'primary',
           onClick: (componentInstance) => {
-            return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then(() => {
-              this.modal.closeAll();
-            });
+            if (isConverting) {
+              return this.acuerdosService.convertirAcuerdo(componentInstance!.acuerdoForm.value).then(() => {
+                this.modal.closeAll();
+              });
+            } else {
+              return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then(() => {
+                this.modal.closeAll();
+              });
+            }
           },
           loading: this.acuerdosService.isEditing(),
           disabled: (componentInstance) => !componentInstance?.acuerdoForm.valid,

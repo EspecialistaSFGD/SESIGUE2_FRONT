@@ -87,11 +87,18 @@ export class EspaciosStore {
           if (!eventos) return;
 
           const res: EspacioModel[] = data.data;
+          // console.log(res);
+          //TODO: capturar fecha de eventos para manejarlos en el front de pedidos
+
           let espaciosRes: SelectModel[] = [];
           let espacioSeleccionado: SelectModel | null = null;
 
           eventos.forEach((evento) => {
-            espaciosRes.push(new SelectModel(Number(evento.eventoId), evento.nombre));
+            if (evento.fechaEvento) {
+              evento.fechaEvento = this.utilesService.stringToDate(evento.fechaEvento.toString());
+            }
+
+            espaciosRes.push(new SelectModel(Number(evento.eventoId), evento.nombre, evento.fechaEvento));
             //TODO: verificar si es necesario
             // if (evento.vigente == 1 && espacioSeleccionado == null) {
             //   espacioSeleccionado = new SelectModel(Number(evento.eventoId), evento.nombre);

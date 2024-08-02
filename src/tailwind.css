@@ -196,6 +196,11 @@ nz-sider .ant-menu-inline .ant-menu-submenu {
     display: block;
 }
 
+.dark .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
+.dark .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input:hover {
+    background: transparent;
+}
+
 /* .auth-wrapper {
     background-image: url(../src/assets/images/bg.svg) !important;
 }

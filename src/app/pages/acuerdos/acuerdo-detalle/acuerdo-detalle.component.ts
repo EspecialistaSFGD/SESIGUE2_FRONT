@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal, ViewContainerRef, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, Signal, ViewContainerRef, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
@@ -25,9 +25,14 @@ import { AvanceComponent } from '../../avances/avance/avance.component';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { PageHeaderComponent } from '../../../libs/shared/layout/page-header/page-header.component';
 import { ComentarioComponent } from '../../../libs/shared/components/comentario/comentario.component';
-import { AuthService } from '../../../libs/services/auth/auth.service';
-import { AccionModel } from '../../../libs/models/auth/accion.model';
 import { PermisoModel } from '../../../libs/models/auth/permiso.model';
+import { UtilesService } from '../../../libs/shared/services/utiles.service';
+import { saveAs } from 'file-saver';
+import { EstadoComponent } from '../../../libs/shared/components/estado/estado.component';
+import { ComentarioModel } from '../../../libs/models/pedido/comentario.model';
+// import { NzTagModule } from 'ng-zorro-antd/tag';
+
+const subTipo = localStorage.getItem('subTipo') || null;
 
 @Component({
   selector: 'app-acuerdo-detalle',
@@ -50,7 +55,9 @@ import { PermisoModel } from '../../../libs/models/auth/permiso.model';
     NzRadioModule,
     HitoComponent,
     NzModalModule,
-    NzBadgeModule
+    NzBadgeModule,
+    EstadoComponent,
+    // NzTagModule,
   ],
   providers: [
 
@@ -88,6 +95,7 @@ export class AcuerdoDetalleComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private modal = inject(NzModalService);
+  private utilesService = inject(UtilesService);
 
   // private confirmModal = inject(NzModalRef);
   confirmModal?: NzModalRef; // For testing by now
@@ -183,6 +191,20 @@ export class AcuerdoDetalleComponent implements OnInit {
     }
 
     this.onHitoSelected(hito);
+  }
+
+  onDownload(avanceId: number): void {
+    if (avanceId == null) return;
+
+    this.avancesService.descargarEvidenciaAvance(avanceId).then((res) => {
+
+      if (res.success == true) {
+        var binary_string = this.utilesService.base64ToArrayBuffer(res.data[0].binario);
+        var blob = new Blob([binary_string], { type: `application/${res.data[0].tipo}` });
+
+        saveAs(blob, res.data[0].nombre);
+      }
+    });
   }
 
   onHitoSelectedById(hitoId: number): void {
@@ -283,10 +305,14 @@ export class AcuerdoDetalleComponent implements OnInit {
   onHitoAddComentarioSD(hito: HitoAcuerdoModel): void {
     this.hitosService.seleccionarHitoById(hito?.hitoId);
 
-    const modal = this.modal.create<ComentarioComponent>({
-      nzTitle: `Comentario de Secretaría Digital para el hito "${hito.hito}"`,
+    const modal = this.modal.create<ComentarioComponent, ComentarioModel>({
+      nzTitle: `Comentario de Secretaría Digital`,
       nzContent: ComentarioComponent,
       nzViewContainerRef: this.viewContainerRef,
+      nzData: {
+        id: hito.hitoId || null,
+        tipo: 'hito',
+      },
       nzMaskClosable: false,
       nzClosable: false,
       nzKeyboard: false,
@@ -305,6 +331,71 @@ export class AcuerdoDetalleComponent implements OnInit {
             });
           },
           loading: this.hitosService.isEditing(),
+          disabled: componentInstance => !componentInstance || !componentInstance.comentarioForm.valid
+        }]
+    });
+
+    const instance = modal.getContentComponent();
+    modal.afterClose.subscribe(result => {
+      instance.comentarioForm.reset();
+    });
+  }
+
+  onAvanceAddComentario(avance: AvanceHitoModel): void {
+    if (avance == null) return;
+
+    let tipoCompentario: number | null = null;
+
+    switch (subTipo) {
+
+      case 'PCM':
+        tipoCompentario = 1;
+        break;
+      case 'Sector':
+        // case 'Ministerio':
+        tipoCompentario = 2;
+        break;
+      case 'Provincia':
+        tipoCompentario = 3;
+        break;
+      case 'Ejecutora':
+        tipoCompentario = 4;
+        break;
+      default:
+        tipoCompentario = null;
+        break;
+    }
+
+
+    this.avancesService.seleccionarAvanceById(avance.avanceId);
+
+    const modal = this.modal.create<ComentarioComponent, ComentarioModel>({
+      nzTitle: `Comentario para el avance`,
+      nzContent: ComentarioComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzData: {
+        id: avance.avanceId || null,
+        tipo: 'avance',
+        tipoComentario: tipoCompentario,
+      },
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => this.modal.closeAll()
+        },
+        {
+          type: 'primary',
+          label: 'Comentar',
+          onClick: componentInstance => {
+            return this.avancesService.agregarComentario(componentInstance!.comentarioForm.value).then((res) => {
+              console.log(res);
+              this.modal.closeAll();
+            });
+          },
+          loading: this.avancesService.isEditing(),
           disabled: componentInstance => !componentInstance || !componentInstance.comentarioForm.valid
         }]
     });

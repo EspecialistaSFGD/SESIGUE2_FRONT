@@ -21,7 +21,7 @@ export class PedidoModel extends SeguridadModel {
         // public depaid?: number,
         // public provid?: number,
         public comentarioPcm?: string,
-
+        public eventoId?: number | null,
     ) {
         super();
     }

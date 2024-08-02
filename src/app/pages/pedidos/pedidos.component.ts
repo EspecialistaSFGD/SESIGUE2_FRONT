@@ -28,6 +28,8 @@ import { PedidoComponent } from './pedido/pedido.component';
 import { PermisoModel } from '../../libs/models/auth/permiso.model';
 import { UtilesService } from '../../libs/shared/services/utiles.service';
 import { ComentarioPedidoComponent } from '../../libs/shared/components/comentario-pedido/comentario-pedido.component';
+import { ComentarioComponent } from '../../libs/shared/components/comentario/comentario.component';
+import { ComentarioModel } from '../../libs/models/pedido/comentario.model';
 
 @Component({
   selector: 'app-pedidos',
@@ -248,19 +250,23 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       nzTitle: 'Validar Pedido',
       nzContent: '¿Está seguro de validar este pedido?',
       nzOnOk: () => {
-        //TODO: incluir el servicio de validar pedido
         this.pedidosService.validarPedido(pedido);
       }
     });
   }
 
+
   onCommentPCM(pedido: PedidoModel): void {
     this.pedidosService.seleccionarPedidoById(pedido.prioridadID);
 
-    const modal = this.modal.create<ComentarioPedidoComponent>({
+    const modal = this.modal.create<ComentarioComponent, ComentarioModel>({
       nzTitle: 'Comentario PCM',
-      nzContent: ComentarioPedidoComponent,
+      nzContent: ComentarioComponent,
       nzViewContainerRef: this.viewContainerRef,
+      nzData: {
+        id: pedido.prioridadID,
+        tipo: 'pedido',
+      },
       nzFooter: [
         {
           label: 'Cancelar',
@@ -271,19 +277,19 @@ export class PedidosComponent implements OnInit, AfterViewInit {
           label: 'Guardar',
           type: 'primary',
           onClick: (componentInstance) => {
-            return this.pedidosService.comentarPcmPedido(componentInstance!.comentarioPcmForm.value).then(() => {
+            return this.pedidosService.comentarPcmPedido(componentInstance!.comentarioForm.value).then(() => {
               this.modal.closeAll();
             });
           },
           loading: this.pedidosService.isEditing(),
-          disabled: (componentInstance) => !componentInstance?.comentarioPcmForm.valid,
+          disabled: (componentInstance) => !componentInstance?.comentarioForm.valid,
         }
       ]
     });
 
     const instance = modal.getContentComponent();
     modal.afterClose.subscribe(result => {
-      instance.comentarioPcmForm.reset();
+      instance.comentarioForm.reset();
     });
   }
 

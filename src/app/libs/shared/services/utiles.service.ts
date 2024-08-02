@@ -4,6 +4,7 @@ import { SelectModel } from '../../models/shared/select.model';
 import { Observable, catchError, map, of } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
 import { parse } from 'date-fns';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 @Injectable({
     providedIn: 'root'
@@ -13,6 +14,17 @@ export class UtilesService {
     public http = inject(HttpClient);
 
     constructor() { }
+
+    descargarArchivo(id: string): Observable<any> {
+        return this.http.get(`${environment.api}/Archivo/Descargar/${id}`).pipe(
+            map((resp: any) => {
+                // console.log(resp);
+
+                return resp;
+            }),
+            catchError((error) => of(false))
+        );
+    }
 
     base64ToArrayBuffer(base64: any) {
         var binary_string = window.atob(base64);
@@ -41,5 +53,13 @@ export class UtilesService {
 
     isEmptyObject(obj: object): boolean {
         return Object.keys(obj).length === 0;
+    }
+
+    getOriginalFile(nzFile: NzUploadFile): File | null {
+        let file: any = nzFile;
+        while (file && file.originFileObj) {
+            file = file.originFileObj;
+        }
+        return file instanceof File ? file : null;
     }
 }

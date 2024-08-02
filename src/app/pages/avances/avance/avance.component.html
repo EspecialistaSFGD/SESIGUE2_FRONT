@@ -74,15 +74,13 @@
             <nz-form-item>
                 <nz-form-label [nzSpan]="null">Evidencia del avance</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback>
-                    <!-- <textarea nz-input id="evidencia" formControlName="evidencia"
-                        placeholder="Ingrese la evidencia del avance" nzAutosize></textarea> -->
-                    <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload" [nzRemove]="onDeleteFiles"
-                        [nzDownload]="onDownloadFiles">
-                        <button type="button" nz-button *ngIf="this.fileList.length < 1">
+                    <nz-upload nzAccept="image/*,.pdf" [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload"
+                        [nzRemove]="onDeleteFiles" [nzDownload]="handleDownload"
+                        [nzShowButton]="this.fileList.length === 0">
+                        <button type="button" nz-button>
                             <span nz-icon nzType="upload"></span>
                             Seleccionar
                         </button>
-
                     </nz-upload>
                 </nz-form-control>
             </nz-form-item>

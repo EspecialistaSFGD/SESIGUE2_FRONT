@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
 import { PedidoModel } from '../../models/pedido';
 import { PedidoRequestModel, PedidoResponseModel } from '../../models/pedido/pedido.model';
+import { ComentarioModel } from '../../models/pedido/comentario.model';
 
 let ubigeo: string | null = null;
 const accesoId = localStorage.getItem('codigoUsuario') || null;
@@ -221,16 +222,20 @@ export class PedidosService {
         });
     }
 
-    comentarPcmPedido(pedido: PedidoModel): Promise<ResponseModel> {
+    comentarPcmPedido(comentario: ComentarioModel): Promise<ResponseModel> {
+        if (comentario.id == null) {
+            this.msg.error('No se ha seleccionado un pedido para agregar comentario SD');
+            return new Promise((resolve, reject) => reject('No se ha seleccionado un pedido para agregar comentario SD'));
+        }
+
+        this.#pedidosResult.update((v) => ({ ...v, isEditing: true }));
+
+        const ots: PedidoRequestModel = {} as PedidoRequestModel;
+        ots.prioridadId = comentario.id;
+        ots.comentarioPcm = comentario.comentario;
+        ots.accesoId = Number(accesoId);
+
         return new Promise((resolve, reject) => {
-            this.#pedidosResult.update((v) => ({ ...v, isEditing: true }));
-
-            const ots: PedidoRequestModel = {} as PedidoRequestModel;
-
-            ots.prioridadId = pedido.prioridadID;
-            ots.comentarioPcm = pedido.comentarioPcm;
-            ots.accesoId = Number(accesoId);
-
             this.http.post<ResponseModel>(`${environment.api}/PrioridadAcuerdo/ComentarPCMPrioridadAcuerdo`, ots).subscribe({
                 next: (data) => {
                     this.msg.success(data.message);
@@ -240,6 +245,7 @@ export class PedidosService {
                 error: (e) => {
                     reject(e);
                 },
+                complete: () => this.#pedidosResult.update((v) => ({ ...v, isEditing: false })),
             });
         });
     }

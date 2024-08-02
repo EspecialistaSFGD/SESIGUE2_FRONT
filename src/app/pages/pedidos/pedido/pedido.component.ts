@@ -53,9 +53,12 @@ export class PedidoComponent {
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
 
-  onSectorChange(event: SelectModel): void {
+  onEspacioChange(event: SelectModel): void {
     // const entidadControl = this.pedidoForm.get('entidad');
     // entidadControl?.reset();
+
+    console.log(event);
+
 
     if (event === null) return;
 

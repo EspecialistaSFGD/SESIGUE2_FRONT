@@ -6,7 +6,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
 import { HitoAcuerdoModel } from '../../models/pedido';
 import { UtilesService } from '../../shared/services/utiles.service';
-import { ComentarioHitoModel, ComentarioSDHitoModel } from '../../models/pedido/comentario.model';
+import { ComentarioHitoModel, ComentarioModel, ComentarioSDHitoModel } from '../../models/pedido/comentario.model';
 import { HitoAcuerdoRequestModel } from '../../models/pedido/hito.model';
 import { Observable, of } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
@@ -103,11 +103,17 @@ export class HitosService {
         });
     }
 
-    agregarComentarioSDHito(comentario: ComentarioHitoModel): Promise<ResponseModel> {
+    agregarComentarioSDHito(comentario: ComentarioModel): Promise<ResponseModel> {
+        if (comentario.id == null) {
+            this.msg.error('No se ha seleccionado un hito para agregar comentario SD');
+            return new Promise((resolve, reject) => reject('No se ha seleccionado un hito para agregar comentario SD'));
+        }
+
         const ots = new ComentarioSDHitoModel();
-        ots.hitoId = comentario.hitoId;
+        ots.hitoId = comentario.id;
         ots.comentarioSD = comentario.comentario;
         ots.accesoId = Number(accesoId);
+
         return new Promise((resolve, reject) => {
             this.http.post(`${environment.api}/Hito/ComentarHito`, ots).subscribe({
                 next: (data: ResponseModel) => {
