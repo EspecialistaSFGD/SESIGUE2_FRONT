@@ -11,18 +11,27 @@ import { ResponseModel } from '../../models/shared/response.model';
 import { MenuModel } from '../../models/shared/menu.model';
 import { PermisoModel } from '../../models/auth/permiso.model';
 import { SelectModel } from '../../models/shared/select.model';
+import { PedidoType } from '../../shared/types/pedido.type';
 
 const codigoUsuario = Number(localStorage.getItem('codigoUsuario')) || 0;
 const codigoPerfil = Number(localStorage.getItem('codigoPerfil')) || 0;
 
 interface State {
   usuario: string | null | undefined;
+  nombreTrabajador: string | null;
   token: string | null | undefined;
   refreshToken: string | null | undefined;
   perfil: string | null | undefined;
   isLoading: boolean;
   isAuthenticated: boolean;
+  subTipo: PedidoType;
+  canViewPedidos: boolean;
   selectedTheme: string;
+  departamento: SelectModel | null;
+  provincia: SelectModel | null;
+  distrito: SelectModel | null;
+  sector: SelectModel | null;
+  permisos: PermisoModel | null;
 }
 
 const DEFAULT_PERMISOS: PermisoModel = {
@@ -60,19 +69,35 @@ export class AuthService {
 
   #usuario = signal<State>({
     usuario: null,
+    nombreTrabajador: this.getNombreTrabajador(),
     token: null,
     refreshToken: null,
     perfil: null,
     isLoading: false,
     isAuthenticated: false,
+    subTipo: this.getSubTipo(),
+    canViewPedidos: false,
     selectedTheme: localStorage['theme'] || 'system',
+    departamento: this.getDepartamentoSelect(),
+    provincia: this.getProvinciaSelect(),
+    distrito: this.getDistritoSelect(),
+    sector: this.getSectorSelect(),
+    permisos: this.getPermisos(),
   });
 
+  public nombreTrabajador = computed(() => this.#usuario().nombreTrabajador);
   public token = computed(() => this.#usuario().token);
   public reFresh = computed(() => this.#usuario().refreshToken);
   public isAuthenticated = computed(() => this.#usuario().isAuthenticated);
+  public subTipo = computed(() => this.#usuario().subTipo);
+  public canViewPedidos = computed(() => this.subTipo() !== 'EJECUTORA');
   public isLoading = computed(() => this.#usuario().isLoading);
   public selectedTheme = computed(() => this.#usuario().selectedTheme);
+  public departamento = computed(() => this.#usuario().departamento);
+  public provincia = computed(() => this.#usuario().provincia);
+  public distrito = computed(() => this.#usuario().distrito);
+  public sector = computed(() => this.#usuario().sector);
+  public permisos = computed(() => this.#usuario().permisos);
 
   constructor() {
     this.initTheme();
@@ -97,10 +122,9 @@ export class AuthService {
             localStorage.setItem('menus', JSON.stringify(data.menus));
             localStorage.setItem('permisos', JSON.stringify(data.permisos));
 
-            this.#usuario.update((v) => ({
-              ...v,
-              isAuthenticated: true,
-            }));
+            this.#usuario.update((v) => ({ ...v, permisos: data.permisos }));
+
+            this.#usuario.update((v) => ({ ...v, isAuthenticated: true }));
           }
 
           if (data.nombreTrabajador != null) {
@@ -109,6 +133,8 @@ export class AuthService {
             } else {
               localStorage.setItem('trabajador', 'Administrador');
             }
+
+            this.#usuario.update((v) => ({ ...v, nombreTrabajador: data.nombreTrabajador }));
           }
 
           if (data.codigoUsuario != null && data.codigoUsuario != '') {
@@ -130,16 +156,25 @@ export class AuthService {
           if (data.codigoDepartamento != null && data.codigoDepartamento != '' && data.departamento != null && data.departamento != '') {
             const dep = new SelectModel(data.codigoDepartamento, data.departamento);
             localStorage.setItem('departamento', JSON.stringify(dep));
+            this.#usuario.update((v) => ({ ...v, departamento: dep }));
           }
 
           if (data.codigoProvincia != null && data.codigoProvincia != '' && data.provincia != null && data.provincia != '') {
             const prov = new SelectModel(data.codigoProvincia, data.provincia);
             localStorage.setItem('provincia', JSON.stringify(prov));
+            this.#usuario.update((v) => ({ ...v, provincia: prov }));
           }
 
           if (data.codigoDistrito != null && data.codigoDistrito != '' && data.distrito != null && data.distrito != '') {
             const dist = new SelectModel(data.codigoDistrito, data.distrito);
             localStorage.setItem('distrito', JSON.stringify(dist));
+            this.#usuario.update((v) => ({ ...v, distrito: dist }));
+          }
+
+          if (data.sector != null && data.descripcionSector != null) {
+            const sector = new SelectModel(data.sector, data.descripcionSector);
+            localStorage.setItem('sector', JSON.stringify(sector));
+            this.#usuario.update((v) => ({ ...v, sector: sector }));
           }
 
           if (data.descripcionNivel != null) {
@@ -148,6 +183,11 @@ export class AuthService {
 
           if (data.descripcionSubTipo != null) {
             localStorage.setItem('subTipo', data.descripcionSubTipo);
+            this.#usuario.update((v) => ({ ...v, subTipo: data.descripcionSubTipo.toUpperCase() as PedidoType }));
+          }
+
+          if (data.sector != null) {
+            localStorage.setItem('codigoSector', data.sector);
           }
 
           if (localStorage.getItem('isSiderCollapsed') == null) localStorage.setItem('isSiderCollapsed', 'true');
@@ -248,6 +288,9 @@ export class AuthService {
             case 'Convertir PreAcuerdo':
               permisos.puede_convertir_preacuerdo = true;
               break
+            case 'Agregar PreAcuerdo':
+              permisos.puede_agregar_acuerdo = true;
+              break;
             default:
               console.warn(`Descripción de botón no reconocida: ${boton.descripcionBoton}`);
               break;
@@ -288,6 +331,67 @@ export class AuthService {
     }
 
     this.initTheme();
+  }
+
+  private getNombreTrabajador(): string {
+    const nombreTrabajador = localStorage.getItem('trabajador') || 'Administrador';
+
+    return nombreTrabajador;
+  }
+
+  private getPermisos(): PermisoModel | null {
+    const permisosFromStorage = localStorage.getItem('permisos') || null;
+
+    if (permisosFromStorage == null) return null;
+
+    const permisos = JSON.parse(permisosFromStorage) as PermisoModel;
+
+    return permisos;
+  }
+
+  private getSubTipo(): PedidoType | null {
+    const storedSubTipo = localStorage.getItem('subTipo') || null;
+    const subTipoFromStorage: PedidoType = (storedSubTipo?.toUpperCase() as PedidoType) || null;
+
+    return subTipoFromStorage;
+  }
+
+  private getSectorSelect(): SelectModel | null {
+    const selectSector = localStorage.getItem('sector') || null;
+
+    if (selectSector == null) return null;
+
+    const sectorSelect = JSON.parse(selectSector) as SelectModel;
+
+    return sectorSelect;
+  }
+
+  private getDepartamentoSelect(): SelectModel | null {
+    const codigoDepartamento = localStorage.getItem('departamento') || null;
+    if (codigoDepartamento == null) return null;
+
+    const departamentoSelect = JSON.parse(codigoDepartamento) as SelectModel;
+
+    return departamentoSelect;
+  }
+
+  private getProvinciaSelect(): SelectModel | null {
+    const codigoProvincia = localStorage.getItem('provincia') || null;
+    if (codigoProvincia == null) return null;
+    const provinciaSelect = JSON.parse(codigoProvincia) as SelectModel;
+
+    // provinciaSelect.value = '0' + provinciaSelect.value;
+
+    return provinciaSelect;
+  }
+
+  private getDistritoSelect(): SelectModel | null {
+    const codigoDistrito = localStorage.getItem('distrito') || null;
+    if (codigoDistrito == null) return null;
+
+    const distritoSelect = JSON.parse(codigoDistrito) as SelectModel;
+
+    return distritoSelect;
   }
 
   getCodigoUsuario(): number {
@@ -342,7 +446,7 @@ export class AuthService {
     return this.http.post<ResponseModel>(`${environment.api}/Login/verificarDisponibilidad`, { numeroDocumento }).pipe(
       tap((resp: ResponseModel) => {
         if (!resp.success) {
-          this.msg.error(resp.message);
+          this.msg.error(resp.message, { nzDuration: 5000 });
         }
         this.#usuario.update((v) => ({ ...v, isLoading: false }));
       }),
@@ -387,9 +491,10 @@ export class AuthService {
   logout(): Observable<any> {
     return this.http.get(`${environment.api}/Login/CerrarSesion`)
       .pipe(
-        tap((resp: any) => {
-          this.removerLocalStorage();
-          this.router.navigateByUrl('/auth/login');
+        tap(() => {
+          this.router.navigate(['/auth/login']).then(() => {
+            this.removerLocalStorage();
+          });
         })
       );
   }
@@ -426,6 +531,14 @@ export class AuthService {
         // );
       }
     }
+  }
+
+  puedeVerPedidos(): Observable<boolean> {
+    const subTipo = this.getSubTipo();
+
+    // this.#usuario.update((v) => ({ ...v, canViewPedidos: subTipo !== 'EJECUTORA' }));
+
+    return of(subTipo !== 'EJECUTORA');
   }
 
   renovarAutenticacion(token: string, refresh: string): Observable<any> {
@@ -488,6 +601,7 @@ export class AuthService {
   }
 
   removerLocalStorage(): void {
+    localStorage.removeItem('nombreTrabajador');
     localStorage.removeItem('token');
     localStorage.removeItem('refresh');
     localStorage.removeItem('perfil');
@@ -503,16 +617,28 @@ export class AuthService {
     localStorage.removeItem('distrito');
     localStorage.removeItem('nivel');
     localStorage.removeItem('subTipo');
+    localStorage.removeItem('codigoSector');
+    localStorage.removeItem('sector');
 
     this.#usuario.set({
       usuario: null,
+      nombreTrabajador: null,
       token: null,
       refreshToken: null,
       perfil: null,
       isLoading: false,
       isAuthenticated: false,
+      subTipo: null,
+      canViewPedidos: false,
       selectedTheme: localStorage['theme'] || 'system',
+      departamento: null,
+      provincia: null,
+      distrito: null,
+      sector: null,
+      permisos: null,
     });
+
+    // window.location.reload();
   }
 }
 

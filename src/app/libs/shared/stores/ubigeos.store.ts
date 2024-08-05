@@ -42,7 +42,7 @@ export class UbigeosStore {
           let departamentosRes: SelectModel[] = [];
 
           res.forEach((x: DepartamentoModel) => {
-            departamentosRes.push(new SelectModel(Number(x.departamentoId), x.departamento));
+            departamentosRes.push(new SelectModel(x.departamentoId.toString(), x.departamento));
           });
 
           this.#ubigeosResult.set({
@@ -55,7 +55,7 @@ export class UbigeosStore {
     );
   }
 
-  listarProvincias(idDep: number, tipo: number = 0): void {
+  listarProvincias(idDep: string | null, tipo: number = 0): void {
     let params = new HttpParams();
 
     params = (idDep !== null) ? params.append('departamento', `${idDep}`) : params;

@@ -15,6 +15,9 @@ import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
 import { EspaciosStore } from '../../../libs/shared/stores/espacios.store';
 import { PedidosStore } from '../../../libs/shared/stores/pedidos.store';
 import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
+import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
+import { PedidoType } from '../../../libs/shared/types/pedido.type';
+import { AuthService } from '../../../libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-pedido',
@@ -36,6 +39,9 @@ import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
 })
 export class PedidoComponent {
   pedidoForm!: UntypedFormGroup;
+  requiredLabel: string = 'Campo requerido';
+  readonly nzModalData: PedidoType = inject(NZ_MODAL_DATA);
+
   fechaDateFormat = 'dd/MM/yyyy';
 
   pedidoService = inject(PedidosService);
@@ -43,12 +49,25 @@ export class PedidoComponent {
   espaciosStore = inject(EspaciosStore);
   pedidosStore = inject(PedidosStore);
   ubigeosStore = inject(UbigeosStore);
+  authService = inject(AuthService);
   private fb = inject(UntypedFormBuilder);
 
   pedidoSeleccionado: PedidoModel = this.pedidoService.pedidoSeleccionado();
 
   constructor() {
     this.crearPedidoForm();
+
+    console.log(this.authService.departamento());
+
+
+    if (this.nzModalData == 'SECTOR') {
+      this.pedidoForm.get('sectorSelect')?.patchValue(this.authService.sector());
+    } else {
+      this.pedidoForm.get('departamentoSelect')?.patchValue(this.authService.departamento());
+      this.pedidoForm.get('provinciaSelect')?.patchValue(this.authService.provincia());
+      this.pedidoForm.get('distritoSelect')?.patchValue(this.authService.distrito());
+    }
+
   }
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
@@ -81,7 +100,10 @@ export class PedidoComponent {
 
     if (value == null) return;
 
-    this.ubigeosStore.listarProvincias(Number(value.value));
+    if (value.value) {
+      this.ubigeosStore.listarProvincias(value.value.toString());
+    }
+
   }
 
   onProvChange(value: SelectModel): void {

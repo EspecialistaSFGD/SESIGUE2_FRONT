@@ -1,5 +1,16 @@
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../services/auth/auth.service';
+import { inject } from '@angular/core';
+import { tap } from 'rxjs';
 
-export const accessGuard: CanActivateFn = (route, state) => {
+export const AccessGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (!authService.canViewPedidos()) {
+    router.navigate(['/panel']);
+    return false;
+  }
+
   return true;
 };

@@ -27,9 +27,10 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { PedidoComponent } from './pedido/pedido.component';
 import { PermisoModel } from '../../libs/models/auth/permiso.model';
 import { UtilesService } from '../../libs/shared/services/utiles.service';
-import { ComentarioPedidoComponent } from '../../libs/shared/components/comentario-pedido/comentario-pedido.component';
 import { ComentarioComponent } from '../../libs/shared/components/comentario/comentario.component';
 import { ComentarioModel } from '../../libs/models/pedido/comentario.model';
+import { AuthService } from '../../libs/services/auth/auth.service';
+import { PedidoType } from '../../libs/shared/types/pedido.type';
 
 @Component({
   selector: 'app-pedidos',
@@ -73,11 +74,12 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   provSeleccionada: SelectModel | null = null;
   filterCounter = signal<number>(0);
 
-  permiso: PermisoModel | null | undefined = null;
-  storedPermiso = localStorage.getItem('permisos');
+  // permiso: PermisoModel | null | undefined = null;
+  // storedPermiso = localStorage.getItem('permisos');
 
-  departamento: SelectModel = {} as SelectModel;
-  storedDepartamento = localStorage.getItem('departamento');
+  // departamento: SelectModel = {} as SelectModel;
+  // sector: SelectModel = {} as SelectModel;
+  // subTipo: PedidoType = null;
 
   private updateParamsSubject = new Subject<void>();
   private updatingParams = false;
@@ -91,22 +93,25 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   public ubigeosStore = inject(UbigeosStore);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
+  authService = inject(AuthService);
   private modal = inject(NzModalService);
   public utilesService = inject(UtilesService);
   confirmModal?: NzModalRef; // For testing by now
   private viewContainerRef = inject(ViewContainerRef);
 
-
   constructor() {
     this.crearSearForm();
 
+    // this.subTipo = this.authService.getSubTipo();
+
     try {
-      this.permiso = this.storedPermiso ? JSON.parse(this.storedPermiso) : {};
-      this.departamento = this.storedDepartamento ? JSON.parse(this.storedDepartamento) : {};
+      // this.permiso = this.storedPermiso ? JSON.parse(this.storedPermiso) : {};
+      // this.departamento = this.authService.getDepartamentoSelect() || {};
+      // this.sector = this.authService.getSectorSelect() || {};
     } catch (e) {
       console.error('Error parsing JSON from localStorage', e);
-      this.permiso = null;
-      this.departamento = {} as SelectModel;
+      // this.permiso = null;
+      // this.departamento = {} as SelectModel;
     }
 
     // console.log('Permiso:', this.permiso);
@@ -188,9 +193,9 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     {
       cui = this.cui,
       espaciosSeleccionados = this.espaciosSeleccionados,
-      sectoresSeleccionados = this.sectoresSeleccionados,
-      depSeleccionado = this.depSeleccionado,
-      provSeleccionada = this.provSeleccionada,
+      sectoresSeleccionados = (this.authService.sector() && this.authService.subTipo() != 'PCM') ? [this.authService.sector()!] : this.sectoresSeleccionados,
+      depSeleccionado = (this.authService.departamento()) ? this.authService.departamento() : this.depSeleccionado,
+      provSeleccionada = (this.authService.provincia()) ? this.authService.provincia() : this.provSeleccionada,
       pageIndex = this.pageIndex,
       pageSize = this.pageSize,
       sortField = this.sortField,
@@ -205,10 +210,13 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     const labelOk = pedido ? 'Actualizar' : 'Agregar';
     this.pedidosService.seleccionarPedidoById(pedido?.prioridadID);
 
-    const modal = this.modal.create<PedidoComponent>({
+    const modal = this.modal.create<PedidoComponent, PedidoType>({
       nzTitle: title,
       nzContent: PedidoComponent,
       nzViewContainerRef: this.viewContainerRef,
+      nzData: this.authService.subTipo(),
+      nzClosable: false,
+      nzMaskClosable: false,
       nzFooter: [
         {
           label: 'Cancelar',
@@ -220,6 +228,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
           type: 'primary',
           onClick: (componentInstance) => {
             return this.pedidosService.agregarPedido(componentInstance!.pedidoForm.value).then((res) => {
+              this.traerPedidos({});
               this.modal.closeAll();
             });
           },
@@ -265,7 +274,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       nzViewContainerRef: this.viewContainerRef,
       nzData: {
         id: pedido.prioridadID,
-        tipo: 'pedido',
+        tipo: 'PEDIDO',
       },
       nzFooter: [
         {
@@ -330,6 +339,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   onDepChange(value: SelectModel, skipNavigation = false): void {
+
     if (this.clearingFilters) {
       return;
     }
@@ -339,8 +349,8 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.depSeleccionado = value;
     this.traerPedidos({ depSeleccionado: value });
 
-    if (value != null) {
-      this.ubigeosStore.listarProvincias(Number(value.value));
+    if (value && value.value) {
+      this.ubigeosStore.listarProvincias(value.value?.toString());
 
       if (this.provSeleccionada != null) {
         this.provSeleccionada = null;
@@ -422,24 +432,46 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   onClearFilters(): void {
     this.clearingFilters = true;
 
-    this.searchForm.reset();
+    // Guardar el valor actual de depSeleccionado si departamento tiene un valor
+    const depSeleccionadoActual = this.authService.departamento() ? this.depSeleccionado : null;
+    const sectorSeleccionadoActual = this.authService.sector() ? this.sectoresSeleccionados : null;
+
+    // Resetear manualmente cada campo excepto el campo de departamento
+    //TODO: Revisar para optimizar en todos los casos adicionales
+    this.searchForm.patchValue({
+      cui: null,
+      // dep: (this.authService.getSubTipo() == 'PCM') ? null : this.departamento,
+      espacio: null,
+      // sector: (this.authService.getSubTipo() == 'PCM') ? null : this.sector,
+      prov: null,
+    });
 
     this.cui = null;
     this.espaciosSeleccionados = [];
     this.sectoresSeleccionados = [];
-    this.depSeleccionado = null;
     this.provSeleccionada = null;
     this.pageIndex = 1;
     this.pageSize = 10;
 
-    this.filterCounter.set(0);
+    // Si existe un departamento, mantener el valor de depSeleccionado
+    this.depSeleccionado = depSeleccionadoActual;
+    this.sectoresSeleccionados = sectorSeleccionadoActual;
+
+    // Actualizar el contador de filtros
+    this.filterCounter.set(
+      (this.cui ? 1 : 0) +
+      (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
+      (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
+      (this.depSeleccionado ? 1 : 0) +
+      (this.provSeleccionada ? 1 : 0)
+    );
 
     // Hacer una sola llamada a traerPedidos con los parámetros vacíos
     this.traerPedidos({
       cui: null,
       espaciosSeleccionados: [],
-      sectoresSeleccionados: [],
-      depSeleccionado: null,
+      sectoresSeleccionados: this.sectoresSeleccionados,
+      depSeleccionado: this.depSeleccionado,
       provSeleccionada: null,
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
@@ -451,7 +483,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       [],
       {
         relativeTo: this.activatedRoute,
-        queryParams: { cui: null, espacio: null, sector: null, dep: null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
+        queryParams: { cui: null, espacio: null, sector: this.sectoresSeleccionados ? this.sectoresSeleccionados[0].value : null, dep: this.depSeleccionado ? this.depSeleccionado.value : null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
         queryParamsHandling: 'merge',
       }
     ).finally(() => {
@@ -463,8 +495,13 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.confirmModal = this.modal.confirm({
       nzTitle: 'Eliminar Pedido',
       nzContent: '¿Está seguro de eliminar este pedido?',
+      nzOkDanger: true,
+      nzClosable: false,
+      nzMaskClosable: false,
       nzOnOk: () => {
-        this.pedidosService.eliminarPedido(value);
+        this.pedidosService.eliminarPedido(value).then(() => {
+          this.traerPedidos({});
+        });
       },
     });
   }
@@ -491,6 +528,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   onQueryParamsChange(params: NzTableQueryParams): void {
     if (!this.updatingParams) {
+
       const { pageSize, pageIndex, sort } = params;
       const currentSort = sort.find(item => item.value !== null);
       this.pageIndex = pageIndex;
@@ -509,14 +547,35 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       }
 
       // Verificar y establecer el valor predeterminado si dep está vacío
-      // console.log(this.utilesService.isEmptyObject(this.departamento));
 
-      if (!this.depSeleccionado && !this.utilesService.isEmptyObject(this.departamento)) {
-        const defaultDep = this.departamento;
-        if (defaultDep) {
-          this.depSeleccionado = defaultDep;
-          this.searchForm.patchValue({ dep: this.depSeleccionado });
-          this.filterCounter.update(x => x + 1);
+      if (this.authService.subTipo() == 'SECTOR') {
+        if (!this.sectoresSeleccionados && this.authService.sector()) {
+          const defaultSector = this.authService.sector();
+          if (defaultSector) {
+            this.sectoresSeleccionados = [defaultSector];
+            this.searchForm.patchValue({ sector: this.sectoresSeleccionados });
+            this.filterCounter.update(x => x + 1);
+          }
+        }
+      }
+
+      if (this.authService.subTipo() == 'REGION' || this.authService.subTipo() == 'DEPARTAMENTO' || this.authService.subTipo() == 'PROVINCIA' || this.authService.subTipo() == 'DISTRITO') {
+        if (!this.depSeleccionado && this.authService.departamento()) {
+          const defaultDep = this.authService.departamento();
+          if (defaultDep) {
+            this.depSeleccionado = defaultDep;
+            this.searchForm.patchValue({ dep: this.depSeleccionado });
+            this.filterCounter.update(x => x + 1);
+          }
+        }
+
+        if (!this.provSeleccionada && this.authService.provincia()) {
+          const defaultProv = this.authService.provincia();
+          if (defaultProv) {
+            this.provSeleccionada = defaultProv;
+            this.searchForm.patchValue({ prov: this.provSeleccionada });
+            this.filterCounter.update(x => x + 1);
+          }
         }
       }
 

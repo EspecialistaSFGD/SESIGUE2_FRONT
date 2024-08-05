@@ -1,3 +1,4 @@
+import { ComentarioType } from "../../shared/types/comentario.type";
 import { SeguridadModel } from "../shared/seguridad.model";
 import { SelectModel } from "../shared/select.model";
 
@@ -45,6 +46,21 @@ export class AcuerdoPedidoModel extends SeguridadModel {
         public es_preAcuerdo?: number,
         public acuerdoModificado?: string,
         public acuerdo_original?: string,
+        //TODO: validar si se necesita
+        public evidencia?: File,
+        public evidenciaDesestimacion?: string,
+    ) {
+        super();
+    }
+}
+
+export class DesestimacionModel extends SeguridadModel {
+    constructor(
+        public acuerdoId?: number | null,
+        public tipo?: ComentarioType,
+        public motivoDesestimacion?: string,
+        public evidencia?: File,
+        public evidenciaDesestimacion?: string,
     ) {
         super();
     }

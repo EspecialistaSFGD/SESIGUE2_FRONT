@@ -9,22 +9,9 @@ import { ResponseModel, ResponseModelPaginated } from '../../models/shared/respo
 import { PedidoModel } from '../../models/pedido';
 import { PedidoRequestModel, PedidoResponseModel } from '../../models/pedido/pedido.model';
 import { ComentarioModel } from '../../models/pedido/comentario.model';
+import { AuthService } from '../auth/auth.service';
 
-let ubigeo: string | null = null;
 const accesoId = localStorage.getItem('codigoUsuario') || null;
-const codigoDepartamento = localStorage.getItem('codigoDepartamento') || null;
-const codigoProvincia = localStorage.getItem('codigoProvincia') || null;
-const codigoDistrito = localStorage.getItem('codigoDistrito') || null;
-
-if (codigoDistrito) {
-    ubigeo = codigoDistrito;
-} else if (codigoProvincia) {
-    ubigeo = codigoProvincia;
-} else if (codigoDepartamento) {
-    ubigeo = codigoDepartamento;
-} else {
-    ubigeo = null;
-}
 
 interface State {
     pedidos: any[];
@@ -41,8 +28,10 @@ interface State {
 })
 export class PedidosService {
 
-    public msg = inject(NzMessageService);
-    public http = inject(HttpClient);
+    private msg = inject(NzMessageService);
+    private http = inject(HttpClient);
+    private authService = inject(AuthService);
+
 
     #pedidosResult = signal<State>({
         pedidos: [],
@@ -61,7 +50,7 @@ export class PedidosService {
     public total = computed(() => this.#pedidosResult().total);
 
     constructor() { }
-
+    //TODO: quitar en el caso de que PCM sea el sector a solicitar
     listarPedidos(cui: string | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = 'prioridadID', sortOrder: string | null = 'descend'): void {
         let params = new HttpParams();
 
@@ -90,6 +79,10 @@ export class PedidosService {
         params = (pageSize !== null) ? params.append('piPageSize', `${pageSize}`) : params;
         params = (sortField !== null) ? params.append('columnSort', `${sortField}`) : params;
         params = (sortOrder !== null) ? params.append('typeSort', `${sortOrder}`) : params;
+
+        if (this.authService.subTipo() == 'SECTOR') {
+            params = params.append('validado', 1);
+        }
 
         this.http.get<ResponseModelPaginated>(`${environment.api}/PrioridadAcuerdo/Listar`, { params }).subscribe({
             next: (data) => {
@@ -155,30 +148,39 @@ export class PedidosService {
             if (pedido.sectorSelect) ots.grupoId = Number(pedido.sectorSelect.value);
             ots.aspectoCriticoResolver = pedido.aspectoCriticoResolver;
             if (pedido.cuis) ots.cuis = pedido.cuis;
+
             if (pedido.tipoIntervencionSelect) {
                 ots.tipoIntervencionId = Number(pedido.tipoIntervencionSelect.value);
                 ots.intervencionesEstrategicas = pedido.tipoIntervencionSelect.label;
             }
+
             if (pedido.ejeEstrategicoSelect) {
                 ots.ejeEstrategicoId = Number(pedido.ejeEstrategicoSelect.value);
                 ots.objetivoEstrategicoTerritorial = pedido.ejeEstrategicoSelect.label;
             }
-            // if (pedido.departamentoSelect && pedido.provinciaSelect) ots.ubigeo = pedido.provinciaSelect.value?.toString();
-            // if (!pedido.provinciaSelect && pedido.departamentoSelect) ots.ubigeo = pedido.departamentoSelect.value?.toString();
-            // if(pedido.entidadIdOrigen) ots.entidadIdOrigen = pedido.entidadIdOrigen;
-            // if (pedido.entidadIdDestino) ots.entidadIdDestino = pedido.entidadIdDestino;
+
             ots.accesoId = Number(accesoId);
-            if (ubigeo) ots.ubigeo = ubigeo;
+
+            if (pedido.sectorSelect) ots.grupoId = Number(pedido.sectorSelect.value);
+
+            if (pedido.distritoSelect) {
+                ots.ubigeo = pedido.distritoSelect.value?.toString();
+            } else if (pedido.provinciaSelect) {
+                ots.ubigeo = pedido.provinciaSelect.value?.toString();
+            } else if (pedido.departamentoSelect) {
+                ots.ubigeo = pedido.departamentoSelect.value?.toString();
+            }
 
             this.http.post<ResponseModel>(`${environment.api}/PrioridadAcuerdo/RegistrarPrioridadAcuerdo`, ots).subscribe({
                 next: (data) => {
                     this.msg.success(data.message);
-                    this.listarPedidos();
+                    // this.listarPedidos();
                     resolve(data);
                 },
                 error: (e) => {
                     reject(e);
                 },
+                complete: () => this.#pedidosResult.update((v) => ({ ...v, isEditing: false })),
             });
         });
     }

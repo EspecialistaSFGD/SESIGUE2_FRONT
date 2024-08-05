@@ -134,6 +134,7 @@
         @if(registerForm.get('tipo')?.value?.label == 'GR/GL') {
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item class="mb-4">
+                <!-- {{this.ubigeosStore.departamentos()|json}} -->
                 <nz-form-label [nzSpan]="null" nzRequired>Departamento</nz-form-label>
                 <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
                     <nz-select id="dep" class="w-full" #dep formControlName="dep" nzPlaceHolder="Todos" nzShowSearch
@@ -167,7 +168,7 @@
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         @if( registerForm.get('dep')?.value != null ||registerForm.get('prov')?.value != null ||
         registerForm.get('sector')?.value != null) {
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="16" nzLg="16" nzXl="16">
             <nz-form-item class="mb-3">
                 <nz-form-label [nzSpan]="null" nzRequired>Entidad</nz-form-label>
                 <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">

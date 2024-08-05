@@ -14,6 +14,7 @@ export class EspacioModel {
         public estadoSelect?: SelectModel,
         public fechaEvento?: Date | null,
         public fechaRegistro?: Date | null,
+        public fechaFinEvento?: Date | null,
     ) { }
 }
 
@@ -30,6 +31,7 @@ export class EspacioResponseModel {
         public descripcionEstado?: string,
         public descripcionVigente?: string,
         public fechaEvento?: Date | null,
+        public fechaFinEvento?: Date | null,
         public fechaRegistro?: Date | null,
     ) { }
 }

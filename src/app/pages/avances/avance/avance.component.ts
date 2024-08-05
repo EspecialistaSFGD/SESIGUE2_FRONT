@@ -72,7 +72,6 @@ export class AvanceComponent {
 
   }
 
-
   beforeUpload = (file: NzUploadFile): boolean => {
     if (file == null) return false;
 

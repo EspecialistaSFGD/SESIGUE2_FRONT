@@ -88,6 +88,7 @@ export class HitosService {
         ots.hitoId = comentario.hitoId;
         ots.comentario = comentario.comentario;
         ots.accesoId = Number(accesoId);
+
         return new Promise((resolve, reject) => {
             this.http.post(`${environment.api}/Hito/ComentarHito`, ots).subscribe({
                 next: (data: ResponseModel) => {

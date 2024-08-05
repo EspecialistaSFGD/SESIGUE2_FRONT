@@ -1,4 +1,4 @@
-<app-page-header [title]="title.toUpperCase()" />
+<app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
     [nzData]="this.acuerdosService.acuerdos()!" [nzFrontPagination]="false"
     [nzLoading]="this.acuerdosService.isLoading()" [nzTotal]="this.acuerdosService.total()" [nzPageSize]="this.pageSize"
@@ -60,12 +60,20 @@
                         nz-tooltip nzTooltipTitle="Ver detalle">
                         <span nz-icon nzType="eye" nzTheme="outline"></span>
                     </button>
-                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar hito">
+                    <!-- <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar hito">
                         <span nz-icon nzType="appstore-add" nzTheme="outline"></span>
-                    </button>
-                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Desestimar acuerdo">
+                    </button> -->
+                    @if(data.evidenciaDesestimacion == null){
+                    <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip
+                        nzTooltipTitle="Solicitar desestimaación de acuerdo" (click)="onSolicitarDesestimacion(data)">
                         <span nz-icon nzType="stop" nzTheme="outline"></span>
                     </button>
+                    }@else{
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip
+                        nzTooltipTitle="Descargar solicitud de desestimación" (click)="onVerDesestimacion(data)">
+                        <span nz-icon nzType="download" nzTheme="outline"></span>
+                    </button>
+                    }
                     <!-- <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Editar acuerdo"
                         (click)="onAddEdit(data)">
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
@@ -210,7 +218,8 @@
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Sector</nz-form-label>
                     <nz-form-control nzSpan="null">
-                        <nz-select [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagSectorPlaceHolder" nzMode="multiple"
+                        <nz-select [nzDisabled]="this.authService.sector() != null && authService.subTipo() != 'PCM'"
+                            [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagSectorPlaceHolder" nzMode="multiple"
                             nzPlaceHolder="Todos" id="sector" #sector formControlName="sector" [compareWith]="compareFn"
                             nzAllowClear (ngModelChange)="onSectorChange($event)">
                             <nz-option *ngFor="let sec of this.sectoresStore.sectores()" [nzLabel]="sec.label!"
@@ -227,9 +236,9 @@
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Departamento</nz-form-label>
                     <nz-form-control nzSpan="null">
-                        <nz-select id="dep" [nzDisabled]="provSeleccionada!=null" class="w-full" #dep
-                            formControlName="dep" nzPlaceHolder="Todos" nzShowSearch [compareWith]="compareFn"
-                            nzAllowClear (ngModelChange)="onDepChange($event)">
+                        <nz-select [nzDisabled]="authService.departamento() != null && authService.subTipo() != 'PCM'"
+                            id="dep" class="w-full" #dep formControlName="dep" nzPlaceHolder="Todos" nzShowSearch
+                            [compareWith]="compareFn" nzAllowClear (ngModelChange)="onDepChange($event)">
                             <nz-option *ngFor="let ubg of this.ubigeosStore.departamentos()" [nzValue]="ubg"
                                 [nzLabel]="ubg.label!">
                             </nz-option>
@@ -243,8 +252,9 @@
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Provincia</nz-form-label>
                     <nz-form-control nzSpan="null">
-                        <nz-select id="prov" class="w-full" #prov formControlName="prov" nzPlaceHolder="Todas"
-                            nzShowSearch [compareWith]="compareFn" nzAllowClear (ngModelChange)="onProvChange($event)">
+                        <nz-select [nzDisabled]="authService.provincia() != null && authService.subTipo() != 'PCM'"
+                            class="w-full" #prov id="prov" formControlName="prov" nzPlaceHolder="Todas" nzShowSearch
+                            [compareWith]="compareFn" nzAllowClear (ngModelChange)="onProvChange($event)">
                             <nz-option *ngFor="let prov of this.ubigeosStore.provincias()" [nzValue]="prov"
                                 [nzLabel]="prov.label!">
                             </nz-option>
@@ -281,7 +291,7 @@
 
     <ng-template #footerTpl>
         <div style="float: right">
-            <button nz-button style="margin-right: 8px;" (click)="onClearFilters();">Limpiar filtros</button>
+            <!-- <button nz-button style="margin-right: 8px;" (click)="onClearFilters();">Limpiar filtros</button> -->
             <button nz-button nzType="primary" (click)="onCloseDrawer()"><span nz-icon nzType="save"
                     nzTheme="outline"></span> Guardar filtros</button>
         </div>

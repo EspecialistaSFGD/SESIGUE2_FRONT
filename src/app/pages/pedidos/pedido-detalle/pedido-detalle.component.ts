@@ -1,7 +1,7 @@
 import { Component, inject, ViewContainerRef } from '@angular/core';
 import { Subject } from 'rxjs';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { PermisoModel } from '../../../libs/models/auth/permiso.model';
 import { CommonModule } from '@angular/common';
@@ -21,6 +21,9 @@ import { debounceTime } from 'rxjs';
 import { TraerAcuerdosPorPedidoInterface } from '../../../libs/interfaces/pedido/pedido.interface';
 import { AcuerdoPedidoModel } from '../../../libs/models/pedido';
 import { AcuerdoComponent } from '../../acuerdos/acuerdo/acuerdo.component';
+import { AcuerdoType } from '../../../libs/shared/types/acuerdo.type';
+import { AccionType } from '../../../libs/shared/types/accion.type';
+import { AddEditAcuerdoModel } from '../../../libs/models/shared/add-edit-acuerdo.model';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -118,37 +121,98 @@ export class PedidoDetalleComponent {
     this.acuerdosService.listarAcuerdosPorPedido(prioridadID, pageIndex, pageSize, sortField, sortOrder);
   }
 
-  onAddEdit(value: AcuerdoPedidoModel | null, isCreatigPreAcuerdo: boolean | null = null, isConverting: boolean | null = null): void {
-    let title: string;
-    let labelOk: string;
+  // onAddEdits(value: AcuerdoPedidoModel | null, isCreatigPreAcuerdo: boolean | null = null, isConverting: boolean | null = null): void {
+  //   let title: string;
+  //   let labelOk: string;
 
-    if (value) {
-      if (isConverting) {
+  //   if (value) {
+  //     if (isConverting) {
+  //       title = 'Convertir Pre acuerdo a Acuerdo';
+  //       labelOk = 'Convertir';
+  //     } else {
+  //       title = 'Editar Acuerdo';
+  //       labelOk = 'Actualizar';
+  //     }
+  //   } else {
+  //     if (isCreatigPreAcuerdo) {
+  //       title = 'Agregar Pre acuerdo';
+  //       labelOk = 'Agregar';
+  //     } else {
+  //       title = 'Agregar Acuerdo';
+  //       labelOk = 'Agregar';
+  //     }
+  //   }
+
+  //   this.acuerdosService.seleccionarAcuerdoById(value?.acuerdoId, isCreatigPreAcuerdo, isConverting);
+
+  //   const modal = this.modal.create<AcuerdoComponent>({
+  //     nzTitle: title,
+  //     nzContent: AcuerdoComponent,
+  //     nzViewContainerRef: this.viewContainerRef,
+  //     nzMaskClosable: false,
+  //     nzClosable: false,
+  //     nzKeyboard: false,
+  //     nzFooter: [
+  //       {
+  //         label: 'Cancelar',
+  //         type: 'default',
+  //         onClick: () => this.modal.closeAll(),
+  //       },
+  //       {
+  //         label: labelOk,
+  //         type: 'primary',
+  //         onClick: (componentInstance) => {
+  //           if (isConverting) {
+  //             return this.acuerdosService.convertirAcuerdo(componentInstance!.acuerdoForm.value).then(() => {
+  //               this.modal.closeAll();
+  //             });
+  //           } else {
+  //             return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then(() => {
+  //               this.modal.closeAll();
+  //             });
+  //           }
+  //         },
+  //         loading: this.acuerdosService.isEditing(),
+  //         disabled: (componentInstance) => !componentInstance?.acuerdoForm.valid,
+  //       },
+  //     ],
+  //   });
+
+  //   const instance = modal.getContentComponent();
+  //   modal.afterClose.subscribe(result => {
+  //     instance.acuerdoForm.reset();
+  //   });
+  // }
+
+  onAddEdit(value: AcuerdoPedidoModel | null, tipo: AcuerdoType, accion: AccionType): void {
+    let title: string = '';
+    let labelOk: string = '';
+
+    switch (accion) {
+      case 'CREATE':
+        title = `Agregar ${tipo}`;
+        labelOk = 'Agregar';
+        break;
+      case 'EDIT':
+        title = `Editar  ${tipo}`;
+        labelOk = 'Actualizar';
+        break;
+      case 'CONVERT':
         title = 'Convertir Pre acuerdo a Acuerdo';
         labelOk = 'Convertir';
-      } else {
-        title = 'Editar Acuerdo';
-        labelOk = 'Actualizar';
-      }
-    } else {
-      if (isCreatigPreAcuerdo) {
-        title = 'Agregar Pre acuerdo';
-        labelOk = 'Agregar';
-      } else {
-        title = 'Agregar Acuerdo';
-        labelOk = 'Agregar';
-      }
+        break;
     }
 
-    this.acuerdosService.seleccionarAcuerdoById(value?.acuerdoId, isCreatigPreAcuerdo, isConverting);
+    this.acuerdosService.seleccionarAcuerdoById(value?.acuerdoId);
 
-    const modal = this.modal.create<AcuerdoComponent>({
+    const modal = this.modal.create<AcuerdoComponent, AddEditAcuerdoModel>({
       nzTitle: title,
       nzContent: AcuerdoComponent,
       nzViewContainerRef: this.viewContainerRef,
       nzMaskClosable: false,
       nzClosable: false,
       nzKeyboard: false,
+      nzData: { tipo, accion },
       nzFooter: [
         {
           label: 'Cancelar',
@@ -159,7 +223,7 @@ export class PedidoDetalleComponent {
           label: labelOk,
           type: 'primary',
           onClick: (componentInstance) => {
-            if (isConverting) {
+            if (accion === 'CONVERT') {
               return this.acuerdosService.convertirAcuerdo(componentInstance!.acuerdoForm.value).then(() => {
                 this.modal.closeAll();
               });

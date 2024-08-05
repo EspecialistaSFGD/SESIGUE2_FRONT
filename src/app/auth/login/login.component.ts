@@ -12,6 +12,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { ThemeSwitcherComponent } from '../../libs/shared/components/theme-switcher/theme-switcher.component';
+import { OnlyNumbersDirective } from '../../libs/shared/directives/only-numbers.directive';
 
 @Component({
   selector: 'app-login',
@@ -28,10 +29,11 @@ import { ThemeSwitcherComponent } from '../../libs/shared/components/theme-switc
     NzCheckboxModule,
     NzIconModule,
     NzDropDownModule,
-    ThemeSwitcherComponent
+    ThemeSwitcherComponent,
+    OnlyNumbersDirective,
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.less'
+  styles: ``,
 })
 export class LoginComponent {
   @ViewChild('usr') usrElement!: ElementRef;
@@ -57,7 +59,10 @@ export class LoginComponent {
     });
 
     this.loginForm = this.fb.group({
-      usuario: [localStorage.getItem('usuario') || null, [Validators.required]],
+      usuario: [
+        localStorage.getItem('usuario') || null,
+        [Validators.required, Validators.pattern(/^\d{8}$/)]
+      ],
       clave: [null, [Validators.required]],
       recordar: [localStorage.getItem('usuario') != null ? true : false]
     });

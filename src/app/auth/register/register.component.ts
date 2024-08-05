@@ -41,6 +41,7 @@ const telefonoValidPattern = /^\d+$/;
     OnlyNumbersDirective,
   ],
   templateUrl: './register.component.html',
+  styles: ``,
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
@@ -165,6 +166,8 @@ export class RegisterComponent {
   }
 
   onDepChange(value: SelectModel): void {
+    // console.log(value);
+
     const provControl = this.registerForm.get('prov');
     const entidadControl = this.registerForm.get('entidad');
     const perfilControl = this.registerForm.get('perfil');
@@ -175,8 +178,11 @@ export class RegisterComponent {
 
     if (value == null) return;
 
-    this.ubigeosStore.listarProvincias(Number(value.value));
-    this, this.entidadesStore.listarEntidades(0, 2, 0, Number(value.value));
+    if (value.value) {
+      this.ubigeosStore.listarProvincias(value.value.toString());
+      this, this.entidadesStore.listarEntidades(0, 2, 0, Number(value.value));
+    }
+
   }
 
   onProvChange(value: SelectModel): void {
@@ -201,21 +207,18 @@ export class RegisterComponent {
 
   onRegister(): void {
     this.authService.registrarUsuario(this.registerForm.value).subscribe({
-
-
       next: (v) => {
         if (v?.success) {
           if (v.data != 0) {
             this.router.navigate(['/auth'], { queryParams: { action: 'login' } });
           }
         }
-
       },
       error: (e) => {
         console.error(e);
         // this.msg.error(e.error.message);
       },
-
+      complete: () => this.registerForm.reset(),
     });
 
   }

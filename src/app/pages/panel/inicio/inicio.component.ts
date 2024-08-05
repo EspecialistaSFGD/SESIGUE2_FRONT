@@ -18,6 +18,7 @@ import { SelectModel } from '../../../libs/models/shared/select.model';
 import { RouterModule } from '@angular/router';
 import { PageHeaderFullComponent } from '../../../libs/shared/layout/page-header-full/page-header-full.component';
 import { EstadoComponent } from '../../../libs/shared/components/estado/estado.component';
+import { AuthService } from '../../../libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-inicio',
@@ -39,13 +40,14 @@ import { EstadoComponent } from '../../../libs/shared/components/estado/estado.c
     NzCardModule,
   ],
   templateUrl: './inicio.component.html',
-  styleUrls: ['./inicio.component.less']
+  styles: ``,
 })
 export class InicioComponent {
   // public requerimientosService = inject(RequerimientosService);
   // public tiposService = inject(TiposService);
   private fb = inject(UntypedFormBuilder);
   private modal = inject(NzModalService);
+  public authService = inject(AuthService);
 
   searchForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';

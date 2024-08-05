@@ -58,7 +58,7 @@
             <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
               <nz-avatar nzSize="small" [nzText]="descripcionTipo" class="bg-blue-700 dark:bg-neutral-700"></nz-avatar>
               <span class="ml-1">
-                {{ trabajador }} {{ (descripcionSector != undefined && descripcionSector != '') ?
+                {{ authService.nombreTrabajador() }} {{ (descripcionSector != undefined && descripcionSector != '') ?
                 ' - ' + descripcionSector :'' }}
               </span>
 
@@ -68,8 +68,8 @@
               <ul nz-menu class="bg-white dark:bg-gray-700">
                 <li
                   class="text-gray-500 hover:text-gray-950 dark:text-gray-300 dark:hover:text-gray-200 dark:hover:bg-gray-600"
-                  nz-menu-item>
-                  <button class="flex items-center gap-1" (click)="onLogout()">
+                  nz-menu-item (click)="onLogout()">
+                  <button class="flex items-center gap-1">
                     <span class="material-symbols-outlined text-sm">
                       power_settings_new
                     </span><span>Cerrar sesión</span>

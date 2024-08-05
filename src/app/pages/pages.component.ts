@@ -43,7 +43,6 @@ export class PagesComponent implements OnInit, AfterViewInit {
 
   menuItems: MenuModel[] = [];
   pageTitle: string | undefined;
-  trabajador: string | undefined;
   descripcionTipo: string | undefined;
   descripcionSector: string | undefined;
   selectedTheme: string = localStorage['theme'] || 'system';
@@ -59,10 +58,6 @@ export class PagesComponent implements OnInit, AfterViewInit {
     const storedMenu = localStorage.getItem('menus');
 
     this.menuItems = (storedMenu) ? JSON.parse(storedMenu) : [];
-
-    const storedTrabajador = localStorage.getItem('trabajador');
-
-    this.trabajador = (storedTrabajador) ? storedTrabajador : 'Administrador';
 
     const storedDescripcionTipo = localStorage.getItem('descripcionTipo');
 

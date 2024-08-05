@@ -5,7 +5,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { HitosService } from '../../../services/pedidos/hitos.service';
-import { NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { ComentarioModel } from '../../../models/pedido/comentario.model';
 
 @Component({

@@ -43,14 +43,20 @@
 
 <!-- <div style="background: #ECECEC;padding:30px;"> -->
 <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+    @if( authService.canViewPedidos() == true ) {
     <div nz-col [nzSpan]="24" nzLg="12" class="mb-4 lg:mb-0">
         <nz-card nzTitle="Pedidos">
-            <p>Desde este espacio, puede listar y generar nuevos pedidos.</p>
+
+            <p class="mb-4">Desde este espacio, puede listar y generar nuevos pedidos.</p>
+            <a nz-button nzType="primary" routerLink="/pedidos">Ver pedidos</a>
         </nz-card>
     </div>
+    }
     <div nz-col [nzSpan]="24" nzLg="12" class="mb-4 lg:mb-0">
         <nz-card nzTitle="Acuerdos">
-            <p>Desde este espacio, puede listar y generar nuevos acuerdos.</p>
+            <p class="mb-4">Desde este espacio, puede listar y generar nuevos acuerdos.</p>
+
+            <a nz-button nzType="primary" routerLink="/acuerdos">Ver acuerdos</a>
         </nz-card>
     </div>
 </div>

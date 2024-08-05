@@ -111,7 +111,7 @@ export class EspaciosService extends BaseHttpService {
       if (evento.subTipo) ots.subTipo = evento.subTipo;
       if (evento.estadoSelect) ots.estado = Number(evento?.estadoSelect['value']);
       if (evento.fechaEvento) ots.fechaEvento = new Date(evento.fechaEvento);
-      if (evento.fechaRegistro) ots.fechaRegistro = new Date(evento.fechaRegistro);
+      if (evento.fechaFinEvento) ots.fechaFinEvento = new Date(evento.fechaFinEvento);
 
       this.http.post(`${this.apiUrl}/Evento/RegistrarEvento`, ots)
         .subscribe({

@@ -1,4 +1,4 @@
-<app-page-header [title]="title.toUpperCase()" />
+<app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderEspacios" nzShowSizeChanger nzSize="small"
     [nzData]="espaciosService.eventos()!" [nzFrontPagination]="false" [nzLoading]="espaciosService.isLoading()"

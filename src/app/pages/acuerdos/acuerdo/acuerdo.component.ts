@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -16,6 +16,8 @@ import { EspaciosStore } from '../../../libs/shared/stores/espacios.store';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
 import { ClasificacionesStore } from '../../../libs/shared/stores/clasificaciones.store';
 import { differenceInCalendarDays } from 'date-fns';
+import { AddEditAcuerdoModel } from '../../../libs/models/shared/add-edit-acuerdo.model';
+import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
 
 
@@ -37,10 +39,12 @@ import { differenceInCalendarDays } from 'date-fns';
   templateUrl: './acuerdo.component.html',
   styles: ``
 })
-export class AcuerdoComponent implements OnInit {
+export class AcuerdoComponent {
   acuerdoForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
-
+  fechaEvento: Date | null = null;
+  nzModalData: AddEditAcuerdoModel = inject(NZ_MODAL_DATA);
+  today = new Date();
   acuerdosService = inject(AcuerdosService);
   pedidosService = inject(PedidosService);
   sectoresStore = inject(SectoresStore);
@@ -50,60 +54,54 @@ export class AcuerdoComponent implements OnInit {
 
 
   pedidoSeleccionado: PedidoModel | null = this.pedidosService.pedidoSeleccionado();
-
   acuerdoSeleccionado: AcuerdoPedidoModel | null = this.acuerdosService.acuerdoSeleccionado();
-
-  isCreatingPreAcuerdo: boolean | null = this.acuerdosService.isCreatingPreAcuerdo();
-
-  isConverting: boolean | null = this.acuerdosService.isConverting();
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
 
 
   constructor() {
-
-
     this.crearAcuerdoForm();
 
-    // console.log(this.acuerdoSeleccionado?.tipoSelect);
+    const acuerdoModificadoCtrl = this.acuerdoForm.get('acuerdoModificado');
+    const acuerdoCtrl = this.acuerdoForm.get('acuerdo');
+    const preAcuerdoCtrl = this.acuerdoForm.get('pre_acuerdo');
+    const es_preAcuerdoBoolCtrl = this.acuerdoForm.get('es_preAcuerdoBool');
+
+    if (this.nzModalData.tipo == 'PRE ACUERDO' && (this.nzModalData.accion == 'CREATE' || this.nzModalData.accion == 'EDIT')) {
+      acuerdoCtrl?.clearValidators();
+      acuerdoModificadoCtrl?.clearValidators();
+      preAcuerdoCtrl?.setValidators([Validators.required]);
+    }
+
+    if (this.nzModalData.tipo == 'ACUERDO' && (this.nzModalData.accion == 'CREATE' || this.nzModalData.accion == 'EDIT')) {
+      preAcuerdoCtrl?.clearValidators();
+      acuerdoModificadoCtrl?.clearValidators();
+      acuerdoCtrl?.setValidators([Validators.required]);
+    }
+
+    if (this.nzModalData.tipo == 'ACUERDO' && this.nzModalData.accion == 'CONVERT') {
+      acuerdoCtrl?.clearValidators();
+      preAcuerdoCtrl?.clearValidators();
+      acuerdoModificadoCtrl?.setValidators([Validators.required]);
+      es_preAcuerdoBoolCtrl?.patchValue(false);
+    }
+
+    acuerdoModificadoCtrl?.updateValueAndValidity();
+    acuerdoCtrl?.updateValueAndValidity();
+    preAcuerdoCtrl?.updateValueAndValidity();
 
 
     if (this.acuerdoSeleccionado?.responsableSelect != null) {
       this.onResponsableAcuerdosChange(this.acuerdoSeleccionado?.responsableSelect);
     }
 
-
-  }
-
-  ngOnInit(): void {
-    const acuerdoModificadoCtrl = this.acuerdoForm.get('acuerdoModificado');
-    const acuerdoCtrl = this.acuerdoForm.get('acuerdo');
-    const preAcuerdoCtrl = this.acuerdoForm.get('pre_acuerdo');
-    const es_preAcuerdoBoolCtrl = this.acuerdoForm.get('es_preAcuerdoBool');
-
-    if (this.isConverting) {
-      acuerdoModificadoCtrl?.setValidators([Validators.required]);
-      es_preAcuerdoBoolCtrl?.patchValue(false);
-    } else {
-      acuerdoModificadoCtrl?.clearValidators();
-
-      if (this.isCreatingPreAcuerdo) {
-        acuerdoCtrl?.clearValidators();
-        preAcuerdoCtrl?.setValidators([Validators.required]);
-      } else {
-        acuerdoCtrl?.setValidators([Validators.required]);
-        preAcuerdoCtrl?.clearValidators();
-      }
+    if (this.pedidoSeleccionado?.fechaEvento != null) {
+      this.fechaEvento = this.pedidoSeleccionado?.fechaEvento;
     }
-
-    acuerdoModificadoCtrl?.updateValueAndValidity();
-    acuerdoCtrl?.updateValueAndValidity();
-    preAcuerdoCtrl?.updateValueAndValidity();
   }
 
   onClasificacionAcuerdosChange(value: SelectModel): void {
     console.log(value);
-
   }
 
   onResponsableAcuerdosChange(tipo: SelectModel): void {
@@ -122,26 +120,27 @@ export class AcuerdoComponent implements OnInit {
   }
 
   disabledDate = (current: Date): boolean => {
-    // if (this.plazo == null) return false;
+    if (this.fechaEvento == null) return false;
 
-    // return differenceInCalendarDays(current, this.plazo) > 0;
-
-    return false;
+    return differenceInCalendarDays(new Date(this.fechaEvento), current) > 0;
   }
+
+  // disabledDate = (current: Date): boolean =>
+  //   differenceInCalendarDays(current, new Date(this.fechaEvento)) > 0;
 
   crearAcuerdoForm(): void {
     this.acuerdoForm = this.fb.group({
       acuerdoId: [this.acuerdoSeleccionado?.acuerdoId],
       prioridadId: [this.pedidoSeleccionado?.prioridadID, [Validators.required]],
-      acuerdo: [(!this.isCreatingPreAcuerdo || this.isConverting) ? this.acuerdoSeleccionado?.acuerdo : null],
-      pre_acuerdo: [(this.isCreatingPreAcuerdo || this.isConverting) ? this.acuerdoSeleccionado?.pre_acuerdo : null],
+      acuerdo: [this.acuerdoSeleccionado?.acuerdo],
+      pre_acuerdo: [this.acuerdoSeleccionado?.pre_acuerdo],
       clasificacionSelect: [this.acuerdoSeleccionado?.clasificacionSelect, [Validators.required]],
       responsableSelect: [this.acuerdoSeleccionado?.responsableSelect, [Validators.required]],
       entidadSelect: [this.acuerdoSeleccionado?.entidadSelect],
       tipoSelect: [this.acuerdoSeleccionado?.tipoSelect, [Validators.required]],
       plazo: [this.acuerdoSeleccionado?.plazo, [Validators.required]],
-      es_preAcuerdoBool: (this.isCreatingPreAcuerdo != null ? this.isCreatingPreAcuerdo : this.acuerdoSeleccionado?.es_preAcuerdoBool),
-      acuerdoModificado: [(this.acuerdoSeleccionado?.acuerdo) ? this.acuerdoSeleccionado?.acuerdo : this.acuerdoSeleccionado?.pre_acuerdo || null],
+      es_preAcuerdoBool: [(this.nzModalData.tipo == 'PRE ACUERDO' ? true : false)],
+      acuerdoModificado: [(this.nzModalData.accion == 'CONVERT' ? this.acuerdoSeleccionado?.pre_acuerdo : null)],
       //TODO: tener en cuenta para una edición especial del acuerdo
       acuerdo_original: [null],
       eventoId: [this.pedidoSeleccionado?.eventoId || null],

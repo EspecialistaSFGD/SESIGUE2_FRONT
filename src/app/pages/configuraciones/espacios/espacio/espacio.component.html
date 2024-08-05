@@ -13,10 +13,10 @@
     </div>
 
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="16" nzLg="16" nzXl="16">
             <nz-form-item>
-                <nz-form-label nzRequired [nzSpan]="null" nzFor="abreviatura">Abreviatura</nz-form-label>
-                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                <nz-form-label [nzSpan]="null">Abreviatura</nz-form-label>
+                <nz-form-control nzSpan="null">
                     <input type="text" nz-input id="abreviatura" formControlName="abreviatura" #abreviatura>
                 </nz-form-control>
             </nz-form-item>
@@ -34,16 +34,30 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
-
+    </div>
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item>
-                <nz-form-label nzRequired [nzSpan]="null">Fecha</nz-form-label>
+                <nz-form-label nzRequired [nzSpan]="null">Fecha inicio</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
-                    <nz-date-picker class="w-full" formControlName="fechaEvento" nzPlaceHolder="Seleccionar fecha"
+                    <nz-date-picker (ngModelChange)="onFechaEventoChange($event)" class="w-full"
+                        formControlName="fechaEvento" nzPlaceHolder="Seleccionar fecha"
                         nzFormat="dd/MM/yyyy"></nz-date-picker>
                 </nz-form-control>
             </nz-form-item>
         </div>
+
+        @if(espacioForm.get('fechaEvento')?.value){
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null">Fecha fin</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-date-picker class="w-full" formControlName="fechaFinEvento" nzPlaceHolder="Seleccionar fecha"
+                        nzFormat="dd/MM/yyyy" [nzDisabledDate]="disabledDate"></nz-date-picker>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
     </div>
 
     <!-- {{this.espacioForm.value|json}} -->

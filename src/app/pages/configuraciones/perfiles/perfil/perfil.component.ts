@@ -90,8 +90,10 @@ export class PerfilComponent {
 
     if (value == null) return;
 
-    this.ubigeosStore.listarProvincias(Number(value.value));
-    this, this.entidadesStore.listarEntidades(0, 2, 0, Number(value.value));
+    if (value.value) {
+      this.ubigeosStore.listarProvincias(value.value?.toString());
+      this, this.entidadesStore.listarEntidades(0, 2, 0, Number(value.value));
+    }
   }
 
   onProvChange(value: SelectModel): void {

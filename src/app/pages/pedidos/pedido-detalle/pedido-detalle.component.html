@@ -1,5 +1,4 @@
-<app-page-header title="Detalle de pedido" [content]="pedidoContent" />
-
+<app-page-header title="Detalle de pedido" [content]="pedidoContent" backUrl="pedidos" />
 <ng-template #pedidoContent>
     <nz-descriptions nzSize="small" nzBordered [nzColumn]="{ xxl: 3, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
         <nz-descriptions-item
@@ -72,7 +71,7 @@
                         (click)="onEliinarHito(data)"> -->
                     <!-- {{acuerdo.codigo|json}} -->
                     <button [disabled]="acuerdo.codigo != null" nz-tooltip="Convertir a acuerdo" *nzSpaceItem nz-button
-                        nzType="link" (click)="onAddEdit(acuerdo, null, true)">
+                        nzType="link" (click)="onAddEdit(acuerdo, 'ACUERDO', 'CONVERT')">
                         <span nz-icon nzType="vertical-align-top" nzTheme="outline"></span>
                     </button>
 
@@ -81,7 +80,7 @@
                         [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede desestimar':'Desestimar hito'"
                         (click)="onEliinarHito(data)"> -->
                     <button [disabled]="acuerdo.codigo != null" *nzSpaceItem nz-button nzType="link"
-                        (click)="onAddEdit(acuerdo)">
+                        (click)="onAddEdit(acuerdo, 'PRE ACUERDO', 'EDIT')">
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
 
@@ -120,10 +119,10 @@
                 <nz-dropdown-menu #menuAddEdit="nzDropdownMenu">
                     <ul nz-menu>
                         <li nz-menu-item>
-                            <button (click)="onAddEdit(null, true)">Pre acuerdo</button>
+                            <button (click)="onAddEdit(null, 'PRE ACUERDO', 'CREATE')">Pre acuerdo</button>
                         </li>
                         <li nz-menu-item>
-                            <button (click)="onAddEdit(null, false)">Acuerdo</button>
+                            <button (click)="onAddEdit(null, 'ACUERDO', 'CREATE')">Acuerdo</button>
                         </li>
                     </ul>
                 </nz-dropdown-menu>

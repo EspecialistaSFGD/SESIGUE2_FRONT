@@ -28,6 +28,11 @@ import { EstadoComponent } from "../../libs/shared/components/estado/estado.comp
 import { AcuerdoPedidoModel } from '../../libs/models/pedido';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { AcuerdoComponent } from './acuerdo/acuerdo.component';
+import { DesestimacionComponent } from '../../libs/shared/components/desestimacion/desestimacion.component';
+import { ComentarioModel } from '../../libs/models/pedido/comentario.model';
+import { UtilesService } from '../../libs/shared/services/utiles.service';
+import { saveAs } from 'file-saver';
+import { AuthService } from '../../libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -51,7 +56,7 @@ import { AcuerdoComponent } from './acuerdo/acuerdo.component';
     EstadoComponent,
   ],
   templateUrl: './acuerdos.component.html',
-  styleUrl: './acuerdos.component.less'
+  styles: ``
 })
 export class AcuerdosComponent implements OnInit {
   searchForm!: UntypedFormGroup;
@@ -82,10 +87,12 @@ export class AcuerdosComponent implements OnInit {
   private timeout: any;
 
   public acuerdosService = inject(AcuerdosService);
+  private utilesService = inject(UtilesService);
   private fb = inject(UntypedFormBuilder);
   public espaciosStore = inject(EspaciosStore);
   public sectoresStore = inject(SectoresStore);
   public ubigeosStore = inject(UbigeosStore);
+  public authService = inject(AuthService);
   public clasificacionesStore = inject(ClasificacionesStore);
   public estadosStore = inject(EstadosStore);
 
@@ -195,8 +202,8 @@ export class AcuerdosComponent implements OnInit {
       tipoSeleccionado = this.tipoSeleccionado,
       estadosSelecionados = this.estadosSelecionados,
       espaciosSeleccionados = this.espaciosSeleccionados,
-      sectoresSeleccionados = this.sectoresSeleccionados,
-      depSeleccionado = this.depSeleccionado,
+      sectoresSeleccionados = (this.authService.sector() && this.authService.subTipo() != 'PCM') ? [this.authService.sector()!] : this.sectoresSeleccionados,
+      depSeleccionado = (this.authService.departamento()) ? this.authService.departamento() : this.depSeleccionado,
       provSeleccionada = this.provSeleccionada,
       pageIndex = this.pageIndex,
       pageSize = this.pageSize,
@@ -205,6 +212,65 @@ export class AcuerdosComponent implements OnInit {
     }: TraerAcuerdosInterface
   ): void {
     this.acuerdosService.listarAcuerdos(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
+  }
+
+  onSolicitarDesestimacion(acuerdo: AcuerdoPedidoModel): void {
+    const title = 'Solicitar desestimación de acuerdo';
+    const labelOK = 'Solicitar desestimación';
+
+    const modal = this.modal.create<DesestimacionComponent, ComentarioModel>({
+      nzTitle: title,
+      nzContent: DesestimacionComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzClosable: false,
+      nzMaskClosable: false,
+      nzData: {
+        id: acuerdo.acuerdoId,
+        tipo: 'ACUERDO',
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: labelOK,
+          type: 'primary',
+          danger: true,
+          onClick: (componentInstance) => {
+            return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
+              this.traerAcuerdos({
+
+              });
+              this.modal.closeAll();
+            });
+          },
+          loading: this.acuerdosService.isEditing(),
+          disabled: (componentInstance) => !componentInstance?.desestimacionForm.valid,
+        }
+      ]
+    });
+
+    const instance = modal.getContentComponent();
+    //modal.afterOpen.subscribe(() => console.log(instance.hitoForm.value));
+    // Return a result when closed
+    modal.afterClose.subscribe(result => {
+      instance.desestimacionForm.reset();
+    });
+  }
+
+  onVerDesestimacion(acuerdo: AcuerdoPedidoModel): void {
+    if (acuerdo == null) return;
+
+    this.acuerdosService.descargarEvidenciaDesestimacion(acuerdo.acuerdoId!).then((res) => {
+      if (res.success == true) {
+        var binary_string = this.utilesService.base64ToArrayBuffer(res.data[0].binario);
+        var blob = new Blob([binary_string], { type: `application/${res.data[0].tipo}` });
+
+        saveAs(blob, res.data[0].nombre);
+      }
+    });
   }
 
   onEspacioChange(value: SelectModel[] | null): void {
@@ -253,8 +319,8 @@ export class AcuerdosComponent implements OnInit {
     this.depSeleccionado = value;
     this.traerAcuerdos({ depSeleccionado: value });
 
-    if (value != null) {
-      this.ubigeosStore.listarProvincias(Number(value.value));
+    if (value != null && value.value) {
+      this.ubigeosStore.listarProvincias(value.value.toString());
 
       if (this.provSeleccionada != null) {
         this.provSeleccionada = null;
@@ -472,6 +538,7 @@ export class AcuerdosComponent implements OnInit {
           type: 'primary',
           onClick: (componentInstance) => {
             return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then((res) => {
+              this.traerAcuerdos({});
               this.modal.closeAll();
             });
           },
@@ -520,6 +587,37 @@ export class AcuerdosComponent implements OnInit {
       this.pageSize = pageSize;
       this.sortField = (currentSort && currentSort.key) || this.sortField;
       this.sortOrder = (currentSort && currentSort.value) || this.sortOrder;
+
+      if (this.authService.subTipo() == 'SECTOR') {
+        if (!this.sectoresSeleccionados && this.authService.sector()) {
+          const defaultSector = this.authService.sector();
+          if (defaultSector) {
+            this.sectoresSeleccionados = [defaultSector];
+            this.searchForm.patchValue({ sector: this.sectoresSeleccionados });
+            this.filterCounter.update(x => x + 1);
+          }
+        }
+      }
+
+      if (this.authService.subTipo() == 'REGION' || this.authService.subTipo() == 'DEPARTAMENTO' || this.authService.subTipo() == 'PROVINCIA' || this.authService.subTipo() == 'DISTRITO') {
+        if (!this.depSeleccionado && this.authService.departamento()) {
+          const defaultDep = this.authService.departamento();
+          if (defaultDep) {
+            this.depSeleccionado = defaultDep;
+            this.searchForm.patchValue({ dep: this.depSeleccionado });
+            this.filterCounter.update(x => x + 1);
+          }
+        }
+
+        if (!this.provSeleccionada && this.authService.provincia()) {
+          const defaultProv = this.authService.provincia();
+          if (defaultProv) {
+            this.provSeleccionada = defaultProv;
+            this.searchForm.patchValue({ prov: this.provSeleccionada });
+            this.filterCounter.update(x => x + 1);
+          }
+        }
+      }
 
       this.traerAcuerdos({
         pageIndex,

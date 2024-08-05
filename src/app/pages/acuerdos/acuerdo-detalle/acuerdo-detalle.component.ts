@@ -30,9 +30,10 @@ import { UtilesService } from '../../../libs/shared/services/utiles.service';
 import { saveAs } from 'file-saver';
 import { EstadoComponent } from '../../../libs/shared/components/estado/estado.component';
 import { ComentarioModel } from '../../../libs/models/pedido/comentario.model';
+import { AuthService } from '../../../libs/services/auth/auth.service';
 // import { NzTagModule } from 'ng-zorro-antd/tag';
 
-const subTipo = localStorage.getItem('subTipo') || null;
+const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
 @Component({
   selector: 'app-acuerdo-detalle',
@@ -91,6 +92,7 @@ export class AcuerdoDetalleComponent implements OnInit {
 
   public acuerdosService = inject(AcuerdosService);
   public hitosService = inject(HitosService);
+  public authService = inject(AuthService);
   public avancesService = inject(AvancesService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
@@ -100,8 +102,8 @@ export class AcuerdoDetalleComponent implements OnInit {
   // private confirmModal = inject(NzModalRef);
   confirmModal?: NzModalRef; // For testing by now
   private viewContainerRef = inject(ViewContainerRef);
-  permiso: PermisoModel | null | undefined = null;
-  storedPermiso = localStorage.getItem('permisos');
+  // permiso: PermisoModel | null | undefined = null;
+  // storedPermiso = localStorage.getItem('permisos');
 
   constructor(
 
@@ -114,10 +116,10 @@ export class AcuerdoDetalleComponent implements OnInit {
       this.acuerdosService.listarAcuerdo(Number(this.id));
 
       try {
-        this.permiso = this.storedPermiso ? JSON.parse(this.storedPermiso) : {};
+        // this.permiso = this.storedPermiso ? JSON.parse(this.storedPermiso) : {};
       } catch (e) {
         console.error('Error parsing JSON from localStorage', e);
-        this.permiso = null;
+        // this.permiso = null;
       }
 
       // console.log('Permiso:', this.permiso);
@@ -287,7 +289,6 @@ export class AcuerdoDetalleComponent implements OnInit {
           label: 'Comentar',
           onClick: componentInstance => {
             return this.hitosService.agregarComentarioHito(componentInstance!.comentarioForm.value).then((res) => {
-              console.log(res);
               this.modal.closeAll();
             });
           },
@@ -311,7 +312,7 @@ export class AcuerdoDetalleComponent implements OnInit {
       nzViewContainerRef: this.viewContainerRef,
       nzData: {
         id: hito.hitoId || null,
-        tipo: 'hito',
+        tipo: 'HITO',
       },
       nzMaskClosable: false,
       nzClosable: false,
@@ -351,14 +352,13 @@ export class AcuerdoDetalleComponent implements OnInit {
       case 'PCM':
         tipoCompentario = 1;
         break;
-      case 'Sector':
-        // case 'Ministerio':
+      case 'SECTOR':
         tipoCompentario = 2;
         break;
-      case 'Provincia':
+      case 'PROVINCIA':
         tipoCompentario = 3;
         break;
-      case 'Ejecutora':
+      case 'EJECUTORA':
         tipoCompentario = 4;
         break;
       default:
@@ -375,7 +375,7 @@ export class AcuerdoDetalleComponent implements OnInit {
       nzViewContainerRef: this.viewContainerRef,
       nzData: {
         id: avance.avanceId || null,
-        tipo: 'avance',
+        tipo: 'AVANCE',
         tipoComentario: tipoCompentario,
       },
       nzMaskClosable: false,

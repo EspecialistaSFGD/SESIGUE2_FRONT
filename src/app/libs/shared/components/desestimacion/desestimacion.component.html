@@ -1,0 +1,32 @@
+<form [formGroup]="desestimacionForm" nz-form nzLayout="vertical">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="motivoDesestimacion">Motivo</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <textarea nz-input id="motivoDesestimacion" formControlName="motivoDesestimacion"
+                        placeholder="Ingrese la descripción del hito" [nzAutosize]="{ minRows: 3 }"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Evidencia</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <nz-upload nzAccept="image/*,.pdf" [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload"
+                        [nzRemove]="onDeleteFiles" [nzDownload]="handleDownload"
+                        [nzShowButton]="this.fileList.length === 0">
+                        <button type="button" nz-button>
+                            <span nz-icon nzType="upload"></span>
+                            Seleccionar
+                        </button>
+                    </nz-upload>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    {{ desestimacionForm.value|json }}
+</form>

@@ -7,6 +7,7 @@ import { ResponseModel, ResponseModelPaginated } from '../../models/shared/respo
 import { AcuerdoPedidoModel } from '../../models/pedido';
 import { UtilesService } from '../../shared/services/utiles.service';
 import { AuthService } from '../auth/auth.service';
+import { DesestimacionModel } from '../../models/pedido/acuerdo.model';
 
 interface State {
     acuerdos: AcuerdoPedidoModel[];
@@ -25,8 +26,8 @@ interface State {
 })
 export class AcuerdosService {
 
-    public msg = inject(NzMessageService);
-    public http = inject(HttpClient);
+    private msg = inject(NzMessageService);
+    private http = inject(HttpClient);
     private utilesService = inject(UtilesService);
     private authService = inject(AuthService);
 
@@ -95,6 +96,8 @@ export class AcuerdosService {
         params = (pageSize !== null) ? params.append('piPageSize', `${pageSize}`) : params;
         params = (sortField !== null) ? params.append('columnSort', `${sortField}`) : params;
         params = (sortOrder !== null) ? params.append('typeSort', `${sortOrder}`) : params;
+
+
 
         this.http.get<ResponseModelPaginated>(`${environment.api}/Acuerdo/Listar`, { params }).subscribe({
             next: (data) => {
@@ -272,7 +275,54 @@ export class AcuerdosService {
         });
     }
 
-    seleccionarAcuerdoById(id: number | null | undefined, es_preAcuerdoBool: boolean | null = null, isConverting: boolean | null = null): void {
+    descargarEvidenciaDesestimacion(acuerdoId: number): Promise<ResponseModel> {
+        return new Promise((resolve, reject) => {
+            this.http.get(`${environment.api}/Acuerdo/Descargar?acuerdoId=${acuerdoId}`).subscribe({
+                next: (data: ResponseModel) => {
+                    resolve(data);
+                },
+                error: (e) => {
+                    reject(e);
+                },
+            });
+        });
+    }
+
+    solicitarDesestimacionAcuerdo(desestimacion: DesestimacionModel): Promise<ResponseModel> {
+        return new Promise((resolve, reject) => {
+            this.#acuerdosResult.update((state) => ({
+                ...state,
+                isEditing: true,
+            }));
+
+            let formData: FormData = new FormData();
+
+            if (desestimacion.acuerdoId != null) formData.append('acuerdoId', `${desestimacion.acuerdoId}`);
+
+            if (desestimacion.motivoDesestimacion != null) formData.append('motivoDesestimacion', desestimacion.motivoDesestimacion);
+
+            // Asegúrate de que evidencia no sea undefined
+            if (desestimacion.evidencia !== null && desestimacion.evidencia !== undefined) {
+                formData.append('evidencia', desestimacion.evidencia, desestimacion.evidencia.name);
+            }
+
+            formData.append('accesoId', this.authService.getCodigoUsuario().toString());
+
+            this.http.post(`${environment.api}/Acuerdo/DesestimarAcuerdo`, formData).subscribe({
+                next: (data: ResponseModel) => {
+                    this.msg.success(data.message);
+                    resolve(data);
+                },
+                error: (e) => {
+                    this.msg.error(`Error al agregar hito: ${e}`);
+                    reject(e);
+                },
+                complete: () => this.#acuerdosResult.update((v) => ({ ...v, isEditing: false })),
+            });
+        });
+    }
+
+    seleccionarAcuerdoById(id: number | null | undefined): void {
         if (id !== null && id !== undefined) {
             const acuerdo = this.#acuerdosResult().acuerdos?.find((e: AcuerdoPedidoModel) => e.acuerdoId === id) || null;
             this.#acuerdosResult.update((v) => ({ ...v, acuerdoSeleccionado: acuerdo }));
@@ -281,16 +331,10 @@ export class AcuerdosService {
 
         }
 
-        this.#acuerdosResult.update((v) => ({
-            ...v,
-            isCreatingPreAcuerdo: (es_preAcuerdoBool !== null) ? es_preAcuerdoBool : v.acuerdoSeleccionado?.es_preAcuerdoBool || null,
-            isConverting: (isConverting !== null) ? isConverting : false,
-        }));
-
-        // if (es_preAcuerdo !== null) {
-        //     this.#acuerdosResult.update((v) => ({ ...v, es_registro_preAcuerdo: es_preAcuerdo }));
-        // } else {
-        //     this.#acuerdosResult.update((v) => ({ ...v, es_registro_preAcuerdo: null }));
-        // }
+        // this.#acuerdosResult.update((v) => ({
+        //     ...v,
+        //     isCreatingPreAcuerdo: (es_preAcuerdoBool !== null) ? es_preAcuerdoBool : v.acuerdoSeleccionado?.es_preAcuerdoBool || null,
+        //     isConverting: (isConverting !== null) ? isConverting : false,
+        // }));
     }
 }

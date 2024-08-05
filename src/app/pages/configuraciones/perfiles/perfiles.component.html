@@ -1,6 +1,6 @@
-<app-page-header [title]="title.toUpperCase()" />
+<app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 
-<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+<nz-table [nzScroll]=" { x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
     [nzData]="this.perfilesService.perfiles()" [nzFrontPagination]="false"
     [nzLoading]="this.perfilesService.isLoading()" [nzTotal]="this.perfilesService.total()" [nzPageSize]="this.pageSize"
     [nzPageIndex]="this.pageIndex" (nzQueryParams)="onQueryParamsChange($event)">

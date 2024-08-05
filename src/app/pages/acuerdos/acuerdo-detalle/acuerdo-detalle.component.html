@@ -1,5 +1,8 @@
-<app-page-header title="Detalle de acuerdo" [content]="acuerdoContent" />
+<app-page-header title="Detalle de acuerdo" [content]="acuerdoContent" backUrl="acuerdos" />
 
+<!-- <code>
+    {{authService.sector()|json}}
+</code> -->
 
 <ng-template #acuerdoContent>
     <nz-descriptions nzSize="small" [nzColumn]="{ xxl: 3, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }" nzBordered>
@@ -77,7 +80,7 @@
             <td>{{ data.comentarioSD }}</td>
             <td nzRight class="w-40">
                 <nz-space>
-                    @if(permiso?.puede_editar_hito){
+                    @if(authService.permisos()?.puede_editar_hito){
                     <button [disabled]="(data.validado==1||data.estado==0)" *nzSpaceItem nz-button nzType="link"
                         nz-tooltip
                         [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede editar':'Editar hito'"
@@ -106,7 +109,7 @@
                         <span nz-icon nzType="rollback" nzTheme="outline"></span>
                     </button>
 
-                    @if(permiso?.puede_validar_hito){
+                    @if(authService.permisos()?.puede_validar_hito){
                     <button [disabled]="data.validado==1||data.estado==0" *nzSpaceItem nz-button nzType="link"
                         nz-tooltip
                         [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede validar':'Validar hito'"
@@ -116,7 +119,7 @@
                     </button>
                     }
 
-                    @if(permiso?.puede_eliminar_hito){
+                    @if(authService.permisos()?.puede_eliminar_hito){
                     <button [disabled]="data.validado==1||data.estado==0" *nzSpaceItem nz-button nzDanger nzType="link"
                         nz-tooltip
                         [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede desestimar':'Desestimar hito'"
@@ -144,7 +147,7 @@
                     <span class="button-text">Quitar hito selecionado</span>
                 </button>
                 }
-                @if(permiso?.puede_agregar_hito){
+                @if(authService.permisos()?.puede_agregar_hito){
                 <button *nzSpaceItem nz-button nzType="primary" (click)="onHitoAddEdit(null)">
                     <span nz-icon nzType="plus" nzTheme="outline"></span>
                     <span class="button-text">Nuevo hito</span>
@@ -196,7 +199,7 @@
             <td class="text-center">{{ data.comentarioEjecutora || '-' }}</td>
             <td nzRight class="w-40">
                 <nz-space>
-                    @if(permiso?.puede_editar_avance){
+                    @if(authService.permisos()?.puede_editar_avance){
                     <!-- @if(true){ -->
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Editar avance"
                         (click)="onAvanceAddEdit(data)">
@@ -209,7 +212,7 @@
                         <span nz-icon nzType="comment" nzTheme="outline"></span>
                     </button>
 
-                    @if(permiso?.puede_validar_avance){
+                    @if(authService.permisos()?.puede_validar_avance){
 
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Validar avance"
                         (click)="onValidarAvance(data)">
@@ -217,7 +220,7 @@
                     </button>
                     }
 
-                    @if(permiso?.puede_eliminar_avance){
+                    @if(authService.permisos()?.puede_eliminar_avance){
                     <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar">
                         <span nz-icon nzType="delete" nzTheme="outline"></span>
                     </button>
@@ -234,7 +237,7 @@
             Gestión de avances del hito # {{ hitoSeleccionadoId}}
         </p>
 
-        @if(permiso?.puede_agregar_avance){
+        @if(authService.permisos()?.puede_agregar_avance){
         <div>
             <nz-space>
                 <button *nzSpaceItem nz-button nzType="primary" (click)="onAvanceAddEdit(null)">
