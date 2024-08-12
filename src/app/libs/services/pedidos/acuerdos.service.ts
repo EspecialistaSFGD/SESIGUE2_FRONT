@@ -216,7 +216,6 @@ export class AcuerdosService {
         });
     }
 
-    //TODO: Convertir a acuerdo
     convertirAcuerdo(acuerdo: AcuerdoPedidoModel): Promise<ResponseModel> {
         if (acuerdo.acuerdoModificado === null || acuerdo.acuerdoModificado === undefined) {
             return new Promise((resolve, reject) => {

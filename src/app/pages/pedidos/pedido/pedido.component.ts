@@ -52,13 +52,10 @@ export class PedidoComponent {
   authService = inject(AuthService);
   private fb = inject(UntypedFormBuilder);
 
-  pedidoSeleccionado: PedidoModel = this.pedidoService.pedidoSeleccionado();
+  pedidoSeleccionado: PedidoModel | null = this.pedidoService.pedidoSeleccionado();
 
   constructor() {
     this.crearPedidoForm();
-
-    console.log(this.authService.departamento());
-
 
     if (this.nzModalData == 'SECTOR') {
       this.pedidoForm.get('sectorSelect')?.patchValue(this.authService.sector());

@@ -31,6 +31,7 @@ import { ComentarioComponent } from '../../libs/shared/components/comentario/com
 import { ComentarioModel } from '../../libs/models/pedido/comentario.model';
 import { AuthService } from '../../libs/services/auth/auth.service';
 import { PedidoType } from '../../libs/shared/types/pedido.type';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 
 @Component({
   selector: 'app-pedidos',
@@ -51,6 +52,7 @@ import { PedidoType } from '../../libs/shared/types/pedido.type';
     NzDrawerModule,
     NzBadgeModule,
     NzToolTipModule,
+    NzAvatarModule,
   ],
   templateUrl: './pedidos.component.html',
   styles: ``
@@ -101,7 +103,6 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   constructor() {
     this.crearSearForm();
-
     // this.subTipo = this.authService.getSubTipo();
 
     try {
@@ -208,7 +209,9 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   onAddEdit(pedido: PedidoModel | null): void {
     const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
     const labelOk = pedido ? 'Actualizar' : 'Agregar';
+
     this.pedidosService.seleccionarPedidoById(pedido?.prioridadID);
+    this.espaciosStore.listarEventos();
 
     const modal = this.modal.create<PedidoComponent, PedidoType>({
       nzTitle: title,
@@ -245,13 +248,13 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onGestionarPedido(id: number): void {
-    if (id == null) {
+  onGestionarPedido(pedido: PedidoModel | null): void {
+    if (pedido == null) {
       return;
     }
 
     //Navegar hacia la página de gestión de hitos en /acuerdos/acuerdo/:id
-    this.router.navigate(['pedidos', 'pedido', id]);
+    this.router.navigate(['pedidos', 'pedido', pedido?.prioridadID]);
   }
 
   onValidate(pedido: PedidoModel): void {
@@ -437,7 +440,6 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     const sectorSeleccionadoActual = this.authService.sector() ? this.sectoresSeleccionados : null;
 
     // Resetear manualmente cada campo excepto el campo de departamento
-    //TODO: Revisar para optimizar en todos los casos adicionales
     this.searchForm.patchValue({
       cui: null,
       // dep: (this.authService.getSubTipo() == 'PCM') ? null : this.departamento,
@@ -508,6 +510,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   onOpenDrawer(): void {
     this.isDrawervisible = true;
+    this.espaciosStore.listarEventos();
   }
 
   onCloseDrawer(): void {

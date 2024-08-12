@@ -90,6 +90,12 @@ export class EspaciosService extends BaseHttpService {
             ...state,
             isLoading: false,
           }));
+        },
+        complete: () => {
+          this.#espaciosResult.update((state) => ({
+            ...state,
+            isLoading: false,
+          }));
         }
       });
   }

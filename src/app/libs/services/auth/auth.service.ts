@@ -404,6 +404,8 @@ export class AuthService {
 
   registrarUsuario(usuario: UsuarioModel): Observable<ResponseModel | null> {
 
+    this.#usuario.update((v) => ({ ...v, isLoading: true }));
+
     let ots: UsuarioRequestModel = {} as UsuarioRequestModel;
 
     if (usuario.perfil) ots.codigoPerfil = Number(usuario.perfil.value);
@@ -418,7 +420,6 @@ export class AuthService {
     ots.tipoDocumento = 1;
     if (usuario.dni) ots.numeroDocumento = usuario.dni;
     ots.esActivo = true;
-    //TODO: Revisar si se quita
     ots.nombreUsuario = '';
 
     return this.http.post<ResponseModel>(`${environment.api}/Usuario/RegistrarUsuario`, ots).pipe(
@@ -433,11 +434,14 @@ export class AuthService {
         } else {
           this.msg.error(resp.message);
         }
+
+        this.#usuario.update((v) => ({ ...v, isLoading: false }));
       }),
       catchError((err) => {
         this.msg.error("Hubo un error al registrar el usuario", err);
+        this.#usuario.update((v) => ({ ...v, isLoading: false }));
         return of(null);
-      })
+      }),
     );
   }
 

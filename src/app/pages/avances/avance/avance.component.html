@@ -14,6 +14,32 @@
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
             <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Fecha</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido" nzHasFeedback>
+                    <nz-date-picker class="w-full" formControlName="fecha" nzPlaceHolder="Seleccionar fecha"
+                        nzFormat="dd/MM/yyyy"></nz-date-picker>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null">Estado</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <nz-select nzPlaceHolder="Seleccione" id="estado" #estado formControlName="estado" nzAllowClear
+                        nzShowSearch (ngModelChange)="onEstadoChange($event)">
+                        <nz-option nzValue="0" nzLabel="En proceso"></nz-option>
+                        <nz-option nzValue="1" nzLabel="Culminado"></nz-option>
+                        <!-- <nz-option *ngFor="let sect of this.sectoresStore.entidadesResponsables()"
+                            [nzLabel]="sect.label!" [nzValue]="sect"></nz-option> -->
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+
+        <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Responsable</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                     <nz-select nzDisabled nzPlaceHolder="Seleccione" id="responsableSelect" #responsableSelect
@@ -24,7 +50,7 @@
                     </nz-select>
                 </nz-form-control>
             </nz-form-item>
-        </div>
+        </div> -->
 
         <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
         <nz-form-item>
@@ -38,19 +64,9 @@
             </nz-form-control>
         </nz-form-item>
     </div> -->
-
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="null" nzRequired>Fecha</nz-form-label>
-                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
-                    <nz-date-picker class="w-full" formControlName="fecha" nzPlaceHolder="Seleccionar fecha"
-                        nzFormat="dd/MM/yyyy"></nz-date-picker>
-                </nz-form-control>
-            </nz-form-item>
-        </div>
     </div>
 
-    @if(this.avanceForm.get('responsableSelect')?.value != null){
+    <!-- @if(this.avanceForm.get('responsableSelect')?.value != null){
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
 
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
@@ -67,13 +83,14 @@
             </nz-form-item>
         </div>
     </div>
-    }
+    } -->
 
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
             <nz-form-item>
-                <nz-form-label [nzSpan]="null">Evidencia del avance</nz-form-label>
-                <nz-form-control nzSpan="null" nzHasFeedback>
+                <nz-form-label [nzSpan]="null" [nzRequired]="avanceForm.get('estado')?.value == '1'">Evidencia del
+                    avance</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback [nzExtra]="evidenciaTpl">
                     <nz-upload nzAccept="image/*,.pdf" [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload"
                         [nzRemove]="onDeleteFiles" [nzDownload]="handleDownload"
                         [nzShowButton]="this.fileList.length === 0">
@@ -82,12 +99,20 @@
                             Seleccionar
                         </button>
                     </nz-upload>
+
+                    <ng-template #evidenciaTpl>
+                        @if(avanceForm.get('estado')?.value == '1'){
+                        Este campo es requerido cuando el estado de la evidencia es "Culminado"
+                        }@else {
+                        Opcional
+                        }
+                    </ng-template>
                 </nz-form-control>
             </nz-form-item>
         </div>
     </div>
 
-    <!-- {{this.avanceForm.value|json}} -->
+    {{this.avanceForm.value|json}}
     <!-- {{this.hitosService.hitoSeleccionado()|json}} -->
     <!-- {{this.hitosService.hitoSeleccionado()|json }} -->
     <!-- {{this.acuerdosService.acuerdoSeleccionado().acuerdoId|json }} -->

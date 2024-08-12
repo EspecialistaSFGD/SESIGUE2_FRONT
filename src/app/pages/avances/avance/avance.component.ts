@@ -139,8 +139,21 @@ export class AvanceComponent {
     this.sectoresStore.listarEntidadesResponsables(Number(tipo.value), acuerdoId);
   }
 
-  crearAvanceForm(): void {
+  onEstadoChange(estado: string): void {
+    if (estado == null) return;
 
+    const controlNombreEvidencia = this.avanceForm.get('nombreEvidencia');
+
+    if (estado == '1') {
+      controlNombreEvidencia?.setValidators([Validators.required]);
+    } else {
+      controlNombreEvidencia?.clearValidators();
+    }
+
+    controlNombreEvidencia?.updateValueAndValidity();
+  }
+
+  crearAvanceForm(): void {
     this.avanceForm = this.fb.group({
       idEvidencia: [this.avanceSeleccionado?.idEvidencia],
       avanceId: [this.avanceSeleccionado?.avanceId],
@@ -148,9 +161,10 @@ export class AvanceComponent {
       fecha: [this.avanceSeleccionado?.fechaDate, [Validators.required]],
       avance: [this.avanceSeleccionado?.avance, [Validators.required]],
       evidencia: [this.avanceSeleccionado?.evidencia],
+      estado: [this.avanceSeleccionado?.estado, [Validators.required]],
       nombreEvidencia: [this.avanceSeleccionado?.nombreEvidencia],
-      entidadSelect: [this.avanceSeleccionado?.entidadSelect, [Validators.required]],
-      responsableSelect: [this.hitoSeleccionado?.responsableSelect, [Validators.required]],
+      // entidadSelect: [this.avanceSeleccionado?.entidadSelect, [Validators.required]],
+      // responsableSelect: [this.hitoSeleccionado?.responsableSelect, [Validators.required]],
     });
   }
 }

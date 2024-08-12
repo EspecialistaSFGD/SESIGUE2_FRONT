@@ -1,1 +1,1 @@
-export type AcuerdoType = 'ACUERDO' | 'PRE ACUERDO';
+export type AcuerdoType = 'ACUERDO' | 'PRE ACUERDO' | null;

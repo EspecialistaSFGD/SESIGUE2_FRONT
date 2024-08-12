@@ -45,6 +45,7 @@
     <thead>
         <tr>
             <th></th>
+            <th class="text-center w-10"></th>
             <th nzColumnKey="hito" [nzSortFn]="true">Hito</th>
             <th nzColumnKey="responsable" [nzFilterFn]="true">Responsable</th>
             <th nzColumnKey="entidad" [nzSortFn]="true">Entidad</th>
@@ -60,20 +61,20 @@
                 <input class="cursor-pointer" type="radio" [id]="'hitoId_' + data.hitoId" name="hitoId"
                     [value]="data.hitoId" [(ngModel)]="hitoSeleccionadoId" (ngModelChange)="onHitoSelected(data)">
             </td>
-            <td>
+            <td class="text-center w-10">
                 @switch (data.estado) {
                 @case (0) {
-                <nz-badge nz-tooltip nzTooltipTitle="Desestimado" nzStatus="error" [nzText]="data.hito"></nz-badge>
-                }
+                <nz-avatar [nzSize]="24" class="bg-red-500" nz-tooltip="Desestomado" nzIcon="close"></nz-avatar> }
                 @case (1) {
                 @if(data.validado==1){
-                <nz-badge nz-tooltip nzTooltipTitle="Validado" nzStatus="success" [nzText]="data.hito"></nz-badge>
+                <nz-avatar [nzSize]="24" class="bg-green-500" nzIcon="check" nz-tooltip="Validado"></nz-avatar>
                 }@else {
-                <nz-badge nzStatus="default" [nzText]="data.hito"></nz-badge>
-                }
+                <nz-avatar [nzSize]="24" class="bg-gray-300" nz-tooltip="Sin validar" nzIcon="check"
+                    nz-tooltip="Validado"></nz-avatar> }
                 }
                 }
             </td>
+            <td>{{ data.hito }}</td>
             <td>{{ data.responsable }}</td>
             <td>{{ data.entidad }}</td>
             <td>{{ data.plazo }}</td>

@@ -14,7 +14,7 @@ export class AvanceHitoModel {
         public comentarioSD?: null,
         public comentarioSector?: null,
         public comentario?: string,
-        public estado?: number,
+        public estado?: string,
         public entidadID?: number,
         public entidadId?: number,
         public entidadSelect?: SelectModel | null,

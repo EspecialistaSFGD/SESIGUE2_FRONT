@@ -10,12 +10,14 @@ import { PedidoModel } from '../../models/pedido';
 import { PedidoRequestModel, PedidoResponseModel } from '../../models/pedido/pedido.model';
 import { ComentarioModel } from '../../models/pedido/comentario.model';
 import { AuthService } from '../auth/auth.service';
+import { EstadoEventoType } from '../../shared/types/estado.type';
 
 const accesoId = localStorage.getItem('codigoUsuario') || null;
 
 interface State {
-    pedidos: any[];
-    pedidoSeleccionado: any | null | undefined;
+    pedidos: PedidoModel[];
+    pedidoSeleccionado: PedidoModel | null;
+    estadoEvento: EstadoEventoType | null;
     isLoading: boolean;
     isEditing: boolean;
     total: number;
@@ -36,6 +38,7 @@ export class PedidosService {
     #pedidosResult = signal<State>({
         pedidos: [],
         pedidoSeleccionado: null,
+        estadoEvento: null,
         isLoading: true,
         isEditing: false,
         total: 0,
@@ -45,6 +48,7 @@ export class PedidosService {
 
     public pedidos = computed(() => this.#pedidosResult().pedidos);
     public pedidoSeleccionado = computed(() => this.#pedidosResult().pedidoSeleccionado);
+    public estadoEvento = computed(() => this.#pedidosResult().pedidoSeleccionado?.estadoEvento);
     public isLoading = computed(() => this.#pedidosResult().isLoading);
     public isEditing = computed(() => this.#pedidosResult().isEditing);
     public total = computed(() => this.#pedidosResult().total);
@@ -86,7 +90,7 @@ export class PedidosService {
 
         this.http.get<ResponseModelPaginated>(`${environment.api}/PrioridadAcuerdo/Listar`, { params }).subscribe({
             next: (data) => {
-                const result = data.data;
+                const result: PedidoResponseModel[] = data.data;
                 if (!result) return;
 
                 result.forEach((x: PedidoResponseModel) => {
@@ -94,7 +98,7 @@ export class PedidosService {
                     if (x.espacio && x.eventoId) x.espacioSelect = new SelectModel(x.eventoId, x.espacio);
                     if (x.intervencionesEstrategicas && x.tipoIntervencionId) x.tipoIntervencionSelect = new SelectModel(x.tipoIntervencionId, x.intervencionesEstrategicas);
                     if (x.objetivoEstrategicoTerritorial && x.ejeEstrategicoId) x.ejeEstrategicoSelect = new SelectModel(x.ejeEstrategicoId, x.objetivoEstrategicoTerritorial);
-                    // if (x.prioridadID) x.prioridadId = x.prioridadId;
+                    if (x.descripcionEstadoEspacio) x.estadoEvento = x.descripcionEstadoEspacio.toUpperCase() as EstadoEventoType;
                 });
 
                 this.#pedidosResult.update((v) => ({ ...v, pedidos: result, isLoading: false, total: data.info.total }));
@@ -122,6 +126,9 @@ export class PedidosService {
                         if (x.espacio && x.eventoId) x.espacioSelect = new SelectModel(x.eventoId, x.espacio);
                         if (x.intervencionesEstrategicas && x.tipoIntervencionId) x.tipoIntervencionSelect = new SelectModel(x.tipoIntervencionId, x.intervencionesEstrategicas);
                         if (x.objetivoEstrategicoTerritorial && x.ejeEstrategicoId) x.ejeEstrategicoSelect = new SelectModel(x.ejeEstrategicoId, x.objetivoEstrategicoTerritorial);
+                        if (x.descripcionEstadoEspacio) x.estadoEvento = x.descripcionEstadoEspacio.toUpperCase() as EstadoEventoType;
+                        // if (x.descripcionEstadoEspacio) x.estadoEvento = 'INICIADO' as EstadoEventoType;
+
                     });
 
                     this.#pedidosResult.update((v) => ({ ...v, pedidoSeleccionado: result[0], isLoading: false }));

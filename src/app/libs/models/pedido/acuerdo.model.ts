@@ -46,9 +46,10 @@ export class AcuerdoPedidoModel extends SeguridadModel {
         public es_preAcuerdo?: number,
         public acuerdoModificado?: string,
         public acuerdo_original?: string,
-        //TODO: validar si se necesita
         public evidencia?: File,
         public evidenciaDesestimacion?: string,
+        public fechaEvento?: Date | null,
+
     ) {
         super();
     }

@@ -12,10 +12,11 @@
         <tr>
             <th nzLeft nzWidth="120px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
             <th nzWidth="150px" nzAlign="center" nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
-            <th nzWidth="150px" nzAlign="center" nzColumnKey="prioridadID" [nzSortFn]="true">ID</th>
+            <!-- <th nzWidth="150px" nzAlign="center" nzColumnKey="prioridadID" [nzSortFn]="true">ID</th> -->
             <th nzWidth="300px" nzAlign="center" nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
             <th nzWidth="300px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
-            <th class="text-center w-8" nzColumnKey="validado"></th>
+            <th class="text-center w-10" nzColumnKey="validado"></th>
+            <th class="w-40" nzColumnKey="codigo" [nzSortFn]="true">Código</th>
             <th class="w-20 sm:w-56" nzColumnKey="aspectoCriticoResolver">Pedido</th>
             <th nzWidth="80px" nzAlign="center" nzColumnKey="cuis">CUI</th>
             <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadPreAcuerdos">Pre acuerdos</th>
@@ -29,7 +30,7 @@
         <tr>
             <td nzLeft nzWidth="120px" nzAlign="center">{{ data.sector }}</td>
             <td nzWidth="150px" nzAlign="center">{{ data.region }}</td>
-            <td nzLeft nzWidth="120px" nzAlign="center">{{ data.prioridadID }}</td>
+            <!-- <td nzLeft nzWidth="120px" nzAlign="center">{{ data.prioridadID }}</td> -->
             <td nzWidth="300px" nzAlign="center">
                 <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip
                     [nzTooltipTitle]="data.objetivoEstrategicoTerritorial">
@@ -41,15 +42,16 @@
                     {{ data.intervencionesEstrategicas }}
                 </p>
             </td>
-            <td class="text-center w-8">
+            <td class="text-center w-10">
                 @if(data.validado==1){
-                <span class="text-green-500" nz-tooltip="Validado" nz-icon [nzType]="'check-circle'"
-                    [nzTheme]="'fill'"></span>
+                <nz-avatar [nzSize]="24" class="bg-green-500 dark:bg-green-400" nzIcon="check"
+                    nz-tooltip="Validado"></nz-avatar>
                 }@else {
-                <span class="text-gray-300" nz-tooltip="Sin validar" nz-icon [nzType]="'check-circle'"
-                    [nzTheme]="'fill'"></span>
+                <nz-avatar [nzSize]="24" class="bg-gray-300" nz-tooltip="Sin validar" nzIcon="check"
+                    nz-tooltip="Validado"></nz-avatar>
                 }
             </td>
+            <td class="w-40">{{data.codigo}}</td>
             <td class="w-20 sm:w-56">
                 <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.aspectoCriticoResolver">
                     {{ data.aspectoCriticoResolver }}
@@ -61,8 +63,8 @@
             <td nzWidth="120px" nzAlign="center">{{ data.comentarioPCM }}</td>
             <td nzRight nzWidth="72px" nzAlign="center">
                 <nz-space>
-                    <button (click)="onGestionarPedido(data.prioridadID)" *nzSpaceItem nz-button nzType="link"
-                        nz-tooltip nzTooltipTitle="Ver detalle">
+                    <button (click)="onGestionarPedido(data)" *nzSpaceItem nz-button nzType="link" nz-tooltip
+                        nzTooltipTitle="Ver detalle">
                         <span nz-icon nzType="eye" nzTheme="outline"></span>
                     </button>
 

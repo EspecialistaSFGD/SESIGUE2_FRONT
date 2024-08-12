@@ -1,9 +1,11 @@
+import { EstadoEventoType } from "../../shared/types/estado.type";
 import { SeguridadModel } from "../shared/seguridad.model";
 import { SelectModel } from "../shared/select.model";
 
 export class PedidoModel extends SeguridadModel {
     constructor(
         public prioridadID?: number,
+        public codigo?: string,
         public espacioSelect?: SelectModel,
         public sectorSelect?: SelectModel,
         public ubigeo?: string,
@@ -18,12 +20,23 @@ export class PedidoModel extends SeguridadModel {
         public cantidadPreAcuerdos?: number,
         public cantidadAcuerdos?: number,
         public fechaEvento?: Date,
+        public descripcionEstadoEspacio?: string,
+        public estadoEvento?: EstadoEventoType,
         // public eventoId?: number,
         // public sectorid?: number,
         // public depaid?: number,
         // public provid?: number,
         public comentarioPcm?: string,
+        public comentarioPCM?: string,
         public eventoId?: number | null,
+
+        public espacio?: string,
+        public sector?: string,
+        public region?: string,
+        public provincia?: string,
+        public distrito?: string,
+        public objetivoEstrategicoTerritorial?: string,
+        public intervencionesEstrategicas?: string,
     ) {
         super();
     }
@@ -55,6 +68,8 @@ export class PedidoResponseModel {
         public depaid?: number,
         public provid?: number,
         public comentarioPcm?: string,
+        public descripcionEstadoEspacio?: string,
+        public estadoEvento?: EstadoEventoType,
 
     ) { }
 }

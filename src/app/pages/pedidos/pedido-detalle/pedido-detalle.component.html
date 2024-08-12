@@ -6,24 +6,25 @@
         <nz-descriptions-item
             nzTitle="Provincia">{{pedidosService.pedidoSeleccionado()?.provincia}}</nz-descriptions-item>
         <nz-descriptions-item
-            nzTitle="Distrito">{{pedidosService.pedidoSeleccionado()?.Distrito}}</nz-descriptions-item>
+            nzTitle="Distrito">{{pedidosService.pedidoSeleccionado()?.distrito}}</nz-descriptions-item>
         <nz-descriptions-item
             nzTitle="Eje estratégico">{{pedidosService.pedidoSeleccionado()?.objetivoEstrategicoTerritorial}}</nz-descriptions-item>
         <nz-descriptions-item
             nzTitle="Tipo de intervención">{{pedidosService.pedidoSeleccionado()?.intervencionesEstrategicas}}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="CUI">{{pedidosService.pedidoSeleccionado()?.cuis}}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Espacio">{{pedidosService.pedidoSeleccionado()?.espacio}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Espacio">{{pedidosService.pedidoSeleccionado()?.espacio}} &CenterDot;
+            <span class="text-gray-400">{{pedidosService.estadoEvento()}}</span></nz-descriptions-item>
         <nz-descriptions-item nzTitle="Sector">{{pedidosService.pedidoSeleccionado()?.sector}}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Estado">
             @if(pedidosService.pedidoSeleccionado()?.validado == 1) {
             <nz-tag nzColor="success">
                 <span nz-icon nzType="check-circle"></span>
-                <span>Validado</span>
+                <span>VALIDADO</span>
             </nz-tag>
             }@else {
             <nz-tag nzColor="error">
                 <span nz-icon nzType="close-circle"></span>
-                <span>Sin validar</span>
+                <span>SIN VALIDAR</span>
             </nz-tag>
             }
         </nz-descriptions-item>
@@ -42,11 +43,12 @@
             <th nzColumnKey="tipo">Tipo</th>
             <th nzColumnKey="" [nzFilterFn]="true">Pre acuerdo</th>
             <th nzColumnKey="acuerdo" [nzSortFn]="true">Acuerdo</th>
-            <th nzColumnKey="" [nzSortFn]="true">Modificación</th>
+            <!-- <th nzColumnKey="" [nzSortFn]="true">Modificación</th> -->
             <th nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
             <th nzColumnKey="responsable" [nzSortFn]="true">Responsable</th>
             <th nzColumnKey="plazo" [nzSortFn]="true">Plazo</th>
-            @if(permiso?.puede_agregar_acuerdo&&permiso?.puede_editar_acuerdo&&permiso?.puede_eliminar_acuerdo&&permiso?.puede_convertir_preacuerdo){
+            @if(pedidosService.estadoEvento() != 'SEGUIMIENTO'&&pedidosService.estadoEvento() != 'FINALIZADO'&&
+            permiso?.puede_agregar_acuerdo&&permiso?.puede_editar_acuerdo&&permiso?.puede_eliminar_acuerdo&&permiso?.puede_convertir_preacuerdo){
             <th nzWidth="110px" nzColumnKey="acciones"></th>
             }
         </tr>
@@ -57,12 +59,11 @@
             <td>{{acuerdo.tipo}} </td>
             <td>{{acuerdo.pre_acuerdo}}</td>
             <td>{{acuerdo.acuerdo}}</td>
-            <!-- //TODO: implementar -->
-            <td>-</td>
             <td>{{acuerdo.clasificacion}}</td>
             <td>{{acuerdo.responsable}}</td>
             <td>{{acuerdo.plazo|date:fechaDateFormat}}</td>
-            @if(permiso?.puede_agregar_acuerdo&&permiso?.puede_editar_acuerdo&&permiso?.puede_eliminar_acuerdo&&permiso?.puede_convertir_preacuerdo){
+            @if(pedidosService.estadoEvento() != 'SEGUIMIENTO'&&pedidosService.estadoEvento() != 'FINALIZADO'&&
+            permiso?.puede_agregar_acuerdo&&permiso?.puede_editar_acuerdo&&permiso?.puede_eliminar_acuerdo&&permiso?.puede_convertir_preacuerdo){
             <td nzRight>
                 <nz-space>
                     <!-- <button [disabled]="data.validado==1||data.estado==0" *nzSpaceItem nz-button nzDanger nzType="link"
@@ -70,17 +71,19 @@
                         [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede desestimar':'Desestimar hito'"
                         (click)="onEliinarHito(data)"> -->
                     <!-- {{acuerdo.codigo|json}} -->
+                    @if(pedidosService.estadoEvento() == 'INICIADO') {
                     <button [disabled]="acuerdo.codigo != null" nz-tooltip="Convertir a acuerdo" *nzSpaceItem nz-button
                         nzType="link" (click)="onAddEdit(acuerdo, 'ACUERDO', 'CONVERT')">
                         <span nz-icon nzType="vertical-align-top" nzTheme="outline"></span>
                     </button>
 
+                    }
+
                     <!-- <button [disabled]="data.validado==1||data.estado==0" *nzSpaceItem nz-button nzDanger nzType="link"
                         nz-tooltip
                         [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede desestimar':'Desestimar hito'"
                         (click)="onEliinarHito(data)"> -->
-                    <button [disabled]="acuerdo.codigo != null" *nzSpaceItem nz-button nzType="link"
-                        (click)="onAddEdit(acuerdo, 'PRE ACUERDO', 'EDIT')">
+                    <button *nzSpaceItem nz-button nzType="link" (click)="onAddEdit(acuerdo, null, 'EDIT')">
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
 
@@ -89,8 +92,7 @@
                         nz-tooltip
                         [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede desestimar':'Desestimar hito'"
                         (click)="onEliinarHito(data)"> -->
-                    <button [disabled]="acuerdo.codigo != null" *nzSpaceItem nz-button nzDanger nzType="link"
-                        (click)="onDelete(acuerdo)">
+                    <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(acuerdo)">
                         <span nz-icon nzType="delete" nzTheme="outline"></span>
                     </button>
 
@@ -109,23 +111,38 @@
 
         <div>
             <nz-space>
-                @if(permiso?.puede_agregar_acuerdo){
-                <button nz-button *nzSpaceItem nzType="primary" nz-dropdown [nzDropdownMenu]="menuAddEdit"
-                    nzTrigger="click">
+                @if(permiso?.puede_agregar_acuerdo && pedidosService.estadoEvento() != 'SEGUIMIENTO' &&
+                pedidosService.estadoEvento() != 'FINALIZADO'){
+
+                <!-- estadoEvento: {{pedidosService.estadoEvento() |json }} -->
+
+                @if(pedidosService.estadoEvento() == 'NO INICIADO') {
+                <button nz-button *nzSpaceItem nzType="primary" (click)="onAddEdit(null, 'PRE ACUERDO', 'CREATE')">
                     <span nz-icon nzType="plus" nzTheme="outline"></span>
+                    <span>Agregar Pre acuerdo</span>
+                </button>
+                }@else {
+                <button nz-button *nzSpaceItem nzType="primary" (click)="onAddEdit(null, 'ACUERDO', 'CREATE')">
+                    <span nz-icon nzType="plus" nzTheme="outline"></span>
+                    <span>Agregar Acuerdo</span>
+                </button>
+                }
+                <!-- <button nz-button *nzSpaceItem nzType="primary" nz-dropdown [nzDropdownMenu]="menuAddEdit"
+                    nzTrigger="click">
+                    x
                     <span class="button-text">Agregar</span>
                     <span nz-icon nzType="down"></span>
                 </button>
                 <nz-dropdown-menu #menuAddEdit="nzDropdownMenu">
                     <ul nz-menu>
                         <li nz-menu-item>
-                            <button (click)="onAddEdit(null, 'PRE ACUERDO', 'CREATE')">Pre acuerdo</button>
+                            
                         </li>
                         <li nz-menu-item>
-                            <button (click)="onAddEdit(null, 'ACUERDO', 'CREATE')">Acuerdo</button>
+                           
                         </li>
                     </ul>
-                </nz-dropdown-menu>
+                </nz-dropdown-menu> -->
                 }
             </nz-space>
         </div>

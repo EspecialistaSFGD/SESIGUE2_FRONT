@@ -184,7 +184,7 @@ export class PedidoDetalleComponent {
   //   });
   // }
 
-  onAddEdit(value: AcuerdoPedidoModel | null, tipo: AcuerdoType, accion: AccionType): void {
+  onAddEdit(value: AcuerdoPedidoModel | null, tipo: AcuerdoType | null, accion: AccionType): void {
     let title: string = '';
     let labelOk: string = '';
 
@@ -194,14 +194,22 @@ export class PedidoDetalleComponent {
         labelOk = 'Agregar';
         break;
       case 'EDIT':
-        title = `Editar  ${tipo}`;
         labelOk = 'Actualizar';
+
+        if (tipo == null && value?.acuerdo === null) {
+          tipo = 'PRE ACUERDO';
+        } else {
+          tipo = 'ACUERDO';
+        }
+
+        title = `Editar ${tipo}`;
         break;
       case 'CONVERT':
-        title = 'Convertir Pre acuerdo a Acuerdo';
+        title = 'Convertir PRE ACUERDO en ACUERDO';
         labelOk = 'Convertir';
         break;
     }
+
 
     this.acuerdosService.seleccionarAcuerdoById(value?.acuerdoId);
 
@@ -246,8 +254,15 @@ export class PedidoDetalleComponent {
   }
 
   onDelete(acuerdo: AcuerdoPedidoModel): void {
+    let tipo: AcuerdoType = null;
+
+    if (acuerdo.acuerdo === null) {
+      tipo = 'PRE ACUERDO';
+    } else {
+      tipo = 'ACUERDO';
+    }
     this.confirmModal = this.modal.confirm({
-      nzTitle: '¿Estás seguro de eliminar este Pre Acuerdo?',
+      nzTitle: ` ¿Estás seguro de eliminar este ${tipo}?`,
       nzContent: 'Esta acción no se puede deshacer',
       nzOkText: 'Eliminar',
       nzOkDanger: true,

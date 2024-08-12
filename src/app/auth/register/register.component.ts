@@ -61,7 +61,6 @@ export class RegisterComponent {
   // provSeleccionada: SelectModel | null = null;
   requiredLabel: string = 'Campo requerido';
   passwordVisible: boolean = false;
-  isLoading: boolean = false;
 
   constructor() {
     this.onCreateRegisterForm();

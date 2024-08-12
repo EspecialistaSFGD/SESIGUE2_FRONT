@@ -203,8 +203,8 @@
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col>
             <button class="mr-2" nz-button [routerLink]="[]" [queryParams]="{ action: 'login' }">Cancelar</button>
-            <button [nzLoading]="isLoading" [disabled]="!registerForm.valid" style="margin-bottom: 0;" nz-button
-                class="" [nzType]="'primary'" (click)="onRegister()">Registrar</button>
+            <button [nzLoading]="authService.isLoading()" [disabled]="!registerForm.valid" style="margin-bottom: 0;"
+                nz-button class="" [nzType]="'primary'" (click)="onRegister()">Registrar</button>
         </div>
     </div>
 </form>

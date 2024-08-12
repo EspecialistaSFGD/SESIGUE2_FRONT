@@ -32,6 +32,7 @@ import { EstadoComponent } from '../../../libs/shared/components/estado/estado.c
 import { ComentarioModel } from '../../../libs/models/pedido/comentario.model';
 import { AuthService } from '../../../libs/services/auth/auth.service';
 // import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 
 const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
@@ -59,6 +60,7 @@ const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
     NzBadgeModule,
     EstadoComponent,
     // NzTagModule,
+    NzAvatarModule,
   ],
   providers: [
 
@@ -312,6 +314,7 @@ export class AcuerdoDetalleComponent implements OnInit {
       nzViewContainerRef: this.viewContainerRef,
       nzData: {
         id: hito.hitoId || null,
+        tipoComentario: 0,
         tipo: 'HITO',
       },
       nzMaskClosable: false,

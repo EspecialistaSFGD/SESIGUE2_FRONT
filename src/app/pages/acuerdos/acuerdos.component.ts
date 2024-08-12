@@ -33,6 +33,10 @@ import { ComentarioModel } from '../../libs/models/pedido/comentario.model';
 import { UtilesService } from '../../libs/shared/services/utiles.service';
 import { saveAs } from 'file-saver';
 import { AuthService } from '../../libs/services/auth/auth.service';
+import { AcuerdoType } from '../../libs/shared/types/acuerdo.type';
+import { AccionType } from '../../libs/shared/types/accion.type';
+import { AddEditAcuerdoModel } from '../../libs/models/shared/add-edit-acuerdo.model';
+import { DueToPipe } from '../../libs/shared/pipes/due-to.pipe';
 
 @Component({
   selector: 'app-pedidos',
@@ -54,6 +58,7 @@ import { AuthService } from '../../libs/services/auth/auth.service';
     NzBadgeModule,
     NzToolTipModule,
     EstadoComponent,
+    DueToPipe,
   ],
   templateUrl: './acuerdos.component.html',
   styles: ``
@@ -517,16 +522,21 @@ export class AcuerdosComponent implements OnInit {
     this.router.navigate(['acuerdos', 'acuerdo', codigo]);
   }
 
-  onAddEdit(acuerdo: AcuerdoPedidoModel | null): void {
-    const title = acuerdo ? 'Editar acuerdo' : 'Nuevo acuerdo';
-    const labelOk = acuerdo ? 'Actualizar' : 'Crear';
+  onAddEdit(acuerdo: AcuerdoPedidoModel | null, tipo: AcuerdoType, accion: AccionType): void {
+    const title = 'Nuevo acuerdo';
+    const labelOk = 'Crear';
 
-    this.acuerdosService.seleccionarAcuerdoById(acuerdo?.acuerdoId || null);
+    // this.acuerdosService.seleccionarAcuerdoById(acuerdo?.acuerdoId || null);
+    this.espaciosStore.listarEventos();
 
-    const modal = this.modal.create<AcuerdoComponent>({
+    const modal = this.modal.create<AcuerdoComponent, AddEditAcuerdoModel>({
       nzTitle: title,
       nzContent: AcuerdoComponent,
       nzViewContainerRef: this.viewContainerRef,
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      nzData: { tipo, accion },
       nzFooter: [
         {
           label: 'Cancelar',
@@ -538,7 +548,7 @@ export class AcuerdosComponent implements OnInit {
           type: 'primary',
           onClick: (componentInstance) => {
             return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then((res) => {
-              this.traerAcuerdos({});
+              // this.traerAcuerdos({});
               this.modal.closeAll();
             });
           },
@@ -558,6 +568,7 @@ export class AcuerdosComponent implements OnInit {
 
   onOpenDrawer(): void {
     this.isDrawervisible = true;
+    this.espaciosStore.listarEventos();
   }
 
   onCloseDrawer(): void {
