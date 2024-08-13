@@ -4,6 +4,7 @@ import { AuthComponent } from './auth/auth.component';
 
 export const routes: Routes = [
   //{ path: '', pathMatch: 'full', redirectTo: '/panel' },
+  { path: 'reportes', component: PagesComponent, loadChildren: () => import('./pages/reportes/reportes.routes').then(m => m.REPORTES_ROUTES) },
   { path: 'avances', component: PagesComponent, loadChildren: () => import('./pages/avances/avances.routes').then(m => m.AVANCES_ROUTES) },
   { path: 'hitos', component: PagesComponent, loadChildren: () => import('./pages/hitos/hitos.routes').then(m => m.HITOS_ROUTES) },
   { path: 'configuraciones', component: PagesComponent, loadChildren: () => import('./pages/configuraciones/configuraciones.routes').then(m => m.CONFIG_ROUTES) },

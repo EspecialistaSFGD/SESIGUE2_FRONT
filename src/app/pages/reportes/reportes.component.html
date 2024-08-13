@@ -1,0 +1,21 @@
+<app-page-header title="Reportes" backUrl="panel"></app-page-header>
+
+<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <nz-card>
+            <nz-statistic [nzValue]="(12423435654 | number)!" [nzTitle]="'Total de acuerdos'"></nz-statistic>
+            <div id="container"></div>
+        </nz-card>
+    </div>
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <nz-card>
+            <nz-statistic [nzValue]="(2019.111 | number: '1.0-2')!" [nzTitle]="'Account Balance (CNY)'"></nz-statistic>
+            <!-- <button nz-button nzType="primary" [style.margin-top.px]="16">Recharge</button> -->
+        </nz-card>
+    </div>
+    <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <nz-card>
+            <nz-statistic [nzValue]="(112893 | number: '1.0-2')!" nzTitle="Active Users" nzLoading></nz-statistic>
+        </nz-card>
+    </div> -->
+</div>

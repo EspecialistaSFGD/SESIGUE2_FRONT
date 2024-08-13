@@ -11,6 +11,7 @@ export class BaseHttpService {
     http = inject(HttpClient);
     msg = inject(NzMessageService);
     apiUrl = environment.api;
+    topoJsonUrl = environment.topoJsonUrl;
 
     constructor() { }
 }
