@@ -54,9 +54,13 @@
             <!-- <td nzWidth="120px" nzAlign="center">{{ data.plazo }}</td> -->
             <td nzWidth="120px" nzAlign="center">
                 @if(data.plazo){
-                @if(data.nomEstadoRegistro!='DESESTIMADO'&&data.nomEstadoRegistro!='CULMINADO'
+                @if(data.nomEstadoRegistro!='DESESTIMADO' && data.nomEstadoRegistro!='CULMINADO'
                 ){
-                <span [ngClass]="data.plazo.toString() | dueTo">{{ data.plazo }}</span>
+                @if(data.plazo.toString() | dueTo) {
+                <span nz-tooltip="Plazo vencido" class="text-red-500">{{ data.plazo }}</span>
+                }@else{
+                {{data.plazo}}
+                }
                 }@else{
                 {{data.plazo}}
                 }

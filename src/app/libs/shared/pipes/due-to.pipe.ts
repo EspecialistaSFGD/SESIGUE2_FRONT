@@ -7,11 +7,11 @@ import { parse, isAfter, isToday } from 'date-fns';
 })
 export class DueToPipe implements PipeTransform {
 
-  transform(plazo: string): string {
+  transform(plazo: string): boolean {
     const parsedPlazo = parse(plazo, 'dd/MM/yyyy', new Date());
     const today = new Date();
 
-    return isAfter(today, parsedPlazo) ? 'text-red-500' : 'due-date-okay';
+    return isAfter(today, parsedPlazo);
   }
 
 }

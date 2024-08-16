@@ -15,6 +15,14 @@ register('data.feature', ({ name }) => {
   return (data: any) => feature(data, data.objects[name]).features;
 });
 
+interface Acuerdo {
+  id: string;
+  departamento: string;
+  acuerdos: number;
+  acuerdosEjecutados: number;
+  avance: number;
+}
+
 
 @Component({
   selector: 'app-reportes',
@@ -36,18 +44,21 @@ register('data.feature', ({ name }) => {
 export class ReportesComponent implements AfterViewInit, OnInit {
 
   private mapService = inject(MapService);
-  totalAcuerdos: number = 0;
+
+  acuerdos = signal<Acuerdo[]>([]);
 
   ngOnInit(): void {
-    this.renderChart();
+    this.renderCharts();
   }
 
   ngAfterViewInit(): void { }
 
-  renderChart(): void {
-    fetch('assets/data/json/geoacuerdos.topo.min.json')
+  renderCharts(): void {
+    fetch('assets/data/json/geoacuerdos.provincias.topo.min.json')
       .then((res) => res.json())
       .then((data) => {
+        this.acuerdos.set(data);
+
         const chart = new Chart({
           container: 'container',
           autoFit: true,
@@ -58,14 +69,14 @@ export class ReportesComponent implements AfterViewInit, OnInit {
           .coordinate({ type: 'mercator' })
           .data({
             type: 'fetch',
-            value: 'assets/data/json/departamentos/departamentos.topo.min.json',
+            value: 'assets/data/json/provincias/01.topo.json',
             transform: [
-              { type: 'feature', name: 'departamentos' },
+              { type: 'feature', name: '01' },
               {
                 type: 'join',
                 join: data,
                 on: ['id', 'id'],
-                select: ['cantAcuerdos'],
+                select: ['acuerdos', 'acuerdosEjecutados', 'avance', 'lugar'],
               },
             ],
           })
@@ -73,7 +84,8 @@ export class ReportesComponent implements AfterViewInit, OnInit {
             palette: 'ylGnBu',
             unknown: '#fff',
           })
-          .encode('color', 'cantAcuerdos')
+          .encode('color', 'acuerdos')
+          // @ts-ignore
           .legend({ color: { layout: { justifyContent: 'center' } } });
 
         chart.render();
@@ -82,8 +94,8 @@ export class ReportesComponent implements AfterViewInit, OnInit {
           const { data } = evt;
           if (data && data.data) {
             const clickedFeature = data.data;
-            console.log('Valores del feature clicado:', clickedFeature.properties);
-            alert(`ID: ${clickedFeature.properties.IDDPTO}`);
+            console.log('Valores del feature clicado:', clickedFeature);
+            alert(`ID: ${clickedFeature.properties.prov}`);
           }
         });
       });

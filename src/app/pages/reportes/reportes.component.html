@@ -19,3 +19,33 @@
         </nz-card>
     </div> -->
 </div>
+
+
+
+<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+    @for (acuerdo of acuerdos(); track $index) {
+    <div nz-col class="gutter-row mt-4" nzXs="24" nzSm="24" nzMd="6" nzLg="6" nzXl="6">
+        <nz-card>
+            <nz-row [nzGutter]="16">
+                <nz-col [nzSpan]="24">
+                    <nz-statistic [nzValue]="acuerdo.departamento"></nz-statistic>
+                </nz-col>
+                <nz-col [nzSpan]="8">
+                    <nz-statistic [nzValue]="(acuerdo.acuerdos | number: '1.0-2')!"
+                        [nzTitle]="'Planificado'"></nz-statistic>
+                </nz-col>
+                <nz-col [nzSpan]="8">
+                    <nz-statistic [nzValue]="(acuerdo.acuerdosEjecutados | number: '1.0-2')!"
+                        [nzTitle]="'Ejecutado'"></nz-statistic>
+                </nz-col>
+                <nz-col [nzSpan]="8">
+                    <nz-statistic [nzValue]="(acuerdo.avance | number: '1.0-2')!" [nzTitle]="'Avance'" [nzSuffix]="'%'"
+                        [nzValueStyle]="{  color: ( acuerdo.avance == 100) ? '#3F8600' : '#ff6600' }"></nz-statistic>
+                </nz-col>
+            </nz-row>
+        </nz-card>
+    </div>
+    }
+</div>
+
+<!-- {{ acuerdos() | json }} -->

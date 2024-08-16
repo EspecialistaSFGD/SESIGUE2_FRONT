@@ -37,6 +37,9 @@ export class PedidoModel extends SeguridadModel {
         public distrito?: string,
         public objetivoEstrategicoTerritorial?: string,
         public intervencionesEstrategicas?: string,
+
+        public tipoCodigoSelect?: SelectModel,
+        public tipoCodigo?: number,
     ) {
         super();
     }

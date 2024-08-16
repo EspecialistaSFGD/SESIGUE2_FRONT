@@ -55,6 +55,16 @@ export class AcuerdoPedidoModel extends SeguridadModel {
     }
 }
 
+//Extender de dos clases
+export class AcuerdoPedidoExpressModel extends AcuerdoPedidoModel {
+    constructor(
+        public grupoId?: number,
+        public grupoSelect?: SelectModel,
+    ) {
+        super();
+    }
+}
+
 export class DesestimacionModel extends SeguridadModel {
     constructor(
         public acuerdoId?: number | null,

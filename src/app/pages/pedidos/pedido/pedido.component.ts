@@ -104,10 +104,31 @@ export class PedidoComponent {
   }
 
   onProvChange(value: SelectModel): void {
-
-
     if (value == null) return;
+  }
 
+  onCodigoChange(codigo: any) {
+    if (codigo == null) return;
+
+    const cuisControl = this.pedidoForm.get('cuis');
+    console.log(codigo);
+
+    switch (Number(codigo)) {
+      case 1:
+        cuisControl?.clearValidators();
+        cuisControl?.reset();
+        break;
+      case 2:
+        cuisControl?.setValidators([Validators.required, Validators.pattern(/^[0-9]{1,7}$/)]);
+        break;
+      case 3:
+        cuisControl?.setValidators([Validators.required, Validators.pattern(/^[0-9]{1,6}$/)]);
+        break;
+      default:
+        break;
+    }
+
+    cuisControl?.updateValueAndValidity();
   }
 
   crearPedidoForm(): void {
@@ -115,6 +136,7 @@ export class PedidoComponent {
       prioridadID: [this.pedidoSeleccionado?.prioridadID],
       espacioSelect: [this.pedidoSeleccionado?.espacioSelect, [Validators.required]],
       sectorSelect: [this.pedidoSeleccionado?.sectorSelect],
+      tipoCodigoSelect: [this.pedidoSeleccionado?.tipoCodigoSelect, [Validators.required]],
       departamentoSelect: [this.pedidoSeleccionado?.departamentoSelect],
       provinciaSelect: [this.pedidoSeleccionado?.provinciaSelect],
       ejeEstrategicoSelect: [this.pedidoSeleccionado?.ejeEstrategicoSelect, [Validators.required]],

@@ -51,7 +51,7 @@
     }
     @else {
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Sector</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
@@ -68,16 +68,49 @@
     }
 
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
             <nz-form-item>
-                <nz-form-label [nzSpan]="null">CUI</nz-form-label>
-                <nz-form-control nzSpan="null">
-                    <input #cuis id="cuis" type="text" nz-input formControlName="cuis">
+                <nz-form-label [nzSpan]="null" nzRequired>Tipo</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-select nzPlaceHolder="Todos" id="tipoCodigoSelect" #tipoCodigoSelect
+                        formControlName="tipoCodigoSelect" (ngModelChange)="onCodigoChange($event)">
+                        <nz-option nzValue="1" nzLabel="Actividad"></nz-option>
+                        <nz-option nzValue="2" nzLabel="CUI"></nz-option>
+                        <nz-option nzValue="3" nzLabel="Idea"></nz-option>
+                    </nz-select>
                 </nz-form-control>
             </nz-form-item>
         </div>
 
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        @if(pedidoForm.get('tipoCodigoSelect')?.value != null && pedidoForm.get('tipoCodigoSelect')?.value != 1) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>CUI</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="cuiLengthTpl">
+                    <input #cuis id="cuis" onlyNumbers type="text" nz-input formControlName="cuis">
+
+                    <ng-template #cuiLengthTpl let-control>
+                        @if (control.errors?.['required']) {
+                        Campo requerido
+                        }
+                        @if (control.errors?.['pattern']) {
+                        @if(pedidoForm.get('tipoCodigoSelect')?.value == 2) {
+                        Debe tener hasta 7 números
+                        }
+
+                        @if(pedidoForm.get('tipoCodigoSelect')?.value == 3) {
+                        Debe tener hasta 6 números
+                        }
+                        }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Eje estratégico</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
@@ -91,7 +124,7 @@
             </nz-form-item>
         </div>
 
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Tipo de intervención</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
@@ -104,10 +137,9 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
-
     </div>
-    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
 
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
             <nz-form-item>
                 <nz-form-label nzRequired [nzSpan]="null" nzFor="aspectoCriticoResolver">Pedido</nz-form-label>

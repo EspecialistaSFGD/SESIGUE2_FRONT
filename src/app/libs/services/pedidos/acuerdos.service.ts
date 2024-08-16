@@ -7,7 +7,7 @@ import { ResponseModel, ResponseModelPaginated } from '../../models/shared/respo
 import { AcuerdoPedidoModel } from '../../models/pedido';
 import { UtilesService } from '../../shared/services/utiles.service';
 import { AuthService } from '../auth/auth.service';
-import { DesestimacionModel } from '../../models/pedido/acuerdo.model';
+import { AcuerdoPedidoExpressModel, DesestimacionModel } from '../../models/pedido/acuerdo.model';
 
 interface State {
     acuerdos: AcuerdoPedidoModel[];
@@ -203,6 +203,52 @@ export class AcuerdosService {
 
         return new Promise((resolve, reject) => {
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/RegistrarAcuerdo`, ots).subscribe({
+                next: (data) => {
+                    this.msg.success(data.message);
+                    this.listarAcuerdosPorPedido(acuerdo.prioridadId);
+                    resolve(data);
+                },
+                error: (e) => {
+                    this.msg.error(e.message);
+                    reject(e);
+                },
+            });
+        });
+    }
+
+    agregarAcuerdoExpress(acuerdo: AcuerdoPedidoExpressModel): Promise<ResponseModel> {
+        //TOFO: implementar
+
+        const ots: AcuerdoPedidoExpressModel = {} as AcuerdoPedidoExpressModel;
+        ots.prioridadId = acuerdo.prioridadId;
+        if (acuerdo.acuerdoId) ots.acuerdoId = acuerdo.acuerdoId;
+
+        if (acuerdo.clasificacionSelect) ots.clasificacionId = Number(acuerdo.clasificacionSelect.value);
+        if (acuerdo.responsableSelect) ots.responsableId = Number(acuerdo.responsableSelect.value);
+        ots.entidadId = (acuerdo.entidadSelect) ? Number(acuerdo.entidadSelect.value) : 0;
+        if (acuerdo.tipoSelect) ots.tipoId = Number(acuerdo.tipoSelect);
+        ots.accesoId = this.authService.getCodigoUsuario();
+        if (acuerdo.plazo) ots.plazo = acuerdo.plazo;
+        if (acuerdo.es_preAcuerdoBool !== null) {
+            ots.es_preAcuerdo = (acuerdo.es_preAcuerdoBool) ? 1 : 0;
+
+            if (acuerdo.es_preAcuerdoBool) {
+                if (acuerdo.pre_acuerdo) ots.pre_acuerdo = acuerdo.pre_acuerdo;
+            } else {
+                if (acuerdo.acuerdo) ots.acuerdo = acuerdo.acuerdo;
+                if (acuerdo.eventoId) ots.eventoId = acuerdo.eventoId;
+            }
+
+            if (acuerdo.grupoSelect) ots.grupoId = Number(acuerdo.grupoSelect.value);
+            if (acuerdo.objetivoEstrategicoTerritorial) ots.objetivoEstrategicoTerritorial = acuerdo.objetivoEstrategicoTerritorial;
+            if (acuerdo.intervencionesEstrategicas) ots.intervencionesEstrategicas = acuerdo.intervencionesEstrategicas;
+            if (acuerdo.aspectoCriticoResolver) ots.aspectoCriticoResolver = acuerdo.aspectoCriticoResolver;
+            if (acuerdo.cuis) ots.cuis = acuerdo.cuis;
+
+        }
+
+        return new Promise((resolve, reject) => {
+            this.http.post<ResponseModel>(`${environment.api}/Acuerdo/RegistrarAcuerdoExpress`, ots).subscribe({
                 next: (data) => {
                     this.msg.success(data.message);
                     this.listarAcuerdosPorPedido(acuerdo.prioridadId);
