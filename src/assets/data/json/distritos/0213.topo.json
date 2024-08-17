@@ -1,0 +1,718 @@
+{
+  "type": "Topology",
+  "arcs": [
+    [
+      [
+        722,
+        657
+      ],
+      [
+        -4,
+        -30
+      ],
+      [
+        -79,
+        -134
+      ],
+      [
+        -49,
+        -20
+      ],
+      [
+        -37,
+        -85
+      ]
+    ],
+    [
+      [
+        553,
+        388
+      ],
+      [
+        -99,
+        141
+      ]
+    ],
+    [
+      [
+        454,
+        529
+      ],
+      [
+        86,
+        82
+      ],
+      [
+        72,
+        90
+      ],
+      [
+        61,
+        31
+      ]
+    ],
+    [
+      [
+        673,
+        732
+      ],
+      [
+        49,
+        -75
+      ]
+    ],
+    [
+      [
+        900,
+        284
+      ],
+      [
+        -63,
+        -38
+      ],
+      [
+        -82,
+        -11
+      ]
+    ],
+    [
+      [
+        755,
+        235
+      ],
+      [
+        -75,
+        117
+      ],
+      [
+        7,
+        148
+      ],
+      [
+        48,
+        17
+      ],
+      [
+        52,
+        56
+      ]
+    ],
+    [
+      [
+        787,
+        573
+      ],
+      [
+        93,
+        -254
+      ],
+      [
+        20,
+        -35
+      ]
+    ],
+    [
+      [
+        1098,
+        634
+      ],
+      [
+        10,
+        -65
+      ],
+      [
+        39,
+        -136
+      ],
+      [
+        -28,
+        -96
+      ],
+      [
+        -55,
+        -27
+      ],
+      [
+        -58,
+        19
+      ],
+      [
+        -74,
+        -10
+      ],
+      [
+        -32,
+        -35
+      ]
+    ],
+    [
+      [
+        787,
+        573
+      ],
+      [
+        6,
+        36
+      ]
+    ],
+    [
+      [
+        793,
+        609
+      ],
+      [
+        9,
+        25
+      ],
+      [
+        84,
+        19
+      ],
+      [
+        44,
+        -82
+      ],
+      [
+        87,
+        56
+      ],
+      [
+        81,
+        7
+      ]
+    ],
+    [
+      [
+        755,
+        235
+      ],
+      [
+        -75,
+        4
+      ]
+    ],
+    [
+      [
+        680,
+        239
+      ],
+      [
+        -107,
+        144
+      ],
+      [
+        -20,
+        5
+      ]
+    ],
+    [
+      [
+        722,
+        657
+      ],
+      [
+        37,
+        10
+      ],
+      [
+        34,
+        -58
+      ]
+    ],
+    [
+      [
+        680,
+        239
+      ],
+      [
+        -63,
+        -37
+      ],
+      [
+        -63,
+        -94
+      ],
+      [
+        -53,
+        -60
+      ],
+      [
+        -69,
+        14
+      ],
+      [
+        -32,
+        -13
+      ],
+      [
+        -67,
+        18
+      ],
+      [
+        -70,
+        -25
+      ],
+      [
+        -48,
+        -42
+      ],
+      [
+        -89,
+        8
+      ],
+      [
+        -100,
+        68
+      ],
+      [
+        -10,
+        37
+      ],
+      [
+        4,
+        99
+      ],
+      [
+        29,
+        73
+      ]
+    ],
+    [
+      [
+        49,
+        285
+      ],
+      [
+        23,
+        -25
+      ],
+      [
+        81,
+        23
+      ],
+      [
+        57,
+        -3
+      ],
+      [
+        74,
+        -41
+      ],
+      [
+        44,
+        2
+      ],
+      [
+        41,
+        33
+      ],
+      [
+        56,
+        -6
+      ],
+      [
+        20,
+        -35
+      ],
+      [
+        37,
+        1
+      ],
+      [
+        39,
+        44
+      ],
+      [
+        66,
+        14
+      ],
+      [
+        27,
+        -32
+      ],
+      [
+        66,
+        -21
+      ]
+    ],
+    [
+      [
+        49,
+        285
+      ],
+      [
+        1,
+        24
+      ],
+      [
+        -50,
+        96
+      ],
+      [
+        67,
+        13
+      ],
+      [
+        37,
+        -17
+      ],
+      [
+        7,
+        -48
+      ],
+      [
+        48,
+        -13
+      ],
+      [
+        56,
+        59
+      ],
+      [
+        44,
+        -24
+      ],
+      [
+        68,
+        12
+      ],
+      [
+        119,
+        -17
+      ],
+      [
+        48,
+        32
+      ],
+      [
+        59,
+        -14
+      ]
+    ],
+    [
+      [
+        454,
+        529
+      ],
+      [
+        -105,
+        99
+      ],
+      [
+        -22,
+        36
+      ],
+      [
+        26,
+        97
+      ],
+      [
+        64,
+        26
+      ],
+      [
+        43,
+        46
+      ],
+      [
+        31,
+        75
+      ]
+    ],
+    [
+      [
+        491,
+        908
+      ],
+      [
+        54,
+        -58
+      ],
+      [
+        76,
+        26
+      ],
+      [
+        28,
+        -57
+      ],
+      [
+        24,
+        -87
+      ]
+    ],
+    [
+      [
+        491,
+        908
+      ],
+      [
+        -8,
+        33
+      ],
+      [
+        131,
+        110
+      ],
+      [
+        59,
+        38
+      ],
+      [
+        47,
+        11
+      ],
+      [
+        20,
+        36
+      ],
+      [
+        64,
+        60
+      ],
+      [
+        48,
+        -45
+      ],
+      [
+        45,
+        6
+      ],
+      [
+        -3,
+        -57
+      ],
+      [
+        59,
+        -61
+      ],
+      [
+        16,
+        -119
+      ],
+      [
+        45,
+        -36
+      ],
+      [
+        30,
+        -129
+      ],
+      [
+        61,
+        -83
+      ],
+      [
+        -7,
+        -38
+      ]
+    ]
+  ],
+  "transform": {
+    "scale": [
+      0.00035082345335658534,
+      0.0002545528854515085
+    ],
+    "translate": [
+      -77.5619277369999,
+      -9.007269476999909
+    ]
+  },
+  "objects": {
+    "0213": {
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "arcs": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "02",
+            "DEPARTAMEN": "ANCASH",
+            "IDPROV": "0213",
+            "PROVINCIA": "MARISCAL LUZURIAGA",
+            "DISTRITO": "PISCOBAMBA",
+            "CAPITAL": "PISCOBAMBA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "021301"
+          },
+          "id": "PISCOBAMBA"
+        },
+        {
+          "arcs": [
+            [
+              4,
+              5,
+              6
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "02",
+            "DEPARTAMEN": "ANCASH",
+            "IDPROV": "0213",
+            "PROVINCIA": "MARISCAL LUZURIAGA",
+            "DISTRITO": "LLAMA",
+            "CAPITAL": "LLAMA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "021305"
+          },
+          "id": "LLAMA"
+        },
+        {
+          "arcs": [
+            [
+              7,
+              -7,
+              8,
+              9
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "02",
+            "DEPARTAMEN": "ANCASH",
+            "IDPROV": "0213",
+            "PROVINCIA": "MARISCAL LUZURIAGA",
+            "DISTRITO": "ELEAZAR GUZMAN BARRON",
+            "CAPITAL": "PAMPACHACRA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "021303"
+          },
+          "id": "ELEAZAR GUZMAN BARRON"
+        },
+        {
+          "arcs": [
+            [
+              -9,
+              -6,
+              10,
+              11,
+              -1,
+              12
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "02",
+            "DEPARTAMEN": "ANCASH",
+            "IDPROV": "0213",
+            "PROVINCIA": "MARISCAL LUZURIAGA",
+            "DISTRITO": "MUSGA",
+            "CAPITAL": "MUSGA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "021308"
+          },
+          "id": "MUSGA"
+        },
+        {
+          "arcs": [
+            [
+              13,
+              14
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "02",
+            "DEPARTAMEN": "ANCASH",
+            "IDPROV": "0213",
+            "PROVINCIA": "MARISCAL LUZURIAGA",
+            "DISTRITO": "LLUMPA",
+            "CAPITAL": "LLUMPA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "021306"
+          },
+          "id": "LLUMPA"
+        },
+        {
+          "arcs": [
+            [
+              -12,
+              -15,
+              15
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "02",
+            "DEPARTAMEN": "ANCASH",
+            "IDPROV": "0213",
+            "PROVINCIA": "MARISCAL LUZURIAGA",
+            "DISTRITO": "LUCMA",
+            "CAPITAL": "LUCMA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "021307"
+          },
+          "id": "LUCMA"
+        },
+        {
+          "arcs": [
+            [
+              -3,
+              16,
+              17
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "02",
+            "DEPARTAMEN": "ANCASH",
+            "IDPROV": "0213",
+            "PROVINCIA": "MARISCAL LUZURIAGA",
+            "DISTRITO": "CASCA",
+            "CAPITAL": "CASCA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "021302"
+          },
+          "id": "CASCA"
+        },
+        {
+          "arcs": [
+            [
+              -10,
+              -13,
+              -4,
+              -18,
+              18
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "02",
+            "DEPARTAMEN": "ANCASH",
+            "IDPROV": "0213",
+            "PROVINCIA": "MARISCAL LUZURIAGA",
+            "DISTRITO": "FIDEL OLIVAS ESCUDERO",
+            "CAPITAL": "SANACHGAN",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "021304"
+          },
+          "id": "FIDEL OLIVAS ESCUDERO"
+        }
+      ]
+    }
+  }
+}

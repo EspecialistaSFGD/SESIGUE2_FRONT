@@ -1,0 +1,653 @@
+{
+  "type": "Topology",
+  "arcs": [
+    [
+      [
+        644,
+        435
+      ],
+      [
+        55,
+        -35
+      ]
+    ],
+    [
+      [
+        699,
+        400
+      ],
+      [
+        -44,
+        -95
+      ],
+      [
+        86,
+        -89
+      ],
+      [
+        62,
+        -44
+      ]
+    ],
+    [
+      [
+        803,
+        172
+      ],
+      [
+        0,
+        -25
+      ],
+      [
+        -83,
+        -34
+      ],
+      [
+        -59,
+        30
+      ],
+      [
+        -62,
+        -1
+      ]
+    ],
+    [
+      [
+        599,
+        142
+      ],
+      [
+        -7,
+        39
+      ],
+      [
+        -74,
+        23
+      ],
+      [
+        -45,
+        95
+      ]
+    ],
+    [
+      [
+        473,
+        299
+      ],
+      [
+        40,
+        92
+      ],
+      [
+        79,
+        62
+      ],
+      [
+        52,
+        -18
+      ]
+    ],
+    [
+      [
+        743,
+        434
+      ],
+      [
+        -44,
+        -34
+      ]
+    ],
+    [
+      [
+        644,
+        435
+      ],
+      [
+        99,
+        -1
+      ]
+    ],
+    [
+      [
+        372,
+        421
+      ],
+      [
+        35,
+        -89
+      ],
+      [
+        66,
+        -33
+      ]
+    ],
+    [
+      [
+        599,
+        142
+      ],
+      [
+        -128,
+        -16
+      ],
+      [
+        -72,
+        -74
+      ],
+      [
+        -85,
+        -46
+      ],
+      [
+        -65,
+        -6
+      ],
+      [
+        -65,
+        45
+      ],
+      [
+        -69,
+        -10
+      ],
+      [
+        -8,
+        48
+      ],
+      [
+        -98,
+        70
+      ],
+      [
+        -9,
+        95
+      ],
+      [
+        29,
+        50
+      ],
+      [
+        -9,
+        61
+      ],
+      [
+        39,
+        42
+      ],
+      [
+        34,
+        -4
+      ],
+      [
+        73,
+        -49
+      ],
+      [
+        45,
+        -6
+      ],
+      [
+        81,
+        90
+      ],
+      [
+        55,
+        1
+      ]
+    ],
+    [
+      [
+        347,
+        433
+      ],
+      [
+        25,
+        -12
+      ]
+    ],
+    [
+      [
+        933,
+        540
+      ],
+      [
+        -61,
+        -108
+      ],
+      [
+        -52,
+        -114
+      ],
+      [
+        2,
+        -44
+      ],
+      [
+        56,
+        -22
+      ],
+      [
+        -21,
+        -56
+      ]
+    ],
+    [
+      [
+        857,
+        196
+      ],
+      [
+        -54,
+        -24
+      ]
+    ],
+    [
+      [
+        743,
+        434
+      ],
+      [
+        2,
+        59
+      ],
+      [
+        -20,
+        116
+      ],
+      [
+        48,
+        40
+      ]
+    ],
+    [
+      [
+        773,
+        649
+      ],
+      [
+        89,
+        -47
+      ],
+      [
+        71,
+        -62
+      ]
+    ],
+    [
+      [
+        1088,
+        208
+      ],
+      [
+        -44,
+        63
+      ],
+      [
+        -17,
+        62
+      ],
+      [
+        59,
+        76
+      ],
+      [
+        52,
+        99
+      ],
+      [
+        19,
+        5
+      ]
+    ],
+    [
+      [
+        1157,
+        513
+      ],
+      [
+        -20,
+        -58
+      ],
+      [
+        19,
+        -112
+      ],
+      [
+        -3,
+        -82
+      ],
+      [
+        -65,
+        -53
+      ]
+    ],
+    [
+      [
+        1088,
+        208
+      ],
+      [
+        52,
+        -60
+      ],
+      [
+        -76,
+        -82
+      ],
+      [
+        -63,
+        55
+      ],
+      [
+        -142,
+        57
+      ],
+      [
+        -2,
+        18
+      ]
+    ],
+    [
+      [
+        933,
+        540
+      ],
+      [
+        51,
+        -2
+      ],
+      [
+        81,
+        29
+      ],
+      [
+        92,
+        -54
+      ]
+    ],
+    [
+      [
+        473,
+        616
+      ],
+      [
+        8,
+        -34
+      ],
+      [
+        -58,
+        -85
+      ],
+      [
+        -9,
+        -42
+      ],
+      [
+        -42,
+        -34
+      ]
+    ],
+    [
+      [
+        347,
+        433
+      ],
+      [
+        33,
+        136
+      ],
+      [
+        43,
+        42
+      ],
+      [
+        50,
+        5
+      ]
+    ],
+    [
+      [
+        473,
+        616
+      ],
+      [
+        51,
+        46
+      ],
+      [
+        24,
+        57
+      ],
+      [
+        66,
+        66
+      ],
+      [
+        60,
+        -37
+      ],
+      [
+        78,
+        -9
+      ],
+      [
+        45,
+        -61
+      ],
+      [
+        -24,
+        -29
+      ]
+    ]
+  ],
+  "transform": {
+    "scale": [
+      0.00030477452463270003,
+      0.00027982929936315253
+    ],
+    "translate": [
+      -72.16732398199997,
+      -13.649162105999949
+    ]
+  },
+  "objects": {
+    "0801": {
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "arcs": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "08",
+            "DEPARTAMEN": "CUSCO",
+            "IDPROV": "0801",
+            "PROVINCIA": "CUSCO",
+            "DISTRITO": "SANTIAGO",
+            "CAPITAL": "SANTIAGO",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "080106"
+          },
+          "id": "SANTIAGO"
+        },
+        {
+          "arcs": [
+            [
+              5,
+              -1,
+              6
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "08",
+            "DEPARTAMEN": "CUSCO",
+            "IDPROV": "0801",
+            "PROVINCIA": "CUSCO",
+            "DISTRITO": "WANCHAQ",
+            "CAPITAL": "WANCHAQ",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "080108"
+          },
+          "id": "WANCHAQ"
+        },
+        {
+          "arcs": [
+            [
+              7,
+              -4,
+              8,
+              9
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "08",
+            "DEPARTAMEN": "CUSCO",
+            "IDPROV": "0801",
+            "PROVINCIA": "CUSCO",
+            "DISTRITO": "CCORCA",
+            "CAPITAL": "CCORCA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "080102"
+          },
+          "id": "CCORCA"
+        },
+        {
+          "arcs": [
+            [
+              10,
+              11,
+              -2,
+              -6,
+              12,
+              13
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "08",
+            "DEPARTAMEN": "CUSCO",
+            "IDPROV": "0801",
+            "PROVINCIA": "CUSCO",
+            "DISTRITO": "SAN SEBASTIAN",
+            "CAPITAL": "SAN SEBASTIAN",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "080105"
+          },
+          "id": "SAN SEBASTIAN"
+        },
+        {
+          "arcs": [
+            [
+              14,
+              15
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "08",
+            "DEPARTAMEN": "CUSCO",
+            "IDPROV": "0801",
+            "PROVINCIA": "CUSCO",
+            "DISTRITO": "SAYLLA",
+            "CAPITAL": "SAYLLA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "080107"
+          },
+          "id": "SAYLLA"
+        },
+        {
+          "arcs": [
+            [
+              -15,
+              16,
+              -11,
+              17
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "08",
+            "DEPARTAMEN": "CUSCO",
+            "IDPROV": "0801",
+            "PROVINCIA": "CUSCO",
+            "DISTRITO": "SAN JERONIMO",
+            "CAPITAL": "SAN JERONIMO",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "080104"
+          },
+          "id": "SAN JERONIMO"
+        },
+        {
+          "arcs": [
+            [
+              18,
+              -10,
+              19
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "08",
+            "DEPARTAMEN": "CUSCO",
+            "IDPROV": "0801",
+            "PROVINCIA": "CUSCO",
+            "DISTRITO": "POROY",
+            "CAPITAL": "POROY",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "080103"
+          },
+          "id": "POROY"
+        },
+        {
+          "arcs": [
+            [
+              -13,
+              -7,
+              -5,
+              -8,
+              -19,
+              20
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "08",
+            "DEPARTAMEN": "CUSCO",
+            "IDPROV": "0801",
+            "PROVINCIA": "CUSCO",
+            "DISTRITO": "CUSCO",
+            "CAPITAL": "CUSCO",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "080101"
+          },
+          "id": "CUSCO"
+        }
+      ]
+    }
+  }
+}

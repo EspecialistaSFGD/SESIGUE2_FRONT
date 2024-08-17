@@ -1,42 +1,42 @@
 [
     {
-        "lugar": "CHACHAPOYAS",
-        "id": "0101",
+        "id": "CHACHAPOYAS",
+        "ubigeo": "0101",
         "acuerdos": 5,
         "acuerdosEjecutados": 5,
         "avance": 100
     },
     {
-        "lugar": "BAGUA",
-        "id": "0102",
+        "id": "BAGUA",
+        "ubigeo": "0102",
         "acuerdos": 4,
         "acuerdosEjecutados": 4,
         "avance": 100
     },
     {
-        "lugar": "BONGARA",
-        "id": "0103",
+        "id": "BONGARA",
+        "ubigeo": "0103",
         "acuerdos": 8,
         "acuerdosEjecutados": 8,
         "avance": 100
     },
     {
-        "lugar": "CONDORCANQUI",
-        "id": "0104",
+        "id": "CONDORCANQUI",
+        "ubigeo": "0104",
         "acuerdos": 6,
         "acuerdosEjecutados": 5,
         "avance": 83
     },
     {
-        "lugar": "LUYA",
-        "id": "0105",
+        "id": "LUYA",
+        "ubigeo": "0105",
         "acuerdos": 7,
         "acuerdosEjecutados": 6,
         "avance": 86
     },
     {
-        "lugar": "RODRIGUEZ DE MENDOZA",
-        "id": "0106",
+        "id": "RODRIGUEZ DE MENDOZA",
+        "ubigeo": "0106",
         "acuerdos": 5,
         "acuerdosEjecutados": 4,
         "avance": 80

@@ -130893,12 +130893,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "01",
+                    "id": "AMAZONAS",
                     "properties": {
-                        "IDDPTO": "01",
-                        "DEPARTAMEN": "AMAZONAS",
-                        "CAPITAL": "CHACHAPOYAS",
-                        "FUENTE": "INEI"
+                        "ubigeo": "01",
+                        "departamento": "AMAZONAS",
+                        "capital": "CHACHAPOYAS",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -131040,12 +131040,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "02",
+                    "id": "ANCASH",
                     "properties": {
-                        "IDDPTO": "02",
-                        "DEPARTAMEN": "ANCASH",
-                        "CAPITAL": "HUARAZ",
-                        "FUENTE": "INEI"
+                        "ubigeo": "02",
+                        "departamento": "ANCASH",
+                        "capital": "HUARAZ",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -131563,12 +131563,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "03",
+                    "id": "APURIMAC",
                     "properties": {
-                        "IDDPTO": "03",
-                        "DEPARTAMEN": "APURIMAC",
-                        "CAPITAL": "ABANCAY",
-                        "FUENTE": "INEI"
+                        "ubigeo": "03",
+                        "departamento": "APURIMAC",
+                        "capital": "ABANCAY",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -131688,12 +131688,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "04",
+                    "id": "AREQUIPA",
                     "properties": {
-                        "IDDPTO": "04",
-                        "DEPARTAMEN": "AREQUIPA",
-                        "CAPITAL": "AREQUIPA",
-                        "FUENTE": "INEI"
+                        "ubigeo": "04",
+                        "departamento": "AREQUIPA",
+                        "capital": "AREQUIPA",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -132869,12 +132869,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "05",
+                    "id": "AYACUCHO",
                     "properties": {
-                        "IDDPTO": "05",
-                        "DEPARTAMEN": "AYACUCHO",
-                        "CAPITAL": "AYACUCHO",
-                        "FUENTE": "INEI"
+                        "ubigeo": "05",
+                        "departamento": "AYACUCHO",
+                        "capital": "AYACUCHO",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -133354,12 +133354,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "06",
+                    "id": "CAJAMARCA",
                     "properties": {
-                        "IDDPTO": "06",
-                        "DEPARTAMEN": "CAJAMARCA",
-                        "CAPITAL": "CAJAMARCA",
-                        "FUENTE": "INEI"
+                        "ubigeo": "06",
+                        "departamento": "CAJAMARCA",
+                        "capital": "CAJAMARCA",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -133707,12 +133707,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "07",
+                    "id": "CALLAO",
                     "properties": {
-                        "IDDPTO": "07",
-                        "DEPARTAMEN": "CALLAO",
-                        "CAPITAL": "CALLAO",
-                        "FUENTE": "INEI"
+                        "ubigeo": "07",
+                        "departamento": "CALLAO",
+                        "capital": "CALLAO",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -136589,12 +136589,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "08",
+                    "id": "CUSCO",
                     "properties": {
-                        "IDDPTO": "08",
-                        "DEPARTAMEN": "CUSCO",
-                        "CAPITAL": "CUSCO",
-                        "FUENTE": "INEI"
+                        "ubigeo": "08",
+                        "departamento": "CUSCO",
+                        "capital": "CUSCO",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -137079,12 +137079,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "09",
+                    "id": "HUANCAVELICA",
                     "properties": {
-                        "IDDPTO": "09",
-                        "DEPARTAMEN": "HUANCAVELICA",
-                        "CAPITAL": "HUANCAVELICA",
-                        "FUENTE": "INEI"
+                        "ubigeo": "09",
+                        "departamento": "HUANCAVELICA",
+                        "capital": "HUANCAVELICA",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -138960,12 +138960,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "10",
+                    "id": "HUANUCO",
                     "properties": {
-                        "IDDPTO": 10,
-                        "DEPARTAMEN": "HUANUCO",
-                        "CAPITAL": "HUANUCO",
-                        "FUENTE": "INEI"
+                        "ubigeo": "10",
+                        "departamento": "HUANUCO",
+                        "capital": "HUANUCO",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -138994,12 +138994,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "11",
+                    "id": "ICA",
                     "properties": {
-                        "IDDPTO": 11,
-                        "DEPARTAMEN": "ICA",
-                        "CAPITAL": "ICA",
-                        "FUENTE": "INEI"
+                        "ubigeo": "11",
+                        "departamento": "ICA",
+                        "capital": "ICA",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -139871,12 +139871,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "12",
+                    "id": "JUNIN",
                     "properties": {
-                        "IDDPTO": 12,
-                        "DEPARTAMEN": "JUNIN",
-                        "CAPITAL": "HUANCAYO",
-                        "FUENTE": "INEI"
+                        "ubigeo": "12",
+                        "departamento": "JUNIN",
+                        "capital": "HUANCAYO",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -139894,12 +139894,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "13",
+                    "id": "LA LIBERTAD",
                     "properties": {
-                        "IDDPTO": 13,
-                        "DEPARTAMEN": "LA LIBERTAD",
-                        "CAPITAL": "TRUJILLO",
-                        "FUENTE": "INEI"
+                        "ubigeo": "13",
+                        "departamento": "LA LIBERTAD",
+                        "capital": "TRUJILLO",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -140349,12 +140349,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "14",
+                    "id": "LAMBAYEQUE",
                     "properties": {
-                        "IDDPTO": 14,
-                        "DEPARTAMEN": "LAMBAYEQUE",
-                        "CAPITAL": "CHICLAYO",
-                        "FUENTE": "INEI"
+                        "ubigeo": "14",
+                        "departamento": "LAMBAYEQUE",
+                        "capital": "CHICLAYO",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -140709,12 +140709,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "15",
+                    "id": "LIMA",
                     "properties": {
-                        "IDDPTO": 15,
-                        "DEPARTAMEN": "LIMA",
-                        "CAPITAL": "LIMA",
-                        "FUENTE": "INEI"
+                        "ubigeo": "15",
+                        "departamento": "LIMA",
+                        "capital": "LIMA",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -141375,12 +141375,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "16",
+                    "id": "LORETO",
                     "properties": {
-                        "IDDPTO": 16,
-                        "DEPARTAMEN": "LORETO",
-                        "CAPITAL": "IQUITOS",
-                        "FUENTE": "INEI"
+                        "ubigeo": "16",
+                        "departamento": "LORETO",
+                        "capital": "IQUITOS",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -142666,12 +142666,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "17",
+                    "id": "MADRE DE DIOS",
                     "properties": {
-                        "IDDPTO": 17,
-                        "DEPARTAMEN": "MADRE DE DIOS",
-                        "CAPITAL": "PUERTO MALDONADO",
-                        "FUENTE": "INEI"
+                        "ubigeo": "17",
+                        "departamento": "MADRE DE DIOS",
+                        "capital": "PUERTO MALDONADO",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -142684,12 +142684,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "18",
+                    "id": "MOQUEGUA",
                     "properties": {
-                        "IDDPTO": 18,
-                        "DEPARTAMEN": "MOQUEGUA",
-                        "CAPITAL": "MOQUEGUA",
-                        "FUENTE": "INEI"
+                        "ubigeo": "18",
+                        "departamento": "MOQUEGUA",
+                        "capital": "MOQUEGUA",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -143075,12 +143075,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "19",
+                    "id": "PASCO",
                     "properties": {
-                        "IDDPTO": 19,
-                        "DEPARTAMEN": "PASCO",
-                        "CAPITAL": "CERRO DE PASCO",
-                        "FUENTE": "INEI"
+                        "ubigeo": "19",
+                        "departamento": "PASCO",
+                        "capital": "CERRO DE PASCO",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -143553,12 +143553,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "20",
+                    "id": "PIURA",
                     "properties": {
-                        "IDDPTO": 20,
-                        "DEPARTAMEN": "PIURA",
-                        "CAPITAL": "PIURA",
-                        "FUENTE": "INEI"
+                        "ubigeo": "20",
+                        "departamento": "PIURA",
+                        "capital": "PIURA",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -143581,12 +143581,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "21",
+                    "id": "PUNO",
                     "properties": {
-                        "IDDPTO": 21,
-                        "DEPARTAMEN": "PUNO",
-                        "CAPITAL": "PUNO",
-                        "FUENTE": "INEI"
+                        "ubigeo": "21",
+                        "departamento": "PUNO",
+                        "capital": "PUNO",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -144626,12 +144626,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "22",
+                    "id": "SAN MARTIN",
                     "properties": {
-                        "IDDPTO": 22,
-                        "DEPARTAMEN": "SAN MARTIN",
-                        "CAPITAL": "MOYOBAMBA",
-                        "FUENTE": "INEI"
+                        "ubigeo": "22",
+                        "departamento": "SAN MARTIN",
+                        "capital": "MOYOBAMBA",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -144643,12 +144643,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "23",
+                    "id": "TACNA",
                     "properties": {
-                        "IDDPTO": 23,
-                        "DEPARTAMEN": "TACNA",
-                        "CAPITAL": "TACNA",
-                        "FUENTE": "INEI"
+                        "ubigeo": "23",
+                        "departamento": "TACNA",
+                        "capital": "TACNA",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -144659,12 +144659,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "24",
+                    "id": "TUMBES",
                     "properties": {
-                        "IDDPTO": 24,
-                        "DEPARTAMEN": "TUMBES",
-                        "CAPITAL": "TUMBES",
-                        "FUENTE": "INEI"
+                        "ubigeo": "24",
+                        "departamento": "TUMBES",
+                        "capital": "TUMBES",
+                        "fuente": "INEI"
                     }
                 },
                 {
@@ -147076,12 +147076,12 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "25",
+                    "id": "UCAYALI",
                     "properties": {
-                        "IDDPTO": 25,
-                        "DEPARTAMEN": "UCAYALI",
-                        "CAPITAL": "PUCALLPA",
-                        "FUENTE": "INEI"
+                        "ubigeo": "25",
+                        "departamento": "UCAYALI",
+                        "capital": "PUCALLPA",
+                        "fuente": "INEI"
                     }
                 }
             ]

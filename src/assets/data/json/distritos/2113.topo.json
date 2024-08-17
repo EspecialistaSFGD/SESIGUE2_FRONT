@@ -1,0 +1,536 @@
+{
+  "type": "Topology",
+  "arcs": [
+    [
+      [
+        553,
+        166
+      ],
+      [
+        -16,
+        -50
+      ],
+      [
+        24,
+        -79
+      ],
+      [
+        -56,
+        -37
+      ],
+      [
+        -51,
+        27
+      ],
+      [
+        -4,
+        33
+      ],
+      [
+        -111,
+        69
+      ],
+      [
+        -91,
+        9
+      ],
+      [
+        -4,
+        -80
+      ],
+      [
+        -33,
+        -2
+      ],
+      [
+        -27,
+        65
+      ],
+      [
+        26,
+        53
+      ]
+    ],
+    [
+      [
+        210,
+        174
+      ],
+      [
+        102,
+        25
+      ],
+      [
+        179,
+        16
+      ],
+      [
+        52,
+        -16
+      ],
+      [
+        10,
+        -33
+      ]
+    ],
+    [
+      [
+        151,
+        249
+      ],
+      [
+        -69,
+        39
+      ],
+      [
+        -40,
+        -2
+      ],
+      [
+        -42,
+        44
+      ],
+      [
+        18,
+        49
+      ],
+      [
+        -4,
+        47
+      ],
+      [
+        46,
+        12
+      ]
+    ],
+    [
+      [
+        60,
+        438
+      ],
+      [
+        59,
+        -43
+      ],
+      [
+        5,
+        -50
+      ],
+      [
+        27,
+        -96
+      ]
+    ],
+    [
+      [
+        1206,
+        193
+      ],
+      [
+        -322,
+        -155
+      ],
+      [
+        0,
+        474
+      ],
+      [
+        104,
+        -90
+      ],
+      [
+        218,
+        -151
+      ],
+      [
+        0,
+        -78
+      ]
+    ],
+    [
+      [
+        725,
+        489
+      ],
+      [
+        -41,
+        39
+      ],
+      [
+        13,
+        62
+      ]
+    ],
+    [
+      [
+        697,
+        590
+      ],
+      [
+        55,
+        4
+      ]
+    ],
+    [
+      [
+        752,
+        594
+      ],
+      [
+        -27,
+        -105
+      ]
+    ],
+    [
+      [
+        610,
+        559
+      ],
+      [
+        -10,
+        -54
+      ],
+      [
+        -58,
+        -48
+      ],
+      [
+        5,
+        -32
+      ]
+    ],
+    [
+      [
+        547,
+        425
+      ],
+      [
+        -33,
+        -13
+      ],
+      [
+        -46,
+        38
+      ],
+      [
+        -65,
+        -2
+      ],
+      [
+        10,
+        -69
+      ],
+      [
+        63,
+        -4
+      ],
+      [
+        40,
+        -48
+      ],
+      [
+        48,
+        -89
+      ],
+      [
+        -11,
+        -72
+      ]
+    ],
+    [
+      [
+        210,
+        174
+      ],
+      [
+        -16,
+        66
+      ],
+      [
+        -43,
+        9
+      ]
+    ],
+    [
+      [
+        60,
+        438
+      ],
+      [
+        123,
+        19
+      ],
+      [
+        91,
+        43
+      ],
+      [
+        57,
+        -17
+      ],
+      [
+        -16,
+        53
+      ],
+      [
+        65,
+        9
+      ],
+      [
+        81,
+        67
+      ],
+      [
+        71,
+        -24
+      ],
+      [
+        61,
+        -38
+      ],
+      [
+        17,
+        9
+      ]
+    ],
+    [
+      [
+        725,
+        489
+      ],
+      [
+        -21,
+        -43
+      ],
+      [
+        -70,
+        -48
+      ],
+      [
+        -23,
+        39
+      ],
+      [
+        -64,
+        -12
+      ]
+    ],
+    [
+      [
+        610,
+        559
+      ],
+      [
+        0,
+        31
+      ],
+      [
+        65,
+        36
+      ]
+    ],
+    [
+      [
+        675,
+        626
+      ],
+      [
+        22,
+        -36
+      ]
+    ],
+    [
+      [
+        675,
+        626
+      ],
+      [
+        25,
+        9
+      ],
+      [
+        52,
+        -41
+      ]
+    ]
+  ],
+  "transform": {
+    "scale": [
+      0.0003236794162520235,
+      0.0003594893700786868
+    ],
+    "translate": [
+      -69.20457422899989,
+      -16.417357733999893
+    ]
+  },
+  "objects": {
+    "2113": {
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "arcs": [
+            [
+              0,
+              1
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "21",
+            "DEPARTAMEN": "PUNO",
+            "IDPROV": "2113",
+            "PROVINCIA": "YUNGUYO",
+            "DISTRITO": "COPANI",
+            "CAPITAL": "COPANI",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "211303"
+          },
+          "id": "COPANI"
+        },
+        {
+          "arcs": [
+            [
+              2,
+              3
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "21",
+            "DEPARTAMEN": "PUNO",
+            "IDPROV": "2113",
+            "PROVINCIA": "YUNGUYO",
+            "DISTRITO": "CUTURAPI",
+            "CAPITAL": "SAN JUAN DE CUTURAPI",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "211304"
+          },
+          "id": "CUTURAPI"
+        },
+        {
+          "arcs": [
+            [
+              4
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "21",
+            "DEPARTAMEN": "PUNO",
+            "IDPROV": "2113",
+            "PROVINCIA": "YUNGUYO",
+            "DISTRITO": "ANAPIA",
+            "CAPITAL": "ANAPIA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "211302"
+          },
+          "id": "ANAPIA"
+        },
+        {
+          "arcs": [
+            [
+              5,
+              6,
+              7
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "21",
+            "DEPARTAMEN": "PUNO",
+            "IDPROV": "2113",
+            "PROVINCIA": "YUNGUYO",
+            "DISTRITO": "UNICACHI",
+            "CAPITAL": "MARCAJA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "211307"
+          },
+          "id": "UNICACHI"
+        },
+        {
+          "arcs": [
+            [
+              8,
+              9,
+              -2,
+              10,
+              -4,
+              11
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "21",
+            "DEPARTAMEN": "PUNO",
+            "IDPROV": "2113",
+            "PROVINCIA": "YUNGUYO",
+            "DISTRITO": "YUNGUYO",
+            "CAPITAL": "YUNGUYO",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "211301"
+          },
+          "id": "YUNGUYO"
+        },
+        {
+          "arcs": [
+            [
+              12,
+              -9,
+              13,
+              14,
+              -6
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "21",
+            "DEPARTAMEN": "PUNO",
+            "IDPROV": "2113",
+            "PROVINCIA": "YUNGUYO",
+            "DISTRITO": "OLLARAYA",
+            "CAPITAL": "SAN MIGUEL DE OLLARAYA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "211305"
+          },
+          "id": "OLLARAYA"
+        },
+        {
+          "arcs": [
+            [
+              -7,
+              -15,
+              15
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "21",
+            "DEPARTAMEN": "PUNO",
+            "IDPROV": "2113",
+            "PROVINCIA": "YUNGUYO",
+            "DISTRITO": "TINICACHI",
+            "CAPITAL": "TINICACHI",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "211306"
+          },
+          "id": "TINICACHI"
+        }
+      ]
+    }
+  }
+}

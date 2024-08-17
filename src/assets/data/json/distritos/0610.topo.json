@@ -1,0 +1,632 @@
+{
+  "type": "Topology",
+  "arcs": [
+    [
+      [
+        779,
+        337
+      ],
+      [
+        -57,
+        54
+      ],
+      [
+        -64,
+        28
+      ],
+      [
+        -35,
+        -35
+      ],
+      [
+        -68,
+        72
+      ],
+      [
+        8,
+        43
+      ]
+    ],
+    [
+      [
+        563,
+        499
+      ],
+      [
+        -54,
+        113
+      ]
+    ],
+    [
+      [
+        509,
+        612
+      ],
+      [
+        -55,
+        207
+      ],
+      [
+        -35,
+        52
+      ]
+    ],
+    [
+      [
+        419,
+        871
+      ],
+      [
+        25,
+        48
+      ],
+      [
+        71,
+        -1
+      ],
+      [
+        29,
+        -17
+      ],
+      [
+        48,
+        37
+      ],
+      [
+        41,
+        62
+      ],
+      [
+        126,
+        68
+      ],
+      [
+        61,
+        -93
+      ],
+      [
+        15,
+        -134
+      ],
+      [
+        54,
+        -24
+      ],
+      [
+        23,
+        -48
+      ],
+      [
+        14,
+        -94
+      ],
+      [
+        57,
+        -25
+      ],
+      [
+        -11,
+        -89
+      ],
+      [
+        62,
+        -117
+      ],
+      [
+        -16,
+        -81
+      ],
+      [
+        13,
+        -25
+      ],
+      [
+        -110,
+        -35
+      ],
+      [
+        -62,
+        27
+      ],
+      [
+        -19,
+        26
+      ],
+      [
+        -61,
+        -19
+      ]
+    ],
+    [
+      [
+        541,
+        80
+      ],
+      [
+        15,
+        -37
+      ]
+    ],
+    [
+      [
+        556,
+        43
+      ],
+      [
+        -73,
+        25
+      ],
+      [
+        -78,
+        -32
+      ],
+      [
+        -24,
+        -36
+      ],
+      [
+        -92,
+        60
+      ],
+      [
+        -98,
+        166
+      ]
+    ],
+    [
+      [
+        191,
+        226
+      ],
+      [
+        26,
+        -24
+      ]
+    ],
+    [
+      [
+        217,
+        202
+      ],
+      [
+        161,
+        -51
+      ],
+      [
+        72,
+        -42
+      ],
+      [
+        91,
+        -29
+      ]
+    ],
+    [
+      [
+        217,
+        202
+      ],
+      [
+        49,
+        46
+      ],
+      [
+        68,
+        -7
+      ],
+      [
+        23,
+        18
+      ]
+    ],
+    [
+      [
+        357,
+        259
+      ],
+      [
+        118,
+        -1
+      ],
+      [
+        40,
+        -81
+      ],
+      [
+        50,
+        -49
+      ],
+      [
+        -24,
+        -48
+      ]
+    ],
+    [
+      [
+        779,
+        337
+      ],
+      [
+        -28,
+        -51
+      ],
+      [
+        -46,
+        -44
+      ],
+      [
+        -28,
+        -80
+      ]
+    ],
+    [
+      [
+        677,
+        162
+      ],
+      [
+        -109,
+        55
+      ],
+      [
+        -6,
+        45
+      ],
+      [
+        -41,
+        28
+      ]
+    ],
+    [
+      [
+        521,
+        290
+      ],
+      [
+        -34,
+        147
+      ],
+      [
+        10,
+        29
+      ],
+      [
+        66,
+        33
+      ]
+    ],
+    [
+      [
+        521,
+        290
+      ],
+      [
+        -99,
+        17
+      ],
+      [
+        -75,
+        37
+      ],
+      [
+        10,
+        -85
+      ]
+    ],
+    [
+      [
+        191,
+        226
+      ],
+      [
+        -1,
+        16
+      ],
+      [
+        -125,
+        37
+      ],
+      [
+        5,
+        35
+      ],
+      [
+        -43,
+        18
+      ],
+      [
+        -27,
+        50
+      ],
+      [
+        41,
+        32
+      ],
+      [
+        36,
+        73
+      ],
+      [
+        39,
+        -47
+      ],
+      [
+        41,
+        -13
+      ],
+      [
+        41,
+        52
+      ]
+    ],
+    [
+      [
+        198,
+        479
+      ],
+      [
+        98,
+        -5
+      ],
+      [
+        50,
+        32
+      ],
+      [
+        16,
+        43
+      ],
+      [
+        59,
+        10
+      ],
+      [
+        88,
+        53
+      ]
+    ],
+    [
+      [
+        677,
+        162
+      ],
+      [
+        -15,
+        -84
+      ],
+      [
+        -24,
+        -31
+      ],
+      [
+        -60,
+        15
+      ],
+      [
+        -22,
+        -19
+      ]
+    ],
+    [
+      [
+        198,
+        479
+      ],
+      [
+        -54,
+        152
+      ],
+      [
+        -21,
+        20
+      ],
+      [
+        24,
+        63
+      ],
+      [
+        85,
+        79
+      ],
+      [
+        36,
+        70
+      ],
+      [
+        49,
+        -10
+      ],
+      [
+        102,
+        18
+      ]
+    ]
+  ],
+  "transform": {
+    "scale": [
+      0.0004605866789168605,
+      0.0003836975655430612
+    ],
+    "translate": [
+      -78.30729686299998,
+      -7.480312474999948
+    ]
+  },
+  "objects": {
+    "0610": {
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "arcs": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0610",
+            "PROVINCIA": "SAN MARCOS",
+            "DISTRITO": "JOSE SABOGAL",
+            "CAPITAL": "VENECIA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061007"
+          },
+          "id": "JOSE SABOGAL"
+        },
+        {
+          "arcs": [
+            [
+              4,
+              5,
+              6,
+              7
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0610",
+            "PROVINCIA": "SAN MARCOS",
+            "DISTRITO": "EDUARDO VILLANUEVA",
+            "CAPITAL": "LA GRAMA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061003"
+          },
+          "id": "EDUARDO VILLANUEVA"
+        },
+        {
+          "arcs": [
+            [
+              -8,
+              8,
+              9
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0610",
+            "PROVINCIA": "SAN MARCOS",
+            "DISTRITO": "CHANCAY",
+            "CAPITAL": "CHANCAY",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061002"
+          },
+          "id": "CHANCAY"
+        },
+        {
+          "arcs": [
+            [
+              10,
+              11,
+              12,
+              -1
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0610",
+            "PROVINCIA": "SAN MARCOS",
+            "DISTRITO": "JOSE MANUEL QUIROZ",
+            "CAPITAL": "SHIRAC",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061006"
+          },
+          "id": "JOSE MANUEL QUIROZ"
+        },
+        {
+          "arcs": [
+            [
+              -13,
+              13,
+              -9,
+              -7,
+              14,
+              15,
+              -2
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0610",
+            "PROVINCIA": "SAN MARCOS",
+            "DISTRITO": "PEDRO GALVEZ",
+            "CAPITAL": "SAN MARCOS",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061001"
+          },
+          "id": "PEDRO GALVEZ"
+        },
+        {
+          "arcs": [
+            [
+              -12,
+              16,
+              -5,
+              -10,
+              -14
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0610",
+            "PROVINCIA": "SAN MARCOS",
+            "DISTRITO": "ICHOCAN",
+            "CAPITAL": "ICHOCAN",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061005"
+          },
+          "id": "ICHOCAN"
+        },
+        {
+          "arcs": [
+            [
+              -16,
+              17,
+              -3
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0610",
+            "PROVINCIA": "SAN MARCOS",
+            "DISTRITO": "GREGORIO PITA",
+            "CAPITAL": "PAUCAMARCA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061004"
+          },
+          "id": "GREGORIO PITA"
+        }
+      ]
+    }
+  }
+}

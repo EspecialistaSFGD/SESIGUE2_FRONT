@@ -1,0 +1,853 @@
+{
+  "type": "Topology",
+  "arcs": [
+    [
+      [
+        672,
+        961
+      ],
+      [
+        15,
+        -26
+      ],
+      [
+        -85,
+        -103
+      ]
+    ],
+    [
+      [
+        602,
+        832
+      ],
+      [
+        -25,
+        -10
+      ],
+      [
+        -117,
+        60
+      ]
+    ],
+    [
+      [
+        460,
+        882
+      ],
+      [
+        57,
+        67
+      ],
+      [
+        38,
+        177
+      ]
+    ],
+    [
+      [
+        555,
+        1126
+      ],
+      [
+        27,
+        -169
+      ],
+      [
+        90,
+        4
+      ]
+    ],
+    [
+      [
+        1011,
+        598
+      ],
+      [
+        -58,
+        27
+      ],
+      [
+        -58,
+        -10
+      ]
+    ],
+    [
+      [
+        895,
+        615
+      ],
+      [
+        -50,
+        56
+      ],
+      [
+        -56,
+        24
+      ],
+      [
+        -73,
+        56
+      ]
+    ],
+    [
+      [
+        716,
+        751
+      ],
+      [
+        -25,
+        29
+      ],
+      [
+        -89,
+        52
+      ]
+    ],
+    [
+      [
+        672,
+        961
+      ],
+      [
+        41,
+        40
+      ],
+      [
+        18,
+        81
+      ],
+      [
+        65,
+        12
+      ],
+      [
+        60,
+        41
+      ],
+      [
+        64,
+        -59
+      ],
+      [
+        10,
+        -73
+      ],
+      [
+        44,
+        -117
+      ],
+      [
+        34,
+        -25
+      ],
+      [
+        33,
+        -110
+      ],
+      [
+        51,
+        -68
+      ],
+      [
+        -15,
+        -49
+      ],
+      [
+        -66,
+        -36
+      ]
+    ],
+    [
+      [
+        460,
+        882
+      ],
+      [
+        -68,
+        -1
+      ],
+      [
+        -102,
+        -27
+      ],
+      [
+        -74,
+        58
+      ],
+      [
+        -67,
+        0
+      ],
+      [
+        -56,
+        60
+      ]
+    ],
+    [
+      [
+        93,
+        972
+      ],
+      [
+        -28,
+        48
+      ],
+      [
+        -15,
+        105
+      ],
+      [
+        92,
+        -2
+      ],
+      [
+        35,
+        28
+      ],
+      [
+        118,
+        -9
+      ],
+      [
+        41,
+        15
+      ],
+      [
+        65,
+        -24
+      ],
+      [
+        59,
+        18
+      ],
+      [
+        95,
+        -25
+      ]
+    ],
+    [
+      [
+        793,
+        223
+      ],
+      [
+        80,
+        40
+      ],
+      [
+        -137,
+        192
+      ],
+      [
+        29,
+        75
+      ],
+      [
+        59,
+        49
+      ],
+      [
+        45,
+        -5
+      ],
+      [
+        26,
+        41
+      ]
+    ],
+    [
+      [
+        1011,
+        598
+      ],
+      [
+        30,
+        -134
+      ],
+      [
+        50,
+        -8
+      ],
+      [
+        1,
+        -180
+      ],
+      [
+        -26,
+        -79
+      ],
+      [
+        -47,
+        -15
+      ],
+      [
+        -27,
+        -88
+      ],
+      [
+        -78,
+        -50
+      ],
+      [
+        -28,
+        2
+      ],
+      [
+        -64,
+        -46
+      ],
+      [
+        -29,
+        12
+      ],
+      [
+        -12,
+        158
+      ],
+      [
+        12,
+        53
+      ]
+    ],
+    [
+      [
+        469,
+        704
+      ],
+      [
+        66,
+        -48
+      ],
+      [
+        24,
+        -66
+      ],
+      [
+        -19,
+        -92
+      ],
+      [
+        17,
+        -23
+      ],
+      [
+        -28,
+        -78
+      ],
+      [
+        8,
+        -46
+      ],
+      [
+        54,
+        -37
+      ]
+    ],
+    [
+      [
+        591,
+        314
+      ],
+      [
+        -125,
+        6
+      ],
+      [
+        -20,
+        33
+      ],
+      [
+        -94,
+        60
+      ]
+    ],
+    [
+      [
+        352,
+        413
+      ],
+      [
+        -52,
+        43
+      ],
+      [
+        -19,
+        48
+      ]
+    ],
+    [
+      [
+        281,
+        504
+      ],
+      [
+        72,
+        58
+      ],
+      [
+        -30,
+        108
+      ],
+      [
+        -19,
+        27
+      ]
+    ],
+    [
+      [
+        304,
+        697
+      ],
+      [
+        61,
+        23
+      ],
+      [
+        69,
+        4
+      ],
+      [
+        35,
+        -20
+      ]
+    ],
+    [
+      [
+        352,
+        413
+      ],
+      [
+        -86,
+        -4
+      ],
+      [
+        -3,
+        37
+      ]
+    ],
+    [
+      [
+        263,
+        446
+      ],
+      [
+        -70,
+        61
+      ],
+      [
+        -36,
+        52
+      ],
+      [
+        37,
+        41
+      ]
+    ],
+    [
+      [
+        194,
+        600
+      ],
+      [
+        0,
+        -39
+      ],
+      [
+        87,
+        -57
+      ]
+    ],
+    [
+      [
+        793,
+        223
+      ],
+      [
+        -57,
+        59
+      ],
+      [
+        -104,
+        3
+      ],
+      [
+        -41,
+        29
+      ]
+    ],
+    [
+      [
+        469,
+        704
+      ],
+      [
+        80,
+        41
+      ],
+      [
+        140,
+        -9
+      ],
+      [
+        27,
+        15
+      ]
+    ],
+    [
+      [
+        194,
+        600
+      ],
+      [
+        -13,
+        118
+      ],
+      [
+        -24,
+        47
+      ]
+    ],
+    [
+      [
+        157,
+        765
+      ],
+      [
+        75,
+        -43
+      ],
+      [
+        72,
+        -25
+      ]
+    ],
+    [
+      [
+        263,
+        446
+      ],
+      [
+        -94,
+        -17
+      ],
+      [
+        -17,
+        40
+      ],
+      [
+        -51,
+        -3
+      ],
+      [
+        -50,
+        36
+      ],
+      [
+        -13,
+        57
+      ],
+      [
+        -38,
+        48
+      ],
+      [
+        24,
+        34
+      ],
+      [
+        133,
+        125
+      ]
+    ],
+    [
+      [
+        157,
+        766
+      ],
+      [
+        0,
+        -1
+      ]
+    ],
+    [
+      [
+        157,
+        766
+      ],
+      [
+        -21,
+        107
+      ],
+      [
+        -39,
+        43
+      ],
+      [
+        -4,
+        56
+      ]
+    ]
+  ],
+  "transform": {
+    "scale": [
+      0.0004927786172161493,
+      0.00045441670267937277
+    ],
+    "translate": [
+      -76.54864360999994,
+      -7.203962474999969
+    ]
+  },
+  "objects": {
+    "2207": {
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "arcs": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "22",
+            "DEPARTAMEN": "SAN MARTIN",
+            "IDPROV": "2207",
+            "PROVINCIA": "PICOTA",
+            "DISTRITO": "PILLUANA",
+            "CAPITAL": "PILLUANA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "220704"
+          },
+          "id": "PILLUANA"
+        },
+        {
+          "arcs": [
+            [
+              4,
+              5,
+              6,
+              -1,
+              7
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "22",
+            "DEPARTAMEN": "SAN MARTIN",
+            "IDPROV": "2207",
+            "PROVINCIA": "PICOTA",
+            "DISTRITO": "TRES UNIDOS",
+            "CAPITAL": "TRES UNIDOS",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "220710"
+          },
+          "id": "TRES UNIDOS"
+        },
+        {
+          "arcs": [
+            [
+              -3,
+              8,
+              9
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "22",
+            "DEPARTAMEN": "SAN MARTIN",
+            "IDPROV": "2207",
+            "PROVINCIA": "PICOTA",
+            "DISTRITO": "BUENOS AIRES",
+            "CAPITAL": "BUENOS AIRES",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "220702"
+          },
+          "id": "BUENOS AIRES"
+        },
+        {
+          "arcs": [
+            [
+              10,
+              -5,
+              11
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "22",
+            "DEPARTAMEN": "SAN MARTIN",
+            "IDPROV": "2207",
+            "PROVINCIA": "PICOTA",
+            "DISTRITO": "SHAMBOYACU",
+            "CAPITAL": "SHAMBOYACU",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "220708"
+          },
+          "id": "SHAMBOYACU"
+        },
+        {
+          "arcs": [
+            [
+              12,
+              13,
+              14,
+              15,
+              16
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "22",
+            "DEPARTAMEN": "SAN MARTIN",
+            "IDPROV": "2207",
+            "PROVINCIA": "PICOTA",
+            "DISTRITO": "PICOTA",
+            "CAPITAL": "PICOTA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "220701"
+          },
+          "id": "PICOTA"
+        },
+        {
+          "arcs": [
+            [
+              -15,
+              17,
+              18,
+              19
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "22",
+            "DEPARTAMEN": "SAN MARTIN",
+            "IDPROV": "2207",
+            "PROVINCIA": "PICOTA",
+            "DISTRITO": "SAN CRISTOBAL",
+            "CAPITAL": "PUERTO RICO",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "220706"
+          },
+          "id": "SAN CRISTOBAL"
+        },
+        {
+          "arcs": [
+            [
+              -11,
+              20,
+              -13,
+              21,
+              -6
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "22",
+            "DEPARTAMEN": "SAN MARTIN",
+            "IDPROV": "2207",
+            "PROVINCIA": "PICOTA",
+            "DISTRITO": "TINGO DE PONASA",
+            "CAPITAL": "TINGO DE PONASA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "220709"
+          },
+          "id": "TINGO DE PONASA"
+        },
+        {
+          "arcs": [
+            [
+              -16,
+              -20,
+              22,
+              23
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "22",
+            "DEPARTAMEN": "SAN MARTIN",
+            "IDPROV": "2207",
+            "PROVINCIA": "PICOTA",
+            "DISTRITO": "CASPISAPA",
+            "CAPITAL": "CASPISAPA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "220703"
+          },
+          "id": "CASPISAPA"
+        },
+        {
+          "arcs": [
+            [
+              -19,
+              24,
+              25,
+              -23
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "22",
+            "DEPARTAMEN": "SAN MARTIN",
+            "IDPROV": "2207",
+            "PROVINCIA": "PICOTA",
+            "DISTRITO": "SAN HILARION",
+            "CAPITAL": "SAN CRISTOBAL DE SISA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "220707"
+          },
+          "id": "SAN HILARION"
+        },
+        {
+          "arcs": [
+            [
+              -2,
+              -7,
+              -22,
+              -17,
+              -24,
+              -26,
+              26,
+              -9
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "22",
+            "DEPARTAMEN": "SAN MARTIN",
+            "IDPROV": "2207",
+            "PROVINCIA": "PICOTA",
+            "DISTRITO": "PUCACACA",
+            "CAPITAL": "PUCACACA",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "220705"
+          },
+          "id": "PUCACACA"
+        }
+      ]
+    }
+  }
+}

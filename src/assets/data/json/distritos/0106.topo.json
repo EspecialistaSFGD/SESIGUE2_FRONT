@@ -1,0 +1,1027 @@
+{
+    "type": "Topology",
+    "arcs": [
+        [
+            [
+                444,
+                668
+            ],
+            [
+                -34,
+                -22
+            ],
+            [
+                -94,
+                -4
+            ]
+        ],
+        [
+            [
+                316,
+                642
+            ],
+            [
+                -45,
+                43
+            ],
+            [
+                -56,
+                -26
+            ],
+            [
+                10,
+                -50
+            ],
+            [
+                -87,
+                -52
+            ],
+            [
+                -95,
+                -5
+            ]
+        ],
+        [
+            [
+                43,
+                552
+            ],
+            [
+                -25,
+                34
+            ],
+            [
+                -18,
+                80
+            ],
+            [
+                18,
+                42
+            ],
+            [
+                100,
+                107
+            ],
+            [
+                64,
+                -10
+            ],
+            [
+                102,
+                74
+            ],
+            [
+                15,
+                56
+            ]
+        ],
+        [
+            [
+                299,
+                935
+            ],
+            [
+                -2,
+                -106
+            ],
+            [
+                64,
+                -72
+            ],
+            [
+                26,
+                -70
+            ],
+            [
+                57,
+                -19
+            ]
+        ],
+        [
+            [
+                554,
+                660
+            ],
+            [
+                75,
+                -47
+            ]
+        ],
+        [
+            [
+                629,
+                613
+            ],
+            [
+                -33,
+                -97
+            ]
+        ],
+        [
+            [
+                596,
+                516
+            ],
+            [
+                -31,
+                -11
+            ]
+        ],
+        [
+            [
+                565,
+                505
+            ],
+            [
+                -69,
+                12
+            ],
+            [
+                -28,
+                30
+            ],
+            [
+                -69,
+                22
+            ],
+            [
+                -83,
+                73
+            ]
+        ],
+        [
+            [
+                444,
+                668
+            ],
+            [
+                110,
+                -8
+            ]
+        ],
+        [
+            [
+                565,
+                505
+            ],
+            [
+                47,
+                -69
+            ]
+        ],
+        [
+            [
+                612,
+                436
+            ],
+            [
+                -38,
+                2
+            ],
+            [
+                -4,
+                -66
+            ],
+            [
+                -35,
+                -76
+            ],
+            [
+                75,
+                -61
+            ],
+            [
+                61,
+                35
+            ],
+            [
+                26,
+                -39
+            ]
+        ],
+        [
+            [
+                697,
+                231
+            ],
+            [
+                32,
+                -77
+            ],
+            [
+                35,
+                -18
+            ],
+            [
+                58,
+                -112
+            ],
+            [
+                -41,
+                -24
+            ],
+            [
+                -83,
+                16
+            ],
+            [
+                -38,
+                42
+            ],
+            [
+                -77,
+                14
+            ],
+            [
+                -121,
+                -3
+            ],
+            [
+                -44,
+                72
+            ],
+            [
+                -108,
+                69
+            ],
+            [
+                -96,
+                19
+            ],
+            [
+                -24,
+                55
+            ],
+            [
+                -88,
+                -7
+            ],
+            [
+                -4,
+                49
+            ],
+            [
+                -40,
+                16
+            ],
+            [
+                -20,
+                168
+            ],
+            [
+                5,
+                42
+            ]
+        ],
+        [
+            [
+                777,
+                897
+            ],
+            [
+                -43,
+                -27
+            ],
+            [
+                -60,
+                -87
+            ],
+            [
+                -45,
+                10
+            ],
+            [
+                -60,
+                -79
+            ],
+            [
+                9,
+                -42
+            ]
+        ],
+        [
+            [
+                578,
+                672
+            ],
+            [
+                -58,
+                32
+            ],
+            [
+                -23,
+                80
+            ],
+            [
+                -88,
+                88
+            ]
+        ],
+        [
+            [
+                409,
+                872
+            ],
+            [
+                61,
+                48
+            ],
+            [
+                23,
+                91
+            ],
+            [
+                105,
+                118
+            ],
+            [
+                29,
+                12
+            ]
+        ],
+        [
+            [
+                627,
+                1141
+            ],
+            [
+                24,
+                -15
+            ],
+            [
+                27,
+                -109
+            ],
+            [
+                57,
+                -83
+            ],
+            [
+                42,
+                -37
+            ]
+        ],
+        [
+            [
+                1032,
+                807
+            ],
+            [
+                -80,
+                3
+            ],
+            [
+                -51,
+                32
+            ],
+            [
+                -72,
+                5
+            ]
+        ],
+        [
+            [
+                829,
+                847
+            ],
+            [
+                -52,
+                50
+            ]
+        ],
+        [
+            [
+                627,
+                1141
+            ],
+            [
+                -67,
+                73
+            ],
+            [
+                -21,
+                75
+            ],
+            [
+                -21,
+                137
+            ],
+            [
+                20,
+                51
+            ],
+            [
+                44,
+                8
+            ],
+            [
+                25,
+                61
+            ],
+            [
+                98,
+                -130
+            ],
+            [
+                33,
+                61
+            ],
+            [
+                53,
+                -15
+            ],
+            [
+                34,
+                -89
+            ],
+            [
+                44,
+                17
+            ],
+            [
+                31,
+                -92
+            ],
+            [
+                144,
+                -60
+            ],
+            [
+                61,
+                7
+            ],
+            [
+                69,
+                -18
+            ],
+            [
+                45,
+                -77
+            ],
+            [
+                -36,
+                -30
+            ],
+            [
+                42,
+                -77
+            ],
+            [
+                68,
+                -52
+            ],
+            [
+                81,
+                -104
+            ],
+            [
+                1,
+                -44
+            ],
+            [
+                -38,
+                -79
+            ],
+            [
+                -49,
+                -49
+            ],
+            [
+                -81,
+                13
+            ],
+            [
+                -30,
+                -13
+            ],
+            [
+                -85,
+                117
+            ],
+            [
+                -60,
+                -25
+            ]
+        ],
+        [
+            [
+                829,
+                847
+            ],
+            [
+                11,
+                -36
+            ],
+            [
+                -92,
+                -107
+            ],
+            [
+                -34,
+                -103
+            ],
+            [
+                -24,
+                -27
+            ]
+        ],
+        [
+            [
+                690,
+                574
+            ],
+            [
+                -61,
+                39
+            ]
+        ],
+        [
+            [
+                554,
+                660
+            ],
+            [
+                24,
+                12
+            ]
+        ],
+        [
+            [
+                299,
+                935
+            ],
+            [
+                63,
+                -52
+            ],
+            [
+                47,
+                -11
+            ]
+        ],
+        [
+            [
+                932,
+                483
+            ],
+            [
+                -7,
+                -76
+            ],
+            [
+                -57,
+                -94
+            ],
+            [
+                -51,
+                -18
+            ],
+            [
+                -22,
+                -64
+            ],
+            [
+                -98,
+                0
+            ]
+        ],
+        [
+            [
+                612,
+                436
+            ],
+            [
+                81,
+                -20
+            ]
+        ],
+        [
+            [
+                693,
+                416
+            ],
+            [
+                69,
+                -8
+            ],
+            [
+                31,
+                -27
+            ],
+            [
+                38,
+                63
+            ],
+            [
+                -5,
+                47
+            ]
+        ],
+        [
+            [
+                826,
+                491
+            ],
+            [
+                24,
+                25
+            ],
+            [
+                82,
+                -33
+            ]
+        ],
+        [
+            [
+                596,
+                516
+            ],
+            [
+                75,
+                -24
+            ]
+        ],
+        [
+            [
+                671,
+                492
+            ],
+            [
+                22,
+                -76
+            ]
+        ],
+        [
+            [
+                671,
+                492
+            ],
+            [
+                41,
+                39
+            ]
+        ],
+        [
+            [
+                712,
+                531
+            ],
+            [
+                114,
+                -40
+            ]
+        ],
+        [
+            [
+                1032,
+                807
+            ],
+            [
+                31,
+                -147
+            ],
+            [
+                -56,
+                -42
+            ],
+            [
+                -14,
+                -56
+            ],
+            [
+                -48,
+                -37
+            ],
+            [
+                -13,
+                -42
+            ]
+        ],
+        [
+            [
+                712,
+                531
+            ],
+            [
+                -22,
+                43
+            ]
+        ]
+    ],
+    "transform": {
+        "scale": [
+            0.0004508803643636218,
+            0.00045767035899092
+        ],
+        "translate": [
+            -77.75226323699997,
+            -6.708452849999901
+        ]
+    },
+    "objects": {
+        "0106": {
+            "type": "GeometryCollection",
+            "geometries": [
+                {
+                    "arcs": [
+                        [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "COCHAMAL",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010603",
+                        "DISTRITO": "COCHAMAL",
+                        "CAPITAL": "COCHAMAL",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            4,
+                            5,
+                            6,
+                            7,
+                            -1,
+                            8
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "HUAMBO",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010604",
+                        "DISTRITO": "HUAMBO",
+                        "CAPITAL": "HUAMBO",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            -8,
+                            9,
+                            10,
+                            11,
+                            -2
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "LIMABAMBA",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010605",
+                        "DISTRITO": "LIMABAMBA",
+                        "CAPITAL": "LIMABAMBA",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            12,
+                            13,
+                            14,
+                            15
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "MARISCAL BENAVIDES",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010607",
+                        "DISTRITO": "MARISCAL BENAVIDES",
+                        "CAPITAL": "MARISCAL BENAVIDES",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            16,
+                            17,
+                            -16,
+                            18
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "VISTA ALEGRE",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010612",
+                        "DISTRITO": "VISTA ALEGRE",
+                        "CAPITAL": "VISTA ALEGRE",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            19,
+                            20,
+                            -5,
+                            21,
+                            -13,
+                            -18
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "SAN NICOLAS",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010601",
+                        "DISTRITO": "SAN NICOLAS",
+                        "CAPITAL": "MENDOZA",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            -14,
+                            -22,
+                            -9,
+                            -4,
+                            22
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "LONGAR",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010606",
+                        "DISTRITO": "LONGAR",
+                        "CAPITAL": "LONGAR",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            23,
+                            -11,
+                            24,
+                            25,
+                            26
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "CHIRIMOTO",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010602",
+                        "DISTRITO": "CHIRIMOTO",
+                        "CAPITAL": "CHIRIMOTO",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            -25,
+                            -10,
+                            -7,
+                            27,
+                            28
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "TOTORA",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010611",
+                        "DISTRITO": "TOTORA",
+                        "CAPITAL": "TOTORA",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            -26,
+                            -29,
+                            29,
+                            30
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "MILPUC",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010608",
+                        "DISTRITO": "MILPUC",
+                        "CAPITAL": "MILPUC",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            31,
+                            -27,
+                            -31,
+                            32,
+                            -20,
+                            -17
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "OMIA",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010609",
+                        "DISTRITO": "OMIA",
+                        "CAPITAL": "OMIA",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                },
+                {
+                    "arcs": [
+                        [
+                            -33,
+                            -30,
+                            -28,
+                            -6,
+                            -21
+                        ]
+                    ],
+                    "type": "Polygon",
+                    "id": "SANTA ROSA",
+                    "properties": {
+                        "IDDPTO": "01",
+                        "DEPARTAMEN": "AMAZONAS",
+                        "IDPROV": "0106",
+                        "PROVINCIA": "RODRIGUEZ DE MENDOZA",
+                        "ubigeo": "010610",
+                        "DISTRITO": "SANTA ROSA",
+                        "CAPITAL": "SANTA ROSA DE HUAYABAMBA",
+                        "CODCCPP": "0001",
+                        "AREA": 1,
+                        "FUENTE": "INEI"
+                    }
+                }
+            ]
+        }
+    }
+}

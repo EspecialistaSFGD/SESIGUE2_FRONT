@@ -1,0 +1,369 @@
+{
+  "type": "Topology",
+  "arcs": [
+    [
+      [
+        302,
+        491
+      ],
+      [
+        26,
+        -69
+      ],
+      [
+        96,
+        -12
+      ],
+      [
+        74,
+        -23
+      ],
+      [
+        65,
+        -39
+      ],
+      [
+        61,
+        30
+      ]
+    ],
+    [
+      [
+        624,
+        378
+      ],
+      [
+        -41,
+        -94
+      ],
+      [
+        -42,
+        -40
+      ]
+    ],
+    [
+      [
+        541,
+        244
+      ],
+      [
+        -29,
+        60
+      ],
+      [
+        -28,
+        -22
+      ],
+      [
+        -131,
+        -56
+      ],
+      [
+        -1,
+        -19
+      ],
+      [
+        -152,
+        4
+      ],
+      [
+        -27,
+        -9
+      ]
+    ],
+    [
+      [
+        173,
+        202
+      ],
+      [
+        -70,
+        108
+      ],
+      [
+        -26,
+        8
+      ]
+    ],
+    [
+      [
+        77,
+        318
+      ],
+      [
+        23,
+        30
+      ],
+      [
+        15,
+        91
+      ],
+      [
+        96,
+        58
+      ],
+      [
+        91,
+        -6
+      ]
+    ],
+    [
+      [
+        541,
+        244
+      ],
+      [
+        -84,
+        -106
+      ],
+      [
+        -25,
+        -99
+      ],
+      [
+        -42,
+        -19
+      ],
+      [
+        -72,
+        14
+      ],
+      [
+        -119,
+        -30
+      ],
+      [
+        -86,
+        15
+      ],
+      [
+        -69,
+        -19
+      ],
+      [
+        -44,
+        42
+      ]
+    ],
+    [
+      [
+        0,
+        42
+      ],
+      [
+        45,
+        -6
+      ],
+      [
+        30,
+        34
+      ],
+      [
+        56,
+        18
+      ],
+      [
+        42,
+        114
+      ]
+    ],
+    [
+      [
+        0,
+        42
+      ],
+      [
+        63,
+        80
+      ],
+      [
+        25,
+        84
+      ],
+      [
+        -11,
+        112
+      ]
+    ],
+    [
+      [
+        302,
+        491
+      ],
+      [
+        62,
+        57
+      ],
+      [
+        51,
+        9
+      ],
+      [
+        5,
+        54
+      ],
+      [
+        55,
+        32
+      ],
+      [
+        37,
+        44
+      ],
+      [
+        26,
+        75
+      ],
+      [
+        71,
+        9
+      ],
+      [
+        47,
+        38
+      ],
+      [
+        19,
+        80
+      ],
+      [
+        44,
+        10
+      ],
+      [
+        21,
+        -67
+      ],
+      [
+        -35,
+        -94
+      ],
+      [
+        21,
+        -81
+      ],
+      [
+        -1,
+        -103
+      ],
+      [
+        -43,
+        -32
+      ],
+      [
+        -58,
+        -144
+      ]
+    ]
+  ],
+  "transform": {
+    "scale": [
+      0.000429345270270297,
+      0.00041707258064520487
+    ],
+    "translate": [
+      -78.91632211299992,
+      -7.228392599999999
+    ]
+  },
+  "objects": {
+    "0612": {
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "arcs": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0612",
+            "PROVINCIA": "SAN PABLO",
+            "DISTRITO": "SAN PABLO",
+            "CAPITAL": "SAN PABLO",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061201"
+          },
+          "id": "SAN PABLO"
+        },
+        {
+          "arcs": [
+            [
+              5,
+              6,
+              -3
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0612",
+            "PROVINCIA": "SAN PABLO",
+            "DISTRITO": "SAN BERNARDINO",
+            "CAPITAL": "SAN BERNARDINO",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061202"
+          },
+          "id": "SAN BERNARDINO"
+        },
+        {
+          "arcs": [
+            [
+              7,
+              -4,
+              -7
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0612",
+            "PROVINCIA": "SAN PABLO",
+            "DISTRITO": "SAN LUIS",
+            "CAPITAL": "SAN LUIS GRANDE",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061203"
+          },
+          "id": "SAN LUIS"
+        },
+        {
+          "arcs": [
+            [
+              -1,
+              8
+            ]
+          ],
+          "type": "Polygon",
+          "properties": {
+            "IDDPTO": "06",
+            "DEPARTAMEN": "CAJAMARCA",
+            "IDPROV": "0612",
+            "PROVINCIA": "SAN PABLO",
+            "DISTRITO": "TUMBADEN",
+            "CAPITAL": "TUMBADEN",
+            "CODCCPP": "0001",
+            "AREA": 1,
+            "FUENTE": "INEI",
+            "ubigeo": "061204"
+          },
+          "id": "TUMBADEN"
+        }
+      ]
+    }
+  }
+}

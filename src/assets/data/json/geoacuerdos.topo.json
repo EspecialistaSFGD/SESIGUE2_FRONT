@@ -1,175 +1,175 @@
 [
     {
-        "id": "01",
-        "departamento": "Amazonas",
+        "id": "AMAZONAS",
+        "ubigeo": "01",
         "acuerdos": 5,
         "acuerdosEjecutados": 5,
         "avance": 100
     },
     {
-        "id": "02",
-        "departamento": "Ancash",
+        "id": "ANCASH",
+        "ubigeo": "02",
         "acuerdos": 4,
         "acuerdosEjecutados": 4,
         "avance": 100
     },
     {
-        "id": "03",
-        "departamento": "Apurímac",
+        "id": "APURIMAC",
+        "ubigeo": "03",
         "acuerdos": 8,
         "acuerdosEjecutados": 8,
         "avance": 100
     },
     {
-        "id": "04",
-        "departamento": "Arequipa",
+        "id": "AREQUIPA",
+        "ubigeo": "04",
         "acuerdos": 6,
         "acuerdosEjecutados": 5,
         "avance": 83
     },
     {
-        "id": "05",
-        "departamento": "Ayacucho",
+        "id": "AYACUCHO",
+        "ubigeo": "05",
         "acuerdos": 7,
         "acuerdosEjecutados": 6,
         "avance": 86
     },
     {
-        "id": "06",
-        "departamento": "Cajamarca",
+        "id": "CAJAMARCA",
+        "ubigeo": "06",
         "acuerdos": 5,
         "acuerdosEjecutados": 4,
         "avance": 80
     },
     {
-        "id": "07",
-        "departamento": "Callao",
+        "id": "CALLAO",
+        "ubigeo": "07",
         "acuerdos": 5,
         "acuerdosEjecutados": 4,
         "avance": 80
     },
     {
-        "id": "08",
-        "departamento": "Cusco",
+        "id": "CUSCO",
+        "ubigeo": "08",
         "acuerdos": 6,
         "acuerdosEjecutados": 5,
         "avance": 83
     },
     {
-        "id": "09",
-        "departamento": "Huancavelica",
+        "id": "HUANCAVELICA",
+        "ubigeo": "09",
         "acuerdos": 7,
         "acuerdosEjecutados": 6,
         "avance": 86
     },
     {
-        "id": "10",
-        "departamento": "Huanuco",
+        "id": "HUANUCO",
+        "ubigeo": "10",
         "acuerdos": 5,
         "acuerdosEjecutados": 5,
         "avance": 100
     },
     {
-        "id": "11",
-        "departamento": "Ica",
+        "id": "ICA",
+        "ubigeo": "11",
         "acuerdos": 4,
         "acuerdosEjecutados": 4,
         "avance": 100
     },
     {
-        "id": "12",
-        "departamento": "Junin",
+        "id": "JUNIN",
+        "ubigeo": "12",
         "acuerdos": 6,
         "acuerdosEjecutados": 5,
         "avance": 83
     },
     {
-        "id": "13",
-        "departamento": "La Libertad",
+        "id": "LA LIBERTAD",
+        "ubigeo": "13",
         "acuerdos": 5,
         "acuerdosEjecutados": 5,
         "avance": 100
     },
     {
-        "id": "14",
-        "departamento": "Lambayeque",
+        "id": "LAMBAYEQUE",
+        "ubigeo": "14",
         "acuerdos": 4,
         "acuerdosEjecutados": 3,
         "avance": 83
     },
     {
-        "id": "15",
-        "departamento": "Lima",
+        "id": "LIMA",
+        "ubigeo": "15",
         "acuerdos": 5,
         "acuerdosEjecutados": 5,
         "avance": 100
     },
     {
-        "id": "16",
-        "departamento": "Loreto",
+        "id": "LORETO",
+        "ubigeo": "16",
         "acuerdos": 6,
         "acuerdosEjecutados": 5,
         "avance": 83
     },
     {
-        "id": "17",
-        "departamento": "Madre de Dios",
+        "id": "MADRE DE DIOS",
+        "ubigeo": "17",
         "acuerdos": 4,
         "acuerdosEjecutados": 4,
         "avance": 100
     },
     {
-        "id": "18",
-        "departamento": "Moquegua",
+        "id": "MOQUEGUA",
+        "ubigeo": "18",
         "acuerdos": 5,
         "acuerdosEjecutados": 5,
         "avance": 100
     },
     {
-        "id": "19",
-        "departamento": "Pasco",
+        "id": "PASCO",
+        "ubigeo": "19",
         "acuerdos": 5,
         "acuerdosEjecutados": 5,
         "avance": 100
     },
     {
-        "id": "20",
-        "departamento": "Piura",
+        "id": "PIURA",
+        "ubigeo": "20",
         "acuerdos": 4,
         "acuerdosEjecutados": 4,
         "avance": 100
     },
     {
-        "id": "21",
-        "departamento": "Puno",
+        "id": "PUNO",
+        "ubigeo": "21",
         "acuerdos": 6,
         "acuerdosEjecutados": 5,
         "avance": 83
     },
     {
-        "id": "22",
-        "departamento": "San Martin",
+        "id": "SAN MARTIN",
+        "ubigeo": "22",
         "acuerdos": 5,
         "acuerdosEjecutados": 5,
         "avance": 100
     },
     {
-        "id": "23",
-        "departamento": "Tacna",
+        "id": "TACNA",
+        "ubigeo": "23",
         "acuerdos": 4,
         "acuerdosEjecutados": 4,
         "avance": 100
     },
     {
-        "id": "24",
-        "departamento": "Tumbes",
+        "id": "TUMBES",
+        "ubigeo": "24",
         "acuerdos": 3,
         "acuerdosEjecutados": 3,
         "avance": 100
     },
     {
-        "id": "25",
-        "departamento": "Ucayali",
+        "id": "UCAYALI",
+        "ubigeo": "25",
         "acuerdos": 5,
         "acuerdosEjecutados": 5,
         "avance": 100
