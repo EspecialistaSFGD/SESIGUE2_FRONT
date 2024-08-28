@@ -2,62 +2,182 @@
     description="Esta plataforma ha sido desarrollada con el objetivo de facilitar el control y seguimiento de los Espacios de Articulación."
     [links]="links" [breadcrumbs]="breadcrumbs" img="./assets/images/logo__login--big--colored--old.svg" />
 
+<div class="site-page-header-ghost-wrapper mb-8">
+    <nz-page-header [nzGhost]="false">
+        <nz-page-header-title>Panel de control consolidado</nz-page-header-title>
+        <nz-page-header-content>
+            <form [formGroup]="filterReportForm" nz-form nzLayout="vertical">
+                <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+                    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="5" nzLg="5" nzXl="5">
+                        <nz-form-item>
+                            <nz-form-label>Periodo</nz-form-label>
+                            <nz-form-control>
+                                <nz-date-picker class="w-full" nzMode="month" formControlName="periodo"
+                                    nzFormat="MM/yyyy"></nz-date-picker>
+                                <!-- <nz-range-picker class="w-full" nzMode="month" nzFormat="MM/yyyy"
+                                    formControlName="periodo"></nz-range-picker> -->
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
 
-<!-- 
+                    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="4" nzLg="4" nzXl="4">
+                        <nz-form-item>
+                            <nz-form-label>Sector</nz-form-label>
+                            <nz-form-control>
+                                <nz-select [nzMaxTagCount]="3" id="sectorSelect" nzPlaceHolder="Seleccione"
+                                    #sectorSelect formControlName="sectorSelect"
+                                    (ngModelChange)="onSectorChange($event)" [compareWith]="compareFn" nzAllowClear>
+                                    <nz-option *ngFor="let sec of sectoresStore.sectores()" [nzLabel]="sec.label!"
+                                        [nzValue]="sec"></nz-option>
+                                </nz-select> </nz-form-control>
+                        </nz-form-item>
+                    </div>
 
-<nz-table nzShowSizeChanger [nzData]="this.requerimientosService.requerimientos()" [nzFrontPagination]="false"
-    [nzLoading]="this.requerimientosService.isLoading()" [nzTotal]="this.requerimientosService.total()"
-    [nzPageSize]="this.requerimientosService.pageSize()" [nzPageIndex]="this.requerimientosService.pageIndex()"
-    (nzQueryParams)="onQueryParamsChange($event)">
-    <thead>
-        <tr>
-            <th nzColumnKey="nomRequerimiento" [nzSortFn]="true">Requerimiento</th>
-            <th nzColumnKey="tipRequerimiento">Tipo de Adquisición</th>
-            <th nzColumnKey="estRequerimiento">Estado</th>
-            <th nzColumnKey="fecRegistro" [nzSortFn]="true">Fecha de registro</th>
-            <th nzColumnKey="acciones">Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @for (data of this.requerimientosService.requerimientos(); track data.idRequerimiento) {
-        <tr>
-            <td>{{ data.nomRequerimiento }}</td>
-            <td>{{ data.tipoRequerimiento!.label }}</td>
-            <td><app-estado [title]="data.estRequerimiento!.label!" /></td>
-            <td>{{ data.fecRegistro | date: 'dd/MM/yyyy' }}</td>
-            <td>
-                <nz-space>
-                    <button [routerLink]="['/requerimiento', data.idRequerimiento]"
-                        routerLinkActive="router-link-active" *nzSpaceItem nz-button nzType="link">
-                        editar
-                    </button>
-                    <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(data)">
-                        eliminar
-                    </button>
-                </nz-space>
-            </td>
-        </tr>
-        }
-    </tbody>
-</nz-table> -->
+                    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="4" nzLg="4" nzXl="4">
+                        <nz-form-item>
+                            <nz-form-label>Espacio</nz-form-label>
+                            <nz-form-control>
+                                <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione"
+                                    #espacioSelect formControlName="espacioSelect" [compareWith]="compareFn"
+                                    nzShowSearch nzAllowClear>
+                                    <nz-option *ngFor="let esp of espaciosStore.espacios()" [nzLabel]="esp.label!"
+                                        [nzValue]="esp"></nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
 
-<!-- <div style="background: #ECECEC;padding:30px;"> -->
-<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-    @if( authService.canViewPedidos() == true ) {
-    <div nz-col [nzSpan]="24" nzLg="12" class="mb-4 lg:mb-0">
-        <nz-card nzTitle="Pedidos">
+                    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="4" nzLg="4" nzXl="4">
+                        <nz-form-item>
+                            <nz-form-label>Departamento</nz-form-label>
+                            <nz-form-control>
+                                <nz-select id="departamentoSelect" class="w-full" #departamentoSelect
+                                    formControlName="departamentoSelect" nzPlaceHolder="Todos" nzShowSearch
+                                    [compareWith]="compareFn" nzAllowClear (ngModelChange)="onDepChange($event)">
+                                    <nz-option *ngFor="let ubg of ubigeosStore.departamentos()" [nzValue]="ubg"
+                                        [nzLabel]="ubg.label!">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
 
-            <p class="mb-4">Desde este espacio, puede listar y generar nuevos pedidos.</p>
-            <a nz-button nzType="primary" routerLink="/pedidos">Ver pedidos</a>
+                    @if(filterReportForm.get('departamentoSelect')?.value != null) {
+                    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="4" nzLg="4" nzXl="4">
+                        <nz-form-item>
+                            <nz-form-label>Provincia</nz-form-label>
+                            <nz-form-control>
+                                <nz-select class="w-full" #provinciaSelect id="provinciaSelect"
+                                    formControlName="provinciaSelect" nzPlaceHolder="Todas" nzShowSearch
+                                    [compareWith]="compareFn" nzAllowClear (ngModelChange)="onProvChange($event)">
+                                    <nz-option *ngFor="let prov of ubigeosStore.provincias()" [nzValue]="prov"
+                                        [nzLabel]="prov.label!">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    }
+                </div>
+            </form>
+        </nz-page-header-content>
+    </nz-page-header>
+</div>
+
+<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <nz-card nzTitle="Acuerdos por región">
+            <div id="container"></div>
         </nz-card>
     </div>
-    }
-    <div nz-col [nzSpan]="24" nzLg="12" class="mb-4 lg:mb-0">
-        <nz-card nzTitle="Acuerdos">
-            <p class="mb-4">Desde este espacio, puede listar y generar nuevos acuerdos.</p>
 
-            <a nz-button nzType="primary" routerLink="/acuerdos">Ver acuerdos</a>
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="16" nzLg="16" nzXl="16">
+        <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-card nzTitle="Acuerdos de las metas bilaterales por sector">
+
+                    <!-- {{reporteSectores().length>0|json}} -->
+                    @if(reporteSectores().length>0) {
+                    <nz-table class="w-full" nzSize="small" nzTemplateMode>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Nº de Acuerdos</th>
+                                <th>Ejecutados</th>
+                                <th>Avance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of reporteSectores(); track item.sector) {
+                            <tr>
+                                <td>{{item.sector}}</td>
+                                <td>{{item.acuerdos}}</td>
+                                <td>{{item.ejecutados}}</td>
+                                <td>
+                                    @if(item.porcentaje) {
+                                    <nz-progress [nzPercent]="item.porcentaje"
+                                        [nzStatus]="(item.porcentaje == 100) ? 'normal' : 'active'"
+                                        [nzStrokeColor]="(item.porcentaje > 70) ? '#52c41a' : '#1890ff'"></nz-progress>
+                                    }
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </nz-table>
+                    }
+                </nz-card>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="my-8">
+    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+        <div class="flex flex-row overflow-x-auto gap-4">
+            <!-- Generar las cards de manera dinámica -->
+            @for (acuerdo of acuerdos(); track $index) {
+            <div class="shrink-0 w-72">
+                <nz-card>
+                    <nz-row [nzGutter]="16">
+                        <nz-col [nzSpan]="24">
+                            <h4 class="font-bold">{{acuerdo.id}}</h4>
+                        </nz-col>
+                    </nz-row>
+
+                    <nz-row [nzGutter]="16">
+                        <nz-col [nzSpan]="12">
+                            <dl>
+                                <dt><span class="text-xl">{{acuerdo.totalAcuerdo}}</span></dt>
+                                <dd>Acuerdos</dd>
+
+                                <dt><span class="text-xl">{{acuerdo.totalEjecutado}}</span></dt>
+                                <dd>Ejecutados</dd>
+                            </dl>
+                        </nz-col>
+                        <nz-col [nzSpan]="12" class="text-right">
+                            <nz-progress [nzStatus]="(acuerdo.porcentaje == 100) ? 'normal' : 'active'"
+                                [nzStrokeColor]="(acuerdo.porcentaje > 70) ? '#52c41a' : '#1890ff'"
+                                [nzPercent]="acuerdo.porcentaje" nzType="circle" [nzWidth]="72"></nz-progress>
+                        </nz-col>
+                    </nz-row>
+                </nz-card>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="mt-8">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+        <nz-card nzTitle="Avance de cumplimientos de Acuerdos">
+            <div id="container-bar"></div>
+        </nz-card>
+    </div>
+
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+        <nz-card nzTitle="% de ejecución por Tipo de Acuerdos">
+            <div id="container-radial"></div>
         </nz-card>
     </div>
 </div>
-<!-- </div> -->

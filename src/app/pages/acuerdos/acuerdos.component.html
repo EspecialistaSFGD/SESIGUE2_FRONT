@@ -1,4 +1,5 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
+<!-- {{this.authService.sector() |json}} -->
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
     [nzData]="this.acuerdosService.acuerdos()!" [nzFrontPagination]="false"
     [nzLoading]="this.acuerdosService.isLoading()" [nzTotal]="this.acuerdosService.total()" [nzPageSize]="this.pageSize"
@@ -130,18 +131,30 @@
                 <nz-dropdown-menu #menu="nzDropdownMenu">
                     <ul nz-menu>
                         <li nz-menu-item>
-                            <a>Exportar acuerdos</a>
+                            <button (click)="isVisible=true" nz-button nzType="text" type="button">Exportar
+                                acuerdos</button>
                         </li>
                         <li nz-menu-item>
-                            <a>Exportar hitos</a>
+                            <button (click)="isVisible=true" nz-button nzType="text" type="button">Exportar
+                                hitos</button>
                         </li>
                     </ul>
                 </nz-dropdown-menu>
+
                 <!-- {{authService.permisos()?.puede_agregar_acuerdo| json}} -->
-                @if(authService.permisos()?.puede_agregar_acuerdo){
+                <!-- @if(authService.permisos()?.puede_agregar_acuerdo){
                 <button *nzSpaceItem nz-button nzType="primary" (click)="onAddEdit(null, 'ACUERDO', 'CREATE')">
                     <span nz-icon nzType="plus" nzTheme="outline"></span>
                     <span class="button-text">Nuevo acuerdo</span>
+                </button>
+                } -->
+
+
+                <!-- //TODO: agregar rol para registro de acuerdos express -->
+                @if(authService.permisos()?.puede_agregar_acuerdo_mt){
+                <button *nzSpaceItem nz-button nzType="primary" (click)="onAddEdit(null, 'ACUERDO', 'RECREATE')">
+                    <span nz-icon nzType="plus" nzTheme="outline"></span>
+                    <span class="button-text">Agregar acuerdo desde Mesa de Trabajo</span>
                 </button>
                 }
             </nz-space>
@@ -314,3 +327,14 @@
         </div>
     </ng-template>
 </nz-drawer>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Descarga de reporte" (nzOnOk)="handleOk()" (nzOnCancel)="handleCancel()">
+    <ng-container *nzModalContent>
+        Deseo descargar
+
+        <nz-select class="w-56">
+            <nz-option nzValue="excel" nzLabel="Solo páginas visibles de la tabla"></nz-option>
+            <nz-option nzValue="pdf" nzLabel="Todas las páginas del reporte"></nz-option>
+        </nz-select>
+    </ng-container>
+</nz-modal>

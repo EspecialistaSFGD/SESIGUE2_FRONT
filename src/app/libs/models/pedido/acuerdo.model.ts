@@ -55,11 +55,30 @@ export class AcuerdoPedidoModel extends SeguridadModel {
     }
 }
 
+export interface AcuerdoReporteModel {
+    ubigeo: string;
+    id: string;
+    totalAcuerdo: number;
+    totalEjecutado: number;
+    porcentaje: number;
+}
+
+
 //Extender de dos clases
 export class AcuerdoPedidoExpressModel extends AcuerdoPedidoModel {
     constructor(
         public grupoId?: number,
         public grupoSelect?: SelectModel,
+        public espacioSelect?: SelectModel,
+        public sectorSelect?: SelectModel,
+        public departamentoSelect?: SelectModel,
+        public provinciaSelect?: SelectModel,
+        public tipoCodigoSelect?: SelectModel,
+        public tipoCodigo?: number,
+        public ejeEstrategicoId?: number,
+        public ejeEstrategicoSelect?: SelectModel,
+        public tipoIntervencionSelect?: SelectModel,
+        public tipoIntervencionId?: number,
     ) {
         super();
     }

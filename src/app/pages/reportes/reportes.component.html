@@ -1,51 +1,52 @@
 <app-page-header title="Reportes" backUrl="panel"></app-page-header>
+<!-- TODO: Implementar CRD de reportes -->
+<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="mb-8">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+        <nz-card>
+            <nz-table [nzTitle]="HeaderReporte" nzShowSizeChanger nzSize="small"
+                [nzData]="this.reportesService.reportes()!" [nzFrontPagination]="false"
+                [nzLoading]="this.reportesService.isLoading()" [nzTotal]="this.reportesService.total()"
+                [nzPageSize]="this.pageSize" [nzPageIndex]="this.pageIndex"
+                (nzQueryParams)="onQueryParamsChange($event)">
+                <thead>
+                    <tr>
+                        <th nzWidth="100px" nzColumnKey="reporteCabeceraId" [nzSortFn]="true">Id</th>
+                        <th nzColumnKey="descripcionReporte">Descripción del reporte</th>
+                        <th nzColumnKey="fechaRegistro" [nzSortFn]="true">Fecha de registro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (data of this.reportesService.reportes(); track data.reporteCabeceraId) {
+                    <tr class="cursor-pointer">
+                        <td nzWidth="100px">{{ data.reporteCabeceraId }}</td>
+                        <td>{{ data.descripcionReporte }}</td>
+                        <td>{{ data.fechaRegistro | date: 'dd/MM/yyyy' }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </nz-table>
 
-<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
-        <nz-card>
-            <nz-statistic [nzValue]="(12423435654 | number)!" [nzTitle]="'Total de acuerdos'"></nz-statistic>
-            <div id="container"></div>
+            <ng-template #HeaderReporte>
+                <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+                    <p class="mb-2 sm:mb-0 font-semibold text-base">
+                        Historial de reportes
+                    </p>
+
+                    <div>
+                        <nz-space>
+                            @if(true){
+                            <button *nzSpaceItem nz-button nzType="primary" (click)="onAddReport()">
+                                <span nz-icon nzType="folder-add" nzTheme="outline"></span>
+                                <span>Generar reporte</span>
+                            </button>
+                            }
+                        </nz-space>
+                    </div>
+                </div>
+            </ng-template>
         </nz-card>
     </div>
-    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
-        <nz-card>
-            <nz-statistic [nzValue]="(2019.111 | number: '1.0-2')!" [nzTitle]="'Account Balance (CNY)'"></nz-statistic>
-            <!-- <button nz-button nzType="primary" [style.margin-top.px]="16">Recharge</button> -->
-        </nz-card>
-    </div>
-    <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
-        <nz-card>
-            <nz-statistic [nzValue]="(112893 | number: '1.0-2')!" nzTitle="Active Users" nzLoading></nz-statistic>
-        </nz-card>
-    </div> -->
 </div>
 
-
-
-<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-    @for (acuerdo of acuerdos(); track $index) {
-    <div nz-col class="gutter-row mt-4" nzXs="24" nzSm="24" nzMd="6" nzLg="6" nzXl="6">
-        <nz-card>
-            <nz-row [nzGutter]="16">
-                <nz-col [nzSpan]="24">
-                    <nz-statistic [nzValue]="acuerdo.departamento"></nz-statistic>
-                </nz-col>
-                <nz-col [nzSpan]="8">
-                    <nz-statistic [nzValue]="(acuerdo.acuerdos | number: '1.0-2')!"
-                        [nzTitle]="'Planificado'"></nz-statistic>
-                </nz-col>
-                <nz-col [nzSpan]="8">
-                    <nz-statistic [nzValue]="(acuerdo.acuerdosEjecutados | number: '1.0-2')!"
-                        [nzTitle]="'Ejecutado'"></nz-statistic>
-                </nz-col>
-                <nz-col [nzSpan]="8">
-                    <nz-statistic [nzValue]="(acuerdo.avance | number: '1.0-2')!" [nzTitle]="'Avance'" [nzSuffix]="'%'"
-                        [nzValueStyle]="{  color: ( acuerdo.avance == 100) ? '#3F8600' : '#ff6600' }"></nz-statistic>
-                </nz-col>
-            </nz-row>
-        </nz-card>
-    </div>
-    }
-</div>
 
 <!-- {{ acuerdos() | json }} -->

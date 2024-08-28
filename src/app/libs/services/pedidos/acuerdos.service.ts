@@ -217,41 +217,39 @@ export class AcuerdosService {
     }
 
     agregarAcuerdoExpress(acuerdo: AcuerdoPedidoExpressModel): Promise<ResponseModel> {
-        //TOFO: implementar
-
         const ots: AcuerdoPedidoExpressModel = {} as AcuerdoPedidoExpressModel;
-        ots.prioridadId = acuerdo.prioridadId;
-        if (acuerdo.acuerdoId) ots.acuerdoId = acuerdo.acuerdoId;
 
-        if (acuerdo.clasificacionSelect) ots.clasificacionId = Number(acuerdo.clasificacionSelect.value);
-        if (acuerdo.responsableSelect) ots.responsableId = Number(acuerdo.responsableSelect.value);
-        ots.entidadId = (acuerdo.entidadSelect) ? Number(acuerdo.entidadSelect.value) : 0;
-        if (acuerdo.tipoSelect) ots.tipoId = Number(acuerdo.tipoSelect);
-        ots.accesoId = this.authService.getCodigoUsuario();
-        if (acuerdo.plazo) ots.plazo = acuerdo.plazo;
-        if (acuerdo.es_preAcuerdoBool !== null) {
-            ots.es_preAcuerdo = (acuerdo.es_preAcuerdoBool) ? 1 : 0;
+        if (acuerdo.espacioSelect) ots.eventoId = Number(acuerdo.espacioSelect.value);
+        if (acuerdo.sectorSelect) ots.grupoId = Number(acuerdo.sectorSelect.value);
+        if (acuerdo.provinciaSelect) ots.ubigeo = acuerdo.provinciaSelect.value?.toString();
+        if (acuerdo.aspectoCriticoResolver) ots.aspectoCriticoResolver = acuerdo.aspectoCriticoResolver;
+        if (acuerdo.tipoCodigoSelect) ots.tipoCodigo = Number(acuerdo.tipoCodigoSelect.value);
+        if (acuerdo.cuis) ots.cuis = acuerdo.cuis;
 
-            if (acuerdo.es_preAcuerdoBool) {
-                if (acuerdo.pre_acuerdo) ots.pre_acuerdo = acuerdo.pre_acuerdo;
-            } else {
-                if (acuerdo.acuerdo) ots.acuerdo = acuerdo.acuerdo;
-                if (acuerdo.eventoId) ots.eventoId = acuerdo.eventoId;
-            }
-
-            if (acuerdo.grupoSelect) ots.grupoId = Number(acuerdo.grupoSelect.value);
-            if (acuerdo.objetivoEstrategicoTerritorial) ots.objetivoEstrategicoTerritorial = acuerdo.objetivoEstrategicoTerritorial;
-            if (acuerdo.intervencionesEstrategicas) ots.intervencionesEstrategicas = acuerdo.intervencionesEstrategicas;
-            if (acuerdo.aspectoCriticoResolver) ots.aspectoCriticoResolver = acuerdo.aspectoCriticoResolver;
-            if (acuerdo.cuis) ots.cuis = acuerdo.cuis;
-
+        if (acuerdo.ejeEstrategicoSelect) {
+            ots.ejeEstrategicoId = Number(acuerdo.ejeEstrategicoSelect.value);
+            ots.objetivoEstrategicoTerritorial = acuerdo.ejeEstrategicoSelect.label;
         }
+
+        if (acuerdo.tipoIntervencionSelect) {
+            ots.tipoIntervencionId = Number(acuerdo.tipoIntervencionSelect.value);
+            ots.intervencionesEstrategicas = acuerdo.tipoIntervencionSelect.label;
+        }
+
+        if (acuerdo.tipoSelect) ots.tipoId = Number(acuerdo.tipoSelect);
+        ots.acuerdo = acuerdo.acuerdo;
+        if (acuerdo.clasificacionSelect) ots.clasificacionId = Number(acuerdo.clasificacionSelect.value);
+        if (acuerdo.plazo) ots.plazo = acuerdo.plazo;
+        if (acuerdo.responsableSelect) ots.responsableId = Number(acuerdo.responsableSelect.value);
+        ots.accesoId = this.authService.getCodigoUsuario();
+        ots.entidadId = (acuerdo.entidadSelect) ? Number(acuerdo.entidadSelect.value) : 0;
+        ots.es_preAcuerdo = 0;
 
         return new Promise((resolve, reject) => {
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/RegistrarAcuerdoExpress`, ots).subscribe({
                 next: (data) => {
                     this.msg.success(data.message);
-                    this.listarAcuerdosPorPedido(acuerdo.prioridadId);
+                    // this.listarAcuerdos();
                     resolve(data);
                 },
                 error: (e) => {

@@ -31,6 +31,7 @@ export class TraerAcuerdosInterface {
         public sortOrder?: string | null,
     ) { }
 }
+
 export class TraerAcuerdosPorPedidoInterface extends PaginatedModel {
     constructor(
         public prioridadID?: number | null,

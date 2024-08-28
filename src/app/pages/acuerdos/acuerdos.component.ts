@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal, ViewContainerRef, inject, signal } from '@angular/core';
+import { Component, OnInit, Signal, TemplateRef, ViewContainerRef, inject, signal } from '@angular/core';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -37,6 +37,9 @@ import { AcuerdoType } from '../../libs/shared/types/acuerdo.type';
 import { AccionType } from '../../libs/shared/types/accion.type';
 import { AddEditAcuerdoModel } from '../../libs/models/shared/add-edit-acuerdo.model';
 import { DueToPipe } from '../../libs/shared/pipes/due-to.pipe';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { concatMap } from 'rxjs/operators';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-pedidos',
@@ -59,6 +62,7 @@ import { DueToPipe } from '../../libs/shared/pipes/due-to.pipe';
     NzToolTipModule,
     EstadoComponent,
     DueToPipe,
+    NzModalModule
   ],
   templateUrl: './acuerdos.component.html',
   styles: ``
@@ -74,6 +78,7 @@ export class AcuerdosComponent implements OnInit {
   sortField: string | null = 'acuerdoID';
   sortOrder: string | null = 'descend';
   isDrawervisible: boolean = false;
+  isVisible: boolean = false;
 
   cui: string | null = null;
   clasificacionesSeleccionadas: SelectModel[] | null = null;
@@ -107,6 +112,7 @@ export class AcuerdosComponent implements OnInit {
   private modal = inject(NzModalService);
   confirmModal?: NzModalRef; // For testing by now
   private viewContainerRef = inject(ViewContainerRef);
+  private message = inject(NzMessageService);
 
   constructor() {
     this.crearSearForm();
@@ -523,8 +529,29 @@ export class AcuerdosComponent implements OnInit {
   }
 
   onAddEdit(acuerdo: AcuerdoPedidoModel | null, tipo: AcuerdoType, accion: AccionType): void {
-    const title = 'Nuevo acuerdo';
-    const labelOk = 'Crear';
+    let title = 'Nuevo acuerdo';
+    let labelOk = 'Crear';
+
+    switch (accion) {
+      case 'EDIT':
+        title = 'Editar acuerdo';
+        labelOk = 'Guardar';
+        break;
+      case 'CONVERT':
+        title = 'Convertir a acuerdo';
+        labelOk = 'Convertir';
+        break;
+      case 'CREATE':
+        title = 'Nuevo acuerdo';
+        labelOk = 'Crear';
+        break;
+      case 'RECREATE':
+        title = 'Crear acuerdo desde Mesa Técnica';
+        labelOk = 'Guardar';
+        break;
+      default:
+        break;
+    }
 
     // this.acuerdosService.seleccionarAcuerdoById(acuerdo?.acuerdoId || null);
     this.espaciosStore.listarEventos();
@@ -547,10 +574,16 @@ export class AcuerdosComponent implements OnInit {
           label: labelOk,
           type: 'primary',
           onClick: (componentInstance) => {
-            return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then((res) => {
-              // this.traerAcuerdos({});
-              this.modal.closeAll();
-            });
+            if (accion == 'RECREATE') {
+              return this.acuerdosService.agregarAcuerdoExpress(componentInstance!.acuerdoForm.value).then((res) => {
+                this.traerAcuerdos({});
+                this.modal.closeAll();
+              });
+            } else {
+              return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then((res) => {
+                this.modal.closeAll();
+              });
+            }
           },
           loading: this.acuerdosService.isEditing(),
           disabled: (componentInstance) => !componentInstance?.acuerdoForm.valid,
@@ -561,6 +594,17 @@ export class AcuerdosComponent implements OnInit {
     const instance = modal.getContentComponent();
     modal.afterClose.subscribe(result => {
       instance.acuerdoForm.reset();
+    });
+  }
+
+  createTplModal(tplTitle: TemplateRef<{}>, tplContent: TemplateRef<{}>, tplFooter: TemplateRef<{}>): void {
+    this.modal.create({
+      nzTitle: tplTitle,
+      nzContent: tplContent,
+      nzFooter: tplFooter,
+      // nzMaskClosable: false,
+      // nzClosable: false,
+      nzOnOk: () => console.log('Click ok')
     });
   }
 
@@ -640,5 +684,21 @@ export class AcuerdosComponent implements OnInit {
       // Emitir cambios de parámetros
       this.updateParamsSubject.next();
     }
+  }
+
+  handleOk(): void {
+    this.message
+      .loading('Descargando archivo', { nzDuration: 2500 })
+      .onClose!.pipe(
+        concatMap(() => this.message.success('Descarga finalizada', { nzDuration: 2500 }).onClose!),
+        concatMap(() => this.message.info('Documento guardado en su computadora', { nzDuration: 2500 }).onClose!)
+      )
+      .subscribe(() => {
+        console.log('All completed!');
+      });
+  }
+
+  handleCancel(): void {
+    this.isVisible = false;
   }
 }

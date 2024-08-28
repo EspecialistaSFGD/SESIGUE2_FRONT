@@ -1,9 +1,164 @@
 <form [formGroup]="acuerdoForm" nz-form nzLayout="vertical">
+
+    @if (this.nzModalData.tipo == 'ACUERDO' && (this.nzModalData.accion == 'RECREATE')) {
+    <legend>Información del Pedido</legend>
+
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        @if(this.nzModalData.accion !== 'CONVERT' ) {
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
             <nz-form-item>
-                <nz-form-label [nzSpan]="null" nzRequired>Tipo</nz-form-label>
+                <nz-form-label [nzSpan]="null" nzRequired>Espacio</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione" #espacioSelect
+                        formControlName="espacioSelect" [compareWith]="compareFn" nzShowSearch nzAllowClear
+                        (ngModelChange)="onEspacioChange($event)">
+                        <nz-option *ngFor="let esp of this.espaciosStore.espacios()" [nzLabel]="esp.label!"
+                            [nzValue]="esp"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-4">
+                <nz-form-label [nzSpan]="null">Sector</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select [nzMaxTagCount]="3" id="sectorSelect" nzPlaceHolder="Seleccione" #sectorSelect
+                        formControlName="sectorSelect" [compareWith]="compareFn" nzAllowClear nzShowSearch
+                        (ngModelChange)="onSectorChange($event)">
+                        <nz-option *ngFor="let sec of this.sectoresStore.sectores()" [nzLabel]="sec.label!"
+                            [nzValue]="sec"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-4">
+                <nz-form-label [nzSpan]="null">Departamento</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select id="departamentoSelect" class="w-full" #departamentoSelect
+                        formControlName="departamentoSelect" nzPlaceHolder="Seleccione" nzShowSearch
+                        [compareWith]="compareFn" nzAllowClear (ngModelChange)="onDepChange($event)" nzShowSearch>
+                        <nz-option *ngFor="let ubg of this.ubigeosStore.departamentos()" [nzValue]="ubg"
+                            [nzLabel]="ubg.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        @if(acuerdoForm.get('departamentoSelect')?.value != null) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null">Provincia</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select class="w-full" #provinciaSelect id="provinciaSelect" formControlName="provinciaSelect"
+                        nzPlaceHolder="Seleccione" nzShowSearch [compareWith]="compareFn" nzAllowClear nzShowSearch
+                        (ngModelChange)="onProvChange($event)">
+                        <nz-option *ngFor="let prov of this.ubigeosStore.provincias()" [nzValue]="prov"
+                            [nzLabel]="prov.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Tipo de código</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-select nzPlaceHolder="Todos" id="tipoCodigoSelect" #tipoCodigoSelect
+                        formControlName="tipoCodigoSelect" (ngModelChange)="onCodigoChange($event)">
+                        <nz-option nzValue="1" nzLabel="ACTIVIDAD"></nz-option>
+                        <nz-option nzValue="2" nzLabel="CUI"></nz-option>
+                        <nz-option nzValue="3" nzLabel="IDEA"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        @if(acuerdoForm.get('tipoCodigoSelect')?.value != null && acuerdoForm.get('tipoCodigoSelect')?.value != 1) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>CUI</nz-form-label>
+                <nz-form-control nzSpan="null" [nzErrorTip]="cuiLengthTpl">
+                    <input #cuis id="cuis" onlyNumbers type="text" nz-input formControlName="cuis">
+
+                    <ng-template #cuiLengthTpl let-control>
+                        @if (control.errors?.['required']) {
+                        Campo requerido
+                        }
+                        @if (control.errors?.['pattern']) {
+                        @if(acuerdoForm.get('tipoCodigoSelect')?.value == 2) {
+                        Debe tener hasta 7 números
+                        }
+
+                        @if(acuerdoForm.get('tipoCodigoSelect')?.value == 3) {
+                        Debe tener hasta 6 números
+                        }
+                        }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Eje estratégico</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-select [nzMaxTagCount]="3" id="ejeEstrategicoSelect" nzPlaceHolder="Seleccione"
+                        #ejeEstrategicoSelect formControlName="ejeEstrategicoSelect" [compareWith]="compareFn"
+                        nzAllowClear (ngModelChange)="onEjeEstrategicoChange($event)">
+                        <nz-option *ngFor="let eje of this.pedidosStore.ejesEstrategicos()" [nzLabel]="eje.label!"
+                            [nzValue]="eje"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Tipo de intervención</nz-form-label>
+                <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-select [nzMaxTagCount]="3" id="tipoIntervencionSelect" nzPlaceHolder="Seleccione"
+                        #tipoIntervencionSelect formControlName="tipoIntervencionSelect" [compareWith]="compareFn"
+                        nzAllowClear (ngModelChange)="onTipoIntervencionChange($event)">
+                        <nz-option *ngFor="let tInt of this.pedidosStore.tiposIntervencion()" [nzLabel]="tInt.label!"
+                            [nzValue]="tInt"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="aspectoCriticoResolver">Pedido</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <textarea nz-input id="aspectoCriticoResolver" formControlName="aspectoCriticoResolver"
+                        placeholder="Ingrese el pedido" nzAutosize></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <legend>Información del Acuerdo</legend>
+    }
+
+    @if(this.nzModalData.accion !== 'CONVERT' ) {
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzRequired>Tipo de acuerdo</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
                     <nz-select nzPlaceHolder="Todos" id="tipoSelect" #tipoSelect formControlName="tipoSelect"
                         nzAllowClear (ngModelChange)="onTipoAcuerdosChange($event)">
@@ -13,34 +168,38 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
-        }
+    </div>
+    }
 
-        @if ( this.nzModalData.accion == 'CONVERT') {
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
-            <nz-form-item>
-                <nz-form-label nzRequired [nzSpan]="null" nzFor="acuerdoModificado"
-                    nzRequired>acuerdoModificado</nz-form-label>
-                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
-                    <textarea nz-input id="acuerdoModificado" formControlName="acuerdoModificado"
-                        placeholder="Ingrese el pre acuerdo" nzAutosize></textarea>
-                </nz-form-control>
-            </nz-form-item>
-        </div>
-        }
+    @if ( this.nzModalData.accion == 'CONVERT') {
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+        <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null" nzFor="acuerdoModificado"
+                nzRequired>acuerdoModificado</nz-form-label>
+            <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                <textarea nz-input id="acuerdoModificado" formControlName="acuerdoModificado"
+                    placeholder="Ingrese el pre acuerdo" nzAutosize></textarea>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+    }
 
-        @if (this.nzModalData.tipo == 'PRE ACUERDO' ) {
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
-            <nz-form-item>
-                <nz-form-label nzRequired [nzSpan]="null" nzFor="pre_acuerdo" nzRequired>Pre acuerdo</nz-form-label>
-                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
-                    <textarea nz-input id="pre_acuerdo" formControlName="pre_acuerdo"
-                        placeholder="Ingrese el pre acuerdo" nzAutosize></textarea>
-                </nz-form-control>
-            </nz-form-item>
-        </div>
-        }
-        @if (this.nzModalData.tipo == 'ACUERDO' && (this.nzModalData.accion == 'CREATE' || this.nzModalData.accion ==
-        'EDIT')) {
+    @if (this.nzModalData.tipo == 'PRE ACUERDO' ) {
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+        <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null" nzFor="pre_acuerdo" nzRequired>Pre acuerdo</nz-form-label>
+            <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                <textarea nz-input id="pre_acuerdo" formControlName="pre_acuerdo" placeholder="Ingrese el pre acuerdo"
+                    nzAutosize></textarea>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+    }
+
+    @if (this.nzModalData.tipo == 'ACUERDO' && (this.nzModalData.accion == 'CREATE' || this.nzModalData.accion ==
+    'RECREATE' || this.nzModalData.accion ==
+    'EDIT')) {
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
             <nz-form-item>
                 <nz-form-label nzRequired [nzSpan]="null" nzFor="acuerdo" nzRequired>Acuerdo</nz-form-label>
@@ -50,9 +209,11 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
-        }
+    </div>
+    }
 
-        @if(this.nzModalData.accion !== 'CONVERT' ) {
+    @if(this.nzModalData.accion !== 'CONVERT' ) {
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Clasificación</nz-form-label>
@@ -76,7 +237,9 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
+    </div>
 
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Responsable</nz-form-label>
@@ -90,13 +253,23 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
+
+        @if(acuerdoForm.get('responsableSelect')?.value != null && this.nzModalData.accion == 'RECREATE') {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="16" nzLg="16" nzXl="16">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null">Entidad</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select nzPlaceHolder="Seleccione" id="entidadSelect" #entidadSelect
+                        formControlName="entidadSelect" nzAllowClear (ngModelChange)="onEntidadIDChange($event)">
+                        <nz-option *ngFor="let sec of this.sectoresStore.sectores()" [nzLabel]="sec.label!"
+                            [nzValue]="sec"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
         }
-
     </div>
-    {{this.acuerdoForm.value|json}}
+    }
 
-
-    <!-- {{this.acuerdosService.acuerdoSeleccionado()|json }} -->
-    <!-- isConverting: {{this.acuerdosService.isConverting()|json }}<br>
-    isCreatingPreAcuerdo: {{this.acuerdosService.isCreatingPreAcuerdo()|json }} -->
+    <!-- {{this.acuerdoForm.value|json}} -->
 </form>

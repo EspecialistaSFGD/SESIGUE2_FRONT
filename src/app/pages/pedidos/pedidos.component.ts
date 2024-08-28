@@ -206,6 +206,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.pedidosService.listarPedidos(cui, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
   }
 
+
   onAddEdit(pedido: PedidoModel | null): void {
     const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
     const labelOk = pedido ? 'Actualizar' : 'Agregar';

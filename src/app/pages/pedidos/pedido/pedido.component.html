@@ -74,9 +74,9 @@
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
                     <nz-select nzPlaceHolder="Todos" id="tipoCodigoSelect" #tipoCodigoSelect
                         formControlName="tipoCodigoSelect" (ngModelChange)="onCodigoChange($event)">
-                        <nz-option nzValue="1" nzLabel="Actividad"></nz-option>
+                        <nz-option nzValue="1" nzLabel="ACTIVIDAD"></nz-option>
                         <nz-option nzValue="2" nzLabel="CUI"></nz-option>
-                        <nz-option nzValue="3" nzLabel="Idea"></nz-option>
+                        <nz-option nzValue="3" nzLabel="IDEA"></nz-option>
                     </nz-select>
                 </nz-form-control>
             </nz-form-item>
@@ -149,11 +149,10 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
-
     </div>
 
 
-    {{this.pedidoForm.value|json}}
+    <!-- {{this.pedidoForm.value|json}} -->
 
     <!-- {{this.hitosService.isEditing()|json }} -->
 

@@ -18,6 +18,8 @@ import { ClasificacionesStore } from '../../../libs/shared/stores/clasificacione
 import { differenceInCalendarDays } from 'date-fns';
 import { AddEditAcuerdoModel } from '../../../libs/models/shared/add-edit-acuerdo.model';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
+import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
+import { PedidosStore } from '../../../libs/shared/stores/pedidos.store';
 
 
 
@@ -43,6 +45,9 @@ export class AcuerdoComponent {
   acuerdoForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
   fechaEvento: Date | null = null;
+  requiredLabel: string = 'Campo requerido';
+
+
   nzModalData: AddEditAcuerdoModel = inject(NZ_MODAL_DATA);
   today = new Date();
   acuerdosService = inject(AcuerdosService);
@@ -50,6 +55,8 @@ export class AcuerdoComponent {
   sectoresStore = inject(SectoresStore);
   espaciosStore = inject(EspaciosStore);
   clasificacionesStore = inject(ClasificacionesStore);
+  ubigeosStore = inject(UbigeosStore);
+  pedidosStore = inject(PedidosStore);
   private fb = inject(UntypedFormBuilder);
 
 
@@ -57,7 +64,6 @@ export class AcuerdoComponent {
   acuerdoSeleccionado: AcuerdoPedidoModel | null = this.acuerdosService.acuerdoSeleccionado();
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
-
 
   constructor() {
     this.crearAcuerdoForm();
@@ -67,29 +73,54 @@ export class AcuerdoComponent {
     const preAcuerdoCtrl = this.acuerdoForm.get('pre_acuerdo');
     const es_preAcuerdoBoolCtrl = this.acuerdoForm.get('es_preAcuerdoBool');
 
+    const prioridadIdCtrl = this.acuerdoForm.get('prioridadId');
+    const sectorCtrl = this.acuerdoForm.get('sectorSelect');
+    const espacioCtrl = this.acuerdoForm.get('espacioSelect');
+
     if (this.nzModalData.tipo == 'PRE ACUERDO' && (this.nzModalData.accion == 'CREATE' || this.nzModalData.accion == 'EDIT')) {
+      prioridadIdCtrl?.setValidators([Validators.required]);
       acuerdoCtrl?.clearValidators();
       acuerdoModificadoCtrl?.clearValidators();
+      sectorCtrl?.clearValidators();
       preAcuerdoCtrl?.setValidators([Validators.required]);
+      espacioCtrl?.clearValidators();
     }
 
     if (this.nzModalData.tipo == 'ACUERDO' && (this.nzModalData.accion == 'CREATE' || this.nzModalData.accion == 'EDIT')) {
+      prioridadIdCtrl?.setValidators([Validators.required]);
+      preAcuerdoCtrl?.clearValidators();
+      acuerdoModificadoCtrl?.clearValidators();
+      sectorCtrl?.clearValidators();
+      acuerdoCtrl?.setValidators([Validators.required]);
+      espacioCtrl?.clearValidators();
+    }
+
+    if (this.nzModalData.tipo == 'ACUERDO' && this.nzModalData.accion == 'RECREATE') {
+      prioridadIdCtrl?.clearValidators();
       preAcuerdoCtrl?.clearValidators();
       acuerdoModificadoCtrl?.clearValidators();
       acuerdoCtrl?.setValidators([Validators.required]);
+      sectorCtrl?.setValidators([Validators.required]);
+      espacioCtrl?.setValidators([Validators.required]);
+      es_preAcuerdoBoolCtrl?.patchValue(false);
+
     }
 
     if (this.nzModalData.tipo == 'ACUERDO' && this.nzModalData.accion == 'CONVERT') {
+      prioridadIdCtrl?.setValidators([Validators.required]);
       acuerdoCtrl?.clearValidators();
       preAcuerdoCtrl?.clearValidators();
+      sectorCtrl?.clearValidators();
       acuerdoModificadoCtrl?.setValidators([Validators.required]);
       es_preAcuerdoBoolCtrl?.patchValue(false);
     }
 
+    prioridadIdCtrl?.updateValueAndValidity();
     acuerdoModificadoCtrl?.updateValueAndValidity();
     acuerdoCtrl?.updateValueAndValidity();
     preAcuerdoCtrl?.updateValueAndValidity();
-
+    sectorCtrl?.updateValueAndValidity();
+    espacioCtrl?.updateValueAndValidity();
 
     if (this.acuerdoSeleccionado?.responsableSelect != null) {
       this.onResponsableAcuerdosChange(this.acuerdoSeleccionado?.responsableSelect);
@@ -105,7 +136,6 @@ export class AcuerdoComponent {
   }
 
   onResponsableAcuerdosChange(tipo: SelectModel): void {
-
     if (tipo == null || this.acuerdoSeleccionado?.acuerdoId == null) return;
     this.sectoresStore.listarEntidadesResponsables(Number(tipo.value), this.acuerdoSeleccionado?.acuerdoId);
   }
@@ -119,19 +149,78 @@ export class AcuerdoComponent {
     console.log('onTipoAcuerdosChange', { value });
   }
 
+  onSectorChange(value: SelectModel): void { }
+
+  onDepChange(value: SelectModel): void {
+    const provControl = this.acuerdoForm.get('provinciaSelect');
+
+    provControl?.reset();
+
+    if (value == null) return;
+
+    if (value.value) {
+      this.ubigeosStore.listarProvincias(value.value.toString());
+    }
+  }
+
+  onProvChange(value: SelectModel): void {
+    if (value == null) return;
+  }
+
   disabledDate = (current: Date): boolean => {
     if (this.fechaEvento == null) return false;
 
     return differenceInCalendarDays(new Date(this.fechaEvento), current) > 0;
   }
 
-  // disabledDate = (current: Date): boolean =>
-  //   differenceInCalendarDays(current, new Date(this.fechaEvento)) > 0;
+  onEjeEstrategicoChange(event: SelectModel): void {
+    if (event == null) return;
+  }
+
+  onTipoIntervencionChange(event: SelectModel): void {
+    if (event == null) return;
+  }
+
+  onCodigoChange(codigo: any) {
+    if (codigo == null) return;
+
+    const cuisControl = this.acuerdoForm.get('cuis');
+    cuisControl?.reset();
+
+    switch (Number(codigo)) {
+      case 1:
+        cuisControl?.clearValidators();
+        break;
+      case 2:
+        cuisControl?.setValidators([Validators.required, Validators.pattern(/^[0-9]{1,7}$/)]);
+        break;
+      case 3:
+        cuisControl?.setValidators([Validators.required, Validators.pattern(/^[0-9]{1,6}$/)]);
+        break;
+      default:
+        break;
+    }
+
+    cuisControl?.updateValueAndValidity();
+  }
+
+  onEspacioChange(event: SelectModel): void {
+    // const entidadControl = this.pedidoForm.get('entidad');
+    // entidadControl?.reset();
+
+    // console.log(event);
+
+    if (event === null) return;
+
+    // this.entidadesStore.listarEntidades(0, 1, Number(event.value));
+
+  }
+
 
   crearAcuerdoForm(): void {
     this.acuerdoForm = this.fb.group({
       acuerdoId: [this.acuerdoSeleccionado?.acuerdoId],
-      prioridadId: [this.pedidoSeleccionado?.prioridadID, [Validators.required]],
+      prioridadId: [this.pedidoSeleccionado?.prioridadID],
       acuerdo: [this.acuerdoSeleccionado?.acuerdo],
       pre_acuerdo: [this.acuerdoSeleccionado?.pre_acuerdo],
       clasificacionSelect: [this.acuerdoSeleccionado?.clasificacionSelect, [Validators.required]],
@@ -143,8 +232,17 @@ export class AcuerdoComponent {
       acuerdoModificado: [(this.nzModalData.accion == 'CONVERT' ? this.acuerdoSeleccionado?.pre_acuerdo : null)],
       //TODO: tener en cuenta para una edición especial del acuerdo
       acuerdo_original: [null],
-      eventoId: [this.pedidoSeleccionado?.eventoId || null],
-      // acuerdo_original: [this.acuerdoSeleccionado?.pre_Acuerdo],
+      eventoId: [(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId],
+      // Información para registro de Acuerdos desde Mesas Ténicas
+      espacioSelect: [null],
+      sectorSelect: [null],
+      tipoCodigoSelect: [null],
+      cuis: [null],
+      departamentoSelect: [this.pedidoSeleccionado?.departamentoSelect],
+      provinciaSelect: [this.pedidoSeleccionado?.provinciaSelect],
+      aspectoCriticoResolver: [null],
+      ejeEstrategicoSelect: [null],
+      tipoIntervencionSelect: [null],
     });
   }
 }

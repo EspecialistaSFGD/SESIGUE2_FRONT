@@ -1,1 +1,1 @@
-export type AccionType = 'CREATE' | 'EDIT' | 'DELETE' | 'CONVERT';
+export type AccionType = 'CREATE' | 'EDIT' | 'DELETE' | 'CONVERT' | 'RECREATE';

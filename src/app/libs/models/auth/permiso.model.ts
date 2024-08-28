@@ -19,6 +19,7 @@ export class PermisoModel {
         public puede_validar_pedido: boolean = false,
         public puede_comentar_pedido_pcm: boolean = false,
         public puede_agregar_acuerdo: boolean = false,
+        public puede_agregar_acuerdo_mt: boolean = false,
         public puede_editar_acuerdo: boolean = false,
         public puede_eliminar_acuerdo: boolean = false,
         public puede_convertir_preacuerdo: boolean = false,

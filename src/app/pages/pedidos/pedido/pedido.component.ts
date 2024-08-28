@@ -111,12 +111,11 @@ export class PedidoComponent {
     if (codigo == null) return;
 
     const cuisControl = this.pedidoForm.get('cuis');
-    console.log(codigo);
+    cuisControl?.reset();
 
     switch (Number(codigo)) {
       case 1:
         cuisControl?.clearValidators();
-        cuisControl?.reset();
         break;
       case 2:
         cuisControl?.setValidators([Validators.required, Validators.pattern(/^[0-9]{1,7}$/)]);

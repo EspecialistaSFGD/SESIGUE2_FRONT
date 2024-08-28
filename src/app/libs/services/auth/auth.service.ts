@@ -54,6 +54,7 @@ const DEFAULT_PERMISOS: PermisoModel = {
   puede_validar_pedido: false,
   puede_comentar_pedido_pcm: false,
   puede_agregar_acuerdo: false,
+  puede_agregar_acuerdo_mt: false,
   puede_editar_acuerdo: false,
   puede_eliminar_acuerdo: false,
   puede_convertir_preacuerdo: false,
@@ -278,6 +279,9 @@ export class AuthService {
               break;
             case 'Agregar Acuerdo':
               permisos.puede_agregar_acuerdo = true;
+              break;
+            case 'Agregar Acuerdo MT':
+              permisos.puede_agregar_acuerdo_mt = true;
               break;
             case 'Editar Acuerdo':
               permisos.puede_editar_acuerdo = true;

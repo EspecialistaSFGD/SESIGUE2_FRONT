@@ -10,7 +10,6 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { SelectModel } from '../../libs/models/shared/select.model';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { AuthService } from '../../libs/services/auth/auth.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SectoresStore } from '../../libs/shared/stores/sectores.store';
 import { UbigeosStore } from '../../libs/shared/stores/ubigeos.store';
