@@ -32,6 +32,7 @@ export class ReporteRequestModel {
         public ubigeo?: string,
         public espacio?: string,
         public sector?: string,
+        public tipo?: string,
     ) { }
 }
 

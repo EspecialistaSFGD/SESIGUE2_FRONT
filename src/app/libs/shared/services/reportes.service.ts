@@ -7,6 +7,7 @@ import { startOfMonth, endOfMonth, startOfDay } from 'date-fns';
 
 interface State {
   reportes: any[];
+  acuerdos: any[];
   reporteSeleccionado: any | null;
   isLoading: boolean;
   isEditing: boolean;
@@ -22,6 +23,7 @@ export class ReportesService extends BaseHttpService {
 
   #reportesResult = signal<State>({
     reportes: [],
+    acuerdos: [],
     reporteSeleccionado: null,
     isLoading: false,
     isEditing: false,
@@ -31,6 +33,28 @@ export class ReportesService extends BaseHttpService {
   });
 
   public reportes = computed(() => this.#reportesResult().reportes);
+  public acuerdos = computed(() => this.#reportesResult().acuerdos);
+  public totalAcuerdos = computed(() => {
+    return this.acuerdos().reduce((sum, item) => sum + item.totalAcuerdo, 0);
+  });
+  public totalEjecutados = computed(() => {
+    return this.acuerdos().reduce((sum, item) => sum + item.totalEjecutado, 0);
+  });
+  public totalDesestimado = computed(() => {
+    return this.acuerdos().reduce((sum, item) => sum + item.totalDesestimado, 0);
+  });
+  public totalEnProceso = computed(() => {
+    return this.acuerdos().reduce((sum, item) => sum + item.totalEnProceso, 0);
+  });
+  public totalPendiente = computed(() => {
+    return this.acuerdos().reduce((sum, item) => sum + item.totalPendiente, 0);
+  });
+  public totalPorcentaje = computed(() => {
+    const validItems = this.acuerdos().filter(item => item.porcentaje > 0);
+    const totalSum = validItems.reduce((sum, item) => sum + item.porcentaje, 0);
+    const promedio = validItems.length > 0 ? totalSum / validItems.length : 0;
+    return Math.round(promedio);
+  });
   public reporteSeleccionado = computed(() => this.#reportesResult().reporteSeleccionado);
   public isLoading = computed(() => this.#reportesResult().isLoading);
   public isEditing = computed(() => this.#reportesResult().isEditing);
@@ -71,14 +95,10 @@ export class ReportesService extends BaseHttpService {
     });
   }
 
-  obtenerReporteResultado(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null): Promise<ResponseModel> {
+  obtenerReporteResultado(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null, tipoAcuerdo: string | null): Promise<ResponseModel> {
     const ots: ReporteRequestModel = {} as ReporteRequestModel;
 
     if (reporteCabeceraId) ots.reporteCabeceraId = reporteCabeceraId;
-
-    // if (departamentoSelect || provinciaSelect) {
-    //   ots.ubigeo = reqRes.provinciaSelect?.value?.toString() || reqRes.departamentoSelect?.value?.toString();
-    // }
 
     if (ubigeo) ots.ubigeo = ubigeo;
 
@@ -86,12 +106,16 @@ export class ReportesService extends BaseHttpService {
 
     if (sector) ots.sector = sector;
 
+    if (tipoAcuerdo) ots.tipo = tipoAcuerdo;
+
     return new Promise((resolve, reject) => {
       this.#reportesResult.update((state) => ({ ...state, isEditing: true }));
 
       this.http.post<ResponseModel>(this.apiUrl + '/Reporte/ObtenerReporteResultado', ots).subscribe({
         next: (data) => {
-          this.#reportesResult.update((state) => ({ ...state, reporteSeleccionado: data.data }));
+
+          this.#reportesResult.update((state) => ({ ...state, acuerdos: data.data }));
+
           resolve(data);
         },
         error: (error) => {
@@ -103,7 +127,7 @@ export class ReportesService extends BaseHttpService {
     });
   }
 
-  obtenerReporteSector(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null): Promise<ResponseModel> {
+  obtenerReporteSector(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null, tipoAcuerdo: string | null): Promise<ResponseModel> {
     let params = new HttpParams();
 
     if (reporteCabeceraId) params = params.append('reporteCabeceraId', reporteCabeceraId);
@@ -113,6 +137,9 @@ export class ReportesService extends BaseHttpService {
     if (sector) params = params.append('sector', sector);
 
     if (espacio) params = params.append('espacio', espacio);
+
+    if (tipoAcuerdo) params = params.append('tipo', tipoAcuerdo);
+
 
     this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
 
@@ -130,13 +157,54 @@ export class ReportesService extends BaseHttpService {
     });
   }
 
-  obtenerReporteClasificacion(reporteCabeceraId: number = 8): Promise<ResponseModel> {
-    let params = new HttpParams().append('reporteCabeceraId', reporteCabeceraId);
+  obtenerReporteClasificacion(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null, tipoAcuerdo: string | null): Promise<ResponseModel> {
+    let params = new HttpParams();
+
+    if (reporteCabeceraId) params = params.append('reporteCabeceraId', reporteCabeceraId);
+
+    if (ubigeo) params = params.append('ubigeo', ubigeo);
+
+    if (sector) params = params.append('sector', sector);
+
+    if (espacio) params = params.append('espacio', espacio);
+
+    if (tipoAcuerdo) params = params.append('tipo', tipoAcuerdo);
+
 
     this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
 
     return new Promise((resolve, reject) => {
       this.http.get<ResponseModel>(this.apiUrl + '/Reporte/ReporteClasificacion', { params }).subscribe({
+        next: (data) => {
+          resolve(data);
+        },
+        error: (error) => {
+          console.error(error);
+          reject(error);
+        },
+        complete: () => this.#reportesResult.update((state) => ({ ...state, isLoading: false })),
+      });
+
+    });
+  }
+
+  obtenerReporteMensual(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null, tipoAcuerdo: string | null): Promise<ResponseModel> {
+    let params = new HttpParams();
+
+    if (reporteCabeceraId) params = params.append('reporteCabeceraId', reporteCabeceraId);
+
+    if (ubigeo) params = params.append('ubigeo', ubigeo);
+
+    if (sector) params = params.append('sector', sector);
+
+    if (espacio) params = params.append('espacio', espacio);
+
+    if (tipoAcuerdo) params = params.append('tipo', tipoAcuerdo);
+
+    this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
+
+    return new Promise((resolve, reject) => {
+      this.http.get<ResponseModel>(this.apiUrl + '/Reporte/ReporteMensual', { params }).subscribe({
         next: (data) => {
           resolve(data);
         },
@@ -182,7 +250,7 @@ export class ReportesService extends BaseHttpService {
     });
   }
 
-  obtnerCodigo(fechaCorte: Date | null): Promise<ResponseModel> {
+  obtenerCodigo(fechaCorte: Date | null): Promise<ResponseModel> {
     let params = new HttpParams();
 
     if (fechaCorte) params = params.append('fechaCorte', fechaCorte.toISOString());

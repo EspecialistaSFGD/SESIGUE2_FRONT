@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, OnInit, ViewContainerRef, inject, signal } from '@angular/core';
-import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
+import { Component, ViewContainerRef, computed, inject, signal } from '@angular/core';
+import { NzTableModule } from 'ng-zorro-antd/table';
 import { CommonModule } from '@angular/common';
 import { AnchorModel } from '../../../libs/models/shared/anchor.model';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
@@ -17,14 +17,13 @@ import { PageHeaderFullComponent } from '../../../libs/shared/layout/page-header
 import { EstadoComponent } from '../../../libs/shared/components/estado/estado.component';
 import { AuthService } from '../../../libs/services/auth/auth.service';
 import { ReportesService } from '../../../libs/shared/services/reportes.service';
-import { ReporteComponent } from '../../reportes/reporte/reporte.component';
 import { Chart, register } from '@antv/g2';
 import { AcuerdoReporteModel } from '../../../libs/models/pedido/acuerdo.model';
 import { UtilesService } from '../../../libs/shared/services/utiles.service';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { environment } from '../../../../environments/environment';
 import { feature } from 'topojson';
-import { ReporteCorteModel, ReporteSectorModel, TraerReportesCorteInterface } from '../../../libs/models/shared/reporte.model';
+import { ReporteSectorModel } from '../../../libs/models/shared/reporte.model';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
@@ -63,18 +62,31 @@ register('data.feature', ({ name }) => {
     NzProgressModule,
   ],
   templateUrl: './inicio.component.html',
-  styles: ``,
+  styles: `
+
+  `,
 })
-export class InicioComponent implements AfterViewInit {
+export class InicioComponent {
 
   filterReportForm!: UntypedFormGroup;
 
   reporteCabeceraIdSeleccionado: number | null = null;
-  ubigeoSeleccionado: string | null = null;
+  ubigeoSeleccionado: SelectModel | null = null;
   sectorSeleccionado: string | null = null;
   espacioSeleccionado: string | null = null;
+  tipoAcuerdoSeleccionado: string | null = null;
   reporteSectores = signal<ReporteSectorModel[]>([]);
+  // Señales para totales y promedio
+  totalAcuerdos = signal<number>(0);
+  totalEjecutados = signal<number>(0);
+  promedioPorcentaje = signal<number>(0);
+  ubigeoSgnl = signal<SelectModel | null>(null);
   periodoSeleccionado: Date | null = null;
+
+  tipoAcuerdos: SelectModel[] = [
+    { value: 1, label: 'ACUERDO' },
+    { value: 2, label: 'COMPROMISO' }
+  ];
 
   private fb = inject(UntypedFormBuilder);
   private modal = inject(NzModalService);
@@ -120,79 +132,186 @@ export class InicioComponent implements AfterViewInit {
 
   constructor() {
     this.onCreateFilterReportForm();
-    this.reportesService.obtnerCodigo(null).then((data) => {
+    this.traerCodigo(null);
+  }
+
+  private traerCodigo(fechaCorte: Date | null): void {
+    this.reportesService.obtenerCodigo(fechaCorte).then((data) => {
       if (data.success) {
         this.reporteCabeceraIdSeleccionado = data.data[0].reporteCabeceraId;
         this.periodoSeleccionado = data.data[0].fechaInfo;
 
-        this.filterReportForm.get('periodo')?.setValue(this.periodoSeleccionado);
+        this.filterReportForm.get('periodo')?.setValue(this.periodoSeleccionado, { emitEvent: false });
 
-        this.onRenderCharts();
-
+        this.onRenderCharts({});
       }
     });
   }
 
-  ngAfterViewInit(): void {
+  onRenderCharts({
+    reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
+    ubigeo = this.ubigeoSeleccionado?.value?.toString(),
+    sector = this.sectorSeleccionado,
+    espacio = this.espacioSeleccionado,
+    tipoAcuerdo = this.tipoAcuerdoSeleccionado,
+  }: TraerReportesInterface): void {
+    this.renderTableChart({
+      reporteCabeceraId,
+      ubigeo,
+      sector,
+      espacio,
+      tipoAcuerdo
+    });
 
-  }
+    this.renderGeoChart({
+      reporteCabeceraId,
+      ubigeo,
+      sector,
+      espacio,
+      tipoAcuerdo
+    });
 
-  onRenderCharts(): void {
-    this.renderTableChart({});
-    this.renderGeoChart({});
-    this.renderBarChart(null, 8);
-    this.renderRadiaChart(null, 8);
+    this.renderBarChart({
+      reporteCabeceraId,
+      ubigeo,
+      sector,
+      espacio,
+      tipoAcuerdo
+    });
+
+    this.renderRadiaChart({
+      reporteCabeceraId,
+      ubigeo,
+      sector,
+      espacio,
+      tipoAcuerdo
+    });
   }
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
 
-  onDepChange(value: SelectModel): void {
+  onPeriodoChange(periodo: Date | null): void {
+    // TODO: validar si es correcto la validación
+    if (periodo == this.periodoSeleccionado) return;
 
-    const provControl = this.filterReportForm.get('prov');
-
-    provControl?.reset();
-
-    if (value == null) {
-      this.ubigeoSeleccionado = null;
-    };
-
-    this.ubigeoSeleccionado = value.value!.toString();
-
-    this.renderGeoChart({ ubigeo: this.ubigeoSeleccionado });
-
-    if (value.value) {
-      this.ubigeosStore.listarProvincias(value.value.toString());
-    }
-
+    this.traerCodigo(periodo);
   }
 
-  onProvChange(value: SelectModel): void {
+  onTipoAcuerdoChange(tipoAcuerdoValue: number | null): void {
+    // Busca el objeto seleccionado en la lista de opciones
+    const selectedOption = this.tipoAcuerdos.find(item => item.value === tipoAcuerdoValue);
 
-    if (value == null) return;
+    if (selectedOption) {
+      const { value, label } = selectedOption;
+      console.log(`Value: ${value}, Label: ${label}`);
+      this.tipoAcuerdoSeleccionado = label!;
+    } else {
+      this.tipoAcuerdoSeleccionado = null;
+      console.log('No se encontró la opción seleccionada');
+    }
+
+    this.onRenderCharts({});
+  }
+
+  onSectorChange(sector: SelectModel | null): void {
+    console.log(sector);
+
+    if (sector == null) {
+      this.sectorSeleccionado = null;
+    } else {
+      this.sectorSeleccionado = sector!.label!;
+    }
+
+    this.onRenderCharts({});
+  }
+
+  onEspacioChange(espacio: SelectModel | null): void {
+    console.log(espacio);
+
+    if (espacio == null) {
+      this.espacioSeleccionado = null;
+    } else {
+      this.espacioSeleccionado = espacio!.label!;
+    }
+
+    this.onRenderCharts({});
+  }
+
+
+  onDepChange(value: SelectModel | null): void {
+    const depControl = this.filterReportForm.get('departamentoSelect');
+    const provControl = this.filterReportForm.get('provinciaSelect');
+
+    // Evita un bucle infinito comprobando si el valor ya es el mismo
+    if (depControl?.value !== value) {
+      depControl?.setValue(value, { emitEvent: false }); // Actualiza sin disparar el evento
+    }
+
+    // Reinicia el valor de la provincia si es necesario
+    provControl?.value && provControl.reset();
+
+    // Asigna el valor seleccionado o null a ubigeoSeleccionado
+    this.ubigeoSeleccionado = value || null;
+
+    // Renderiza el gráfico con el ubigeo seleccionado
+    this.onRenderCharts({});
+
+    // Lista las provincias si se seleccionó un departamento
+    if (this.ubigeoSeleccionado) {
+      this.ubigeosStore.listarProvincias(this.ubigeoSeleccionado?.value?.toString() ?? null);
+    }
+
+    this.ubigeoSgnl.set(this.ubigeoSeleccionado);
+  }
+
+  onProvChange(value: SelectModel | null): void {
+    const provControl = this.filterReportForm.get('provinciaSelect');
+    const depControl = this.filterReportForm.get('departamentoSelect');
+
+    // Evita un bucle infinito comprobando si el valor ya es el mismo
+    if (provControl?.value !== value) {
+      provControl?.setValue(value, { emitEvent: false }); // Actualiza sin disparar el evento
+    }
+
+    if (value == null) {
+      // Si el valor es null, verifica si el departamento tiene un valor
+      if (depControl?.value) {
+        this.ubigeoSeleccionado = depControl.value;
+      } else {
+        this.ubigeoSeleccionado = null;
+      }
+    } else {
+      this.ubigeoSeleccionado = value;
+    }
+
+    // Renderiza el gráfico con el ubigeo seleccionado
+    this.onRenderCharts({});
+    this.ubigeoSgnl.set(this.ubigeoSeleccionado);
   }
 
   renderGeoChart({
     reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
-    ubigeo = this.ubigeoSeleccionado,
+    ubigeo = this.ubigeoSeleccionado?.value?.toString(),
     sector = this.sectorSeleccionado,
     espacio = this.espacioSeleccionado,
+    tipoAcuerdo = this.tipoAcuerdoSeleccionado,
   }: TraerReportesInterface): void {
+
+    // Determina la URL del TopoJSON y el feature basado en el ubigeo
+    const { topoJsonUrl, rqDataFeature } = this.getTopoJsonUrlAndFeature(ubigeo ?? null);
+
     this.geoChart = new Chart({
       container: 'container',
       autoFit: true,
     });
 
-    const topoJsonUrl = (ubigeo) ? `${environment.topoJsonUrl}/provincias/${ubigeo}.topo.json` : `${environment.topoJsonUrl}/departamentos/departamentos.topo.json`;
-    // const rqUrl = (ubigeo) ? `geoacuerdos.provincias.topo.json` : `geoacuerdos.topo.json`;
-    const rqDataFeature = (ubigeo) ? ubigeo : `departamentos`;
-
-    this.reportesService.obtenerReporteResultado(reporteCabeceraId, ubigeo, sector, espacio)
-      .then((data) => data.data)
+    this.reportesService.obtenerReporteResultado(reporteCabeceraId, ubigeo, sector, espacio, tipoAcuerdo)
+      .then((response) => response.data)
       .then((data) => {
         this.acuerdos.set(data);
 
         if (this.geoChart) {
-          this.geoChart.clear(); // Clear the chart before rendering new data
+          this.geoChart.clear(); // Limpiar el gráfico antes de renderizar nuevos datos
           this.geoChart.geoPath()
             .coordinate({ type: 'mercator' })
             .data({
@@ -216,110 +335,148 @@ export class InicioComponent implements AfterViewInit {
             .encode('color', 'Ejecutados')
             .legend({ color: { layout: { justifyContent: 'center' } } });
           this.geoChart.render();
-          this.geoChart.on('element:click', (evt) => {
-            const { data } = evt;
-            // if (data && data.data) {
-            //   const ft = data.data.properties;
-            //   this.renderGeoChart(ft.ubigeo);
-            // }
-          });
+
+          this.geoChart.on('element:click', this.handleElementClick.bind(this));
         }
       });
   }
 
-  renderRadiaChart(ubigeo: string | null, reporteCabeceraId: number = 8): void {
+  private getTopoJsonUrlAndFeature(ubigeo: string | null): { topoJsonUrl: string, rqDataFeature: string } {
+    const baseUrl = environment.topoJsonUrl;
+    if (ubigeo?.length === 2) {
+      return { topoJsonUrl: `${baseUrl}/provincias/${ubigeo}.topo.json`, rqDataFeature: ubigeo };
+    }
+    if (ubigeo?.length === 4) {
+      return { topoJsonUrl: `${baseUrl}/distritos/${ubigeo}.topo.json`, rqDataFeature: ubigeo };
+    }
+    return { topoJsonUrl: `${baseUrl}/departamentos/departamentos.topo.json`, rqDataFeature: 'departamentos' };
+  }
+
+  private handleElementClick(evt: any): void {
+    const { data } = evt;
+    if (data && data.data) {
+      const ubigeoLength = data.data.properties.ubigeo.length;
+
+      if (ubigeoLength === 2) {
+        this.onDepChange(new SelectModel(data.data.properties.ubigeo, data.data.properties.departamento));
+      } else if (ubigeoLength === 4) {
+        this.onProvChange(new SelectModel(data.data.properties.ubigeo, data.data.properties.prov));
+      }
+    }
+  }
+
+  renderRadiaChart({
+    reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
+    ubigeo = this.ubigeoSeleccionado?.value?.toString(),
+    sector = this.sectorSeleccionado,
+    espacio = this.espacioSeleccionado,
+    tipoAcuerdo = this.tipoAcuerdoSeleccionado
+  }: TraerReportesInterface): void {
     this.radialChart = new Chart({
       container: 'container-radial',
       autoFit: true,
     });
 
-    this.radialChart.coordinate({ type: 'radial', innerRadius: 0.1, endAngle: Math.PI });
+    this.radialChart.coordinate({ type: 'theta', outerRadius: 0.8 });
 
-    this.reportesService.obtenerReporteClasificacion(reporteCabeceraId)
+    this.reportesService.obtenerReporteClasificacion(reporteCabeceraId, ubigeo, sector, espacio, tipoAcuerdo)
       .then((data) => data.data)
       .then((data) => {
+
+        console.log(data);
+
 
         if (this.radialChart) {
           this.radialChart
             .interval()
             .data(data)
-            .encode('x', 'name')
+            .transform({ type: 'stackY' })
             .encode('y', 'porcentaje')
-            .scale('y', { type: 'sqrt' })
-            .encode('color', 'porcentaje')
-            .style('stroke', 'white')
-            .scale('color', {
-              range: '#BAE7FF-#1890FF-#0050B3',
+            .encode('color', 'tipo')
+            .legend('color', { position: 'bottom', layout: { justifyContent: 'center' } })
+            .label({
+              position: 'outside',
+              text: (data: any) => `${data.tipo}: ${data.porcentaje}%`,
             })
-            .axis('y', { tickFilter: (d: any, i: any) => i !== 0 })
-            .legend({
-              color: {
-                length: 400,
-                position: 'bottom',
-                layout: { justifyContent: 'center' },
-              },
-            })
-            .animate('enter', { type: 'waveIn', duration: 800 });
-
-
+            .tooltip((data) => {
+              return {
+                name: `${data.tipo}`,
+                value: `${data.ejecutados} de ${data.acuerdos} acuerdos ejecutados`,
+              };
+            });
 
           this.radialChart.render();
         }
       });
   }
 
-  renderBarChart(ubigeo: string | null, reporteCabeceraId: number = 8): void {
-    const data = [
-      { periodo: '01/2024', ejecutados: 79.80 },
-      { periodo: '02/2024', ejecutados: 85.00 },
-      { periodo: '03/2024', ejecutados: 100.00 },
-      { periodo: '04/2024', ejecutados: 90.00 },
-      { periodo: '05/2024', ejecutados: 88.00 },
-      { periodo: '06/2024', ejecutados: 99.00 },
-    ];
+  renderBarChart({
+    reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
+    ubigeo = this.ubigeoSeleccionado?.value?.toString(),
+    sector = this.sectorSeleccionado,
+    espacio = this.espacioSeleccionado,
+    tipoAcuerdo = this.tipoAcuerdoSeleccionado
+  }: TraerReportesInterface): void {
+
     this.barChart = new Chart({
       container: 'container-bar',
       autoFit: true,
     });
 
-    this.barChart
-      .interval()
-      .data({
-        value: data
-      })
-      .encode('x', 'periodo')
-      .encode('y', 'ejecutados')
-      .tooltip((data) => ({
-        name: 'Ejecución',
-        value: `${data.ejecutados}%`,
-      }));
+    this.reportesService.obtenerReporteMensual(reporteCabeceraId, ubigeo, sector, espacio, tipoAcuerdo)
+      .then((data) => data.data)
+      .then((data) => {
 
-    this.barChart.render();
+        if (this.barChart) {
+          this.barChart
+            .interval()
+            .data(data)
+            .encode('x', 'periodo')
+            .encode('y', 'ejecutados')
+            .tooltip((data) => ({
+              name: 'Ejecución',
+              value: `${data.ejecutados}%`,
+            }));
+
+          this.barChart.render();
+        }
+      });
   }
 
   renderTableChart({
     reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
-    ubigeo = this.ubigeoSeleccionado,
+    ubigeo = this.ubigeoSeleccionado?.value?.toString(),
     sector = this.sectorSeleccionado,
     espacio = this.espacioSeleccionado,
+    tipoAcuerdo = this.tipoAcuerdoSeleccionado
   }: TraerReportesInterface): void {
-    this.reportesService.obtenerReporteSector(reporteCabeceraId, ubigeo, sector, espacio).then((data) => {
+    this.reportesService.obtenerReporteSector(reporteCabeceraId, ubigeo, sector, espacio, tipoAcuerdo).then((data) => {
       if (data.success) {
         this.reporteSectores.set(data.data);
+
+        // Efecto para calcular los totales y el promedio cuando cambie reporteSectores
+        const sectores = this.reporteSectores();
+
+        if (sectores.length > 0) {
+          const totalAcuerdos = sectores.reduce((sum, sector) => sum + (sector.acuerdos ?? 0), 0);
+          const totalEjecutados = sectores.reduce((sum, sector) => sum + (sector.ejecutados ?? 0), 0);
+          const sectoresConPorcentaje = sectores.filter(sector => sector.porcentaje! > 0);
+          const totalPorcentaje = sectoresConPorcentaje.reduce((sum, sector) => sum + sector.porcentaje!, 0);
+          const promedioPorcentaje = sectoresConPorcentaje.length > 0 ? totalPorcentaje / sectoresConPorcentaje.length : 0;
+
+          // Actualizamos las señales
+          this.totalAcuerdos.set(totalAcuerdos);
+          this.totalEjecutados.set(totalEjecutados);
+          this.promedioPorcentaje.set(parseFloat(promedioPorcentaje.toFixed(2)));
+        } else {
+          // Si no hay datos, reiniciamos los valores
+          this.totalAcuerdos.set(0);
+          this.totalEjecutados.set(0);
+          this.promedioPorcentaje.set(0);
+        }
       }
     });
   }
-
-  onSectorChange(sector: SelectModel): void {
-    if (sector == null) {
-      this.sectorSeleccionado = null;
-      this.renderTableChart({});
-      return;
-    };
-
-    this.renderTableChart({ sector: sector.label });
-  }
-
 
   onCreateFilterReportForm(): void {
     this.filterReportForm = this.fb.group({
@@ -328,6 +485,7 @@ export class InicioComponent implements AfterViewInit {
       provinciaSelect: [null],
       sectorSelect: [null],
       espacioSelect: [null],
+      tipoAcuerdoSelect: [null],
     });
   }
 }
