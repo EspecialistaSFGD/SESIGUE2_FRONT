@@ -10,14 +10,15 @@
     (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
-            <th nzLeft nzWidth="120px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+            <th class="text-center w-10" nzColumnKey="validado"></th>
+            <th class="w-40" nzColumnKey="codigo">Código</th>
+            <th class="w-20 sm:w-56" nzColumnKey="aspectoCriticoResolver">Pedido</th>
+            <th class="w-40" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
+            <th nzWidth="120px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
             <th nzWidth="150px" nzAlign="center" nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
             <!-- <th nzWidth="150px" nzAlign="center" nzColumnKey="prioridadID" [nzSortFn]="true">ID</th> -->
             <th nzWidth="300px" nzAlign="center" nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
             <th nzWidth="300px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
-            <th class="text-center w-10" nzColumnKey="validado"></th>
-            <th class="w-40" nzColumnKey="codigo" [nzSortFn]="true">Código</th>
-            <th class="w-20 sm:w-56" nzColumnKey="aspectoCriticoResolver">Pedido</th>
             <th nzWidth="80px" nzAlign="center" nzColumnKey="cuis">CUI</th>
             <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadPreAcuerdos">Pre acuerdos</th>
             <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadAcuerdos">Acuerdos</th>
@@ -28,20 +29,6 @@
     <tbody>
         @for (data of this.pedidosService.pedidos(); track data.prioridadID) {
         <tr>
-            <td nzLeft nzWidth="120px" nzAlign="center">{{ data.sector }}</td>
-            <td nzWidth="150px" nzAlign="center">{{ data.region }}</td>
-            <!-- <td nzLeft nzWidth="120px" nzAlign="center">{{ data.prioridadID }}</td> -->
-            <td nzWidth="300px" nzAlign="center">
-                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip
-                    [nzTooltipTitle]="data.objetivoEstrategicoTerritorial">
-                    {{ data.objetivoEstrategicoTerritorial }}
-                </p>
-            </td>
-            <td nzWidth="300px" nzAlign="center">
-                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.intervencionesEstrategicas">
-                    {{ data.intervencionesEstrategicas }}
-                </p>
-            </td>
             <td class="text-center w-10">
                 @if(data.validado==1){
                 <nz-avatar [nzSize]="24" class="bg-green-500 dark:bg-green-400" nzIcon="check"
@@ -57,6 +44,22 @@
                     {{ data.aspectoCriticoResolver }}
                 </p>
             </td>
+            <td>{{ data.espacio }}</td>
+            <td nzWidth="120px" nzAlign="center">{{ data.sector }}</td>
+            <td nzWidth="150px" nzAlign="center">{{ data.region }}</td>
+            <!-- <td nzLeft nzWidth="120px" nzAlign="center">{{ data.prioridadID }}</td> -->
+            <td nzWidth="300px" nzAlign="center">
+                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip
+                    [nzTooltipTitle]="data.objetivoEstrategicoTerritorial">
+                    {{ data.objetivoEstrategicoTerritorial }}
+                </p>
+            </td>
+            <td nzWidth="300px" nzAlign="center">
+                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.intervencionesEstrategicas">
+                    {{ data.intervencionesEstrategicas }}
+                </p>
+            </td>
+
             <td nzWidth="80px" nzAlign="center">{{ data.cuis }}</td>
             <td nzWidth="100px" nzAlign="center">{{ data.cantidadPreAcuerdos }}</td>
             <td nzWidth="100px" nzAlign="center">{{ data.cantidadAcuerdos }}</td>
@@ -109,6 +112,10 @@
         <p class="mb-2 sm:mb-0">Resultados ({{this.pedidosService.total()}})</p>
         <div>
             <nz-space>
+
+                <button *nzSpaceItem nz-button nz-tooltip="Actualizar" (click)="onRefresh()">
+                    <span nz-icon nzType="sync" nzTheme="outline"></span>
+                </button>
 
                 <button *nzSpaceItem nz-button (click)="onOpenDrawer()">
                     <span nz-icon nzType="filter" nzTheme="outline"></span>

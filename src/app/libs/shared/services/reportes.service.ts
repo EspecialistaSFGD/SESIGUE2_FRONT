@@ -4,6 +4,7 @@ import { ReporteAddRequestModel, ReporteCorteModel, ReporteFormModel, ReporteReq
 import { HttpParams } from '@angular/common/http';
 import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
 import { startOfMonth, endOfMonth, startOfDay } from 'date-fns';
+import { ReporteType } from '../types/reporte.type';
 
 interface State {
   reportes: any[];
@@ -278,5 +279,60 @@ export class ReportesService extends BaseHttpService {
     } else {
       this.#reportesResult.update((v) => ({ ...v, reporteSeleccionado: null }));
     }
+  }
+
+  descargarReporteAcuerdos(tipo: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend'): Promise<ResponseModel> {
+    let params = new HttpParams()
+      .append('piCurrentPage', pageIndex)
+      .append('piPageSize', pageSize)
+      .append('columnSort', sortField)
+      .append('typeSort', sortOrder);
+
+    this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
+
+    const tipoReporte = (tipo == 'ACUERDO') ? 'PrioridadAcuerdo' : 'Hito';
+
+    return new Promise((resolve, reject) => {
+
+      this.http.get<ResponseModel>(`${this.apiUrl}/${tipoReporte}/Exportar`, { params }).subscribe({
+        next: (data) => {
+          resolve(data);
+        },
+        error: (error) => {
+          reject(error);
+        },
+        complete: () => this.#reportesResult.update((state) => ({ ...state, isLoading: false })),
+      })
+
+    });
+  }
+
+  obtenerReporteTotales(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null, tipoAcuerdo: string | null): Promise<ResponseModel> {
+    let params = new HttpParams();
+
+    if (reporteCabeceraId) params = params.append('reporteCabeceraId', reporteCabeceraId);
+
+    if (ubigeo) params = params.append('ubigeo', ubigeo);
+
+    if (sector) params = params.append('sector', sector);
+
+    if (espacio) params = params.append('espacio', espacio);
+
+    if (tipoAcuerdo) params = params.append('tipo', tipoAcuerdo);
+
+    this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
+
+    return new Promise((resolve, reject) => {
+      this.http.get<ResponseModel>(this.apiUrl + '/Reporte/ReporteCabecera', { params }).subscribe({
+        next: (data) => {
+          resolve(data);
+        },
+        error: (error) => {
+          reject(error);
+        },
+        complete: () => this.#reportesResult.update((state) => ({ ...state, isLoading: false })),
+      });
+
+    });
   }
 }

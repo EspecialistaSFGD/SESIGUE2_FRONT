@@ -40,6 +40,9 @@ import { DueToPipe } from '../../libs/shared/pipes/due-to.pipe';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { concatMap } from 'rxjs/operators';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { ReporteType } from '../../libs/shared/types/reporte.type';
+import { ReporteDescargaComponent } from '../../libs/shared/components/reporte-descarga/reporte-descarga.component';
+import { ReportesService } from '../../libs/shared/services/reportes.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -75,8 +78,8 @@ export class AcuerdosComponent implements OnInit {
 
   pageIndex: number = 1;
   pageSize: number = 10;
-  sortField: string | null = 'acuerdoID';
-  sortOrder: string | null = 'descend';
+  sortField: string = 'acuerdoID';
+  sortOrder: string = 'descend';
   isDrawervisible: boolean = false;
   isVisible: boolean = false;
 
@@ -113,6 +116,7 @@ export class AcuerdosComponent implements OnInit {
   confirmModal?: NzModalRef; // For testing by now
   private viewContainerRef = inject(ViewContainerRef);
   private message = inject(NzMessageService);
+  private reportesService = inject(ReportesService);
 
   constructor() {
     this.crearSearForm();
@@ -149,7 +153,7 @@ export class AcuerdosComponent implements OnInit {
         }
 
         if (params['dep'] != null) {
-          this.depSeleccionado = { value: Number(params['dep']) };
+          this.depSeleccionado = { value: params['dep'] };
           this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
         }
 
@@ -223,6 +227,10 @@ export class AcuerdosComponent implements OnInit {
     }: TraerAcuerdosInterface
   ): void {
     this.acuerdosService.listarAcuerdos(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
+  }
+
+  onRefresh(): void {
+    this.traerAcuerdos({});
   }
 
   onSolicitarDesestimacion(acuerdo: AcuerdoPedidoModel): void {
@@ -444,6 +452,58 @@ export class AcuerdosComponent implements OnInit {
     this.cui = (value == null || value == '' || value == undefined) ? null : value;
     this.traerAcuerdos({ cui: value });
     this.updateParamsSubject.next();
+  }
+
+  onDescargarReporte(tipo: ReporteType): void {
+    const modal = this.modal.create<ReporteDescargaComponent, ReporteType>({
+      nzTitle: `Descargando reporte de ${tipo}`,
+      nzContent: ReporteDescargaComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzData: tipo,
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => this.modal.closeAll()
+        },
+        {
+          type: 'primary',
+          label: 'Comentar',
+          onClick: componentInstance => {
+            const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
+
+            if (tipo == 'ACUERDO') {
+
+              return this.reportesService.descargarReporteAcuerdos(
+                tipo,
+                this.pageIndex, page, 'PrioridadId', this.sortOrder
+              ).then((res) => {
+
+                if (res.success == true) {
+                  var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+                  var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                  saveAs(blob, res.data.nombreArchivo);
+                }
+
+                this.modal.closeAll();
+              });
+            }
+
+            return;
+          },
+          loading: this.reportesService.isLoading(),
+          disabled: componentInstance => !componentInstance || !componentInstance.reporteDescargaForm.valid
+        }]
+    });
+
+    const instance = modal.getContentComponent();
+
+    modal.afterClose.subscribe(() => {
+      instance.reporteDescargaForm.reset();
+    });
   }
 
   updateQueryParams() {

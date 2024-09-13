@@ -24,7 +24,7 @@
                             </nz-form-control>
                         </nz-form-item>
                     </div>
-
+                    <!-- 
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="4" nzLg="4" nzXl="4">
                         <nz-form-item>
                             <nz-form-label>Tipo de Acuerdo</nz-form-label>
@@ -40,7 +40,7 @@
 
                             </nz-form-control>
                         </nz-form-item>
-                    </div>
+                    </div> -->
 
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="4" nzLg="4" nzXl="4">
                         <nz-form-item>
@@ -109,28 +109,36 @@
 <nz-row nz-row [nzGutter]="[{ xs: 8, sm: 16, md: 24, lg: 32 }, { xs: 8, sm: 16, md: 24, lg: 32 }]" class="mb-8">
     <nz-col nzFlex="4">
         <nz-card>
-            <nz-statistic [nzValue]="reportesService.totalAcuerdos()" [nzTitle]="'Acuerdos Programados'"
-                [nzPrefix]="prefixTplProg" [nzValueStyle]="{ color: '#52c41a' }"></nz-statistic>
-            <ng-template #prefixTplProg><span nz-icon nzType="field-time" nzTheme="outline"></span></ng-template>
+            <nz-statistic [nzValue]="totales()?.total" [nzTitle]="'Acuerdos Establecidos'" [nzPrefix]="prefixTplProg"
+                [nzValueStyle]="{ color: '#52c41a' }"></nz-statistic>
+            <ng-template #prefixTplProg><span nz-icon nzType="aim" nzTheme="outline"></span></ng-template>
         </nz-card>
     </nz-col>
     <nz-col nzFlex="4">
         <nz-card>
-            <nz-statistic [nzValue]="reportesService.totalEjecutados()" [nzTitle]="'Acuerdos Cumplidos'"
-                [nzPrefix]="prefixTpCumpl" [nzValueStyle]="{ color: '#52c41a' }"></nz-statistic>
-            <ng-template #prefixTpCumpl><span nz-icon nzType="check"></span></ng-template>
-        </nz-card>
-    </nz-col>
-    <nz-col nzFlex="4">
-        <nz-card>
-            <nz-statistic [nzValue]="1000" [nzTitle]="'Acuerdos Desestimados'" [nzPrefix]="prefixTplDesest"
-                [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
+            <nz-statistic [nzValue]="totales()?.desestimado" [nzTitle]="'Acuerdos Desestimados'"
+                [nzPrefix]="prefixTplDesest" [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
             <ng-template #prefixTplDesest><span nz-icon nzType="stop" nzTheme="outline"></span></ng-template>
         </nz-card>
     </nz-col>
     <nz-col nzFlex="4">
         <nz-card>
-            <nz-statistic [nzValue]="1000" [nzTitle]="'Acuerdos En Proceso'" [nzPrefix]="prefixTplProces"
+            <nz-statistic [nzValue]="totales()?.vigente" [nzTitle]="'Acuerdos Vigentes'" [nzPrefix]="prefixTplVig"
+                [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
+            <ng-template #prefixTplVig><span nz-icon nzType="field-time" nzTheme="outline"></span></ng-template>
+        </nz-card>
+    </nz-col>
+    <nz-col nzFlex="4">
+        <nz-card>
+            <nz-statistic [nzValue]="totales()?.cumplido" [nzTitle]="'Acuerdos Cumplidos'" [nzPrefix]="prefixTpCumpl"
+                [nzValueStyle]="{ color: '#52c41a' }"></nz-statistic>
+            <ng-template #prefixTpCumpl><span nz-icon nzType="check"></span></ng-template>
+        </nz-card>
+    </nz-col>
+
+    <nz-col nzFlex="4">
+        <nz-card>
+            <nz-statistic [nzValue]="totales()?.proceso" [nzTitle]="'Acuerdos En Proceso'" [nzPrefix]="prefixTplProces"
                 [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
             <ng-template #prefixTplProces><span nz-icon nzType="loading-3-quarters"
                     nzTheme="outline"></span></ng-template>
@@ -138,18 +146,25 @@
     </nz-col>
     <nz-col nzFlex="4">
         <nz-card>
-            <nz-statistic [nzValue]="1000" [nzTitle]="'Acuerdos Pendientes'" [nzPrefix]="prefixTplPend"
+            <nz-statistic [nzValue]="totales()?.vencido" [nzTitle]="'Acuerdos Vencidos'" [nzPrefix]="prefixTplVenci"
                 [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
-            <ng-template #prefixTplPend><span nz-icon nzType="rise" nzTheme="outline"></span></ng-template>
+            <ng-template #prefixTplVenci><span nz-icon nzType="alert" nzTheme="outline"></span></ng-template>
         </nz-card>
     </nz-col>
     <nz-col nzFlex="4">
+        <nz-card>
+            <nz-statistic [nzValue]="totales()?.pendiente" [nzTitle]="'Acuerdos Pendientes'" [nzPrefix]="prefixTplPend"
+                [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
+            <ng-template #prefixTplPend><span nz-icon nzType="clock-circle" nzTheme="outline"></span></ng-template>
+        </nz-card>
+    </nz-col>
+    <!-- <nz-col nzFlex="4">
         <nz-card>
             <nz-statistic [nzValue]="reportesService.totalPorcentaje()" [nzTitle]="'Total de Acuerdos Ejecutados'"
                 [nzPrefix]="prefixTplEjec" [nzSuffix]="'%'" [nzValueStyle]="{ color: '#52c41a' }"></nz-statistic>
             <ng-template #prefixTplEjec><span nz-icon nzType="check-circle"></span></ng-template>
         </nz-card>
-    </nz-col>
+    </nz-col> -->
 </nz-row>
 
 <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="flex flex-wrap mt-8">
@@ -159,31 +174,31 @@
         </nz-card>
     </div>
 
-    <div nz-col class="gutter-row flex" nzXs="24" nzSm="24" nzMd="16" nzLg="16" nzXl="16">
+    <div nz-col class="gutter-row flex" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
         <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="flex-1">
             <div nz-col class="gutter-row flex" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
-                <nz-card nzTitle="Cumplimiento de Acuerdos por Sector" class="flex-1">
+                <nz-card nzTitle="Cumplimiento de Acuerdos por Región" class="flex-1">
                     <!-- Contenido del nz-card -->
-                    @if(reporteSectores().length>0) {
+                    @if(acuerdos().length>0) {
                     <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '400px' }" [nzFooter]="tplFooter">
                         <thead>
                             <tr>
-                                <th [nzWidth]="'200px'">Sector</th>
+                                <th [nzWidth]="'150px'">Región</th>
                                 <th nzAlign="center" [nzWidth]="'100px'">Nº de Acuerdos</th>
                                 <th nzAlign="center" [nzWidth]="'100px'">Ejecutados</th>
                                 <th nzAlign="center" class="">Avance</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @for (item of reporteSectores(); track item.sector) {
+                            @for (item of acuerdos(); track item.id) {
                             <tr>
-                                <td>{{item.sector}}</td>
-                                <td nzAlign="center">{{item.acuerdos}}</td>
-                                <td nzAlign="center">{{item.ejecutados}}</td>
+                                <td>{{item.id}}</td>
+                                <td nzAlign="center">{{item.totalAcuerdo}}</td>
+                                <td nzAlign="center">{{item.totalEjecutado}}</td>
                                 <td nzAlign="center" class="">
                                     @if(item.porcentaje) {
-                                    <div class="object-contain w-[90%]">
-                                        <nz-progress [nzPercent]="item.porcentaje" [nzStrokeWidth]="'12'"
+                                    <div class="object-contain w-[85%]">
+                                        <nz-progress [nzPercent]="item.porcentaje.toFixed(0)" [nzStrokeWidth]="'12'"
                                             [nzStatus]="(item.porcentaje == 100) ? 'normal' : 'active'"
                                             [nzStrokeColor]="(item.porcentaje > 70) ? '#52c41a' : '#1890ff'"></nz-progress>
                                     </div>
@@ -197,18 +212,69 @@
                     <ng-template #tplFooter>
                         <tfoot>
                             <tr>
-                                <td class="w-[200px] font-bold">TOTAL</td>
+                                <td class="w-[150px] font-bold">TOTAL</td>
+                                <td class="w-[100px] text-center font-bold">{{totales()?.total}}</td>
+                                <td class="w-[100px] text-center font-bold">{{totales()?.cumplido}}</td>
+                                <td class=" text-center font-bold">
+                                    {{ totales() && totales()?.cumplido !== undefined && totales()?.total !== undefined
+                                    ? ((totales()?.cumplido! / totales()?.total!) * 100).toFixed(0)
+                                    : 'N/A' }}%
+                                </td>
+
+                            </tr>
+                        </tfoot>
+                    </ng-template>
+                    }
+                </nz-card>
+            </div>
+        </div>
+    </div>
+
+    <div nz-col class="gutter-row flex" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="flex-1">
+            <div nz-col class="gutter-row flex" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-card nzTitle="Cumplimiento de Acuerdos por Sector" class="flex-1">
+                    <!-- Contenido del nz-card -->
+                    @if(reporteSectores().length>0) {
+                    <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '400px' }" [nzFooter]="tplFooter">
+                        <thead>
+                            <tr>
+                                <th [nzWidth]="'150px'">Sector</th>
+                                <th nzAlign="center" [nzWidth]="'100px'">Nº de Acuerdos</th>
+                                <th nzAlign="center" [nzWidth]="'100px'">Ejecutados</th>
+                                <th nzAlign="center" class="">Avance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of reporteSectores(); track item.sector) {
+                            <tr>
+                                <td>{{item.sector}}</td>
+                                <td nzAlign="center">{{item.acuerdos}}</td>
+                                <td nzAlign="center">{{item.ejecutados}}</td>
+                                <td nzAlign="center" class="">
+                                    @if(item.porcentaje) {
+                                    <div class="object-contain w-[85%]">
+                                        <nz-progress [nzPercent]="item.porcentaje.toFixed(0)" [nzStrokeWidth]="'12'"
+                                            [nzStatus]="(item.porcentaje == 100) ? 'normal' : 'active'"
+                                            [nzStrokeColor]="(item.porcentaje > 70) ? '#52c41a' : '#1890ff'"></nz-progress>
+                                    </div>
+                                    }
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </nz-table>
+
+                    <ng-template #tplFooter>
+                        <tfoot>
+                            <tr>
+                                <td class="w-[150px] font-bold">TOTAL</td>
                                 <td class="w-[100px] text-center font-bold">{{totalAcuerdos()}}</td>
                                 <td class="w-[100px] text-center font-bold">{{totalEjecutados()}}</td>
-                                <td class="w-[500px] text-center font-bold">
+                                <td class="text-center font-bold">
 
-                                    {{ promedioPorcentaje() }}%
-                                    <!-- 
-                                    <div class="object-contain w-[95%]">
-                                        <nz-progress [nzPercent]="promedioPorcentaje()"
-                                            [nzStatus]="(promedioPorcentaje() == 100) ? 'normal' : 'active'"
-                                            [nzStrokeColor]="(promedioPorcentaje() > 70) ? '#52c41a' : '#1890ff'"></nz-progress>
-                                    </div> -->
+                                    {{ promedioPorcentaje().toFixed(0) }}%
+
                                 </td>
                             </tr>
                         </tfoot>
@@ -221,10 +287,9 @@
 </div>
 
 
-<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="my-8">
+<!-- <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="my-8">
     <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
         <div class="flex flex-row overflow-x-auto gap-4">
-            <!-- Generar las cards de manera dinámica -->
             @for (acuerdo of acuerdos(); track $index) {
             <div class="shrink-0 w-72   ">
                 <nz-card>
@@ -255,7 +320,7 @@
             }
         </div>
     </div>
-</div>
+</div> -->
 
 <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="mt-8">
     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">

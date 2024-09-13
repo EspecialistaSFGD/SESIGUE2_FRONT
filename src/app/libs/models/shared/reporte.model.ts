@@ -62,3 +62,14 @@ export class ReporteSectorModel {
     ) { }
 }
 
+export class ReporteTotalModel {
+    constructor(
+        public total?: number,
+        public desestimado?: number,
+        public vigente?: number,
+        public cumplido?: number,
+        public proceso?: number,
+        public vencido?: number,
+        public pendiente?: number,
+    ) { }
+}

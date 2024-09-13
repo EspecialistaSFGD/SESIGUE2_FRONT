@@ -137,7 +137,9 @@ export class PedidosComponent implements OnInit, AfterViewInit {
         }
 
         if (params['dep'] != null) {
-          this.depSeleccionado = { value: Number(params['dep']) };
+
+          this.depSeleccionado = { value: params['dep'] };
+
           this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
         }
 
@@ -206,6 +208,9 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.pedidosService.listarPedidos(cui, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
   }
 
+  onRefresh(): void {
+    this.traerPedidos({});
+  }
 
   onAddEdit(pedido: PedidoModel | null): void {
     const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
@@ -343,6 +348,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   onDepChange(value: SelectModel, skipNavigation = false): void {
+
 
     if (this.clearingFilters) {
       return;

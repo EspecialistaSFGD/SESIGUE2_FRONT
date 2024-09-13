@@ -80,8 +80,9 @@
                         <span nz-icon nzType="appstore-add" nzTheme="outline"></span>
                     </button> -->
                     @if(data.evidenciaDesestimacion == null && data.nomEstadoRegistro != 'DESESTIMADO'){
-                    <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip
-                        nzTooltipTitle="Solicitar desestimaación de acuerdo" (click)="onSolicitarDesestimacion(data)">
+                    <button [disabled]="(data.nomEstadoRegistro == 'CULMINADO')" *nzSpaceItem nz-button nzDanger
+                        nzType="link" nz-tooltip nzTooltipTitle="Solicitar desestimación de acuerdo"
+                        (click)="onSolicitarDesestimacion(data)">
                         <span nz-icon nzType="stop" nzTheme="outline"></span>
                     </button>
                     }@else{
@@ -111,6 +112,10 @@
         <div>
             <nz-space>
 
+                <button *nzSpaceItem nz-button nz-tooltip="Actualizar" (click)="onRefresh()">
+                    <span nz-icon nzType="sync" nzTheme="outline"></span>
+                </button>
+
                 <button *nzSpaceItem nz-button (click)="onOpenDrawer()">
                     <span nz-icon nzType="filter" nzTheme="outline"></span>
                     <span class="button-text">Filtros</span>
@@ -131,11 +136,12 @@
                 <nz-dropdown-menu #menu="nzDropdownMenu">
                     <ul nz-menu>
                         <li nz-menu-item>
-                            <button (click)="isVisible=true" nz-button nzType="text" type="button">Exportar
+                            <button (click)="onDescargarReporte('ACUERDO')" nz-button nzType="text"
+                                type="button">Exportar
                                 acuerdos</button>
                         </li>
                         <li nz-menu-item>
-                            <button (click)="isVisible=true" nz-button nzType="text" type="button">Exportar
+                            <button nz-button nzType="text" (click)="onDescargarReporte('HITO')" type="button">Exportar
                                 hitos</button>
                         </li>
                     </ul>
@@ -327,14 +333,3 @@
         </div>
     </ng-template>
 </nz-drawer>
-
-<nz-modal [(nzVisible)]="isVisible" nzTitle="Descarga de reporte" (nzOnOk)="handleOk()" (nzOnCancel)="handleCancel()">
-    <ng-container *nzModalContent>
-        Deseo descargar
-
-        <nz-select class="w-56">
-            <nz-option nzValue="excel" nzLabel="Solo páginas visibles de la tabla"></nz-option>
-            <nz-option nzValue="pdf" nzLabel="Todas las páginas del reporte"></nz-option>
-        </nz-select>
-    </ng-container>
-</nz-modal>

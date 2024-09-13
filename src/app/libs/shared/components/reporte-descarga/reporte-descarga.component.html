@@ -1,0 +1,16 @@
+<form [formGroup]="reporteDescargaForm" nz-form nzLayout="vertical">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="esDescargaTotal">Deseo descargar</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <nz-radio-group formControlName="esDescargaTotal">
+                        <label nz-radio [nzValue]="false">Solo páginas visibles de la tabla</label>
+                        <label nz-radio [nzValue]="true">Todas las páginas del reporte</label>
+                    </nz-radio-group>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <!-- {{ reporteDescargaForm.value|json }} -->
+</form>

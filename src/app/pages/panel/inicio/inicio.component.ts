@@ -23,7 +23,7 @@ import { UtilesService } from '../../../libs/shared/services/utiles.service';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { environment } from '../../../../environments/environment';
 import { feature } from 'topojson';
-import { ReporteSectorModel } from '../../../libs/models/shared/reporte.model';
+import { ReporteSectorModel, ReporteTotalModel } from '../../../libs/models/shared/reporte.model';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
@@ -68,6 +68,7 @@ register('data.feature', ({ name }) => {
 })
 export class InicioComponent {
 
+
   filterReportForm!: UntypedFormGroup;
 
   reporteCabeceraIdSeleccionado: number | null = null;
@@ -76,6 +77,15 @@ export class InicioComponent {
   espacioSeleccionado: string | null = null;
   tipoAcuerdoSeleccionado: string | null = null;
   reporteSectores = signal<ReporteSectorModel[]>([]);
+  totales = signal<ReporteTotalModel>({
+    total: 0,
+    desestimado: 0,
+    vigente: 0,
+    cumplido: 0,
+    proceso: 0,
+    vencido: 0,
+    pendiente: 0,
+  });
   // Señales para totales y promedio
   totalAcuerdos = signal<number>(0);
   totalEjecutados = signal<number>(0);
@@ -155,6 +165,7 @@ export class InicioComponent {
     espacio = this.espacioSeleccionado,
     tipoAcuerdo = this.tipoAcuerdoSeleccionado,
   }: TraerReportesInterface): void {
+
     this.renderTableChart({
       reporteCabeceraId,
       ubigeo,
@@ -180,6 +191,14 @@ export class InicioComponent {
     });
 
     this.renderRadiaChart({
+      reporteCabeceraId,
+      ubigeo,
+      sector,
+      espacio,
+      tipoAcuerdo
+    });
+
+    this.renderTotalChart({
       reporteCabeceraId,
       ubigeo,
       sector,
@@ -474,6 +493,23 @@ export class InicioComponent {
           this.totalEjecutados.set(0);
           this.promedioPorcentaje.set(0);
         }
+      }
+    });
+  }
+
+  renderTotalChart({
+    reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
+    ubigeo = this.ubigeoSeleccionado?.value?.toString(),
+    sector = this.sectorSeleccionado,
+    espacio = this.espacioSeleccionado,
+    tipoAcuerdo = this.tipoAcuerdoSeleccionado
+  }: TraerReportesInterface): void {
+    this.reportesService.obtenerReporteTotales(reporteCabeceraId, ubigeo, sector, espacio, tipoAcuerdo).then((data) => {
+      if (data.success) {
+        this.totales.set(data.data[0]);
+
+        console.log('totales', this.totales());
+
       }
     });
   }

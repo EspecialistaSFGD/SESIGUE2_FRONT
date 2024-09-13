@@ -16,6 +16,7 @@ interface State {
     isEditing: boolean;
     isCreatingPreAcuerdo: boolean | null;
     isConverting: boolean | null;
+    isDesestimated: boolean | null;
     total: number;
     sortField: string | null;
     sortOrder: string | null;
@@ -38,6 +39,7 @@ export class AcuerdosService {
         isEditing: false,
         isCreatingPreAcuerdo: false,
         isConverting: false,
+        isDesestimated: false,
         total: 0,
         sortField: null,
         sortOrder: null,
@@ -47,6 +49,7 @@ export class AcuerdosService {
     public acuerdoSeleccionado = computed(() => this.#acuerdosResult().acuerdoSeleccionado);
     public isCreatingPreAcuerdo = computed(() => this.#acuerdosResult().isCreatingPreAcuerdo);
     public isConverting = computed(() => this.#acuerdosResult().isConverting);
+    public isDesestimated = computed(() => this.acuerdoSeleccionado()?.nomEstadoRegistro === 'DESESTIMADO' || this.acuerdoSeleccionado()?.nomEstadoRegistro === 'CULMINADO');
     public isLoading = computed(() => this.#acuerdosResult().isLoading);
     public isEditing = computed(() => this.#acuerdosResult().isEditing);
     public total = computed(() => this.#acuerdosResult().total);

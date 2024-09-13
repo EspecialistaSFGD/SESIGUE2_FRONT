@@ -14,7 +14,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { AvancesService } from '../../../libs/services/pedidos/avances.service';
-import { AvanceHitoModel, HitoAcuerdoModel } from '../../../libs/models/pedido';
+import { AcuerdoPedidoModel, AvanceHitoModel, HitoAcuerdoModel } from '../../../libs/models/pedido';
 import { Subject, debounceTime } from 'rxjs';
 import { HitoComponent } from '../../hitos/hito/hito.component';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -31,8 +31,11 @@ import { saveAs } from 'file-saver';
 import { EstadoComponent } from '../../../libs/shared/components/estado/estado.component';
 import { ComentarioModel } from '../../../libs/models/pedido/comentario.model';
 import { AuthService } from '../../../libs/services/auth/auth.service';
+import { DueToPipe } from '../../../libs/shared/pipes/due-to.pipe';
+import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 // import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { DesestimacionComponent } from '../../../libs/shared/components/desestimacion/desestimacion.component';
 
 const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
@@ -61,6 +64,8 @@ const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
     EstadoComponent,
     // NzTagModule,
     NzAvatarModule,
+    NzPageHeaderModule,
+    DueToPipe,
   ],
   providers: [
 
@@ -487,6 +492,49 @@ export class AcuerdoDetalleComponent implements OnInit {
     });
   }
 
+  onSolicitarDesestimacion(acuerdo: AcuerdoPedidoModel): void {
+    const title = 'Solicitar desestimación de acuerdo';
+    const labelOK = 'Solicitar desestimación';
+
+    const modal = this.modal.create<DesestimacionComponent, ComentarioModel>({
+      nzTitle: title,
+      nzContent: DesestimacionComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzClosable: false,
+      nzMaskClosable: false,
+      nzData: {
+        id: acuerdo.acuerdoId,
+        tipo: 'ACUERDO',
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: labelOK,
+          type: 'primary',
+          danger: true,
+          onClick: (componentInstance) => {
+            return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
+              this.acuerdosService.listarAcuerdo(Number(this.id!));
+              this.modal.closeAll();
+            });
+          },
+          loading: this.acuerdosService.isEditing(),
+          disabled: (componentInstance) => !componentInstance?.desestimacionForm.valid,
+        }
+      ]
+    });
+
+    const instance = modal.getContentComponent();
+    //modal.afterOpen.subscribe(() => console.log(instance.hitoForm.value));
+    // Return a result when closed
+    modal.afterClose.subscribe(result => {
+      instance.desestimacionForm.reset();
+    });
+  }
 
   updateQueryParams() {
     this.updatingParams = true;
