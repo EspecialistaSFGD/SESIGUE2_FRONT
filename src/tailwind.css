@@ -36,80 +36,26 @@ menu {
     vertical-align: middle;
 }
 
-/* Dark theme */
-/* .dark .ant-table {
-    @apply bg-neutral-950 text-gray-100;
-}
-
-.dark .ant-table-thead>tr>th {
-    @apply bg-neutral-900 text-gray-50;
-}
-
-.dark .ant-table-tbody>tr>td {
-    @apply border-neutral-800 border-b border-solid;
-}
-
-.dark .ant-table-tbody>tr.ant-table-row:hover>td,
-.dark .ant-table-tbody>tr>td.ant-table-cell-row-hover,
-.dark .ant-table-thead th.ant-table-column-has-sorters:hover {
-    @apply bg-neutral-800;
-}
-
-.dark .ant-table-cell-fix-left,
-.dark .ant-table-cell-fix-right {
-    @apply bg-neutral-950;
-} */
-
-/* Buttons */
-/* .dark .ant-btn-link:not(.ant-btn-dangerous) {
-    @apply text-blue-500;
-} */
-
-/* End Buttons */
-
-/* Drawe */
-/* .dark .ant-drawer-content,
-.dark .ant-drawer-header {
-    @apply bg-neutral-950 text-white;
-}
-
-.dark .ant-drawer-title,
-.dark .ant-drawer-close {
-    @apply text-white;
-} */
-
-/* Drawer end */
-
-/* Form newgins */
-/* .dark .ant-form-item-label>label {
-    @apply text-white;
-}
-
-.dark .ant-input-affix-wrapper {
-    @apply text-white;
-}
-
-.dark .ant-input {
-    @apply bg-transparent text-white;
-}
-
-.dark .ant-input-focused,
-.dark .ant-input:focus {
-    @apply border-blue-500;
-} */
-
-/* Form ends */
-
 nz-sider .ant-menu-item a {
     @apply text-white;
 }
 
+nz-sider .ant-menu-item a:hover {
+    @apply text-punche-red-100;
+}
+
 nz-sider .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    @apply bg-blue-950;
+    @apply bg-transparent;
+
 }
 
 .dark nz-sider .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    @apply bg-gray-950;
+    @apply bg-transparent;
+}
+
+.ant-menu-item-selected.ant-menu-item,
+.ant-menu-item-selected.ant-menu-item a {
+    @apply text-punche-red-100;
 }
 
 nz-sider .ant-menu.ant-menu-dark,

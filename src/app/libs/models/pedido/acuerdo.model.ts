@@ -14,6 +14,7 @@ export class AcuerdoPedidoModel extends SeguridadModel {
         public sector?: string,
         public region?: string,
         public provincia?: string,
+        public distrito?: string,
         public ubica?: string,
         public intervencionesEstrategicas?: string,
         public aspectoCriticoResolver?: string,
@@ -49,6 +50,7 @@ export class AcuerdoPedidoModel extends SeguridadModel {
         public evidencia?: File,
         public evidenciaDesestimacion?: string,
         public fechaEvento?: Date | null,
+        public motivoDesestimacion?: string,
 
     ) {
         super();
@@ -73,6 +75,7 @@ export class AcuerdoPedidoExpressModel extends AcuerdoPedidoModel {
         public sectorSelect?: SelectModel,
         public departamentoSelect?: SelectModel,
         public provinciaSelect?: SelectModel,
+        public distritoSelect?: SelectModel,
         public tipoCodigoSelect?: SelectModel,
         public tipoCodigo?: number,
         public ejeEstrategicoId?: number,

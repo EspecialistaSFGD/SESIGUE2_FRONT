@@ -9,6 +9,7 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { ThemeSwitcherComponent } from '../libs/shared/components/theme-switcher/theme-switcher.component';
 import { SuperHeaderComponent } from '../libs/shared/layout/super-header/super-header.component';
+import { FooterComponent } from '../libs/shared/layout/footer/footer.component';
 
 @Component({
   selector: 'app-auth',
@@ -23,6 +24,7 @@ import { SuperHeaderComponent } from '../libs/shared/layout/super-header/super-h
     NzCardModule,
     ThemeSwitcherComponent,
     SuperHeaderComponent,
+    FooterComponent,
   ],
   templateUrl: './auth.component.html',
 })

@@ -151,6 +151,19 @@ export class AcuerdoDetalleComponent implements OnInit {
 
   }
 
+  onVerDesestimacion(acuerdo: AcuerdoPedidoModel): void {
+    if (acuerdo == null) return;
+
+    this.acuerdosService.descargarEvidenciaDesestimacion(acuerdo.acuerdoId!).then((res) => {
+      if (res.success == true) {
+        var binary_string = this.utilesService.base64ToArrayBuffer(res.data[0].binario);
+        var blob = new Blob([binary_string], { type: `application/${res.data[0].tipo}` });
+
+        saveAs(blob, res.data[0].nombre);
+      }
+    });
+  }
+
   traerHitos({
     acuerdoID = Number(this.id) || null,
     hitoID = Number(this.hitoSeleccionadoId) || null,

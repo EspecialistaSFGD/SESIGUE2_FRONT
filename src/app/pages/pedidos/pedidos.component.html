@@ -1,6 +1,6 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 
-<!-- <h1>{{authService.sector()|json}}</h1> -->
+<!-- <h1>{{authService.provincia()|json}}</h1> -->
 <!-- <h1>{{authService.canViewPedidos()|json}}</h1> -->
 <!-- <h1>{{authService.permisos()|json}}</h1> -->
 
@@ -38,7 +38,7 @@
                     nz-tooltip="Validado"></nz-avatar>
                 }
             </td>
-            <td class="w-40">{{data.codigo}}</td>
+            <td class="w-40"><strong>{{data.codigo}}</strong></td>
             <td class="w-20 sm:w-56">
                 <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.aspectoCriticoResolver">
                     {{ data.aspectoCriticoResolver }}
@@ -123,10 +123,10 @@
                     <nz-badge class="button-text pl-1" nzStandalone [nzCount]="filterCounter()"></nz-badge>
                 </button>
 
-                <button *nzSpaceItem nz-button>
+                <!-- <button *nzSpaceItem nz-button>
                     <span nz-icon nzType="printer" nzTheme="outline"></span>
                     <span class="button-text">Imprimir acuerdos</span>
-                </button>
+                </button> -->
 
                 <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu">
                     <span nz-icon nzType="file-excel" nzTheme="outline"></span>
@@ -229,8 +229,8 @@
                 </nz-form-item>
             </div>
 
-            <div *ngIf="depSeleccionado != null" nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24"
-                nzXl="24">
+            @if(depSeleccionado != null){
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Provincia</nz-form-label>
                     <nz-form-control nzSpan="null">
@@ -244,6 +244,25 @@
                     </nz-form-control>
                 </nz-form-item>
             </div>
+            }
+
+            @if(provSeleccionada != null){
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null">Distrito</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-select [nzDisabled]="authService.distrito() != null && authService.subTipo() != 'PCM'"
+                            class="w-full" #dis id="dis" formControlName="dis" nzPlaceHolder="Todas" nzShowSearch
+                            [compareWith]="compareFn" nzAllowClear (ngModelChange)="onDisChange($event)">
+                            <nz-option *ngFor="let dis of this.ubigeosStore.distritos()" [nzValue]="dis"
+                                [nzLabel]="dis.label!">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            }
+
 
             <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <div class="inner-box">

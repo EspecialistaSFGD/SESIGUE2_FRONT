@@ -55,7 +55,8 @@ export class PedidosService {
 
     constructor() { }
     //TODO: quitar en el caso de que PCM sea el sector a solicitar
-    listarPedidos(cui: string | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = 'prioridadID', sortOrder: string | null = 'descend'): void {
+    listarPedidos(cui: string | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null, dis: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = 'prioridadID', sortOrder: string | null = 'descend'): void {
+        // debugger;
         let params = new HttpParams();
 
         this.#pedidosResult.update((state) => ({
@@ -77,8 +78,14 @@ export class PedidosService {
             });
         }
 
-        params = (dep !== null && prov === null) ? params.append('ubigeo[]', `${dep.value}`) : params;
-        params = (prov !== null) ? params.append('ubigeo[]', `${prov.value}`) : params;
+        if (dis !== null) {
+            params = params.append('ubigeo[]', `${dis.value}`);
+        } else if (prov !== null) {
+            params = params.append('ubigeo[]', `${prov.value}`);
+        } else if (dep !== null) {
+            params = params.append('ubigeo[]', `${dep.value}`);
+        }
+
         params = (pageIndex !== null) ? params.append('piCurrentPage', `${pageIndex}`) : params;
         params = (pageSize !== null) ? params.append('piPageSize', `${pageSize}`) : params;
         params = (sortField !== null) ? params.append('columnSort', `${sortField}`) : params;
@@ -167,6 +174,7 @@ export class PedidosService {
             }
 
             ots.accesoId = Number(accesoId);
+            ots.codigoPerfil = this.authService.codigoPerfil();
 
             if (pedido.sectorSelect) ots.grupoId = Number(pedido.sectorSelect.value);
 
@@ -221,7 +229,7 @@ export class PedidosService {
             this.http.post<ResponseModel>(`${environment.api}/PrioridadAcuerdo/ValidarPrioridadAcuerdo`, ots).subscribe({
                 next: (data) => {
                     this.msg.success(data.message);
-                    this.listarPedidos();
+                    // this.listarPedidos();
                     resolve(data);
                 },
                 error: (e) => {
@@ -248,7 +256,8 @@ export class PedidosService {
             this.http.post<ResponseModel>(`${environment.api}/PrioridadAcuerdo/ComentarPCMPrioridadAcuerdo`, ots).subscribe({
                 next: (data) => {
                     this.msg.success(data.message);
-                    this.listarPedidos();
+                    //TODO: solucionar en el llamado
+                    // this.listarPedidos();
                     resolve(data);
                 },
                 error: (e) => {

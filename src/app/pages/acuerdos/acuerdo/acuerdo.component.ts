@@ -165,6 +165,18 @@ export class AcuerdoComponent {
 
   onProvChange(value: SelectModel): void {
     if (value == null) return;
+
+    const disCtrl = this.acuerdoForm.get('distritoSelect');
+    disCtrl?.reset();
+
+    if (value && value.value) {
+      this.ubigeosStore.listarDistritos(value.value?.toString());
+    }
+
+  }
+
+  onDisChange(value: SelectModel): void {
+
   }
 
   disabledDate = (current: Date): boolean => {
@@ -218,28 +230,33 @@ export class AcuerdoComponent {
 
 
   crearAcuerdoForm(): void {
+    const preAcuerdoValue = this.acuerdoSeleccionado?.pre_acuerdo;
+
     this.acuerdoForm = this.fb.group({
       acuerdoId: [this.acuerdoSeleccionado?.acuerdoId],
       prioridadId: [this.pedidoSeleccionado?.prioridadID],
-      acuerdo: [this.acuerdoSeleccionado?.acuerdo],
-      pre_acuerdo: [this.acuerdoSeleccionado?.pre_acuerdo],
+      acuerdo: [this.nzModalData.accion === 'CONVERT' ? preAcuerdoValue : this.acuerdoSeleccionado?.acuerdo], // Si la condición se cumple, usamos pre_acuerdo
+      pre_acuerdo: [{
+        value: preAcuerdoValue,
+        disabled: this.nzModalData.accion === 'CONVERT'  // Condición para deshabilitar
+      }],
       clasificacionSelect: [this.acuerdoSeleccionado?.clasificacionSelect, [Validators.required]],
       responsableSelect: [this.acuerdoSeleccionado?.responsableSelect, [Validators.required]],
       entidadSelect: [this.acuerdoSeleccionado?.entidadSelect],
-      tipoSelect: [this.acuerdoSeleccionado?.tipoSelect, [Validators.required]],
+      tipoSelect: [this.acuerdoSeleccionado?.tipoSelect || "1", [Validators.required]],
       plazo: [this.acuerdoSeleccionado?.plazo, [Validators.required]],
       es_preAcuerdoBool: [(this.nzModalData.tipo == 'PRE ACUERDO' ? true : false)],
       acuerdoModificado: [(this.nzModalData.accion == 'CONVERT' ? this.acuerdoSeleccionado?.pre_acuerdo : null)],
       //TODO: tener en cuenta para una edición especial del acuerdo
       acuerdo_original: [null],
       eventoId: [(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId],
-      // Información para registro de Acuerdos desde Mesas Ténicas
       espacioSelect: [null],
       sectorSelect: [null],
       tipoCodigoSelect: [null],
       cuis: [null],
       departamentoSelect: [this.pedidoSeleccionado?.departamentoSelect],
       provinciaSelect: [this.pedidoSeleccionado?.provinciaSelect],
+      distritoSelect: [this.pedidoSeleccionado?.distritoSelect],
       aspectoCriticoResolver: [null],
       ejeEstrategicoSelect: [null],
       tipoIntervencionSelect: [null],

@@ -6,12 +6,26 @@
 // Override less variables to here
 // View all variables: https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/style/themes/default.less
 
-@primary-color: #002C8C;
+@primary-color: #0866ae;
 @info-color: #1890ff;
 @select-item-selected-bg: #e6f7ff;
 // @layout-sider-background: #002C8C;
 // @layout-sider-background-light: #fff;
 @form-vertical-label-padding: 0 0 4px;
+
+// Sobreescribir las variables para el color de 'nzDanger'
+@btn-danger-bg: #E30613; // Fondo del botón 'danger'
+@btn-danger-border: #E30613; // Borde del botón 'danger'
+@btn-danger-hover-bg: #cc0511; // Color de fondo en hover
+@btn-danger-active-bg: #b2050f; // Color de fondo cuando se hace clic
+@btn-danger-focus-shadow: 0 0 0 4px rgba(227, 6, 19, 0.5); // Sombra en el foco
+
+// Sobreescribir las variables para el color de 'nzSuccess' (verde)
+@btn-success-bg: #1ca05a; // Fondo del botón 'success'
+@btn-success-border: #1ca05a; // Borde del botón 'success'
+@btn-success-hover-bg: #17904e; // Color de fondo en hover
+@btn-success-active-bg: #128e43; // Color de fondo cuando se hace clic
+@btn-success-focus-shadow: 0 0 0 4px rgba(28, 160, 90, 0.5); // Sombra en el foco
 
 
 // dark theme
@@ -149,4 +163,17 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
     // align-items: center;
     // justify-content: center;
     height: 100%;
+}
+
+.auth .ant-card-body {
+    padding: 0 !important;
+}
+
+.auth .ant-tabs-nav-wrap {
+    display: flex;
+    justify-content: center;
+}
+
+.ant-descriptions-item-label {
+    font-weight: 600;
 }

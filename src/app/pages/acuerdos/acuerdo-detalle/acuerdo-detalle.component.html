@@ -11,13 +11,15 @@
             </nz-space>
         </nz-page-header-extra>
         <nz-page-header-content>
-            <nz-descriptions nzSize="small" [nzColumn]="{ xxl: 3, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }" nzBordered>
+            <nz-descriptions nzSize="small" [nzColumn]="{ xxl: 4, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }" nzBordered>
                 <nz-descriptions-item
                     nzTitle="Sector">{{this.acuerdosService.acuerdoSeleccionado()?.sector}}</nz-descriptions-item>
                 <nz-descriptions-item
                     nzTitle="Departamento">{{this.acuerdosService.acuerdoSeleccionado()?.region}}</nz-descriptions-item>
-                <nz-descriptions-item
-                    nzTitle="Provincia">{{this.acuerdosService.acuerdoSeleccionado()?.provincia}}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Provincia">{{this.acuerdosService.acuerdoSeleccionado()?.provincia}}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Distrito">{{this.acuerdosService.acuerdoSeleccionado()?.distrito}}
+                </nz-descriptions-item>
                 <nz-descriptions-item
                     nzTitle="CUI">{{this.acuerdosService.acuerdoSeleccionado()?.cuis}}</nz-descriptions-item>
                 <nz-descriptions-item
@@ -57,8 +59,20 @@
                         [isBadge]="false"></app-estado>
                     }
                 </nz-descriptions-item>
-                <nz-descriptions-item
-                    nzTitle="Acuerdo">{{this.acuerdosService.acuerdoSeleccionado()?.acuerdo}}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Acuerdo">{{this.acuerdosService.acuerdoSeleccionado()?.acuerdo}}
+                </nz-descriptions-item>
+
+                @if(this.acuerdosService.acuerdoSeleccionado()?.evidenciaDesestimacion != null){
+                <nz-descriptions-item nzTitle="Motivo de Solic. de Desestimación">
+
+                    {{this.acuerdosService.acuerdoSeleccionado()?.motivoDesestimacion}}
+
+                    <button nz-button nzType="link" nz-tooltip="Descargar evidencia de solicitud"
+                        (click)="onVerDesestimacion(this.acuerdosService.acuerdoSeleccionado()!)">
+                        <span nz-icon nzType="download" nzTheme="outline"></span>
+                    </button>
+                </nz-descriptions-item>
+                }
             </nz-descriptions>
         </nz-page-header-content>
     </nz-page-header>
@@ -263,7 +277,7 @@
 <ng-template #HeaderAvance>
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
         <p class="mb-2 sm:mb-0 font-semibold text-base">
-            Gestión de avances del hito # {{ hitoSeleccionadoId}}
+            Gestión de avances del hito
         </p>
 
         @if(authService.permisos()?.puede_agregar_avance){

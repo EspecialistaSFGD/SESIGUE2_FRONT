@@ -308,6 +308,58 @@ export class InicioComponent {
     this.ubigeoSgnl.set(this.ubigeoSeleccionado);
   }
 
+  // renderGeoChart({
+  //   reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
+  //   ubigeo = this.ubigeoSeleccionado?.value?.toString(),
+  //   sector = this.sectorSeleccionado,
+  //   espacio = this.espacioSeleccionado,
+  //   tipoAcuerdo = this.tipoAcuerdoSeleccionado,
+  // }: TraerReportesInterface): void {
+
+  //   // Determina la URL del TopoJSON y el feature basado en el ubigeo
+  //   const { topoJsonUrl, rqDataFeature } = this.getTopoJsonUrlAndFeature(ubigeo ?? null);
+
+  //   this.geoChart = new Chart({
+  //     container: 'container',
+  //     autoFit: true,
+  //   });
+
+  //   this.reportesService.obtenerReporteResultado(reporteCabeceraId, ubigeo, sector, espacio, tipoAcuerdo)
+  //     .then((response) => response.data)
+  //     .then((data) => {
+  //       this.acuerdos.set(data);
+
+  //       if (this.geoChart) {
+  //         this.geoChart.clear(); // Limpiar el gráfico antes de renderizar nuevos datos
+  //         this.geoChart.geoPath()
+  //           .coordinate({ type: 'mercator' })
+  //           .data({
+  //             type: 'fetch',
+  //             value: topoJsonUrl,
+  //             transform: [
+  //               { type: 'feature', name: rqDataFeature },
+  //               {
+  //                 type: 'join',
+  //                 join: data,
+  //                 on: ['id', 'id'],
+  //                 select: ['totalEjecutado'],
+  //                 as: ['Ejecutados'],
+  //               },
+  //             ],
+  //           })
+  //           .scale('color', {
+  //             palette: 'ylGnBu',
+  //             unknown: '#fff',
+  //           })
+  //           .encode('color', 'Ejecutados')
+  //           .legend({ color: { layout: { justifyContent: 'center' } } });
+  //         this.geoChart.render();
+
+  //         this.geoChart.on('element:click', this.handleElementClick.bind(this));
+  //       }
+  //     });
+  // }
+
   renderGeoChart({
     reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
     ubigeo = this.ubigeoSeleccionado?.value?.toString(),
@@ -331,6 +383,7 @@ export class InicioComponent {
 
         if (this.geoChart) {
           this.geoChart.clear(); // Limpiar el gráfico antes de renderizar nuevos datos
+
           this.geoChart.geoPath()
             .coordinate({ type: 'mercator' })
             .data({
@@ -347,18 +400,28 @@ export class InicioComponent {
                 },
               ],
             })
-            .scale('color', {
-              palette: 'ylGnBu',
-              unknown: '#fff',
+            // Lógica de colores sólidos basada en el valor de "Ejecutados"
+            .encode('color', (d: any) => {
+              const ejecutados = d.Ejecutados ?? 0;
+              if (ejecutados <= 30) {
+                return 'red';  // Hasta 30, rojo
+              } else if (ejecutados <= 50) {
+                return 'orange';  // Hasta 50, naranja
+              } else {
+                return 'green';  // Más de 50, verde
+              }
             })
-            .encode('color', 'Ejecutados')
-            .legend({ color: { layout: { justifyContent: 'center' } } });
+            // Tooltip con información personalizada
+            .encode('tooltip', (d: any) => `Ejecutados: ${d.Ejecutados || 0}`)
+            .legend(false); // Deshabilitar la leyenda de colores si no es necesaria
+
           this.geoChart.render();
 
           this.geoChart.on('element:click', this.handleElementClick.bind(this));
         }
       });
   }
+
 
   private getTopoJsonUrlAndFeature(ubigeo: string | null): { topoJsonUrl: string, rqDataFeature: string } {
     const baseUrl = environment.topoJsonUrl;
@@ -402,9 +465,6 @@ export class InicioComponent {
       .then((data) => data.data)
       .then((data) => {
 
-        console.log(data);
-
-
         if (this.radialChart) {
           this.radialChart
             .interval()
@@ -412,6 +472,9 @@ export class InicioComponent {
             .transform({ type: 'stackY' })
             .encode('y', 'porcentaje')
             .encode('color', 'tipo')
+            .scale('color', {
+              range: ['#0866ae', '#0bbbef', '#ffe045', '#DC0A15', '#c67036', '#1ca05a'],  // Paleta de colores personalizada
+            })
             .legend('color', { position: 'bottom', layout: { justifyContent: 'center' } })
             .label({
               position: 'outside',

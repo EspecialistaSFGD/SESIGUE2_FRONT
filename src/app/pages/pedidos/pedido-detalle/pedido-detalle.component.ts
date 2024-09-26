@@ -44,7 +44,9 @@ import { AddEditAcuerdoModel } from '../../../libs/models/shared/add-edit-acuerd
     NzTagModule,
   ],
   templateUrl: './pedido-detalle.component.html',
-  styles: ``
+  styles: `
+
+  `
 })
 export class PedidoDetalleComponent {
   private updateParamsSubject: Subject<void> = new Subject<void>();

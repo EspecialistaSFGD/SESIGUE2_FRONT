@@ -43,7 +43,7 @@
                     data.aspectoCriticoResolver }}</p>
             </td>
             <td nzWidth="150px" nzAlign="center">{{ data.cuis }}</td>
-            <td nzWidth="150px" nzAlign="center">{{ data.codigo }}</td>
+            <td nzWidth="150px" nzAlign="center"><strong>{{data.codigo}}</strong></td>
             <td nzWidth="150px">
                 <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.acuerdo">{{
                     data.acuerdo }}</p>
@@ -79,7 +79,7 @@
                     <!-- <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar hito">
                         <span nz-icon nzType="appstore-add" nzTheme="outline"></span>
                     </button> -->
-                    @if(data.evidenciaDesestimacion == null && data.nomEstadoRegistro != 'DESESTIMADO'){
+                    <!-- @if(data.evidenciaDesestimacion == null && data.nomEstadoRegistro != 'DESESTIMADO'){
                     <button [disabled]="(data.nomEstadoRegistro == 'CULMINADO')" *nzSpaceItem nz-button nzDanger
                         nzType="link" nz-tooltip nzTooltipTitle="Solicitar desestimación de acuerdo"
                         (click)="onSolicitarDesestimacion(data)">
@@ -90,7 +90,16 @@
                         nzTooltipTitle="Descargar solicitud de desestimación" (click)="onVerDesestimacion(data)">
                         <span nz-icon nzType="download" nzTheme="outline"></span>
                     </button>
+                    } -->
+
+                    @if(data.evidenciaDesestimacion != null){
+                    <button *nzSpaceItem nz-button nzType="link" nz-popover
+                        nzPopoverTitle="Motivo de solicitud de desestimación"
+                        [nzPopoverContent]="data?.motivoDesestimacion" (click)="onVerDesestimacion(data)">
+                        <span nz-icon nzType="download" nzTheme="outline"></span>
+                    </button>
                     }
+
                     <!-- <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Editar acuerdo"
                         (click)="onAddEdit(data)">
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
@@ -283,8 +292,8 @@
                 </nz-form-item>
             </div>
 
-            <div *ngIf="depSeleccionado != null" nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24"
-                nzXl="24">
+            @if(depSeleccionado != null){
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <nz-form-item>
                     <nz-form-label [nzSpan]="null">Provincia</nz-form-label>
                     <nz-form-control nzSpan="null">
@@ -298,6 +307,24 @@
                     </nz-form-control>
                 </nz-form-item>
             </div>
+            }
+
+            @if(provSeleccionada != null){
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null">Distrito</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                        <nz-select [nzDisabled]="authService.distrito() != null && authService.subTipo() != 'PCM'"
+                            class="w-full" #dis id="dis" formControlName="dis" nzPlaceHolder="Todas" nzShowSearch
+                            [compareWith]="compareFn" nzAllowClear (ngModelChange)="onDisChange($event)">
+                            <nz-option *ngFor="let dis of this.ubigeosStore.distritos()" [nzValue]="dis"
+                                [nzLabel]="dis.label!">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            }
 
             <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <div class="inner-box">

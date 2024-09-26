@@ -95,6 +95,7 @@ export class PedidoRequestModel {
         public entidadIdOrigen?: number,
         public entidadIdDestino?: number,
         public comentarioPcm?: string,
+        public codigoPerfil?: number,
 
         // public ubigeo?: string,
         // public region?: string,

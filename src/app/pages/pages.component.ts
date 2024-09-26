@@ -11,6 +11,8 @@ import { filter, map } from 'rxjs';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { ThemeSwitcherComponent } from '../libs/shared/components/theme-switcher/theme-switcher.component';
+import { SuperHeaderComponent } from '../libs/shared/layout/super-header/super-header.component';
+import { FooterComponent } from '../libs/shared/layout/footer/footer.component';
 
 
 @Component({
@@ -26,7 +28,9 @@ import { ThemeSwitcherComponent } from '../libs/shared/components/theme-switcher
     NzIconModule,
     NzAvatarModule,
     NzDropDownModule,
-    ThemeSwitcherComponent
+    ThemeSwitcherComponent,
+    SuperHeaderComponent,
+    FooterComponent,
   ],
   templateUrl: './pages.component.html',
   styleUrl: './pages.component.less'

@@ -43,6 +43,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { ReporteType } from '../../libs/shared/types/reporte.type';
 import { ReporteDescargaComponent } from '../../libs/shared/components/reporte-descarga/reporte-descarga.component';
 import { ReportesService } from '../../libs/shared/services/reportes.service';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 
 @Component({
   selector: 'app-pedidos',
@@ -63,6 +64,7 @@ import { ReportesService } from '../../libs/shared/services/reportes.service';
     NzDrawerModule,
     NzBadgeModule,
     NzToolTipModule,
+    NzPopoverModule,
     EstadoComponent,
     DueToPipe,
     NzModalModule
@@ -83,6 +85,7 @@ export class AcuerdosComponent implements OnInit {
   isDrawervisible: boolean = false;
   isVisible: boolean = false;
 
+
   cui: string | null = null;
   clasificacionesSeleccionadas: SelectModel[] | null = null;
   tipoSeleccionado: SelectModel | null = null;
@@ -91,6 +94,9 @@ export class AcuerdosComponent implements OnInit {
   sectoresSeleccionados: SelectModel[] | null = null;
   depSeleccionado: SelectModel | null = null;
   provSeleccionada: SelectModel | null = null;
+  disSeleccionado: SelectModel | null = null;
+
+  private cargandoUbigeo: boolean = false; // Variable de control para evitar llamadas múltiples
 
   filterCounter = signal<number>(0);
 
@@ -124,6 +130,8 @@ export class AcuerdosComponent implements OnInit {
     // Obtener los valores de los queryParams en la primera carga
     this.activatedRoute.queryParams.subscribe((params) => {
       if (!this.updatingParams) {
+        this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
+
         if (params['cui'] != null) {
           this.cui = params['cui'];
         }
@@ -159,6 +167,11 @@ export class AcuerdosComponent implements OnInit {
 
         if (params['prov'] != null) {
           this.provSeleccionada = { value: params['prov'] };
+          this.onProvChange(this.provSeleccionada, true);
+        }
+
+        if (params['dis'] != null) {
+          this.disSeleccionado = { value: params['dis'] };
         }
 
         if (params['pageIndex'] != null) {
@@ -186,8 +199,11 @@ export class AcuerdosComponent implements OnInit {
           (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
           (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
           (this.depSeleccionado ? 1 : 0) +
-          (this.provSeleccionada ? 1 : 0)
+          (this.provSeleccionada ? 1 : 0) +
+          (this.disSeleccionado ? 1 : 0)
         );
+
+        this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
       }
     });
 
@@ -207,6 +223,7 @@ export class AcuerdosComponent implements OnInit {
       sector: this.sectoresSeleccionados,
       dep: this.depSeleccionado,
       prov: this.provSeleccionada,
+      dis: this.disSeleccionado,
     });
   }
 
@@ -219,14 +236,17 @@ export class AcuerdosComponent implements OnInit {
       espaciosSeleccionados = this.espaciosSeleccionados,
       sectoresSeleccionados = (this.authService.sector() && this.authService.subTipo() != 'PCM') ? [this.authService.sector()!] : this.sectoresSeleccionados,
       depSeleccionado = (this.authService.departamento()) ? this.authService.departamento() : this.depSeleccionado,
-      provSeleccionada = this.provSeleccionada,
+      provSeleccionada = (this.authService.provincia()) ? this.authService.provincia() : this.provSeleccionada,
+      disSeleccionado = (this.authService.distrito()) ? this.authService.distrito() : this.disSeleccionado,
       pageIndex = this.pageIndex,
       pageSize = this.pageSize,
       sortField = this.sortField,
       sortOrder = this.sortOrder
     }: TraerAcuerdosInterface
   ): void {
-    this.acuerdosService.listarAcuerdos(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
+    if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
+      this.acuerdosService.listarAcuerdos(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
+    }
   }
 
   onRefresh(): void {
@@ -259,9 +279,7 @@ export class AcuerdosComponent implements OnInit {
           danger: true,
           onClick: (componentInstance) => {
             return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
-              this.traerAcuerdos({
-
-              });
+              this.traerAcuerdos({});
               this.modal.closeAll();
             });
           },
@@ -354,12 +372,13 @@ export class AcuerdosComponent implements OnInit {
       this.filterCounter.update(x => x + 1);
     }
 
-    if (!skipNavigation) {
+    if (!this.cargandoUbigeo && !skipNavigation) {
+      this.traerAcuerdos({});
       this.updateParamsSubject.next();
     }
   }
 
-  onProvChange(value: SelectModel): void {
+  onProvChange(value: SelectModel, skipNavigation = false): void {
     if (this.clearingFilters) {
       return;
     }
@@ -367,7 +386,16 @@ export class AcuerdosComponent implements OnInit {
     const wasPreviouslySelected = this.provSeleccionada != null;
 
     this.provSeleccionada = value;
-    this.traerAcuerdos({ provSeleccionada: value });
+
+    if (value && value.value) {
+      this.ubigeosStore.listarDistritos(value.value?.toString());
+
+      if (this.disSeleccionado != null) {
+        this.disSeleccionado = null;
+        this.searchForm.patchValue({ dis: null });
+        this.filterCounter.update(x => x - 1);
+      }
+    }
 
     if (value == null && wasPreviouslySelected) {
       this.filterCounter.update(x => x - 1);
@@ -375,7 +403,32 @@ export class AcuerdosComponent implements OnInit {
       this.filterCounter.update(x => x + 1);
     }
 
-    this.updateParamsSubject.next();
+    if (!this.cargandoUbigeo && !skipNavigation) {
+      this.traerAcuerdos({});
+      this.updateParamsSubject.next();
+    }
+  }
+
+  onDisChange(value: SelectModel): void {
+
+    if (this.clearingFilters) {
+      return;
+    }
+
+    const wasPreviouslySelected = this.disSeleccionado != null;
+    this.disSeleccionado = value;
+
+    if (value == null && wasPreviouslySelected) {
+      this.filterCounter.update(x => x - 1);
+    } else if (value != null && !wasPreviouslySelected) {
+      this.filterCounter.update(x => x + 1);
+    }
+
+    // Solo llamar a traerPedidos si cargandoUbigeo es false
+    if (!this.cargandoUbigeo) {
+      this.traerAcuerdos({});
+      this.updateParamsSubject.next();
+    }
   }
 
   onClasificacionAcuerdosChange(value: SelectModel[] | null) {
@@ -518,6 +571,7 @@ export class AcuerdosComponent implements OnInit {
       sector: this.sectoresSeleccionados ? this.sectoresSeleccionados.map(x => x.value) : null,
       dep: this.depSeleccionado ? this.depSeleccionado.value : null,
       prov: this.provSeleccionada ? this.provSeleccionada.value : null,
+      dis: this.disSeleccionado ? this.disSeleccionado.value : null,
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
       sortField: this.sortField,
@@ -689,13 +743,14 @@ export class AcuerdosComponent implements OnInit {
       sector: [null],
       dep: [null],
       prov: [null],
+      dis: [null],
     });
   }
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
 
   onQueryParamsChange(params: NzTableQueryParams): void {
-    if (!this.updatingParams) {
+    if (!this.updatingParams && !this.cargandoUbigeo) { // Agrega la verificación de cargandoUbigeo
       const { pageSize, pageIndex, sort } = params;
       const currentSort = sort.find(item => item.value !== null);
       this.pageIndex = pageIndex;
@@ -729,6 +784,15 @@ export class AcuerdosComponent implements OnInit {
           if (defaultProv) {
             this.provSeleccionada = defaultProv;
             this.searchForm.patchValue({ prov: this.provSeleccionada });
+            this.filterCounter.update(x => x + 1);
+          }
+        }
+
+        if (!this.disSeleccionado && this.authService.distrito()) {
+          const defaultDis = this.authService.distrito();
+          if (defaultDis) {
+            this.disSeleccionado = defaultDis;
+            this.searchForm.patchValue({ dis: this.disSeleccionado });
             this.filterCounter.update(x => x + 1);
           }
         }

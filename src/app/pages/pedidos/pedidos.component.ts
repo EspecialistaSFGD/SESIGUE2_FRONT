@@ -74,14 +74,10 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   sectoresSeleccionados: SelectModel[] | null = null;
   depSeleccionado: SelectModel | null = null;
   provSeleccionada: SelectModel | null = null;
+  disSeleccionado: SelectModel | null = null;
   filterCounter = signal<number>(0);
 
-  // permiso: PermisoModel | null | undefined = null;
-  // storedPermiso = localStorage.getItem('permisos');
-
-  // departamento: SelectModel = {} as SelectModel;
-  // sector: SelectModel = {} as SelectModel;
-  // subTipo: PedidoType = null;
+  private cargandoUbigeo: boolean = false; // Variable de control para evitar llamadas múltiples
 
   private updateParamsSubject = new Subject<void>();
   private updatingParams = false;
@@ -103,23 +99,12 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   constructor() {
     this.crearSearForm();
-    // this.subTipo = this.authService.getSubTipo();
-
-    try {
-      // this.permiso = this.storedPermiso ? JSON.parse(this.storedPermiso) : {};
-      // this.departamento = this.authService.getDepartamentoSelect() || {};
-      // this.sector = this.authService.getSectorSelect() || {};
-    } catch (e) {
-      console.error('Error parsing JSON from localStorage', e);
-      // this.permiso = null;
-      // this.departamento = {} as SelectModel;
-    }
-
-    // console.log('Permiso:', this.permiso);
 
     // Obtener los valores de los queryParams en la primera carga
     this.activatedRoute.queryParams.subscribe((params) => {
       if (!this.updatingParams) {
+        this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
+
         if (params['cui'] != null) {
           this.cui = params['cui'];
         }
@@ -137,14 +122,19 @@ export class PedidosComponent implements OnInit, AfterViewInit {
         }
 
         if (params['dep'] != null) {
-
           this.depSeleccionado = { value: params['dep'] };
-
           this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
         }
 
         if (params['prov'] != null) {
+
           this.provSeleccionada = { value: params['prov'] };
+
+          this.onProvChange(this.provSeleccionada, true);
+        }
+
+        if (params['dis'] != null) {
+          this.disSeleccionado = { value: params['dis'] };
         }
 
         if (params['pageIndex'] != null) {
@@ -169,8 +159,12 @@ export class PedidosComponent implements OnInit, AfterViewInit {
           (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
           (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
           (this.depSeleccionado ? 1 : 0) +
-          (this.provSeleccionada ? 1 : 0)
+          (this.provSeleccionada ? 1 : 0) +
+          (this.disSeleccionado ? 1 : 0)
         );
+
+        this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
+        // this.traerPedidos({}); // Llamar a traerPedidos una vez finalizada la carga
       }
     });
 
@@ -187,6 +181,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       sector: this.sectoresSeleccionados,
       dep: this.depSeleccionado,
       prov: this.provSeleccionada,
+      dis: this.disSeleccionado,
     });
   }
 
@@ -199,14 +194,18 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       sectoresSeleccionados = (this.authService.sector() && this.authService.subTipo() != 'PCM') ? [this.authService.sector()!] : this.sectoresSeleccionados,
       depSeleccionado = (this.authService.departamento()) ? this.authService.departamento() : this.depSeleccionado,
       provSeleccionada = (this.authService.provincia()) ? this.authService.provincia() : this.provSeleccionada,
+      disSeleccionado = (this.authService.distrito()) ? this.authService.distrito() : this.disSeleccionado,
       pageIndex = this.pageIndex,
       pageSize = this.pageSize,
       sortField = this.sortField,
       sortOrder = this.sortOrder
     }: TraerPedidosInterface
   ): void {
-    this.pedidosService.listarPedidos(cui, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, pageIndex, pageSize, sortField, sortOrder);
+    if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
+      this.pedidosService.listarPedidos(cui, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
+    }
   }
+
 
   onRefresh(): void {
     this.traerPedidos({});
@@ -268,7 +267,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       nzTitle: 'Validar Pedido',
       nzContent: '¿Está seguro de validar este pedido?',
       nzOnOk: () => {
-        this.pedidosService.validarPedido(pedido);
+        this.pedidosService.validarPedido(pedido).then(() => this.traerPedidos({}));
       }
     });
   }
@@ -296,6 +295,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
           type: 'primary',
           onClick: (componentInstance) => {
             return this.pedidosService.comentarPcmPedido(componentInstance!.comentarioForm.value).then(() => {
+              this.traerPedidos({});
               this.modal.closeAll();
             });
           },
@@ -348,16 +348,12 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   onDepChange(value: SelectModel, skipNavigation = false): void {
-
-
     if (this.clearingFilters) {
       return;
     }
 
     const wasPreviouslySelected = this.depSeleccionado != null;
-
     this.depSeleccionado = value;
-    this.traerPedidos({ depSeleccionado: value });
 
     if (value && value.value) {
       this.ubigeosStore.listarProvincias(value.value?.toString());
@@ -375,20 +371,30 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       this.filterCounter.update(x => x + 1);
     }
 
-    if (!skipNavigation) {
+    // Solo llamar a traerPedidos si cargandoUbigeo es false y skipNavigation es false
+    if (!this.cargandoUbigeo && !skipNavigation) {
+      this.traerPedidos({});
       this.updateParamsSubject.next();
     }
   }
 
-  onProvChange(value: SelectModel): void {
+  onProvChange(value: SelectModel, skipNavigation = false): void {
     if (this.clearingFilters) {
       return;
     }
 
     const wasPreviouslySelected = this.provSeleccionada != null;
-
     this.provSeleccionada = value;
-    this.traerPedidos({ provSeleccionada: value });
+
+    if (value && value.value) {
+      this.ubigeosStore.listarDistritos(value.value?.toString());
+
+      if (this.disSeleccionado != null) {
+        this.disSeleccionado = null;
+        this.searchForm.patchValue({ dis: null });
+        this.filterCounter.update(x => x - 1);
+      }
+    }
 
     if (value == null && wasPreviouslySelected) {
       this.filterCounter.update(x => x - 1);
@@ -396,7 +402,32 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       this.filterCounter.update(x => x + 1);
     }
 
-    this.updateParamsSubject.next();
+    // Solo llamar a traerPedidos si cargandoUbigeo es false y skipNavigation es false
+    if (!this.cargandoUbigeo && !skipNavigation) {
+      this.traerPedidos({});
+      this.updateParamsSubject.next();
+    }
+  }
+
+  onDisChange(value: SelectModel): void {
+    if (this.clearingFilters) {
+      return;
+    }
+
+    const wasPreviouslySelected = this.disSeleccionado != null;
+    this.disSeleccionado = value;
+
+    if (value == null && wasPreviouslySelected) {
+      this.filterCounter.update(x => x - 1);
+    } else if (value != null && !wasPreviouslySelected) {
+      this.filterCounter.update(x => x + 1);
+    }
+
+    // Solo llamar a traerPedidos si cargandoUbigeo es false
+    if (!this.cargandoUbigeo) {
+      this.traerPedidos({});
+      this.updateParamsSubject.next();
+    }
   }
 
   onCuiChange(event: any) {
@@ -424,6 +455,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       sector: this.sectoresSeleccionados ? this.sectoresSeleccionados.map(x => x.value) : null,
       dep: this.depSeleccionado ? this.depSeleccionado.value : null,
       prov: this.provSeleccionada ? this.provSeleccionada.value : null,
+      dis: this.disSeleccionado ? this.disSeleccionado.value : null,
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
       sortField: this.sortField,
@@ -531,13 +563,14 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       sector: [null],
       dep: [null],
       prov: [null],
+      dis: [null],
     });
   }
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
 
   onQueryParamsChange(params: NzTableQueryParams): void {
-    if (!this.updatingParams) {
+    if (!this.updatingParams && !this.cargandoUbigeo) { // Agrega la verificación de cargandoUbigeo
 
       const { pageSize, pageIndex, sort } = params;
       const currentSort = sort.find(item => item.value !== null);
@@ -557,7 +590,6 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       }
 
       // Verificar y establecer el valor predeterminado si dep está vacío
-
       if (this.authService.subTipo() == 'SECTOR') {
         if (!this.sectoresSeleccionados && this.authService.sector()) {
           const defaultSector = this.authService.sector();
@@ -587,8 +619,18 @@ export class PedidosComponent implements OnInit, AfterViewInit {
             this.filterCounter.update(x => x + 1);
           }
         }
+
+        if (!this.disSeleccionado && this.authService.distrito()) {
+          const defaultDis = this.authService.distrito();
+          if (defaultDis) {
+            this.disSeleccionado = defaultDis;
+            this.searchForm.patchValue({ dis: this.disSeleccionado });
+            this.filterCounter.update(x => x + 1);
+          }
+        }
       }
 
+      // Llamar a traerPedidos solo si no estamos cargando ubigeo
       this.traerPedidos({
         pageIndex,
         pageSize,
@@ -599,4 +641,5 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       this.updateParamsSubject.next();
     }
   }
+
 }

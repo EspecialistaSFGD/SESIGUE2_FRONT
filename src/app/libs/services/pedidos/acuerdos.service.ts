@@ -56,7 +56,7 @@ export class AcuerdosService {
 
     constructor() { }
 
-    listarAcuerdos(cui: string | null = null, clasificacion: SelectModel[] | null = null, tipo: SelectModel | null = null, estadoAcuerdo: SelectModel[] | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
+    listarAcuerdos(cui: string | null = null, clasificacion: SelectModel[] | null = null, tipo: SelectModel | null = null, estadoAcuerdo: SelectModel[] | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, dis: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
         // debugger;
         let params = new HttpParams();
 
@@ -93,8 +93,14 @@ export class AcuerdosService {
             });
         }
 
-        params = (dep !== null && prov === null) ? params.append('ubigeo[]', `${dep.value}`) : params;
-        params = (prov !== null) ? params.append('ubigeo[]', `${prov.value}`) : params;
+        if (dis !== null) {
+            params = params.append('ubigeo[]', `${dis.value}`);
+        } else if (prov !== null) {
+            params = params.append('ubigeo[]', `${prov.value}`);
+        } else if (dep !== null) {
+            params = params.append('ubigeo[]', `${dep.value}`);
+        }
+
         params = (pageIndex !== null) ? params.append('piCurrentPage', `${pageIndex}`) : params;
         params = (pageSize !== null) ? params.append('piPageSize', `${pageSize}`) : params;
         params = (sortField !== null) ? params.append('columnSort', `${sortField}`) : params;
@@ -224,7 +230,16 @@ export class AcuerdosService {
 
         if (acuerdo.espacioSelect) ots.eventoId = Number(acuerdo.espacioSelect.value);
         if (acuerdo.sectorSelect) ots.grupoId = Number(acuerdo.sectorSelect.value);
-        if (acuerdo.provinciaSelect) ots.ubigeo = acuerdo.provinciaSelect.value?.toString();
+        // if (acuerdo.provinciaSelect) ots.ubigeo = acuerdo.provinciaSelect.value?.toString();
+
+        if (acuerdo.distritoSelect) {
+            ots.ubigeo = acuerdo.distritoSelect.value?.toString();
+        } else if (acuerdo.provinciaSelect) {
+            ots.ubigeo = acuerdo.provinciaSelect.value?.toString();
+        } else if (acuerdo.departamentoSelect) {
+            ots.ubigeo = acuerdo.departamentoSelect.value?.toString();
+        }
+
         if (acuerdo.aspectoCriticoResolver) ots.aspectoCriticoResolver = acuerdo.aspectoCriticoResolver;
         if (acuerdo.tipoCodigoSelect) ots.tipoCodigo = Number(acuerdo.tipoCodigoSelect.value);
         if (acuerdo.cuis) ots.cuis = acuerdo.cuis;

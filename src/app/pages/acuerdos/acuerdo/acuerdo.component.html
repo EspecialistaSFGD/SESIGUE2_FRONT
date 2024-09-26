@@ -65,6 +65,23 @@
             </nz-form-item>
         </div>
         }
+
+        @if(acuerdoForm.get('provinciaSelect')?.value != null) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null">Distrito</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select class="w-full" #distritoSelect id="distritoSelect" formControlName="distritoSelect"
+                        nzPlaceHolder="Seleccione" nzShowSearch [compareWith]="compareFn" nzAllowClear nzShowSearch
+                        (ngModelChange)="onDisChange($event)">
+                        <nz-option *ngFor="let prov of this.ubigeosStore.distritos()" [nzValue]="prov"
+                            [nzLabel]="prov.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
     </div>
 
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
@@ -154,7 +171,7 @@
     <legend>Información del Acuerdo</legend>
     }
 
-    @if(this.nzModalData.accion !== 'CONVERT' ) {
+    <!-- @if(this.nzModalData.accion !== 'CONVERT' ) { -->
     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
             <nz-form-item>
@@ -169,18 +186,42 @@
             </nz-form-item>
         </div>
     </div>
-    }
+    <!-- } -->
 
     @if ( this.nzModalData.accion == 'CONVERT') {
-    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+    <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
         <nz-form-item>
             <nz-form-label nzRequired [nzSpan]="null" nzFor="acuerdoModificado"
                 nzRequired>acuerdoModificado</nz-form-label>
             <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                 <textarea nz-input id="acuerdoModificado" formControlName="acuerdoModificado"
-                    placeholder="Ingrese el pre acuerdo" nzAutosize></textarea>
+                    placeholder="Ingrese el pre acuerdo" [nzAutosize]="{ minRows: 4 }"></textarea>
             </nz-form-control>
         </nz-form-item>
+    </div> -->
+
+
+
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="pre_acuerdo" nzRequired>Pre acuerdo</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <textarea nz-input id="pre_acuerdo" formControlName="pre_acuerdo"
+                        placeholder="Ingrese el pre acuerdo" [nzAutosize]="{ minRows: 4 }"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="null" nzFor="acuerdo" nzRequired>Acuerdo</nz-form-label>
+                <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+                    <textarea nz-input id="acuerdo" formControlName="acuerdo" placeholder="Ingrese el acuerdo"
+                        [nzAutosize]="{ minRows: 4 }"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
     </div>
     }
 
@@ -190,7 +231,7 @@
             <nz-form-label nzRequired [nzSpan]="null" nzFor="pre_acuerdo" nzRequired>Pre acuerdo</nz-form-label>
             <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                 <textarea nz-input id="pre_acuerdo" formControlName="pre_acuerdo" placeholder="Ingrese el pre acuerdo"
-                    nzAutosize></textarea>
+                    [nzAutosize]="{ minRows: 4 }"></textarea>
             </nz-form-control>
         </nz-form-item>
     </div>
@@ -205,14 +246,14 @@
                 <nz-form-label nzRequired [nzSpan]="null" nzFor="acuerdo" nzRequired>Acuerdo</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                     <textarea nz-input id="acuerdo" formControlName="acuerdo" placeholder="Ingrese el acuerdo"
-                        nzAutosize></textarea>
+                        [nzAutosize]="{ minRows: 4 }"></textarea>
                 </nz-form-control>
             </nz-form-item>
         </div>
     </div>
     }
 
-    @if(this.nzModalData.accion !== 'CONVERT' ) {
+    <!-- @if(this.nzModalData.accion !== 'CONVERT' ) { -->
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
             <nz-form-item>
@@ -269,7 +310,7 @@
         </div>
         }
     </div>
-    }
+    <!-- } -->
 
     <!-- {{this.acuerdoForm.value|json}} -->
 </form>

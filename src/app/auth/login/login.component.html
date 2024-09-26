@@ -1,6 +1,6 @@
 <form nz-form [formGroup]="loginForm" [nzLayout]="'vertical'">
   <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-    <div nz-col class="gutter-row" nzXs="24" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
       <nz-form-item class="mb-3">
         <!-- <nz-form-label nzFor="usuario" nzRequired>Usuario</nz-form-label> -->
         <div class="pb-1">
@@ -22,7 +22,7 @@
       </nz-form-item>
     </div>
 
-    <div nz-col class="gutter-row" nzXs="24" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
       <nz-form-item class="mb-3">
         <div class="flex items-center justify-between pb-1">
           <!-- <nz-form-label class="flex-auto" nzFor="clave" nzRequired nzLabelAlign="left">Clave</nz-form-label> -->
@@ -44,7 +44,7 @@
   </div>
 
   <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-    <div nz-col class="gutter-row" nzXs="24" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
       <label nz-checkbox formControlName="recordar" ngDefaultControl>
         <span>Recordar usuario</span>
       </label>
@@ -52,9 +52,9 @@
   </div>
 
   <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="mt-3">
-    <div nz-col>
-      <button [nzLoading]="isLoading" [disabled]="!loginForm.valid" style="margin-bottom: 0;" nz-button class=""
-        [nzType]="'primary'" (click)="onLogin()" (keypress)="onEnter($event)">Ingresar</button>
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+      <button nzDanger nzBlock [nzLoading]="isLoading" [disabled]="!loginForm.valid" style="margin-bottom: 0;" nz-button
+        class="" [nzType]="'primary'" (click)="onLogin()" (keypress)="onEnter($event)">Ingresar</button>
     </div>
   </div>
 </form>

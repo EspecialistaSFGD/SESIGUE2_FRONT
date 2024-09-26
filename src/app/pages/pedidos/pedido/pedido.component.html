@@ -2,7 +2,7 @@
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
             <nz-form-item>
-                <nz-form-label [nzSpan]="null" nzRequired>Espacio (no iniciado)</nz-form-label>
+                <nz-form-label [nzSpan]="null" nzRequired>Espacio</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
                     <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione" #espacioSelect
                         formControlName="espacioSelect" [compareWith]="compareFn" nzAllowClear
@@ -49,6 +49,25 @@
             </nz-form-item>
         </div>
         }
+
+        @if(pedidoForm.get('provinciaSelect')?.value != null) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item class="mb-3">
+                <nz-form-label [nzSpan]="null">Distrito</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select class="w-full" #distritoSelect id="distritoSelect" formControlName="distritoSelect"
+                        nzPlaceHolder="Seleccione" nzShowSearch [compareWith]="compareFn" nzAllowClear nzShowSearch
+                        (ngModelChange)="onDisChange($event)">
+                        <nz-option *ngFor="let prov of this.ubigeosStore.distritos()" [nzValue]="prov"
+                            [nzLabel]="prov.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+
+
     </div>
     }
     }
@@ -150,7 +169,7 @@
                 <nz-form-label nzRequired [nzSpan]="null" nzFor="aspectoCriticoResolver">Pedido</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                     <textarea nz-input id="aspectoCriticoResolver" formControlName="aspectoCriticoResolver"
-                        placeholder="Ingrese el pedido" nzAutosize></textarea>
+                        placeholder="Ingrese el pedido" [nzAutosize]="{ minRows: 4 }"></textarea>
                 </nz-form-control>
             </nz-form-item>
         </div>

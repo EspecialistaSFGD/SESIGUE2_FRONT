@@ -110,28 +110,28 @@
     <nz-col nzFlex="4">
         <nz-card>
             <nz-statistic [nzValue]="totales()?.total" [nzTitle]="'Acuerdos Establecidos'" [nzPrefix]="prefixTplProg"
-                [nzValueStyle]="{ color: '#52c41a' }"></nz-statistic>
+                [nzValueStyle]="{ color: '#1ca05a' }"></nz-statistic>
             <ng-template #prefixTplProg><span nz-icon nzType="aim" nzTheme="outline"></span></ng-template>
         </nz-card>
     </nz-col>
     <nz-col nzFlex="4">
         <nz-card>
             <nz-statistic [nzValue]="totales()?.desestimado" [nzTitle]="'Acuerdos Desestimados'"
-                [nzPrefix]="prefixTplDesest" [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
+                [nzPrefix]="prefixTplDesest" [nzValueStyle]="{ color: '#0866ae' }"></nz-statistic>
             <ng-template #prefixTplDesest><span nz-icon nzType="stop" nzTheme="outline"></span></ng-template>
         </nz-card>
     </nz-col>
     <nz-col nzFlex="4">
         <nz-card>
             <nz-statistic [nzValue]="totales()?.vigente" [nzTitle]="'Acuerdos Vigentes'" [nzPrefix]="prefixTplVig"
-                [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
+                [nzValueStyle]="{ color: '#0866ae' }"></nz-statistic>
             <ng-template #prefixTplVig><span nz-icon nzType="field-time" nzTheme="outline"></span></ng-template>
         </nz-card>
     </nz-col>
     <nz-col nzFlex="4">
         <nz-card>
             <nz-statistic [nzValue]="totales()?.cumplido" [nzTitle]="'Acuerdos Cumplidos'" [nzPrefix]="prefixTpCumpl"
-                [nzValueStyle]="{ color: '#52c41a' }"></nz-statistic>
+                [nzValueStyle]="{ color: '#1ca05a' }"></nz-statistic>
             <ng-template #prefixTpCumpl><span nz-icon nzType="check"></span></ng-template>
         </nz-card>
     </nz-col>
@@ -139,7 +139,7 @@
     <nz-col nzFlex="4">
         <nz-card>
             <nz-statistic [nzValue]="totales()?.proceso" [nzTitle]="'Acuerdos En Proceso'" [nzPrefix]="prefixTplProces"
-                [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
+                [nzValueStyle]="{ color: '#0866ae' }"></nz-statistic>
             <ng-template #prefixTplProces><span nz-icon nzType="loading-3-quarters"
                     nzTheme="outline"></span></ng-template>
         </nz-card>
@@ -147,21 +147,21 @@
     <nz-col nzFlex="4">
         <nz-card>
             <nz-statistic [nzValue]="totales()?.vencido" [nzTitle]="'Acuerdos Vencidos'" [nzPrefix]="prefixTplVenci"
-                [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
+                [nzValueStyle]="{ color: '#0866ae' }"></nz-statistic>
             <ng-template #prefixTplVenci><span nz-icon nzType="alert" nzTheme="outline"></span></ng-template>
         </nz-card>
     </nz-col>
     <nz-col nzFlex="4">
         <nz-card>
             <nz-statistic [nzValue]="totales()?.pendiente" [nzTitle]="'Acuerdos Pendientes'" [nzPrefix]="prefixTplPend"
-                [nzValueStyle]="{ color: '#1890ff' }"></nz-statistic>
+                [nzValueStyle]="{ color: '#0866ae' }"></nz-statistic>
             <ng-template #prefixTplPend><span nz-icon nzType="clock-circle" nzTheme="outline"></span></ng-template>
         </nz-card>
     </nz-col>
     <!-- <nz-col nzFlex="4">
         <nz-card>
             <nz-statistic [nzValue]="reportesService.totalPorcentaje()" [nzTitle]="'Total de Acuerdos Ejecutados'"
-                [nzPrefix]="prefixTplEjec" [nzSuffix]="'%'" [nzValueStyle]="{ color: '#52c41a' }"></nz-statistic>
+                [nzPrefix]="prefixTplEjec" [nzSuffix]="'%'" [nzValueStyle]="{ color: '#1ca05a' }"></nz-statistic>
             <ng-template #prefixTplEjec><span nz-icon nzType="check-circle"></span></ng-template>
         </nz-card>
     </nz-col> -->
@@ -200,7 +200,7 @@
                                     <div class="object-contain w-[85%]">
                                         <nz-progress [nzPercent]="item.porcentaje.toFixed(0)" [nzStrokeWidth]="'12'"
                                             [nzStatus]="(item.porcentaje == 100) ? 'normal' : 'active'"
-                                            [nzStrokeColor]="(item.porcentaje > 70) ? '#52c41a' : '#1890ff'"></nz-progress>
+                                            [nzStrokeColor]="(item.porcentaje > 70) ? '#1ca05a' : '#0866ae'"></nz-progress>
                                     </div>
                                     }
                                 </td>
@@ -256,7 +256,7 @@
                                     <div class="object-contain w-[85%]">
                                         <nz-progress [nzPercent]="item.porcentaje.toFixed(0)" [nzStrokeWidth]="'12'"
                                             [nzStatus]="(item.porcentaje == 100) ? 'normal' : 'active'"
-                                            [nzStrokeColor]="(item.porcentaje > 70) ? '#52c41a' : '#1890ff'"></nz-progress>
+                                            [nzStrokeColor]="(item.porcentaje > 70) ? '#1ca05a' : '#0866ae'"></nz-progress>
                                     </div>
                                     }
                                 </td>
@@ -311,7 +311,7 @@
                         </nz-col>
                         <nz-col [nzSpan]="12" class="text-right">
                             <nz-progress [nzStatus]="(acuerdo.porcentaje == 100) ? 'normal' : 'active'"
-                                [nzStrokeColor]="(acuerdo.porcentaje > 70) ? '#52c41a' : '#1890ff'"
+                                [nzStrokeColor]="(acuerdo.porcentaje > 70) ? '#1ca05a' : '#0866ae'"
                                 [nzPercent]="acuerdo.porcentaje" nzType="circle" [nzWidth]="72"></nz-progress>
                         </nz-col>
                     </nz-row>

@@ -11,3 +11,10 @@ export class ProvinciaModel {
         public provincia: string,
     ) { }
 }
+
+export class DistritoModel {
+    constructor(
+        public distritoId: number,
+        public distrito: string,
+    ) { }
+}

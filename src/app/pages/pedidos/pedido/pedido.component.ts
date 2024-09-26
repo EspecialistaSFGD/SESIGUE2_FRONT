@@ -105,6 +105,18 @@ export class PedidoComponent {
 
   onProvChange(value: SelectModel): void {
     if (value == null) return;
+
+    const disCtrl = this.pedidoForm.get('distritoSelect');
+    disCtrl?.reset();
+
+    if (value && value.value) {
+      this.ubigeosStore.listarDistritos(value.value?.toString());
+    }
+
+  }
+
+  onDisChange(value: SelectModel): void {
+
   }
 
   onCodigoChange(codigo: any) {
@@ -130,6 +142,8 @@ export class PedidoComponent {
     cuisControl?.updateValueAndValidity();
   }
 
+
+
   crearPedidoForm(): void {
     this.pedidoForm = this.fb.group({
       prioridadID: [this.pedidoSeleccionado?.prioridadID],
@@ -138,6 +152,7 @@ export class PedidoComponent {
       tipoCodigoSelect: [this.pedidoSeleccionado?.tipoCodigoSelect, [Validators.required]],
       departamentoSelect: [this.pedidoSeleccionado?.departamentoSelect],
       provinciaSelect: [this.pedidoSeleccionado?.provinciaSelect],
+      distritoSelect: [this.pedidoSeleccionado?.distritoSelect],
       ejeEstrategicoSelect: [this.pedidoSeleccionado?.ejeEstrategicoSelect, [Validators.required]],
       tipoIntervencionSelect: [this.pedidoSeleccionado?.tipoIntervencionSelect, [Validators.required]],
       aspectoCriticoResolver: [this.pedidoSeleccionado?.aspectoCriticoResolver, [Validators.required]],

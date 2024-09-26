@@ -32,6 +32,7 @@ interface State {
   distrito: SelectModel | null;
   sector: SelectModel | null;
   permisos: PermisoModel | null;
+  codigoPerfil: number
 }
 
 const DEFAULT_PERMISOS: PermisoModel = {
@@ -84,6 +85,7 @@ export class AuthService {
     distrito: this.getDistritoSelect(),
     sector: this.getSectorSelect(),
     permisos: this.getPermisos(),
+    codigoPerfil: this.getCodigoPerfilUsr(),
   });
 
   public nombreTrabajador = computed(() => this.#usuario().nombreTrabajador);
@@ -99,6 +101,7 @@ export class AuthService {
   public distrito = computed(() => this.#usuario().distrito);
   public sector = computed(() => this.#usuario().sector);
   public permisos = computed(() => this.#usuario().permisos);
+  public codigoPerfil = computed(() => this.#usuario().codigoPerfil);
 
   constructor() {
     this.initTheme();
@@ -341,6 +344,12 @@ export class AuthService {
     const nombreTrabajador = localStorage.getItem('trabajador') || 'Administrador';
 
     return nombreTrabajador;
+  }
+
+  private getCodigoPerfilUsr(): number {
+    const codigoPerfil = Number(localStorage.getItem('codigoPerfil')) || 0;
+
+    return codigoPerfil;
   }
 
   private getPermisos(): PermisoModel | null {
@@ -644,6 +653,7 @@ export class AuthService {
       distrito: null,
       sector: null,
       permisos: null,
+      codigoPerfil: 0
     });
 
     // window.location.reload();
