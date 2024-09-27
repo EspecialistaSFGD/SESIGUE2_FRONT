@@ -1,36 +1,36 @@
-import { Component, ViewContainerRef, computed, inject, signal } from '@angular/core';
-import { NzTableModule } from 'ng-zorro-antd/table';
 import { CommonModule } from '@angular/common';
-import { AnchorModel } from '../../../libs/models/shared/anchor.model';
+import { Component, ViewContainerRef, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { environment } from '../../../environments/environment';
 import { RouterModule } from '@angular/router';
-import { PageHeaderFullComponent } from '../../../libs/shared/layout/page-header-full/page-header-full.component';
-import { EstadoComponent } from '../../../libs/shared/components/estado/estado.component';
-import { AuthService } from '../../../libs/services/auth/auth.service';
-import { ReportesService } from '../../../libs/shared/services/reportes.service';
 import { Chart, register } from '@antv/g2';
-import { AcuerdoReporteModel } from '../../../libs/models/pedido/acuerdo.model';
-import { UtilesService } from '../../../libs/shared/services/utiles.service';
-import { NzStatisticModule } from 'ng-zorro-antd/statistic';
-import { environment } from '../../../../environments/environment';
-import { feature } from 'topojson';
-import { ReporteSectorModel, ReporteTotalModel } from '../../../libs/models/shared/reporte.model';
-import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { TraerReportesInterface } from '@libs/interfaces/reportes/reporte.interface';
+import { AcuerdoReporteModel } from '@libs/models/pedido/acuerdo.model';
+import { AnchorModel } from '@libs/models/shared/anchor.model';
+import { ReporteSectorModel, ReporteTotalModel } from '@libs/models/shared/reporte.model';
+import { SelectModel } from '@libs/models/shared/select.model';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { EstadoComponent } from '@libs/shared/components/estado/estado.component';
+import { PageHeaderFullComponent } from '@libs/shared/layout/page-header-full/page-header-full.component';
+import { ReportesService } from '@libs/shared/services/reportes.service';
+import { UtilesService } from '@libs/shared/services/utiles.service';
+import { EspaciosStore } from '@libs/shared/stores/espacios.store';
+import { SectoresStore } from '@libs/shared/stores/sectores.store';
+import { UbigeosStore } from '@libs/shared/stores/ubigeos.store';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
-import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
-import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
-import { SelectModel } from '../../../libs/models/shared/select.model';
-import { EspaciosStore } from '../../../libs/shared/stores/espacios.store';
-import { TraerReportesInterface } from '../../../libs/interfaces/reportes/reporte.interface';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { feature } from 'topojson';
 
 // @ts-ignore
 register('data.feature', ({ name }) => {
@@ -39,7 +39,7 @@ register('data.feature', ({ name }) => {
 });
 
 @Component({
-  selector: 'app-inicio',
+  selector: 'app-panel',
   standalone: true,
   imports: [
     CommonModule,
@@ -61,12 +61,12 @@ register('data.feature', ({ name }) => {
     NzStatisticModule,
     NzProgressModule,
   ],
-  templateUrl: './inicio.component.html',
+  templateUrl: './panel.component.html',
   styles: `
 
   `,
 })
-export class InicioComponent {
+export class PanelComponent {
 
 
   filterReportForm!: UntypedFormGroup;
