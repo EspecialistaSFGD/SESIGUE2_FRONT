@@ -1,0 +1,338 @@
+<nz-modal [(nzVisible)]="showModal" (click)="closeModal()" nzTitle="Agregar Asistencia técnica" nzWidth="75%"
+  nzOkText="Guardar Asistencia Técnica" (nzOnOk)="saveOrEdit()" nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
+  <ng-container *nzModalContent>
+    <form [formGroup]="formAsistencia" (ngSubmit)="submitFormulario()" nz-form nzLayout="vertical">
+      <div nz-row [nzGutter]="16">
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null">Tipo de atención</nz-form-label>
+            <nz-radio-group formControlName="tipo">
+              @for (tipo of tipos; track $index){
+              <label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
+              }
+            </nz-radio-group>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null">Modalidad</nz-form-label>
+            <nz-radio-group formControlName="modalidad">
+              @for (modalidad of modalidades; track $index){
+              <label nz-radio [nzValue]="modalidad">{{modalidad | titlecase }}</label>
+              }
+            </nz-radio-group>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="16">
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null" nzFor="fechaAtencion">Fecha de atención</nz-form-label>
+            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+              <nz-date-picker class="w-full" id="fechaAtencion" formControlName="fechaAtencion"
+                nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null" nzFor="lugarId">Lugar</nz-form-label>
+            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+              <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" formControlName="lugarId" nzAllowClear>
+                @for (lugar of lugares; track $index) {
+                <nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null" nzFor="tipoEntidadId">Tipo de entidad entendida</nz-form-label>
+            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+              <nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId" formControlName="tipoEntidadId"
+                nzAllowClear>
+                @for (entidades of entidades; track $index) {
+                <nz-option [nzValue]="entidades.lugarId" nzLabel="{{entidades.nombre}}"></nz-option>
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="16">
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null" nzFor="departamento">Departmento</nz-form-label>
+            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+              <nz-select nzPlaceHolder="Seleccionat departamento" id="departamento" formControlName="departamento"
+                nzAllowClear>
+                <nz-option [nzValue]="1" nzLabel="AMAZONAS"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null" nzFor="provincia">Provincia</nz-form-label>
+            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+              <nz-select nzPlaceHolder="Seleccionat provincia" id="provincia" formControlName="provincia" nzAllowClear>
+                <nz-option [nzValue]="1" nzLabel="BAGUA"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null" nzFor="distrito">Distrito</nz-form-label>
+            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+              <nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" formControlName="distrito" nzAllowClear>
+                <nz-option [nzValue]="1" nzLabel="BAGUA"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="entidad">Entidad</nz-form-label>
+            <nz-form-control nzSpan="null">
+              <input type="text" nz-input id="entidad" placeholder="Entidad" formControlName="entidad">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="16">
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null">Participa Autoridad</nz-form-label>
+            <nz-radio-group formControlName="autoridad">
+              @for (participa of participar; track $index){
+              <label nz-radio [nzValue]="participa">{{participa | titlecase }}</label>
+              }
+            </nz-radio-group>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="dniAutoridad">DNI</nz-form-label>
+            <nz-form-control nzSpan="null">
+              <input type="text" nz-input id="dniAutoridad" placeholder="Ingresa el DNi aquí"
+                formControlName="dniAutoridad">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="nombreAutoridad">Nombre</nz-form-label>
+            <nz-form-control nzSpan="null">
+              <input type="text" nz-input id="nombreAutoridad" placeholder="Ingresa el nombre aquí"
+                formControlName="nombreAutoridad">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="cargoAutoridad">Cargo</nz-form-label>
+            <nz-form-control nzSpan="null">
+              <input type="text" nz-input id="cargoAutoridad" placeholder="Ingrese el cargo aquí"
+                formControlName="cargoAutoridad">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="16">
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null">Participa Congresista</nz-form-label>
+            <nz-radio-group formControlName="congresista">
+              @for (participa of participar; track $index){
+              <label nz-radio [nzValue]="participa">{{participa | titlecase }}</label>
+              }
+            </nz-radio-group>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="dniCongresista">DNI</nz-form-label>
+            <nz-form-control nzSpan="null">
+              <input type="text" nz-input id="dniCongresista" placeholder="Ingresa el DNi aquí"
+                formControlName="dniCongresista">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="nombreCongresista">Nombre</nz-form-label>
+            <nz-form-control nzSpan="null">
+              <input type="text" nz-input id="nombreCongresista" placeholder="Ingresa el nombre aquí"
+                formControlName="nombreCongresista">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="cargoCongresista">Cargo</nz-form-label>
+            <nz-form-control nzSpan="null">
+              <input type="text" nz-input id="cargoCongresista" placeholder="Ingrese el cargo aquí"
+                formControlName="cargoCongresista">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="16">
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null" nzFor="espacioId">Espacio</nz-form-label>
+            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+              <nz-select nzPlaceHolder="Seleccionar espacio" id="espacioId" formControlName="espacioId" nzAllowClear>
+                <nz-option [nzValue]="1" nzLabel="Espacio 1"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null">Clasificación</nz-form-label>
+            <nz-radio-group formControlName="clasificacion">
+              @for (clasificacion of clasificaciones; track $index){
+              <label nz-radio [nzValue]="clasificacion">{{clasificacion | titlecase }}</label>
+              }
+            </nz-radio-group>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="tema">Tema</nz-form-label>
+            <nz-form-control nzSpan="null">
+              <input type="text" nz-input id="tema" placeholder="Ingrese el tema aquí" formControlName="tema">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="16">
+        <div nz-col nzSpan="12">
+          <nz-collapse>
+            <nz-collapse-panel [nzHeader]="headerParticipantesCollapsed" [nzActive]="true" [nzDisabled]="false"
+              formArrayName="participantes">
+              <div nz-row [nzGutter]="16" *ngFor="let participante of participantes.controls; let i = index"
+                [formGroupName]="i">
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired [nzSpan]="null">Tipo de participante</nz-form-label>
+                    <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                      <nz-select nzPlaceHolder="Seleccionat tipo de participante" formControlName="participanteId"
+                        nzAllowClear>
+                        @for (lugar of lugares; track $index) {
+                        <nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
+                        }
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="null" nzFor="cantidadParticipante">Cantidad</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                      <input type="text" nz-input id="cantidadParticipante" formControlName="cantidad">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="4" class="flex flex-col items-center">
+                  <nz-form-label [nzSpan]="null"> Eliminar </nz-form-label>
+                  <span nz-icon nzType="minus-circle-o" class="dynamic-delete-button" style="font-size: 24px;"
+                    (click)="removeItemFormArray(i,'participantes')"></span>
+                </div>
+              </div>
+            </nz-collapse-panel>
+          </nz-collapse>
+          <ng-template #headerParticipantesCollapsed>
+            <div class="w-100 flex flex-col sm:flex-row justify-between">
+              Participantes
+              <button nz-button nzType="dashed" class="add-button" (click)="addItemFormArray($event,'participantes')">
+                <span nz-icon nzType="plus"></span>
+                Nuevo participante
+              </button>
+            </div>
+          </ng-template>
+        </div>
+        <div nz-col nzSpan="12">
+          <nz-collapse>
+            <nz-collapse-panel [nzHeader]="headerAgendasCollapsed" [nzActive]="true" [nzDisabled]="false"
+              formArrayName="agendas">
+              <div nz-row [nzGutter]="16" *ngFor="let agenda of agendas.controls; let i = index" [formGroupName]="i">
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired [nzSpan]="null">Clasificación</nz-form-label>
+                    <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                      <nz-select nzPlaceHolder="Seleccionar clasificación" formControlName="clasificacionId"
+                        nzAllowClear>
+                        @for (lugar of lugares; track $index) {
+                        <nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
+                        }
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="null" nzFor="cuiAgenda">CUI</nz-form-label>
+                    <nz-form-control nzSpan="null">
+                      <input type="text" nz-input id="cuiAgenda" formControlName="cui">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="4" class="flex flex-col items-center">
+                  <nz-form-label [nzSpan]="null"> Eliminar </nz-form-label>
+                  <span nz-icon nzType="minus-circle-o" class="dynamic-delete-button" style="font-size: 24px;"
+                    (click)="removeItemFormArray(i,'agendas')"></span>
+                </div>
+              </div>
+            </nz-collapse-panel>
+          </nz-collapse>
+          <ng-template #headerAgendasCollapsed>
+            <div class="w-100 flex flex-col sm:flex-row justify-between">
+              Agendas
+              <button nz-button nzType="dashed" class="add-button" (click)="addItemFormArray($event,'agendas')">
+                <span nz-icon nzType="plus"></span>
+                Nueva agenda
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="16">
+        <div nz-col nzSpan="24">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="null" nzFor="comentarios">Comentarios</nz-form-label>
+            <textarea nz-input id="comentarios" formControlName="comentarios" placeholder="Ingrese el comentario aquí"
+              rows="2"></textarea>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="16">
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="evidenciaReunion">Evidencia de reunion</nz-form-label>
+            <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
+              <button nz-button>
+                <span nz-icon nzType="upload"></span>
+                Selecionar evidencia
+              </button>
+            </nz-upload>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="evidenciaReunion">Acta de asistencia</nz-form-label>
+            <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
+              <button nz-button>
+                <span nz-icon nzType="upload"></span>
+                Selecionar evidencia
+              </button>
+            </nz-upload>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+</nz-modal>
