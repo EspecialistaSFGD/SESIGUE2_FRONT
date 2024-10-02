@@ -8,7 +8,8 @@
       "@interfaces/*": ["./src/app/libs/interfaces/*"],
       "@models/*": ["./src/app/libs/models/*"],
       "@shared/*": ["./src/app/libs/shared/*"],
-      "@environments/*": ["./src/environments/*"]
+      "@environments/*": ["./src/environments/*"],
+      "@helpers/*": ["./src/app/helpers/*"]
     },
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,

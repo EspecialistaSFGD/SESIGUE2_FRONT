@@ -16,27 +16,27 @@ export enum AsistenciasTecnicasTipos {
 
 export enum AsistenciasTecnicasModalidad {
   PRESENCIAL = 'presencial',
-  VIRTUAL = 'virtual'
+  VIRTUALS = 'virtual'
 }
 
 export enum AsistenciasTecnicasClasificacion {
-  PRESENCIAL = 'inversión',
-  VIRTUAL = 'gestion'
+  INVERSION = 'inversión',
+  GECTION = 'gestion'
 }
 
 export interface AsistenciaTecnicaResponse {
   asistenciaId?: string,
   tipo: string,
   modalidad: string,
-  fechaAtencion: Date,
+  fechaAtencion: string,
   lugarId: string,
   tipoEntidadId: string,
   entidadId: string,
-  autoridad: string,
+  autoridad: boolean,
   dniAutoridad: string,
   nombreAutoridad: string,
   cargoAutoridad: string,
-  congresista: string,
+  congresista: boolean,
   dniCongresista: string,
   nombreCongresista: string,
   clasificacion: string,
@@ -45,4 +45,5 @@ export interface AsistenciaTecnicaResponse {
   comentarios: string,
   evidenciaReunion: string,
   evidenciaAsistencia: string
+  code?: string
 }

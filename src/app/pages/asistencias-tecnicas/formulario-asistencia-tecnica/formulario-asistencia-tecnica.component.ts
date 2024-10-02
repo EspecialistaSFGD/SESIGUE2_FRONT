@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, signal, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos } from '@interfaces/asistencia-tecnica.interface';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse } from '@interfaces/asistencia-tecnica.interface';
 import { LugarResponse } from '@interfaces/lugar.interface';
 import { UbigeoEntidad } from '@interfaces/ubigeo.interface';
 import { AuthService } from '@services/auth/auth.service';
@@ -26,6 +26,9 @@ import { TipoEntidadResponse } from '@interfaces/entidad.interface';
 import { EspacioResponse } from '@interfaces/espacios.interfaces';
 import { NivelGobiernoResponse } from '@interfaces/nivel-gobierno.interface';
 import { ClasificacionResponse } from '@interfaces/clasificaciones.interface';
+import { typeErrorControl } from '@helpers/form';
+import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
+import { ItemEnums } from '@interfaces/helpers.interface';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -51,10 +54,11 @@ import { ClasificacionResponse } from '@interfaces/clasificaciones.interface';
 export class FormularioAsistenciaTecnicaComponent {
   @Input() showModal: boolean = false
   @Output() setCloseShow = new EventEmitter()
+  @Output() saveData = new EventEmitter()
 
-  tipos: AsistenciasTecnicasTipos[] = Object.values(AsistenciasTecnicasTipos)
-  modalidades: AsistenciasTecnicasModalidad[] = Object.values(AsistenciasTecnicasModalidad)
-  clasificaciones: AsistenciasTecnicasClasificacion[] = Object.values(AsistenciasTecnicasClasificacion)
+  tipos:ItemEnums[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value: value.toLowerCase(), text }));
+  modalidades:ItemEnums[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value: value.toLowerCase(), text }));
+  clasificaciones:ItemEnums[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }));
   public lugares = signal<LugarResponse[]>([])
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   public espacios = signal<EspacioResponse[]>([])
@@ -69,22 +73,8 @@ export class FormularioAsistenciaTecnicaComponent {
     currentPage: 1,
     total: 0
   }
-  // entidades: LugarResponse[] = [
-  //   { lugarId: '1', nombre: 'Gobierno Nacional' },
-  //   { lugarId: '2', nombre: 'Gobierno Regional' },
-  //   { lugarId: '3', nombre: 'Gobierno Local' },
-  // ]
-  // tipoParticipantes: LugarResponse[] = [
-  //   { lugarId: '1', nombre: 'Tipo 1' },
-  //   { lugarId: '2', nombre: 'Tipo 3' },
-  //   { lugarId: '3', nombre: 'Tipo 3' },
-  // ]
-  // clasificacion: LugarResponse[] = [
-  //   { lugarId: '1', nombre: 'clasificacion 1' },
-  //   { lugarId: '2', nombre: 'clasificacion 3' },
-  //   { lugarId: '3', nombre: 'clasificacion 3' },
-  // ]
-  participar: string[] = ['si', 'no']
+
+  participar: ItemEnums[] = [{ value: 'true', text: 'si' }, { value: 'false', text: 'no' }]
   fileList: NzUploadFile[] = [];
 
   ubigeoEntidad: UbigeoEntidad = {
@@ -94,10 +84,11 @@ export class FormularioAsistenciaTecnicaComponent {
     district: 0
   }
 
-  listParticipantes: Array<{ id: number; controlInstance: string }> = [{ id: 1, controlInstance: 'text' }];
+  // listParticipantes: Array<{ id: number; controlInstance: string }> = [{ id: 1, controlInstance: 'text' }];
 
   private fb = inject(FormBuilder)
   private authService = inject(AuthService)
+  private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
   private lugaresService = inject(LugaresService)
   private tipoEntidadService = inject(EntidadesService)
   private espacioService = inject(EspaciosService)
@@ -141,8 +132,18 @@ export class FormularioAsistenciaTecnicaComponent {
     agendas: this.fb.array([])
   })
 
+  alertMessageError( control:string ){
+    return this.formAsistencia.get( control )?.errors && this.formAsistencia.get( control )?.touched
+  }
 
-  ngOnInit() {
+  msgErrorControl( control:string, label?:string ):string {
+    const text = label ? label : control
+    const errors = this.formAsistencia.get( control )?.errors;
+    return typeErrorControl( text,errors )
+  }
+
+
+  ngOnInit() {    
     this.obtenerUbigeo()
     this.obtenerLugares()
     this.obtenerTipoEntidad()
@@ -240,11 +241,24 @@ export class FormularioAsistenciaTecnicaComponent {
   }
 
   saveOrEdit() {    
+    console.log(this.formAsistencia.value);
+    
     if (this.formAsistencia.invalid){
       this.formAsistencia.markAllAsTouched()
       return;
     }
-    console.log(this.formAsistencia.value);
+    const fechaAtencionReg = this.formAsistencia.get('fechaAtencion')?.value;
+    const getMonth = fechaAtencionReg.getMonth() + 1 
+    const getDay = fechaAtencionReg.getDate()
+    const month = getMonth > 9 ? getMonth : `0${getMonth}`
+    const day = getDay > 9 ? getDay : `0${getDay}`
+    const fechaAtencion = `${day}/${month}/${ fechaAtencionReg.getFullYear() }`
+    const asistenciaTecnica: AsistenciaTecnicaResponse = { ...this.formAsistencia.value, fechaAtencion, code: this.authService.getCodigoUsuario() }
+    this.asistenciaTecnicaService.registrarAsistenciaTecnica(asistenciaTecnica)
+      .subscribe( resp => {
+        console.log('Response service');
+        console.log(resp);
+      })
 
   }
   closeModal() {

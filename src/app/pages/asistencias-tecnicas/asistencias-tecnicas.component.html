@@ -49,4 +49,4 @@
 </ng-template>
 {{showNzModal}}
 <app-formulario-asistencia-tecnica [showModal]="showNzModal"
-  (setCloseShow)="showNzModal = false"></app-formulario-asistencia-tecnica>
+  (setCloseShow)="showNzModal = false" (saveData)="verifySaveData($event)"></app-formulario-asistencia-tecnica>

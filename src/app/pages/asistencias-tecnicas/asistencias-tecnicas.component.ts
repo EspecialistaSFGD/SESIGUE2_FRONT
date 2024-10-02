@@ -66,6 +66,11 @@ export class AsistenciasTecnicasComponent {
 
   }
 
+  verifySaveData(saved: boolean){
+    console.log('guardado!!!!');
+    console.log(saved);
+  }
+
   goFormSaveAndEdit(asistenciaId: number) {
     this.showNzModal = true
     // console.log(asistenciaId);

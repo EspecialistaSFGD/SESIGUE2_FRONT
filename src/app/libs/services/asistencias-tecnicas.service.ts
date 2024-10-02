@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
 import { AsistenciasTecnicasResponses, AsistenciaTecnicaResponse } from '@interfaces/asistencia-tecnica.interface';
 import { Pagination } from '@interfaces/pagination.interface';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
 
 @Injectable({
@@ -21,12 +21,22 @@ export class AsistenciasTecnicasService {
     return this.http.get<AsistenciasTecnicasResponses>(`${this.urlAsistenciaTecnica}/ListarAsistenciasTecnicas`, { headers, params })
   }
 
-  registrarAsistenciaTecnica(asistencitecnica:AsistenciaTecnicaResponse, pagination: Pagination){
-    const params = this.helpersService.setParams(pagination)
-    const headers = this.helpersService.getAutorizationToken()
+  registrarAsistenciaTecnica(asistenciTecnica:AsistenciaTecnicaResponse){
+    console.log('IN SERVICE');
+    console.log(asistenciTecnica);
+    
+    const headers = this.getAutorizationToken()
+    const formData:FormData = this.generateFormData( asistenciTecnica )    
+    return this.http.post<AsistenciasTecnicasResponses>(`${this.urlAsistenciaTecnica}/RegistrarAsistenciaTecnica`, formData, { headers })
+    .pipe(
+      tap( resp => {      
+        console.log(resp);        
+        return resp
+      }),
+      map( valid => valid.success ),
+      catchError( err => of( err ) )
+    )
   }
-
-  
 
   getAutorizationToken() {
     const { codigo, expiracionToken } = JSON.parse(localStorage.getItem('token') || '')
@@ -41,5 +51,29 @@ export class AsistenciasTecnicasService {
       httpParams = httpParams.append(param.key, param.value);
     }
     return httpParams
+  }
+
+  private generateFormData( asistencitecnica:AsistenciaTecnicaResponse ):FormData {
+    const formData = new FormData()
+    formData.append( 'tipo', asistencitecnica.tipo )
+    formData.append( 'modalidad', asistencitecnica.modalidad )
+    formData.append( 'fechaAtencion', asistencitecnica.fechaAtencion )
+    formData.append( 'autoridad', `${asistencitecnica.autoridad}` )
+    formData.append( 'dniAutoridad', asistencitecnica.dniAutoridad )
+    formData.append( 'nombreAutoridad', asistencitecnica.nombreAutoridad )
+    formData.append( 'cargoAutoridad', asistencitecnica.cargoAutoridad )
+    formData.append( 'congresista', `${asistencitecnica.congresista}` )
+    formData.append( 'dniCongresista', asistencitecnica.dniCongresista )
+    formData.append( 'nombreCongresista', asistencitecnica.nombreCongresista )
+    formData.append( 'clasificacion', asistencitecnica.clasificacion )
+    formData.append( 'tema', asistencitecnica.tema )
+    formData.append( 'comentarios', `${ asistencitecnica.comentarios }` )
+    formData.append( 'evidenciaReunion', `${ asistencitecnica.evidenciaReunion }` )
+    formData.append( 'evidenciaAsistencia', `${ asistencitecnica.evidenciaAsistencia }` )
+    formData.append( 'lugarId', `${ asistencitecnica.lugarId }` )
+    formData.append( 'tipoEntidadId', `${ asistencitecnica.tipoEntidadId }` )
+    formData.append( 'espacioId', `${ asistencitecnica.espacioId }` )
+    formData.append( 'code', `${ asistencitecnica.code }` )
+    return formData
   }
 }
