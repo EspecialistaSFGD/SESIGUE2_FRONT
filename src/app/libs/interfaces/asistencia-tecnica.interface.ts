@@ -1,6 +1,6 @@
 import { PaginationsResponse } from "./pagination.interface"
 
-export interface AsistenciasTecnicasResponse {
+export interface AsistenciasTecnicasResponses {
   success: boolean,
   message: string,
   errors?: string,
@@ -27,6 +27,7 @@ export enum AsistenciasTecnicasClasificacion {
 export interface AsistenciaTecnicaResponse {
   asistenciaId?: string,
   tipo: string,
+  modalidad: string,
   fechaAtencion: Date,
   lugarId: string,
   tipoEntidadId: string,
@@ -38,6 +39,7 @@ export interface AsistenciaTecnicaResponse {
   congresista: string,
   dniCongresista: string,
   nombreCongresista: string,
+  clasificacion: string,
   espacioId: string,
   tema: string,
   comentarios: string,

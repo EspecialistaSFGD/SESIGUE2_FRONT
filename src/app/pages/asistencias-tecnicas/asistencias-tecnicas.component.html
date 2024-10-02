@@ -14,10 +14,23 @@
       <th nzWidth="150px" nzAlign="center" nzColumnKey="congresista" [nzSortFn]="true">Congresista</th>
       <th nzWidth="150px" nzColumnKey="espacio">Espacio</th>
       <th nzWidth="150px" nzColumnKey="clasificacion">Clasificación</th>
-      <th nzColumnKey="acciones" nzRight nzWidth="150px" nzAlign="center">Acciones</th>
+      <!-- <th nzColumnKey="acciones" nzRight nzWidth="150px" nzAlign="center">Acciones</th> -->
     </tr>
   </thead>
   <tbody>
+    @for (asistencia of asistenciasTecnicas(); track $index){
+      <tr>
+        <td>{{asistencia.tipo | titlecase}}</td>
+        <td>{{asistencia.modalidad | titlecase }}</td>
+        <td>{{asistencia.fechaAtencion | date : 'dd/MM/yyyy' }}</td>
+        <td>{{asistencia.tipoEntidadId}}</td>
+        <td>{{asistencia.tipoEntidadId}}</td>
+        <td>{{asistencia.autoridad ? 'Si' : 'No' }}</td>
+        <td>{{asistencia.congresista ? 'Si' : 'No' }}</td>
+        <td>{{asistencia.espacioId}}</td>
+        <td>{{asistencia.clasificacion}}</td>
+      </tr>
+    }
   </tbody>
 </nz-table>
 

@@ -1,14 +1,14 @@
 import { PaginationsResponse } from "./pagination.interface"
 
-export interface LugaresResponses {
+export interface NivelesGobiernosResponses {
   success: boolean,
   message: string,
   errors?: string,
-  data: LugarResponse[],
+  data: NivelGobiernoResponse[],
   info?: PaginationsResponse
 }
 
-export interface LugarResponse {
-  lugarId?: string,
+export interface NivelGobiernoResponse {
+  nivelId?: string,
   nombre: string
 }

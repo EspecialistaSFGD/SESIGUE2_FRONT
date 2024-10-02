@@ -8,6 +8,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -15,6 +16,7 @@ import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-te
   templateUrl: './asistencias-tecnicas.component.html',
   styles: ``,
   imports: [
+    CommonModule,
     PageHeaderComponent,
     NzTableModule,
     NzSpaceModule,
@@ -47,7 +49,7 @@ export class AsistenciasTecnicasComponent {
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas(this.pagination)
       .subscribe(resp => {
         if (resp.success == true) {
-          this.asistenciasTecnicas.set(resp.data)
+          this.asistenciasTecnicas.set(resp.data)      
           const { pageIndex, pageSize, total } = resp.info!
           this.pagination.currentPage = pageIndex
           this.pagination.pageSize = pageSize
