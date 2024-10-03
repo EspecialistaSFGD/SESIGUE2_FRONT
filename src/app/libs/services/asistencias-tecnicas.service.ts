@@ -21,11 +21,8 @@ export class AsistenciasTecnicasService {
     return this.http.get<AsistenciasTecnicasResponses>(`${this.urlAsistenciaTecnica}/ListarAsistenciasTecnicas`, { headers, params })
   }
 
-  registrarAsistenciaTecnica(asistenciTecnica:AsistenciaTecnicaResponse){
-    console.log('IN SERVICE');
-    console.log(asistenciTecnica);
-    
-    const headers = this.getAutorizationToken()
+  registrarAsistenciaTecnica(asistenciTecnica:AsistenciaTecnicaResponse){    
+    const headers = this.helpersService.getAutorizationToken()
     const formData:FormData = this.generateFormData( asistenciTecnica )    
     return this.http.post<AsistenciasTecnicasResponses>(`${this.urlAsistenciaTecnica}/RegistrarAsistenciaTecnica`, formData, { headers })
     .pipe(
@@ -70,9 +67,10 @@ export class AsistenciasTecnicasService {
     formData.append( 'comentarios', `${ asistencitecnica.comentarios }` )
     formData.append( 'evidenciaReunion', `${ asistencitecnica.evidenciaReunion }` )
     formData.append( 'evidenciaAsistencia', `${ asistencitecnica.evidenciaAsistencia }` )
-    formData.append( 'lugarId', `${ asistencitecnica.lugarId }` )
-    formData.append( 'tipoEntidadId', `${ asistencitecnica.tipoEntidadId }` )
-    formData.append( 'espacioId', `${ asistencitecnica.espacioId }` )
+    formData.append( 'lugarId', asistencitecnica.lugarId )
+    formData.append( 'tipoEntidadId', asistencitecnica.tipoEntidadId )
+    formData.append( 'entidadId', asistencitecnica.entidadId )
+    formData.append( 'espacioId', asistencitecnica.espacioId )
     formData.append( 'code', `${ asistencitecnica.code }` )
     return formData
   }

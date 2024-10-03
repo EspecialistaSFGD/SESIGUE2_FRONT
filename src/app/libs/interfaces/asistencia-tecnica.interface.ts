@@ -1,13 +1,5 @@
 import { PaginationsResponse } from "./pagination.interface"
 
-export interface AsistenciasTecnicasResponses {
-  success: boolean,
-  message: string,
-  errors?: string,
-  data: AsistenciaTecnicaResponse[],
-  info?: PaginationsResponse
-}
-
 export enum AsistenciasTecnicasTipos {
   ASESORAMIENTO = 'asesoramiento',
   ASISTENCIA = 'asistencia técnica',
@@ -21,7 +13,15 @@ export enum AsistenciasTecnicasModalidad {
 
 export enum AsistenciasTecnicasClasificacion {
   INVERSION = 'inversión',
-  GECTION = 'gestion'
+  GESTION = 'gestion'
+}
+
+export interface AsistenciasTecnicasResponses {
+  success: boolean,
+  message: string,
+  errors?: string,
+  data: AsistenciaTecnicaResponse[],
+  info?: PaginationsResponse
 }
 
 export interface AsistenciaTecnicaResponse {
@@ -30,8 +30,11 @@ export interface AsistenciaTecnicaResponse {
   modalidad: string,
   fechaAtencion: string,
   lugarId: string,
+  nombreLugar?: string,
   tipoEntidadId: string,
+  nombreTipoEntidad?: string,
   entidadId: string,
+  nombreEntidad?: string,
   autoridad: boolean,
   dniAutoridad: string,
   nombreAutoridad: string,
@@ -41,9 +44,11 @@ export interface AsistenciaTecnicaResponse {
   nombreCongresista: string,
   clasificacion: string,
   espacioId: string,
+  nombreEspacio?: string,
   tema: string,
   comentarios: string,
   evidenciaReunion: string,
-  evidenciaAsistencia: string
-  code?: string
+  evidenciaAsistencia: string,
+  code?: string,
+  fechaRegistro: Date
 }

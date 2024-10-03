@@ -1,34 +1,34 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, signal, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse } from '@interfaces/asistencia-tecnica.interface';
 import { LugarResponse } from '@interfaces/lugar.interface';
-import { UbigeoEntidad } from '@interfaces/ubigeo.interface';
+import { typeErrorControl } from '@helpers/form';
+import { ClasificacionResponse } from '@interfaces/clasificaciones.interface';
+import { TipoEntidadResponse } from '@interfaces/entidad.interface';
+import { EspacioResponse } from '@interfaces/espacios.interfaces';
+import { ItemEnums } from '@interfaces/helpers.interface';
+import { NivelGobiernoResponse } from '@interfaces/nivel-gobierno.interface';
+import { Pagination } from '@interfaces/pagination.interface';
+import { UbigeoDepartamentoResponse } from '@interfaces/ubigeo.interface';
+import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
 import { AuthService } from '@services/auth/auth.service';
+import { ClasificacionesService } from '@services/clasificaciones.service';
+import { EntidadesService } from '@services/entidades.service';
+import { EspaciosService } from '@services/espacios.service';
+import { LugaresService } from '@services/lugares.service';
+import { NivelesGobiernosService } from '@services/niveles-gobiernos.service';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
-import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
-import { Pagination } from '@interfaces/pagination.interface';
-import { LugaresService } from '@services/lugares.service';
-import { EntidadesService } from '@services/entidades.service';
-import { EspaciosService } from '@services/espacios.service';
-import { NivelesGobiernosService } from '@services/niveles-gobiernos.service';
-import { ClasificacionesService } from '@services/clasificaciones.service';
-import { TipoEntidadResponse } from '@interfaces/entidad.interface';
-import { EspacioResponse } from '@interfaces/espacios.interfaces';
-import { NivelGobiernoResponse } from '@interfaces/nivel-gobierno.interface';
-import { ClasificacionResponse } from '@interfaces/clasificaciones.interface';
-import { typeErrorControl } from '@helpers/form';
-import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
-import { ItemEnums } from '@interfaces/helpers.interface';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -53,6 +53,7 @@ import { ItemEnums } from '@interfaces/helpers.interface';
 })
 export class FormularioAsistenciaTecnicaComponent {
   @Input() showModal: boolean = false
+  @Input() departamentos: UbigeoDepartamentoResponse[] = []
   @Output() setCloseShow = new EventEmitter()
   @Output() saveData = new EventEmitter()
 
@@ -67,8 +68,8 @@ export class FormularioAsistenciaTecnicaComponent {
 
   allPagination: Pagination = {
     code: 0,
-    columnSort: 'fechaAtencion',
-    typeSort: 'DESC',
+    columnSort: 'fechaRegistro',
+    typeSort: 'ASC',
     pageSize: 10,
     currentPage: 1,
     total: 0
@@ -76,15 +77,6 @@ export class FormularioAsistenciaTecnicaComponent {
 
   participar: ItemEnums[] = [{ value: 'true', text: 'si' }, { value: 'false', text: 'no' }]
   fileList: NzUploadFile[] = [];
-
-  ubigeoEntidad: UbigeoEntidad = {
-    id: 0,
-    department: 0,
-    province: 0,
-    district: 0
-  }
-
-  // listParticipantes: Array<{ id: number; controlInstance: string }> = [{ id: 1, controlInstance: 'text' }];
 
   private fb = inject(FormBuilder)
   private authService = inject(AuthService)
@@ -144,17 +136,11 @@ export class FormularioAsistenciaTecnicaComponent {
 
 
   ngOnInit() {    
-    this.obtenerUbigeo()
     this.obtenerLugares()
     this.obtenerTipoEntidad()
     this.obtenerEspacios()
     this.obtenerParticipantes()
     this.obtenerClasificaciones()
-  }
-
-  obtenerUbigeo() {
-    const departments = (this.authService.departamento()) ? this.authService.departamento() : this.ubigeoEntidad.department;
-    // console.log(this.authService.departamento());
   }
 
   obtenerLugares(){
@@ -236,13 +222,7 @@ export class FormularioAsistenciaTecnicaComponent {
     return false;
   };
 
-  submitFormulario() {
-    // console.log(this.formAsistencia.value);
-  }
-
   saveOrEdit() {    
-    console.log(this.formAsistencia.value);
-    
     if (this.formAsistencia.invalid){
       this.formAsistencia.markAllAsTouched()
       return;
@@ -256,8 +236,10 @@ export class FormularioAsistenciaTecnicaComponent {
     const asistenciaTecnica: AsistenciaTecnicaResponse = { ...this.formAsistencia.value, fechaAtencion, code: this.authService.getCodigoUsuario() }
     this.asistenciaTecnicaService.registrarAsistenciaTecnica(asistenciaTecnica)
       .subscribe( resp => {
-        console.log('Response service');
-        console.log(resp);
+        if(resp === true){
+          this.saveData.emit(true)
+          this.closeModal()
+        }
       })
 
   }

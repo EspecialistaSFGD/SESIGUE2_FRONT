@@ -1,7 +1,7 @@
 <nz-modal [(nzVisible)]="showModal" (click)="closeModal()" nzTitle="Agregar Asistencia técnica" nzWidth="75%"
   nzOkText="Guardar Asistencia Técnica" (nzOnOk)="saveOrEdit()" nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
   <ng-container *nzModalContent>
-    <form [formGroup]="formAsistencia" (ngSubmit)="submitFormulario()" nz-form nzLayout="vertical">
+    <form [formGroup]="formAsistencia" nz-form nzLayout="vertical">
       <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="12">
           <nz-form-item>
@@ -72,7 +72,9 @@
             <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
               <nz-select nzPlaceHolder="Seleccionat departamento" id="departamento" formControlName="departamento"
                 nzAllowClear>
-                <nz-option [nzValue]="1" nzLabel="AMAZONAS"></nz-option>
+                @for (departamento of departamentos; track $index) {
+                  <nz-option [nzValue]="departamento.departamentoId" nzLabel="{{departamento.departamento}}"></nz-option>
+                }
               </nz-select>
               <small class="text-danger" *ngIf="alertMessageError('departamento')">{{msgErrorControl('departamento','departamento')}}</small>
             </nz-form-control>
