@@ -1,56 +1,43 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from '../../libs/guards/auth.guard';
-import { UsuariosComponent } from './usuarios/usuarios.component';
-import { PerfilesComponent } from './perfiles/perfiles.component';
-import { EspaciosComponent } from './espacios/espacios.component';
-import { AccesosComponent } from './accesos/accesos.component';
-import { BotonesComponent } from './botones/botones.component';
-import { MenuesComponent } from './menues/menues.component';
 
 export const CONFIG_ROUTES: Routes = [
   {
     path: '', redirectTo: 'usuarios', pathMatch: 'full'
   },
   {
-    canActivate: [AuthGuard],
-    path: 'usuarios', component: UsuariosComponent,
+    path: 'usuarios', loadComponent: () => import('./usuarios/usuarios.component').then(m => m.UsuariosComponent),
     data: {
-      title: 'Gestión de usuarios',
+      title: 'Gestión de usuarios'
     }
   },
   {
-    canActivate: [AuthGuard],
-    path: 'perfiles', component: PerfilesComponent,
+    path: 'perfiles', loadComponent: () => import('./perfiles/perfiles.component').then(m => m.PerfilesComponent),
     data: {
       title: 'Gestión de perfiles',
     }
   },
   {
-    canActivate: [AuthGuard],
-    path: 'espacios', component: EspaciosComponent,
+    path: 'espacios', loadComponent: () => import('./espacios/espacios.component').then(m => m.EspaciosComponent),
     data: {
-      title: 'Gestión de espacios de Articulación',
+      title: 'Gestión de espacios de Articulación'
     }
   },
   {
-    canActivate: [AuthGuard],
-    path: 'accesos', component: AccesosComponent,
+    path: 'menues', loadComponent: () => import('./menues/menues.component').then(m => m.MenuesComponent),
     data: {
-      title: 'Gestión de accesos',
+      title: 'Gestión de menues'
     }
   },
   {
-    canActivate: [AuthGuard],
-    path: 'botones', component: BotonesComponent,
+    path: 'botones', loadComponent: () => import('./botones/botones.component').then(m => m.BotonesComponent),
     data: {
-      title: 'Gestión de botones',
+      title: 'Gestión de botones'
     }
   },
   {
-    canActivate: [AuthGuard],
-    path: 'menues', component: MenuesComponent,
+    path: 'accesos', loadComponent: () => import('./accesos/accesos.component').then(m => m.AccesosComponent),
     data: {
-      title: 'Gestión de menues',
+      title: 'Gestión de accesos'
     }
   }
 ];
