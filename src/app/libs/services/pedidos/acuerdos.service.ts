@@ -200,8 +200,8 @@ export class AcuerdosService {
         ots.accesoId = this.authService.getCodigoUsuario();
         if (acuerdo.plazo) ots.plazo = acuerdo.plazo;
         if (acuerdo.es_preAcuerdoBool !== null) {
-            ots.es_preAcuerdo = (acuerdo.es_preAcuerdoBool) ? 1 : 0;
-
+            ots.es_preAcuerdo = (acuerdo.es_preAcuerdoBool) ? 0 : 1;
+            //TODO: verificar si va de esta manera
             if (acuerdo.es_preAcuerdoBool) {
                 if (acuerdo.pre_acuerdo) ots.pre_acuerdo = acuerdo.pre_acuerdo;
             } else {
@@ -287,11 +287,23 @@ export class AcuerdosService {
         }
 
         const ots: AcuerdoPedidoModel = {} as AcuerdoPedidoModel;
-        ots.acuerdoId = acuerdo.acuerdoId;
-        ots.eventoId = acuerdo.eventoId;
-        ots.acuerdo = acuerdo.acuerdoModificado;
-        ots.acuerdoModificado = acuerdo.acuerdoModificado;
+        ots.prioridadId = acuerdo.prioridadId;
+        if (acuerdo.acuerdoId) ots.acuerdoId = acuerdo.acuerdoId;
+
+        if (acuerdo.clasificacionSelect) ots.clasificacionId = Number(acuerdo.clasificacionSelect.value);
+        if (acuerdo.responsableSelect) ots.responsableId = Number(acuerdo.responsableSelect.value);
+        ots.entidadId = (acuerdo.entidadSelect) ? Number(acuerdo.entidadSelect.value) : 0;
+        if (acuerdo.tipoSelect) ots.tipoId = Number(acuerdo.tipoSelect);
         ots.accesoId = this.authService.getCodigoUsuario();
+        if (acuerdo.plazo) ots.plazo = acuerdo.plazo;
+
+        if (acuerdo.es_preAcuerdoBool !== null) {
+            ots.es_preAcuerdo = (acuerdo.es_preAcuerdoBool) ? 1 : 0;
+        }
+
+        if (acuerdo.acuerdo) ots.acuerdo = acuerdo.acuerdo;
+        if (acuerdo.pre_acuerdo) ots.pre_acuerdo = acuerdo.pre_acuerdo;
+        if (acuerdo.eventoId) ots.eventoId = acuerdo.eventoId;
 
         return new Promise((resolve, reject) => {
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/ConvertirPreAcuerdo`, ots).subscribe({

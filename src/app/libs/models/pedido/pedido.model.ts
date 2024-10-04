@@ -20,6 +20,7 @@ export class PedidoModel extends SeguridadModel {
         public cantidadPreAcuerdos?: number,
         public cantidadAcuerdos?: number,
         public fechaEvento?: Date,
+        public fechaFinEvento?: Date,
         public descripcionEstadoEspacio?: string,
         public estadoEvento?: EstadoEventoType,
         // public eventoId?: number,

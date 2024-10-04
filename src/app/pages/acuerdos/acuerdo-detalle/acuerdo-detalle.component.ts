@@ -455,8 +455,8 @@ export class AcuerdoDetalleComponent implements OnInit {
 
   onEliinarHito(hito: HitoAcuerdoModel): void {
     this.confirmModal = this.modal.confirm({
-      nzTitle: `¿Deseas desestimar el hito: "${hito.hito}"?`,
-      nzContent: 'El hito será desestimado de forma permanente.',
+      nzTitle: `¿Deseas eliminar el hito: "${hito.hito}"?`,
+      nzContent: 'El hito será eliminado de forma permanente.',
       nzIconType: 'exclamation-circle',
       nzOkDanger: true,
       nzOnOk: () => this.hitosService.eliminarHito(hito)

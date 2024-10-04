@@ -5,7 +5,8 @@
                 <nz-form-label [nzSpan]="null" nzFor="avance" nzRequired>Descripción del avance</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                     <textarea nz-input id="avance" formControlName="avance"
-                        placeholder="Ingrese la descripción del avance" nzAutosize></textarea>
+                        placeholder="Ingrese la descripción del avance" [nzAutosize]="{ minRows: 4 }"
+                        nzAutosize></textarea>
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -112,7 +113,7 @@
         </div>
     </div>
 
-    {{this.avanceForm.value|json}}
+    <!-- {{this.avanceForm.value|json}} -->
     <!-- {{this.hitosService.hitoSeleccionado()|json}} -->
     <!-- {{this.hitosService.hitoSeleccionado()|json }} -->
     <!-- {{this.acuerdosService.acuerdoSeleccionado().acuerdoId|json }} -->

@@ -4,12 +4,14 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { environment } from '../../../../environments/environment.development';
 import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
 import { SelectModel } from '../../models/shared/select.model';
-import { EspacioModel } from '../../models/shared/espacio.model';
+import { EspacioModel, TipoEventoModel } from '../../models/shared/espacio.model';
 import { UtilesService } from '../services/utiles.service';
 
 interface State {
   espacios: SelectModel[];
   espacioSeleccionado?: SelectModel | null;
+  tiposEspacio: SelectModel[];
+  tipoEspacioSeleccionado?: SelectModel | null;
 }
 
 @Injectable({
@@ -24,17 +26,22 @@ export class EspaciosStore {
   #espaciosResult = signal<State>({
     espacios: [],
     espacioSeleccionado: null,
+    tiposEspacio: [],
+    tipoEspacioSeleccionado: null,
   });
 
   public espacios = computed(() => this.#espaciosResult().espacios);
   public espacioSeleccionado = computed(() => this.#espaciosResult().espacioSeleccionado);
+  public tiposEspacio = computed(() => this.#espaciosResult().tiposEspacio);
+  public tipoEspacioSeleccionado = computed(() => this.#espaciosResult().tipoEspacioSeleccionado);
 
   constructor() {
-    this.listarEventos();
+    // this.listarEventos();
+    this.listarTiposEvento();
   }
 
 
-  listarEventos(estado: number = 1, vigente: number = 1, pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend'): void {
+  listarEventos(codigoTipoEvento: number | null = null, estado: number = 1, vigente: number = 1, pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend'): void {
     let params = new HttpParams()
       .append('estado', `${estado}`)
       .append('vigente', `${vigente}`)
@@ -42,6 +49,8 @@ export class EspaciosStore {
       .append('piPageSize', `${pageSize}`)
       .append('columnSort', `${sortField}`)
       .append('typeSort', `${sortOrder}`);
+
+    if (codigoTipoEvento != null) params = params.append('codigoTipoEvento', `${codigoTipoEvento}`);
 
     this.#espaciosResult.update((state) => ({
       ...state,
@@ -54,6 +63,8 @@ export class EspaciosStore {
 
           const eventos: EspacioModel[] = data.data;
 
+          // console.log(data);
+
           if (!eventos) return;
 
           const res: EspacioModel[] = data.data;
@@ -62,11 +73,12 @@ export class EspaciosStore {
           let espacioSeleccionado: SelectModel | null = null;
 
           eventos.forEach((evento) => {
+
             if (evento.fechaEvento) {
               evento.fechaEvento = this.utilesService.stringToDate(evento.fechaEvento.toString());
             }
 
-            espaciosRes.push(new SelectModel(Number(evento.eventoId), evento.nombre, evento.fechaEvento));
+            espaciosRes.push(new SelectModel(Number(evento.eventoId), evento.nombre, evento.fechaEvento, evento.subTipo));
           });
 
 
@@ -88,4 +100,49 @@ export class EspaciosStore {
       });
   }
 
+  listarTiposEvento(columnSort: string = 'codigoTipoEvento', TypeSort: string = 'descend', piPageSize: number = 10, piCurrentPage: number = 1): void {
+
+    let params = new HttpParams()
+      .append('columnSort', `${columnSort}`)
+      .append('TypeSort', `${TypeSort}`)
+      .append('piPageSize', `${piPageSize}`)
+      .append('piCurrentPage', `${piCurrentPage}`);
+
+    this.http.get<ResponseModelPaginated>(`${environment.api}/TipoEvento/Listar`, { params })
+      .subscribe({
+        next: (data) => {
+
+          // console.log(data);
+
+
+          const tiposEvento: TipoEventoModel[] = data.data;
+
+          if (!tiposEvento) return;
+
+          const res: TipoEventoModel[] = data.data;
+
+          let espaciosRes: SelectModel[] = [];
+          let espacioSeleccionado: SelectModel | null = null;
+
+          tiposEvento.forEach((evento) => {
+
+            espaciosRes.push(new SelectModel(Number(evento.codigoTipoEvento), evento.descripcionTipoEvento));
+          });
+
+          this.#espaciosResult.update((state) => ({
+            ...state,
+            tiposEspacio: espaciosRes,
+            tipoEspacioSeleccionado: espacioSeleccionado,
+            isLoading: false,
+          }));
+        },
+        error: (err) => {
+          this.msg.error(err.error.message);
+          this.#espaciosResult.update((state) => ({
+            ...state,
+            isLoading: false,
+          }));
+        }
+      });
+  }
 }

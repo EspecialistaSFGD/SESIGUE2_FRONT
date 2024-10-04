@@ -75,6 +75,7 @@ export class InicioComponent {
   ubigeoSeleccionado: SelectModel | null = null;
   sectorSeleccionado: string | null = null;
   espacioSeleccionado: string | null = null;
+  tipoEspacioSeleccionado: SelectModel | null = null;
   tipoAcuerdoSeleccionado: string | null = null;
   reporteSectores = signal<ReporteSectorModel[]>([]);
   totales = signal<ReporteTotalModel>({
@@ -210,7 +211,6 @@ export class InicioComponent {
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
 
   onPeriodoChange(periodo: Date | null): void {
-    // TODO: validar si es correcto la validación
     if (periodo == this.periodoSeleccionado) return;
 
     this.traerCodigo(periodo);
@@ -233,7 +233,6 @@ export class InicioComponent {
   }
 
   onSectorChange(sector: SelectModel | null): void {
-    console.log(sector);
 
     if (sector == null) {
       this.sectorSeleccionado = null;
@@ -244,9 +243,27 @@ export class InicioComponent {
     this.onRenderCharts({});
   }
 
-  onEspacioChange(espacio: SelectModel | null): void {
-    console.log(espacio);
+  onTipoEspacioChange(value: SelectModel | null, skipNavigation = false): void {
+    const wasPreviouslySelected = this.tipoEspacioSeleccionado != null;
 
+    this.tipoEspacioSeleccionado = value;
+    // this.traerAcuerdos({ tipoEspacioSeleccionado: value });
+    // debugger;
+    if (value != null) {
+      // this.espaciosStore.limpiarEspacios();
+      this.espaciosStore.listarEventos(Number(value.value));
+
+
+      if (this.espacioSeleccionado != null) {
+        this.espacioSeleccionado = null;
+        this.filterReportForm.patchValue({ espacio: null });
+      }
+    } else {
+      this.onEspacioChange(null);
+    }
+  }
+
+  onEspacioChange(espacio: SelectModel | null): void {
     if (espacio == null) {
       this.espacioSeleccionado = null;
     } else {
@@ -385,6 +402,10 @@ export class InicioComponent {
           this.geoChart.clear(); // Limpiar el gráfico antes de renderizar nuevos datos
 
           this.geoChart.geoPath()
+
+          this.geoChart.clear(); // Limpiar el gráfico antes de renderizar nuevos datos
+
+          this.geoChart.geoPath()
             .coordinate({ type: 'mercator' })
             .data({
               type: 'fetch',
@@ -395,25 +416,43 @@ export class InicioComponent {
                   type: 'join',
                   join: data,
                   on: ['id', 'id'],
-                  select: ['totalEjecutado'],
-                  as: ['Ejecutados'],
+                  select: ['totalEjecutado', 'porcentaje'],
+                  as: ['Ejecutados', 'Porcentaje'],
                 },
               ],
             })
-            // Lógica de colores sólidos basada en el valor de "Ejecutados"
-            .encode('color', (d: any) => {
-              const ejecutados = d.Ejecutados ?? 0;
-              if (ejecutados <= 30) {
-                return 'red';  // Hasta 30, rojo
-              } else if (ejecutados <= 50) {
-                return 'orange';  // Hasta 50, naranja
+            // Definir el campo para la escala de color
+            .encode('color', 'Porcentaje')  // Usamos el campo Porcentaje para la escala de color
+
+            // Definir la escala de color con rangos ajustados
+            // .scale('color', {
+            //   type: 'quantize',  // Usar `quantize` para asignar colores discretos
+            //   domain: [0, 100],  // Rango total de 0 a 100
+            //   range: ['#4d4d4d', '#DC0A15', '#0866ae', '#1ca05a'],  // Colores asignados a los rangos
+            // })
+
+            // Definir el campo para la escala de color usando style
+            .style('fill', (datum: any) => {
+              const { Porcentaje } = datum;
+
+              // Asignar colores según los rangos personalizados
+              if (Porcentaje === 0) {
+                return '#4d4d4d';  // 0% => Gris
+              } else if (Porcentaje <= 50) {
+                return '#DC0A15';   // <= 50% => Rojo
+              } else if (Porcentaje <= 90) {
+                return '#0866ae';  // <= 90% => Azul
               } else {
-                return 'green';  // Más de 50, verde
+                return '#1ca05a'; // > 90% => Verde
               }
             })
+
             // Tooltip con información personalizada
-            .encode('tooltip', (d: any) => `Ejecutados: ${d.Ejecutados || 0}`)
-            .legend(false); // Deshabilitar la leyenda de colores si no es necesaria
+            .encode('tooltip', (d: any) => {
+              const porcentajeRedondeado = Math.round(d.Porcentaje);
+              return `Ejecutados: ${d.Ejecutados || 0} (${porcentajeRedondeado}%)`;
+            })
+            .legend(false); // Deshabilitar la leyenda si no es necesaria
 
           this.geoChart.render();
 
@@ -515,10 +554,12 @@ export class InicioComponent {
             .data(data)
             .encode('x', 'periodo')
             .encode('y', 'ejecutados')
+            .style('fill', '#0866ae')
             .tooltip((data) => ({
               name: 'Ejecución',
               value: `${data.ejecutados}%`,
             }));
+
 
           this.barChart.render();
         }
@@ -571,7 +612,7 @@ export class InicioComponent {
       if (data.success) {
         this.totales.set(data.data[0]);
 
-        console.log('totales', this.totales());
+        // console.log('totales', this.totales());
 
       }
     });
@@ -583,6 +624,7 @@ export class InicioComponent {
       departamentoSelect: [null],
       provinciaSelect: [null],
       sectorSelect: [null],
+      tipoEspacio: [null],
       espacioSelect: [null],
       tipoAcuerdoSelect: [null],
     });

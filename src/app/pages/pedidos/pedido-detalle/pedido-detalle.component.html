@@ -76,7 +76,6 @@
                         nzType="link" (click)="onAddEdit(acuerdo, 'ACUERDO', 'CONVERT')">
                         <span nz-icon nzType="vertical-align-top" nzTheme="outline"></span>
                     </button>
-
                     }
 
                     <!-- <button [disabled]="data.validado==1||data.estado==0" *nzSpaceItem nz-button nzDanger nzType="link"
@@ -92,7 +91,9 @@
                         nz-tooltip
                         [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede desestimar':'Desestimar hito'"
                         (click)="onEliinarHito(data)"> -->
-                    <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(acuerdo)">
+                    <!-- //TODO: validar disabled. Cuando es preacuerdo, se puede hacer todo (NO INICIADO). Cuando es acuerdo y es INICIADO se puede hacer todo. Cuando es preacuerdo y es INICIADO, solo se puede convertir. -->
+                    <button [disabled]="isDeleteDisabled()" *nzSpaceItem nz-button nzDanger nzType="link"
+                        (click)="onDelete(acuerdo)">
                         <span nz-icon nzType="delete" nzTheme="outline"></span>
                     </button>
 

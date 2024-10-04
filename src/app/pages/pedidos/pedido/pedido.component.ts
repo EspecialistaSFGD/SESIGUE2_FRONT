@@ -18,6 +18,7 @@ import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { PedidoType } from '../../../libs/shared/types/pedido.type';
 import { AuthService } from '../../../libs/services/auth/auth.service';
+import { differenceInCalendarDays, parseISO } from 'date-fns';
 
 @Component({
   selector: 'app-pedido',
@@ -53,6 +54,8 @@ export class PedidoComponent {
   private fb = inject(UntypedFormBuilder);
 
   pedidoSeleccionado: PedidoModel | null = this.pedidoService.pedidoSeleccionado();
+
+  public fechaEvento = (this.pedidoSeleccionado?.fechaEvento != null) ? parseISO(this.pedidoSeleccionado?.fechaEvento.toString()) : null;
 
   constructor() {
     this.crearPedidoForm();
@@ -140,6 +143,12 @@ export class PedidoComponent {
     }
 
     cuisControl?.updateValueAndValidity();
+  }
+
+  disabledDate = (current: Date): boolean => {
+    if (this.fechaEvento == null) return false;
+
+    return differenceInCalendarDays(this.fechaEvento, current) > 0;
   }
 
 

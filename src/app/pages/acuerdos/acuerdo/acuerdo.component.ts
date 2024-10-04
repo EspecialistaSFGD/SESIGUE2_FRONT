@@ -15,13 +15,11 @@ import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
 import { EspaciosStore } from '../../../libs/shared/stores/espacios.store';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
 import { ClasificacionesStore } from '../../../libs/shared/stores/clasificaciones.store';
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays, parseISO } from 'date-fns';
 import { AddEditAcuerdoModel } from '../../../libs/models/shared/add-edit-acuerdo.model';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
 import { PedidosStore } from '../../../libs/shared/stores/pedidos.store';
-
-
 
 @Component({
   selector: 'app-acuerdo',
@@ -44,7 +42,7 @@ import { PedidosStore } from '../../../libs/shared/stores/pedidos.store';
 export class AcuerdoComponent {
   acuerdoForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
-  fechaEvento: Date | null = null;
+  // fechaEvento: Date | null = null;
   requiredLabel: string = 'Campo requerido';
 
 
@@ -64,6 +62,9 @@ export class AcuerdoComponent {
   acuerdoSeleccionado: AcuerdoPedidoModel | null = this.acuerdosService.acuerdoSeleccionado();
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
+
+  public fechaEvento = (this.pedidoSeleccionado?.fechaEvento != null) ? parseISO(this.pedidoSeleccionado?.fechaEvento.toString()) : null;
+  public fechaFinEvento = (this.pedidoSeleccionado?.fechaFinEvento != null) ? parseISO(this.pedidoSeleccionado?.fechaFinEvento.toString()) : null;
 
   constructor() {
     this.crearAcuerdoForm();
@@ -126,9 +127,9 @@ export class AcuerdoComponent {
       this.onResponsableAcuerdosChange(this.acuerdoSeleccionado?.responsableSelect);
     }
 
-    if (this.pedidoSeleccionado?.fechaEvento != null) {
-      this.fechaEvento = this.pedidoSeleccionado?.fechaEvento;
-    }
+    // if (this.pedidoSeleccionado?.fechaEvento != null) {
+    //   this.fechaEvento = this.pedidoSeleccionado?.fechaEvento;
+    // }
   }
 
   onClasificacionAcuerdosChange(value: SelectModel): void {
@@ -180,9 +181,13 @@ export class AcuerdoComponent {
   }
 
   disabledDate = (current: Date): boolean => {
-    if (this.fechaEvento == null) return false;
+    // Si 'plazo' o 'fechaEvento' son null, permitir todas las fechas
+    if (!this.fechaFinEvento || !this.fechaEvento) {
+      return false;
+    }
 
-    return differenceInCalendarDays(new Date(this.fechaEvento), current) > 0;
+    // Habilitar solo las fechas entre 'fechaFinEvento' y 'fechaEvento'
+    return current < this.fechaEvento || current > this.fechaFinEvento;
   }
 
   onEjeEstrategicoChange(event: SelectModel): void {

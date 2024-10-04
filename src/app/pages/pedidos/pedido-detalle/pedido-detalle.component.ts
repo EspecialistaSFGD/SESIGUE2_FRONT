@@ -274,6 +274,12 @@ export class PedidoDetalleComponent {
     });
   }
 
+  isDeleteDisabled(): boolean {
+    // this.pedidosService.estadoEvento() != 'NO INICIADO'
+
+    return this.pedidosService.estadoEvento() == 'SEGUIMIENTO';
+  }
+
   updateQueryParams() {
     this.updatingParams = true;
 
