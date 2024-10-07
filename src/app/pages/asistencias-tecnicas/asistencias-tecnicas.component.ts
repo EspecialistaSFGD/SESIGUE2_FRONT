@@ -1,15 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { AsistenciaTecnicaResponse, AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos } from '@interfaces/asistencia-tecnica.interface';
+import { ItemEnum } from '@interfaces/helpers.interface';
 import { Pagination } from '@interfaces/pagination.interface';
 import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
+import { UbigeosService } from '@services/ubigeos.service';
 import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
-import { CommonModule } from '@angular/common';
-import { ItemEnum } from '@interfaces/helpers.interface';
+import { UbigeoDepartmentResponse } from '@interfaces/ubigeo.interface';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -29,6 +31,7 @@ import { ItemEnum } from '@interfaces/helpers.interface';
 export class AsistenciasTecnicasComponent {
   title: string = `Lista de Asistencias Técnicas`;
   public asistenciasTecnicas = signal<AsistenciaTecnicaResponse[]>([])
+  public departamentos = signal<UbigeoDepartmentResponse[]>([])
   pagination: Pagination = {
     code: 0,
     columnSort: 'fechaAtencion',
@@ -45,9 +48,11 @@ export class AsistenciasTecnicasComponent {
   clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value, text }))
 
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
+  private ubigeoService = inject(UbigeosService)
 
   ngOnInit() {
     this.obtenerAsistenciasTecnicas()
+    this.obtenerDepartamentos()
   }
 
   obtenerAsistenciasTecnicas() {
@@ -63,6 +68,15 @@ export class AsistenciasTecnicasComponent {
           this.pagination.currentPage = 1
           this.pagination.pageSize = 10
           this.pagination.total = 0
+        }
+      })
+  }
+
+  obtenerDepartamentos() {
+    this.ubigeoService.getDepartments()
+      .subscribe(resp => {
+        if (resp.success == true) {
+          this.departamentos.set(resp.data)
         }
       })
   }

@@ -47,5 +47,6 @@
   </div>
 </ng-template>
 
-<app-formulario-asistencia-tecnica [showModal]="showNzModal"
+<app-formulario-asistencia-tecnica [showModal]="showNzModal" [tipos]="tipos" [modalidades]="modalidaades"
+  [departamentos]="departamentos()" [clasificaciones]="clasificaciones"
   (setCloseShow)="showNzModal = false"></app-formulario-asistencia-tecnica>

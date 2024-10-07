@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos } from '@interfaces/asistencia-tecnica.interface';
 import { LugarResponse } from '@interfaces/lugar.interface';
-import { UbigeoEntidad } from '@interfaces/ubigeo.interface';
+import { UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoEntidad, UbigeoProvinciaResponse } from '@interfaces/ubigeo.interface';
 import { AuthService } from '@services/auth/auth.service';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -16,6 +16,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
+import { ItemEnum } from '@interfaces/helpers.interface';
+import { UbigeosService } from '@services/ubigeos.service';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -40,11 +42,17 @@ import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 })
 export class FormularioAsistenciaTecnicaComponent {
   @Input() showModal: boolean = false
+  @Input() tipos!: ItemEnum[]
+  @Input() modalidades!: ItemEnum[]
+  @Input() clasificaciones!: ItemEnum[]
+  @Input() departamentos!: UbigeoDepartmentResponse[]
   @Output() setCloseShow = new EventEmitter()
 
-  tipos: AsistenciasTecnicasTipos[] = Object.values(AsistenciasTecnicasTipos)
-  modalidades: AsistenciasTecnicasModalidad[] = Object.values(AsistenciasTecnicasModalidad)
-  clasificaciones: AsistenciasTecnicasClasificacion[] = Object.values(AsistenciasTecnicasClasificacion)
+  public provincias = signal<UbigeoProvinciaResponse[]>([])
+  public distritos = signal<UbigeoDistritoResponse[]>([])
+  provinceDisabled: boolean = true
+  districtDisabled: boolean = true
+
   lugares: LugarResponse[] = [
     { lugarId: '1', nombre: 'PCM - Palacio' },
     { lugarId: '2', nombre: 'PCM - Schell' },
@@ -77,7 +85,8 @@ export class FormularioAsistenciaTecnicaComponent {
   listParticipantes: Array<{ id: number; controlInstance: string }> = [{ id: 1, controlInstance: 'text' }];
 
   private fb = inject(FormBuilder)
-  private authService = inject(AuthService)
+  // private authService = inject(AuthService)
+  private ubigeoService = inject(UbigeosService)
 
   get participantes() {
     return this.formAsistencia.get('participantes') as FormArray;
@@ -146,14 +155,29 @@ export class FormularioAsistenciaTecnicaComponent {
     }
   }
 
-  ngOnInit() {
-    this.obtenerUbigeo()
-  }
-
-  obtenerUbigeo() {
-    console.log('UBIGEO');
-    const departments = (this.authService.departamento()) ? this.authService.departamento() : this.ubigeoEntidad.department;
-    console.log(this.authService.departamento());
+  obtenerUbigeo(value: string, ubigeo: string) {
+    if (ubigeo == 'provincias') {
+      this.formAsistencia.get('provincia')?.reset();
+      this.formAsistencia.get('distrito')?.reset();
+      this.districtDisabled = true
+      this.ubigeoService.getProvinces(value)
+        .subscribe(resp => {
+          if (resp.success == true) {
+            this.provinceDisabled = false
+            this.provincias.set(resp.data)
+          }
+        })
+    } else if (ubigeo == 'distritos') {
+      this.formAsistencia.get('distrito')?.reset();
+      this.ubigeoService.getDistricts(value)
+        .subscribe(resp => {
+          if (resp.success == true) {
+            this.districtDisabled = false
+            this.distritos.set(resp.data)
+            console.log(resp.data);
+          }
+        })
+    }
   }
 
   beforeUpload = (file: NzUploadFile): boolean => {
@@ -161,12 +185,11 @@ export class FormularioAsistenciaTecnicaComponent {
     return false;
   };
 
-  submitFormulario() {
-    console.log(this.formAsistencia.value);
-
-  }
 
   saveOrEdit() {
+    if (this.formAsistencia.invalid) {
+      this.formAsistencia.markAllAsTouched()
+    }
     console.log('save or edit');
 
   }
