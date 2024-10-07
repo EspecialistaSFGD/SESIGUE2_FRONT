@@ -18,6 +18,12 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { ItemEnum } from '@interfaces/helpers.interface';
 import { UbigeosService } from '@services/ubigeos.service';
+import { LugaresService } from '@services/lugares.service';
+import { TipoEntidadesService } from '@services/tipo-entidades.service';
+import { EspaciosService } from '@services/espacios.service';
+import { NivelGobiernosService } from '@services/nivel-gobiernos.service';
+import { ClasificacionesService } from '@services/clasificaciones.service';
+import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -56,22 +62,30 @@ export class FormularioAsistenciaTecnicaComponent {
   lugares: LugarResponse[] = [
     { lugarId: '1', nombre: 'PCM - Palacio' },
     { lugarId: '2', nombre: 'PCM - Schell' },
+    { lugarId: '3', nombre: 'Sector' },
+    { lugarId: '4', nombre: 'Territorio' },
   ]
   entidades: LugarResponse[] = [
+    { lugarId: '1', nombre: 'Gobierno Regional' },
+    { lugarId: '2', nombre: 'Mancomunidad Regiona' },
+    { lugarId: '3', nombre: 'Mancomunidad Municipal' },
+  ]
+  tipoParticipantes: LugarResponse[] = [
     { lugarId: '1', nombre: 'Gobierno Nacional' },
     { lugarId: '2', nombre: 'Gobierno Regional' },
     { lugarId: '3', nombre: 'Gobierno Local' },
   ]
-  tipoParticipantes: LugarResponse[] = [
-    { lugarId: '1', nombre: 'Tipo 1' },
-    { lugarId: '2', nombre: 'Tipo 3' },
-    { lugarId: '3', nombre: 'Tipo 3' },
-  ]
   clasificacion: LugarResponse[] = [
-    { lugarId: '1', nombre: 'clasificacion 1' },
-    { lugarId: '2', nombre: 'clasificacion 3' },
-    { lugarId: '3', nombre: 'clasificacion 3' },
+    { lugarId: '1', nombre: 'Destrabe' },
+    { lugarId: '2', nombre: 'Gestión de financiamiento' },
+    { lugarId: '3', nombre: 'Seguimiento y monitoreo' },
   ]
+  espacios: LugarResponse[] = [
+    { lugarId: '1', nombre: 'Mancomunidades' },
+    { lugarId: '2', nombre: 'Mesa de dialogo' },
+    { lugarId: '3', nombre: 'Consejo de estado regional' },
+  ]
+
   participar: string[] = ['si', 'no']
   fileList: NzUploadFile[] = [];
 
@@ -85,8 +99,13 @@ export class FormularioAsistenciaTecnicaComponent {
   listParticipantes: Array<{ id: number; controlInstance: string }> = [{ id: 1, controlInstance: 'text' }];
 
   private fb = inject(FormBuilder)
-  // private authService = inject(AuthService)
+  private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
   private ubigeoService = inject(UbigeosService)
+  private lugarService = inject(LugaresService)
+  private tipoEntidad = inject(TipoEntidadesService)
+  private espacioService = inject(EspaciosService)
+  private nivelGobiernoService = inject(NivelGobiernosService)
+  private clasificacionService = inject(ClasificacionesService)
 
   get participantes() {
     return this.formAsistencia.get('participantes') as FormArray;
@@ -95,8 +114,6 @@ export class FormularioAsistenciaTecnicaComponent {
   get agendas() {
     return this.formAsistencia.get('agendas') as FormArray;
   }
-
-
 
   public formAsistencia: FormGroup = this.fb.group({
     tipo: ['', Validators.required],
@@ -126,6 +143,15 @@ export class FormularioAsistenciaTecnicaComponent {
     participantes: this.fb.array([]),
     agendas: this.fb.array([])
   })
+
+  ngOnInit() {
+    this.obtenerLugares()
+  }
+
+  obtenerLugares() {
+    console.log('lugares');
+    this.lugarService
+  }
 
   addItemFormArray(event: MouseEvent, formGroup: string) {
     event.preventDefault();
@@ -174,7 +200,6 @@ export class FormularioAsistenciaTecnicaComponent {
           if (resp.success == true) {
             this.districtDisabled = false
             this.distritos.set(resp.data)
-            console.log(resp.data);
           }
         })
     }
@@ -190,8 +215,12 @@ export class FormularioAsistenciaTecnicaComponent {
     if (this.formAsistencia.invalid) {
       this.formAsistencia.markAllAsTouched()
     }
-    console.log('save or edit');
-
+    const dateForm = new Date(this.formAsistencia.get('fechaAtencion')?.value)
+    const fechaAtencion = `${dateForm.getDate()}/${dateForm.getMonth() + 1}/${dateForm.getFullYear()}`
+    this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ... this.formAsistencia.value, fechaAtencion })
+      .subscribe(resp => {
+        console.log(resp);
+      })
   }
   closeModal() {
     this.showModal = false
