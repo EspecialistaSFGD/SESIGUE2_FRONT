@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { AsistenciaTecnicaResponse } from '@interfaces/asistencia-tecnica.interface';
+import { AsistenciaTecnicaResponse, AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos } from '@interfaces/asistencia-tecnica.interface';
 import { Pagination } from '@interfaces/pagination.interface';
 import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
 import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
@@ -8,6 +8,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
+import { CommonModule } from '@angular/common';
+import { ItemEnum } from '@interfaces/helpers.interface';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -15,6 +17,7 @@ import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-te
   templateUrl: './asistencias-tecnicas.component.html',
   styles: ``,
   imports: [
+    CommonModule,
     PageHeaderComponent,
     NzTableModule,
     NzSpaceModule,
@@ -37,6 +40,10 @@ export class AsistenciasTecnicasComponent {
   asistenciaId: number = 0
   showNzModal: boolean = false
 
+  tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value, text }))
+  modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value, text }))
+  clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value, text }))
+
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
 
   ngOnInit() {
@@ -58,6 +65,18 @@ export class AsistenciasTecnicasComponent {
           this.pagination.total = 0
         }
       })
+  }
+
+  getTextEnum(value: string, kind: string): string {
+    let text = value
+    if (kind == 'tipo') {
+      text = this.tipos.find(item => item.value.toLowerCase() == value)!.text
+    } else if (kind == 'modalidad') {
+      text = this.modalidaades.find(item => item.value.toLowerCase() == value)!.text
+    } else if (kind == 'clasificacion') {
+      text = this.clasificaciones.find(item => item.value.toLowerCase() == value)!.text
+    }
+    return text
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {

@@ -1,4 +1,4 @@
-export interface PaginationsResponse {
+export interface PaginationResponse {
   pageIndex: number,
   pageSize: number,
   total: number

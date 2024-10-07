@@ -7,17 +7,29 @@
     <tr>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo</th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
-      <th nzWidth="120px" nzAlign="center" nzColumnKey="fecha" [nzSortFn]="true">Fecha de atención</th>
-      <th nzWidth="150px" nzColumnKey="tipoEntidad">Tipo de entidad</th>
+      <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
+      <th nzWidth="150px" nzAlign="center" nzColumnKey="tipoEntidad" [nzSortFn]="true">Tipo de entidad</th>
       <th nzWidth="150px" nzColumnKey="entidad">Entidad</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="autoridad">Autoridad</th>
-      <th nzWidth="150px" nzAlign="center" nzColumnKey="congresista" [nzSortFn]="true">Congresista</th>
-      <th nzWidth="150px" nzColumnKey="espacio">Espacio</th>
-      <th nzWidth="150px" nzColumnKey="clasificacion">Clasificación</th>
-      <th nzColumnKey="acciones" nzRight nzWidth="150px" nzAlign="center">Acciones</th>
+      <th nzWidth="150px" nzAlign="center" nzColumnKey="congresista">Congresista</th>
+      <th nzWidth="150px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
+      <th nzWidth="150px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
     </tr>
   </thead>
   <tbody>
+    @for(asistencia of asistenciasTecnicas(); track $index){
+    <tr>
+      <td nzAlign="center">{{getTextEnum(asistencia.tipo, 'tipo') | titlecase}}</td>
+      <td nzAlign="center">{{getTextEnum(asistencia.modalidad, 'modalidad') | titlecase }}</td>
+      <td nzAlign="center">{{asistencia.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
+      <td nzAlign="center">{{asistencia.nombreTipoEntidad}}</td>
+      <td>{{asistencia.nombreEntidad}}</td>
+      <td nzAlign="center">{{asistencia.autoridad ? 'Si' : 'No' }}</td>
+      <td nzAlign="center">{{asistencia.congresista ? 'Si' : 'No'}}</td>
+      <td nzAlign="center">{{asistencia.nombreEspacio | titlecase }}</td>
+      <td nzAlign="center">{{getTextEnum(asistencia.clasificacion, 'clasificacion') | titlecase}}</td>
+    </tr>
+    }
   </tbody>
 </nz-table>
 
@@ -34,6 +46,6 @@
     </div>
   </div>
 </ng-template>
-{{showNzModal}}
+
 <app-formulario-asistencia-tecnica [showModal]="showNzModal"
   (setCloseShow)="showNzModal = false"></app-formulario-asistencia-tecnica>

@@ -1,14 +1,14 @@
 import { PaginationResponse } from "./pagination.interface";
 
-export interface LugaresResponses {
+export interface ClasificacionesResponses {
   success: string,
   message: string,
   errors?: string,
-  data: LugarResponse[],
+  data: ClasificacionResponse[],
   info?: PaginationResponse,
 }
 
-export interface LugarResponse {
-  lugarId?: string,
+export interface ClasificacionResponse {
+  clasificacionId?: string,
   nombre: string
 }
