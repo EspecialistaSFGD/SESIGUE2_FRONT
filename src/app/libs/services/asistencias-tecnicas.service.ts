@@ -23,9 +23,12 @@ export class AsistenciasTecnicasService {
 
   registrarAsistenciaTecnica(asistenciaTecnica: AsistenciaTecnicaResponse) {
     asistenciaTecnica.code = Number(localStorage.getItem('codigoUsuario')) ?? 0
+    asistenciaTecnica.estado = true;
+    console.log(asistenciaTecnica);
+
     const formData = this.generateFormData(asistenciaTecnica)
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.post<AsistenciasTecnicasResponse>(this.urlAsistenciaTecnica, formData, { headers })
+    return this.http.post<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/RegistrarAsistenciaTecnica`, formData, { headers })
       .pipe(
         tap(resp => {
           return resp
@@ -57,6 +60,7 @@ export class AsistenciasTecnicasService {
     formData.append('code', `${asistenciaTecnica.code}`)
     formData.append('evidenciaReunion', asistenciaTecnica.evidenciaReunion)
     formData.append('evidenciaAsistencia', asistenciaTecnica.evidenciaAsistencia)
+    formData.append('estado', `${asistenciaTecnica.estado}`)
 
     return formData
   }

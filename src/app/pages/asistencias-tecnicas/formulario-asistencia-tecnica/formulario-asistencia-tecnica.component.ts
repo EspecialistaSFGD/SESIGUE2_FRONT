@@ -53,6 +53,7 @@ export class FormularioAsistenciaTecnicaComponent {
   @Input() clasificaciones!: ItemEnum[]
   @Input() departamentos!: UbigeoDepartmentResponse[]
   @Output() setCloseShow = new EventEmitter()
+  @Output() addFormDate = new EventEmitter()
 
   public provincias = signal<UbigeoProvinciaResponse[]>([])
   public distritos = signal<UbigeoDistritoResponse[]>([])
@@ -121,7 +122,7 @@ export class FormularioAsistenciaTecnicaComponent {
     fechaAtencion: ['', Validators.required],
     lugarId: ['', Validators.required],
     tipoEntidadId: ['', Validators.required],
-    entidadId: ['', Validators.required],
+    entidadId: ['1', Validators.required],
     departamento: ['', Validators.required],
     provincia: ['', Validators.required],
     distrito: ['', Validators.required],
@@ -216,10 +217,18 @@ export class FormularioAsistenciaTecnicaComponent {
       this.formAsistencia.markAllAsTouched()
     }
     const dateForm = new Date(this.formAsistencia.get('fechaAtencion')?.value)
-    const fechaAtencion = `${dateForm.getDate()}/${dateForm.getMonth() + 1}/${dateForm.getFullYear()}`
+    const getMonth = dateForm.getMonth() + 1
+    const getDay = dateForm.getDate()
+    const month = getMonth > 9 ? getMonth : `0${getMonth}`
+    const day = getDay > 9 ? getDay : `0${getDay}`
+    const fechaAtencion = `${day}/${month}/${dateForm.getFullYear()}`
     this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ... this.formAsistencia.value, fechaAtencion })
       .subscribe(resp => {
-        console.log(resp);
+        if (resp == true) {
+          this.addFormDate.emit(true)
+          this.showModal = false
+          this.formAsistencia.reset()
+        }
       })
   }
   closeModal() {

@@ -43,9 +43,9 @@ export class AsistenciasTecnicasComponent {
   asistenciaId: number = 0
   showNzModal: boolean = false
 
-  tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value, text }))
-  modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value, text }))
-  clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value, text }))
+  tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value: value.toLowerCase(), text }))
+  modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value: value.toLowerCase(), text }))
+  clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }))
 
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
   private ubigeoService = inject(UbigeosService)
@@ -97,10 +97,14 @@ export class AsistenciasTecnicasComponent {
 
   }
 
+  getAddFormAdded(success: boolean) {
+    if (success) {
+      this.obtenerAsistenciasTecnicas()
+      this.showNzModal = true
+    }
+  }
+
   goFormSaveAndEdit(asistenciaId: number) {
     this.showNzModal = true
-    // console.log(asistenciaId);
-    console.log('in main');
-    console.log(this.showNzModal);
   }
 }

@@ -51,5 +51,5 @@ export interface AsistenciaTecnicaResponse {
   evidenciaAsistencia: string,
   estado: boolean,
   fechaRegistro: Date
-  code: number,
+  code: number
 }
