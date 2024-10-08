@@ -1,11 +1,7 @@
-import { PaginationResponse } from "./pagination.interface";
+import { DataResponses } from "./helpers.interface";
 
-export interface LugaresResponses {
-  success: string,
-  message: string,
-  errors?: string,
-  data: LugarResponse[],
-  info?: PaginationResponse,
+export interface LugaresResponses extends DataResponses {
+  data: LugarResponse[]
 }
 
 export interface LugarResponse {

@@ -1,11 +1,7 @@
-import { PaginationResponse } from "./pagination.interface";
+import { DataResponses } from "./helpers.interface";
 
-export interface TipoEntidadResponses {
-    success: string,
-    message: string,
-    errors?: string,
+export interface TipoEntidadesResponses extends DataResponses {
     data: TipoEntidadResponse[],
-    info?: PaginationResponse,
 }
 
 export interface TipoEntidadResponse {

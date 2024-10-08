@@ -1,22 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
-import { HelpersService } from './helpers.service';
+import { EspaciosResponses } from '@interfaces/espacio.interface';
 import { Pagination } from '@interfaces/pagination.interface';
-import { LugaresResponses } from '@interfaces/lugar.interface';
 import { Observable } from 'rxjs';
+import { HelpersService } from './helpers.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EspaciosService {
-  private urllugar: string = `${environment.api}/Lugar`
+  private urlEspacio: string = `${environment.api}/Espacio`
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  getAllLugares(pagination: Pagination): Observable<LugaresResponses> {
+  getAllEspacios(pagination: Pagination): Observable<EspaciosResponses> {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<LugaresResponses>(`${this.urllugar}/ListarLugares`, { headers, params })
+    return this.http.get<EspaciosResponses>(`${this.urlEspacio}/ListarEspacios`, { headers, params })
   }
 }

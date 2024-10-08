@@ -1,11 +1,7 @@
-import { PaginationResponse } from "./pagination.interface";
+import { DataResponses } from "./helpers.interface";
 
-export interface NivelGobiernosResponses {
-    success: string,
-    message: string,
-    errors?: string,
+export interface NivelGobiernosResponses extends DataResponses {
     data: NivelGobiernoResponse[],
-    info?: PaginationResponse,
 }
 
 export interface NivelGobiernoResponse {

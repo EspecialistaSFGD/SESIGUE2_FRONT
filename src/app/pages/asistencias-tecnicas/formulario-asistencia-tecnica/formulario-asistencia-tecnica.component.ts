@@ -24,6 +24,11 @@ import { EspaciosService } from '@services/espacios.service';
 import { NivelGobiernosService } from '@services/nivel-gobiernos.service';
 import { ClasificacionesService } from '@services/clasificaciones.service';
 import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
+import { Pagination } from '@interfaces/pagination.interface';
+import { TipoEntidadResponse } from '@interfaces/tipo-entidad.interface';
+import { NivelGobiernoResponse } from '@interfaces/nivel-gobierno.interface';
+import { EspacioResponse } from '@interfaces/espacio.interface';
+import { ClasificacionResponse } from '@interfaces/clasificacion.interface';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -60,35 +65,23 @@ export class FormularioAsistenciaTecnicaComponent {
   provinceDisabled: boolean = true
   districtDisabled: boolean = true
 
-  lugares: LugarResponse[] = [
-    { lugarId: '1', nombre: 'PCM - Palacio' },
-    { lugarId: '2', nombre: 'PCM - Schell' },
-    { lugarId: '3', nombre: 'Sector' },
-    { lugarId: '4', nombre: 'Territorio' },
-  ]
-  entidades: LugarResponse[] = [
-    { lugarId: '1', nombre: 'Gobierno Regional' },
-    { lugarId: '2', nombre: 'Mancomunidad Regiona' },
-    { lugarId: '3', nombre: 'Mancomunidad Municipal' },
-  ]
-  tipoParticipantes: LugarResponse[] = [
-    { lugarId: '1', nombre: 'Gobierno Nacional' },
-    { lugarId: '2', nombre: 'Gobierno Regional' },
-    { lugarId: '3', nombre: 'Gobierno Local' },
-  ]
-  clasificacion: LugarResponse[] = [
-    { lugarId: '1', nombre: 'Destrabe' },
-    { lugarId: '2', nombre: 'Gestión de financiamiento' },
-    { lugarId: '3', nombre: 'Seguimiento y monitoreo' },
-  ]
-  espacios: LugarResponse[] = [
-    { lugarId: '1', nombre: 'Mancomunidades' },
-    { lugarId: '2', nombre: 'Mesa de dialogo' },
-    { lugarId: '3', nombre: 'Consejo de estado regional' },
-  ]
+  public lugares = signal<LugarResponse[]>([])
+  public tipoEntidades = signal<TipoEntidadResponse[]>([])
+  public espacios = signal<EspacioResponse[]>([])
+  public gobiernoParticipantes = signal<NivelGobiernoResponse[]>([])
+  public agendaClasificaciones = signal<ClasificacionResponse[]>([])
 
   participar: string[] = ['si', 'no']
   fileList: NzUploadFile[] = [];
+
+  pagination: Pagination = {
+    code: 0,
+    columnSort: 'lugarId',
+    typeSort: 'ASC',
+    pageSize: 10,
+    currentPage: 1,
+    total: 0
+  }
 
   ubigeoEntidad: UbigeoEntidad = {
     id: 0,
@@ -103,7 +96,7 @@ export class FormularioAsistenciaTecnicaComponent {
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
   private ubigeoService = inject(UbigeosService)
   private lugarService = inject(LugaresService)
-  private tipoEntidad = inject(TipoEntidadesService)
+  private tipoEntidadService = inject(TipoEntidadesService)
   private espacioService = inject(EspaciosService)
   private nivelGobiernoService = inject(NivelGobiernosService)
   private clasificacionService = inject(ClasificacionesService)
@@ -147,11 +140,59 @@ export class FormularioAsistenciaTecnicaComponent {
 
   ngOnInit() {
     this.obtenerLugares()
+    this.obtenerTipoEntidad()
+    this.obtenerEspacios()
+    this.obtenerParticipantes()
+    this.obtenerAgendas()
   }
 
   obtenerLugares() {
-    console.log('lugares');
-    this.lugarService
+    this.lugarService.getAllLugares(this.pagination)
+      .subscribe(resp => {
+        if (resp.success = true) {
+          this.lugares.set(resp.data)
+        }
+      })
+  }
+
+  obtenerTipoEntidad() {
+    this.pagination.columnSort = 'nombre'
+    this.tipoEntidadService.getAllTipoEntidades(this.pagination)
+      .subscribe(resp => {
+        if (resp.success = true) {
+          this.tipoEntidades.set(resp.data)
+        }
+      })
+  }
+
+  obtenerEspacios() {
+    this.pagination.columnSort = 'nombre'
+    this.espacioService.getAllEspacios(this.pagination)
+      .subscribe(resp => {
+        if (resp.success = true) {
+          this.espacios.set(resp.data)
+        }
+      })
+  }
+
+  obtenerParticipantes() {
+    this.pagination.columnSort = 'nombre'
+    this.nivelGobiernoService.getAllNivelGobiernos(this.pagination)
+      .subscribe(resp => {
+        if (resp.success = true) {
+          this.gobiernoParticipantes.set(resp.data)
+        }
+      })
+  }
+
+  obtenerAgendas() {
+    this.pagination.columnSort = 'nombre'
+    this.clasificacionService.getAllClasificaciones(this.pagination)
+      .subscribe(resp => {
+        if (resp.success = true) {
+          this.agendaClasificaciones.set(resp.data)
+        }
+      })
   }
 
   addItemFormArray(event: MouseEvent, formGroup: string) {

@@ -39,7 +39,7 @@
             <nz-form-label nzRequired [nzSpan]="null" nzFor="lugarId">Lugar</nz-form-label>
             <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
               <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" formControlName="lugarId" nzAllowClear>
-                @for (lugar of lugares; track $index) {
+                @for (lugar of lugares(); track $index) {
                 <nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
                 }
               </nz-select>
@@ -52,8 +52,8 @@
             <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
               <nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId" formControlName="tipoEntidadId"
                 nzAllowClear>
-                @for (entidades of entidades; track $index) {
-                <nz-option [nzValue]="entidades.lugarId" nzLabel="{{entidades.nombre}}"></nz-option>
+                @for (entidades of tipoEntidades(); track $index) {
+                <nz-option [nzValue]="entidades.tipoId" nzLabel="{{entidades.nombre}}"></nz-option>
                 }
               </nz-select>
             </nz-form-control>
@@ -193,8 +193,8 @@
             <nz-form-label nzRequired [nzSpan]="null" nzFor="espacioId">Espacio</nz-form-label>
             <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
               <nz-select nzPlaceHolder="Seleccionar espacio" id="espacioId" formControlName="espacioId" nzAllowClear>
-                @for (espacio of espacios; track $index){
-                <nz-option [nzValue]="espacio.lugarId" nzLabel="{{espacio.nombre}}"></nz-option>
+                @for (espacio of espacios(); track $index){
+                <nz-option [nzValue]="espacio.espacioId" nzLabel="{{espacio.nombre}}"></nz-option>
                 }
               </nz-select>
             </nz-form-control>
@@ -232,8 +232,8 @@
                     <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
                       <nz-select nzPlaceHolder="Seleccionat tipo de participante" formControlName="participanteId"
                         nzAllowClear>
-                        @for (lugar of tipoParticipantes; track $index) {
-                        <nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
+                        @for (participante of gobiernoParticipantes(); track $index) {
+                        <nz-option [nzValue]="participante.nivelId" nzLabel="{{participante.nombre}}"></nz-option>
                         }
                       </nz-select>
                     </nz-form-control>
@@ -276,8 +276,9 @@
                     <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
                       <nz-select nzPlaceHolder="Seleccionar clasificación" formControlName="clasificacionId"
                         nzAllowClear>
-                        @for (lugar of clasificacion; track $index) {
-                        <nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
+                        @for (clasificacion of agendaClasificaciones(); track $index) {
+                        <nz-option [nzValue]="clasificacion.clasificacionId"
+                          nzLabel="{{clasificacion.nombre}}"></nz-option>
                         }
                       </nz-select>
                     </nz-form-control>

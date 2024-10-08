@@ -1,11 +1,7 @@
-import { PaginationResponse } from "./pagination.interface";
+import { DataResponses } from "./helpers.interface";
 
-export interface EspaciosResponses {
-    success: string,
-    message: string,
-    errors?: string,
+export interface EspaciosResponses extends DataResponses {
     data: EspacioResponse[],
-    info?: PaginationResponse,
 }
 
 export interface EspacioResponse {

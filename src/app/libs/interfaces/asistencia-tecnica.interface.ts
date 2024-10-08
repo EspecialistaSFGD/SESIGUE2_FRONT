@@ -1,11 +1,7 @@
-import { PaginationResponse } from "./pagination.interface"
+import { DataResponses } from "./helpers.interface"
 
-export interface AsistenciasTecnicasResponse {
-  success: boolean,
-  message: string,
-  errors?: string,
+export interface AsistenciasTecnicasResponse extends DataResponses {
   data: AsistenciaTecnicaResponse[],
-  info?: PaginationResponse
 }
 
 export enum AsistenciasTecnicasTipos {
