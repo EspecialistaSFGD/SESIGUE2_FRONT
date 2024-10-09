@@ -230,7 +230,7 @@
                   <nz-form-item>
                     <nz-form-label nzRequired [nzSpan]="null">Tipo de participante</nz-form-label>
                     <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
-                      <nz-select nzPlaceHolder="Seleccionat tipo de participante" formControlName="participanteId"
+                      <nz-select nzPlaceHolder="Seleccionat tipo de participante" formControlName="nivelId"
                         nzAllowClear>
                         @for (participante of gobiernoParticipantes(); track $index) {
                         <nz-option [nzValue]="participante.nivelId" nzLabel="{{participante.nombre}}"></nz-option>

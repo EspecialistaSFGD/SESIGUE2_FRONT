@@ -45,7 +45,7 @@ export interface AsistenciaTecnicaResponse {
   comentarios: string,
   evidenciaReunion: string,
   evidenciaAsistencia: string,
-  estado: boolean,
-  fechaRegistro: Date
-  code: number
+  estado?: boolean,
+  fechaRegistro?: Date
+  code?: number
 }

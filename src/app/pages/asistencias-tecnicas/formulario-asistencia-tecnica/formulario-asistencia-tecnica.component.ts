@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos } from '@interfaces/asistencia-tecnica.interface';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse } from '@interfaces/asistencia-tecnica.interface';
 import { LugarResponse } from '@interfaces/lugar.interface';
 import { UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoEntidad, UbigeoProvinciaResponse } from '@interfaces/ubigeo.interface';
 import { AuthService } from '@services/auth/auth.service';
@@ -29,6 +29,10 @@ import { TipoEntidadResponse } from '@interfaces/tipo-entidad.interface';
 import { NivelGobiernoResponse } from '@interfaces/nivel-gobierno.interface';
 import { EspacioResponse } from '@interfaces/espacio.interface';
 import { ClasificacionResponse } from '@interfaces/clasificacion.interface';
+import { AsistenciaTecnicaParticipantesService } from '@services/asistencia-tecnica-participantes.service';
+import { AsistenciaTecnicaAgendasService } from '@services/asistencia-tecnica-agendas.service';
+import { AsistenciaTecnicaParticipanteResponse } from '@interfaces/asistencia-tecnica-participante';
+import { AsistenciaTecnicaAgendaResponse } from '@interfaces/asistencia-tecnica-agenda';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -57,6 +61,7 @@ export class FormularioAsistenciaTecnicaComponent {
   @Input() modalidades!: ItemEnum[]
   @Input() clasificaciones!: ItemEnum[]
   @Input() departamentos!: UbigeoDepartmentResponse[]
+  @Input() asistenciaTecnica!: AsistenciaTecnicaResponse
   @Output() setCloseShow = new EventEmitter()
   @Output() addFormDate = new EventEmitter()
 
@@ -100,6 +105,8 @@ export class FormularioAsistenciaTecnicaComponent {
   private espacioService = inject(EspaciosService)
   private nivelGobiernoService = inject(NivelGobiernosService)
   private clasificacionService = inject(ClasificacionesService)
+  private asistenciaTecnicaParticipanteService = inject(AsistenciaTecnicaParticipantesService)
+  private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
 
   get participantes() {
     return this.formAsistencia.get('participantes') as FormArray;
@@ -139,11 +146,16 @@ export class FormularioAsistenciaTecnicaComponent {
   })
 
   ngOnInit() {
+    this.setFormData()
     this.obtenerLugares()
     this.obtenerTipoEntidad()
     this.obtenerEspacios()
     this.obtenerParticipantes()
     this.obtenerAgendas()
+  }
+
+  setFormData(){
+    this.formAsistencia.reset({ ...this.asistenciaTecnica })
   }
 
   obtenerLugares() {
@@ -200,7 +212,7 @@ export class FormularioAsistenciaTecnicaComponent {
     event.stopPropagation();
     if (formGroup == 'participantes') {
       const participanteRow = this.fb.group({
-        participanteId: ['', Validators.required],
+        nivelId: ['', Validators.required],
         cantidad: ['', Validators.required],
       })
       this.participantes.push(participanteRow)
@@ -212,9 +224,8 @@ export class FormularioAsistenciaTecnicaComponent {
       })
       this.agendas.push(agendaRow)
     }
-    console.log(formGroup);
-
   }
+
   removeItemFormArray(i: number, formGroup: string) {
     if (formGroup == 'participantes') {
       this.participantes.removeAt(i)
@@ -263,9 +274,31 @@ export class FormularioAsistenciaTecnicaComponent {
     const month = getMonth > 9 ? getMonth : `0${getMonth}`
     const day = getDay > 9 ? getDay : `0${getDay}`
     const fechaAtencion = `${day}/${month}/${dateForm.getFullYear()}`
-    this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ... this.formAsistencia.value, fechaAtencion })
+    const formValues = this.formAsistencia.value
+    let participantes = formValues.participantes
+    let agendas = formValues.agendas
+    this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ... formValues, fechaAtencion })
       .subscribe(resp => {
-        if (resp == true) {
+        if(resp.success == true){
+          const asistencia = resp.data
+          if(participantes.length > 0){
+            for(let data of participantes){
+            const participante: AsistenciaTecnicaParticipanteResponse = { ...data, asistenciaId: asistencia }
+            this.asistenciaTecnicaParticipanteService.registrarParticipante(participante)
+              .subscribe(response => {
+                if(response == true){
+                }           
+              })
+            }
+            for(let data of agendas){
+              const agenda: AsistenciaTecnicaAgendaResponse = { ...data, asistenciaId: asistencia }
+              this.asistenciaTecnicaAgendaService.registrarAgenda(agenda)
+                .subscribe(response => {
+                  if(response == true){
+                  }
+                })
+            }
+          }
           this.addFormDate.emit(true)
           this.showModal = false
           this.formAsistencia.reset()

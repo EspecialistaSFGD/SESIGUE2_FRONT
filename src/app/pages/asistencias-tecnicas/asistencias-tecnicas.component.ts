@@ -40,6 +40,32 @@ export class AsistenciasTecnicasComponent {
     currentPage: 1,
     total: 0
   }
+  fechaActual = new Date();
+  asistenciaTecnica: AsistenciaTecnicaResponse = {
+    tipo: '',
+    modalidad: '',
+    fechaAtencion: this.fechaActual,
+    lugarId: '',
+    nombreLugar: '',
+    tipoEntidadId: '',
+    nombreTipoEntidad: '',
+    entidadId: '',
+    nombreEntidad: '',
+    autoridad: false,
+    dniAutoridad: '',
+    nombreAutoridad: '',
+    cargoAutoridad: '',
+    congresista: false,
+    dniCongresista: '',
+    nombreCongresista: '',
+    clasificacion: '',
+    espacioId: '',
+    nombreEspacio: '',
+    tema: '',
+    comentarios: '',
+    evidenciaReunion: '',
+    evidenciaAsistencia: ''
+  }
   asistenciaId: number = 0
   showNzModal: boolean = false
 
