@@ -14,6 +14,7 @@
       <th nzWidth="150px" nzAlign="center" nzColumnKey="congresista">Congresista</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
+      <th nzWidth="150px" nzAlign="center">Acciones</th>
     </tr>
   </thead>
   <tbody>
@@ -28,6 +29,12 @@
       <td nzAlign="center">{{asistencia.congresista ? 'Si' : 'No'}}</td>
       <td nzAlign="center">{{asistencia.nombreEspacio | titlecase }}</td>
       <td nzAlign="center">{{getTextEnum(asistencia.clasificacion, 'clasificacion') | titlecase}}</td>
+      <td nzAlign="center">
+        <nz-space>
+          <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(asistencia)"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+          <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="eliminarAsistencia(asistencia.asistenciaId!)"><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+      </nz-space>
+      </td>
     </tr>
     }
   </tbody>
@@ -38,7 +45,7 @@
     <p class="mb-2 sm:mb-0">Resultados ({{pagination.total}})</p>
     <div>
       <nz-space>
-        <button nz-button nzType="primary" (click)="goFormSaveAndEdit(asistenciaId)">
+        <button nz-button nzType="primary" (click)="crearAsistenciaTecnica()">
           <span nz-icon nzType="plus" nzTheme="outline"></span>
           <span class="button-text">Nueva Asistencia técnica</span>
         </button>
@@ -47,6 +54,6 @@
   </div>
 </ng-template>
 
-<app-formulario-asistencia-tecnica [showModal]="showNzModal" [tipos]="tipos" [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica"
+<app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos" [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica"
   [departamentos]="departamentos()" [clasificaciones]="clasificaciones" (addFormDate)="getAddFormAdded($event)"
   (setCloseShow)="showNzModal = false"></app-formulario-asistencia-tecnica>

@@ -12,6 +12,7 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { UbigeoDepartmentResponse } from '@interfaces/ubigeo.interface';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -40,39 +41,18 @@ export class AsistenciasTecnicasComponent {
     currentPage: 1,
     total: 0
   }
-  fechaActual = new Date();
-  asistenciaTecnica: AsistenciaTecnicaResponse = {
-    tipo: '',
-    modalidad: '',
-    fechaAtencion: this.fechaActual,
-    lugarId: '',
-    nombreLugar: '',
-    tipoEntidadId: '',
-    nombreTipoEntidad: '',
-    entidadId: '',
-    nombreEntidad: '',
-    autoridad: false,
-    dniAutoridad: '',
-    nombreAutoridad: '',
-    cargoAutoridad: '',
-    congresista: false,
-    dniCongresista: '',
-    nombreCongresista: '',
-    clasificacion: '',
-    espacioId: '',
-    nombreEspacio: '',
-    tema: '',
-    comentarios: '',
-    evidenciaReunion: '',
-    evidenciaAsistencia: ''
-  }
-  asistenciaId: number = 0
+  
+  asistenciaTecnica!: AsistenciaTecnicaResponse
+  create: boolean = true
+  // asistenciaId: number = 0
   showNzModal: boolean = false
 
+  confirmModal?: NzModalRef;
   tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value: value.toLowerCase(), text }))
   modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value: value.toLowerCase(), text }))
   clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }))
 
+  private modal = inject(NzModalService);
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
   private ubigeoService = inject(UbigeosService)
 
@@ -123,6 +103,27 @@ export class AsistenciasTecnicasComponent {
 
   }
 
+  updatedAsistencia(asistencia: AsistenciaTecnicaResponse){
+    console.log('ACTUALIZAR ASISTENCIA');    
+    console.log(asistencia);
+    this.asistenciaTecnica = asistencia
+    this.create = false
+    this.showNzModal = true
+  }
+
+  eliminarAsistencia(asistenciaId: string){
+    console.log(('ELIMINAR ASISTENCIA'));    
+    console.log(asistenciaId);    
+    this.confirmModal = this.modal.confirm({
+      nzTitle: '¿Está seguro de eliminar este perfil?',
+      nzContent: 'Esta acción no se puede deshacer.',
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      // nzOnOk: () => {},
+      nzCancelText: 'Cancelar',
+    });
+  }
+
   getAddFormAdded(success: boolean) {
     if (success) {
       this.obtenerAsistenciasTecnicas()
@@ -130,7 +131,34 @@ export class AsistenciasTecnicasComponent {
     }
   }
 
-  goFormSaveAndEdit(asistenciaId: number) {
+  crearAsistenciaTecnica() {
+    this.create = true
+    const fechaAtencion = new Date();
+    this.asistenciaTecnica = {
+      tipo: '',
+      modalidad: '',
+      fechaAtencion,
+      lugarId: '',
+      nombreLugar: '',
+      tipoEntidadId: '',
+      nombreTipoEntidad: '',
+      entidadId: '',
+      nombreEntidad: '',
+      autoridad: false,
+      dniAutoridad: '',
+      nombreAutoridad: '',
+      cargoAutoridad: '',
+      congresista: false,
+      dniCongresista: '',
+      nombreCongresista: '',
+      clasificacion: '',
+      espacioId: '',
+      nombreEspacio: '',
+      tema: '',
+      comentarios: '',
+      evidenciaReunion: '',
+      evidenciaAsistencia: ''
+    }
     this.showNzModal = true
   }
 }

@@ -1,5 +1,5 @@
-<nz-modal [(nzVisible)]="showModal" (click)="closeModal()" nzTitle="Agregar Asistencia técnica" nzWidth="75%"
-  nzOkText="Guardar Asistencia Técnica" (nzOnOk)="saveOrEdit()" nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
+<nz-modal [(nzVisible)]="showModal" (click)="closeModal()" nzTitle="{{create ? 'Agregar' : 'Actualizar' }} Asistencia técnica" nzWidth="75%"
+  nzOkText="{{create ? 'Agregar' : 'Actualizar' }} Asistencia Técnica" (nzOnOk)="saveOrEdit()" nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
   <ng-container *nzModalContent>
     <form [formGroup]="formAsistencia" nz-form nzLayout="vertical">
       <div nz-row [nzGutter]="16">

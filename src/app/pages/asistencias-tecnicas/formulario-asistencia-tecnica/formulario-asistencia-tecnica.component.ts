@@ -1,38 +1,37 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse } from '@interfaces/asistencia-tecnica.interface';
+import { AsistenciaTecnicaAgendaResponse } from '@interfaces/asistencia-tecnica-agenda';
+import { AsistenciaTecnicaParticipanteResponse } from '@interfaces/asistencia-tecnica-participante';
+import { AsistenciaTecnicaResponse } from '@interfaces/asistencia-tecnica.interface';
+import { ClasificacionResponse } from '@interfaces/clasificacion.interface';
+import { EspacioResponse } from '@interfaces/espacio.interface';
+import { ItemEnum } from '@interfaces/helpers.interface';
 import { LugarResponse } from '@interfaces/lugar.interface';
+import { NivelGobiernoResponse } from '@interfaces/nivel-gobierno.interface';
+import { Pagination } from '@interfaces/pagination.interface';
+import { TipoEntidadResponse } from '@interfaces/tipo-entidad.interface';
 import { UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoEntidad, UbigeoProvinciaResponse } from '@interfaces/ubigeo.interface';
-import { AuthService } from '@services/auth/auth.service';
+import { AsistenciaTecnicaAgendasService } from '@services/asistencia-tecnica-agendas.service';
+import { AsistenciaTecnicaParticipantesService } from '@services/asistencia-tecnica-participantes.service';
+import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
+import { ClasificacionesService } from '@services/clasificaciones.service';
+import { EspaciosService } from '@services/espacios.service';
+import { LugaresService } from '@services/lugares.service';
+import { NivelGobiernosService } from '@services/nivel-gobiernos.service';
+import { TipoEntidadesService } from '@services/tipo-entidades.service';
+import { UbigeosService } from '@services/ubigeos.service';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
-import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
-import { ItemEnum } from '@interfaces/helpers.interface';
-import { UbigeosService } from '@services/ubigeos.service';
-import { LugaresService } from '@services/lugares.service';
-import { TipoEntidadesService } from '@services/tipo-entidades.service';
-import { EspaciosService } from '@services/espacios.service';
-import { NivelGobiernosService } from '@services/nivel-gobiernos.service';
-import { ClasificacionesService } from '@services/clasificaciones.service';
-import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
-import { Pagination } from '@interfaces/pagination.interface';
-import { TipoEntidadResponse } from '@interfaces/tipo-entidad.interface';
-import { NivelGobiernoResponse } from '@interfaces/nivel-gobierno.interface';
-import { EspacioResponse } from '@interfaces/espacio.interface';
-import { ClasificacionResponse } from '@interfaces/clasificacion.interface';
-import { AsistenciaTecnicaParticipantesService } from '@services/asistencia-tecnica-participantes.service';
-import { AsistenciaTecnicaAgendasService } from '@services/asistencia-tecnica-agendas.service';
-import { AsistenciaTecnicaParticipanteResponse } from '@interfaces/asistencia-tecnica-participante';
-import { AsistenciaTecnicaAgendaResponse } from '@interfaces/asistencia-tecnica-agenda';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -55,13 +54,14 @@ import { AsistenciaTecnicaAgendaResponse } from '@interfaces/asistencia-tecnica-
     NzInputNumberModule
   ]
 })
-export class FormularioAsistenciaTecnicaComponent {
+export class FormularioAsistenciaTecnicaComponent implements   OnChanges {
   @Input() showModal: boolean = false
   @Input() tipos!: ItemEnum[]
   @Input() modalidades!: ItemEnum[]
   @Input() clasificaciones!: ItemEnum[]
   @Input() departamentos!: UbigeoDepartmentResponse[]
   @Input() asistenciaTecnica!: AsistenciaTecnicaResponse
+  @Input() create: boolean = true
   @Output() setCloseShow = new EventEmitter()
   @Output() addFormDate = new EventEmitter()
 
@@ -145,8 +145,11 @@ export class FormularioAsistenciaTecnicaComponent {
     agendas: this.fb.array([])
   })
 
-  ngOnInit() {
+  ngOnChanges(changes: SimpleChanges) {
     this.setFormData()
+  }
+
+  ngOnInit() {
     this.obtenerLugares()
     this.obtenerTipoEntidad()
     this.obtenerEspacios()
@@ -155,7 +158,10 @@ export class FormularioAsistenciaTecnicaComponent {
   }
 
   setFormData(){
-    this.formAsistencia.reset({ ...this.asistenciaTecnica })
+    const fechaAtencion = this.create ? '' : this.asistenciaTecnica.fechaAtencion
+    const autoridad = this.create ? '' : this.asistenciaTecnica.autoridad
+    const congresista = this.create ? '' : this.asistenciaTecnica.congresista
+    this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, congresista })    
   }
 
   obtenerLugares() {
