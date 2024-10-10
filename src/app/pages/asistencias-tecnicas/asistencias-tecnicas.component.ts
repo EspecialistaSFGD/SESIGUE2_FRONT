@@ -41,10 +41,9 @@ export class AsistenciasTecnicasComponent {
     currentPage: 1,
     total: 0
   }
-  
+
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
-  // asistenciaId: number = 0
   showNzModal: boolean = false
 
   confirmModal?: NzModalRef;
@@ -103,17 +102,17 @@ export class AsistenciasTecnicasComponent {
 
   }
 
-  updatedAsistencia(asistencia: AsistenciaTecnicaResponse){
-    console.log('ACTUALIZAR ASISTENCIA');    
+  updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {
+    console.log('ACTUALIZAR ASISTENCIA');
     console.log(asistencia);
     this.asistenciaTecnica = asistencia
     this.create = false
     this.showNzModal = true
   }
 
-  eliminarAsistencia(asistenciaId: string){
-    console.log(('ELIMINAR ASISTENCIA'));    
-    console.log(asistenciaId);    
+  eliminarAsistencia(asistenciaId: string) {
+    console.log(('ELIMINAR ASISTENCIA'));
+    console.log(asistenciaId);
     this.confirmModal = this.modal.confirm({
       nzTitle: '¿Está seguro de eliminar este perfil?',
       nzContent: 'Esta acción no se puede deshacer.',

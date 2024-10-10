@@ -24,10 +24,36 @@ export class AsistenciasTecnicasService {
   registrarAsistenciaTecnica(asistenciaTecnica: AsistenciaTecnicaResponse) {
     asistenciaTecnica.code = Number(localStorage.getItem('codigoUsuario')) ?? 0
     asistenciaTecnica.estado = true;
-
+    console.log('IN SERVICE');
+    console.log(asistenciaTecnica);
     const formData = this.generateFormData(asistenciaTecnica)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.post<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/RegistrarAsistenciaTecnica`, formData, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
+  }
+
+  actualizarAsistenciaTecnica(asistenciaTecnica: AsistenciaTecnicaResponse) {
+    const formData = this.generateFormData(asistenciaTecnica)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.put<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/ActualizarAsistenciaTecnica/${asistenciaTecnica.asistenciaId}`, formData, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
+  }
+
+  deleteAsistenciaTecnica(asistenciaId: string) {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.delete<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/EliminarAsistenciaTecnica/${asistenciaId}`, { headers })
       .pipe(
         tap(resp => {
           return resp

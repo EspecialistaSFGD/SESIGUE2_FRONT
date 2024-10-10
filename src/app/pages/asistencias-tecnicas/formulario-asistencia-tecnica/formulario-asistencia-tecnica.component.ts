@@ -32,6 +32,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
+import { typeErrorControl } from '../../../helpers/forms';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -54,7 +55,7 @@ import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
     NzInputNumberModule
   ]
 })
-export class FormularioAsistenciaTecnicaComponent implements   OnChanges {
+export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   @Input() showModal: boolean = false
   @Input() tipos!: ItemEnum[]
   @Input() modalidades!: ItemEnum[]
@@ -128,25 +129,35 @@ export class FormularioAsistenciaTecnicaComponent implements   OnChanges {
     distrito: ['', Validators.required],
     entidad: [{ value: '', disabled: true }],
     autoridad: ['', Validators.required],
-    dniAutoridad: ['', Validators.required],
-    nombreAutoridad: ['', Validators.required],
-    cargoAutoridad: ['', Validators.required],
+    dniAutoridad: [''],
+    nombreAutoridad: [''],
+    cargoAutoridad: [''],
     congresista: ['', Validators.required],
-    dniCongresista: ['', Validators.required],
-    nombreCongresista: ['', Validators.required],
+    dniCongresista: [''],
+    nombreCongresista: [''],
     cargoCongresista: [{ value: 'Congresista', disabled: true }],
     espacioId: ['', Validators.required],
     clasificacion: ['', Validators.required],
     tema: ['', Validators.required],
     comentarios: ['', Validators.required],
-    evidenciaReunion: ['', Validators.required],
-    evidenciaAsistencia: ['', Validators.required],
+    evidenciaReunion: [''],
+    evidenciaAsistencia: [''],
     participantes: this.fb.array([]),
     agendas: this.fb.array([])
   })
 
   ngOnChanges(changes: SimpleChanges) {
     this.setFormData()
+  }
+
+  alertMessageError(control: string) {
+    return this.formAsistencia.get(control)?.errors && this.formAsistencia.get(control)?.touched
+  }
+
+  msgErrorControl(control: string, label?: string): string {
+    const text = label ? label : control
+    const errors = this.formAsistencia.get(control)?.errors;
+    return typeErrorControl(text, errors)
   }
 
   ngOnInit() {
@@ -157,11 +168,11 @@ export class FormularioAsistenciaTecnicaComponent implements   OnChanges {
     this.obtenerAgendas()
   }
 
-  setFormData(){
+  setFormData() {
     const fechaAtencion = this.create ? '' : this.asistenciaTecnica.fechaAtencion
     const autoridad = this.create ? '' : this.asistenciaTecnica.autoridad
     const congresista = this.create ? '' : this.asistenciaTecnica.congresista
-    this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, congresista })    
+    this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, congresista })
   }
 
   obtenerLugares() {
@@ -211,6 +222,19 @@ export class FormularioAsistenciaTecnicaComponent implements   OnChanges {
           this.agendaClasificaciones.set(resp.data)
         }
       })
+  }
+
+  changeAutoridad() {
+    const autoridad = this.formAsistencia.get('autoridad')?.value
+    this.formAsistencia.get('dniAutoridad')?.setErrors({ required: autoridad })
+    this.formAsistencia.get('nombreAutoridad')?.setErrors({ required: autoridad })
+    this.formAsistencia.get('cargoAutoridad')?.setErrors({ required: autoridad })
+  }
+
+  changeCongresista() {
+    const congresista = this.formAsistencia.get('congresista')?.value
+    this.formAsistencia.get('dniCongresista')?.setErrors({ required: congresista })
+    this.formAsistencia.get('nombreCongresista')?.setErrors({ required: congresista })
   }
 
   addItemFormArray(event: MouseEvent, formGroup: string) {
@@ -271,8 +295,10 @@ export class FormularioAsistenciaTecnicaComponent implements   OnChanges {
 
 
   saveOrEdit() {
+    this.formAsistencia.get('entidadId')?.setValue(1)
+    console.log(this.formAsistencia.value);
     if (this.formAsistencia.invalid) {
-      this.formAsistencia.markAllAsTouched()
+      return this.formAsistencia.markAllAsTouched()
     }
     const dateForm = new Date(this.formAsistencia.get('fechaAtencion')?.value)
     const getMonth = dateForm.getMonth() + 1
@@ -283,24 +309,25 @@ export class FormularioAsistenciaTecnicaComponent implements   OnChanges {
     const formValues = this.formAsistencia.value
     let participantes = formValues.participantes
     let agendas = formValues.agendas
-    this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ... formValues, fechaAtencion })
+
+    this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ...formValues, fechaAtencion })
       .subscribe(resp => {
-        if(resp.success == true){
+        if (resp.success == true) {
           const asistencia = resp.data
-          if(participantes.length > 0){
-            for(let data of participantes){
-            const participante: AsistenciaTecnicaParticipanteResponse = { ...data, asistenciaId: asistencia }
-            this.asistenciaTecnicaParticipanteService.registrarParticipante(participante)
-              .subscribe(response => {
-                if(response == true){
-                }           
-              })
+          if (participantes.length > 0) {
+            for (let data of participantes) {
+              const participante: AsistenciaTecnicaParticipanteResponse = { ...data, asistenciaId: asistencia }
+              this.asistenciaTecnicaParticipanteService.registrarParticipante(participante)
+                .subscribe(response => {
+                  if (response == true) {
+                  }
+                })
             }
-            for(let data of agendas){
+            for (let data of agendas) {
               const agenda: AsistenciaTecnicaAgendaResponse = { ...data, asistenciaId: asistencia }
               this.asistenciaTecnicaAgendaService.registrarAgenda(agenda)
                 .subscribe(response => {
-                  if(response == true){
+                  if (response == true) {
                   }
                 })
             }
@@ -314,5 +341,6 @@ export class FormularioAsistenciaTecnicaComponent implements   OnChanges {
   closeModal() {
     this.showModal = false
     this.setCloseShow.emit(false)
+    this.formAsistencia.reset()
   }
 }
