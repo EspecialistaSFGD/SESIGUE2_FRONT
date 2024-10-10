@@ -31,6 +31,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzMessageModule } from 'ng-zorro-antd/message';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { typeErrorControl } from '../../../helpers/forms';
 import { EntidadesService } from '@services/entidades.service';
@@ -111,6 +113,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private asistenciaTecnicaParticipanteService = inject(AsistenciaTecnicaParticipantesService)
   private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
   private entidadService = inject(EntidadesService)
+  private messageService = inject(NzMessageService)
 
   get participantes() {
     return this.formAsistencia.get('participantes') as FormArray;
@@ -292,7 +295,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   obtenerDistito(ubigeo: string) {
     if (ubigeo) {
-      console.log(ubigeo);
       this.obtenerEntidad(ubigeo)
     }
   }
@@ -378,6 +380,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
             this.showModal = false
             this.formAsistencia.reset()
             this.closeModal()
+            this.messageService.create('success', 'Se ha registrado con exito')
           }
         })
     } else {
@@ -387,6 +390,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
             this.addFormDate.emit(true)
             this.showModal = false
             this.formAsistencia.reset()
+            this.messageService.create('success', 'Se ha actualizado con exito')
           }
         })
     }

@@ -103,22 +103,26 @@ export class AsistenciasTecnicasComponent {
   }
 
   updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {
-    console.log('ACTUALIZAR ASISTENCIA');
-    console.log(asistencia);
     this.asistenciaTecnica = asistencia
     this.create = false
     this.showNzModal = true
   }
 
   eliminarAsistencia(asistenciaId: string) {
-    console.log(('ELIMINAR ASISTENCIA'));
-    console.log(asistenciaId);
     this.confirmModal = this.modal.confirm({
-      nzTitle: '¿Está seguro de eliminar este perfil?',
+      nzTitle: '¿Está seguro de eliminar esta asistencia técnica?',
       nzContent: 'Esta acción no se puede deshacer.',
       nzOkText: 'Eliminar',
       nzOkDanger: true,
-      // nzOnOk: () => {},
+      nzOnOk: () => {
+        this.asistenciaTecnicaService.deleteAsistenciaTecnica(asistenciaId)
+          .subscribe(resp => {
+            if (resp.success == true) {
+              console.log('Se ha eliminado con exito');
+              this.obtenerAsistenciasTecnicas()
+            }
+          })
+      },
       nzCancelText: 'Cancelar',
     });
   }
