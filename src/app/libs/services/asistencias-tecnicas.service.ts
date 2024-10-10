@@ -46,7 +46,7 @@ export class AsistenciasTecnicasService {
         tap(resp => {
           return resp
         }),
-        map(valid => valid),
+        map(valid => valid.success),
         catchError(err => of(err))
       )
   }

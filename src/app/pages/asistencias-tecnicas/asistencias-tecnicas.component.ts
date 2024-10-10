@@ -142,6 +142,7 @@ export class AsistenciasTecnicasComponent {
       tipoEntidadId: '',
       nombreTipoEntidad: '',
       entidadId: '',
+      ubigeoEntidad: '',
       nombreEntidad: '',
       autoridad: false,
       dniAutoridad: '',

@@ -33,6 +33,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { typeErrorControl } from '../../../helpers/forms';
+import { EntidadesService } from '@services/entidades.service';
+import { EntidadResponse } from '@interfaces/entidad.interface';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -108,6 +110,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private clasificacionService = inject(ClasificacionesService)
   private asistenciaTecnicaParticipanteService = inject(AsistenciaTecnicaParticipantesService)
   private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
+  private entidadService = inject(EntidadesService)
 
   get participantes() {
     return this.formAsistencia.get('participantes') as FormArray;
@@ -172,7 +175,17 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const fechaAtencion = this.create ? '' : this.asistenciaTecnica.fechaAtencion
     const autoridad = this.create ? '' : this.asistenciaTecnica.autoridad
     const congresista = this.create ? '' : this.asistenciaTecnica.congresista
-    this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, congresista })
+    const ubigeo = this.create ? '' : this.asistenciaTecnica.ubigeoEntidad
+    const departamento = this.create ? '' : ubigeo.slice(0, 2)
+    const provincia = this.create ? '' : ubigeo.slice(0, 4)
+    const distrito = this.create ? '' : ubigeo
+    const entidad = this.create ? '' : this.asistenciaTecnica.nombreEntidad
+    const cargoCongresista = this.create ? '' : 'Congresista'
+    if (!this.create) {
+      this.obtenerUbigeoProvincias(departamento)
+      this.obtenerUbigeoDistrito(provincia)
+    }
+    this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, congresista, departamento, provincia, distrito, entidad, cargoCongresista })
   }
 
   obtenerLugares() {
@@ -235,6 +248,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const congresista = this.formAsistencia.get('congresista')?.value
     this.formAsistencia.get('dniCongresista')?.setErrors({ required: congresista })
     this.formAsistencia.get('nombreCongresista')?.setErrors({ required: congresista })
+    this.formAsistencia.get('cargoCongresista')?.setValue(congresista ? 'Congresista' : '')
   }
 
   addItemFormArray(event: MouseEvent, formGroup: string) {
@@ -269,23 +283,52 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.formAsistencia.get('provincia')?.reset();
       this.formAsistencia.get('distrito')?.reset();
       this.districtDisabled = true
-      this.ubigeoService.getProvinces(value)
-        .subscribe(resp => {
-          if (resp.success == true) {
-            this.provinceDisabled = false
-            this.provincias.set(resp.data)
-          }
-        })
+      this.obtenerUbigeoProvincias(value)
     } else if (ubigeo == 'distritos') {
       this.formAsistencia.get('distrito')?.reset();
-      this.ubigeoService.getDistricts(value)
-        .subscribe(resp => {
-          if (resp.success == true) {
-            this.districtDisabled = false
-            this.distritos.set(resp.data)
-          }
-        })
+      this.obtenerUbigeoDistrito(value)
     }
+  }
+
+  obtenerDistito(ubigeo: string) {
+    if (ubigeo) {
+      console.log(ubigeo);
+      this.obtenerEntidad(ubigeo)
+    }
+  }
+
+  obtenerEntidad(ubigeo: string) {
+    this.entidadService.getEntidadporUbigeo(ubigeo)
+      .subscribe(resp => {
+        if (resp.success) {
+          const entidad: EntidadResponse = resp.data[0];
+          this.formAsistencia.get('entidad')?.setValue(entidad.entidad)
+          this.formAsistencia.get('entidadId')?.setValue(entidad.entidadId)
+        } else {
+          this.formAsistencia.get('entidad')?.setValue('')
+          this.formAsistencia.get('entidadId')?.setValue('')
+        }
+      })
+  }
+
+  obtenerUbigeoProvincias(departamento: string) {
+    this.ubigeoService.getProvinces(departamento)
+      .subscribe(resp => {
+        if (resp.success == true) {
+          this.provinceDisabled = false
+          this.provincias.set(resp.data)
+        }
+      })
+  }
+
+  obtenerUbigeoDistrito(provincia: string) {
+    this.ubigeoService.getDistricts(provincia)
+      .subscribe(resp => {
+        if (resp.success == true) {
+          this.districtDisabled = false
+          this.distritos.set(resp.data)
+        }
+      })
   }
 
   beforeUpload = (file: NzUploadFile): boolean => {
@@ -295,8 +338,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
 
   saveOrEdit() {
-    this.formAsistencia.get('entidadId')?.setValue(1)
-    console.log(this.formAsistencia.value);
     if (this.formAsistencia.invalid) {
       return this.formAsistencia.markAllAsTouched()
     }
@@ -310,33 +351,45 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     let participantes = formValues.participantes
     let agendas = formValues.agendas
 
-    this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ...formValues, fechaAtencion })
-      .subscribe(resp => {
-        if (resp.success == true) {
-          const asistencia = resp.data
-          if (participantes.length > 0) {
-            for (let data of participantes) {
-              const participante: AsistenciaTecnicaParticipanteResponse = { ...data, asistenciaId: asistencia }
-              this.asistenciaTecnicaParticipanteService.registrarParticipante(participante)
-                .subscribe(response => {
-                  if (response == true) {
-                  }
-                })
+    if (this.create) {
+      this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ...formValues, fechaAtencion })
+        .subscribe(resp => {
+          if (resp.success == true) {
+            const asistencia = resp.data
+            if (participantes.length > 0) {
+              for (let data of participantes) {
+                const participante: AsistenciaTecnicaParticipanteResponse = { ...data, asistenciaId: asistencia }
+                this.asistenciaTecnicaParticipanteService.registrarParticipante(participante)
+                  .subscribe(response => {
+                    if (response == true) {
+                    }
+                  })
+              }
+              for (let data of agendas) {
+                const agenda: AsistenciaTecnicaAgendaResponse = { ...data, asistenciaId: asistencia }
+                this.asistenciaTecnicaAgendaService.registrarAgenda(agenda)
+                  .subscribe(response => {
+                    if (response == true) {
+                    }
+                  })
+              }
             }
-            for (let data of agendas) {
-              const agenda: AsistenciaTecnicaAgendaResponse = { ...data, asistenciaId: asistencia }
-              this.asistenciaTecnicaAgendaService.registrarAgenda(agenda)
-                .subscribe(response => {
-                  if (response == true) {
-                  }
-                })
-            }
+            this.addFormDate.emit(true)
+            this.showModal = false
+            this.formAsistencia.reset()
+            this.closeModal()
           }
-          this.addFormDate.emit(true)
-          this.showModal = false
-          this.formAsistencia.reset()
-        }
-      })
+        })
+    } else {
+      this.asistenciaTecnicaService.actualizarAsistenciaTecnica({ ...formValues, fechaAtencion, asistenciaId: this.asistenciaTecnica.asistenciaId })
+        .subscribe(resp => {
+          if (resp == true) {
+            this.addFormDate.emit(true)
+            this.showModal = false
+            this.formAsistencia.reset()
+          }
+        })
+    }
   }
   closeModal() {
     this.showModal = false

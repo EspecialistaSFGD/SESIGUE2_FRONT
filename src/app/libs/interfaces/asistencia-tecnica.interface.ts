@@ -30,6 +30,7 @@ export interface AsistenciaTecnicaResponse {
   tipoEntidadId: string,
   nombreTipoEntidad: string,
   entidadId: string,
+  ubigeoEntidad: string,
   nombreEntidad: string,
   autoridad: boolean,
   dniAutoridad: string,

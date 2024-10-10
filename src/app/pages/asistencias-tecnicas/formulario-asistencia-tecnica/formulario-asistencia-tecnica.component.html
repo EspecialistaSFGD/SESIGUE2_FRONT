@@ -107,7 +107,7 @@
             <nz-form-label nzRequired [nzSpan]="null" nzFor="distrito">Distrito</nz-form-label>
             <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
               <nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" formControlName="distrito"
-                [nzDisabled]="districtDisabled" nzShowSearch>
+                (ngModelChange)="obtenerDistito($event)" [nzDisabled]="districtDisabled" nzShowSearch>
                 @for (distrito of distritos(); track $index) {
                 <nz-option [nzValue]="distrito.distritoId" nzLabel="{{distrito.distrito}}"></nz-option>
                 }
@@ -212,8 +212,7 @@
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="cargoCongresista">Cargo</nz-form-label>
             <nz-form-control nzSpan="null">
-              <input type="text" nz-input id="cargoCongresista" placeholder="Ingrese el cargo aquí"
-                formControlName="cargoCongresista">
+              <input type="text" nz-input id="cargoCongresista" formControlName="cargoCongresista">
             </nz-form-control>
           </nz-form-item>
         </div>
