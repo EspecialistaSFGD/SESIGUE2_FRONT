@@ -1,6 +1,6 @@
 <nz-modal [(nzVisible)]="showModal" (click)="closeModal()"
-  nzTitle="{{create ? 'Agregar' : 'Actualizar' }} Asistencia técnica" nzWidth="75%"
-  nzOkText="{{create ? 'Agregar' : 'Actualizar' }} Asistencia Técnica" (nzOnOk)="saveOrEdit()" nzCancelText="Cancelar"
+  nzTitle="{{create ? 'Agregar' : 'Actualizar' }} Atención" nzWidth="75%"
+  nzOkText="{{create ? 'Agregar' : 'Actualizar' }} Atención" (nzOnOk)="saveOrEdit()" nzCancelText="Cancelar"
   (nzOnCancel)="closeModal()">
   <ng-container *nzModalContent>
     <form [formGroup]="formAsistencia" nz-form nzLayout="vertical">
@@ -19,7 +19,7 @@
         <div nz-col nzSpan="12">
           <nz-form-item>
             <nz-form-label [nzSpan]="null">Modalidad</nz-form-label>
-            <nz-radio-group formControlName="modalidad">
+            <nz-radio-group formControlName="modalidad" (ngModelChange)="obtenerModalidad()">
               @for (modalidad of modalidades; track $index){
               <label nz-radio [nzValue]="modalidad.value">{{modalidad.text | titlecase }}</label>
               }
@@ -33,7 +33,7 @@
         <div nz-col nzSpan="8">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="fechaAtencion">Fecha de atención</nz-form-label>
-            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+            <nz-form-control nzSpan="null">
               <nz-date-picker class="w-full" id="fechaAtencion" formControlName="fechaAtencion"
                 nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy"></nz-date-picker>
             </nz-form-control>
@@ -44,8 +44,8 @@
         <div nz-col nzSpan="8">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="lugarId">Lugar</nz-form-label>
-            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
-              <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" formControlName="lugarId" nzAllowClear>
+            <nz-form-control nzSpan="null">
+              <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" formControlName="lugarId" nzAllowClear nzShowSearch>
                 @for (lugar of lugares(); track $index) {
                 <nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
                 }
@@ -58,9 +58,9 @@
         <div nz-col nzSpan="8">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="tipoEntidadId">Tipo de entidad entendida</nz-form-label>
-            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+            <nz-form-control nzSpan="null">
               <nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId" formControlName="tipoEntidadId"
-                nzAllowClear>
+                nzAllowClear nzShowSearch>
                 @for (entidades of tipoEntidades(); track $index) {
                 <nz-option [nzValue]="entidades.tipoId" nzLabel="{{entidades.nombre}}"></nz-option>
                 }
@@ -74,10 +74,10 @@
       <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="6">
           <nz-form-item>
-            <nz-form-label [nzSpan]="null" nzFor="departamento">Departmento</nz-form-label>
-            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+            <nz-form-label [nzSpan]="null" nzFor="departamento">Departamento</nz-form-label>
+            <nz-form-control nzSpan="null">
               <nz-select nzPlaceHolder="Seleccionar departamento" id="departamento" formControlName="departamento"
-                (ngModelChange)="obtenerUbigeo($event,'provincias')" nzAllowClear nzShowSearch>
+                (ngModelChange)="obtenerUbigeoDepartamento($event)" nzAllowClear nzShowSearch>
                 @for (departamento of departamentos; track $index) {
                 <nz-option [nzValue]="departamento.departamentoId" nzLabel="{{departamento.departamento}}"></nz-option>
                 }
@@ -90,9 +90,9 @@
         <div nz-col nzSpan="6">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="provincia">Provincia</nz-form-label>
-            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+            <nz-form-control nzSpan="null">
               <nz-select nzPlaceHolder="Seleccionar provincia" id="provincia" formControlName="provincia"
-                (ngModelChange)="obtenerUbigeo($event,'distritos')" [nzDisabled]="provinceDisabled" nzShowSearch>
+                (ngModelChange)="obtenerUbigeoProvincia($event)" [nzDisabled]="provinceDisabled" nzAllowClear nzShowSearch>
                 @for (provincia of provincias(); track $index) {
                 <nz-option [nzValue]="provincia.provinciaId" nzLabel="{{provincia.provincia}}"></nz-option>
                 }
@@ -105,9 +105,9 @@
         <div nz-col nzSpan="6">
           <nz-form-item>
             <nz-form-label nzRequired [nzSpan]="null" nzFor="distrito">Distrito</nz-form-label>
-            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+            <nz-form-control nzSpan="null">
               <nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" formControlName="distrito"
-                (ngModelChange)="obtenerDistito($event)" [nzDisabled]="districtDisabled" nzShowSearch>
+                (ngModelChange)="obtenerDistito($event)" [nzDisabled]="districtDisabled" nzAllowClear nzShowSearch>
                 @for (distrito of distritos(); track $index) {
                 <nz-option [nzValue]="distrito.distritoId" nzLabel="{{distrito.distrito}}"></nz-option>
                 }
@@ -143,11 +143,11 @@
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="dniAutoridad">DNI</nz-form-label>
             <nz-form-control nzSpan="null">
-              <input type="text" nz-input id="dniAutoridad" placeholder="Ingresa el DNi aquí"
+              <input type="text" nz-input id="dniAutoridad" placeholder="Ingresa el DNI aquí"
                 formControlName="dniAutoridad">
             </nz-form-control>
             <small class="text-danger"
-              *ngIf="alertMessageError('dniAutoridad')">{{msgErrorControl('dniAutoridad','dni')}}</small>
+              *ngIf="alertMessageError('dniAutoridad')">{{msgErrorControl('dniAutoridad','DNI')}}</small>
           </nz-form-item>
         </div>
         <div nz-col nzSpan="6">
@@ -190,7 +190,7 @@
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="dniCongresista">DNI</nz-form-label>
             <nz-form-control nzSpan="null">
-              <input type="text" nz-input id="dniCongresista" placeholder="Ingresa el DNi aquí"
+              <input type="text" nz-input id="dniCongresista" placeholder="Ingresa el DNI aquí"
                 formControlName="dniCongresista">
             </nz-form-control>
             <small class="text-danger"
@@ -218,11 +218,11 @@
         </div>
       </div>
       <div nz-row [nzGutter]="16">
-        <div nz-col nzSpan="8">
+        <div nz-col nzSpan="6">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacio</nz-form-label>
-            <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
-              <nz-select nzPlaceHolder="Seleccionar espacio" id="espacioId" formControlName="espacioId" nzAllowClear>
+            <nz-form-control nzSpan="null">
+              <nz-select nzPlaceHolder="Seleccionar espacio" id="espacioId" formControlName="espacioId" nzAllowClear nzShowSearch>
                 @for (espacio of espacios(); track $index){
                 <nz-option [nzValue]="espacio.espacioId" nzLabel="{{espacio.nombre}}"></nz-option>
                 }
@@ -232,10 +232,10 @@
             </nz-form-control>
           </nz-form-item>
         </div>
-        <div nz-col nzSpan="8">
+        <div nz-col nzSpan="6">
           <nz-form-item>
             <nz-form-label [nzSpan]="null">Clasificación</nz-form-label>
-            <nz-radio-group formControlName="clasificacion">
+            <nz-radio-group formControlName="clasificacion" (ngModelChange)="obtenerClasificacion()">
               @for (clasificacion of clasificaciones; track $index){
               <label nz-radio [nzValue]="clasificacion.value">{{clasificacion.text| titlecase }}</label>
               }
@@ -244,7 +244,7 @@
               *ngIf="alertMessageError('clasificacion')">{{msgErrorControl('clasificacion','clasificacion')}}</small>
           </nz-form-item>
         </div>
-        <div nz-col nzSpan="8">
+        <div nz-col nzSpan="12">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="tema">Tema</nz-form-label>
             <nz-form-control nzSpan="null">
@@ -257,20 +257,22 @@
       <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="12">
           <nz-collapse>
-            <nz-collapse-panel [nzHeader]="headerParticipantesCollapsed" [nzActive]="true" [nzDisabled]="false"
+            <nz-collapse-panel [nzHeader]="headerParticipantesCollapsed" [nzActive]="collapseParticipantes" [nzDisabled]="false"
               formArrayName="participantes">
               <div nz-row [nzGutter]="16" *ngFor="let participante of participantes.controls; let i = index"
                 [formGroupName]="i">
                 <div nz-col nzSpan="12">
                   <nz-form-item>
                     <nz-form-label nzRequired [nzSpan]="null">Tipo de participante</nz-form-label>
-                    <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-form-control nzSpan="null">
                       <nz-select nzPlaceHolder="Seleccionat tipo de participante" formControlName="nivelId"
-                        nzAllowClear>
+                      nzAllowClear nzShowSearch>
                         @for (participante of gobiernoParticipantes(); track $index) {
                         <nz-option [nzValue]="participante.nivelId" nzLabel="{{participante.nombre}}"></nz-option>
                         }
                       </nz-select>
+                      <small class="text-danger"
+              *ngIf="alertMessageErrorTwoNivel('participantes',i,'nivelId')">{{msgErrorControlTwoNivel('participantes',i,'nivelId','participante')}}</small>
                     </nz-form-control>
                   </nz-form-item>
                 </div>
@@ -280,6 +282,8 @@
                     <nz-form-control nzSpan="null">
                       <input type="text" nz-input id="cantidadParticipante" formControlName="cantidad">
                     </nz-form-control>
+                    <small class="text-danger"
+              *ngIf="alertMessageErrorTwoNivel('participantes',i,'cantidad')">{{msgErrorControlTwoNivel('participantes',i,'cantidad','cantidad')}}</small>
                   </nz-form-item>
                 </div>
                 <div nz-col nzSpan="4" class="flex flex-col items-center">
@@ -302,15 +306,15 @@
         </div>
         <div nz-col nzSpan="12">
           <nz-collapse>
-            <nz-collapse-panel [nzHeader]="headerAgendasCollapsed" [nzActive]="true" [nzDisabled]="false"
+            <nz-collapse-panel [nzHeader]="headerAgendasCollapsed" [nzActive]="collapseAgendas" [nzDisabled]="false"
               formArrayName="agendas">
               <div nz-row [nzGutter]="16" *ngFor="let agenda of agendas.controls; let i = index" [formGroupName]="i">
                 <div nz-col nzSpan="12">
                   <nz-form-item>
                     <nz-form-label [nzSpan]="null">Clasificación</nz-form-label>
-                    <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
+                    <nz-form-control nzSpan="null">
                       <nz-select nzPlaceHolder="Seleccionar clasificación" formControlName="clasificacionId"
-                        nzAllowClear>
+                      nzAllowClear nzShowSearch>
                         @for (clasificacion of agendaClasificaciones(); track $index) {
                         <nz-option [nzValue]="clasificacion.clasificacionId"
                           nzLabel="{{clasificacion.nombre}}"></nz-option>

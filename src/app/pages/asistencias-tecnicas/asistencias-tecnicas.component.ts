@@ -30,7 +30,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
   ]
 })
 export class AsistenciasTecnicasComponent {
-  title: string = `Lista de Asistencias Técnicas`;
+  title: string = `Lista de Atenciones`;
   public asistenciasTecnicas = signal<AsistenciaTecnicaResponse[]>([])
   public departamentos = signal<UbigeoDepartmentResponse[]>([])
   pagination: Pagination = {

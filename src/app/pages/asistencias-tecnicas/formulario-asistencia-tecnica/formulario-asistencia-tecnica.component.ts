@@ -3,7 +3,7 @@ import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, Simp
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsistenciaTecnicaAgendaResponse } from '@interfaces/asistencia-tecnica-agenda';
 import { AsistenciaTecnicaParticipanteResponse } from '@interfaces/asistencia-tecnica-participante';
-import { AsistenciaTecnicaResponse } from '@interfaces/asistencia-tecnica.interface';
+import { AsistenciasTecnicasModalidad, AsistenciaTecnicaResponse } from '@interfaces/asistencia-tecnica.interface';
 import { ClasificacionResponse } from '@interfaces/clasificacion.interface';
 import { EspacioResponse } from '@interfaces/espacio.interface';
 import { ItemEnum } from '@interfaces/helpers.interface';
@@ -37,6 +37,7 @@ import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { typeErrorControl } from '../../../helpers/forms';
 import { EntidadesService } from '@services/entidades.service';
 import { EntidadResponse } from '@interfaces/entidad.interface';
+import { ValidatorService } from '@services/validators/validator.service';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -74,6 +75,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   public distritos = signal<UbigeoDistritoResponse[]>([])
   provinceDisabled: boolean = true
   districtDisabled: boolean = true
+
+  collapseParticipantes: boolean = true
+  collapseAgendas: boolean = true
 
   public lugares = signal<LugarResponse[]>([])
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
@@ -114,6 +118,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
   private entidadService = inject(EntidadesService)
   private messageService = inject(NzMessageService)
+  private validatorService = inject(ValidatorService)
 
   get participantes() {
     return this.formAsistencia.get('participantes') as FormArray;
@@ -135,9 +140,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     distrito: ['', Validators.required],
     entidad: [{ value: '', disabled: true }],
     autoridad: ['', Validators.required],
-    dniAutoridad: [''],
-    nombreAutoridad: [''],
-    cargoAutoridad: [''],
+    dniAutoridad: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
+    nombreAutoridad: ['', Validators.required],
+    cargoAutoridad: ['', Validators.required],
     congresista: ['', Validators.required],
     dniCongresista: [''],
     nombreCongresista: [''],
@@ -159,10 +164,25 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   alertMessageError(control: string) {
     return this.formAsistencia.get(control)?.errors && this.formAsistencia.get(control)?.touched
   }
+  alertMessageErrorTwoNivel(control: string, index:number, subcontrol:string) {
+    const getControl = this.formAsistencia.get(control) as FormArray
+    const levelControl = getControl.at(index).get(subcontrol)    
+    return levelControl?.errors && levelControl?.touched
+  }
 
   msgErrorControl(control: string, label?: string): string {
     const text = label ? label : control
     const errors = this.formAsistencia.get(control)?.errors;
+    
+    return typeErrorControl(text, errors)
+  }
+
+  msgErrorControlTwoNivel(control: string, index:number, subcontrol:string, label?: string): string {
+    const getControl = this.formAsistencia.get(control) as FormArray
+    const levelControl = getControl.at(index).get(subcontrol)    
+    const text = label ? label : subcontrol
+    const errors = levelControl?.errors;
+    
     return typeErrorControl(text, errors)
   }
 
@@ -240,11 +260,36 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       })
   }
 
+  obtenerModalidad(){
+    const modalidad = this.formAsistencia.get('modalidad')?.value
+    const lugar = this.formAsistencia.get('lugarId')
+    switch (modalidad) {
+      case 'virtuals':
+        this.lugares().map( item => {
+          if(item.nombre.toLowerCase() == 'virtual' ){
+            lugar?.setValue(item.lugarId)
+          }        
+        })
+        break;
+      case 'presencial':
+        const iSchell = this.lugares().find( item => item.nombre.toLowerCase().includes('schell') ? item : null )
+        const iVirtual = this.lugares().find( item => item.nombre.toLowerCase().includes('virtual') ? item : null )
+        if(!lugar?.value){
+          lugar?.setValue(iSchell?.lugarId)
+        } else {                    
+          if(lugar.value == iVirtual?.lugarId){
+            lugar?.setValue(iSchell?.lugarId)
+          }
+        }
+        break
+    }
+  }
+
   changeAutoridad() {
     const autoridad = this.formAsistencia.get('autoridad')?.value
-    this.formAsistencia.get('dniAutoridad')?.setErrors({ required: autoridad })
-    this.formAsistencia.get('nombreAutoridad')?.setErrors({ required: autoridad })
-    this.formAsistencia.get('cargoAutoridad')?.setErrors({ required: autoridad })
+    // this.formAsistencia.get('dniAutoridad')?.setErrors({ required: autoridad })
+    // this.formAsistencia.get('nombreAutoridad')?.setErrors({ required: autoridad })
+    // this.formAsistencia.get('cargoAutoridad')?.setErrors({ required: autoridad })
   }
 
   changeCongresista() {
@@ -254,20 +299,24 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.formAsistencia.get('cargoCongresista')?.setValue(congresista ? 'Congresista' : '')
   }
 
-  addItemFormArray(event: MouseEvent, formGroup: string) {
+  addItemFormArray(event: MouseEvent, formGroup: string) {    
     event.preventDefault();
     event.stopPropagation();
     if (formGroup == 'participantes') {
+      this.collapseParticipantes = true
       const participanteRow = this.fb.group({
+        participanteId: [''],
         nivelId: ['', Validators.required],
-        cantidad: ['', Validators.required],
+        cantidad: ['', [Validators.required, Validators.pattern(this.validatorService.NumberPattern)]],
       })
       this.participantes.push(participanteRow)
     }
     if (formGroup == 'agendas') {
+      this.collapseAgendas = true
       const agendaRow = this.fb.group({
+        agendaId: [''],
         clasificacionId: ['', Validators.required],
-        cui: ['', Validators.required],
+        cui: [''],
       })
       this.agendas.push(agendaRow)
     }
@@ -281,16 +330,22 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     }
   }
 
-  obtenerUbigeo(value: string, ubigeo: string) {
-    if (ubigeo == 'provincias') {
+  obtenerUbigeoDepartamento(ubigeo:string){
+    if(ubigeo){
       this.formAsistencia.get('provincia')?.reset();
-      this.formAsistencia.get('distrito')?.reset();
-      this.districtDisabled = true
-      this.obtenerUbigeoProvincias(value)
-    } else if (ubigeo == 'distritos') {
-      this.formAsistencia.get('distrito')?.reset();
-      this.obtenerUbigeoDistrito(value)
+        this.formAsistencia.get('distrito')?.reset();
+        this.districtDisabled = true
+        this.obtenerUbigeoProvincias(ubigeo)
+        this.obtenerEntidad(`${ubigeo}0000`)
     }
+  }
+  obtenerUbigeoProvincia(ubigeo:string){
+    if(ubigeo){
+      this.formAsistencia.get('distrito')?.reset();
+      this.obtenerUbigeoDistrito(ubigeo)
+      this.obtenerEntidad(`${ubigeo}01`)
+    }
+    
   }
 
   obtenerDistito(ubigeo: string) {
@@ -300,17 +355,21 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   obtenerEntidad(ubigeo: string) {
-    this.entidadService.getEntidadporUbigeo(ubigeo)
-      .subscribe(resp => {
-        if (resp.success) {
-          const entidad: EntidadResponse = resp.data[0];
-          this.formAsistencia.get('entidad')?.setValue(entidad.entidad)
-          this.formAsistencia.get('entidadId')?.setValue(entidad.entidadId)
-        } else {
-          this.formAsistencia.get('entidad')?.setValue('')
-          this.formAsistencia.get('entidadId')?.setValue('')
-        }
-      })
+    if(ubigeo){      
+      this.entidadService.getEntidadporUbigeo(ubigeo)
+        .subscribe(resp => {
+          console.log(resp);
+          
+          if (resp.success) {
+            const entidad: EntidadResponse = resp.data[0];
+            this.formAsistencia.get('entidad')?.setValue(entidad.entidad)
+            this.formAsistencia.get('entidadId')?.setValue(entidad.entidadId)
+          } else {
+            this.formAsistencia.get('entidad')?.setValue('')
+            this.formAsistencia.get('entidadId')?.setValue('')
+          }
+        })
+    }
   }
 
   obtenerUbigeoProvincias(departamento: string) {
@@ -337,6 +396,12 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.fileList = this.fileList.concat(file);
     return false;
   };
+
+  obtenerClasificacion(){
+    const clasificacion = this.formAsistencia.get('clasificacion')?.value
+    console.log(clasificacion);
+    
+  }
 
 
   saveOrEdit() {
@@ -367,6 +432,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
                     }
                   })
               }
+            }
+            if (agendas.length > 0) {
               for (let data of agendas) {
                 const agenda: AsistenciaTecnicaAgendaResponse = { ...data, asistenciaId: asistencia }
                 this.asistenciaTecnicaAgendaService.registrarAgenda(agenda)
