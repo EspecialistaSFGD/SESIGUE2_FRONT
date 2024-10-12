@@ -164,25 +164,25 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   alertMessageError(control: string) {
     return this.formAsistencia.get(control)?.errors && this.formAsistencia.get(control)?.touched
   }
-  alertMessageErrorTwoNivel(control: string, index:number, subcontrol:string) {
+  alertMessageErrorTwoNivel(control: string, index: number, subcontrol: string) {
     const getControl = this.formAsistencia.get(control) as FormArray
-    const levelControl = getControl.at(index).get(subcontrol)    
+    const levelControl = getControl.at(index).get(subcontrol)
     return levelControl?.errors && levelControl?.touched
   }
 
   msgErrorControl(control: string, label?: string): string {
     const text = label ? label : control
     const errors = this.formAsistencia.get(control)?.errors;
-    
+
     return typeErrorControl(text, errors)
   }
 
-  msgErrorControlTwoNivel(control: string, index:number, subcontrol:string, label?: string): string {
+  msgErrorControlTwoNivel(control: string, index: number, subcontrol: string, label?: string): string {
     const getControl = this.formAsistencia.get(control) as FormArray
-    const levelControl = getControl.at(index).get(subcontrol)    
+    const levelControl = getControl.at(index).get(subcontrol)
     const text = label ? label : subcontrol
     const errors = levelControl?.errors;
-    
+
     return typeErrorControl(text, errors)
   }
 
@@ -260,24 +260,24 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       })
   }
 
-  obtenerModalidad(){
+  obtenerModalidad() {
     const modalidad = this.formAsistencia.get('modalidad')?.value
     const lugar = this.formAsistencia.get('lugarId')
     switch (modalidad) {
       case 'virtuals':
-        this.lugares().map( item => {
-          if(item.nombre.toLowerCase() == 'virtual' ){
+        this.lugares().map(item => {
+          if (item.nombre.toLowerCase() == 'virtual') {
             lugar?.setValue(item.lugarId)
-          }        
+          }
         })
         break;
       case 'presencial':
-        const iSchell = this.lugares().find( item => item.nombre.toLowerCase().includes('schell') ? item : null )
-        const iVirtual = this.lugares().find( item => item.nombre.toLowerCase().includes('virtual') ? item : null )
-        if(!lugar?.value){
+        const iSchell = this.lugares().find(item => item.nombre.toLowerCase().includes('schell') ? item : null)
+        const iVirtual = this.lugares().find(item => item.nombre.toLowerCase().includes('virtual') ? item : null)
+        if (!lugar?.value) {
           lugar?.setValue(iSchell?.lugarId)
-        } else {                    
-          if(lugar.value == iVirtual?.lugarId){
+        } else {
+          if (lugar.value == iVirtual?.lugarId) {
             lugar?.setValue(iSchell?.lugarId)
           }
         }
@@ -299,7 +299,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.formAsistencia.get('cargoCongresista')?.setValue(congresista ? 'Congresista' : '')
   }
 
-  addItemFormArray(event: MouseEvent, formGroup: string) {    
+  addItemFormArray(event: MouseEvent, formGroup: string) {
     event.preventDefault();
     event.stopPropagation();
     if (formGroup == 'participantes') {
@@ -330,22 +330,22 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     }
   }
 
-  obtenerUbigeoDepartamento(ubigeo:string){
-    if(ubigeo){
+  obtenerUbigeoDepartamento(ubigeo: string) {
+    if (ubigeo) {
       this.formAsistencia.get('provincia')?.reset();
-        this.formAsistencia.get('distrito')?.reset();
-        this.districtDisabled = true
-        this.obtenerUbigeoProvincias(ubigeo)
-        this.obtenerEntidad(`${ubigeo}0000`)
+      this.formAsistencia.get('distrito')?.reset();
+      this.districtDisabled = true
+      this.obtenerUbigeoProvincias(ubigeo)
+      this.obtenerEntidad(`${ubigeo}0000`)
     }
   }
-  obtenerUbigeoProvincia(ubigeo:string){
-    if(ubigeo){
+  obtenerUbigeoProvincia(ubigeo: string) {
+    if (ubigeo) {
       this.formAsistencia.get('distrito')?.reset();
       this.obtenerUbigeoDistrito(ubigeo)
       this.obtenerEntidad(`${ubigeo}01`)
     }
-    
+
   }
 
   obtenerDistito(ubigeo: string) {
@@ -355,11 +355,11 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   obtenerEntidad(ubigeo: string) {
-    if(ubigeo){      
+    if (ubigeo) {
       this.entidadService.getEntidadporUbigeo(ubigeo)
         .subscribe(resp => {
           console.log(resp);
-          
+
           if (resp.success) {
             const entidad: EntidadResponse = resp.data[0];
             this.formAsistencia.get('entidad')?.setValue(entidad.entidad)
@@ -397,10 +397,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     return false;
   };
 
-  obtenerClasificacion(){
+  obtenerClasificacion() {
     const clasificacion = this.formAsistencia.get('clasificacion')?.value
     console.log(clasificacion);
-    
+
   }
 
 
