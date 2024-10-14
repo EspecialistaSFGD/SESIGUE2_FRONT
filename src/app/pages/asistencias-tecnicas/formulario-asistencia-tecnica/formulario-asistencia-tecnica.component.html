@@ -34,9 +34,9 @@
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="fechaAtencion">Fecha de atención</nz-form-label>
             <nz-form-control nzSpan="null">
-              <nz-date-picker class="w-full" id="fechaAtencion" class="datepicker-form-control"
-                formControlName="fechaAtencion" nzPlaceHolder="Seleccionar fecha"
-                nzFormat="dd/MM/yyyy"></nz-date-picker>
+              <nz-date-picker id="fechaAtencion" class="datepicker-form-control" formControlName="fechaAtencion"
+                nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy"
+                [nzDisabledDate]="disableDates"></nz-date-picker>
             </nz-form-control>
             <div class="text-danger" *ngIf="alertMessageError('fechaAtencion')">
               {{msgErrorControl('fechaAtencion','Fecha de atención')}}</div>
@@ -178,6 +178,78 @@
         </div>
       </div>
       <div nz-row [nzGutter]="16">
+        <div nz-col nzSpan="24">
+          <div class="border border-solid border-grey-800 ">
+            <div class="flex justify-between items-center bg-gray-100 px-4 py-2">
+              <h5 class=" text-sm">Congresistas</h5>
+              <div
+                class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 rounded hover:bg-punche-blue-500 hover:text-white"
+                (click)="addItemFormArray($event,'congresistas')">
+                <span nz-icon nzType="plus" nzTheme="outline"></span>
+                Nuevo congresista
+              </div>
+            </div>
+            <div class=" px-4 py-2">
+              <div formArrayName="congresistas">
+                <div *ngFor="let congresista of congresistas.controls; let i = index" [formGroupName]="i">
+                  <div nz-row [nzGutter]="16">
+
+                    <div nz-col nzSpan="4">
+                      <nz-form-item>
+                        <nz-form-label nzRequired [nzSpan]="null">Participa Congresista</nz-form-label>
+                        <nz-radio-group class="radio-form-control" formControlName="congresista">
+                          @for (participa of participar; track $index){
+                          <label nz-radio [nzValue]="participa == 'si' ? true : false">{{participa | titlecase
+                            }}</label>
+                          }
+                        </nz-radio-group>
+                        <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'congresista')">
+                          {{msgErrorControlTwoNivel('congresistas',i,'congresista','Congresista')}}</div>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col nzSpan="6">
+                      <nz-form-item>
+                        <nz-form-label [nzSpan]="null" nzFor="dni{{i}}">DNI</nz-form-label>
+                        <nz-form-control nzSpan="null">
+                          <input type="text" class="form-control" id="dni{{i}}" placeholder="Ingresa el DNI aquí"
+                            formControlName="dni">
+                        </nz-form-control>
+                        <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'dni')">
+                          {{msgErrorControlTwoNivel('congresistas',i,'dni','DNI')}}</div>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col nzSpan="6">
+                      <nz-form-item>
+                        <nz-form-label [nzSpan]="null" nzFor="nombre{{i}}">Nombre</nz-form-label>
+                        <nz-form-control nzSpan="null">
+                          <input type="text" class="form-control" id="nombre{{i}}" placeholder="Ingresa el nombre aquí"
+                            formControlName="nombre">
+                        </nz-form-control>
+                        <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'nombre')">
+                          {{msgErrorControlTwoNivel('congresistas',i,'nombre','Nombre')}}</div>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col nzSpan="6">
+                      <nz-form-item>
+                        <nz-form-label [nzSpan]="null" nzFor="descripcion{{i}}">Descripción</nz-form-label>
+                        <nz-form-control nzSpan="null">
+                          <input type="text" class="form-control" id="descripcion{{i}}" formControlName="descripcion">
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col nzSpan="2" class="flex flex-col items-center">
+                      <nz-form-label [nzSpan]="null"> Eliminar </nz-form-label>
+                      <span nz-icon nzType="minus-circle-o" class="dynamic-delete-button cursor-pointer"
+                        style="font-size: 24px;" (click)="removeItemFormArray(i,'congresistas')"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="6">
           <nz-form-item>
             <nz-form-label nzRequired [nzSpan]="null">Participa Congresista</nz-form-label>
@@ -221,8 +293,8 @@
             </nz-form-control>
           </nz-form-item>
         </div>
-      </div>
-      <div nz-row [nzGutter]="16">
+      </div> -->
+      <div nz-row [nzGutter]="16" class="mt-3">
         <div nz-col nzSpan="6">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacio</nz-form-label>
@@ -262,13 +334,13 @@
           </nz-form-item>
         </div>
       </div>
-      <div nz-row [nzGutter]="16">
+      <div nz-row [nzGutter]="16" class="mt-2">
         <div nz-col nzSpan="12">
           <div class="border border-solid border-grey-800 ">
             <div class="flex justify-between items-center bg-gray-100 px-4 py-2">
               <h5 class=" text-sm">Participantes</h5>
               <div
-                class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 hover:bg-punche-blue-500 hover:text-white"
+                class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 rounded hover:bg-punche-blue-500 hover:text-white"
                 (click)="addItemFormArray($event,'participantes')">
                 <span nz-icon nzType="plus" nzTheme="outline"></span>
                 Nuevo participante
@@ -305,8 +377,8 @@
                     </div>
                     <div nz-col nzSpan="4" class="flex flex-col items-center">
                       <nz-form-label [nzSpan]="null"> Eliminar </nz-form-label>
-                      <span nz-icon nzType="minus-circle-o" class="dynamic-delete-button" style="font-size: 24px;"
-                        (click)="removeItemFormArray(i,'participantes')"></span>
+                      <span nz-icon nzType="minus-circle-o" class="dynamic-delete-button cursor-pointer"
+                        style="font-size: 24px;" (click)="removeItemFormArray(i,'participantes')"></span>
                     </div>
                   </div>
                 </div>
@@ -319,7 +391,7 @@
             <div class="flex justify-between items-center bg-gray-100 px-4 py-2">
               <h5 class=" text-sm">Agendas</h5>
               <div
-                class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 hover:bg-punche-blue-500 hover:text-white"
+                class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 rounded hover:bg-punche-blue-500 hover:text-white"
                 (click)="addItemFormArray($event,'agendas')">
                 <span nz-icon nzType="plus" nzTheme="outline"></span>
                 Nueva Agenda
@@ -352,8 +424,8 @@
                   </div>
                   <div nz-col nzSpan="4" class="flex flex-col items-center">
                     <nz-form-label [nzSpan]="null"> Eliminar </nz-form-label>
-                    <span nz-icon nzType="minus-circle-o" class="dynamic-delete-button" style="font-size: 24px;"
-                      (click)="removeItemFormArray(i,'agendas')"></span>
+                    <span nz-icon nzType="minus-circle-o" class="dynamic-delete-button cursor-pointer"
+                      style="font-size: 24px;" (click)="removeItemFormArray(i,'agendas')"></span>
                   </div>
                 </div>
               </div>
@@ -361,12 +433,12 @@
           </div>
         </div>
       </div>
-      <div nz-row [nzGutter]="16">
+      <div nz-row [nzGutter]="16" class="mt-4">
         <div nz-col nzSpan="24">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="comentarios">Comentarios</nz-form-label>
-            <textarea nz-input id="comentarios" formControlName="comentarios" placeholder="Ingrese el comentario aquí"
-              rows="2"></textarea>
+            <textarea class="form-control" id="comentarios" formControlName="comentarios"
+              placeholder="Ingrese el comentario aquí" rows="2"></textarea>
             <div class="text-danger" *ngIf="alertMessageError('comentarios')">
               {{msgErrorControl('comentarios','Comentarios')}}</div>
           </nz-form-item>
@@ -376,22 +448,24 @@
         <div nz-col nzSpan="12">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="evidenciaReunion">Evidencia de reunion</nz-form-label>
-            <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
-              <button nz-button>
+            <nz-upload [(nzFileList)]="fileListMeet" [nzBeforeUpload]="beforeUploadMeet">
+              <div
+                class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 hover:bg-punche-blue-500 hover:text-white">
                 <span nz-icon nzType="upload"></span>
                 Selecionar evidencia
-              </button>
+              </div>
             </nz-upload>
           </nz-form-item>
         </div>
         <div nz-col nzSpan="12">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="evidenciaAsistencia">Acta de asistencia</nz-form-label>
-            <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
-              <button nz-button>
+            <nz-upload [(nzFileList)]="fileListAttendance" [nzBeforeUpload]="beforeUploadAttendance">
+              <div
+                class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 hover:bg-punche-blue-500 hover:text-white">
                 <span nz-icon nzType="upload"></span>
                 Selecionar evidencia
-              </button>
+              </div>
             </nz-upload>
           </nz-form-item>
         </div>

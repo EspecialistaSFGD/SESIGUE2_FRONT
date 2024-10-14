@@ -75,9 +75,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   public distritos = signal<UbigeoDistritoResponse[]>([])
   provinceDisabled: boolean = true
   districtDisabled: boolean = true
+  today = new Date();
 
-  collapseParticipantes: boolean = true
-  collapseAgendas: boolean = true
+  // collapseParticipantes: boolean = true
+  // collapseAgendas: boolean = true
 
   public lugares = signal<LugarResponse[]>([])
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
@@ -86,7 +87,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   public agendaClasificaciones = signal<ClasificacionResponse[]>([])
 
   participar: string[] = ['si', 'no']
-  fileList: NzUploadFile[] = [];
+  fileListMeet: NzUploadFile[] = [];
+  fileListAttendance: NzUploadFile[] = [];
 
   pagination: Pagination = {
     code: 0,
@@ -97,14 +99,14 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     total: 0
   }
 
-  ubigeoEntidad: UbigeoEntidad = {
-    id: 0,
-    department: 0,
-    province: 0,
-    district: 0
-  }
+  // ubigeoEntidad: UbigeoEntidad = {
+  //   id: 0,
+  //   department: 0,
+  //   province: 0,
+  //   district: 0
+  // }
 
-  listParticipantes: Array<{ id: number; controlInstance: string }> = [{ id: 1, controlInstance: 'text' }];
+  // listParticipantes: Array<{ id: number; controlInstance: string }> = [{ id: 1, controlInstance: 'text' }];
 
   private fb = inject(FormBuilder)
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
@@ -119,6 +121,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private entidadService = inject(EntidadesService)
   private messageService = inject(NzMessageService)
   private validatorService = inject(ValidatorService)
+
+  get congresistas() {
+    return this.formAsistencia.get('congresistas') as FormArray;
+  }
 
   get participantes() {
     return this.formAsistencia.get('participantes') as FormArray;
@@ -143,16 +149,17 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     dniAutoridad: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
     nombreAutoridad: ['', Validators.required],
     cargoAutoridad: ['', Validators.required],
-    congresista: ['', Validators.required],
+    congresista: [''],
     dniCongresista: [''],
     nombreCongresista: [''],
-    cargoCongresista: [{ value: 'Congresista', disabled: true }],
+    // cargoCongresista: [{ value: 'Congresista', disabled: true }],
     espacioId: ['', Validators.required],
     clasificacion: ['', Validators.required],
     tema: ['', Validators.required],
     comentarios: ['', Validators.required],
     evidenciaReunion: [''],
     evidenciaAsistencia: [''],
+    congresistas: this.fb.array([]),
     participantes: this.fb.array([]),
     agendas: this.fb.array([])
   })
@@ -285,6 +292,22 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     }
   }
 
+  disableDates = (current: Date): boolean => {
+    if (!current) {
+      return false;
+    }
+    const daysAgo = this.differenceInCalendarDays(this.today, current);
+    return daysAgo < 0 || daysAgo > 2;
+  };
+
+  differenceInCalendarDays(dateLeft: Date, dateRight: Date): number {
+    const startOfDayLeft = new Date(dateLeft.getFullYear(), dateLeft.getMonth(), dateLeft.getDate());
+    const startOfDayRight = new Date(dateRight.getFullYear(), dateRight.getMonth(), dateRight.getDate());
+
+    const diffInMs = startOfDayLeft.getTime() - startOfDayRight.getTime();
+    return Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+  }
+
   changeAutoridad() {
     const autoridad = this.formAsistencia.get('autoridad')?.value
     // this.formAsistencia.get('dniAutoridad')?.setErrors({ required: autoridad })
@@ -292,18 +315,28 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     // this.formAsistencia.get('cargoAutoridad')?.setErrors({ required: autoridad })
   }
 
-  changeCongresista() {
-    const congresista = this.formAsistencia.get('congresista')?.value
-    this.formAsistencia.get('dniCongresista')?.setErrors({ required: congresista })
-    this.formAsistencia.get('nombreCongresista')?.setErrors({ required: congresista })
-    this.formAsistencia.get('cargoCongresista')?.setValue(congresista ? 'Congresista' : '')
-  }
+  // changeCongresista() {
+  //   const congresista = this.formAsistencia.get('congresista')?.value
+  //   this.formAsistencia.get('dniCongresista')?.setErrors({ required: congresista })
+  //   this.formAsistencia.get('nombreCongresista')?.setErrors({ required: congresista })
+  //   this.formAsistencia.get('cargoCongresista')?.setValue(congresista ? 'Congresista' : '')
+  // }
 
   addItemFormArray(event: MouseEvent, formGroup: string) {
     event.preventDefault();
     event.stopPropagation();
+    if (formGroup == 'congresistas') {
+      const congresistaRow = this.fb.group({
+        congresistaId: [''],
+        congresista: ['', Validators.required],
+        dni: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
+        nombre: ['', Validators.required],
+        descripcion: ['', Validators.required],
+      })
+      this.congresistas.push(congresistaRow)
+    }
     if (formGroup == 'participantes') {
-      this.collapseParticipantes = true
+      // this.collapseParticipantes = true
       const participanteRow = this.fb.group({
         participanteId: [''],
         nivelId: ['', Validators.required],
@@ -312,7 +345,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.participantes.push(participanteRow)
     }
     if (formGroup == 'agendas') {
-      this.collapseAgendas = true
+      // this.collapseAgendas = true
       const agendaRow = this.fb.group({
         agendaId: [''],
         clasificacionId: ['', Validators.required],
@@ -323,7 +356,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   removeItemFormArray(i: number, formGroup: string) {
-    if (formGroup == 'participantes') {
+    if (formGroup == 'congresistas') {
+      this.congresistas.removeAt(i)
+    } else if (formGroup == 'participantes') {
       this.participantes.removeAt(i)
     } else if (formGroup == 'agendas') {
       this.agendas.removeAt(i)
@@ -392,8 +427,13 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       })
   }
 
-  beforeUpload = (file: NzUploadFile): boolean => {
-    this.fileList = this.fileList.concat(file);
+  beforeUploadMeet = (file: NzUploadFile): boolean => {
+    this.fileListMeet = this.fileListMeet.concat(file);
+    return false;
+  };
+
+  beforeUploadAttendance = (file: NzUploadFile): boolean => {
+    this.fileListAttendance = this.fileListAttendance.concat(file);
     return false;
   };
 
@@ -415,6 +455,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const day = getDay > 9 ? getDay : `0${getDay}`
     const fechaAtencion = `${day}/${month}/${dateForm.getFullYear()}`
     const formValues = this.formAsistencia.value
+    let congresistas = formValues.congresistas
     let participantes = formValues.participantes
     let agendas = formValues.agendas
 
