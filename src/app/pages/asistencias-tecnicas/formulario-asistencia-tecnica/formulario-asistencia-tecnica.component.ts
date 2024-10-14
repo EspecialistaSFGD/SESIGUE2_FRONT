@@ -77,9 +77,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   districtDisabled: boolean = true
   today = new Date();
 
-  // collapseParticipantes: boolean = true
-  // collapseAgendas: boolean = true
-
   public lugares = signal<LugarResponse[]>([])
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   public espacios = signal<EspacioResponse[]>([])
@@ -98,15 +95,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     currentPage: 1,
     total: 0
   }
-
-  // ubigeoEntidad: UbigeoEntidad = {
-  //   id: 0,
-  //   department: 0,
-  //   province: 0,
-  //   district: 0
-  // }
-
-  // listParticipantes: Array<{ id: number; controlInstance: string }> = [{ id: 1, controlInstance: 'text' }];
 
   private fb = inject(FormBuilder)
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
@@ -315,12 +303,13 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     // this.formAsistencia.get('cargoAutoridad')?.setErrors({ required: autoridad })
   }
 
-  // changeCongresista() {
-  //   const congresista = this.formAsistencia.get('congresista')?.value
-  //   this.formAsistencia.get('dniCongresista')?.setErrors({ required: congresista })
-  //   this.formAsistencia.get('nombreCongresista')?.setErrors({ required: congresista })
-  //   this.formAsistencia.get('cargoCongresista')?.setValue(congresista ? 'Congresista' : '')
-  // }
+  changeCongresista(index:number) {
+    const congresistas = this.formAsistencia.get('congresistas') as FormArray
+    const congresista = congresistas.at(index).get('congresista')?.value       
+    const descripcion = congresistas.at(index).get('descripcion')
+    descripcion?.setValue(congresista ? 'Congresista' : 'Asesor')
+    congresista ? descripcion?.disable() : descripcion?.enable()
+  }
 
   addItemFormArray(event: MouseEvent, formGroup: string) {
     event.preventDefault();
@@ -336,7 +325,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.congresistas.push(congresistaRow)
     }
     if (formGroup == 'participantes') {
-      // this.collapseParticipantes = true
       const participanteRow = this.fb.group({
         participanteId: [''],
         nivelId: ['', Validators.required],
@@ -345,7 +333,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.participantes.push(participanteRow)
     }
     if (formGroup == 'agendas') {
-      // this.collapseAgendas = true
       const agendaRow = this.fb.group({
         agendaId: [''],
         clasificacionId: ['', Validators.required],
@@ -440,7 +427,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   obtenerClasificacion() {
     const clasificacion = this.formAsistencia.get('clasificacion')?.value
     console.log(clasificacion);
-
+    //TODO: validar cui agendas
   }
 
 
@@ -486,7 +473,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
             }
             this.addFormDate.emit(true)
             this.showModal = false
-            this.formAsistencia.reset()
+            this.resetForm()
             this.closeModal()
             this.messageService.create('success', 'Se ha registrado con exito')
           }
@@ -497,7 +484,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
           if (resp == true) {
             this.addFormDate.emit(true)
             this.showModal = false
-            this.formAsistencia.reset()
+            this.resetForm()
             this.messageService.create('success', 'Se ha actualizado con exito')
           }
         })
@@ -506,6 +493,13 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   closeModal() {
     this.showModal = false
     this.setCloseShow.emit(false)
+    this.resetForm()
+  }
+
+  resetForm(){
     this.formAsistencia.reset()
+    this.congresistas.clear()
+    this.participantes.clear()
+    this.agendas.clear()
   }
 }
