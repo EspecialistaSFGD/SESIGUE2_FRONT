@@ -2,7 +2,7 @@
   nzWidth="75%" nzOkText="{{create ? 'Agregar' : 'Actualizar' }} Atención" (nzOnOk)="saveOrEdit()"
   nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
   <ng-container *nzModalContent>
-    <form [formGroup]="formAsistencia" nz-form nzLayout="vertical">
+    <form [formGroup]="formAsistencia" nz-form nzLayout="vertical" autocomplete="off">
       <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="12">
           <nz-form-item>
@@ -13,18 +13,6 @@
               }
             </nz-radio-group>
             <div class="text-danger" *ngIf="alertMessageError('tipo')">{{msgErrorControl('tipo','Tipo de atención')}}
-            </div>
-          </nz-form-item>
-        </div>
-        <div nz-col nzSpan="12">
-          <nz-form-item>
-            <nz-form-label [nzSpan]="null">Modalidad</nz-form-label>
-            <nz-radio-group class="radio-form-control" formControlName="modalidad" (ngModelChange)="obtenerModalidad()">
-              @for (modalidad of modalidades; track $index){
-              <label nz-radio [nzValue]="modalidad.value">{{modalidad.text | titlecase }}</label>
-              }
-            </nz-radio-group>
-            <div class="text-danger" *ngIf="alertMessageError('modalidad')">{{msgErrorControl('modalidad','Modalidad')}}
             </div>
           </nz-form-item>
         </div>
@@ -44,6 +32,18 @@
         </div>
         <div nz-col nzSpan="6">
           <nz-form-item>
+            <nz-form-label [nzSpan]="null">Modalidad</nz-form-label>
+            <nz-radio-group class="radio-form-control" formControlName="modalidad" (ngModelChange)="obtenerModalidad()">
+              @for (modalidad of modalidades; track $index){
+              <label nz-radio [nzValue]="modalidad.value">{{modalidad.text | titlecase }}</label>
+              }
+            </nz-radio-group>
+            <div class="text-danger" *ngIf="alertMessageError('modalidad')">{{msgErrorControl('modalidad','Modalidad')}}
+            </div>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="lugarId">Lugar</nz-form-label>
             <nz-form-control nzSpan="null">
               <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" class="select-form-control"
@@ -58,9 +58,9 @@
         </div>
         <div nz-col nzSpan="6">
           <nz-form-item>
-            <nz-form-label [nzSpan]="null" nzFor="tipoEntidadId">Tipo de entidad entendida</nz-form-label>
+            <nz-form-label [nzSpan]="null" nzFor="tipoEntidadId">Tipo de entidad</nz-form-label>
             <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId" class="select-form-control"
+              <nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId" class="select-form-control" (ngModelChange)="changeTipoEntidad()"
                 formControlName="tipoEntidadId" nzAllowClear nzShowSearch>
                 @for (entidades of tipoEntidades(); track $index) {
                 <nz-option [nzValue]="entidades.tipoId" nzLabel="{{entidades.nombre}}"></nz-option>
@@ -411,6 +411,8 @@
                             nzLabel="{{clasificacion.nombre}}"></nz-option>
                           }
                         </nz-select>
+                        <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'clasificacionId')">
+                          {{msgErrorControlTwoNivel('agendas',i,'clasificacionId','Clasificación')}}</div>
                       </nz-form-control>
                     </nz-form-item>
                   </div>
@@ -420,6 +422,8 @@
                       <nz-form-control nzSpan="null">
                         <input type="text" class="form-control" id="cuiAgenda" formControlName="cui">
                       </nz-form-control>
+                      <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'cui')">
+                        {{msgErrorControlTwoNivel('agendas',i,'cui','CUI')}}</div>
                     </nz-form-item>
                   </div>
                   <div nz-col nzSpan="4" class="flex flex-col items-center">

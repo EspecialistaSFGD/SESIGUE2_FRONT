@@ -5,6 +5,7 @@
   (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
+      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código</th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo</th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
       <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
@@ -20,6 +21,7 @@
   <tbody>
     @for(asistencia of asistenciasTecnicas(); track $index){
     <tr>
+      <td nzAlign="center">{{asistencia.codigo}}</td>
       <td nzAlign="center">{{getTextEnum(asistencia.tipo, 'tipo') | titlecase}}</td>
       <td nzAlign="center">{{getTextEnum(asistencia.modalidad, 'modalidad') | titlecase }}</td>
       <td nzAlign="center">{{asistencia.fechaAtencion | date : 'dd/MM/yyyy'}}</td>

@@ -22,6 +22,7 @@ export enum AsistenciasTecnicasClasificacion {
 
 export interface AsistenciaTecnicaResponse {
   asistenciaId?: string,
+  codigo?: string,
   tipo: string,
   modalidad: string,
   fechaAtencion: Date,

@@ -10,6 +10,8 @@ export const typeErrorControl = (text: string, errors: any) => {
     msg = `No tiene un formato de ${text}`
   } else if (errors?.['minlength']) {
     msg = `${text} debe tener minimo ${errors?.['minlength'].requiredLength} caracteres`
+  } else if (errors?.['maxlength']) {
+    msg = `${text} debe tener maximo ${errors?.['maxlength'].requiredLength} caracteres`
   } else if (errors?.['msgBack']) {
     msg = errors?.['msgBack']
   } else if (errors?.['mailExist']) {
