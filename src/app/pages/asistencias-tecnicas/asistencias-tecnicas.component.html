@@ -5,7 +5,7 @@
   (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
-      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código</th>
+      <!-- <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código</th> -->
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo</th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
       <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
@@ -21,7 +21,7 @@
   <tbody>
     @for(asistencia of asistenciasTecnicas(); track $index){
     <tr>
-      <td nzAlign="center">{{asistencia.codigo}}</td>
+      <!-- <td nzAlign="center">{{asistencia.codigo}}</td> -->
       <td nzAlign="center">{{getTextEnum(asistencia.tipo, 'tipo') | titlecase}}</td>
       <td nzAlign="center">{{getTextEnum(asistencia.modalidad, 'modalidad') | titlecase }}</td>
       <td nzAlign="center">{{asistencia.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
@@ -33,9 +33,12 @@
       <td nzAlign="center">{{getTextEnum(asistencia.clasificacion, 'clasificacion') | titlecase}}</td>
       <td nzAlign="center">
         <nz-space>
-          <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(asistencia)"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
-          <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="eliminarAsistencia(asistencia.asistenciaId!)"><span nz-icon nzType="delete" nzTheme="outline"></span></button>
-      </nz-space>
+          <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(asistencia)"><span nz-icon
+              nzType="edit" nzTheme="outline"></span></button>
+          <button *nzSpaceItem nz-button nzDanger nzType="link"
+            (click)="eliminarAsistencia(asistencia.asistenciaId!)"><span nz-icon nzType="delete"
+              nzTheme="outline"></span></button>
+        </nz-space>
       </td>
     </tr>
     }
@@ -56,6 +59,7 @@
   </div>
 </ng-template>
 
-<app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos" [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica"
-  [departamentos]="departamentos()" [clasificaciones]="clasificaciones" (addFormDate)="getAddFormAdded($event)"
+<app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos"
+  [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica" [departamentos]="departamentos()"
+  [clasificaciones]="clasificaciones" (addFormDate)="getAddFormAdded($event)"
   (setCloseShow)="showNzModal = false"></app-formulario-asistencia-tecnica>

@@ -60,8 +60,8 @@
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="tipoEntidadId">Tipo de entidad</nz-form-label>
             <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId" class="select-form-control" (ngModelChange)="changeTipoEntidad()"
-                formControlName="tipoEntidadId" nzAllowClear nzShowSearch>
+              <nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId" class="select-form-control"
+                (ngModelChange)="changeTipoEntidad()" formControlName="tipoEntidadId" nzAllowClear nzShowSearch>
                 @for (entidades of tipoEntidades(); track $index) {
                 <nz-option [nzValue]="entidades.tipoId" nzLabel="{{entidades.nombre}}"></nz-option>
                 }
@@ -197,7 +197,8 @@
                     <div nz-col nzSpan="4">
                       <nz-form-item>
                         <nz-form-label nzRequired [nzSpan]="null">Participa Congresista</nz-form-label>
-                        <nz-radio-group class="radio-form-control" formControlName="congresista" (ngModelChange)="changeCongresista(i)">
+                        <nz-radio-group class="radio-form-control" formControlName="congresista"
+                          (ngModelChange)="changeCongresista(i)">
                           @for (participa of participar; track $index){
                           <label nz-radio [nzValue]="participa == 'si' ? true : false">{{participa | titlecase
                             }}</label>

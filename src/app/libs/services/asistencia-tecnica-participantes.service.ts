@@ -14,10 +14,10 @@ export class AsistenciaTecnicaParticipantesService {
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  getAllParticipantes(asistenciaId: string, pagination: Pagination): Observable<AsistenciaTecnicaParticipanteResponse> {
+  getAllParticipantes(asistenciaId: string, pagination: Pagination): Observable<AsistenciaTecnicaParticipantesResponses> {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<AsistenciaTecnicaParticipanteResponse>(`${this.urlAsistenciaTecnicaParticipante}/ListarParticipantes/${asistenciaId}`, { headers, params })
+    return this.http.get<AsistenciaTecnicaParticipantesResponses>(`${this.urlAsistenciaTecnicaParticipante}/ListarParticipantes/${asistenciaId}`, { headers, params })
   }
 
   registrarParticipante(participante: AsistenciaTecnicaParticipanteResponse) {
@@ -53,7 +53,7 @@ export class AsistenciaTecnicaParticipantesService {
         tap(resp => {
           return resp
         }),
-        map(valid => valid.success),
+        map(valid => valid),
         catchError(err => of(err))
       )
   }

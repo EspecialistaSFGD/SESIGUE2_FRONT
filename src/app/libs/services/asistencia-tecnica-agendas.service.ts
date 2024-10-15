@@ -47,12 +47,12 @@ export class AsistenciaTecnicaAgendasService {
 
   eliminarAgenda(agendaId: string) {
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.delete<AsistenciaTecnicaAgendasResponses>(`${this.urlAsistenciaTecnicaAgenda}/ActualizarAgenda/${agendaId}`, { headers })
+    return this.http.delete<AsistenciaTecnicaAgendasResponses>(`${this.urlAsistenciaTecnicaAgenda}/EliminarAgenda/${agendaId}`, { headers })
       .pipe(
         tap(resp => {
           return resp
         }),
-        map(valid => valid.success),
+        map(valid => valid),
         catchError(err => of(err))
       )
   }

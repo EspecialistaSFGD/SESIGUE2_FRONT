@@ -115,15 +115,15 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private messageService = inject(NzMessageService)
   private validatorService = inject(ValidatorService)
 
-  get congresistas() {
+  get congresistas(): FormArray {
     return this.formAsistencia.get('congresistas') as FormArray;
   }
 
-  get participantes() {
+  get participantes(): FormArray {
     return this.formAsistencia.get('participantes') as FormArray;
   }
 
-  get agendas() {
+  get agendas(): FormArray {
     return this.formAsistencia.get('agendas') as FormArray;
   }
 
@@ -208,6 +208,53 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       if (!this.create) {
         this.obtenerUbigeoProvincias(departamento)
         this.obtenerUbigeoDistrito(provincia)
+        this.pagination.columnSort = 'congresistaId'
+        this.asistenciaTecnicaCongresistaService.getAllCongresistas(this.asistenciaTecnica.asistenciaId!, this.pagination)
+          .subscribe(resp => {
+            if (resp.success == true) {
+              this.congresistas.clear()
+              for (let data of resp.data) {
+                const congresistaRow = this.fb.group({
+                  congresistaId: [data.asistenteCongresistaId],
+                  congresista: [data.congresista, Validators.required],
+                  dni: [data.dni, [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
+                  nombre: [data.nombre, Validators.required],
+                  descripcion: [{ value: data.descripcion, disabled: data.congresista }, Validators.required],
+                })
+                this.congresistas.push(congresistaRow)
+              }
+            }
+          })
+        this.pagination.columnSort = 'participanteId'
+        this.asistenciaTecnicaParticipanteService.getAllParticipantes(this.asistenciaTecnica.asistenciaId!, this.pagination)
+          .subscribe(resp => {
+            if (resp.success == true) {
+              this.participantes.clear()
+              for (let data of resp.data) {
+                const participanteRow = this.fb.group({
+                  participanteId: [data.participanteId],
+                  nivelId: [data.nivelId, Validators.required],
+                  cantidad: [data.cantidad, [Validators.required, Validators.pattern(this.validatorService.NumberPattern)]],
+                })
+                this.participantes.push(participanteRow)
+              }
+            }
+          })
+        this.pagination.columnSort = 'agendaId'
+        this.asistenciaTecnicaAgendaService.getAllAgendas(this.asistenciaTecnica.asistenciaId!, this.pagination)
+          .subscribe(resp => {
+            if (resp.success == true) {
+              this.agendas.clear()
+              for (let data of resp.data) {
+                const agendaRow = this.fb.group({
+                  agendaId: [data.agendaId],
+                  clasificacionId: [data.clasificacionId, Validators.required],
+                  cui: [data.cui],
+                })
+                this.agendas.push(agendaRow)
+              }
+            }
+          })
       }
       this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, congresista, departamento, provincia, distrito, entidad, cargoCongresista })
     }
@@ -367,11 +414,47 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   removeItemFormArray(i: number, formGroup: string) {
     if (formGroup == 'congresistas') {
-      this.congresistas.removeAt(i)
+      if (!this.create) {
+        const congresistas = this.formAsistencia.get('congresistas') as FormArray
+        const congresistaId = congresistas.at(i).get('congresistaId')?.value
+        this.asistenciaTecnicaCongresistaService.eliminarCongresista(congresistaId)
+          .subscribe(resp => {
+            if (resp.success == true) {
+              this.congresistas.removeAt(i)
+            }
+          })
+      } else {
+        this.participantes.removeAt(i)
+      }
+
     } else if (formGroup == 'participantes') {
-      this.participantes.removeAt(i)
+      if (!this.create) {
+        const participantes = this.formAsistencia.get('participantes') as FormArray
+        const participanteId = participantes.at(i).get('participanteId')?.value
+        this.asistenciaTecnicaParticipanteService.eliminarAgenda(participanteId)
+          .subscribe(resp => {
+            if (resp.success == true) {
+              this.participantes.removeAt(i)
+            }
+          })
+      } else {
+        this.participantes.removeAt(i)
+      }
     } else if (formGroup == 'agendas') {
-      this.agendas.removeAt(i)
+      if (!this.create) {
+        const agendas = this.formAsistencia.get('agendas') as FormArray
+        const agendaId = agendas.at(i).get('agendaId')?.value
+        this.asistenciaTecnicaAgendaService.eliminarAgenda(agendaId)
+          .subscribe(resp => {
+            console.log(resp);
+
+            if (resp.success == true) {
+              this.agendas.removeAt(i)
+            }
+          })
+      } else {
+        this.agendas.removeAt(i)
+      }
     }
   }
 

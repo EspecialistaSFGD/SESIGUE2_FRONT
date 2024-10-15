@@ -59,7 +59,7 @@ export class AsistenciaTecnicaCongresistasService {
         tap(resp => {
           return resp
         }),
-        map(valid => valid.success),
+        map(valid => valid),
         catchError(err => of(err))
       )
   }
