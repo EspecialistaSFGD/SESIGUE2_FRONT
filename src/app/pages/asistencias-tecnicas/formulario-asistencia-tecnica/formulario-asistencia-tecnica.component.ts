@@ -41,6 +41,8 @@ import { AsistenciaTecnicaCongresistasService } from '@services/asistencia-tecni
 import { AsistenciaTecnicaCongresistaResponse } from '@interfaces/asistencia-tecnica-congresista.interface';
 import { CongresistasService } from '@services/congresistas.service';
 import { CongresistaResponse } from '@interfaces/congresista.interface';
+import { SsiService } from '@services/ssi.service';
+import { FechaService } from '@services/fecha.service';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -78,6 +80,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   public distritos = signal<UbigeoDistritoResponse[]>([])
   provinceDisabled: boolean = true
   districtDisabled: boolean = true
+  private timeoutId: any;
+  fechaMinAtencion = new Date
   today = new Date();
 
   public lugares = signal<LugarResponse[]>([])
@@ -114,6 +118,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private entidadService = inject(EntidadesService)
   private messageService = inject(NzMessageService)
   private validatorService = inject(ValidatorService)
+  private ssiService = inject(SsiService)
+  private fechaService = inject(FechaService)
 
   get congresistas(): FormArray {
     return this.formAsistencia.get('congresistas') as FormArray;
@@ -192,6 +198,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.obtenerEspacios()
     this.obtenerParticipantes()
     this.obtenerAgendas()
+    this.obtenerFechaLaborales()
   }
 
   setFormData() {
@@ -250,6 +257,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
                   agendaId: [data.agendaId],
                   clasificacionId: [data.clasificacionId, Validators.required],
                   cui: [data.cui],
+                  inversion: ['']
                 })
                 this.agendas.push(agendaRow)
               }
@@ -334,6 +342,25 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     }
   }
 
+  obtenerFechaLaborales(){
+    const pagination: Pagination = {
+      code: 0,
+      columnSort: 'fecha',
+      typeSort: 'DESC',
+      pageSize: 3,
+      currentPage: 1,
+      total: 0
+    }
+    const fecha = `${this.today.getDate()}/${this.today.getMonth() + 1}/${this.today.getFullYear()}`
+    this.fechaService.fechasLaborales(fecha,pagination)
+      .subscribe(resp => {
+        if(resp.success == true){
+          const fechas = resp.data
+          this.fechaMinAtencion = fechas[fechas.length - 1].fecha
+        }
+      })    
+  }
+
   changeTipoEntidad() {
     const provincia = this.formAsistencia.get('provincia')
     if (provincia) {
@@ -354,11 +381,16 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   disableDates = (current: Date): boolean => {
+    const maxDate = new Date(this.today)
+    const minDate = new Date(this.fechaMinAtencion)
+    const diffInMs = Math.abs(maxDate.getTime() - minDate.getTime());
+    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24)) - 1;    
+    
     if (!current) {
       return false;
     }
     const daysAgo = this.differenceInCalendarDays(this.today, current);
-    return daysAgo < 0 || daysAgo > 2;
+    return daysAgo < 0 || daysAgo > diffInDays;
   };
 
   differenceInCalendarDays(dateLeft: Date, dateRight: Date): number {
@@ -407,6 +439,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
         agendaId: [''],
         clasificacionId: ['', Validators.required],
         cui: [''],
+        inversion: ['']
       })
       this.agendas.push(agendaRow)
     }
@@ -446,8 +479,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
         const agendaId = agendas.at(i).get('agendaId')?.value
         this.asistenciaTecnicaAgendaService.eliminarAgenda(agendaId)
           .subscribe(resp => {
-            console.log(resp);
-
             if (resp.success == true) {
               this.agendas.removeAt(i)
             }
@@ -547,6 +578,38 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       })
     }
   }
+
+  obtenerIndexParaSsi(index: number){
+    const agendas = this.formAsistencia.get('agendas') as FormArray
+    const cui = agendas.at(index).get('cui')
+    let value = cui?.value
+    if(value.length > 7){
+      const newValue = value.substring(0, 7);
+      cui?.setValue(newValue)
+    }
+    if(value.length == 7){
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId)
+      }
+      this.timeoutId = setTimeout(() => {
+        this.ssiService.obtenerSSIMef(value)
+          .subscribe( resp => {
+            console.log('VERIFIANDFO NOMBRE DE INVERSION');
+            
+            console.log(resp);
+            
+          })
+      }, 1000);
+    }
+  }
+
+  obtenerSSIMef(index: number){
+    const agendas = this.formAsistencia.get('agendas') as FormArray
+    const inversion = agendas.at(index).get('inversion')?.value
+    return inversion
+  }
+
+  
 
 
   saveOrEdit() {

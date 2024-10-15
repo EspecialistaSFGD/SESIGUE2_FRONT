@@ -420,11 +420,12 @@
                   <div nz-col nzSpan="8">
                     <nz-form-item>
                       <nz-form-label [nzSpan]="null" nzFor="cuiAgenda">CUI</nz-form-label>
-                      <nz-form-control nzSpan="null">
+                      <nz-form-control nzSpan="null" (keyup)="obtenerIndexParaSsi(i)">
                         <input type="text" class="form-control" id="cuiAgenda" formControlName="cui">
                       </nz-form-control>
                       <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'cui')">
                         {{msgErrorControlTwoNivel('agendas',i,'cui','CUI')}}</div>
+                        <div class="text-xs text-slate-400">{{ obtenerSSIMef(i) }}</div>
                     </nz-form-item>
                   </div>
                   <div nz-col nzSpan="4" class="flex flex-col items-center">
