@@ -37,6 +37,10 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { typeErrorControl } from '../../../helpers/forms';
+import { AsistenciaTecnicaCongresistasService } from '@services/asistencia-tecnica-congresistas.service';
+import { AsistenciaTecnicaCongresistaResponse } from '@interfaces/asistencia-tecnica-congresista.interface';
+import { CongresistasService } from '@services/congresistas.service';
+import { CongresistaResponse } from '@interfaces/congresista.interface';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -103,6 +107,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private espacioService = inject(EspaciosService)
   private nivelGobiernoService = inject(NivelGobiernosService)
   private clasificacionService = inject(ClasificacionesService)
+  private congresistaService = inject(CongresistasService)
+  private asistenciaTecnicaCongresistaService = inject(AsistenciaTecnicaCongresistasService)
   private asistenciaTecnicaParticipanteService = inject(AsistenciaTecnicaParticipantesService)
   private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
   private entidadService = inject(EntidadesService)
@@ -189,7 +195,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   setFormData() {
-    if(this.asistenciaTecnica){
+    if (this.asistenciaTecnica) {
       const fechaAtencion = this.create ? this.today : this.asistenciaTecnica.fechaAtencion
       const autoridad = this.create ? '' : this.asistenciaTecnica.autoridad
       const congresista = this.create ? '' : this.asistenciaTecnica.congresista
@@ -203,10 +209,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
         this.obtenerUbigeoProvincias(departamento)
         this.obtenerUbigeoDistrito(provincia)
       }
-      console.log('ACTION FORM DATA');
-      console.log(this.asistenciaTecnica);    
-      console.log(this.showModal);
-  
       this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, congresista, departamento, provincia, distrito, entidad, cargoCongresista })
     }
   }
@@ -285,13 +287,13 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     }
   }
 
-  changeTipoEntidad(){
+  changeTipoEntidad() {
     const provincia = this.formAsistencia.get('provincia')
-    if(provincia){
-      const tipo = this.obtenerValueTipoEntidad() 
+    if (provincia) {
+      const tipo = this.obtenerValueTipoEntidad()
       const regionales = ['GR']
       regionales.includes(tipo?.abreviatura!) ? provincia?.disable() : provincia?.enable()
-      if(regionales.includes(tipo?.abreviatura!)){
+      if (regionales.includes(tipo?.abreviatura!)) {
         provincia?.reset()
         this.provincias.set([])
         this.distritos.set([])
@@ -299,9 +301,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     }
   }
 
-  obtenerValueTipoEntidad(){
+  obtenerValueTipoEntidad() {
     const tipoId = this.formAsistencia.get('tipoEntidadId')?.value
-    return this.tipoEntidades().find(item => item.tipoId == tipoId ? item : null)   
+    return this.tipoEntidades().find(item => item.tipoId == tipoId ? item : null)
   }
 
   disableDates = (current: Date): boolean => {
@@ -324,9 +326,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const autoridad = this.formAsistencia.get('autoridad')?.value
   }
 
-  changeCongresista(index:number) {
+  changeCongresista(index: number) {
     const congresistas = this.formAsistencia.get('congresistas') as FormArray
-    const congresista = congresistas.at(index).get('congresista')?.value       
+    const congresista = congresistas.at(index).get('congresista')?.value
     const descripcion = congresistas.at(index).get('descripcion')
     descripcion?.setValue(congresista ? 'Congresista' : 'Representante')
     congresista ? descripcion?.disable() : descripcion?.enable()
@@ -445,12 +447,12 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   obtenerClasificacion() {
     const clasificacion = this.formAsistencia.get('clasificacion')?.value
-    if(clasificacion){
+    if (clasificacion) {
       const agendas = this.formAsistencia.get('agendas') as FormArray
       agendas.controls.forEach(control => {
         const cui = control.get('cui')
         cui?.setErrors({ required: true })
-        if(clasificacion == 'gestion'){
+        if (clasificacion == 'gestion') {
           cui?.disable()
           cui?.setValue('')
           cui?.clearValidators()
@@ -458,7 +460,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
           cui?.enable()
           cui?.setValidators([Validators.required, Validators.pattern(this.validatorService.NumberPattern), Validators.minLength(6), Validators.maxLength(7)])
           cui?.updateValueAndValidity()
-        }        
+        }
       })
     }
   }
@@ -484,6 +486,27 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
         .subscribe(resp => {
           if (resp.success == true) {
             const asistencia = resp.data
+            if (congresistas.length > 0) {
+              for (let data of congresistas) {
+                if (data.congresista) {
+                  data.descripcion = 'Congresista'
+                }
+                const congresista: CongresistaResponse = { ...data }
+                this.congresistaService.registrarCongresista(congresista)
+                  .subscribe(respCongresista => {
+                    if (respCongresista.success == true) {
+                      const congresistaId = respCongresista.data
+                      const asistenciaCongresista: AsistenciaTecnicaCongresistaResponse = { ...data, asistenciaId: asistencia, congresistaId }
+                      this.asistenciaTecnicaCongresistaService.registrarCongresista(asistenciaCongresista)
+                        .subscribe(response => {
+                          if (response == true) {
+                          }
+                        })
+                    }
+                  })
+
+              }
+            }
             if (participantes.length > 0) {
               for (let data of participantes) {
                 const participante: AsistenciaTecnicaParticipanteResponse = { ...data, asistenciaId: asistencia }
@@ -530,7 +553,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.resetForm()
   }
 
-  resetForm(){
+  resetForm() {
     // this.formAsistencia.reset()
     this.congresistas.clear()
     this.participantes.clear()

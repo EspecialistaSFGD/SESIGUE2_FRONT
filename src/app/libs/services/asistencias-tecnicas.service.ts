@@ -24,8 +24,6 @@ export class AsistenciasTecnicasService {
   registrarAsistenciaTecnica(asistenciaTecnica: AsistenciaTecnicaResponse) {
     asistenciaTecnica.code = Number(localStorage.getItem('codigoUsuario')) ?? 0
     asistenciaTecnica.estado = true;
-    console.log('IN SERVICE');
-    console.log(asistenciaTecnica);
     const formData = this.generateFormData(asistenciaTecnica)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.post<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/RegistrarAsistenciaTecnica`, formData, { headers })
