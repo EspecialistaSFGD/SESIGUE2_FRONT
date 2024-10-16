@@ -148,14 +148,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     dniAutoridad: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
     nombreAutoridad: ['', Validators.required],
     cargoAutoridad: ['', Validators.required],
-    congresista: [''],
-    dniCongresista: [''],
-    nombreCongresista: [''],
-    // cargoCongresista: [{ value: 'Congresista', disabled: true }],
     espacioId: ['', Validators.required],
     clasificacion: ['', Validators.required],
     tema: ['', Validators.required],
-    comentarios: ['', Validators.required],
+    comentarios: [''],
     evidenciaReunion: [''],
     evidenciaAsistencia: [''],
     congresistas: this.fb.array([]),
@@ -205,13 +201,11 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     if (this.asistenciaTecnica) {
       const fechaAtencion = this.create ? this.today : this.asistenciaTecnica.fechaAtencion
       const autoridad = this.create ? '' : this.asistenciaTecnica.autoridad
-      const congresista = this.create ? '' : this.asistenciaTecnica.congresista
       const ubigeo = this.create ? '' : this.asistenciaTecnica.ubigeoEntidad
       const departamento = this.create ? '' : ubigeo.slice(0, 2)
       const provincia = this.create ? '' : ubigeo.slice(0, 4)
       const distrito = this.create ? '' : ubigeo
       const entidad = this.create ? '' : this.asistenciaTecnica.nombreEntidad
-      const cargoCongresista = this.create ? '' : 'Congresista'
       if (!this.create) {
         this.obtenerUbigeoProvincias(departamento)
         this.obtenerUbigeoDistrito(provincia)
@@ -264,7 +258,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
             }
           })
       }
-      this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, congresista, departamento, provincia, distrito, entidad, cargoCongresista })
+      this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, departamento, provincia, distrito, entidad })
     }
   }
 
@@ -347,7 +341,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       code: 0,
       columnSort: 'fecha',
       typeSort: 'DESC',
-      pageSize: 3,
+      pageSize: 15,
       currentPage: 1,
       total: 0
     }
@@ -362,13 +356,22 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   changeTipoEntidad() {
+    this.setUbigeo()
+    const departamento = this.formAsistencia.get('departamento')?.value
+    this.obtenerEntidad(`${departamento}0000`)
+  }
+
+  setUbigeo(){
     const provincia = this.formAsistencia.get('provincia')
     if (provincia) {
+      const distrito = this.formAsistencia.get('distrito')
       const tipo = this.obtenerValueTipoEntidad()
       const regionales = ['GR']
       regionales.includes(tipo?.abreviatura!) ? provincia?.disable() : provincia?.enable()
-      if (regionales.includes(tipo?.abreviatura!)) {
+      regionales.includes(tipo?.abreviatura!) ? distrito?.disable() : distrito?.enable()
+      if (regionales.includes(tipo?.abreviatura!)) {                
         provincia?.reset()
+        distrito?.reset()
         this.provincias.set([])
         this.distritos.set([])
       }
@@ -451,13 +454,13 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
         const congresistas = this.formAsistencia.get('congresistas') as FormArray
         const congresistaId = congresistas.at(i).get('congresistaId')?.value
         this.asistenciaTecnicaCongresistaService.eliminarCongresista(congresistaId)
-          .subscribe(resp => {
-            if (resp.success == true) {
-              this.congresistas.removeAt(i)
-            }
-          })
-      } else {
-        this.participantes.removeAt(i)
+        .subscribe(resp => {
+          if (resp.success == true) {
+            this.congresistas.removeAt(i)
+          }
+        })
+      } else {        
+        this.congresistas.removeAt(i)
       }
 
     } else if (formGroup == 'participantes') {
@@ -494,6 +497,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.formAsistencia.get('provincia')?.reset();
       this.formAsistencia.get('distrito')?.reset();
       this.districtDisabled = true
+      // this.changeTipoEntidad()
+      this.setUbigeo()
       this.obtenerUbigeoProvincias(ubigeo)
       this.obtenerEntidad(`${ubigeo}0000`)
     }

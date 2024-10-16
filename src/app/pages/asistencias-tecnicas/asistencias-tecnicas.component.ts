@@ -35,7 +35,7 @@ export class AsistenciasTecnicasComponent {
   public departamentos = signal<UbigeoDepartmentResponse[]>([])
   pagination: Pagination = {
     code: 0,
-    columnSort: 'codigo',
+    columnSort: 'fechaAtencion',
     typeSort: 'DESC',
     pageSize: 10,
     currentPage: 1,
