@@ -3,11 +3,13 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
+      "@libs/*": ["./src/app/libs/*"],
       "@guards/*": ["./src/app/libs/guards/*"],
       "@services/*": ["./src/app/libs/services/*"],
       "@interfaces/*": ["./src/app/libs/interfaces/*"],
       "@models/*": ["./src/app/libs/models/*"],
       "@shared/*": ["./src/app/libs/shared/*"],
+      "@core/*": ["./src/app/core/*"],
       "@environments/*": ["./src/environments/*"]
     },
     "outDir": "./dist/out-tsc",

@@ -1,19 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AsistenciaTecnicaAgendaResponse } from '@interfaces/asistencia-tecnica-agenda';
-import { AsistenciaTecnicaParticipanteResponse } from '@interfaces/asistencia-tecnica-participante';
-import { AsistenciaTecnicaResponse } from '@interfaces/asistencia-tecnica.interface';
-import { ClasificacionResponse } from '@interfaces/clasificacion.interface';
-import { EntidadResponse } from '@interfaces/entidad.interface';
-import { EspacioResponse } from '@interfaces/espacio.interface';
-import { ItemEnum } from '@interfaces/helpers.interface';
-import { LugarResponse } from '@interfaces/lugar.interface';
-import { NivelGobiernoResponse } from '@interfaces/nivel-gobierno.interface';
-import { Pagination } from '@interfaces/pagination.interface';
-import { TipoEntidadResponse } from '@interfaces/tipo-entidad.interface';
-import { UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@interfaces/ubigeo.interface';
 import { AsistenciaTecnicaAgendasService } from '@services/asistencia-tecnica-agendas.service';
+import { AsistenciaTecnicaCongresistasService } from '@services/asistencia-tecnica-congresistas.service';
 import { AsistenciaTecnicaParticipantesService } from '@services/asistencia-tecnica-participantes.service';
 import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
 import { ClasificacionesService } from '@services/clasificaciones.service';
@@ -24,25 +13,15 @@ import { NivelGobiernosService } from '@services/nivel-gobiernos.service';
 import { TipoEntidadesService } from '@services/tipo-entidades.service';
 import { UbigeosService } from '@services/ubigeos.service';
 import { ValidatorService } from '@services/validators/validator.service';
-import { NzCollapseModule } from 'ng-zorro-antd/collapse';
-import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalModule } from 'ng-zorro-antd/modal';
-import { NzRadioModule } from 'ng-zorro-antd/radio';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzSpaceModule } from 'ng-zorro-antd/space';
-import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
-import { typeErrorControl } from '../../../helpers/forms';
-import { AsistenciaTecnicaCongresistasService } from '@services/asistencia-tecnica-congresistas.service';
-import { AsistenciaTecnicaCongresistaResponse } from '@interfaces/asistencia-tecnica-congresista.interface';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { CongresistasService } from '@services/congresistas.service';
-import { CongresistaResponse } from '@interfaces/congresista.interface';
-import { SsiService } from '@services/ssi.service';
+import { AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, Pagination, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@libs/interfaces';
+import { NivelGobiernoResponse } from '@libs/interfaces/nivel-gobierno.interface';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { FechaService } from '@services/fecha.service';
+import { SsiService } from '@services/ssi.service';
+import { typeErrorControl } from '@core/helpers';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -51,18 +30,8 @@ import { FechaService } from '@services/fecha.service';
   styles: ``,
   imports: [
     CommonModule,
-    NzModalModule,
+    NgZorroModule,
     ReactiveFormsModule,
-    NzFormModule,
-    NzRadioModule,
-    NzInputModule,
-    NzDatePickerModule,
-    NzSelectModule,
-    NzIconModule,
-    NzUploadModule,
-    NzCollapseModule,
-    NzSpaceModule,
-    NzInputNumberModule
   ]
 })
 export class FormularioAsistenciaTecnicaComponent implements OnChanges {
