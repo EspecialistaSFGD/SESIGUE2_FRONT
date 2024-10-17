@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Observable } from 'rxjs';
-import { EntidadesResponses } from '@interfaces/entidad.interface';
+import { EntidadesResponses } from '@core/interfaces/entidad.interface';
 
 @Injectable({
   providedIn: 'root'

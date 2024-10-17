@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@libs/interfaces';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';

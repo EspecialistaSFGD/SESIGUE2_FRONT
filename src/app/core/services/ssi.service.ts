@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { SSIResponse } from '@interfaces/ssi.interface';
+import { SSIResponse } from '@core/interfaces/ssi.interface';
 
 @Injectable({
   providedIn: 'root'

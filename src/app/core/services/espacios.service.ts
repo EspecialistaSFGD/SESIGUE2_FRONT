@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
-import { EspaciosResponses } from '@interfaces/espacio.interface';
-import { Pagination } from '@interfaces/pagination.interface';
+import { EspaciosResponses } from '@core/interfaces/espacio.interface';
+import { Pagination } from '@core/interfaces/pagination.interface';
 import { Observable } from 'rxjs';
 import { HelpersService } from './helpers.service';
 

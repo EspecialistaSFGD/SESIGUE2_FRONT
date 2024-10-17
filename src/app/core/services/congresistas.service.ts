@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Observable, catchError, map, of, tap } from 'rxjs';
-import { CongresistaResponse, CongresistasResponses } from '@interfaces/congresista.interface';
+import { CongresistaResponse, CongresistasResponses } from '@core/interfaces/congresista.interface';
 
 @Injectable({
   providedIn: 'root'

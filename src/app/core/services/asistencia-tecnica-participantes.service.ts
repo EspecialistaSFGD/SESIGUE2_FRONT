@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { Pagination } from '@interfaces/pagination.interface';
-import { AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaParticipantesResponses } from '@interfaces/asistencia-tecnica-participante';
+import { Pagination } from '@core/interfaces/pagination.interface';
+import { AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaParticipantesResponses } from '@core/interfaces/asistencia-tecnica-participante';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({

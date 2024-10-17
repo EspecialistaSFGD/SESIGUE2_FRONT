@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { Pagination } from '@interfaces/pagination.interface';
+import { Pagination } from '@core/interfaces/pagination.interface';
 import { Observable } from 'rxjs';
-import { ClasificacionesResponses } from '@interfaces/clasificacion.interface';
+import { ClasificacionesResponses } from '@core/interfaces/clasificacion.interface';
 
 @Injectable({
   providedIn: 'root'

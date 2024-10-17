@@ -2,9 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { Pagination } from '@interfaces/pagination.interface';
+import { Pagination } from '@core/interfaces/pagination.interface';
 import { Observable } from 'rxjs';
-import { FechasResponses } from '@interfaces/fecha.interface';
+import { FechasResponses } from '@core/interfaces/fecha.interface';
 
 @Injectable({
   providedIn: 'root'

@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { UbigeosDepartamentosResponses, UbigeosDistritosResponses, UbigeosProvinciasResponses } from '@interfaces/ubigeo.interface';
+import { UbigeosDepartamentosResponses, UbigeosDistritosResponses, UbigeosProvinciasResponses } from '@core/interfaces/ubigeo.interface';
 import { Observable } from 'rxjs';
 
 @Injectable({

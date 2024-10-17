@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
-import { AsistenciaTecnicaResponse, AsistenciasTecnicasResponse } from '@interfaces/asistencia-tecnica.interface';
-import { Pagination } from '@interfaces/pagination.interface';
+import { AsistenciaTecnicaResponse, AsistenciasTecnicasResponse } from '@core/interfaces/asistencia-tecnica.interface';
+import { Pagination } from '@core/interfaces/pagination.interface';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
 

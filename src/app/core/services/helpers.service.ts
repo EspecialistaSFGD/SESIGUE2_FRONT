@@ -1,6 +1,6 @@
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Pagination } from '@interfaces/pagination.interface';
+import { Pagination } from '@core/interfaces/pagination.interface';
 
 @Injectable({
   providedIn: 'root'

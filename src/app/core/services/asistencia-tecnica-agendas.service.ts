@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaAgendasResponses } from '@interfaces/asistencia-tecnica-agenda';
+import { AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaAgendasResponses } from '@core/interfaces/asistencia-tecnica-agenda';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { Pagination } from '@interfaces/pagination.interface';
+import { Pagination } from '@core/interfaces/pagination.interface';
 
 @Injectable({
   providedIn: 'root'
