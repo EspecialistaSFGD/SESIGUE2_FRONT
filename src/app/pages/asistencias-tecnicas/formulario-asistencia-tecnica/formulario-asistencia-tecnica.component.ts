@@ -555,11 +555,13 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {
+    this.fileListMeet = []
     this.fileListMeet = this.fileListMeet.concat(file);
     return false;
   };
 
   beforeUploadAttendance = (file: NzUploadFile): boolean => {
+    this.fileListAttendance = []
     this.fileListAttendance = this.fileListAttendance.concat(file);
     return false;
   };
@@ -700,6 +702,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
   closeModal() {
     this.showModal = false
+    this.fileListMeet = []
+    this.fileListAttendance = []
     this.setCloseShow.emit(false)
     this.resetForm()
   }
