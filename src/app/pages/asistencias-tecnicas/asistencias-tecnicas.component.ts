@@ -1,18 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { AsistenciaTecnicaResponse, AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos } from '@interfaces/asistencia-tecnica.interface';
-import { ItemEnum } from '@interfaces/helpers.interface';
-import { Pagination } from '@interfaces/pagination.interface';
-import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
-import { UbigeosService } from '@services/ubigeos.service';
-import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzSpaceModule } from 'ng-zorro-antd/space';
-import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
-import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
-import { UbigeoDepartmentResponse } from '@interfaces/ubigeo.interface';
+import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@libs/interfaces';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
+import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -22,10 +16,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
   imports: [
     CommonModule,
     PageHeaderComponent,
-    NzTableModule,
-    NzSpaceModule,
-    NzButtonModule,
-    NzIconModule,
+    NgZorroModule,
     FormularioAsistenciaTecnicaComponent
   ]
 })

@@ -11,6 +11,8 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTableModule } from 'ng-zorro-antd/table';
 
 
 @NgModule({
@@ -27,7 +29,9 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
     NzUploadModule,
     NzCollapseModule,
     NzSpaceModule,
-    NzInputNumberModule
+    NzInputNumberModule,
+    NzButtonModule,
+    NzTableModule
   ],
   exports: [
     NzFormModule,
@@ -40,7 +44,9 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
     NzUploadModule,
     NzCollapseModule,
     NzSpaceModule,
-    NzInputNumberModule
+    NzInputNumberModule,
+    NzButtonModule,
+    NzTableModule
   ]
 })
 export class NgZorroModule { }

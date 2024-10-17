@@ -1,27 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AsistenciaTecnicaAgendasService } from '@services/asistencia-tecnica-agendas.service';
-import { AsistenciaTecnicaCongresistasService } from '@services/asistencia-tecnica-congresistas.service';
-import { AsistenciaTecnicaParticipantesService } from '@services/asistencia-tecnica-participantes.service';
-import { AsistenciasTecnicasService } from '@services/asistencias-tecnicas.service';
-import { ClasificacionesService } from '@services/clasificaciones.service';
-import { EntidadesService } from '@services/entidades.service';
-import { EspaciosService } from '@services/espacios.service';
-import { LugaresService } from '@services/lugares.service';
-import { NivelGobiernosService } from '@services/nivel-gobiernos.service';
-import { TipoEntidadesService } from '@services/tipo-entidades.service';
-import { UbigeosService } from '@services/ubigeos.service';
-import { ValidatorService } from '@services/validators/validator.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzUploadFile } from 'ng-zorro-antd/upload';
-import { CongresistasService } from '@services/congresistas.service';
-import { AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, Pagination, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@libs/interfaces';
-import { NivelGobiernoResponse } from '@libs/interfaces/nivel-gobierno.interface';
-import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { FechaService } from '@services/fecha.service';
-import { SsiService } from '@services/ssi.service';
+import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, FechaService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
+import { AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@libs/interfaces';
+import { ValidatorService } from '@core/services/validators';
 import { typeErrorControl } from '@core/helpers';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
