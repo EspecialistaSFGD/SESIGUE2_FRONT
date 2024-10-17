@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
+import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 
 @Component({
@@ -33,6 +34,7 @@ export class AsistenciasTecnicasComponent {
     total: 0
   }
 
+  paramsExist: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
   showNzModal: boolean = false
@@ -43,12 +45,43 @@ export class AsistenciasTecnicasComponent {
   clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }))
 
   private modal = inject(NzModalService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute)
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
   private ubigeoService = inject(UbigeosService)
+
+
+  constructor() {
+    this.getParams()
+  }
 
   ngOnInit() {
     this.obtenerAsistenciasTecnicas()
     this.obtenerDepartamentos()
+  }
+
+  getParams(){
+    this.route.queryParams.subscribe(params => {
+      if(Object.keys(params).length > 0){
+        const relations = [
+          { param: 'entidad', field: 'entidadId' },
+          { param: 'tipoEntidad', field: 'tipoEntidadId' },
+          { param: 'espacio', field: 'espacioId' },
+        ]
+
+        let campo = params['campo']
+        const finded = relations.find( item => item.param = campo)        
+        if(finded){
+          campo = finded.field
+        }
+        
+        this.pagination.columnSort = campo
+        this.pagination.currentPage = params['pagina']
+        this.pagination.pageSize = params['cantidad']
+        this.pagination.typeSort = params['ordenar']
+        this.obtenerAsistenciasTecnicas()
+      }      
+    });
   }
 
   obtenerAsistenciasTecnicas() {
@@ -90,7 +123,22 @@ export class AsistenciasTecnicasComponent {
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
-
+    const sortsNames = ['ascend','descend']
+    const sorts = params.sort.find( item => sortsNames.includes(item.value!))    
+    const qtySorts = params.sort.reduce( (total, item) => {
+      return sortsNames.includes( item.value! ) ? total + 1 : total
+    }, 0)    
+    const showParams = params.pageIndex == 1 && params.pageSize == 10 && qtySorts == 0 ? false : true
+    if(showParams){
+      const ordenar = sorts?.value!.slice(0, -3)      
+      this.router.navigate(
+        [],
+        {
+          relativeTo: this.route,
+          queryParams: { pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar }
+        }
+      );
+    }    
   }
 
   updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {

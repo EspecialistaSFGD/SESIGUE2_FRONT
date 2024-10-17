@@ -4,12 +4,10 @@ import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup 
 import { environment } from '../../../environments/environment';
 import { RouterModule } from '@angular/router';
 import { Chart, register } from '@antv/g2';
-import { TraerReportesInterface } from '@interfaces/reportes/reporte.interface';
 import { AcuerdoReporteModel } from '@models/pedido/acuerdo.model';
 import { AnchorModel } from '@models/shared/anchor.model';
 import { ReporteSectorModel, ReporteTotalModel } from '@models/shared/reporte.model';
 import { SelectModel } from '@models/shared/select.model';
-import { AuthService } from '@services/auth/auth.service';
 import { EstadoComponent } from '@shared/components/estado/estado.component';
 import { PageHeaderFullComponent } from '@shared/layout/page-header-full/page-header-full.component';
 import { ReportesService } from '@shared/services/reportes.service';
@@ -31,6 +29,8 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { feature } from 'topojson';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { TraerReportesInterface } from '@libs/interfaces/reportes/reporte.interface';
 
 // @ts-ignore
 register('data.feature', ({ name }) => {

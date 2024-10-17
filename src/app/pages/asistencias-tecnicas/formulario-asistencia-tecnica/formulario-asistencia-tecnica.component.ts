@@ -313,7 +313,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   changeTipoEntidad() {
     this.setUbigeo()
     const departamento = this.formAsistencia.get('departamento')?.value
-    this.obtenerEntidad(`${departamento}0000`)
+    if(departamento){
+      this.obtenerEntidad(`${departamento}0000`)
+    }
   }
 
   setUbigeo(){
