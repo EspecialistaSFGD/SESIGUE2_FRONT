@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, FechaService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
+import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, FechaService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { ValidatorService } from '@core/services/validators';
 import { typeErrorControl } from '@core/helpers';
@@ -75,6 +75,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private validatorService = inject(ValidatorService)
   private ssiService = inject(SsiService)
   private fechaService = inject(FechaService)
+  private alcaldeService = inject(AlcaldesService)
 
   get congresistas(): FormArray {
     return this.formAsistencia.get('congresistas') as FormArray;
@@ -98,6 +99,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     departamento: ['', Validators.required],
     provincia: ['', Validators.required],
     distrito: ['', Validators.required],
+    ubigeo: [''],
     entidad: [{ value: '', disabled: true }],
     autoridad: ['', Validators.required],
     dniAutoridad: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
@@ -363,7 +365,47 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   changeAutoridad() {
     const autoridad = this.formAsistencia.get('autoridad')?.value
+    const ubigeo = this.formAsistencia.get('ubigeo')?.value
+    const dni = this.formAsistencia.get('dniAutoridad')
+    const nombre = this.formAsistencia.get('nombreAutoridad')
+    const cargo = this.formAsistencia.get('cargoAutoridad')
+    
+    if(autoridad && ubigeo){
+      this.obtenerAlcaldePorUbigeo(ubigeo)
+    } else {
+      dni?.reset()
+      nombre?.reset()
+      cargo?.reset()
+    }
   }
+
+  obtenerAlcaldePorUbigeo(ubigeo: string){
+    let mainUbigeo = ubigeo.slice(0, -2);
+    let endUbigeo = ubigeo.slice(-2);
+    const setUbigeo = endUbigeo == '01' ? mainUbigeo : ubigeo
+
+    const dni = this.formAsistencia.get('dniAutoridad')
+    const nombre = this.formAsistencia.get('nombreAutoridad')
+    const cargo = this.formAsistencia.get('cargoAutoridad')
+    
+    this.alcaldeService.getAlcaldePorUbigeo(setUbigeo)
+      .subscribe( resp => {
+        if(resp.success){
+          if(resp.data.length > 0){
+            const alcalde = resp.data[0]
+            dni?.setValue(alcalde.dni)
+            nombre?.setValue(alcalde.nombre)
+            cargo?.setValue(alcalde.cargo)
+          } else {
+            dni?.reset()
+            nombre?.reset()
+            cargo?.reset()
+          }         
+        }
+      })
+  }
+
+
 
   changeCongresista(index: number) {
     const congresistas = this.formAsistencia.get('congresistas') as FormArray
@@ -465,17 +507,20 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.formAsistencia.get('distrito')?.reset();
       this.obtenerUbigeoDistrito(ubigeo)
       this.obtenerEntidad(`${ubigeo}01`)
+      this.changeAutoridad()
     }
 
   }
 
-  obtenerDistito(ubigeo: string) {
+  obtenerUbigeoDistito(ubigeo: string) {
     if (ubigeo) {
       this.obtenerEntidad(ubigeo)
+      this.changeAutoridad()
     }
   }
 
   obtenerEntidad(ubigeo: string) {
+    this.formAsistencia.get('ubigeo')?.setValue(ubigeo)
     if (ubigeo) {
       this.entidadService.getEntidadporUbigeo(ubigeo)
         .subscribe(resp => {

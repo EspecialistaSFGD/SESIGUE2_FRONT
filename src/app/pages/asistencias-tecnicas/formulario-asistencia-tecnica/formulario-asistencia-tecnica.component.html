@@ -110,7 +110,7 @@
             <nz-form-label nzRequired [nzSpan]="null" nzFor="distrito">Distrito</nz-form-label>
             <nz-form-control nzSpan="null">
               <nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" class="select-form-control"
-                formControlName="distrito" (ngModelChange)="obtenerDistito($event)" [nzDisabled]="districtDisabled"
+                formControlName="distrito" (ngModelChange)="obtenerUbigeoDistito($event)" [nzDisabled]="districtDisabled"
                 nzAllowClear nzShowSearch>
                 @for (distrito of distritos(); track $index) {
                 <nz-option [nzValue]="distrito.distritoId" nzLabel="{{distrito.distrito}}"></nz-option>
