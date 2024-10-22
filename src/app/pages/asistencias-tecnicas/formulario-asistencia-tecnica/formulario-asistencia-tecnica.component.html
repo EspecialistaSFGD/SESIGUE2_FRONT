@@ -1,5 +1,4 @@
-<nz-modal [(nzVisible)]="showModal" (click)="closeModal()" nzTitle="{{create ? 'Agregar' : 'Actualizar' }} Atención"
-  nzWidth="75%" nzOkText="{{create ? 'Agregar' : 'Actualizar' }} Atención" (nzOnOk)="saveOrEdit()"
+<nz-modal [(nzVisible)]="showModal" nzTitle="{{create ? 'Agregar' : 'Actualizar' }} Atención" nzMaskClosable="false" nzKeyboard="false" nzWidth="75%" nzOkText="{{create ? 'Agregar' : 'Actualizar' }} Atención" (nzOnOk)="saveOrEdit()"
   nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
   <ng-container *nzModalContent>
     <form [formGroup]="formAsistencia" nz-form nzLayout="vertical" autocomplete="off">
@@ -443,10 +442,13 @@
         <div nz-col nzSpan="24">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="comentarios">Comentarios</nz-form-label>
-            <textarea class="form-control" id="comentarios" formControlName="comentarios"
+            <textarea class="form-control" id="comentarios" formControlName="comentarios" (keyup)="caracteresContador('comentarios',520)"
               placeholder="Ingrese el comentario aquí" rows="2"></textarea>
-            <div class="text-danger" *ngIf="alertMessageError('comentarios')">
-              {{msgErrorControl('comentarios','Comentarios')}}</div>
+              <div class="flex justify-between">
+                <div class="text-danger" *ngIf="alertMessageError('comentarios')">
+                  {{msgErrorControl('comentarios','Comentarios')}}</div>
+                <div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : comentariosCount < 20 }">{{comentariosCount}}</div>
+              </div>
           </nz-form-item>
         </div>
       </div>

@@ -45,6 +45,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   public gobiernoParticipantes = signal<NivelGobiernoResponse[]>([])
   public agendaClasificaciones = signal<ClasificacionResponse[]>([])
 
+  comentariosCount = 250
   participar: string[] = ['si', 'no']
   fileListMeet: NzUploadFile[] = [];
   fileListAttendance: NzUploadFile[] = [];
@@ -616,6 +617,17 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const agendas = this.formAsistencia.get('agendas') as FormArray
     const inversion = agendas.at(index).get('inversion')?.value
     return inversion
+  }
+
+  caracteresContador(control: string, qty: number){
+    const element = this.formAsistencia.get(control)
+    const value = element?.value
+    if(value.length > qty){
+      const newValue = value.substring(0, qty);
+      element?.setValue(newValue)
+    }
+
+    this.comentariosCount = qty - value.length;
   }
 
   
