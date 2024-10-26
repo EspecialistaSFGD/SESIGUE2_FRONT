@@ -323,18 +323,37 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   setUbigeo(){
+    const departamento = this.formAsistencia.get('departamento')
     const provincia = this.formAsistencia.get('provincia')
-    if (provincia) {
-      const distrito = this.formAsistencia.get('distrito')
-      const tipo = this.obtenerValueTipoEntidad()
-      const regionales = ['GR']
-      regionales.includes(tipo?.abreviatura!) ? provincia?.disable() : provincia?.enable()
-      regionales.includes(tipo?.abreviatura!) ? distrito?.disable() : distrito?.enable()
-      if (regionales.includes(tipo?.abreviatura!)) {                
-        provincia?.reset()
-        distrito?.reset()
-        this.provincias.set([])
-        this.distritos.set([])
+    const distrito = this.formAsistencia.get('distrito')    
+    const autoridad = this.formAsistencia.get('autoridad')?.value    
+    const dni = this.formAsistencia.get('dniAutoridad')    
+    const tipo = this.obtenerValueTipoEntidad()
+    const regionales = ['GR','MR']
+    regionales.includes(tipo?.abreviatura!) ? provincia?.disable() : provincia?.enable()
+    regionales.includes(tipo?.abreviatura!) ? distrito?.disable() : distrito?.enable()
+    if (regionales.includes(tipo?.abreviatura!)) {    
+      provincia?.reset()
+      distrito?.reset()
+      this.provincias.set([])
+      this.distritos.set([])       
+    }
+    const mancomunidadMuni = ['MM']
+    if (mancomunidadMuni.includes(tipo?.abreviatura!)) {
+      distrito?.clearValidators()
+    }
+    const mancomunidad = ['MR','MM']
+    if (mancomunidad.includes(tipo?.abreviatura!)) {
+      console.log(autoridad);
+      
+      dni?.clearValidators()
+      if(autoridad){
+        console.log('VALIDAR DNI');
+        
+        dni?.setValidators(Validators.required)
+      } else {
+        console.log('LIMPIAR DNI');
+        
       }
     }
   }
@@ -371,6 +390,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const dni = this.formAsistencia.get('dniAutoridad')
     const nombre = this.formAsistencia.get('nombreAutoridad')
     const cargo = this.formAsistencia.get('cargoAutoridad')
+   
     
     if(autoridad && ubigeo){
       this.obtenerAlcaldePorUbigeo(ubigeo)
@@ -379,6 +399,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       nombre?.reset()
       cargo?.reset()
     }
+    // if(autoridad){
+    //   dni?.setValidators(Validators.required)
+    // }
+    this.setUbigeo()
   }
 
   obtenerAlcaldePorUbigeo(ubigeo: string){
@@ -497,11 +521,11 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     if (ubigeo) {
       this.formAsistencia.get('provincia')?.reset();
       this.formAsistencia.get('distrito')?.reset();
-      this.districtDisabled = true
+      // this.districtDisabled = true
       // this.changeTipoEntidad()
-      this.setUbigeo()
       this.obtenerUbigeoProvincias(ubigeo)
       this.obtenerEntidad(`${ubigeo}0000`)
+      this.setUbigeo()
     }
   }
   obtenerUbigeoProvincia(ubigeo: string) {
@@ -543,6 +567,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       .subscribe(resp => {
         if (resp.success == true) {
           this.provinceDisabled = false
+          this.districtDisabled = true
           this.provincias.set(resp.data)
         }
       })
