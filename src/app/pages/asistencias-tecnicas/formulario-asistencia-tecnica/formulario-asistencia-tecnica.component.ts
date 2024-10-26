@@ -241,6 +241,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   obtenerEspacios() {
     this.pagination.columnSort = 'nombre'
+    this.pagination.pageSize = 20
     this.espacioService.getAllEspacios(this.pagination)
       .subscribe(resp => {
         if (resp.success = true) {

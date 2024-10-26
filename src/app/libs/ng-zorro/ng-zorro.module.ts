@@ -13,6 +13,8 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 
 
 @NgModule({
@@ -31,7 +33,9 @@ import { NzTableModule } from 'ng-zorro-antd/table';
     NzSpaceModule,
     NzInputNumberModule,
     NzButtonModule,
-    NzTableModule
+    NzTableModule,
+    NzTabsModule,
+    NzDrawerModule
   ],
   exports: [
     NzFormModule,
@@ -46,7 +50,9 @@ import { NzTableModule } from 'ng-zorro-antd/table';
     NzSpaceModule,
     NzInputNumberModule,
     NzButtonModule,
-    NzTableModule
+    NzTableModule,
+    NzTabsModule,
+    NzDrawerModule
   ]
 })
 export class NgZorroModule { }

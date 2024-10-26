@@ -12,7 +12,11 @@ export const PAGES_ROUTES: Routes = [
   },
   {
     canActivate: [AuthGuard, AccessGuard],
+    path: 'transferencias_financieras', loadComponent: () => import('./transferencias-financieras/transferencias-financieras.component').then(m => m.TransferenciasFinancierasComponent)
+  },
+  {
+    canActivate: [AuthGuard, AccessGuard],
     path: 'configuraciones', loadChildren: () => import('./configuraciones/configuraciones.routes').then(m => m.CONFIG_ROUTES)
   },
-  { path: '', redirectTo: 'panel', pathMatch: 'full' },
+  { path: '**', redirectTo: 'panel', pathMatch: 'full' },
 ];
