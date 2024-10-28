@@ -57,6 +57,24 @@
 
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="4" nzLg="4" nzXl="4">
                         <nz-form-item>
+                            <nz-form-label [nzSpan]="null">TIpos de Espacio</nz-form-label>
+                            <!-- {{this.espaciosStore.tiposEspacio()|json}} -->
+                            <nz-form-control nzSpan="null">
+                                <nz-select nzPlaceHolder="Seleccione" id="tipoEspacio" #tipoEspacio
+                                    formControlName="tipoEspacio" [compareWith]="compareFn" nzAllowClear
+                                    (ngModelChange)="onTipoEspacioChange($event)">
+                                    <nz-option *ngFor="let tEsp of this.espaciosStore.tiposEspacio()"
+                                        [nzLabel]="tEsp.label!" [nzValue]="tEsp"></nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                    @if(filterReportForm.get('tipoEspacio')?.value != null) {
+
+
+                    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="4" nzLg="4" nzXl="4">
+                        <nz-form-item>
                             <nz-form-label>Espacio</nz-form-label>
                             <nz-form-control>
                                 <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione"
@@ -68,6 +86,8 @@
                             </nz-form-control>
                         </nz-form-item>
                     </div>
+
+                    }
 
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="4" nzLg="4" nzXl="4">
                         <nz-form-item>
@@ -198,9 +218,18 @@
                                 <td nzAlign="center" class="">
                                     @if(item.porcentaje) {
                                     <div class="object-contain w-[85%]">
-                                        <nz-progress [nzPercent]="item.porcentaje.toFixed(0)" [nzStrokeWidth]="'12'"
+                                        <!-- <nz-progress [nzPercent]="item.porcentaje.toFixed(0)" [nzStrokeWidth]="'12'"
                                             [nzStatus]="(item.porcentaje == 100) ? 'normal' : 'active'"
-                                            [nzStrokeColor]="(item.porcentaje > 70) ? '#1ca05a' : '#0866ae'"></nz-progress>
+                                            [nzStrokeColor]="(item.porcentaje > 70) ? '#1ca05a' : '#0866ae'"></nz-progress> -->
+                                        <nz-progress [nzPercent]="item.porcentaje.toFixed(0)" [nzStrokeWidth]="12"
+                                            [nzStatus]="item.porcentaje === 100 ? 'active' : 'normal'" [nzStrokeColor]="
+                                            item.porcentaje == 0 ? '#4d4d4d' :        
+                                            item.porcentaje <= 50 ? '#DC0A15' :      
+                                            item.porcentaje <= 90 ? '#0866ae' :      
+                                            '#1ca05a'                                
+                                        ">
+                                        </nz-progress>
+
                                     </div>
                                     }
                                 </td>
@@ -254,9 +283,17 @@
                                 <td nzAlign="center" class="">
                                     @if(item.porcentaje) {
                                     <div class="object-contain w-[85%]">
-                                        <nz-progress [nzPercent]="item.porcentaje.toFixed(0)" [nzStrokeWidth]="'12'"
+                                        <!-- <nz-progress [nzPercent]="item.porcentaje.toFixed(0)" [nzStrokeWidth]="'12'"
                                             [nzStatus]="(item.porcentaje == 100) ? 'normal' : 'active'"
-                                            [nzStrokeColor]="(item.porcentaje > 70) ? '#1ca05a' : '#0866ae'"></nz-progress>
+                                            [nzStrokeColor]="(item.porcentaje > 70) ? '#1ca05a' : '#0866ae'"></nz-progress> -->
+                                        <nz-progress [nzPercent]="item.porcentaje.toFixed(0)" [nzStrokeWidth]="12"
+                                            [nzStatus]="item.porcentaje === 100 ? 'active' : 'normal'" [nzStrokeColor]="
+                                            item.porcentaje == 0 ? '#4d4d4d' :        
+                                            item.porcentaje <= 50 ? '#DC0A15' :      
+                                            item.porcentaje <= 90 ? '#0866ae' :      
+                                            '#1ca05a'                                
+                                        ">
+                                        </nz-progress>
                                     </div>
                                     }
                                 </td>

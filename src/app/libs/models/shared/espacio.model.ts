@@ -45,3 +45,12 @@ export class TraerEspaciosInterface {
         public sortOrder?: string | null,
     ) { }
 }
+
+export interface TipoEventoModel {
+    iRecordCount: number;
+    iPageCount: number;
+    iCurrentPage: number;
+    codigoTipoEvento: number;
+    descripcionTipoEvento: string;
+    rowNumber: number;
+}

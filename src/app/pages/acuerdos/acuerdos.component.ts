@@ -91,6 +91,7 @@ export class AcuerdosComponent implements OnInit {
   tipoSeleccionado: SelectModel | null = null;
   estadosSelecionados: SelectModel[] | null = null;
   espaciosSeleccionados: SelectModel[] | null = null;
+  tipoEspacioSeleccionado: SelectModel | null = null;
   sectoresSeleccionados: SelectModel[] | null = null;
   depSeleccionado: SelectModel | null = null;
   provSeleccionada: SelectModel | null = null;
@@ -127,85 +128,104 @@ export class AcuerdosComponent implements OnInit {
   constructor() {
     this.crearSearForm();
 
+    const savedParams = localStorage.getItem('acuerdosParams');
+
+    if (savedParams) {
+      // Si ya hay parámetros guardados en localStorage, los cargamos
+      const paramsFromStorage = JSON.parse(savedParams);
+      this.cargarParametrosDesdeLocalStorage(paramsFromStorage);
+    } else {
+      // Si no hay parámetros guardados en el localStorage, continuar con la lógica normal
+      this.activatedRoute.queryParams.subscribe((params) => {
+        this.cargarParametrosDesdeURL(params);
+      });
+    }
+
     // Obtener los valores de los queryParams en la primera carga
-    this.activatedRoute.queryParams.subscribe((params) => {
-      if (!this.updatingParams) {
-        this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
+    // this.activatedRoute.queryParams.subscribe((params) => {
+    //   if (!this.updatingParams) {
+    //     this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
 
-        if (params['cui'] != null) {
-          this.cui = params['cui'];
-        }
+    //     if (params['cui'] != null) {
+    //       this.cui = params['cui'];
+    //     }
 
-        if (params['clasificacion'] != null) {
-          const selectedValues = Array.isArray(params['clasificacion']) ? params['clasificacion'] : [params['clasificacion']];
-          this.clasificacionesSeleccionadas = selectedValues.map(value => ({ value: Number(value) }));
-        }
+    //     if (params['clasificacion'] != null) {
+    //       const selectedValues = Array.isArray(params['clasificacion']) ? params['clasificacion'] : [params['clasificacion']];
+    //       this.clasificacionesSeleccionadas = selectedValues.map(value => ({ value: Number(value) }));
+    //     }
 
-        if (params['tipo'] != null) {
-          this.tipoSeleccionado = { value: params['tipo'] };
-        }
+    //     if (params['tipo'] != null) {
+    //       this.tipoSeleccionado = { value: params['tipo'] };
+    //     }
 
-        if (params['estado'] != null) {
-          const selectedValues = Array.isArray(params['estado']) ? params['estado'] : [params['estado']];
-          this.estadosSelecionados = selectedValues.map(value => ({ value: Number(value) }));
-        }
+    //     if (params['estado'] != null) {
+    //       const selectedValues = Array.isArray(params['estado']) ? params['estado'] : [params['estado']];
+    //       this.estadosSelecionados = selectedValues.map(value => ({ value: Number(value) }));
+    //     }
 
-        if (params['espacio'] != null) {
-          const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
-          this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
-        }
+    //     if (params['tipoEspacio'] != null) {
+    //       this.tipoEspacioSeleccionado = { value: Number(params['tipoEspacio']) };
+    //       this.onTipoEspacioChange(this.tipoEspacioSeleccionado, true);
+    //     }
 
-        if (params['sector'] != null) {
-          const selectedValues = Array.isArray(params['sector']) ? params['sector'] : [params['sector']];
-          this.sectoresSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
-        }
+    //     if (params['espacio'] != null) {
+    //       const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
+    //       this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+    //     }
 
-        if (params['dep'] != null) {
-          this.depSeleccionado = { value: params['dep'] };
-          this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
-        }
+    //     if (params['sector'] != null) {
+    //       const selectedValues = Array.isArray(params['sector']) ? params['sector'] : [params['sector']];
+    //       this.sectoresSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+    //     }
 
-        if (params['prov'] != null) {
-          this.provSeleccionada = { value: params['prov'] };
-          this.onProvChange(this.provSeleccionada, true);
-        }
+    //     if (params['dep'] != null) {
+    //       this.depSeleccionado = { value: params['dep'] };
+    //       this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
+    //     }
 
-        if (params['dis'] != null) {
-          this.disSeleccionado = { value: params['dis'] };
-        }
+    //     if (params['prov'] != null) {
+    //       this.provSeleccionada = { value: params['prov'] };
+    //       this.onProvChange(this.provSeleccionada, true);
+    //     }
 
-        if (params['pageIndex'] != null) {
-          this.pageIndex = Number(params['pageIndex']);
-        }
+    //     if (params['dis'] != null) {
+    //       this.disSeleccionado = { value: params['dis'] };
+    //     }
 
-        if (params['pageSize'] != null) {
-          this.pageSize = Number(params['pageSize']);
-        }
+    //     if (params['pageIndex'] != null) {
+    //       this.pageIndex = Number(params['pageIndex']);
+    //     }
 
-        if (params['sortField'] != null) {
-          this.sortField = params['sortField'];
-        }
+    //     if (params['pageSize'] != null) {
+    //       this.pageSize = Number(params['pageSize']);
+    //     }
 
-        if (params['sortOrder'] != null) {
-          this.sortOrder = params['sortOrder'];
-        }
+    //     if (params['sortField'] != null) {
+    //       this.sortField = params['sortField'];
+    //     }
 
-        // Inicializar el contador con la suma de las selecciones iniciales
-        this.filterCounter.set(
-          ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
-          (this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.length : 0) +
-          (this.tipoSeleccionado ? 1 : 0) +
-          (this.estadosSelecionados ? this.estadosSelecionados.length : 0) +
-          (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
-          (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
-          (this.depSeleccionado ? 1 : 0) +
-          (this.provSeleccionada ? 1 : 0) +
-          (this.disSeleccionado ? 1 : 0)
-        );
+    //     if (params['sortOrder'] != null) {
+    //       this.sortOrder = params['sortOrder'];
+    //     }
 
-        this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
-      }
-    });
+    //     // Inicializar el contador con la suma de las selecciones iniciales
+    //     this.filterCounter.set(
+    //       ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
+    //       (this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.length : 0) +
+    //       (this.tipoSeleccionado ? 1 : 0) +
+    //       (this.estadosSelecionados ? this.estadosSelecionados.length : 0) +
+    //       (this.tipoEspacioSeleccionado ? 1 : 0) +
+    //       (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
+    //       (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
+    //       (this.depSeleccionado ? 1 : 0) +
+    //       (this.provSeleccionada ? 1 : 0) +
+    //       (this.disSeleccionado ? 1 : 0)
+    //     );
+
+    //     this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
+    //   }
+    // });
 
     // Debounce los cambios de parámetros de la URL
     this.updateParamsSubject.pipe(debounceTime(300)).subscribe(() => {
@@ -219,12 +239,135 @@ export class AcuerdosComponent implements OnInit {
       clasificacion: this.clasificacionesSeleccionadas,
       tipo: this.tipoSeleccionado,
       estado: this.estadosSelecionados,
+      tipoEspacio: this.tipoEspacioSeleccionado,
       espacio: this.espaciosSeleccionados,
       sector: this.sectoresSeleccionados,
       dep: this.depSeleccionado,
       prov: this.provSeleccionada,
       dis: this.disSeleccionado,
     });
+  }
+
+  cargarParametrosDesdeLocalStorage(params: any): void {
+    if (!this.updatingParams) {
+      this.cargandoUbigeo = true;
+
+      this.cui = params.cui || null;
+      this.clasificacionesSeleccionadas = params.clasificacion && params.clasificacion.length ? params.clasificacion.map((value: number) => ({ value })) : [];
+      this.tipoSeleccionado = params.tipo ? { value: params.tipo } : null;
+      this.estadosSelecionados = params.estado && params.estado.length ? params.estado.map((value: number) => ({ value })) : [];
+      this.tipoEspacioSeleccionado = params.tipoEspacio ? { value: params.tipoEspacio } : null;
+      this.espaciosSeleccionados = params.espacio && params.espacio.length ? params.espacio.map((value: number) => ({ value })) : [];
+      this.sectoresSeleccionados = params.sector && params.sector.length ? params.sector.map((value: number) => ({ value })) : [];
+      this.depSeleccionado = params.dep ? { value: params.dep } : null;
+      this.provSeleccionada = params.prov ? { value: params.prov } : null;
+      this.disSeleccionado = params.dis ? { value: params.dis } : null;
+      this.pageIndex = params.pageIndex || 1;
+      this.pageSize = params.pageSize || 10;
+      this.sortField = params.sortField || 'acuerdoID';
+      this.sortOrder = params.sortOrder || 'descend';
+
+      // Actualizar el contador de filtros activos
+      this.filterCounter.set(
+        ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
+        (this.clasificacionesSeleccionadas?.length ? this.clasificacionesSeleccionadas.length : 0) +
+        (this.tipoSeleccionado ? 1 : 0) +
+        (this.estadosSelecionados?.length ? this.estadosSelecionados.length : 0) +
+        (this.tipoEspacioSeleccionado ? 1 : 0) +
+        (this.espaciosSeleccionados?.length ? this.espaciosSeleccionados.length : 0) +
+        (this.sectoresSeleccionados?.length ? this.sectoresSeleccionados.length : 0) +
+        (this.depSeleccionado ? 1 : 0) +
+        (this.provSeleccionada ? 1 : 0) +
+        (this.disSeleccionado ? 1 : 0)
+      );
+
+      this.cargandoUbigeo = false;
+    }
+  }
+
+  cargarParametrosDesdeURL(params: any): void {
+    if (!this.updatingParams) {
+      this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
+
+      if (params['cui'] != null) {
+        this.cui = params['cui'];
+      }
+
+      if (params['clasificacion'] != null) {
+        const selectedValues = Array.isArray(params['clasificacion']) ? params['clasificacion'] : [params['clasificacion']];
+        this.clasificacionesSeleccionadas = selectedValues.map(value => ({ value: Number(value) }));
+      }
+
+      if (params['tipo'] != null) {
+        this.tipoSeleccionado = { value: params['tipo'] };
+      }
+
+      if (params['estado'] != null) {
+        const selectedValues = Array.isArray(params['estado']) ? params['estado'] : [params['estado']];
+        this.estadosSelecionados = selectedValues.map(value => ({ value: Number(value) }));
+      }
+
+      if (params['tipoEspacio'] != null) {
+        this.tipoEspacioSeleccionado = { value: Number(params['tipoEspacio']) };
+        this.onTipoEspacioChange(this.tipoEspacioSeleccionado, true);
+      }
+
+      if (params['espacio'] != null) {
+        const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
+        this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+      }
+
+      if (params['sector'] != null) {
+        const selectedValues = Array.isArray(params['sector']) ? params['sector'] : [params['sector']];
+        this.sectoresSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+      }
+
+      if (params['dep'] != null) {
+        this.depSeleccionado = { value: params['dep'] };
+        this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
+      }
+
+      if (params['prov'] != null) {
+        this.provSeleccionada = { value: params['prov'] };
+        this.onProvChange(this.provSeleccionada, true);
+      }
+
+      if (params['dis'] != null) {
+        this.disSeleccionado = { value: params['dis'] };
+      }
+
+      if (params['pageIndex'] != null) {
+        this.pageIndex = Number(params['pageIndex']);
+      }
+
+      if (params['pageSize'] != null) {
+        this.pageSize = Number(params['pageSize']);
+      }
+
+      if (params['sortField'] != null) {
+        this.sortField = params['sortField'];
+      }
+
+      if (params['sortOrder'] != null) {
+        this.sortOrder = params['sortOrder'];
+      }
+
+      // Inicializar el contador con la suma de las selecciones iniciales
+      this.filterCounter.set(
+        ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
+        (this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.length : 0) +
+        (this.tipoSeleccionado ? 1 : 0) +
+        (this.estadosSelecionados ? this.estadosSelecionados.length : 0) +
+        (this.tipoEspacioSeleccionado ? 1 : 0) +
+        (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
+        (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
+        (this.depSeleccionado ? 1 : 0) +
+        (this.provSeleccionada ? 1 : 0) +
+        (this.disSeleccionado ? 1 : 0)
+      );
+
+      this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
+    }
   }
 
   traerAcuerdos(
@@ -308,6 +451,42 @@ export class AcuerdosComponent implements OnInit {
         saveAs(blob, res.data[0].nombre);
       }
     });
+  }
+
+  onTipoEspacioChange(value: SelectModel | null, skipNavigation = false): void {
+    if (this.clearingFilters) {
+      return;
+    }
+
+    const wasPreviouslySelected = this.tipoEspacioSeleccionado != null;
+
+    this.tipoEspacioSeleccionado = value;
+    // this.traerAcuerdos({ tipoEspacioSeleccionado: value });
+    // debugger;
+    if (value != null) {
+      // this.espaciosStore.limpiarEspacios();
+      this.espaciosStore.listarEventos(Number(value.value));
+
+
+      if (this.espaciosSeleccionados != null) {
+        this.espaciosSeleccionados = null;
+        this.searchForm.patchValue({ espacio: null });
+        this.filterCounter.update(x => x - 1);
+      }
+    } else {
+      this.onEspacioChange(null);
+    }
+
+    if (value == null && wasPreviouslySelected) {
+      this.filterCounter.update(x => x - 1);
+    } else if (value != null && !wasPreviouslySelected) {
+      this.filterCounter.update(x => x + 1);
+    }
+
+    if (!this.cargandoUbigeo && !skipNavigation) {
+      // this.traerAcuerdos({});
+      this.updateParamsSubject.next();
+    }
   }
 
   onEspacioChange(value: SelectModel[] | null): void {
@@ -450,8 +629,6 @@ export class AcuerdosComponent implements OnInit {
   }
 
   onTipoAcuerdosChange(value: any) {
-    console.log('onTipoAcuerdosChange', { value });
-
     if (this.clearingFilters) {
       return;
     }
@@ -567,6 +744,7 @@ export class AcuerdosComponent implements OnInit {
       clasificacion: this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.map(x => x.value) : null,
       tipo: this.tipoSeleccionado ? this.tipoSeleccionado.value : null,
       estado: this.estadosSelecionados ? this.estadosSelecionados.map(x => x.value) : null,
+      tipoEspacio: this.tipoEspacioSeleccionado ? this.tipoEspacioSeleccionado.value : null,
       espacio: this.espaciosSeleccionados ? this.espaciosSeleccionados.map(x => x.value) : null,
       sector: this.sectoresSeleccionados ? this.sectoresSeleccionados.map(x => x.value) : null,
       dep: this.depSeleccionado ? this.depSeleccionado.value : null,
@@ -578,6 +756,10 @@ export class AcuerdosComponent implements OnInit {
       sortOrder: this.sortOrder
     };
 
+    // Guardar en el localStorage
+    localStorage.setItem('acuerdosParams', JSON.stringify(queryParams));
+
+
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
       queryParams,
@@ -587,50 +769,125 @@ export class AcuerdosComponent implements OnInit {
     });
   }
 
-  onClearFilters(): void {
-    this.clearingFilters = true;
+  // onClearFilters(): void {
+  //   this.clearingFilters = true;
 
-    this.searchForm.reset();
+  //   this.searchForm.reset();
 
-    this.cui = null;
-    this.clasificacionesSeleccionadas = [];
-    this.tipoSeleccionado = null;
-    this.estadosSelecionados = [];
-    this.espaciosSeleccionados = [];
-    this.sectoresSeleccionados = [];
-    this.depSeleccionado = null;
-    this.provSeleccionada = null;
+  //   this.cui = null;
+  //   this.clasificacionesSeleccionadas = [];
+  //   this.tipoSeleccionado = null;
+  //   this.estadosSelecionados = [];
+  //   this.tipoEspacioSeleccionado = null;
+  //   this.espaciosSeleccionados = [];
+  //   this.sectoresSeleccionados = [];
+  //   this.depSeleccionado = null;
+  //   this.provSeleccionada = null;
+  //   this.pageIndex = 1;
+  //   this.pageSize = 10;
+
+  //   this.filterCounter.set(0);
+
+  //   // Hacer una sola llamada a traerAcuerdos con los parámetros vacíos
+  //   this.traerAcuerdos({
+  //     cui: null,
+  //     clasificacionesSeleccionadas: [],
+  //     tipoSeleccionado: null,
+  //     estadosSelecionados: [],
+  //     espaciosSeleccionados: [],
+  //     sectoresSeleccionados: [],
+  //     depSeleccionado: null,
+  //     provSeleccionada: null,
+  //     pageIndex: this.pageIndex,
+  //     pageSize: this.pageSize,
+  //     sortField: this.sortField,
+  //     sortOrder: this.sortOrder
+  //   });
+
+  //   this.router.navigate(
+  //     [],
+  //     {
+  //       relativeTo: this.activatedRoute,
+  //       queryParams: { cui: null, clasificacion: null, tipo: null, estado: null, tipoEspacio: null, espacio: null, sector: null, dep: null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
+  //       queryParamsHandling: 'merge',
+  //     }
+  //   ).finally(() => {
+  //     this.clearingFilters = false;
+  //   });
+  // }
+
+  onClearFilters(excepciones: string[]): void {
+    // Primero restablecemos todos los filtros excepto los que están en la lista de excepciones
+    if (!excepciones.includes('cui')) {
+      this.cui = null;
+    }
+    if (!excepciones.includes('clasificacion')) {
+      this.clasificacionesSeleccionadas = [];
+    }
+    if (!excepciones.includes('tipo')) {
+      this.tipoSeleccionado = null;
+    }
+    if (!excepciones.includes('estado')) {
+      this.estadosSelecionados = [];
+    }
+    if (!excepciones.includes('tipoEspacio')) {
+      this.tipoEspacioSeleccionado = null;
+    }
+    if (!excepciones.includes('espacio')) {
+      this.espaciosSeleccionados = [];
+    }
+
+    if (this.authService.subTipo() != 'SECTOR') {
+      this.sectoresSeleccionados = [];
+    }
+
+    if (this.authService.subTipo() != 'REGION') {
+      this.depSeleccionado = null;
+    }
+    if (this.authService.subTipo() != 'PROVINCIA') {
+      this.provSeleccionada = null;
+    }
+    if (this.authService.subTipo() != 'DISTRITO') {
+      this.disSeleccionado = null;
+    }
+
+    // Restablecer paginación, orden y otros parámetros globales
     this.pageIndex = 1;
     this.pageSize = 10;
+    this.sortField = 'acuerdoID';
+    this.sortOrder = 'descend';
 
-    this.filterCounter.set(0);
-
-    // Hacer una sola llamada a traerAcuerdos con los parámetros vacíos
-    this.traerAcuerdos({
-      cui: null,
-      clasificacionesSeleccionadas: [],
-      tipoSeleccionado: null,
-      estadosSelecionados: [],
-      espaciosSeleccionados: [],
-      sectoresSeleccionados: [],
-      depSeleccionado: null,
-      provSeleccionada: null,
-      pageIndex: this.pageIndex,
-      pageSize: this.pageSize,
-      sortField: this.sortField,
-      sortOrder: this.sortOrder
+    // Actualizar los valores en el formulario de búsqueda
+    this.searchForm.patchValue({
+      cui: this.cui,
+      clasificacion: this.clasificacionesSeleccionadas,
+      tipo: this.tipoSeleccionado,
+      estado: this.estadosSelecionados,
+      tipoEspacio: this.tipoEspacioSeleccionado,
+      espacio: this.espaciosSeleccionados,
+      sector: this.sectoresSeleccionados,
+      dep: this.depSeleccionado,
+      prov: this.provSeleccionada,
+      dis: this.disSeleccionado,
     });
 
-    this.router.navigate(
-      [],
-      {
-        relativeTo: this.activatedRoute,
-        queryParams: { cui: null, clasificacion: null, tipo: null, estado: null, espacio: null, sector: null, dep: null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
-        queryParamsHandling: 'merge',
-      }
-    ).finally(() => {
-      this.clearingFilters = false;
-    });
+
+    // Actualizar el contador de filtros activos (filterCounter)
+    this.filterCounter.set(
+      ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
+      (this.clasificacionesSeleccionadas && this.clasificacionesSeleccionadas.length ? this.clasificacionesSeleccionadas.length : 0) +
+      (this.tipoSeleccionado ? 1 : 0) +
+      (this.estadosSelecionados && this.estadosSelecionados.length ? this.estadosSelecionados.length : 0) +
+      (this.tipoEspacioSeleccionado ? 1 : 0) +
+      (this.espaciosSeleccionados && this.espaciosSeleccionados.length ? this.espaciosSeleccionados.length : 0) +
+      (this.sectoresSeleccionados && this.sectoresSeleccionados.length ? this.sectoresSeleccionados.length : 0) +
+      (this.depSeleccionado ? 1 : 0) +
+      (this.provSeleccionada ? 1 : 0) +
+      (this.disSeleccionado ? 1 : 0)
+    );
+
+    // Actualizamos los queryParams para reflejar los cambios en la URL
+    this.updateQueryParams();
   }
 
   onGestionarHitoAcuerdo(codigo: number): void {
@@ -726,7 +983,7 @@ export class AcuerdosComponent implements OnInit {
 
   onOpenDrawer(): void {
     this.isDrawervisible = true;
-    this.espaciosStore.listarEventos();
+    // this.espaciosStore.listarEventos();
   }
 
   onCloseDrawer(): void {
@@ -739,6 +996,7 @@ export class AcuerdosComponent implements OnInit {
       clasificacion: [null],
       tipo: [null],
       estado: [null],
+      tipoEspacio: [null],
       espacio: [null],
       sector: [null],
       dep: [null],

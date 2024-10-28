@@ -13,7 +13,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
 import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
 import { SelectModel } from '../../../libs/models/shared/select.model';
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays, parseISO } from 'date-fns';
 
 @Component({
   selector: 'app-hito',
@@ -47,11 +47,9 @@ export class HitoComponent {
   private seleccion: SelectModel | null = null;
 
   public plazo = (this.acuerdoSeleccionado?.plazo != null) ? this.utilesService.stringToDate(this.acuerdoSeleccionado?.plazo.toString() || null) : null;
+  public fechaEvento = (this.acuerdoSeleccionado?.fechaEvento != null) ? parseISO(this.acuerdoSeleccionado?.fechaEvento.toString()) : null;
 
   constructor() {
-
-    // console.log(this.plazo);
-
 
     this.crearHitoForm();
 
@@ -64,7 +62,12 @@ export class HitoComponent {
     } else {
       this.seleccion = this.hitoSeleccionado.responsableSelect
     }
+
     this.onResponsableIDChange(this.seleccion);
+
+    console.log('fechaEvento', this.fechaEvento);
+    console.log('plazo', this.plazo);
+
   }
 
   onResponsableIDChange(tipo: SelectModel | null): void {
@@ -78,9 +81,13 @@ export class HitoComponent {
   }
 
   disabledDate = (current: Date): boolean => {
-    if (this.plazo == null) return false;
+    // Si 'plazo' o 'fechaEvento' son null, permitir todas las fechas
+    if (!this.plazo || !this.fechaEvento) {
+      return false;
+    }
 
-    return differenceInCalendarDays(current, this.plazo) > 0;
+    // Habilitar solo las fechas entre 'plazo' y 'fechaEvento'
+    return current < this.fechaEvento || current > this.plazo;
   }
 
 

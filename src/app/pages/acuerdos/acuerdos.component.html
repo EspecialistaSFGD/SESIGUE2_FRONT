@@ -1,5 +1,6 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <!-- {{this.authService.sector() |json}} -->
+{{ this.authService.subTipo() |json}}
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
     [nzData]="this.acuerdosService.acuerdos()!" [nzFrontPagination]="false"
     [nzLoading]="this.acuerdosService.isLoading()" [nzTotal]="this.acuerdosService.total()" [nzPageSize]="this.pageSize"
@@ -245,7 +246,24 @@
 
             <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <nz-form-item>
+                    <nz-form-label [nzSpan]="null">TIpos de Espacio</nz-form-label>
+                    <!-- {{this.espaciosStore.tiposEspacio()|json}} -->
+                    <nz-form-control nzSpan="null">
+                        <nz-select nzPlaceHolder="Seleccione" id="tipoEspacio" #tipoEspacio
+                            formControlName="tipoEspacio" [compareWith]="compareFn" nzAllowClear
+                            (ngModelChange)="onTipoEspacioChange($event)">
+                            <nz-option *ngFor="let tEsp of this.espaciosStore.tiposEspacio()" [nzLabel]="tEsp.label!"
+                                [nzValue]="tEsp"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            @if(searchForm.get('tipoEspacio')?.value != null) {
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+                <nz-form-item>
                     <nz-form-label [nzSpan]="null">Espacio</nz-form-label>
+                    <!-- {{this.espaciosStore.espacios()|json}} -->
                     <nz-form-control nzSpan="null">
                         <nz-select [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagPlaceHolder" nzMode="multiple"
                             nzPlaceHolder="Todos" id="espacio" #espacio formControlName="espacio"
@@ -258,6 +276,7 @@
                     </nz-form-control>
                 </nz-form-item>
             </div>
+            }
 
             <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <nz-form-item>
@@ -354,7 +373,7 @@
 
     <ng-template #footerTpl>
         <div style="float: right">
-            <!-- <button nz-button style="margin-right: 8px;" (click)="onClearFilters();">Limpiar filtros</button> -->
+            <button nz-button style="margin-right: 8px;" (click)="onClearFilters([]);">Limpiar filtros</button>
             <button nz-button nzType="primary" (click)="onCloseDrawer()"><span nz-icon nzType="save"
                     nzTheme="outline"></span> Guardar filtros</button>
         </div>

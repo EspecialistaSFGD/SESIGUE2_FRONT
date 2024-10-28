@@ -149,11 +149,19 @@ export class PedidosService {
     }
 
     agregarPedido(pedido: PedidoModel): Promise<ResponseModel> {
-        // console.log(pedido);
-        // return new Promise((resolve, reject) => { });
+
+        const codigoPerfil = this.authService.getCodigoPerfil();
+        this.#pedidosResult.update((v) => ({ ...v, isEditing: true }));
+
+        if (codigoPerfil === 0)
+            return new Promise((resolve, reject) => {
+                this.#pedidosResult.update((v) => ({ ...v, isEditing: false }));
+                this.msg.error('No se pudo obtener el Cógido de Perfil...')
+
+                reject(new Error('No se pudo obtener el Código de Perfil'));
+            });
 
         return new Promise((resolve, reject) => {
-            this.#pedidosResult.update((v) => ({ ...v, isEditing: true }));
 
             const ots: PedidoRequestModel = {} as PedidoRequestModel;
 
@@ -174,7 +182,7 @@ export class PedidosService {
             }
 
             ots.accesoId = Number(accesoId);
-            ots.codigoPerfil = this.authService.codigoPerfil();
+            ots.codigoPerfil = codigoPerfil;
 
             if (pedido.sectorSelect) ots.grupoId = Number(pedido.sectorSelect.value);
 

@@ -636,6 +636,8 @@ export class AuthService {
     localStorage.removeItem('subTipo');
     localStorage.removeItem('codigoSector');
     localStorage.removeItem('sector');
+    localStorage.removeItem('acuerdosParams');
+    localStorage.removeItem('pedidosParams');
 
     this.#usuario.set({
       usuario: null,

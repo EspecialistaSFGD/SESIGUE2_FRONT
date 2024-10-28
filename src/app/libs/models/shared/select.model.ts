@@ -4,5 +4,6 @@ export class SelectModel {
         public label?: string,
         // public checked?: boolean,
         public descripcion?: any,
+        public adicional?: any,
     ) { }
 }

@@ -71,6 +71,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   cui: string | null = null;
   espaciosSeleccionados: SelectModel[] | null = null;
+  tipoEspacioSeleccionado: SelectModel | null = null;
   sectoresSeleccionados: SelectModel[] | null = null;
   depSeleccionado: SelectModel | null = null;
   provSeleccionada: SelectModel | null = null;
@@ -100,73 +101,92 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   constructor() {
     this.crearSearForm();
 
+    const savedParams = localStorage.getItem('pedidosParams');
+
+    if (savedParams) {
+      // Si ya hay parámetros guardados en localStorage, los cargamos
+      const paramsFromStorage = JSON.parse(savedParams);
+      this.cargarParametrosDesdeLocalStorage(paramsFromStorage);
+    } else {
+      // Si no hay parámetros guardados en el localStorage, continuar con la lógica normal
+      this.activatedRoute.queryParams.subscribe((params) => {
+        this.cargarParametrosDesdeURL(params);
+      });
+    }
+
     // Obtener los valores de los queryParams en la primera carga
-    this.activatedRoute.queryParams.subscribe((params) => {
-      if (!this.updatingParams) {
-        this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
+    // this.activatedRoute.queryParams.subscribe((params) => {
+    //   if (!this.updatingParams) {
+    //     this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
 
-        if (params['cui'] != null) {
-          this.cui = params['cui'];
-        }
+    //     if (params['cui'] != null) {
+    //       this.cui = params['cui'];
+    //     }
 
-        if (params['espacio'] != null) {
-          const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
-          this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
-        } else {
-          this.espaciosSeleccionados = [];
-        }
+    //     if (params['tipoEspacio'] != null) {
+    //       this.tipoEspacioSeleccionado = { value: Number(params['tipoEspacio']) };
+    //       this.onTipoEspacioChange(this.tipoEspacioSeleccionado, true);
+    //     }
 
-        if (params['sector'] != null) {
-          const selectedValues = Array.isArray(params['sector']) ? params['sector'] : [params['sector']];
-          this.sectoresSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
-        }
+    //     if (params['espacio'] != null) {
+    //       const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
+    //       this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+    //     } else {
+    //       this.espaciosSeleccionados = [];
+    //     }
 
-        if (params['dep'] != null) {
-          this.depSeleccionado = { value: params['dep'] };
-          this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
-        }
+    //     if (params['sector'] != null) {
+    //       const selectedValues = Array.isArray(params['sector']) ? params['sector'] : [params['sector']];
+    //       this.sectoresSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+    //     }
 
-        if (params['prov'] != null) {
+    //     if (params['dep'] != null) {
+    //       this.depSeleccionado = { value: params['dep'] };
+    //       this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
+    //     }
 
-          this.provSeleccionada = { value: params['prov'] };
+    //     if (params['prov'] != null) {
 
-          this.onProvChange(this.provSeleccionada, true);
-        }
+    //       this.provSeleccionada = { value: params['prov'] };
 
-        if (params['dis'] != null) {
-          this.disSeleccionado = { value: params['dis'] };
-        }
+    //       this.onProvChange(this.provSeleccionada, true);
+    //     }
 
-        if (params['pageIndex'] != null) {
-          this.pageIndex = Number(params['pageIndex']);
-        }
+    //     if (params['dis'] != null) {
+    //       this.disSeleccionado = { value: params['dis'] };
+    //     }
 
-        if (params['pageSize'] != null) {
-          this.pageSize = Number(params['pageSize']);
-        }
+    //     if (params['pageIndex'] != null) {
+    //       this.pageIndex = Number(params['pageIndex']);
+    //     }
 
-        if (params['sortField'] != null) {
-          this.sortField = params['sortField'];
-        }
+    //     if (params['pageSize'] != null) {
+    //       this.pageSize = Number(params['pageSize']);
+    //     }
 
-        if (params['sortOrder'] != null) {
-          this.sortOrder = params['sortOrder'];
-        }
+    //     if (params['sortField'] != null) {
+    //       this.sortField = params['sortField'];
+    //     }
 
-        // Inicializar el contador con la suma de las selecciones iniciales
-        this.filterCounter.set(
-          (this.cui ? 1 : 0) +
-          (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
-          (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
-          (this.depSeleccionado ? 1 : 0) +
-          (this.provSeleccionada ? 1 : 0) +
-          (this.disSeleccionado ? 1 : 0)
-        );
+    //     if (params['sortOrder'] != null) {
+    //       this.sortOrder = params['sortOrder'];
+    //     }
 
-        this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
-        // this.traerPedidos({}); // Llamar a traerPedidos una vez finalizada la carga
-      }
-    });
+    //     // Inicializar el contador con la suma de las selecciones iniciales
+    //     this.filterCounter.set(
+    //       (this.cui ? 1 : 0) +
+    //       (this.tipoEspacioSeleccionado ? 1 : 0) +
+    //       (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
+    //       (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
+    //       (this.depSeleccionado ? 1 : 0) +
+    //       (this.provSeleccionada ? 1 : 0) +
+    //       (this.disSeleccionado ? 1 : 0)
+    //     );
+
+    //     this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
+    //     // this.traerPedidos({}); // Llamar a traerPedidos una vez finalizada la carga
+    //   }
+    // });
 
     // Debounce los cambios de parámetros de la URL
     this.updateParamsSubject.pipe(debounceTime(300)).subscribe(() => {
@@ -177,6 +197,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.searchForm.patchValue({
       cui: this.cui,
+      tipoEspacio: this.tipoEspacioSeleccionado,
       espacio: this.espaciosSeleccionados,
       sector: this.sectoresSeleccionados,
       dep: this.depSeleccionado,
@@ -309,6 +330,42 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     modal.afterClose.subscribe(result => {
       instance.comentarioForm.reset();
     });
+  }
+
+  onTipoEspacioChange(value: SelectModel | null, skipNavigation = false): void {
+    if (this.clearingFilters) {
+      return;
+    }
+
+    const wasPreviouslySelected = this.tipoEspacioSeleccionado != null;
+
+    this.tipoEspacioSeleccionado = value;
+    // this.traerAcuerdos({ tipoEspacioSeleccionado: value });
+    // debugger;
+    if (value != null) {
+      // this.espaciosStore.limpiarEspacios();
+      this.espaciosStore.listarEventos(Number(value.value));
+
+
+      if (this.espaciosSeleccionados != null) {
+        this.espaciosSeleccionados = null;
+        this.searchForm.patchValue({ espacio: null });
+        this.filterCounter.update(x => x - 1);
+      }
+    } else {
+      this.onEspacioChange(null);
+    }
+
+    if (value == null && wasPreviouslySelected) {
+      this.filterCounter.update(x => x - 1);
+    } else if (value != null && !wasPreviouslySelected) {
+      this.filterCounter.update(x => x + 1);
+    }
+
+    if (!this.cargandoUbigeo && !skipNavigation) {
+      // this.traerAcuerdos({});
+      this.updateParamsSubject.next();
+    }
   }
 
   onEspacioChange(value: SelectModel[] | null): void {
@@ -451,6 +508,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
     const queryParams = {
       cui: this.cui,
+      tipoEspacio: this.tipoEspacioSeleccionado ? this.tipoEspacioSeleccionado.value : null,
       espacio: this.espaciosSeleccionados ? this.espaciosSeleccionados.map(x => x.value) : null,
       sector: this.sectoresSeleccionados ? this.sectoresSeleccionados.map(x => x.value) : null,
       dep: this.depSeleccionado ? this.depSeleccionado.value : null,
@@ -462,6 +520,9 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       sortOrder: this.sortOrder
     };
 
+    // Guardar en el localStorage
+    localStorage.setItem('pedidosParams', JSON.stringify(queryParams));
+
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
       queryParams,
@@ -471,66 +532,226 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onClearFilters(): void {
-    this.clearingFilters = true;
+  // onClearFilters(): void {
+  //   this.clearingFilters = true;
 
-    // Guardar el valor actual de depSeleccionado si departamento tiene un valor
-    const depSeleccionadoActual = this.authService.departamento() ? this.depSeleccionado : null;
-    const sectorSeleccionadoActual = this.authService.sector() ? this.sectoresSeleccionados : null;
+  //   // Guardar el valor actual de depSeleccionado si departamento tiene un valor
+  //   const depSeleccionadoActual = this.authService.departamento() ? this.depSeleccionado : null;
+  //   const sectorSeleccionadoActual = this.authService.sector() ? this.sectoresSeleccionados : null;
 
-    // Resetear manualmente cada campo excepto el campo de departamento
-    this.searchForm.patchValue({
-      cui: null,
-      // dep: (this.authService.getSubTipo() == 'PCM') ? null : this.departamento,
-      espacio: null,
-      // sector: (this.authService.getSubTipo() == 'PCM') ? null : this.sector,
-      prov: null,
-    });
+  //   // Resetear manualmente cada campo excepto el campo de departamento
+  //   this.searchForm.patchValue({
+  //     cui: null,
+  //     // dep: (this.authService.getSubTipo() == 'PCM') ? null : this.departamento,
+  //     espacio: null,
+  //     // sector: (this.authService.getSubTipo() == 'PCM') ? null : this.sector,
+  //     prov: null,
+  //   });
 
-    this.cui = null;
-    this.espaciosSeleccionados = [];
-    this.sectoresSeleccionados = [];
-    this.provSeleccionada = null;
+  //   this.cui = null;
+  //   this.tipoEspacioSeleccionado = null;
+  //   this.espaciosSeleccionados = [];
+  //   this.sectoresSeleccionados = [];
+  //   this.provSeleccionada = null;
+  //   this.pageIndex = 1;
+  //   this.pageSize = 10;
+
+  //   // Si existe un departamento, mantener el valor de depSeleccionado
+  //   this.depSeleccionado = depSeleccionadoActual;
+  //   this.sectoresSeleccionados = sectorSeleccionadoActual;
+
+  //   // Actualizar el contador de filtros
+  //   this.filterCounter.set(
+  //     (this.cui ? 1 : 0) +
+  //     (this.tipoEspacioSeleccionado ? 1 : 0) +
+  //     (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
+  //     (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
+  //     (this.depSeleccionado ? 1 : 0) +
+  //     (this.provSeleccionada ? 1 : 0)
+  //   );
+
+  //   // Hacer una sola llamada a traerPedidos con los parámetros vacíos
+  //   this.traerPedidos({
+  //     cui: null,
+  //     espaciosSeleccionados: [],
+  //     sectoresSeleccionados: this.sectoresSeleccionados,
+  //     depSeleccionado: this.depSeleccionado,
+  //     provSeleccionada: null,
+  //     pageIndex: this.pageIndex,
+  //     pageSize: this.pageSize,
+  //     sortField: this.sortField,
+  //     sortOrder: this.sortOrder
+  //   });
+
+  //   this.router.navigate(
+  //     [],
+  //     {
+  //       relativeTo: this.activatedRoute,
+  //       queryParams: { cui: null, tipoEspacio: null, espacio: null, sector: this.sectoresSeleccionados ? this.sectoresSeleccionados[0].value : null, dep: this.depSeleccionado ? this.depSeleccionado.value : null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
+  //       queryParamsHandling: 'merge',
+  //     }
+  //   ).finally(() => {
+  //     this.clearingFilters = false;
+  //   });
+  // }
+
+  cargarParametrosDesdeLocalStorage(params: any): void {
+    if (!this.updatingParams) {
+      this.cargandoUbigeo = true;
+
+      this.cui = params.cui || null;
+      this.tipoEspacioSeleccionado = params.tipoEspacio ? { value: params.tipoEspacio } : null;
+      this.espaciosSeleccionados = params.espacio && params.espacio.length ? params.espacio.map((value: number) => ({ value })) : [];
+      this.sectoresSeleccionados = params.sector && params.sector.length ? params.sector.map((value: number) => ({ value })) : [];
+      this.depSeleccionado = params.dep ? { value: params.dep } : null;
+      this.provSeleccionada = params.prov ? { value: params.prov } : null;
+      this.disSeleccionado = params.dis ? { value: params.dis } : null;
+      this.pageIndex = params.pageIndex || 1;
+      this.pageSize = params.pageSize || 10;
+      this.sortField = params.sortField || 'prioridadID';
+      this.sortOrder = params.sortOrder || 'descend';
+
+      // Actualizar el contador de filtros activos
+      this.filterCounter.set(
+        ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
+        (this.tipoEspacioSeleccionado ? 1 : 0) +
+        (this.espaciosSeleccionados?.length ? this.espaciosSeleccionados.length : 0) +
+        (this.sectoresSeleccionados?.length ? this.sectoresSeleccionados.length : 0) +
+        (this.depSeleccionado ? 1 : 0) +
+        (this.provSeleccionada ? 1 : 0) +
+        (this.disSeleccionado ? 1 : 0)
+      );
+
+      this.cargandoUbigeo = false;
+    }
+  }
+
+  cargarParametrosDesdeURL(params: any): void {
+    if (!this.updatingParams) {
+      this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
+
+      if (params['cui'] != null) {
+        this.cui = params['cui'];
+      }
+
+      if (params['tipoEspacio'] != null) {
+        this.tipoEspacioSeleccionado = { value: Number(params['tipoEspacio']) };
+        this.onTipoEspacioChange(this.tipoEspacioSeleccionado, true);
+      }
+
+      if (params['espacio'] != null) {
+        const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
+        this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+      }
+
+      if (params['sector'] != null) {
+        const selectedValues = Array.isArray(params['sector']) ? params['sector'] : [params['sector']];
+        this.sectoresSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+      }
+
+      if (params['dep'] != null) {
+        this.depSeleccionado = { value: params['dep'] };
+        this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
+      }
+
+      if (params['prov'] != null) {
+        this.provSeleccionada = { value: params['prov'] };
+        this.onProvChange(this.provSeleccionada, true);
+      }
+
+      if (params['dis'] != null) {
+        this.disSeleccionado = { value: params['dis'] };
+      }
+
+      if (params['pageIndex'] != null) {
+        this.pageIndex = Number(params['pageIndex']);
+      }
+
+      if (params['pageSize'] != null) {
+        this.pageSize = Number(params['pageSize']);
+      }
+
+      if (params['sortField'] != null) {
+        this.sortField = params['sortField'];
+      }
+
+      if (params['sortOrder'] != null) {
+        this.sortOrder = params['sortOrder'];
+      }
+
+      // Inicializar el contador con la suma de las selecciones iniciales
+      this.filterCounter.set(
+        ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
+        (this.tipoEspacioSeleccionado ? 1 : 0) +
+        (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
+        (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
+        (this.depSeleccionado ? 1 : 0) +
+        (this.provSeleccionada ? 1 : 0) +
+        (this.disSeleccionado ? 1 : 0)
+      );
+
+      this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
+    }
+  }
+
+  onClearFilters(excepciones: string[]): void {
+    // Primero restablecemos todos los filtros excepto los que están en la lista de excepciones
+    if (!excepciones.includes('cui')) {
+      this.cui = null;
+    }
+    if (!excepciones.includes('tipoEspacio')) {
+      this.tipoEspacioSeleccionado = null;
+    }
+    if (!excepciones.includes('espacio')) {
+      this.espaciosSeleccionados = [];
+    }
+
+    if (this.authService.subTipo() != 'SECTOR') {
+      this.sectoresSeleccionados = [];
+    }
+
+    if (this.authService.subTipo() != 'REGION') {
+      this.depSeleccionado = null;
+    }
+    if (this.authService.subTipo() != 'PROVINCIA') {
+      this.provSeleccionada = null;
+    }
+    if (this.authService.subTipo() != 'DISTRITO') {
+      this.disSeleccionado = null;
+    }
+
+    // Restablecer paginación, orden y otros parámetros globales
     this.pageIndex = 1;
     this.pageSize = 10;
+    this.sortField = 'prioridadID';
+    this.sortOrder = 'descend';
 
-    // Si existe un departamento, mantener el valor de depSeleccionado
-    this.depSeleccionado = depSeleccionadoActual;
-    this.sectoresSeleccionados = sectorSeleccionadoActual;
+    // Actualizar los valores en el formulario de búsqueda
+    this.searchForm.patchValue({
+      cui: this.cui,
+      tipoEspacio: this.tipoEspacioSeleccionado,
+      espacio: this.espaciosSeleccionados,
+      sector: this.sectoresSeleccionados,
+      dep: this.depSeleccionado,
+      prov: this.provSeleccionada,
+      dis: this.disSeleccionado,
+    });
 
-    // Actualizar el contador de filtros
+    // Actualizar el contador de filtros activos (filterCounter)
     this.filterCounter.set(
-      (this.cui ? 1 : 0) +
-      (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
-      (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
+      ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
+      (this.tipoEspacioSeleccionado ? 1 : 0) +
+      (this.espaciosSeleccionados && this.espaciosSeleccionados.length ? this.espaciosSeleccionados.length : 0) +
+      (this.sectoresSeleccionados && this.sectoresSeleccionados.length ? this.sectoresSeleccionados.length : 0) +
       (this.depSeleccionado ? 1 : 0) +
-      (this.provSeleccionada ? 1 : 0)
+      (this.provSeleccionada ? 1 : 0) +
+      (this.disSeleccionado ? 1 : 0)
     );
 
-    // Hacer una sola llamada a traerPedidos con los parámetros vacíos
-    this.traerPedidos({
-      cui: null,
-      espaciosSeleccionados: [],
-      sectoresSeleccionados: this.sectoresSeleccionados,
-      depSeleccionado: this.depSeleccionado,
-      provSeleccionada: null,
-      pageIndex: this.pageIndex,
-      pageSize: this.pageSize,
-      sortField: this.sortField,
-      sortOrder: this.sortOrder
-    });
-
-    this.router.navigate(
-      [],
-      {
-        relativeTo: this.activatedRoute,
-        queryParams: { cui: null, espacio: null, sector: this.sectoresSeleccionados ? this.sectoresSeleccionados[0].value : null, dep: this.depSeleccionado ? this.depSeleccionado.value : null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
-        queryParamsHandling: 'merge',
-      }
-    ).finally(() => {
-      this.clearingFilters = false;
-    });
+    // Actualizamos los queryParams para reflejar los cambios en la URL
+    this.updateQueryParams();
   }
+
 
   onDelete(value: any): void {
     this.confirmModal = this.modal.confirm({
@@ -549,7 +770,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   onOpenDrawer(): void {
     this.isDrawervisible = true;
-    this.espaciosStore.listarEventos();
+    // this.espaciosStore.listarEventos();
   }
 
   onCloseDrawer(): void {
@@ -559,6 +780,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   crearSearForm(): void {
     this.searchForm = this.fb.group({
       cui: [null],
+      tipoEspacio: [null],
       espacio: [null],
       sector: [null],
       dep: [null],

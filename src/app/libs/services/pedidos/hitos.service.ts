@@ -224,7 +224,7 @@ export class HitosService {
         if (accesoId != null) hitoRequest.accesoId = Number(accesoId);
         this.http.post(`${environment.api}/Hito/DesestimarHito`, hitoRequest).subscribe({
             next: (data) => {
-                this.msg.success('Hito desestimado correctamente');
+                this.msg.success('Hito eliminado correctamente');
                 this.listarHitos(hito.acuerdoID, null, 1, 10, 'hitoId', 'ascend');
             },
             error: (e) => {
@@ -232,10 +232,6 @@ export class HitosService {
             },
         });
     }
-
-    // seleccionarHito(hito: HitoAcuerdoModel | null): void {
-    //     this.#hitosResult.update((v) => ({ ...v, hitoSeleccionado: hito }));
-    // }
 
     seleccionarHitoById(hitoId: number | null | undefined): void {
         if (hitoId !== null && hitoId !== undefined) {
