@@ -327,10 +327,14 @@
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="tema">Tema</nz-form-label>
             <nz-form-control nzSpan="null">
-              <input type="text" class="form-control" id="tema" placeholder="Ingrese el tema aquí"
+              <input type="text" class="form-control" id="tema" placeholder="Ingrese el tema aquí" (keyup)="caracteresContador('tema',1500)"
                 formControlName="tema">
             </nz-form-control>
-            <div class="text-danger" *ngIf="alertMessageError('tema')">{{msgErrorControl('tema','Tema')}}</div>
+            <div class="flex justify-between">
+              <div class="w-full text-danger" *ngIf="alertMessageError('tema')">
+                {{msgErrorControl('tema','Tema')}}</div>
+              <div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : temaCount < 20 }">{{temaCount}}</div>
+            </div>
           </nz-form-item>
         </div>
       </div>
@@ -442,10 +446,10 @@
         <div nz-col nzSpan="24">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="comentarios">Comentarios</nz-form-label>
-            <textarea class="form-control" id="comentarios" formControlName="comentarios" (keyup)="caracteresContador('comentarios',520)"
+            <textarea class="form-control" id="comentarios" formControlName="comentarios" (keyup)="caracteresContador('comentarios',900)"
               placeholder="Ingrese el comentario aquí" rows="2"></textarea>
               <div class="flex justify-between">
-                <div class="text-danger" *ngIf="alertMessageError('comentarios')">
+                <div class="w-full text-danger" *ngIf="alertMessageError('comentarios')">
                   {{msgErrorControl('comentarios','Comentarios')}}</div>
                 <div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : comentariosCount < 20 }">{{comentariosCount}}</div>
               </div>

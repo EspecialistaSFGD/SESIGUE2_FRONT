@@ -45,10 +45,13 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   public gobiernoParticipantes = signal<NivelGobiernoResponse[]>([])
   public agendaClasificaciones = signal<ClasificacionResponse[]>([])
 
-  comentariosCount = 250
+  temaCount = 1500
+  comentariosCount = 900
   participar: string[] = ['si', 'no']
   fileListMeet: NzUploadFile[] = [];
   fileListAttendance: NzUploadFile[] = [];
+  fileMeet: File | null = null;
+  fileAttendance: File | null = null;
 
   pagination: Pagination = {
     code: 0,
@@ -103,7 +106,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     ubigeo: [''],
     entidad: [{ value: '', disabled: true }],
     autoridad: ['', Validators.required],
-    dniAutoridad: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
+    dniAutoridad: [''],
     nombreAutoridad: ['', Validators.required],
     cargoAutoridad: ['', Validators.required],
     espacioId: ['', Validators.required],
@@ -147,6 +150,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   ngOnInit() {
+    // this.setFormData()
     this.obtenerLugares()
     this.obtenerTipoEntidad()
     this.obtenerEspacios()
@@ -164,6 +168,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       const provincia = this.create ? '' : ubigeo.slice(0, 4)
       const distrito = this.create ? '' : ubigeo
       const entidad = this.create ? '' : this.asistenciaTecnica.nombreEntidad
+      let dniAutoridad = ''      
       if (!this.create) {
         this.obtenerUbigeoProvincias(departamento)
         this.obtenerUbigeoDistrito(provincia)
@@ -215,8 +220,14 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
               }
             }
           })
-      }
-      this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, departamento, provincia, distrito, entidad })
+
+          if(this.asistenciaTecnica.dniAutoridad){
+            const dni = this.asistenciaTecnica.dniAutoridad == 'null' ? '' : this.asistenciaTecnica.dniAutoridad
+            dniAutoridad = dni
+          }
+        }
+        this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, dniAutoridad, departamento, provincia, distrito, entidad })
+        // this.setDniAutoridadvalidators()
     }
   }
 
@@ -323,7 +334,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   setUbigeo(){
-    const departamento = this.formAsistencia.get('departamento')
     const provincia = this.formAsistencia.get('provincia')
     const distrito = this.formAsistencia.get('distrito')    
     const autoridad = this.formAsistencia.get('autoridad')?.value    
@@ -343,19 +353,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       distrito?.clearValidators()
     }
     const mancomunidad = ['MR','MM']
-    if (mancomunidad.includes(tipo?.abreviatura!)) {
-      console.log(autoridad);
-      
-      dni?.clearValidators()
-      if(autoridad){
-        console.log('VALIDAR DNI');
-        
-        dni?.setValidators(Validators.required)
-      } else {
-        console.log('LIMPIAR DNI');
-        
-      }
-    }
   }
 
   obtenerValueTipoEntidad() {
@@ -395,13 +392,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     if(autoridad && ubigeo){
       this.obtenerAlcaldePorUbigeo(ubigeo)
     } else {
-      dni?.reset()
-      nombre?.reset()
-      cargo?.reset()
+      dni?.setValue('')
+      nombre?.setValue('')
+      cargo?.setValue('')
     }
-    // if(autoridad){
-    //   dni?.setValidators(Validators.required)
-    // }
     this.setUbigeo()
   }
 
@@ -423,15 +417,13 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
             nombre?.setValue(alcalde.nombre)
             cargo?.setValue(alcalde.cargo)
           } else {
-            dni?.reset()
-            nombre?.reset()
-            cargo?.reset()
+            dni?.setValue('')
+            nombre?.setValue('')
+            cargo?.setValue('')
           }         
         }
       })
   }
-
-
 
   changeCongresista(index: number) {
     const congresistas = this.formAsistencia.get('congresistas') as FormArray
@@ -521,8 +513,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     if (ubigeo) {
       this.formAsistencia.get('provincia')?.reset();
       this.formAsistencia.get('distrito')?.reset();
-      // this.districtDisabled = true
-      // this.changeTipoEntidad()
       this.obtenerUbigeoProvincias(ubigeo)
       this.obtenerEntidad(`${ubigeo}0000`)
       this.setUbigeo()
@@ -584,12 +574,16 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {
+    const evidenciaReunion = this.formAsistencia.get('evidenciaReunion')
+    evidenciaReunion?.setValue(file)
     this.fileListMeet = []
     this.fileListMeet = this.fileListMeet.concat(file);
     return false;
   };
 
   beforeUploadAttendance = (file: NzUploadFile): boolean => {
+    const evidenciaAsistencia = this.formAsistencia.get('evidenciaAsistencia')
+    evidenciaAsistencia?.setValue(file)
     this.fileListAttendance = []
     this.fileListAttendance = this.fileListAttendance.concat(file);
     return false;
@@ -630,10 +624,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.timeoutId = setTimeout(() => {
         this.ssiService.obtenerSSIMef(value)
           .subscribe( resp => {
-            console.log('VERIFIANDFO NOMBRE DE INVERSION');
-            
-            console.log(resp);
-            
+            console.log('VERIFIANDFO NOMBRE DE INVERSION');            
+            console.log(resp);            
           })
       }, 1000);
     }
@@ -652,14 +644,16 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       const newValue = value.substring(0, qty);
       element?.setValue(newValue)
     }
-
-    this.comentariosCount = qty - value.length;
+    if(control == 'tema'){
+      this.temaCount = qty - value.length;
+    } else {
+      this.comentariosCount = qty - value.length;
+    }
   }
 
-  
-
-
-  saveOrEdit() {
+  saveOrEdit() { 
+    console.log(this.formAsistencia.value);
+    
     if (this.formAsistencia.invalid) {
       return this.formAsistencia.markAllAsTouched()
     }

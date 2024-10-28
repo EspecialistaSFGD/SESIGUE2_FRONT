@@ -70,23 +70,25 @@ export class AsistenciasTecnicasComponent {
           { param: 'espacio', field: 'espacioId' },
         ]
 
-        let campo = params['campo'] ?? 'fechaAtencion'
-        const finded = relations.find( item => item.param = campo)        
+        let campo = params['campo'] ?? 'fechaAtencion'        
+        const finded = relations.find( item => item.param == campo)       
         if(finded){
           campo = finded.field
-        }
+        }        
         
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
         this.pagination.pageSize = params['cantidad']
-        this.pagination.typeSort = params['ordenar']
+        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
         this.obtenerAsistenciasTecnicas()
+      } else {
+        this.pagination.columnSort = 'fechaAtencion'
       }
       
     });
   }
 
-  obtenerAsistenciasTecnicas() {
+  obtenerAsistenciasTecnicas() {    
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas(this.pagination)
       .subscribe(resp => {
         if (resp.success == true) {
