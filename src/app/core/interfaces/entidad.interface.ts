@@ -11,8 +11,8 @@ export interface EntidadResponse {
   distrito: string,
   ubigeo: string,
   entidad: string,
-  dniAlcalde: String,
-  nombreAlcalde: String,
-  cargoAlcalde: String,
-  sexoAlcalde: String,
+  // dniAlcalde: String,
+  // nombreAlcalde: String,
+  // cargoAlcalde: String,
+  // sexoAlcalde: String,
 }

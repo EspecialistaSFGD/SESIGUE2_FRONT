@@ -4,18 +4,31 @@ import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Observable } from 'rxjs';
 import { EntidadesResponses } from '@core/interfaces/entidad.interface';
+import { Pagination } from '@core/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntidadesService {
-  private urlUbigeo: string = `${environment.api}/Entidad`
+  private urlEntidad: string = `${environment.api}/Entidad`
 
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  getEntidadporUbigeo(ubigeo: string): Observable<EntidadesResponses> {
+  getEntidadPorUbigeo(ubigeo: string): Observable<EntidadesResponses> {
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<EntidadesResponses>(`${this.urlUbigeo}/ListarPorUbigeo/${ubigeo}`, { headers })
+    return this.http.get<EntidadesResponses>(`${this.urlEntidad}/ListarPorUbigeo/${ubigeo}`, { headers })
+  }
+
+  getEntidadPorId(id: string): Observable<EntidadesResponses> {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<EntidadesResponses>(`${this.urlEntidad}/ListarPorId/${id}`, { headers })
+  }
+
+  getMancomunidades(tipo:string, pagination:Pagination): Observable<EntidadesResponses>{
+    let params = this.helpersServices.setParams(pagination)
+    params = params.append('tipo', tipo) 
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<EntidadesResponses>(`${this.urlEntidad}/ListarMancomunidades`, { headers, params })
   }
 }

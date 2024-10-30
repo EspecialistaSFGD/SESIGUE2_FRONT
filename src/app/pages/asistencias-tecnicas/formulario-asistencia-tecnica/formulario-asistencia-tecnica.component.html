@@ -75,57 +75,88 @@
         <div nz-col nzSpan="6">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="departamento">Departamento</nz-form-label>
-            <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionar departamento" id="departamento" class="select-form-control"
-                formControlName="departamento" (ngModelChange)="obtenerUbigeoDepartamento($event)" nzAllowClear
-                nzShowSearch>
-                @for (departamento of departamentos; track $index) {
-                <nz-option [nzValue]="departamento.departamentoId" nzLabel="{{departamento.departamento}}"></nz-option>
-                }
-              </nz-select>
-              <div class="text-danger" *ngIf="alertMessageError('departamento')">
-                {{msgErrorControl('departamento','Departamento')}}</div>
-            </nz-form-control>
+            @if(mancomunidadesAbrev.includes(tipoMancomunidad)){
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="departamento" placeholder="" formControlName="departamento">
+              </nz-form-control>
+            } @else {
+              <nz-form-control nzSpan="null">
+                <nz-select nzPlaceHolder="Seleccionar departamento" id="departamento" class="select-form-control"
+                  formControlName="departamento" (ngModelChange)="obtenerUbigeoDepartamento($event)" nzAllowClear
+                  nzShowSearch>
+                  @for (departamento of departamentos; track $index) {
+                  <nz-option [nzValue]="departamento.departamentoId" nzLabel="{{departamento.departamento}}"></nz-option>
+                  }
+                </nz-select>
+                <div class="text-danger" *ngIf="alertMessageError('departamento')">
+                  {{msgErrorControl('departamento','Departamento')}}</div>
+              </nz-form-control>
+            }
+
           </nz-form-item>
         </div>
         <div nz-col nzSpan="6">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="provincia">Provincia</nz-form-label>
-            <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
-                formControlName="provincia" (ngModelChange)="obtenerUbigeoProvincia($event)"
-                [nzDisabled]="provinceDisabled" nzAllowClear nzShowSearch>
-                @for (provincia of provincias(); track $index) {
-                <nz-option [nzValue]="provincia.provinciaId" nzLabel="{{provincia.provincia}}"></nz-option>
-                }
-              </nz-select>
-              <div class="text-danger" *ngIf="alertMessageError('provincia')">
-                {{msgErrorControl('provincia','Provincia')}}</div>
-            </nz-form-control>
+            @if(mancomunidadesAbrev.includes(tipoMancomunidad)){
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="provincia" placeholder="" formControlName="provincia">
+              </nz-form-control>
+            } @else {
+              <nz-form-control nzSpan="null">
+                <nz-select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
+                  formControlName="provincia" (ngModelChange)="obtenerUbigeoProvincia($event)"
+                  [nzDisabled]="provinceDisabled" nzAllowClear nzShowSearch>
+                  @for (provincia of provincias(); track $index) {
+                  <nz-option [nzValue]="provincia.provinciaId" nzLabel="{{provincia.provincia}}"></nz-option>
+                  }
+                </nz-select>
+                <div class="text-danger" *ngIf="alertMessageError('provincia')">
+                  {{msgErrorControl('provincia','Provincia')}}</div>
+              </nz-form-control>
+            }
           </nz-form-item>
         </div>
         <div nz-col nzSpan="6">
           <nz-form-item>
             <nz-form-label nzRequired [nzSpan]="null" nzFor="distrito">Distrito</nz-form-label>
-            <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" class="select-form-control"
-                formControlName="distrito" (ngModelChange)="obtenerUbigeoDistito($event)" [nzDisabled]="districtDisabled"
-                nzAllowClear nzShowSearch>
-                @for (distrito of distritos(); track $index) {
-                <nz-option [nzValue]="distrito.distritoId" nzLabel="{{distrito.distrito}}"></nz-option>
-                }
-              </nz-select>
-              <div class="text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}
-              </div>
-            </nz-form-control>
+            @if(mancomunidadesAbrev.includes(tipoMancomunidad)){
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="distrito" placeholder="" formControlName="distrito">
+              </nz-form-control>
+            } @else {
+              <nz-form-control nzSpan="null">
+                <nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" class="select-form-control"
+                  formControlName="distrito" (ngModelChange)="obtenerUbigeoDistito($event)" [nzDisabled]="districtDisabled"
+                  nzAllowClear nzShowSearch>
+                  @for (distrito of distritos(); track $index) {
+                  <nz-option [nzValue]="distrito.distritoId" nzLabel="{{distrito.distrito}}"></nz-option>
+                  }
+                </nz-select>
+                <div class="text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}
+                </div>
+              </nz-form-control>
+            }
           </nz-form-item>
         </div>
         <div nz-col nzSpan="6">
           <nz-form-item>
-            <nz-form-label [nzSpan]="null" nzFor="entidad">Entidad</nz-form-label>
-            <nz-form-control nzSpan="null">
-              <input type="text" class="form-control" id="entidad" placeholder="Entidad" formControlName="entidad">
-            </nz-form-control>
+            @if(mancomunidadesAbrev.includes(tipoMancomunidad)){
+              <nz-form-label [nzSpan]="null" nzFor="entidad">Mancomunidad</nz-form-label>
+              <nz-select nzPlaceHolder="Seleccionar mancomunidad" id="entidadId" class="w-full select-form-control" (ngModelChange)="changeMancomunidad()"
+                formControlName="entidadId" nzAllowClear nzShowSearch>
+                @for (mancomunidad of mancomunidades(); track $index) {
+                <nz-option [nzValue]="mancomunidad.entidadId" nzLabel="{{mancomunidad.entidad}}"></nz-option>
+                }
+              </nz-select>
+              <div class="text-danger" *ngIf="alertMessageError('entidadId')">
+                {{msgErrorControl('entidadId','Mancomunidad')}}</div>
+            } @else {
+              <nz-form-label [nzSpan]="null" nzFor="entidad">Entidad</nz-form-label>
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="entidad" placeholder="Entidad" formControlName="entidad">
+              </nz-form-control>
+            }
           </nz-form-item>
         </div>
       </div>
