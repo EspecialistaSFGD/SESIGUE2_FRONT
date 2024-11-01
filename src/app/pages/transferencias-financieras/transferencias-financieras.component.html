@@ -7,27 +7,48 @@
 	</button>
 	</div>
 	<nz-tabset>
-		<nz-tab nzTitle="Transferencias detalle">
-			<nz-table [nzScroll]="{ x: '1150px' }" nzTitle="Transferencias detalle" nzShowSizeChanger nzSize="small"
-			[nzData]="transferDetail()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="pagination.total"
-			[nzPageSize]="pagination.pageSize" [nzPageIndex]="pagination.currentPage">
+		<nz-tab nzTitle="TRANSFERENCIAS DETALLE">
+			<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderDetail" nzShowSizeChanger nzSize="small"
+			[nzData]="transferDetails()" [nzFrontPagination]="false" [nzLoading]="loadingDetail" [nzTotal]="paginationDetails.total"
+			[nzPageSize]="paginationDetails.pageSize" [nzPageIndex]="paginationDetails.currentPage" (nzQueryParams)="paramsDetailChange($event)">
 			<thead>
 				<tr>
 					<th nzLeft nzWidth="100px">Nivel de gobierno</th>
 					<th nzLeft nzWidth="100px">Departamento</th>
 					<th nzLeft nzWidth="100px">Provincia</th>
 					<th nzLeft nzWidth="100px">Distrito</th>
-					<th nzWidth="120px" nzAlign="center">Pliego</th>
+					<th nzWidth="120px">Pliego</th>
 					<th nzWidth="150px" nzAlign="center">CUI</th>
-					<th nzWidth="150px">Transferencias</th>
+					<th nzWidth="150px" nzAlign="center">Transferencias</th>
 					<th nzWidth="150px" nzAlign="center">Dispositivo legal</th>
 					<th nzWidth="150px" nzAlign="center">Fecha de publicación</th>
 					<th nzWidth="150px" nzAlign="center">Periodo</th>
 				</tr>
 			</thead>
+			<tbody>
+				@for(detail of transferDetails(); track $index){
+				<tr>
+				  <td>{{detail.nivel_gobierno}}</td>
+				  <td>{{detail.departamento}}</td>
+				  <td>{{detail.provincia}}</td>
+				  <td>{{detail.distrito}}</td>
+				  <td>{{detail.pliego}}</td>
+				  <td nzAlign="center">{{detail.codigo_unico}}</td>
+				  <td nzAlign="center">{{detail.monto}}</td>
+				  <td nzAlign="center">{{detail.resolucion}}</td>
+				  <td nzAlign="center">{{detail.fecha_publicacion | date : 'dd/MM/yyyy'}}</td>
+				  <td nzAlign="center">{{detail.fecha_publicacion | date : 'yyyy'}}</td>
+				  </tr>
+				}
+				  </tbody>
 		</nz-table>
+		<ng-template #HeaderDetail>
+			<div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+			  <p class="mb-2 sm:mb-0">Resultados ({{paginationDetails.total}})</p>
+			</div>
+		  </ng-template>
 		</nz-tab>
-		<nz-tab nzTitle="Transferencias resumido">
+		<nz-tab nzTitle="TRANSFERENCIAS RESUMIDO">
 			<nz-table [nzScroll]="{ x: '1150px' }" nzTitle="Transferencias resumido" nzShowSizeChanger nzSize="small"
 			[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="pagination.total"
 			[nzPageSize]="pagination.pageSize" [nzPageIndex]="pagination.currentPage">
@@ -71,7 +92,7 @@
 					<nz-form-control nzSpan="null">
 						<nz-select nzPlaceHolder="Seleccionar periodo" id="periodo" class="select-form-control"
 							formControlName="periodo" nzAllowClearnzShowSearch>
-							@for (periodo of periodos; track $index) {
+							@for (periodo of generarPeriodos(); track $index) {
 							<nz-option [nzValue]="periodo" nzLabel="{{periodo}}"></nz-option>
 							}
 						</nz-select>
