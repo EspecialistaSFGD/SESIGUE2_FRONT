@@ -14,9 +14,12 @@ export class TransferenciasFinancierasService {
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  obtenerTransferenciasFinancierasDetalles(pagination: Pagination): Observable<TransferenciasFinancierasResponses> {
-    const params = this.helpersServices.setParams(pagination)
+  obtenerTransferenciasFinancierasDetalles(pagination: Pagination, periodo:string | null = null): Observable<TransferenciasFinancierasResponses> {
+    let params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
+    if(periodo){
+      params = params.append('periodo', periodo)
+    }
     return this.http.get<TransferenciasFinancierasResponses>(`${this.urlTransferencias}/ListarTransferenciaFinancieraDetalle`, { headers, params })
   }
 }
