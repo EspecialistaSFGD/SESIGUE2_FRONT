@@ -36,8 +36,22 @@ export const CONFIG_ROUTES: Routes = [
   },
   {
     path: 'accesos', loadComponent: () => import('./accesos/accesos.component').then(m => m.AccesosComponent),
-    data: {
-      title: 'Gestión de accesos'
-    }
+  },
+  {
+    path: 'reportes', loadComponent: () => import('../reportes/reportes.component').then(c => c.ReportesComponent )
   }
+  // {
+  //   canActivate: [AuthGuard],
+  //   path: 'reportes', component: ReportesComponent,
+  //   data: {
+  //     title: 'Gestión de reportes',
+  //   }
+  // },
+  // {
+  //   canActivate: [AuthGuard],
+  //   path: 'menues', component: MenuesComponent,
+  //   data: {
+  //     title: 'Gestión de accesos'
+  //   }
+  // }
 ];

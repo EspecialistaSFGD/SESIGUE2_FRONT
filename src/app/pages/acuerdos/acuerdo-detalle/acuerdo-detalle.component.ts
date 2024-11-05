@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, Signal, ViewContainerRef, inject } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, Signal, ViewContainerRef, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
@@ -36,6 +36,7 @@ import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 // import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { DesestimacionComponent } from '../../../libs/shared/components/desestimacion/desestimacion.component';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 
 const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
@@ -61,6 +62,7 @@ const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
     HitoComponent,
     NzModalModule,
     NzBadgeModule,
+    NzAlertModule,
     EstadoComponent,
     // NzTagModule,
     NzAvatarModule,
@@ -73,7 +75,7 @@ const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
   templateUrl: './acuerdo-detalle.component.html',
   styles: ``
 })
-export class AcuerdoDetalleComponent implements OnInit {
+export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
   searchForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
 
@@ -137,6 +139,8 @@ export class AcuerdoDetalleComponent implements OnInit {
         if (!this.updatingParams) {
           if (params['hito'] != null) {
             this.hitoSeleccionadoId = Number(params['hito']);
+
+            // this.hitosService.seleccionarHitoById(this.hitoSeleccionadoId);
           }
         }
       }
@@ -146,9 +150,23 @@ export class AcuerdoDetalleComponent implements OnInit {
       this.updateQueryParams();
     });
   }
+  ngAfterViewInit(): void {
+    // setTimeout(() => {
+
+    //   console.log(this.hitosService.hitoSeleccionado());
+    // }, 500);
+
+  }
 
   ngOnInit(): void {
+  }
 
+  onBack(url: string | null): void {
+    if (url) {
+      this.router.navigateByUrl(url);
+    } else {
+      window.history.back();
+    }
   }
 
   onVerDesestimacion(acuerdo: AcuerdoPedidoModel): void {
@@ -195,7 +213,11 @@ export class AcuerdoDetalleComponent implements OnInit {
     this.hitoSeleccionadoId = hito.hitoId!;
     // this.hitoSeleccionado = hito;
     this.hitosService.seleccionarHitoById(hito.hitoId);
-    this.traerAvances({ hitoId: Number(hito.hitoId) });
+
+    if (this.hitosService.hitoSeleccionado().estadoValidado == 'VALIDADO') {
+      this.traerAvances({ hitoId: Number(hito.hitoId) });
+    }
+
 
     this.updateParamsSubject.next();
   }
@@ -238,6 +260,7 @@ export class AcuerdoDetalleComponent implements OnInit {
 
     this.hitoSeleccionadoId = hitoId!;
     this.hitosService.seleccionarHitoById(hitoId);
+
     this.traerAvances({ hitoId: Number(hitoId) });
 
     this.updateParamsSubject.next();
@@ -245,13 +268,15 @@ export class AcuerdoDetalleComponent implements OnInit {
 
   onHitoDeselected(): void {
     this.hitoSeleccionadoId = null;
-    // this.hitoSeleccionado = null;
+    // this.acuerdosService.seleccionarAcuerdoById(null);
     this.hitosService.seleccionarHitoById(null);
     this.updateParamsSubject.next();
   }
 
   onHitoAddEdit(hito: HitoAcuerdoModel | null): void {
-    const title = hito ? `Modificando hito "${hito.hito}"` : 'Registrando nuevo hito';
+    this.onHitoDeselected();
+
+    const title = hito ? `Modificando hito` : 'Registrando nuevo hito';
     const labelOk = hito ? `Actualizar` : 'Registrar';
     this.hitosService.seleccionarHitoById(hito?.hitoId);
 
@@ -273,7 +298,8 @@ export class AcuerdoDetalleComponent implements OnInit {
           onClick: componentInstance => {
             return this.hitosService.agregarEditarHito(componentInstance!.hitoForm.value).then((res) => {
 
-              this.onHitoSelectedById(res.data);
+              // this.onHitoSelectedById(res.data);
+              this.acuerdosService.listarAcuerdo(Number(this.id));
 
               this.modal.closeAll();
             });
@@ -437,7 +463,7 @@ export class AcuerdoDetalleComponent implements OnInit {
 
   onValidarHito(hito: HitoAcuerdoModel): void {
     this.confirmModal = this.modal.confirm({
-      nzTitle: `¿Deseas validar el hito: "${hito.hito}"?`,
+      nzTitle: `¿Deseas validar el hito?`,
       nzContent: 'El hito pasará a estar VALIDADO.',
       nzIconType: 'check-circle',
       nzOnOk: () => this.hitosService.validarHito(hito)
@@ -455,16 +481,19 @@ export class AcuerdoDetalleComponent implements OnInit {
 
   onEliinarHito(hito: HitoAcuerdoModel): void {
     this.confirmModal = this.modal.confirm({
-      nzTitle: `¿Deseas eliminar el hito: "${hito.hito}"?`,
+      nzTitle: `¿Deseas eliminar el hito?`,
       nzContent: 'El hito será eliminado de forma permanente.',
       nzIconType: 'exclamation-circle',
       nzOkDanger: true,
-      nzOnOk: () => this.hitosService.eliminarHito(hito)
+      nzOnOk: () => this.hitosService.eliminarHito(hito).then(() => {
+        this.acuerdosService.listarAcuerdo(Number(this.id));
+        this.traerHitos({});
+      })
     });
   }
 
   onAvanceAddEdit(avance: AvanceHitoModel | null): void {
-    const title = avance ? `Modificando avance "${avance.avance}"` : 'Nuevo avance';
+    const title = avance ? `Modificando avance` : 'Nuevo avance';
     this.avancesService.seleccionarAvanceById(avance?.avanceId);
     const labelOk = avance ? `Actualizar` : 'Registrar';
     // console.log(this.avancesService.avanceSeleccionado());
@@ -489,6 +518,8 @@ export class AcuerdoDetalleComponent implements OnInit {
           onClick: componentInstance => {
             return this.avancesService.agregarEditarAvance(componentInstance!.avanceForm.value).then((res) => {
               console.log(res);
+              this.acuerdosService.listarAcuerdo(Number(this.id));
+              this.traerHitos({});
               this.traerAvances({ hitoId: Number(this.hitoSeleccionadoId) });
               this.modal.closeAll();
             });

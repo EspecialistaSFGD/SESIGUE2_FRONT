@@ -100,8 +100,8 @@
             </nz-form-item>
         </div>
     </div>
-
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item class="mb-4">
                 <nz-form-label [nzSpan]="null" nzRequired>Tipo</nz-form-label>
@@ -114,7 +114,9 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
+    </div>
 
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         @if(registerForm.get('tipo')?.value?.label == 'GN') {
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item class="mb-4">
@@ -157,6 +159,23 @@
                         [compareWith]="compareFn" nzAllowClear (ngModelChange)="onProvChange($event)">
                         <nz-option *ngFor="let prov of this.ubigeosStore.provincias()" [nzValue]="prov"
                             [nzLabel]="prov.label!">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        }
+
+        @if(registerForm.get('prov')?.value != null) {
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null">Distrito</nz-form-label>
+                <nz-form-control nzSpan="null">
+                    <nz-select [nzDisabled]="authService.distrito() != null && authService.subTipo() != 'PCM'"
+                        class="w-full" #dis id="dis" formControlName="dis" nzPlaceHolder="Todas" nzShowSearch
+                        [compareWith]="compareFn" nzAllowClear (ngModelChange)="onDisChange($event)">
+                        <nz-option *ngFor="let dis of this.ubigeosStore.distritos()" [nzValue]="dis"
+                            [nzLabel]="dis.label!">
                         </nz-option>
                     </nz-select>
                 </nz-form-control>
@@ -207,4 +226,6 @@
                 nz-button class="" [nzType]="'primary'" (click)="onRegister()">Registrar</button>
         </div>
     </div>
+
+    <!-- {{ registerForm.value | json}} -->
 </form>

@@ -18,14 +18,14 @@
                 <nz-form-label [nzSpan]="null" nzRequired>Fecha</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido" nzHasFeedback>
                     <nz-date-picker class="w-full" formControlName="fecha" nzPlaceHolder="Seleccionar fecha"
-                        nzFormat="dd/MM/yyyy"></nz-date-picker>
+                        nzFormat="dd/MM/yyyy" [nzDisabledDate]="disabledDate"></nz-date-picker>
                 </nz-form-control>
             </nz-form-item>
         </div>
 
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
             <nz-form-item>
-                <nz-form-label nzRequired [nzSpan]="null">Estado</nz-form-label>
+                <nz-form-label nzRequired [nzSpan]="null">Estado del Hito</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                     <nz-select nzPlaceHolder="Seleccione" id="estado" #estado formControlName="estado" nzAllowClear
                         nzShowSearch (ngModelChange)="onEstadoChange($event)">

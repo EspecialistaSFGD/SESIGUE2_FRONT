@@ -280,6 +280,12 @@ export class PedidoDetalleComponent {
     return this.pedidosService.estadoEvento() == 'SEGUIMIENTO';
   }
 
+  isEditDisabled(): boolean {
+    // this.pedidosService.estadoEvento() != 'NO INICIADO'
+
+    return this.pedidosService.estadoEvento() == 'INICIADO';
+  }
+
   updateQueryParams() {
     this.updatingParams = true;
 

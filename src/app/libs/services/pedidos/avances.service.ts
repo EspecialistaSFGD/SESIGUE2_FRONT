@@ -8,6 +8,8 @@ import { UtilesService } from '../../shared/services/utiles.service';
 import { SelectModel } from '../../models/shared/select.model';
 import { ComentarioAvanceModel, ComentarioModel } from '../../models/pedido/comentario.model';
 const accesoId = localStorage.getItem('codigoUsuario') || null;
+const codigoSubTipo = localStorage.getItem('codigoSubTipo') || null;
+const codigoNivel = localStorage.getItem('codigoNivel') || null;
 
 interface State {
     avances: any[];
@@ -47,6 +49,11 @@ export class AvancesService {
     constructor() { }
 
     agregarEditarAvance(avance: AvanceHitoModel): Promise<ResponseModel> {
+        // console.log(avance);
+
+        // return new Promise((resolve, reject) => {
+
+        // });
         return new Promise((resolve, reject) => {
             this.#avancesResult.update((state) => ({
                 ...state,
@@ -62,7 +69,7 @@ export class AvancesService {
                 const fechaE = new Date(avance.fecha);
                 formData.append('fecha', `${fechaE.toISOString()}`);
             }
-            // formData.append('fecha', `${avance.fecha}`);
+            formData.append('estadoRegistroHito', `${avance.estado}`);
             formData.append('avance', `${avance.avance}`);
 
             if (avance.idEvidencia != null) formData.append('IdEvidencia', avance.idEvidencia);
@@ -73,7 +80,10 @@ export class AvancesService {
             }
 
             if (avance.entidadSelect != null) formData.append('entidadID', `${avance.entidadSelect?.value}`);
+
             formData.append('accesoId', `${accesoId}`);
+            formData.append('codigoSubTipo', `${codigoSubTipo}`);
+            formData.append('codigoNivel', `${codigoNivel}`);
 
             this.http.post(`${environment.api}/Avance/RegistrarAvance`, formData).subscribe({
                 next: (data: ResponseModel) => {
@@ -157,6 +167,28 @@ export class AvancesService {
                 next: (data: ResponseModel) => {
                     this.msg.success('Comentario agregado correctamente');
                     this.listarAvances(this.avanceSeleccionado().hitdoId, 1, 10, 'avanceId', 'ascend');
+                    resolve(data);
+                },
+                error: (e) => {
+                    this.msg.error(`Error al agregar comentario: ${e}`);
+                    reject(e);
+                },
+            });
+        });
+    }
+
+    agregarComentarioDesdeListadoHitos(comentario: ComentarioModel): Promise<ResponseModel> {
+        const ots = new ComentarioAvanceModel();
+        ots.avanceId = comentario.id;
+        ots.comentario = comentario.comentario;
+        ots.accesoId = Number(accesoId);
+        ots.tipoComentario = comentario.tipoComentario;
+
+        return new Promise((resolve, reject) => {
+            this.http.post(`${environment.api}/Avance/ComentarioAvance`, ots).subscribe({
+                next: (data: ResponseModel) => {
+                    this.msg.success('Comentario agregado correctamente');
+                    // this.listarAvances(this.avanceSeleccionado().hitdoId, 1, 10, 'avanceId', 'ascend');
                     resolve(data);
                 },
                 error: (e) => {

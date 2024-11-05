@@ -1,4 +1,5 @@
 import { ComentarioType } from "../../shared/types/comentario.type";
+import { EstadoEventoType } from "../../shared/types/estado.type";
 import { SeguridadModel } from "../shared/seguridad.model";
 import { SelectModel } from "../shared/select.model";
 
@@ -51,6 +52,10 @@ export class AcuerdoPedidoModel extends SeguridadModel {
         public evidenciaDesestimacion?: string,
         public fechaEvento?: Date | null,
         public motivoDesestimacion?: string,
+        public ubicacion?: string,
+        public fechaPedidoDesestimacion?: Date,
+        public estadoEvento?: EstadoEventoType,
+        public descripcionEstadoEspacio?: string,
 
     ) {
         super();

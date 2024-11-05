@@ -1,8 +1,19 @@
-import { Component, OnInit, Signal, TemplateRef, ViewContainerRef, inject, signal } from '@angular/core';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
+import { Component, inject, signal, ViewContainerRef } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { debounceTime, Subject } from 'rxjs';
+import { UtilesService } from '../../libs/shared/services/utiles.service';
+import { AuthService } from '../../libs/services/auth/auth.service';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { SelectModel } from '../../libs/models/shared/select.model';
+import { TraerHitosListadoInterface } from '../../libs/interfaces/acuerdo/acuerdo.interface';
+import { HitosService } from '../../libs/services/pedidos/hitos.service';
+import { EspaciosStore } from '../../libs/shared/stores/espacios.store';
+import { UbigeosStore } from '../../libs/shared/stores/ubigeos.store';
+import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
+import { CommonModule } from '@angular/common';
+import { PageHeaderComponent } from '../../libs/shared/layout/page-header/page-header.component';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -10,43 +21,31 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { SelectModel } from '../../libs/models/shared/select.model';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
-import { EspaciosStore } from '../../libs/shared/stores/espacios.store';
-import { SectoresStore } from '../../libs/shared/stores/sectores.store';
-import { UbigeosStore } from '../../libs/shared/stores/ubigeos.store';
-import { TraerAcuerdosInterface } from '../../libs/interfaces/pedido/pedido.interface';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { AcuerdosService } from '../../libs/services/pedidos/acuerdos.service';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { EstadoComponent } from '../../libs/shared/components/estado/estado.component';
+import { DueToPipe } from '../../libs/shared/pipes/due-to.pipe';
 import { ClasificacionesStore } from '../../libs/shared/stores/clasificaciones.store';
 import { EstadosStore } from '../../libs/shared/stores/estados.store';
-import { PageHeaderComponent } from '../../libs/shared/layout/page-header/page-header.component';
-import { EstadoComponent } from "../../libs/shared/components/estado/estado.component";
-import { AcuerdoPedidoModel } from '../../libs/models/pedido';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { AcuerdoComponent } from './acuerdo/acuerdo.component';
-import { DesestimacionComponent } from '../../libs/shared/components/desestimacion/desestimacion.component';
-import { ComentarioModel } from '../../libs/models/pedido/comentario.model';
-import { UtilesService } from '../../libs/shared/services/utiles.service';
+import { SectoresStore } from '../../libs/shared/stores/sectores.store';
+import { AvanceHitoModel, HitoAcuerdoModel } from '../../libs/models/pedido';
 import { saveAs } from 'file-saver';
-import { AuthService } from '../../libs/services/auth/auth.service';
-import { AcuerdoType } from '../../libs/shared/types/acuerdo.type';
-import { AccionType } from '../../libs/shared/types/accion.type';
-import { AddEditAcuerdoModel } from '../../libs/models/shared/add-edit-acuerdo.model';
-import { DueToPipe } from '../../libs/shared/pipes/due-to.pipe';
-import { NzModalModule } from 'ng-zorro-antd/modal';
-import { concatMap } from 'rxjs/operators';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { AcuerdosService } from '../../libs/services/pedidos/acuerdos.service';
+import { ComentarioComponent } from '../../libs/shared/components/comentario/comentario.component';
+import { ComentarioModel } from '../../libs/models/pedido/comentario.model';
+import { AvancesService } from '../../libs/services/pedidos/avances.service';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { ReporteType } from '../../libs/shared/types/reporte.type';
 import { ReporteDescargaComponent } from '../../libs/shared/components/reporte-descarga/reporte-descarga.component';
 import { ReportesService } from '../../libs/shared/services/reportes.service';
-import { NzPopoverModule } from 'ng-zorro-antd/popover';
+
+const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
+
 
 @Component({
-  selector: 'app-pedidos',
+  selector: 'app-hitos',
   standalone: true,
   imports: [
     CommonModule,
@@ -65,29 +64,29 @@ import { NzPopoverModule } from 'ng-zorro-antd/popover';
     NzBadgeModule,
     NzToolTipModule,
     NzPopoverModule,
+    NzAvatarModule,
     EstadoComponent,
     DueToPipe,
     NzModalModule
   ],
-  templateUrl: './acuerdos.component.html',
+  templateUrl: './hitos.component.html',
   styles: ``
 })
-export class AcuerdosComponent implements OnInit {
+export class HitosComponent {
   searchForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
-  title: string = `Lista de acuerdos y compromisos`;
+  title: string = `Lista de Hitos`;
 
   pageIndex: number = 1;
   pageSize: number = 10;
-  sortField: string = 'acuerdoID';
+  sortField: string = 'hitoId';
   sortOrder: string = 'descend';
   isDrawervisible: boolean = false;
   isVisible: boolean = false;
 
-
   cui: string | null = null;
   clasificacionesSeleccionadas: SelectModel[] | null = null;
-  tipoSeleccionado: SelectModel | null = null;
+  tipoSeleccionado: string | null = null;
   estadosSelecionados: SelectModel[] | null = null;
   espaciosSeleccionados: SelectModel[] | null = null;
   tipoEspacioSeleccionado: SelectModel | null = null;
@@ -96,24 +95,24 @@ export class AcuerdosComponent implements OnInit {
   provSeleccionada: SelectModel | null = null;
   disSeleccionado: SelectModel | null = null;
 
-  private cargandoUbigeo: boolean = false; // Variable de control para evitar llamadas múltiples
-
   filterCounter = signal<number>(0);
+
+  private cargandoUbigeo: boolean = false; // Variable de control para evitar llamadas múltiples
 
   private updateParamsSubject: Subject<void> = new Subject<void>();
   private updatingParams: boolean = false;
   private clearingFilters: boolean = false;
   private timeout: any;
 
-  public acuerdosService = inject(AcuerdosService);
   private utilesService = inject(UtilesService);
   private fb = inject(UntypedFormBuilder);
-  public espaciosStore = inject(EspaciosStore);
-  public sectoresStore = inject(SectoresStore);
-  public ubigeosStore = inject(UbigeosStore);
   public authService = inject(AuthService);
+  public hitosService = inject(HitosService);
+  public espaciosStore = inject(EspaciosStore);
+  public ubigeosStore = inject(UbigeosStore);
   public clasificacionesStore = inject(ClasificacionesStore);
   public estadosStore = inject(EstadosStore);
+  public sectoresStore = inject(SectoresStore);
 
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
@@ -121,13 +120,14 @@ export class AcuerdosComponent implements OnInit {
   private modal = inject(NzModalService);
   confirmModal?: NzModalRef; // For testing by now
   private viewContainerRef = inject(ViewContainerRef);
-  private message = inject(NzMessageService);
+  private acuerdosService = inject(AcuerdosService);
+  private avancesService = inject(AvancesService);
   private reportesService = inject(ReportesService);
 
   constructor() {
     this.crearSearForm();
 
-    const savedParams = localStorage.getItem('acuerdosParams');
+    const savedParams = localStorage.getItem('hitosParams');
 
     if (savedParams) {
       // Si ya hay parámetros guardados en localStorage, los cargamos
@@ -136,101 +136,16 @@ export class AcuerdosComponent implements OnInit {
     } else {
       // Si no hay parámetros guardados en el localStorage, continuar con la lógica normal
       this.activatedRoute.queryParams.subscribe((params) => {
-        this.cargarParametrosDesdeURL(params);
+        // this.cargarParametrosDesdeURL(params);
       });
     }
-
-    // Obtener los valores de los queryParams en la primera carga
-    // this.activatedRoute.queryParams.subscribe((params) => {
-    //   if (!this.updatingParams) {
-    //     this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
-
-    //     if (params['cui'] != null) {
-    //       this.cui = params['cui'];
-    //     }
-
-    //     if (params['clasificacion'] != null) {
-    //       const selectedValues = Array.isArray(params['clasificacion']) ? params['clasificacion'] : [params['clasificacion']];
-    //       this.clasificacionesSeleccionadas = selectedValues.map(value => ({ value: Number(value) }));
-    //     }
-
-    //     if (params['tipo'] != null) {
-    //       this.tipoSeleccionado = { value: params['tipo'] };
-    //     }
-
-    //     if (params['estado'] != null) {
-    //       const selectedValues = Array.isArray(params['estado']) ? params['estado'] : [params['estado']];
-    //       this.estadosSelecionados = selectedValues.map(value => ({ value: Number(value) }));
-    //     }
-
-    //     if (params['tipoEspacio'] != null) {
-    //       this.tipoEspacioSeleccionado = { value: Number(params['tipoEspacio']) };
-    //       this.onTipoEspacioChange(this.tipoEspacioSeleccionado, true);
-    //     }
-
-    //     if (params['espacio'] != null) {
-    //       const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
-    //       this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
-    //     }
-
-    //     if (params['sector'] != null) {
-    //       const selectedValues = Array.isArray(params['sector']) ? params['sector'] : [params['sector']];
-    //       this.sectoresSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
-    //     }
-
-    //     if (params['dep'] != null) {
-    //       this.depSeleccionado = { value: params['dep'] };
-    //       this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
-    //     }
-
-    //     if (params['prov'] != null) {
-    //       this.provSeleccionada = { value: params['prov'] };
-    //       this.onProvChange(this.provSeleccionada, true);
-    //     }
-
-    //     if (params['dis'] != null) {
-    //       this.disSeleccionado = { value: params['dis'] };
-    //     }
-
-    //     if (params['pageIndex'] != null) {
-    //       this.pageIndex = Number(params['pageIndex']);
-    //     }
-
-    //     if (params['pageSize'] != null) {
-    //       this.pageSize = Number(params['pageSize']);
-    //     }
-
-    //     if (params['sortField'] != null) {
-    //       this.sortField = params['sortField'];
-    //     }
-
-    //     if (params['sortOrder'] != null) {
-    //       this.sortOrder = params['sortOrder'];
-    //     }
-
-    //     // Inicializar el contador con la suma de las selecciones iniciales
-    //     this.filterCounter.set(
-    //       ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
-    //       (this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.length : 0) +
-    //       (this.tipoSeleccionado ? 1 : 0) +
-    //       (this.estadosSelecionados ? this.estadosSelecionados.length : 0) +
-    //       (this.tipoEspacioSeleccionado ? 1 : 0) +
-    //       (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
-    //       (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
-    //       (this.depSeleccionado ? 1 : 0) +
-    //       (this.provSeleccionada ? 1 : 0) +
-    //       (this.disSeleccionado ? 1 : 0)
-    //     );
-
-    //     this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
-    //   }
-    // });
 
     // Debounce los cambios de parámetros de la URL
     this.updateParamsSubject.pipe(debounceTime(300)).subscribe(() => {
       this.updateQueryParams();
     });
   }
+
 
   ngOnInit(): void {
     this.searchForm.patchValue({
@@ -247,13 +162,103 @@ export class AcuerdosComponent implements OnInit {
     });
   }
 
+  traerHitos(
+    {
+      cui = this.cui,
+      clasificacionesSeleccionadas = this.clasificacionesSeleccionadas,
+      tipoSeleccionado = this.tipoSeleccionado,
+      estadosSelecionados = this.estadosSelecionados,
+      espaciosSeleccionados = this.espaciosSeleccionados,
+      sectoresSeleccionados = (this.authService.sector() && this.authService.subTipo() != 'PCM') ? [this.authService.sector()!] : this.sectoresSeleccionados,
+      depSeleccionado = (this.authService.departamento()) ? this.authService.departamento() : this.depSeleccionado,
+      provSeleccionada = (this.authService.provincia()) ? this.authService.provincia() : this.provSeleccionada,
+      disSeleccionado = (this.authService.distrito()) ? this.authService.distrito() : this.disSeleccionado,
+      pageIndex = this.pageIndex,
+      pageSize = this.pageSize,
+      sortField = this.sortField,
+      sortOrder = this.sortOrder
+    }: TraerHitosListadoInterface
+  ): void {
+    if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
+      this.hitosService.listarHitosGenerales(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
+    }
+  }
+
+  onAvanceAddComentario(avance: AvanceHitoModel): void {
+    if (avance == null) return;
+
+    let tipoCompentario: number | null = null;
+
+    switch (subTipo) {
+
+      case 'PCM':
+        tipoCompentario = 1;
+        break;
+      case 'SECTOR':
+        tipoCompentario = 2;
+        break;
+      case 'PROVINCIA':
+        tipoCompentario = 3;
+        break;
+      case 'EJECUTORA':
+        tipoCompentario = 4;
+        break;
+      default:
+        tipoCompentario = null;
+        break;
+    }
+
+    this.avancesService.seleccionarAvanceById(avance.avanceId);
+
+    const modal = this.modal.create<ComentarioComponent, ComentarioModel>({
+      nzTitle: `Comentario para el avance`,
+      nzContent: ComentarioComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzData: {
+        id: avance.avanceId || null,
+        tipo: 'AVANCE',
+        tipoComentario: tipoCompentario,
+      },
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => this.modal.closeAll()
+        },
+        {
+          type: 'primary',
+          label: 'Comentar',
+          onClick: componentInstance => {
+            return this.avancesService.agregarComentarioDesdeListadoHitos(componentInstance!.comentarioForm.value).then((res) => {
+              this.traerHitos({});
+              console.log(res);
+              this.modal.closeAll();
+            });
+          },
+          loading: this.avancesService.isEditing(),
+          disabled: componentInstance => !componentInstance || !componentInstance.comentarioForm.valid
+        }]
+    });
+
+    const instance = modal.getContentComponent();
+    modal.afterClose.subscribe(result => {
+      instance.comentarioForm.reset();
+    });
+  }
+
+  onRefresh(): void {
+    this.traerHitos({});
+  }
+
   cargarParametrosDesdeLocalStorage(params: any): void {
     if (!this.updatingParams) {
       this.cargandoUbigeo = true;
 
       this.cui = params.cui || null;
       this.clasificacionesSeleccionadas = params.clasificacion && params.clasificacion.length ? params.clasificacion.map((value: number) => ({ value })) : [];
-      this.tipoSeleccionado = params.tipo ? { value: params.tipo } : null;
+      this.tipoSeleccionado = params.tipo ? params.tipo : null;
       this.estadosSelecionados = params.estado && params.estado.length ? params.estado.map((value: number) => ({ value })) : [];
       this.tipoEspacioSeleccionado = params.tipoEspacio ? { value: params.tipoEspacio } : null;
       this.espaciosSeleccionados = params.espacio && params.espacio.length ? params.espacio.map((value: number) => ({ value })) : [];
@@ -284,172 +289,97 @@ export class AcuerdosComponent implements OnInit {
     }
   }
 
-  cargarParametrosDesdeURL(params: any): void {
-    if (!this.updatingParams) {
-      this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
+  // cargarParametrosDesdeURL(params: any): void {
+  //   if (!this.updatingParams) {
+  //     this.cargandoUbigeo = true; // Iniciar la carga de ubigeo
 
-      if (params['cui'] != null) {
-        this.cui = params['cui'];
-      }
+  //     if (params['cui'] != null) {
+  //       this.cui = params['cui'];
+  //     }
 
-      if (params['clasificacion'] != null) {
-        const selectedValues = Array.isArray(params['clasificacion']) ? params['clasificacion'] : [params['clasificacion']];
-        this.clasificacionesSeleccionadas = selectedValues.map(value => ({ value: Number(value) }));
-      }
+  //     if (params['clasificacion'] != null) {
+  //       const selectedValues = Array.isArray(params['clasificacion']) ? params['clasificacion'] : [params['clasificacion']];
+  //       this.clasificacionesSeleccionadas = selectedValues.map(value => ({ value: Number(value) }));
+  //     }
 
-      if (params['tipo'] != null) {
-        this.tipoSeleccionado = { value: params['tipo'] };
-      }
+  //     if (params['tipo'] != null) {
+  //       this.tipoSeleccionado = { value: params['tipo'] };
+  //     }
 
-      if (params['estado'] != null) {
-        const selectedValues = Array.isArray(params['estado']) ? params['estado'] : [params['estado']];
-        this.estadosSelecionados = selectedValues.map(value => ({ value: Number(value) }));
-      }
+  //     if (params['estado'] != null) {
+  //       const selectedValues = Array.isArray(params['estado']) ? params['estado'] : [params['estado']];
+  //       this.estadosSelecionados = selectedValues.map(value => ({ value: Number(value) }));
+  //     }
 
-      if (params['tipoEspacio'] != null) {
-        this.tipoEspacioSeleccionado = { value: Number(params['tipoEspacio']) };
-        this.onTipoEspacioChange(this.tipoEspacioSeleccionado, true);
-      }
+  //     if (params['tipoEspacio'] != null) {
+  //       this.tipoEspacioSeleccionado = { value: Number(params['tipoEspacio']) };
+  //       this.onTipoEspacioChange(this.tipoEspacioSeleccionado, true);
+  //     }
 
-      if (params['espacio'] != null) {
-        const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
-        this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
-      }
+  //     if (params['espacio'] != null) {
+  //       const selectedValues = Array.isArray(params['espacio']) ? params['espacio'] : [params['espacio']];
+  //       this.espaciosSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+  //     }
 
-      if (params['sector'] != null) {
-        const selectedValues = Array.isArray(params['sector']) ? params['sector'] : [params['sector']];
-        this.sectoresSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
-      }
+  //     if (params['sector'] != null) {
+  //       const selectedValues = Array.isArray(params['sector']) ? params['sector'] : [params['sector']];
+  //       this.sectoresSeleccionados = selectedValues.map(value => ({ value: Number(value) }));
+  //     }
 
-      if (params['dep'] != null) {
-        this.depSeleccionado = { value: params['dep'] };
-        this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
-      }
+  //     if (params['dep'] != null) {
+  //       this.depSeleccionado = { value: params['dep'] };
+  //       this.onDepChange(this.depSeleccionado, true); // true indica que no se debe volver a navegar
+  //     }
 
-      if (params['prov'] != null) {
-        this.provSeleccionada = { value: params['prov'] };
-        this.onProvChange(this.provSeleccionada, true);
-      }
+  //     if (params['prov'] != null) {
+  //       this.provSeleccionada = { value: params['prov'] };
+  //       this.onProvChange(this.provSeleccionada, true);
+  //     }
 
-      if (params['dis'] != null) {
-        this.disSeleccionado = { value: params['dis'] };
-      }
+  //     if (params['dis'] != null) {
+  //       this.disSeleccionado = { value: params['dis'] };
+  //     }
 
-      if (params['pageIndex'] != null) {
-        this.pageIndex = Number(params['pageIndex']);
-      }
+  //     if (params['pageIndex'] != null) {
+  //       this.pageIndex = Number(params['pageIndex']);
+  //     }
 
-      if (params['pageSize'] != null) {
-        this.pageSize = Number(params['pageSize']);
-      }
+  //     if (params['pageSize'] != null) {
+  //       this.pageSize = Number(params['pageSize']);
+  //     }
 
-      if (params['sortField'] != null) {
-        this.sortField = params['sortField'];
-      }
+  //     if (params['sortField'] != null) {
+  //       this.sortField = params['sortField'];
+  //     }
 
-      if (params['sortOrder'] != null) {
-        this.sortOrder = params['sortOrder'];
-      }
+  //     if (params['sortOrder'] != null) {
+  //       this.sortOrder = params['sortOrder'];
+  //     }
 
-      // Inicializar el contador con la suma de las selecciones iniciales
-      this.filterCounter.set(
-        ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
-        (this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.length : 0) +
-        (this.tipoSeleccionado ? 1 : 0) +
-        (this.estadosSelecionados ? this.estadosSelecionados.length : 0) +
-        (this.tipoEspacioSeleccionado ? 1 : 0) +
-        (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
-        (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
-        (this.depSeleccionado ? 1 : 0) +
-        (this.provSeleccionada ? 1 : 0) +
-        (this.disSeleccionado ? 1 : 0)
-      );
+  //     // Inicializar el contador con la suma de las selecciones iniciales
+  //     this.filterCounter.set(
+  //       ((this.cui != undefined && this.cui != null && this.cui != '') ? 1 : 0) +
+  //       (this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.length : 0) +
+  //       (this.tipoSeleccionado ? 1 : 0) +
+  //       (this.estadosSelecionados ? this.estadosSelecionados.length : 0) +
+  //       (this.tipoEspacioSeleccionado ? 1 : 0) +
+  //       (this.espaciosSeleccionados ? this.espaciosSeleccionados.length : 0) +
+  //       (this.sectoresSeleccionados ? this.sectoresSeleccionados.length : 0) +
+  //       (this.depSeleccionado ? 1 : 0) +
+  //       (this.provSeleccionada ? 1 : 0) +
+  //       (this.disSeleccionado ? 1 : 0)
+  //     );
 
-      this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
-    }
+  //     this.cargandoUbigeo = false; // Finalizar la carga de ubigeo
+  //   }
+  // }
+
+  onOpenDrawer(): void {
+    this.isDrawervisible = true;
   }
 
-  traerAcuerdos(
-    {
-      cui = this.cui,
-      clasificacionesSeleccionadas = this.clasificacionesSeleccionadas,
-      tipoSeleccionado = this.tipoSeleccionado,
-      estadosSelecionados = this.estadosSelecionados,
-      espaciosSeleccionados = this.espaciosSeleccionados,
-      sectoresSeleccionados = (this.authService.sector() && this.authService.subTipo() != 'PCM') ? [this.authService.sector()!] : this.sectoresSeleccionados,
-      depSeleccionado = (this.authService.departamento()) ? this.authService.departamento() : this.depSeleccionado,
-      provSeleccionada = (this.authService.provincia()) ? this.authService.provincia() : this.provSeleccionada,
-      disSeleccionado = (this.authService.distrito()) ? this.authService.distrito() : this.disSeleccionado,
-      pageIndex = this.pageIndex,
-      pageSize = this.pageSize,
-      sortField = this.sortField,
-      sortOrder = this.sortOrder
-    }: TraerAcuerdosInterface
-  ): void {
-    if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
-      this.acuerdosService.listarAcuerdos(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
-    }
-  }
-
-  onRefresh(): void {
-    this.traerAcuerdos({});
-  }
-
-  onSolicitarDesestimacion(acuerdo: AcuerdoPedidoModel): void {
-    const title = 'Solicitar desestimación de acuerdo';
-    const labelOK = 'Solicitar desestimación';
-
-    const modal = this.modal.create<DesestimacionComponent, ComentarioModel>({
-      nzTitle: title,
-      nzContent: DesestimacionComponent,
-      nzViewContainerRef: this.viewContainerRef,
-      nzClosable: false,
-      nzMaskClosable: false,
-      nzData: {
-        id: acuerdo.acuerdoId,
-        tipo: 'ACUERDO',
-      },
-      nzFooter: [
-        {
-          label: 'Cancelar',
-          type: 'default',
-          onClick: () => this.modal.closeAll(),
-        },
-        {
-          label: labelOK,
-          type: 'primary',
-          danger: true,
-          onClick: (componentInstance) => {
-            return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
-              this.traerAcuerdos({});
-              this.modal.closeAll();
-            });
-          },
-          loading: this.acuerdosService.isEditing(),
-          disabled: (componentInstance) => !componentInstance?.desestimacionForm.valid,
-        }
-      ]
-    });
-
-    const instance = modal.getContentComponent();
-    //modal.afterOpen.subscribe(() => console.log(instance.hitoForm.value));
-    // Return a result when closed
-    modal.afterClose.subscribe(result => {
-      instance.desestimacionForm.reset();
-    });
-  }
-
-  onVerDesestimacion(acuerdo: AcuerdoPedidoModel): void {
-    if (acuerdo == null) return;
-
-    this.acuerdosService.descargarEvidenciaDesestimacion(acuerdo.acuerdoId!).then((res) => {
-      if (res.success == true) {
-        var binary_string = this.utilesService.base64ToArrayBuffer(res.data[0].binario);
-        var blob = new Blob([binary_string], { type: `application/${res.data[0].tipo}` });
-
-        saveAs(blob, res.data[0].nombre);
-      }
-    });
+  onCloseDrawer(): void {
+    this.isDrawervisible = false;
   }
 
   onTipoEspacioChange(value: SelectModel | null, skipNavigation = false): void {
@@ -460,7 +390,7 @@ export class AcuerdosComponent implements OnInit {
     const wasPreviouslySelected = this.tipoEspacioSeleccionado != null;
 
     this.tipoEspacioSeleccionado = value;
-    // this.traerAcuerdos({ tipoEspacioSeleccionado: value });
+    // this.traerHitos({ tipoEspacioSeleccionado: value });
     // debugger;
     if (value != null) {
       // this.espaciosStore.limpiarEspacios();
@@ -483,7 +413,7 @@ export class AcuerdosComponent implements OnInit {
     }
 
     if (!this.cargandoUbigeo && !skipNavigation) {
-      // this.traerAcuerdos({});
+      // this.traerHitos({});
       this.updateParamsSubject.next();
     }
   }
@@ -499,7 +429,7 @@ export class AcuerdosComponent implements OnInit {
     const newSelectedCount = value.length;
 
     this.espaciosSeleccionados = value;
-    this.traerAcuerdos({ espaciosSeleccionados: value });
+    this.traerHitos({ espaciosSeleccionados: value });
 
     this.filterCounter.update(x => x + (newSelectedCount - prevSelectedCount));
 
@@ -517,7 +447,7 @@ export class AcuerdosComponent implements OnInit {
     const newSelectedCount = value.length;
 
     this.sectoresSeleccionados = value;
-    this.traerAcuerdos({ sectoresSeleccionados: value });
+    this.traerHitos({ sectoresSeleccionados: value });
 
     this.filterCounter.update(x => x + (newSelectedCount - prevSelectedCount));
 
@@ -532,7 +462,7 @@ export class AcuerdosComponent implements OnInit {
     const wasPreviouslySelected = this.depSeleccionado != null;
 
     this.depSeleccionado = value;
-    this.traerAcuerdos({ depSeleccionado: value });
+    this.traerHitos({ depSeleccionado: value });
 
     if (value != null && value.value) {
       this.ubigeosStore.listarProvincias(value.value.toString());
@@ -551,7 +481,7 @@ export class AcuerdosComponent implements OnInit {
     }
 
     if (!this.cargandoUbigeo && !skipNavigation) {
-      this.traerAcuerdos({});
+      this.traerHitos({});
       this.updateParamsSubject.next();
     }
   }
@@ -582,7 +512,7 @@ export class AcuerdosComponent implements OnInit {
     }
 
     if (!this.cargandoUbigeo && !skipNavigation) {
-      this.traerAcuerdos({});
+      this.traerHitos({});
       this.updateParamsSubject.next();
     }
   }
@@ -604,7 +534,7 @@ export class AcuerdosComponent implements OnInit {
 
     // Solo llamar a traerPedidos si cargandoUbigeo es false
     if (!this.cargandoUbigeo) {
-      this.traerAcuerdos({});
+      this.traerHitos({});
       this.updateParamsSubject.next();
     }
   }
@@ -620,7 +550,7 @@ export class AcuerdosComponent implements OnInit {
     const newSelectedCount = value.length;
 
     this.clasificacionesSeleccionadas = value;
-    this.traerAcuerdos({ clasificacionesSeleccionadas: value });
+    this.traerHitos({ clasificacionesSeleccionadas: value });
 
     this.filterCounter.update(x => x + (newSelectedCount - prevSelectedCount));
 
@@ -636,9 +566,9 @@ export class AcuerdosComponent implements OnInit {
     if (value == null) {
       this.tipoSeleccionado = null;
     } else {
-      this.tipoSeleccionado = { value };
+      this.tipoSeleccionado = value;
     }
-    this.traerAcuerdos({ tipoSeleccionado: this.tipoSeleccionado });
+    this.traerHitos({ tipoSeleccionado: this.tipoSeleccionado });
 
     if (value == null && wasPreviouslySelected) {
       this.filterCounter.update(x => x - 1);
@@ -660,7 +590,7 @@ export class AcuerdosComponent implements OnInit {
     const newSelectedCount = value.length;
 
     this.estadosSelecionados = value;
-    this.traerAcuerdos({ estadosSelecionados: value });
+    this.traerHitos({ estadosSelecionados: value });
 
     this.filterCounter.update(x => x + (newSelectedCount - prevSelectedCount));
 
@@ -679,8 +609,39 @@ export class AcuerdosComponent implements OnInit {
 
   private executeCuiListing(value: string) {
     this.cui = (value == null || value == '' || value == undefined) ? null : value;
-    this.traerAcuerdos({ cui: value });
+    this.traerHitos({ cui: value });
     this.updateParamsSubject.next();
+  }
+
+  onGestionarHitoAcuerdo(codigo: number): void {
+    if (codigo == null) {
+      return;
+    }
+
+    //Navegar hacia la página de gestión de hitos en /acuerdos/acuerdo/:codigo
+    this.router.navigate(['acuerdos', 'acuerdo', codigo]);
+  }
+
+  onVerDesestimacion(acuerdo: HitoAcuerdoModel): void {
+    if (acuerdo == null) return;
+
+    this.acuerdosService.descargarEvidenciaDesestimacion(acuerdo.acuerdoID!).then((res) => {
+      if (res.success == true) {
+        var binary_string = this.utilesService.base64ToArrayBuffer(res.data[0].binario);
+        var blob = new Blob([binary_string], { type: `application/${res.data[0].tipo}` });
+
+        saveAs(blob, res.data[0].nombre);
+      }
+    });
+  }
+
+  onValidarAvance(avance: AvanceHitoModel): void {
+    this.confirmModal = this.modal.confirm({
+      nzTitle: `¿Deseas validar el avance: "${avance.avance}"?`,
+      nzContent: 'El avance pasará a estar VALIDADO.',
+      nzIconType: 'check-circle',
+      nzOnOk: () => this.avancesService.validarAvance(avance)
+    });
   }
 
   onDescargarReporte(tipo: ReporteType): void {
@@ -699,7 +660,7 @@ export class AcuerdosComponent implements OnInit {
         },
         {
           type: 'primary',
-          label: 'Comentar',
+          label: 'Descargar',
           onClick: componentInstance => {
             const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
 
@@ -741,7 +702,7 @@ export class AcuerdosComponent implements OnInit {
     const queryParams = {
       cui: this.cui,
       clasificacion: this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas.map(x => x.value) : null,
-      tipo: this.tipoSeleccionado ? this.tipoSeleccionado.value : null,
+      tipo: this.tipoSeleccionado ? this.tipoSeleccionado : null,
       estado: this.estadosSelecionados ? this.estadosSelecionados.map(x => x.value) : null,
       tipoEspacio: this.tipoEspacioSeleccionado ? this.tipoEspacioSeleccionado.value : null,
       espacio: this.espaciosSeleccionados ? this.espaciosSeleccionados.map(x => x.value) : null,
@@ -756,8 +717,7 @@ export class AcuerdosComponent implements OnInit {
     };
 
     // Guardar en el localStorage
-    localStorage.setItem('acuerdosParams', JSON.stringify(queryParams));
-
+    localStorage.setItem('hitosParams', JSON.stringify(queryParams));
 
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
@@ -767,53 +727,6 @@ export class AcuerdosComponent implements OnInit {
       this.updatingParams = false;
     });
   }
-
-  // onClearFilters(): void {
-  //   this.clearingFilters = true;
-
-  //   this.searchForm.reset();
-
-  //   this.cui = null;
-  //   this.clasificacionesSeleccionadas = [];
-  //   this.tipoSeleccionado = null;
-  //   this.estadosSelecionados = [];
-  //   this.tipoEspacioSeleccionado = null;
-  //   this.espaciosSeleccionados = [];
-  //   this.sectoresSeleccionados = [];
-  //   this.depSeleccionado = null;
-  //   this.provSeleccionada = null;
-  //   this.pageIndex = 1;
-  //   this.pageSize = 10;
-
-  //   this.filterCounter.set(0);
-
-  //   // Hacer una sola llamada a traerAcuerdos con los parámetros vacíos
-  //   this.traerAcuerdos({
-  //     cui: null,
-  //     clasificacionesSeleccionadas: [],
-  //     tipoSeleccionado: null,
-  //     estadosSelecionados: [],
-  //     espaciosSeleccionados: [],
-  //     sectoresSeleccionados: [],
-  //     depSeleccionado: null,
-  //     provSeleccionada: null,
-  //     pageIndex: this.pageIndex,
-  //     pageSize: this.pageSize,
-  //     sortField: this.sortField,
-  //     sortOrder: this.sortOrder
-  //   });
-
-  //   this.router.navigate(
-  //     [],
-  //     {
-  //       relativeTo: this.activatedRoute,
-  //       queryParams: { cui: null, clasificacion: null, tipo: null, estado: null, tipoEspacio: null, espacio: null, sector: null, dep: null, prov: null, pageIndex: this.pageIndex, pageSize: this.pageSize, sortField: this.sortField, sortOrder: this.sortOrder },
-  //       queryParamsHandling: 'merge',
-  //     }
-  //   ).finally(() => {
-  //     this.clearingFilters = false;
-  //   });
-  // }
 
   onClearFilters(excepciones: string[]): void {
     // Primero restablecemos todos los filtros excepto los que están en la lista de excepciones
@@ -889,123 +802,6 @@ export class AcuerdosComponent implements OnInit {
     this.updateQueryParams();
   }
 
-  onGestionarHitoAcuerdo(codigo: number): void {
-    if (codigo == null) {
-      return;
-    }
-
-    //Navegar hacia la página de gestión de hitos en /acuerdos/acuerdo/:codigo
-    this.router.navigate(['acuerdos', 'acuerdo', codigo]);
-  }
-
-  onAddEdit(acuerdo: AcuerdoPedidoModel | null, tipo: AcuerdoType, accion: AccionType): void {
-    let title = 'Nuevo acuerdo';
-    let labelOk = 'Crear';
-
-    switch (accion) {
-      case 'EDIT':
-        title = 'Editar acuerdo';
-        labelOk = 'Guardar';
-        break;
-      case 'CONVERT':
-        title = 'Convertir a acuerdo';
-        labelOk = 'Convertir';
-        break;
-      case 'CREATE':
-        title = 'Nuevo acuerdo';
-        labelOk = 'Crear';
-        break;
-      case 'RECREATE':
-        title = 'Crear acuerdo desde Mesa Técnica';
-        labelOk = 'Guardar';
-        break;
-      default:
-        break;
-    }
-
-    // this.acuerdosService.seleccionarAcuerdoById(acuerdo?.acuerdoId || null);
-    this.espaciosStore.listarEventos();
-
-    const modal = this.modal.create<AcuerdoComponent, AddEditAcuerdoModel>({
-      nzTitle: title,
-      nzContent: AcuerdoComponent,
-      nzViewContainerRef: this.viewContainerRef,
-      nzMaskClosable: false,
-      nzClosable: false,
-      nzKeyboard: false,
-      nzData: { tipo, accion },
-      nzFooter: [
-        {
-          label: 'Cancelar',
-          type: 'default',
-          onClick: () => this.modal.closeAll(),
-        },
-        {
-          label: labelOk,
-          type: 'primary',
-          onClick: (componentInstance) => {
-            if (accion == 'RECREATE') {
-              return this.acuerdosService.agregarAcuerdoExpress(componentInstance!.acuerdoForm.value).then((res) => {
-                this.traerAcuerdos({});
-                this.modal.closeAll();
-              });
-            } else {
-              return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then((res) => {
-                this.modal.closeAll();
-              });
-            }
-          },
-          loading: this.acuerdosService.isEditing(),
-          disabled: (componentInstance) => !componentInstance?.acuerdoForm.valid,
-        }
-      ]
-    });
-
-    const instance = modal.getContentComponent();
-    modal.afterClose.subscribe(result => {
-      instance.acuerdoForm.reset();
-    });
-  }
-
-  createTplModal(tplTitle: TemplateRef<{}>, tplContent: TemplateRef<{}>, tplFooter: TemplateRef<{}>): void {
-    this.modal.create({
-      nzTitle: tplTitle,
-      nzContent: tplContent,
-      nzFooter: tplFooter,
-      // nzMaskClosable: false,
-      // nzClosable: false,
-      nzOnOk: () => console.log('Click ok')
-    });
-  }
-
-  onDelete(value: any): void { }
-
-  onOpenDrawer(): void {
-    this.isDrawervisible = true;
-    // this.espaciosStore.listarEventos();
-  }
-
-  onCloseDrawer(): void {
-    this.isDrawervisible = false;
-  }
-
-  crearSearForm(): void {
-    this.searchForm = this.fb.group({
-      cui: [null],
-      clasificacion: [null],
-      tipo: [null],
-      estado: [null],
-      tipoEspacio: [null],
-      espacio: [null],
-      sector: [null],
-      dep: [null],
-      prov: [null],
-      dis: [null],
-    });
-  }
-
-  compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
-
   onQueryParamsChange(params: NzTableQueryParams): void {
     if (!this.updatingParams && !this.cargandoUbigeo) { // Agrega la verificación de cargandoUbigeo
       const { pageSize, pageIndex, sort } = params;
@@ -1055,7 +851,7 @@ export class AcuerdosComponent implements OnInit {
         }
       }
 
-      this.traerAcuerdos({
+      this.traerHitos({
         pageIndex,
         pageSize,
         sortField: this.sortField,
@@ -1067,19 +863,21 @@ export class AcuerdosComponent implements OnInit {
     }
   }
 
-  handleOk(): void {
-    this.message
-      .loading('Descargando archivo', { nzDuration: 2500 })
-      .onClose!.pipe(
-        concatMap(() => this.message.success('Descarga finalizada', { nzDuration: 2500 }).onClose!),
-        concatMap(() => this.message.info('Documento guardado en su computadora', { nzDuration: 2500 }).onClose!)
-      )
-      .subscribe(() => {
-        console.log('All completed!');
-      });
+  crearSearForm(): void {
+    this.searchForm = this.fb.group({
+      cui: [null],
+      clasificacion: [null],
+      tipo: [null],
+      estado: [null],
+      tipoEspacio: [null],
+      espacio: [null],
+      sector: [null],
+      dep: [null],
+      prov: [null],
+      dis: [null],
+    });
   }
 
-  handleCancel(): void {
-    this.isVisible = false;
-  }
+  compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
+
 }

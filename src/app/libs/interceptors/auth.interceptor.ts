@@ -4,12 +4,12 @@ import { AuthService } from '../services/auth/auth.service';
 import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const tokenService = inject(AuthService);
+  const authService = inject(AuthService);
   let isRefreshing = false;
   let refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   let authReq = req;
-  const token = tokenService.obtenerToken();
+  const token = authService.obtenerToken();
 
   if (token != null) {
     authReq = addTokenHeader(req, token);
@@ -21,15 +21,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         isRefreshing = true;
         refreshTokenSubject.next(null);
 
-        const token = tokenService.obtenerToken();
-        const refresh = tokenService.obtenerRefreshToken();
+        const token = authService.obtenerToken();
+        const refresh = authService.obtenerRefreshToken();
 
         if (refresh && token) {
-          return tokenService.renovarAutenticacion(token, refresh).pipe(
+          return authService.renovarAutenticacion(token, refresh).pipe(
             switchMap((resp: any) => {
               isRefreshing = false;
 
-              //tokenService.guardarLocalStorage(resp.data.token, resp.data.refreshToken);
+              //authService.guardarLocalStorage(resp.data.token, resp.data.refreshToken);
               refreshTokenSubject.next(resp.data.token);
 
               return next(addTokenHeader(authReq, resp.data.token));
@@ -37,7 +37,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             catchError((err) => {
               isRefreshing = false;
 
-              tokenService.logout();
+              authService.logout(token);
               return throwError(() => err);
             })
           );

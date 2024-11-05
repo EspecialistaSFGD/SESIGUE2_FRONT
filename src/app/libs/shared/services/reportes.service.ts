@@ -5,6 +5,8 @@ import { HttpParams } from '@angular/common/http';
 import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
 import { startOfMonth, endOfMonth, startOfDay } from 'date-fns';
 import { ReporteType } from '../types/reporte.type';
+import { SelectModel } from '../../models/shared/select.model';
+import { GeoObjectModel, ReporteMensualModel } from '../../models/reporte/reporte.model';
 
 interface State {
   reportes: any[];
@@ -96,26 +98,56 @@ export class ReportesService extends BaseHttpService {
     });
   }
 
-  obtenerReporteResultado(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null, tipoAcuerdo: string | null): Promise<ResponseModel> {
-    const ots: ReporteRequestModel = {} as ReporteRequestModel;
+  obtenerReporteResultado(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: SelectModel[] | null = null, tipoAcuerdo: string | null): Promise<ResponseModel> {
+    // const ots: ReporteRequestModel = {} as ReporteRequestModel;
+    let params = new HttpParams();
 
-    if (reporteCabeceraId) ots.reporteCabeceraId = reporteCabeceraId;
+    // if (reporteCabeceraId) ots.reporteCabeceraId = reporteCabeceraId;
 
-    if (ubigeo) ots.ubigeo = ubigeo;
+    // if (ubigeo) ots.ubigeo = ubigeo;
 
-    if (espacio) ots.espacio = espacio;
+    // if (espacio) ots.espacio = espacio;
 
-    if (sector) ots.sector = sector;
+    if (reporteCabeceraId) params = params.append('reporteCabeceraId', reporteCabeceraId);
 
-    if (tipoAcuerdo) ots.tipo = tipoAcuerdo;
+    if (ubigeo) params = params.append('ubigeo', ubigeo);
+
+    if (sector) params = params.append('sector', sector);
+
+    if (espacio != null && espacio.length > 0) {
+      espacio.forEach((esp: SelectModel) => {
+        params = params.append('espacio[]', `${esp.label}`);
+      });
+    }
+
+    // if (sector) ots.sector = sector;
+
+    // if (tipoAcuerdo) ots.tipo = tipoAcuerdo;
+
+    if (tipoAcuerdo) params = params.append('tipo', tipoAcuerdo);
+
 
     return new Promise((resolve, reject) => {
       this.#reportesResult.update((state) => ({ ...state, isEditing: true }));
 
-      this.http.post<ResponseModel>(this.apiUrl + '/Reporte/ObtenerReporteResultado', ots).subscribe({
+      this.http.get<ResponseModel>(this.apiUrl + '/Reporte/ObtenerReporteResultado', { params }).subscribe({
         next: (data) => {
 
-          this.#reportesResult.update((state) => ({ ...state, acuerdos: data.data }));
+          if (!data.success) return;
+
+          let results: GeoObjectModel[] = [];
+
+          results = data.data;
+
+          results.forEach((geo: GeoObjectModel) => {
+            geo.porcentaje = Number(geo.porcentaje.toFixed(1));
+            geo.porcentajeStr = `${geo.porcentaje} %`;
+          });
+
+          // console.log(results);
+
+
+          this.#reportesResult.update((state) => ({ ...state, acuerdos: results }));
 
           resolve(data);
         },
@@ -128,7 +160,7 @@ export class ReportesService extends BaseHttpService {
     });
   }
 
-  obtenerReporteSector(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null, tipoAcuerdo: string | null): Promise<ResponseModel> {
+  obtenerReporteSector(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: SelectModel[] | null = null, tipoAcuerdo: string | null): Promise<ResponseModel> {
     let params = new HttpParams();
 
     if (reporteCabeceraId) params = params.append('reporteCabeceraId', reporteCabeceraId);
@@ -137,7 +169,13 @@ export class ReportesService extends BaseHttpService {
 
     if (sector) params = params.append('sector', sector);
 
-    if (espacio) params = params.append('espacio', espacio);
+    // if (espacio) params = params.append('espacio', espacio);
+
+    if (espacio != null && espacio.length > 0) {
+      espacio.forEach((esp: SelectModel) => {
+        params = params.append('espacio[]', `${esp.label}`);
+      });
+    }
 
     if (tipoAcuerdo) params = params.append('tipo', tipoAcuerdo);
 
@@ -158,7 +196,7 @@ export class ReportesService extends BaseHttpService {
     });
   }
 
-  obtenerReporteClasificacion(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null, tipoAcuerdo: string | null): Promise<ResponseModel> {
+  obtenerReporteClasificacion(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: SelectModel[] | null = null, tipoAcuerdo: string | null): Promise<ReporteMensualModel[]> {
     let params = new HttpParams();
 
     if (reporteCabeceraId) params = params.append('reporteCabeceraId', reporteCabeceraId);
@@ -167,7 +205,12 @@ export class ReportesService extends BaseHttpService {
 
     if (sector) params = params.append('sector', sector);
 
-    if (espacio) params = params.append('espacio', espacio);
+    // if (espacio) params = params.append('espacio', espacio);
+    if (espacio != null && espacio.length > 0) {
+      espacio.forEach((esp: SelectModel) => {
+        params = params.append('espacio[]', `${esp.label}`);
+      });
+    }
 
     if (tipoAcuerdo) params = params.append('tipo', tipoAcuerdo);
 
@@ -177,7 +220,19 @@ export class ReportesService extends BaseHttpService {
     return new Promise((resolve, reject) => {
       this.http.get<ResponseModel>(this.apiUrl + '/Reporte/ReporteClasificacion', { params }).subscribe({
         next: (data) => {
-          resolve(data);
+          if (!data.success) return;
+
+          let results: ReporteMensualModel[] = [];
+          results = data.data;
+
+          results.forEach((res: ReporteMensualModel) => {
+            res.porcentaje = Number(res.porcentaje.toFixed(1));
+            res.avance = `${res.porcentaje}%`;
+          });
+
+          // console.log(results);
+
+          resolve(results);
         },
         error: (error) => {
           console.error(error);
@@ -189,7 +244,7 @@ export class ReportesService extends BaseHttpService {
     });
   }
 
-  obtenerReporteMensual(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null, tipoAcuerdo: string | null): Promise<ResponseModel> {
+  obtenerReporteMensual(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: SelectModel[] | null = null, tipoAcuerdo: string | null): Promise<ReporteMensualModel[]> {
     let params = new HttpParams();
 
     if (reporteCabeceraId) params = params.append('reporteCabeceraId', reporteCabeceraId);
@@ -198,7 +253,11 @@ export class ReportesService extends BaseHttpService {
 
     if (sector) params = params.append('sector', sector);
 
-    if (espacio) params = params.append('espacio', espacio);
+    if (espacio != null && espacio.length > 0) {
+      espacio.forEach((esp: SelectModel) => {
+        params = params.append('espacio[]', `${esp.label}`);
+      });
+    }
 
     if (tipoAcuerdo) params = params.append('tipo', tipoAcuerdo);
 
@@ -207,7 +266,17 @@ export class ReportesService extends BaseHttpService {
     return new Promise((resolve, reject) => {
       this.http.get<ResponseModel>(this.apiUrl + '/Reporte/ReporteMensual', { params }).subscribe({
         next: (data) => {
-          resolve(data);
+          if (!data.success) return;
+
+          let results: ReporteMensualModel[] = [];
+          results = data.data;
+
+          results.forEach((res: ReporteMensualModel) => {
+            res.porcentaje = Number(res.porcentaje.toFixed(1));
+            res.avance = `${res.porcentaje}%`;
+          });
+
+          resolve(results);
         },
         error: (error) => {
           console.error(error);
@@ -307,7 +376,7 @@ export class ReportesService extends BaseHttpService {
     });
   }
 
-  obtenerReporteTotales(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: string | null, tipoAcuerdo: string | null): Promise<ResponseModel> {
+  obtenerReporteTotales(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: SelectModel[] | null = null, tipoAcuerdo: string | null): Promise<ResponseModel> {
     let params = new HttpParams();
 
     if (reporteCabeceraId) params = params.append('reporteCabeceraId', reporteCabeceraId);
@@ -316,7 +385,13 @@ export class ReportesService extends BaseHttpService {
 
     if (sector) params = params.append('sector', sector);
 
-    if (espacio) params = params.append('espacio', espacio);
+    // if (espacio) params = params.append('espacio', espacio);
+
+    if (espacio != null && espacio.length > 0) {
+      espacio.forEach((esp: SelectModel) => {
+        params = params.append('espacio[]', `${esp.label}`);
+      });
+    }
 
     if (tipoAcuerdo) params = params.append('tipo', tipoAcuerdo);
 

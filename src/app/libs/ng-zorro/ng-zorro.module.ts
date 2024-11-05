@@ -15,6 +15,12 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzCardComponent } from 'ng-zorro-antd/card';
+import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
+import { NzProgressModule } from 'ng-zorro-antd/progress'
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
 
 
 @NgModule({
@@ -35,7 +41,13 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer';
     NzButtonModule,
     NzTableModule,
     NzTabsModule,
-    NzDrawerModule
+    NzDrawerModule,
+    NzCardComponent,
+    NzPageHeaderModule,
+    NzStatisticModule,
+    NzProgressModule,
+    NzToolTipModule,
+    NzBadgeModule,
   ],
   exports: [
     NzFormModule,
@@ -52,7 +64,13 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer';
     NzButtonModule,
     NzTableModule,
     NzTabsModule,
-    NzDrawerModule
+    NzDrawerModule,
+    NzCardComponent,
+    NzPageHeaderModule,
+    NzStatisticModule,
+    NzProgressModule,
+    NzToolTipModule,
+    NzBadgeModule
   ]
 })
 export class NgZorroModule { }

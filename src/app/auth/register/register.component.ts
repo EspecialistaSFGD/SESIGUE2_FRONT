@@ -189,6 +189,24 @@ export class RegisterComponent {
 
     if (value == null) return;
 
+    if (value && value.value) {
+      this.ubigeosStore.listarDistritos(value.value?.toString());
+
+      if (this.registerForm.get('dis')?.value != null) {
+        this.registerForm.patchValue({ dis: null });
+      }
+    }
+
+    this.entidadesStore.listarEntidades(0, 2, 0, Number(value.value));
+  }
+
+  onDisChange(value: SelectModel): void {
+    const entidadControl = this.registerForm.get('entidad');
+    entidadControl?.reset();
+
+    if (value == null) return;
+
+    //TODO: actualizar entidades por distritos
     this.entidadesStore.listarEntidades(0, 2, 0, Number(value.value));
   }
 
@@ -226,6 +244,7 @@ export class RegisterComponent {
       tipo: [null, [Validators.required]],
       dep: [null],
       prov: [null],
+      dis: [null],
       entidad: [null, [Validators.required]],
       sector: [null],
       perfil: [null, [Validators.required]],

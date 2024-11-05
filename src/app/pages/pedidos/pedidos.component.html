@@ -31,31 +31,41 @@
         <tr>
             <td class="text-center w-10">
                 @if(data.validado==1){
-                <nz-avatar [nzSize]="24" class="bg-green-500 dark:bg-green-400" nzIcon="check"
+                <nz-avatar [nzSize]="24" class="bg-green-500 dark:bg-green-400" nzIcon="check" nzTooltipPlacement="left"
                     nz-tooltip="Validado"></nz-avatar>
+                }
+                @else{
+                @if(data.comentarioPCM){
+                <nz-avatar [nzSize]="24" class="bg-orange-500" nzTooltipPlacement="left" nz-tooltip="Sin validar"
+                    nzIcon="check" nzTooltipPlacement="left"
+                    nz-tooltip="Por validar, con observación de PCM"></nz-avatar>
                 }@else {
-                <nz-avatar [nzSize]="24" class="bg-gray-300" nz-tooltip="Sin validar" nzIcon="check"
-                    nz-tooltip="Por validar"></nz-avatar>
+                <nz-avatar [nzSize]="24" class="bg-gray-300" nzTooltipPlacement="left" nz-tooltip="Sin validar"
+                    nzIcon="check" nzTooltipPlacement="left" nz-tooltip="Por validar"></nz-avatar>
+                }
+
                 }
             </td>
             <td class="w-40"><strong>{{data.codigo}}</strong></td>
             <td class="w-20 sm:w-56">
-                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.aspectoCriticoResolver">
+                <p class="line-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
+                    [nzTooltipTitle]="data.aspectoCriticoResolver">
                     {{ data.aspectoCriticoResolver }}
                 </p>
             </td>
             <td>{{ data.espacio }}</td>
             <td nzWidth="120px" nzAlign="center">{{ data.sector }}</td>
-            <td nzWidth="150px" nzAlign="center">{{ data.region }}</td>
+            <td nzWidth="150px" nzAlign="center">{{ data.ubicacion }}</td>
             <!-- <td nzLeft nzWidth="120px" nzAlign="center">{{ data.prioridadID }}</td> -->
             <td nzWidth="300px" nzAlign="center">
-                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip
+                <p class="line-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
                     [nzTooltipTitle]="data.objetivoEstrategicoTerritorial">
                     {{ data.objetivoEstrategicoTerritorial }}
                 </p>
             </td>
             <td nzWidth="300px" nzAlign="center">
-                <p class="line-clamp-1 sm:line-clamp-3" nz-tooltip [nzTooltipTitle]="data.intervencionesEstrategicas">
+                <p class="line-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
+                    [nzTooltipTitle]="data.intervencionesEstrategicas">
                     {{ data.intervencionesEstrategicas }}
                 </p>
             </td>
@@ -66,14 +76,14 @@
             <td nzWidth="120px" nzAlign="center">{{ data.comentarioPCM }}</td>
             <td nzRight nzWidth="72px" nzAlign="center">
                 <nz-space>
-                    <button (click)="onGestionarPedido(data)" *nzSpaceItem nz-button nzType="link" nz-tooltip
-                        nzTooltipTitle="Ver detalle">
+                    <button (click)="onGestionarPedido(data)" *nzSpaceItem nz-button nzType="link"
+                        nzTooltipPlacement="left" nz-tooltip nzTooltipTitle="Ver detalle">
                         <span nz-icon nzType="eye" nzTheme="outline"></span>
                     </button>
 
                     @if(authService.permisos()?.puede_comentar_pedido_pcm){
-                    <button [disabled]="data.validado==1" *nzSpaceItem nz-button nzType="link" nz-tooltip
-                        nzTooltipTitle="Agregar comentario" (click)="onCommentPCM(data)">
+                    <button [disabled]="data.validado==1" *nzSpaceItem nz-button nzType="link" nzTooltipPlacement="left"
+                        nz-tooltip nzTooltipTitle="Agregar comentario" (click)="onCommentPCM(data)">
                         <nz-badge [nzDot]="data.comentarioPCM != '' && data.comentarioPCM != null">
                             <span nz-icon nzType="comment" nzTheme="outline"></span>
                         </nz-badge>
@@ -82,7 +92,7 @@
 
                     @if(authService.permisos()?.puede_validar_pedido){
                     <button [disabled]="data.validado==1" (click)="onValidate(data)" *nzSpaceItem nz-button
-                        nzType="link" nz-tooltip="Validar pedido">
+                        nzType="link" nzTooltipPlacement="left" nz-tooltip="Validar pedido">
                         <span nz-icon nzType="check" nzTheme="outline"></span>
                     </button>
                     }
@@ -113,7 +123,7 @@
         <div>
             <nz-space>
 
-                <button *nzSpaceItem nz-button nz-tooltip="Actualizar" (click)="onRefresh()">
+                <button *nzSpaceItem nz-button nzTooltipPlacement="left" nz-tooltip="Actualizar" (click)="onRefresh()">
                     <span nz-icon nzType="sync" nzTheme="outline"></span>
                 </button>
 
@@ -161,7 +171,7 @@
         <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
             <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <nz-form-item>
-                    <nz-form-label [nzSpan]="null" nzFor="cui">Código de acuerdo o CUI</nz-form-label>
+                    <nz-form-label [nzSpan]="null" nzFor="cui">Código de pedido o CUI</nz-form-label>
                     <nz-form-control nzSpan="null">
                         <nz-input-group [nzSuffix]="suffixIconSearch">
                             <input type="text" #cui id="cui" formControlName="cui" nz-input

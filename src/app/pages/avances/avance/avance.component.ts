@@ -15,6 +15,7 @@ import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { UtilesService } from '../../../libs/shared/services/utiles.service';
 import { saveAs } from 'file-saver';
+import { differenceInCalendarDays } from 'date-fns';
 
 @Component({
   selector: 'app-avance',
@@ -51,6 +52,7 @@ export class AvanceComponent {
 
   uploading = false;
   fileList: NzUploadFile[] = [];
+  today = new Date();
 
   constructor() {
     this.crearAvanceForm();
@@ -88,7 +90,10 @@ export class AvanceComponent {
 
     if (this.fileList.length > 0) {
       if (originalFile != null) {
+        // console.log(originalFile);
+
         this.avanceForm.get('evidencia')?.patchValue(originalFile);
+        this.avanceForm.get('nombreEvidencia')?.patchValue(originalFile.name);
       }
     }
 
@@ -99,7 +104,6 @@ export class AvanceComponent {
     this.fileList = [];
     this.avanceForm.get('evidencia')?.patchValue(null);
     this.avanceForm.get('nombreEvidencia')?.patchValue(null);
-    console.log('evidencia', this.avanceForm.get('evidencia')?.value);
 
     return false;
   }
@@ -107,6 +111,10 @@ export class AvanceComponent {
   handleDownload = (file: NzUploadFile): void => {
     const nombreEvidencia = this.avanceForm.get('nombreEvidencia')?.value;
     const idArchivo = this.avanceForm.get('avanceId')?.value;
+
+    console.log('idArchivo', idArchivo);
+    console.log('nombreEvidencia', nombreEvidencia);
+
 
     if (nombreEvidencia != '' && nombreEvidencia != null) { // viene del servidor
       this.avancesService.descargarEvidenciaAvance(idArchivo).then((res) => {
@@ -153,6 +161,10 @@ export class AvanceComponent {
     controlNombreEvidencia?.updateValueAndValidity();
   }
 
+  disabledDate = (current: Date): boolean =>
+    // Can not select days before today and today
+    differenceInCalendarDays(current, this.today) > 0;
+
   crearAvanceForm(): void {
     this.avanceForm = this.fb.group({
       idEvidencia: [this.avanceSeleccionado?.idEvidencia],
@@ -161,7 +173,7 @@ export class AvanceComponent {
       fecha: [this.avanceSeleccionado?.fechaDate, [Validators.required]],
       avance: [this.avanceSeleccionado?.avance, [Validators.required]],
       evidencia: [this.avanceSeleccionado?.evidencia],
-      estado: [this.avanceSeleccionado?.estado, [Validators.required]],
+      estado: ['0', [Validators.required]],
       nombreEvidencia: [this.avanceSeleccionado?.nombreEvidencia],
       // entidadSelect: [this.avanceSeleccionado?.entidadSelect, [Validators.required]],
       // responsableSelect: [this.hitoSeleccionado?.responsableSelect, [Validators.required]],

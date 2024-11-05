@@ -41,6 +41,10 @@ export class PedidoModel extends SeguridadModel {
 
         public tipoCodigoSelect?: SelectModel,
         public tipoCodigo?: number,
+        public tipoInversionId?: number,
+
+        public codigoPerfil?: number,
+        public ubicacion?: string,
     ) {
         super();
     }
@@ -74,7 +78,10 @@ export class PedidoResponseModel {
         public comentarioPcm?: string,
         public descripcionEstadoEspacio?: string,
         public estadoEvento?: EstadoEventoType,
-
+        public tipoInversionId?: number,
+        public tipoCodigoSelect?: any,
+        public distrito?: string,
+        public ubicacion?: string,
     ) { }
 }
 
@@ -97,6 +104,7 @@ export class PedidoRequestModel {
         public entidadIdDestino?: number,
         public comentarioPcm?: string,
         public codigoPerfil?: number,
+        public tipoInversionId?: number,
 
         // public ubigeo?: string,
         // public region?: string,
