@@ -13,6 +13,7 @@ import { AuthService } from '../auth/auth.service';
 import { EstadoEventoType } from '../../shared/types/estado.type';
 
 const accesoId = localStorage.getItem('codigoUsuario') || null;
+const perfilId = localStorage.getItem('codigoPerfil') || null;
 
 interface State {
     pedidos: PedidoModel[];
@@ -33,7 +34,6 @@ export class PedidosService {
     private msg = inject(NzMessageService);
     private http = inject(HttpClient);
     private authService = inject(AuthService);
-
 
     #pedidosResult = signal<State>({
         pedidos: [],
@@ -101,11 +101,19 @@ export class PedidosService {
                 if (!result) return;
 
                 result.forEach((x: PedidoResponseModel) => {
+                    const ubicacion = [
+                        x.region ? x.region : '',
+                        x.provincia ? x.provincia : '',
+                        x.distrito ? x.distrito : ''
+                    ].filter(Boolean).join(' / ');
+
                     if (x.sector && x.sectorid) x.sectorSelect = new SelectModel(x.sectorid, x.sector);
                     if (x.espacio && x.eventoId) x.espacioSelect = new SelectModel(x.eventoId, x.espacio);
+                    if (x.tipoInversionId) x.tipoCodigoSelect = x.tipoInversionId.toString();
                     if (x.intervencionesEstrategicas && x.tipoIntervencionId) x.tipoIntervencionSelect = new SelectModel(x.tipoIntervencionId, x.intervencionesEstrategicas);
                     if (x.objetivoEstrategicoTerritorial && x.ejeEstrategicoId) x.ejeEstrategicoSelect = new SelectModel(x.ejeEstrategicoId, x.objetivoEstrategicoTerritorial);
                     if (x.descripcionEstadoEspacio) x.estadoEvento = x.descripcionEstadoEspacio.toUpperCase() as EstadoEventoType;
+                    x.ubicacion = ubicacion;
                 });
 
                 this.#pedidosResult.update((v) => ({ ...v, pedidos: result, isLoading: false, total: data.info.total }));
@@ -149,17 +157,17 @@ export class PedidosService {
     }
 
     agregarPedido(pedido: PedidoModel): Promise<ResponseModel> {
-
-        const codigoPerfil = this.authService.getCodigoPerfil();
+        // debugger;
+        // const codigoPerfil = this.authService.getCodigoPerfil();
         this.#pedidosResult.update((v) => ({ ...v, isEditing: true }));
 
-        if (codigoPerfil === 0)
-            return new Promise((resolve, reject) => {
-                this.#pedidosResult.update((v) => ({ ...v, isEditing: false }));
-                this.msg.error('No se pudo obtener el Cógido de Perfil...')
+        // if (codigoPerfil === 0)
+        //     return new Promise((resolve, reject) => {
+        //         this.#pedidosResult.update((v) => ({ ...v, isEditing: false }));
+        //         this.msg.error('No se pudo obtener el Cógido de Perfil...')
 
-                reject(new Error('No se pudo obtener el Código de Perfil'));
-            });
+        //         reject(new Error('No se pudo obtener el Código de Perfil'));
+        //     });
 
         return new Promise((resolve, reject) => {
 
@@ -170,6 +178,10 @@ export class PedidosService {
             if (pedido.sectorSelect) ots.grupoId = Number(pedido.sectorSelect.value);
             ots.aspectoCriticoResolver = pedido.aspectoCriticoResolver;
             if (pedido.cuis) ots.cuis = pedido.cuis;
+
+            if (pedido.tipoCodigoSelect) {
+                ots.tipoInversionId = Number(pedido.tipoCodigoSelect);
+            }
 
             if (pedido.tipoIntervencionSelect) {
                 ots.tipoIntervencionId = Number(pedido.tipoIntervencionSelect.value);
@@ -182,7 +194,7 @@ export class PedidosService {
             }
 
             ots.accesoId = Number(accesoId);
-            ots.codigoPerfil = codigoPerfil;
+            ots.codigoPerfil = Number(perfilId);
 
             if (pedido.sectorSelect) ots.grupoId = Number(pedido.sectorSelect.value);
 
@@ -243,6 +255,9 @@ export class PedidosService {
                 error: (e) => {
                     reject(e);
                 },
+                complete: () => {
+                    this.#pedidosResult.update((v) => ({ ...v, isEditing: false }));
+                }
             });
         });
     }

@@ -13,7 +13,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
 import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
 import { SelectModel } from '../../../libs/models/shared/select.model';
-import { differenceInCalendarDays, parseISO } from 'date-fns';
+import { isSameDay, isBefore, isAfter, parseISO } from 'date-fns';
 
 @Component({
   selector: 'app-hito',
@@ -29,7 +29,7 @@ import { differenceInCalendarDays, parseISO } from 'date-fns';
     NzSelectModule,
   ],
   templateUrl: './hito.component.html',
-  styleUrl: './hito.component.less',
+  styles: ``,
   providers: []
 })
 export class HitoComponent {
@@ -86,10 +86,18 @@ export class HitoComponent {
       return false;
     }
 
-    // Habilitar solo las fechas entre 'plazo' y 'fechaEvento'
-    return current < this.fechaEvento || current > this.plazo;
+    // Habilitar solo las fechas entre 'fechaEvento' y 'plazo', incluyendo ambas
+    return (
+      isBefore(current, this.fechaEvento) ||
+      isAfter(current, this.plazo) &&
+      !isSameDay(current, this.fechaEvento) &&
+      !isSameDay(current, this.plazo)
+    );
   }
 
+  onPlazoChange(fecha: Date) {
+    console.log(fecha);
+  }
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
 

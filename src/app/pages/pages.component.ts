@@ -13,6 +13,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { ThemeSwitcherComponent } from '../libs/shared/components/theme-switcher/theme-switcher.component';
 import { SuperHeaderComponent } from '../libs/shared/layout/super-header/super-header.component';
 import { FooterComponent } from '../libs/shared/layout/footer/footer.component';
+import { ResponseModel } from '../libs/models/shared/response.model';
 
 
 @Component({
@@ -50,6 +51,8 @@ export class PagesComponent implements OnInit, AfterViewInit {
   descripcionTipo: string | undefined;
   descripcionSector: string | undefined;
   selectedTheme: string = localStorage['theme'] || 'system';
+  storedToken: string | null = this.authService.obtenerToken() || null;
+
 
   constructor() {
     this.getDataRoute().subscribe((data) => {
@@ -71,7 +74,6 @@ export class PagesComponent implements OnInit, AfterViewInit {
 
     this.descripcionSector = (storedDescripcionSector) ? storedDescripcionSector : undefined;
 
-    // this.authService.initTheme();
   }
 
   ngAfterViewInit() {
@@ -79,36 +81,18 @@ export class PagesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // this.selectedTheme = localStorage['theme'] || 'system';
-    // this.initTheme();
+
   }
 
-  // initTheme(): void {
-  //   if (this.selectedTheme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-  //     document.documentElement.classList.add('dark');
-  //   } else {
-  //     document.documentElement.classList.remove('dark');
-  //   }
-  // }
-
-  // switchTheme(theme: string): void {
-  //   this.selectedTheme = theme;
-
-  //   if (theme === 'dark') {
-  //     localStorage['theme'] = 'dark';
-  //   } else if (theme === 'light') {
-  //     localStorage['theme'] = 'light';
-  //   } else {
-  //     localStorage.removeItem('theme');
-  //   }
-
-  //   this.authService.initTheme();
-  // }
-
   onLogout(): void {
-    this.authService.removerLocalStorage();
 
-    this.router.navigate(['/auth']);
+    this.authService.logout(this.authService.token()!).subscribe({
+      next: () => {
+        this.authService.removerLocalStorage();
+        this.router.navigate(['/auth']);
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   getDataRoute() {

@@ -8,10 +8,12 @@ import { AcuerdoPedidoModel } from '../../models/pedido';
 import { UtilesService } from '../../shared/services/utiles.service';
 import { AuthService } from '../auth/auth.service';
 import { AcuerdoPedidoExpressModel, DesestimacionModel } from '../../models/pedido/acuerdo.model';
+import { EstadoEventoType } from '../../shared/types/estado.type';
 
 interface State {
     acuerdos: AcuerdoPedidoModel[];
     acuerdoSeleccionado: AcuerdoPedidoModel | null;
+    estadoEvento: EstadoEventoType | null;
     isLoading: boolean;
     isEditing: boolean;
     isCreatingPreAcuerdo: boolean | null;
@@ -35,6 +37,7 @@ export class AcuerdosService {
     #acuerdosResult = signal<State>({
         acuerdos: [],
         acuerdoSeleccionado: null,
+        estadoEvento: null,
         isLoading: true,
         isEditing: false,
         isCreatingPreAcuerdo: false,
@@ -47,9 +50,11 @@ export class AcuerdosService {
 
     public acuerdos = computed(() => this.#acuerdosResult().acuerdos);
     public acuerdoSeleccionado = computed(() => this.#acuerdosResult().acuerdoSeleccionado);
+    public estadoEvento = computed(() => this.#acuerdosResult().acuerdoSeleccionado?.estadoEvento);
     public isCreatingPreAcuerdo = computed(() => this.#acuerdosResult().isCreatingPreAcuerdo);
     public isConverting = computed(() => this.#acuerdosResult().isConverting);
     public isDesestimated = computed(() => this.acuerdoSeleccionado()?.nomEstadoRegistro === 'DESESTIMADO' || this.acuerdoSeleccionado()?.nomEstadoRegistro === 'CULMINADO');
+    public isDesestimating = computed(() => this.acuerdoSeleccionado()?.fechaPedidoDesestimacion != null);
     public isLoading = computed(() => this.#acuerdosResult().isLoading);
     public isEditing = computed(() => this.#acuerdosResult().isEditing);
     public total = computed(() => this.#acuerdosResult().total);
@@ -110,9 +115,20 @@ export class AcuerdosService {
 
         this.http.get<ResponseModelPaginated>(`${environment.api}/Acuerdo/Listar`, { params }).subscribe({
             next: (data) => {
-                // console.log(data.data);
+                const result: AcuerdoPedidoModel[] = data.data;
+                if (!result) return;
 
-                this.#acuerdosResult.update((v) => ({ ...v, acuerdos: data.data, isLoading: false, total: data.info.total }));
+                result.forEach((x: AcuerdoPedidoModel) => {
+                    const ubicacion = [
+                        x.region ? x.region : '',
+                        x.provincia ? x.provincia : '',
+                        x.distrito ? x.distrito : ''
+                    ].filter(Boolean).join(' / ');
+
+                    x.ubicacion = ubicacion;
+                });
+
+                this.#acuerdosResult.update((v) => ({ ...v, acuerdos: result, isLoading: false, total: data.info.total }));
             },
             error: (e) => console.log(e),
             complete: () => this.#acuerdosResult.update((v) => ({ ...v, isLoading: false })),
@@ -175,6 +191,8 @@ export class AcuerdosService {
                     if (acuerdo.responsable && acuerdo.responsableId) {
                         acuerdo.responsableSelect = new SelectModel(acuerdo.responsableId, acuerdo.responsable);
                         acuerdo.entidadSelect = new SelectModel(acuerdo.entidadId, acuerdo.entidad);
+                        if (acuerdo.descripcionEstadoEspacio) acuerdo.estadoEvento = acuerdo.descripcionEstadoEspacio.toUpperCase() as EstadoEventoType;
+
                     }
                 });
 
@@ -205,6 +223,7 @@ export class AcuerdosService {
             if (acuerdo.es_preAcuerdoBool) {
                 if (acuerdo.pre_acuerdo) ots.pre_acuerdo = acuerdo.pre_acuerdo;
             } else {
+                if (acuerdo.pre_acuerdo) ots.pre_acuerdo = acuerdo.pre_acuerdo;
                 if (acuerdo.acuerdo) ots.acuerdo = acuerdo.acuerdo;
                 if (acuerdo.eventoId) ots.eventoId = acuerdo.eventoId;
             }

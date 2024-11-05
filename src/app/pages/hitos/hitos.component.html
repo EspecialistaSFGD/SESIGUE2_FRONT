@@ -2,42 +2,54 @@
 <!-- {{this.authService.sector() |json}} -->
 <!-- {{ this.authService.subTipo() |json}} -->
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-    [nzData]="this.acuerdosService.acuerdos()!" [nzFrontPagination]="false"
-    [nzLoading]="this.acuerdosService.isLoading()" [nzTotal]="this.acuerdosService.total()" [nzPageSize]="this.pageSize"
-    [nzPageIndex]="this.pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
+    [nzData]="this.hitosService.hitos()!" [nzFrontPagination]="false" [nzLoading]="this.hitosService.isLoading()"
+    [nzTotal]="this.hitosService.total()" [nzPageSize]="this.pageSize" [nzPageIndex]="this.pageIndex"
+    (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
-            <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+            <th class="text-center w-10" nzLeft></th>
+            <th nzWidth="100px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
             <th nzWidth="120px" nzAlign="center" nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
-            <!-- <th nzWidth="150px" nzAlign="center" nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
-            <th nzWidth="150px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th> -->
+            <th nzWidth="150px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
+
             <th nzWidth="150px" nzColumnKey="pedido">Pedido</th>
             <th nzWidth="150px" nzAlign="center" nzColumnKey="cuis">CUI</th>
             <th nzWidth="150px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código</th>
+
             <th nzWidth="150px" nzColumnKey="acuerdo">Acuerdo</th>
-            <th nzWidth="120px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
-            <!-- <th nzWidth="120px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th> -->
             <th nzWidth="120px" nzAlign="center" nzColumnKey="plazo" [nzSortFn]="true">Plazo</th>
             <th nzWidth="120px" nzAlign="center" nzColumnKey="nomEstadoRegistro">Estado</th>
+
+            <th nzWidth="150px" nzAlign="center" nzColumnKey="hito">Hito</th>
+            <th nzWidth="120px" nzAlign="center" nzColumnKey="responsableHito">Responsable del Hito</th>
+            <th nzWidth="120px" nzAlign="center" nzColumnKey="plazoHito">Plazo del Hito</th>
+            <th nzWidth="120px" nzAlign="center" nzColumnKey="estadoHito">Estado del Hito</th>
+            <th nzWidth="150px" nzColumnKey="avance">Avance</th>
+            <th nzWidth="150px" nzColumnKey="comentarioSector">Comentario Sector</th>
+            <th nzWidth="150px" nzColumnKey="comentarioSDAv">Comentario PCM</th>
+
             <th nzColumnKey="acciones" nzRight nzWidth="150px" nzAlign="center"></th>
         </tr>
     </thead>
     <tbody>
-        @for (data of this.acuerdosService.acuerdos(); track data.codigo) {
+        @for (data of this.hitosService.hitos(); track data.codigo) {
         <tr>
-            <td nzLeft nzWidth="100px" nzAlign="center">{{ data.sector }}</td>
+            <td class="text-center w-10" nzLeft>
+
+                @if(data.validaPCM==1){
+                <nz-avatar [nzSize]="24" class="bg-green-500" nzIcon="check" nz-tooltip="Validado"></nz-avatar>
+                }@else {
+                <nz-avatar [nzSize]="24" class="bg-gray-300" nz-tooltip="Sin validar" nzIcon="check"></nz-avatar>
+                }
+            </td>
+            <td nzWidth="100px" nzAlign="center">{{ data.sector }}</td>
             <td nzWidth="120px" nzAlign="center">{{ data.ubicacion }}</td>
-            <!-- <td nzWidth="150px" nzAlign="center">
+            <td nzWidth="150px" nzAlign="center">
                 <p class="line-clamp-1 sm:line-clamp-2" nzTooltipPlacement="left" nz-tooltip
-                    [nzTooltipTitle]="data.objetivoEstrategicoTerritorial">
-                    {{ data.objetivoEstrategicoTerritorial }}
-                </p>
-            </td> -->
-            <!-- <td nzWidth="150px" nzAlign="center">
-                <p class="line-clamp-1 sm:line-clamp-2" nzTooltipPlacement="left" nz-tooltip [nzTooltipTitle]="data.intervencionesEstrategicas">
+                    [nzTooltipTitle]="data.intervencionesEstrategicas">
                     {{ data.intervencionesEstrategicas }}
                 </p>
-            </td> -->
+            </td>
 
             <td nzWidth="150px">
                 <p class="line-clamp-1 sm:line-clamp-2" nzTooltipPlacement="left" nz-tooltip
@@ -46,54 +58,55 @@
             </td>
             <td nzWidth="150px" nzAlign="center">{{ data.cuis }}</td>
             <td nzWidth="150px" nzAlign="center"><strong>{{data.codigo}}</strong></td>
+
             <td nzWidth="150px">
                 <p class="line-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
                     [nzTooltipTitle]="data.acuerdo">{{
                     data.acuerdo }}</p>
             </td>
-
-            <td nzWidth="120px" nzAlign="center">{{ data.clasificacion }}</td>
-
-            <!--  <td nzWidth="120px" nzAlign="center">{{ data.espacio }}</td> -->
-            <!-- <td nzWidth="120px" nzAlign="center">{{ data.plazo }}</td> -->
             <td nzWidth="120px" nzAlign="center">
                 @if(data.plazo){
                 @if(data.nomEstadoRegistro!='DESESTIMADO' && data.nomEstadoRegistro!='CULMINADO'
                 ){
                 @if(data.plazo.toString() | dueTo) {
-                <span nzTooltipPlacement="left" nz-tooltip="Plazo vencido" class="text-red-500">{{ data.plazo }}</span>
+                <span nzTooltipPlacement="left" nz-tooltip="Plazo vencido" class="text-red-500">{{ data.plazo | date:
+                    'dd/MM/yyyy' }}</span>
                 }@else{
-                {{data.plazo}}
+                {{data.plazo|date: 'dd/MM/yyyy'}}
                 }
                 }@else{
-                {{data.plazo}}
+                {{data.plazo|date: 'dd/MM/yyyy'}}
                 }
                 }
             </td>
             <td nzWidth="120px" nzAlign="center">
-                <app-estado [title]="data.nomEstadoRegistro!" [isBadge]="false" />
+                <app-estado [title]="data.nomEstadoRegistroAC!" [isBadge]="false" />
             </td>
+
+            <td nzWidth="150px">
+                <p class="line-clamp-1 sm:line-clamp-2" nzTooltipPlacement="left" nz-tooltip
+                    [nzTooltipTitle]="data.hito">{{
+                    data.hito }}</p>
+            </td>
+            <td nzWidth="120px" nzAlign="center">{{ data.responsableHito }}</td>
+            <td nzWidth="120px" nzAlign="center">{{ data.plazoHito | date:'dd/MM/yyyy' }}</td>
+            <td nzWidth="120px" nzAlign="center">{{ data.estadoHito }}</td>
+            <td nzWidth="150px">
+                <p class="line-clamp-1 sm:line-clamp-2" nzTooltipPlacement="left" nz-tooltip
+                    [nzTooltipTitle]="data.avance">{{
+                    data.avance }}</p>
+            </td>
+
+            <td>{{ data.comentarioSector || '-' }}</td>
+            <td>{{ data.comentarioSDAv || '-' }}</td>
+
             <td nzRight nzWidth="150px" nzAlign="center">
                 <nz-space>
-                    <button (click)="onGestionarHitoAcuerdo(data.acuerdoId!)" *nzSpaceItem nz-button nzType="link"
+                    <button (click)="onGestionarHitoAcuerdo(data.acuerdoID!)" *nzSpaceItem nz-button nzType="link"
                         nzTooltipPlacement="left" nz-tooltip nzTooltipTitle="Ver detalle">
                         <span nz-icon nzType="eye" nzTheme="outline"></span>
                     </button>
-                    <!-- <button *nzSpaceItem nz-button nzType="link" nzTooltipPlacement="left" nz-tooltip nzTooltipTitle="Agregar hito">
-                        <span nz-icon nzType="appstore-add" nzTheme="outline"></span>
-                    </button> -->
-                    <!-- @if(data.evidenciaDesestimacion == null && data.nomEstadoRegistro != 'DESESTIMADO'){
-                    <button [disabled]="(data.nomEstadoRegistro == 'CULMINADO')" *nzSpaceItem nz-button nzDanger
-                        nzType="link" nzTooltipPlacement="left" nz-tooltip nzTooltipTitle="Solicitar desestimación de acuerdo"
-                        (click)="onSolicitarDesestimacion(data)">
-                        <span nz-icon nzType="stop" nzTheme="outline"></span>
-                    </button>
-                    }@else{
-                    <button *nzSpaceItem nz-button nzType="link" nzTooltipPlacement="left" nz-tooltip
-                        nzTooltipTitle="Descargar solicitud de desestimación" (click)="onVerDesestimacion(data)">
-                        <span nz-icon nzType="download" nzTheme="outline"></span>
-                    </button>
-                    } -->
+
 
                     @if(data.evidenciaDesestimacion != null){
                     <button *nzSpaceItem nz-button nzType="link" nz-popover
@@ -103,14 +116,17 @@
                     </button>
                     }
 
-                    <!-- <button *nzSpaceItem nz-button nzType="link" nzTooltipPlacement="left" nz-tooltip nzTooltipTitle="Editar acuerdo"
-                        (click)="onAddEdit(data)">
-                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar comentario"
+                        (click)="onAvanceAddComentario(data)">
+                        <span nz-icon nzType="comment" nzTheme="outline"></span>
                     </button>
-                    <button *nzSpaceItem nz-button nzDanger nzType="link" (click)="onDelete(data)" nzTooltipPlacement="left" nz-tooltip
-                        nzTooltipTitle="Eliminar">
-                        <span nz-icon nzType="delete" nzTheme="outline"></span>
-                    </button> -->
+
+                    <!-- @if(authService.permisos()?.puede_validar_avance){ -->
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Validar avance"
+                        (click)="onValidarAvance(data)">
+                        <span class="text-green-500" nz-icon nzType="check-circle" nzTheme="outline"></span>
+                    </button>
+                    <!-- } -->
                 </nz-space>
             </td>
         </tr>
@@ -120,7 +136,7 @@
 
 <ng-template #Header>
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
-        <p class="mb-2 sm:mb-0">Resultados ({{this.acuerdosService.total()}})</p>
+        <p class="mb-2 sm:mb-0">Resultados ({{this.hitosService.total()}})</p>
         <div>
             <nz-space>
 
@@ -169,12 +185,12 @@
 
 
                 <!-- //TODO: agregar rol para registro de acuerdos express -->
-                @if(authService.permisos()?.puede_agregar_acuerdo_mt){
+                <!-- @if(authService.permisos()?.puede_agregar_acuerdo_mt){
                 <button *nzSpaceItem nz-button nzType="primary" (click)="onAddEdit(null, 'ACUERDO', 'RECREATE')">
                     <span nz-icon nzType="plus" nzTheme="outline"></span>
                     <span class="button-text">Agregar acuerdo desde Mesa de Trabajo</span>
                 </button>
-                }
+                } -->
             </nz-space>
         </div>
     </div>
@@ -193,7 +209,7 @@
                                 (keyup)="onCuiChange($event)" placeholder="Ingrese código a buscar" />
                         </nz-input-group>
                         <ng-template #suffixIconSearch>
-                            <span nz-icon [nzType]="this.acuerdosService.isLoading()?'loading':'search'"></span>
+                            <span nz-icon [nzType]="this.hitosService.isLoading()?'loading':'search'"></span>
                         </ng-template>
                     </nz-form-control>
                 </nz-form-item>
@@ -368,8 +384,8 @@
                 </div>
             </div> -->
         </div>
-        <!-- <code>{{searchForm.valid | json}}<br>
-        {{searchForm.value | json}}</code> -->
+        <code>{{searchForm.valid | json}}<br>
+        {{searchForm.value | json}}</code>
     </form>
 
 

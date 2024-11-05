@@ -25,6 +25,11 @@ export class HitoAcuerdoModel {
         public nomContacto?: string | null,
         public telefContacto?: string | null,
         public accesoId?: number | null,
+        public region?: string,
+        public provincia?: string,
+        public distrito?: string,
+        public ubicacion?: string,
+        public estadoValidado?: string,
     ) { }
 }
 

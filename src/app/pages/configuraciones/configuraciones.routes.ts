@@ -6,6 +6,7 @@ import { EspaciosComponent } from './espacios/espacios.component';
 import { AccesosComponent } from './accesos/accesos.component';
 import { BotonesComponent } from './botones/botones.component';
 import { MenuesComponent } from './menues/menues.component';
+import { ReportesComponent } from '../reportes/reportes.component';
 
 export const CONFIG_ROUTES: Routes = [
   {
@@ -44,6 +45,13 @@ export const CONFIG_ROUTES: Routes = [
     path: 'botones', component: BotonesComponent,
     data: {
       title: 'Gestión de botones',
+    }
+  },
+  {
+    canActivate: [AuthGuard],
+    path: 'reportes', component: ReportesComponent,
+    data: {
+      title: 'Gestión de reportes',
     }
   },
   {

@@ -15,7 +15,7 @@ import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
 import { EspaciosStore } from '../../../libs/shared/stores/espacios.store';
 import { AcuerdosService } from '../../../libs/services/pedidos/acuerdos.service';
 import { ClasificacionesStore } from '../../../libs/shared/stores/clasificaciones.store';
-import { differenceInCalendarDays, parseISO } from 'date-fns';
+import { addYears, isBefore, isAfter, parseISO } from 'date-fns';
 import { AddEditAcuerdoModel } from '../../../libs/models/shared/add-edit-acuerdo.model';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
@@ -181,13 +181,16 @@ export class AcuerdoComponent {
   }
 
   disabledDate = (current: Date): boolean => {
-    // Si 'plazo' o 'fechaEvento' son null, permitir todas las fechas
-    if (!this.fechaFinEvento || !this.fechaEvento) {
+    // Si 'fechaEvento' es null, permitir todas las fechas
+    if (!this.fechaEvento) {
       return false;
     }
 
-    // Habilitar solo las fechas entre 'fechaFinEvento' y 'fechaEvento'
-    return current < this.fechaEvento || current > this.fechaFinEvento;
+    // Usar date-fns para agregar 2 años a 'fechaEvento'
+    const fechaFinEvento = addYears(this.fechaEvento, 2);
+
+    // Habilitar solo las fechas entre 'fechaEvento' y 'fechaFinEvento'
+    return isBefore(current, this.fechaEvento) || isAfter(current, fechaFinEvento);
   }
 
   onEjeEstrategicoChange(event: SelectModel): void {

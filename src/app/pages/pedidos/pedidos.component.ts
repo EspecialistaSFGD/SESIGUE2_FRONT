@@ -303,6 +303,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       nzViewContainerRef: this.viewContainerRef,
       nzData: {
         id: pedido.prioridadID,
+        tipoComentario: 1,
         tipo: 'PEDIDO',
       },
       nzFooter: [
@@ -753,7 +754,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
 
-  onDelete(value: any): void {
+  onDelete(value: PedidoModel): void {
     this.confirmModal = this.modal.confirm({
       nzTitle: 'Eliminar Pedido',
       nzContent: '¿Está seguro de eliminar este pedido?',
@@ -761,7 +762,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       nzClosable: false,
       nzMaskClosable: false,
       nzOnOk: () => {
-        this.pedidosService.eliminarPedido(value).then(() => {
+        this.pedidosService.eliminarPedido(value.prioridadID!).then(() => {
           this.traerPedidos({});
         });
       },

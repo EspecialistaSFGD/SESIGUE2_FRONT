@@ -32,7 +32,7 @@ interface State {
   distrito: SelectModel | null;
   sector: SelectModel | null;
   permisos: PermisoModel | null;
-  codigoPerfil: number
+  codigoPerfil: number | null
 }
 
 const DEFAULT_PERMISOS: PermisoModel = {
@@ -72,7 +72,7 @@ export class AuthService {
   #usuario = signal<State>({
     usuario: null,
     nombreTrabajador: this.getNombreTrabajador(),
-    token: null,
+    token: this.obtenerToken(),
     refreshToken: null,
     perfil: null,
     isLoading: false,
@@ -85,7 +85,7 @@ export class AuthService {
     distrito: this.getDistritoSelect(),
     sector: this.getSectorSelect(),
     permisos: this.getPermisos(),
-    codigoPerfil: this.getCodigoPerfilUsr(),
+    codigoPerfil: this.getCodigoPerfil(),
   });
 
   public nombreTrabajador = computed(() => this.#usuario().nombreTrabajador);
@@ -181,8 +181,16 @@ export class AuthService {
             this.#usuario.update((v) => ({ ...v, sector: sector }));
           }
 
+          if (data.codigoNivel != null) {
+            localStorage.setItem('codigoNivel', data.codigoNivel);
+          }
+
           if (data.descripcionNivel != null) {
             localStorage.setItem('nivel', data.descripcionNivel);
+          }
+
+          if (data.codigoSubTipo != null) {
+            localStorage.setItem('codigoSubTipo', data.codigoSubTipo);
           }
 
           if (data.descripcionSubTipo != null) {
@@ -346,12 +354,6 @@ export class AuthService {
     return nombreTrabajador;
   }
 
-  private getCodigoPerfilUsr(): number {
-    const codigoPerfil = Number(localStorage.getItem('codigoPerfil')) || 0;
-
-    return codigoPerfil;
-  }
-
   private getPermisos(): PermisoModel | null {
     const permisosFromStorage = localStorage.getItem('permisos') || null;
 
@@ -505,15 +507,8 @@ export class AuthService {
       );
   }
 
-  logout(): Observable<any> {
-    return this.http.get(`${environment.api}/Login/CerrarSesion`)
-      .pipe(
-        tap(() => {
-          this.router.navigate(['/auth/login']).then(() => {
-            this.removerLocalStorage();
-          });
-        })
-      );
+  logout(token: string): Observable<any> {
+    return this.http.post(`${environment.api}/Login/CerrarSesion`, { token });
   }
 
   validarToken(): Observable<boolean> {
@@ -576,11 +571,11 @@ export class AuthService {
       );
   }
 
-  obtenerToken(): void | string {
+  obtenerToken(): null | string {
     var token: Token = JSON.parse(localStorage.getItem('token')!);
 
     if (token == null) {
-      return;
+      return null;
     }
 
     return token.codigo;
@@ -638,6 +633,9 @@ export class AuthService {
     localStorage.removeItem('sector');
     localStorage.removeItem('acuerdosParams');
     localStorage.removeItem('pedidosParams');
+    localStorage.removeItem('hitosParams');
+    localStorage.removeItem('codigoNivel');
+    localStorage.removeItem('codigoSubTipo');
 
     this.#usuario.set({
       usuario: null,
@@ -655,7 +653,7 @@ export class AuthService {
       distrito: null,
       sector: null,
       permisos: null,
-      codigoPerfil: 0
+      codigoPerfil: null
     });
 
     // window.location.reload();
