@@ -91,7 +91,7 @@
 					<label for="periodo">Periodo</label>
 					<nz-form-control nzSpan="null">
 						<nz-select nzPlaceHolder="Seleccionar periodo" id="periodo" class="select-form-control" (ngModelChange)="changePeriod()"
-							formControlName="periodo" nzAllowClearnzShowSearch>
+							formControlName="periodo" nzAllowClear nzShowSearch>
 							@for (periodo of generarPeriodos(); track $index) {
 							<nz-option [nzValue]="periodo" nzLabel="{{periodo}}"></nz-option>
 							}
@@ -159,7 +159,7 @@
 						<nz-form-control nzSpan="null">
 							<nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId" class="select-form-control" formControlName="tipoEntidadId" nzAllowClear nzShowSearch (ngModelChange)="changeTipoEntidad()">
 								@for (entidad of tipoEntidades(); track $index) {
-								<nz-option [nzValue]="entidad.tipoId" nzLabel="{{entidad.nombre}}"></nz-option>
+								<nz-option [nzValue]="entidad.abreviatura" nzLabel="{{entidad.nombre}}"></nz-option>
 								}
 							</nz-select>
 							<div class="text-danger" *ngIf="alertMessageError('tipoEntidadId')">
@@ -169,9 +169,9 @@
 					<div class="flex flex-col">
 						<label for="mancomunidad">Mancomunidad</label>
 						<nz-form-control nzSpan="null">
-							<nz-select nzPlaceHolder="Seleccionat mancomunidad" id="mancomunidad" class="select-form-control" formControlName="mancomunidad" nzAllowClear nzShowSearch>
+							<nz-select nzPlaceHolder="Seleccionat mancomunidad" id="mancomunidad" class="select-form-control" formControlName="mancomunidad" nzAllowClear nzShowSearch (ngModelChange)="changeMancomunidad($event)">
 								@for (mancomunidad of mancomunidades(); track $index) {
-								<nz-option [nzValue]="mancomunidad.entidadId" nzLabel="{{mancomunidad.entidad}}"></nz-option>
+								<nz-option [nzValue]="mancomunidad.entidad" nzLabel="{{mancomunidad.entidad}}"></nz-option>
 								}
 							</nz-select>
 							<div class="text-danger" *ngIf="alertMessageError('mancomunidad')">
@@ -183,9 +183,9 @@
     </form>
 
     <ng-template #footerFilter>
-        <div style="float: right">
+        <!-- <div style="float: right">
             <button nz-button nzType="primary" (click)="onCloseDrawer()"><span nz-icon nzType="save"
                     nzTheme="outline"></span> Guardar filtros</button>
-        </div>
+        </div> -->
     </ng-template>
 </nz-drawer>

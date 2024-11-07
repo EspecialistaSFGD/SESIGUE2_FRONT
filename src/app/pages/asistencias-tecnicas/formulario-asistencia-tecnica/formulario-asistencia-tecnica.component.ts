@@ -312,19 +312,23 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   obtenerFechaLaborales(){
-    const pagination: Pagination = {
+    const paginationLaboral: Pagination = {
       code: 0,
       columnSort: 'fecha',
       typeSort: 'DESC',
-      pageSize: 15,
+      pageSize: 4,
       currentPage: 1,
       total: 0
     }
-    const fecha = `${this.today.getDate()}/${this.today.getMonth() + 1}/${this.today.getFullYear()}`
-    this.fechaService.fechasLaborales(fecha,pagination)
+    const getDay = this.today.getDate()
+    const getMonth = this.today.getMonth() + 1
+    const day = getDay < 10 ? `0${getDay}` : getDay
+    const month = getMonth < 10 ? `0${getMonth}` : getMonth
+    const fecha = `${day}/${month}/${this.today.getFullYear()}`
+    this.fechaService.fechasLaborales(fecha,paginationLaboral)
       .subscribe(resp => {
         if(resp.success == true){
-          const fechas = resp.data
+          const fechas = resp.data          
           this.fechaMinAtencion = fechas[fechas.length - 1].fecha
         }
       })    
@@ -421,11 +425,14 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   changeAutoridad() {
+    const ubigeo = this.formAsistencia.get('ubigeo')?.value
     if(this.mancomunidadesAbrev.includes(this.tipoMancomunidad)){
-
+      // this.obtenerAlcaldePorUbigeo(ubigeo)
+      // console.log('MANCOMUNIDAD');      
+      // console.log(ubigeo);
+      
     } else {
       const autoridad = this.formAsistencia.get('autoridad')?.value
-      const ubigeo = this.formAsistencia.get('ubigeo')?.value
       const dni = this.formAsistencia.get('dniAutoridad')
       const nombre = this.formAsistencia.get('nombreAutoridad')
       const cargo = this.formAsistencia.get('cargoAutoridad')
@@ -442,17 +449,21 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     
   }
 
+  obtenerMancomunidadPorUbigeo(ubigei:string){
+
+  }
+
   obtenerAlcaldePorUbigeo(ubigeo: string){
     let mainUbigeo = ubigeo.slice(0, -2);
     let endUbigeo = ubigeo.slice(-2);
-    const setUbigeo = endUbigeo == '01' ? mainUbigeo : ubigeo
+    const setUbigeo = endUbigeo == '01' ? mainUbigeo : ubigeo    
 
     const dni = this.formAsistencia.get('dniAutoridad')
     const nombre = this.formAsistencia.get('nombreAutoridad')
     const cargo = this.formAsistencia.get('cargoAutoridad')
 
     this.alcaldeService.getAlcaldePorUbigeo(setUbigeo)
-      .subscribe( resp => {
+      .subscribe( resp => {        
         if(resp.success){
           if(resp.data.length > 0){
             const alcalde = resp.data[0]
@@ -599,6 +610,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const departamento = this.formAsistencia.get('departamento')
     const provincia = this.formAsistencia.get('provincia')
     const distrito = this.formAsistencia.get('distrito')
+    const ubigeo = this.formAsistencia.get('ubigeo')
     const entidadId = this.formAsistencia.get('entidadId')?.value
     if(entidadId){
       this.entidadService.getEntidadPorId(entidadId)
@@ -608,11 +620,14 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
             departamento?.setValue(entidad.departamento)
             provincia?.setValue(entidad.provincia)
             distrito?.setValue(entidad.distrito)
+            ubigeo?.setValue(entidad.ubigeo)
           } else {
             departamento?.setValue('')
             provincia?.setValue('')
             distrito?.setValue('')
-          }
+            ubigeo?.setValue('')
+          }         
+          
         })
     }
   }

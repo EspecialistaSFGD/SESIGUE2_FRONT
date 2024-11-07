@@ -23,3 +23,11 @@ export interface TransferenciaFinancieraResponse {
 	nivel_gobierno: string,
 	sub_tipo_proyecto: string,
 }
+
+export interface PaginationTransferences{
+	periodo?: string,
+	tipoUbigeo?: string,
+	ubigeo?: string,
+	tipoEntidad?: string,
+	mancomunidad?: string,
+}
