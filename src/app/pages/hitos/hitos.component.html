@@ -121,12 +121,12 @@
                         <span nz-icon nzType="comment" nzTheme="outline"></span>
                     </button>
 
-                    <!-- @if(authService.permisos()?.puede_validar_avance){ -->
+                    @if(authService.permisos()?.puede_validar_avance_pcm){
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Validar avance"
                         (click)="onValidarAvance(data)">
                         <span class="text-green-500" nz-icon nzType="check-circle" nzTheme="outline"></span>
                     </button>
-                    <!-- } -->
+                    }
                 </nz-space>
             </td>
         </tr>

@@ -10,7 +10,7 @@ export class PermisoModel {
         public puede_agregar_avance: boolean = false,
         public puede_editar_avance: boolean = false,
         public puede_eliminar_avance: boolean = false,
-        public puede_validar_avance: boolean = false,
+        // public puede_validar_avance: boolean = false,
         public puede_desestimar_avance: boolean = false,
         public puede_comentar_avance: boolean = false,
         public puede_agregar_pedido: boolean = false,
@@ -23,5 +23,8 @@ export class PermisoModel {
         public puede_editar_acuerdo: boolean = false,
         public puede_eliminar_acuerdo: boolean = false,
         public puede_convertir_preacuerdo: boolean = false,
+        public puede_solicitar_desestimacion: boolean = false,
+        public puede_validar_avance_sector: boolean = false,
+        public puede_validar_avance_pcm: boolean = false,
     ) { }
 }

@@ -46,7 +46,7 @@ const DEFAULT_PERMISOS: PermisoModel = {
   puede_agregar_avance: false,
   puede_editar_avance: false,
   puede_eliminar_avance: false,
-  puede_validar_avance: false,
+  // puede_validar_avance: false,
   puede_desestimar_avance: false,
   puede_comentar_avance: false,
   puede_agregar_pedido: false,
@@ -59,6 +59,9 @@ const DEFAULT_PERMISOS: PermisoModel = {
   puede_editar_acuerdo: false,
   puede_eliminar_acuerdo: false,
   puede_convertir_preacuerdo: false,
+  puede_solicitar_desestimacion: false,
+  puede_validar_avance_sector: false,
+  puede_validar_avance_pcm: false,
 };
 
 @Injectable({
@@ -264,9 +267,9 @@ export class AuthService {
             case 'Eliminar Avance':
               permisos.puede_eliminar_avance = true;
               break;
-            case 'Validar Avance':
-              permisos.puede_validar_avance = true;
-              break;
+            // case 'Validar Avance':
+            //   permisos.puede_validar_avance = true;
+            //   break;
             case 'Desestimar Avance':
               permisos.puede_desestimar_avance = true;
               break;
@@ -305,6 +308,15 @@ export class AuthService {
               break
             case 'Agregar PreAcuerdo':
               permisos.puede_agregar_acuerdo = true;
+              break;
+            case 'Solicitar Desestimación':
+              permisos.puede_solicitar_desestimacion = true;
+              break;
+            case 'Validar Avance Sector':
+              permisos.puede_validar_avance_sector = true;
+              break;
+            case 'Validar Avance PCM':
+              permisos.puede_validar_avance_pcm = true;
               break;
             default:
               console.warn(`Descripción de botón no reconocida: ${boton.descripcionBoton}`);
@@ -659,4 +671,3 @@ export class AuthService {
     // window.location.reload();
   }
 }
-
