@@ -1,7 +1,7 @@
 import { DataResponses } from "./helpers.interface";
 
 export interface TransferenciasFinancierasResponses extends DataResponses {
-  data: TransferenciaFinancieraResponse[]
+	data: TransferenciaFinancieraResponse[]
 }
 
 export interface TransferenciaFinancieraResponse {
@@ -24,10 +24,10 @@ export interface TransferenciaFinancieraResponse {
 	sub_tipo_proyecto: string,
 }
 
-export interface PaginationTransferences{
+export interface PaginationTransferences {
 	periodo?: string,
+	tipoProducto?: string,
 	tipoUbigeo?: string,
 	ubigeo?: string,
 	tipoEntidad?: string,
-	mancomunidad?: string,
 }
