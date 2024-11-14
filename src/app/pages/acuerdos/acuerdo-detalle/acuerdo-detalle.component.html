@@ -298,7 +298,7 @@
                         <span nz-icon nzType="comment" nzTheme="outline"></span>
                     </button>
 
-                    @if(authService.permisos()?.puede_validar_avance){
+                    @if(authService.permisos()?.puede_validar_avance_sector){
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Validar avance"
                         (click)="onValidarAvance(data)" [disabled]="acuerdosService.isDesestimated()">
                         <span class="text-green-500" nz-icon nzType="check-circle" nzTheme="outline"></span>

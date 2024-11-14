@@ -9,7 +9,7 @@ module.exports = {
       colors: {
         'punche-blue': {
           DEFAULT: '#0866ae',  // Color azul principal
-          50: '#e6f2fc',       // Tint más claro
+          50: '#DFF1FF',       // Tint más claro
           100: '#cce5f9',
           200: '#99cbf3',
           300: '#66b1ed',
@@ -41,6 +41,7 @@ module.exports = {
           300: '#6fd49b',
           400: '#3fc679',
           500: '#1ca05a',      // Color principal
+          550: '#018D86',
           600: '#188b51',
           700: '#147547',
           800: '#105f3d',
