@@ -30,10 +30,10 @@
             <a class="flex items-center" routerLink="/transferencias_financieras">
               <span nz-icon nzType="calendar" nzTheme="outline"></span>
               <span>Transferencias financieras</span>
-            </a>            
+            </a>
           </li>
 
-          <!-- @for (item of menuItems; track item.codigoMenu) {
+          @for (item of menuItems; track item.codigoMenu) {
           @if(item.children != null && item.children != undefined && item.children.length > 0) {
           <li nz-submenu nzOpen [nzTitle]="item.descripcionItem" [nzIcon]="item.iconoMenu!"
             routerLinkActive="ant-menu-item-selected" class="my-2">
@@ -52,7 +52,7 @@
               <span>{{item.descripcionItem}}</span>
             </a>
             }
-            } -->
+            }
         </ul>
       </div>
       }
