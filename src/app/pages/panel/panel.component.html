@@ -1,4 +1,4 @@
-<div class="site-page-header-ghost-wrapper mb-8">
+<div class="site-page-header-ghost-wrapper mb-4">
     <nz-page-header [nzGhost]="false" class="bg-punche-blue-50">
         <nz-page-header-title>
             <!-- <span>Panel de control consolidado</span> -->
@@ -135,4 +135,377 @@
             </form>
         </nz-page-header-content>
     </nz-page-header>
+</div>
+
+<div class="tiny-slider relative">
+    <div class="tiny-slider-container">
+        <div>
+            <nz-card class="bg-punche-green-550 text-white rounded-2xl">
+                <div nz-row class="items-center">
+                    <div nz-col nzSpan="8">
+                        <img class="w-full" src="./assets/images/inicio/acuerdos-total.svg" alt="" srcset="">
+                    </div>
+                    <div nz-col nzSpan="16">
+                        <div class="px-4">
+                            <p class="text-xl sm:text-4xl font-bold">{{totales()?.total}}</p>
+                            <p class="text-sm font-bold line-clamp-2 leading-[18px]">Acuerdos Establecidos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
+                    nzType="question-circle" nzTheme="outline"
+                    [nz-tooltip]="'Acuerdos generados en las reuniones bilaterales'"></span>
+            </nz-card>
+        </div>
+
+        <div>
+            <nz-card class="bg-punche-green-550 text-white rounded-2xl">
+                <div nz-row class="items-center">
+                    <div nz-col nzSpan="8">
+                        <img class="w-full" src="./assets/images/inicio/acuerdos-desestimado.svg" alt="" srcset="">
+                    </div>
+                    <div nz-col nzSpan="16">
+                        <div class="px-4">
+                            <p class="text-xl sm:text-4xl font-bold">{{totales()?.desestimado}}</p>
+                            <p class="text-sm font-bold line-clamp-2 leading-[18px]">Acuerdos Desestimados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
+                    nzType="question-circle" nzTheme="outline"
+                    [nz-tooltip]="'Acuerdos que, por razón justificada, y en coordinación entre las partes, dejan de ser consideradas para la medición'"></span>
+            </nz-card>
+        </div>
+
+        <div>
+            <nz-card class="bg-punche-green-550 text-white rounded-2xl">
+                <div nz-row class="items-center">
+                    <div nz-col nzSpan="8">
+                        <img class="w-full" src="./assets/images/inicio/acuerdos-vigente.svg" alt="" srcset="">
+                    </div>
+                    <div nz-col nzSpan="16">
+                        <div class="px-4">
+                            <p class="text-xl sm:text-4xl font-bold">{{totales()?.vigente}}</p>
+                            <p class="text-sm font-bold line-clamp-2 leading-[18px]">Acuerdos Vigentes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
+                    nzType="question-circle" nzTheme="outline"
+                    [nz-tooltip]="'Resultado de la diferencia de acuerdos establecidos menos los desestimados'"></span>
+            </nz-card>
+        </div>
+
+        <div>
+            <nz-card class="bg-punche-green-550 text-white rounded-2xl">
+                <div nz-row class="items-center">
+                    <div nz-col nzSpan="8">
+                        <img class="w-full" src="./assets/images/inicio/acuerdos-cumplido.svg" alt="" srcset="">
+                    </div>
+                    <div nz-col nzSpan="16">
+                        <div class="px-4">
+                            <p class="text-xl sm:text-4xl font-bold">{{totales()?.cumplido}}</p>
+                            <p class="text-sm font-bold line-clamp-2 leading-[18px]">Acuerdos Cumplidos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
+                    nzType="question-circle" nzTheme="outline"
+                    [nz-tooltip]="'Acuerdos que han sido cumplidos por el gobierno Nacional, regional y/o local'"></span>
+            </nz-card>
+        </div>
+
+        <div>
+            <nz-card class="bg-punche-green-550 text-white rounded-2xl">
+                <div nz-row class="items-center">
+                    <div nz-col nzSpan="8">
+                        <img class="w-full" src="./assets/images/inicio/acuerdos-proceso.svg" alt="" srcset="">
+                    </div>
+                    <div nz-col nzSpan="16">
+                        <div class="px-4">
+                            <p class="text-xl sm:text-4xl font-bold">{{totales()?.proceso}}</p>
+                            <p class="text-sm font-bold line-clamp-2 leading-[18px]">Acuerdos En proceso</p>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
+                    nzType="question-circle" nzTheme="outline"
+                    [nz-tooltip]="'Acuerdos que se encuentran dentro del plazo para su cumplimiento'"></span>
+            </nz-card>
+        </div>
+
+        <div>
+            <nz-card class="bg-punche-green-550 text-white rounded-2xl">
+                <div nz-row class="items-center">
+                    <div nz-col nzSpan="8">
+                        <img class="w-full" src="./assets/images/inicio/acuerdos-pendiente.svg" alt="" srcset="">
+                    </div>
+                    <div nz-col nzSpan="16">
+                        <div class="px-4">
+                            <p class="text-xl sm:text-4xl font-bold">{{totales()?.pendiente}}</p>
+                            <p class="text-sm font-bold line-clamp-2 leading-[18px]">Acuerdos Pendientes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
+                    nzType="question-circle" nzTheme="outline"
+                    [nz-tooltip]="'Acuerdos que no tienen definidos los hitos para su cumplimiento'"></span>
+            </nz-card>
+        </div>
+
+        <div>
+            <nz-card class="bg-punche-green-550 text-white rounded-2xl">
+                <div nz-row class="items-center">
+                    <div nz-col nzSpan="8">
+                        <img class="w-full" src="./assets/images/inicio/acuerdos-vencido.svg" alt="" srcset="">
+                    </div>
+                    <div nz-col nzSpan="16">
+                        <div class="px-4">
+                            <p class="text-xl sm:text-4xl font-bold">{{totales()?.vencido}}</p>
+                            <p class="text-sm font-bold line-clamp-2 leading-[18px]">Acuerdos Vencidos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
+                    nzType="question-circle" nzTheme="outline"
+                    [nz-tooltip]="'Acuerdos que superaron el plazo establecido para su cumplimiento'"></span>
+            </nz-card>
+        </div>
+    </div>
+
+    <nav id="custom_controlsContainer"
+        class="hidden md:flex max-xl:hidden absolute w-full top-1/2 -translate-y-1/2 items-center justify-between">
+        <button aria-label="Slide anterior" type="button" id="prev"
+            class="w-8 h-8 absolute -left-4 bg-white rounded-full shadow-sm hover:shadow-lg active:shadow-2xl hover:bg-gray-50 active:bg-gray-100"><span
+                nz-icon nzType="left" nzTheme="outline"></span></button>
+        <button aria-label="Slide siguiente" id="next" type="button"
+            class="w-8 h-8 absolute -right-4 bg-white rounded-full shadow-sm hover:shadow-lg active:shadow-2xl hover:bg-gray-50 active:bg-gray-100"><span
+                nz-icon nzType="right" nzTheme="outline"></span></button>
+    </nav>
+</div>
+
+
+<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="mt-4">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 mb-4">Acuerdos
+            por
+            {{ubigeoRngSgnl()}}
+        </h3>
+
+        <nz-card class="rounded-2xl shadow-md mb-4">
+            <div id="container" class=""></div>
+        </nz-card>
+
+        <nz-card class="rounded-2xl shadow-md card-no-padding">
+            <h4 class="text-white bg-[#5C95C1] px-4 py-2 text-sm rounded-md">Leyenda</h4>
+
+            <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="px-4 py-2">
+                <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12"
+                    class="flex items-center gap-2">
+                    <div class="w-4 h-4 bg-[#018D86]"></div>
+                    <span class="leading-[14px]">100% de avance</span>
+                </div>
+                <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12"
+                    class="flex items-center gap-2">
+                    <div class="w-4 h-4 bg-[#DAEDE9]"></div>
+                    <span class="leading-[14px]">Mayor al 20% y menor al 50% de avance</span>
+                </div>
+            </div>
+            <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="px-4 py-2">
+                <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12"
+                    class="flex items-center gap-2">
+                    <div class="w-4 h-4 bg-[#6EC6D8]"></div>
+                    <span class="leading-[14px]">Mayor al 50 % y menor a 99 % de avance</span>
+                </div>
+                <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12"
+                    class="flex items-center gap-2">
+                    <div class="w-4 h-4 bg-[#D6D4D3]"></div>
+                    <span class="leading-[14px]">Menor al 20% de avance</span>
+                </div>
+            </div>
+
+        </nz-card>
+    </div>
+
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 mb-4">
+            Cumplimiento de acuerdos por {{ubigeoRngSgnl()}}
+        </h3>
+
+        @if(acuerdos().length>0) {
+        <nz-card class="card-no-padding bg-transparent">
+            <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '200px' }" [nzFooter]="tplFooter"
+                class="custom-table">
+                <thead>
+                    <tr>
+                        <th [nzWidth]="'150px'">Región</th>
+                        <th nzAlign="center" [nzWidth]="'100px'">Nº de Acuerdos</th>
+                        <th nzAlign="center" [nzWidth]="'100px'">Ejecutados</th>
+                        <th nzAlign="center" class="">Avance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of acuerdos(); track item.id) {
+                    <tr>
+                        <td>{{item.id}}</td>
+                        <td nzAlign="center">{{item.totalAcuerdo}}</td>
+                        <td nzAlign="center">{{item.totalEjecutado}}</td>
+                        <td nzAlign="center" class="">
+                            @if(item.porcentaje) {
+                            <div class="object-contain w-[85%]">
+                                <nz-progress [nzPercent]="item.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
+                                    [nzStatus]="item.porcentaje === 100 ? 'active' : 'normal'" [nzStrokeColor]="
+                                        item.porcentaje <= 20 ? '#D6D4D3' :        
+                                        item.porcentaje > 20 && item.porcentaje <= 50 ? '#DAEDE9' :      
+                                        item.porcentaje > 50 && item.porcentaje <= 99 ? '#6EC6D8' :      
+                                        '#018D86'                                
+                                    ">
+                                </nz-progress>
+
+                            </div>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </nz-table>
+
+            <ng-template #tplFooter>
+                <tfoot>
+                    <tr>
+                        <td class="w-[150px] font-bold">TOTAL</td>
+                        <td class="w-[100px] text-center font-bold">{{totales()?.total}}</td>
+                        <td class="w-[100px] text-center font-bold">{{totales()?.cumplido}}</td>
+                        <td class=" text-center font-bold">
+                            {{ totales() && totales()?.cumplido !== undefined && totales()?.total !== undefined
+                            ? ((totales()?.cumplido! / totales()?.total!) * 100).toFixed(1)
+                            : 'N/A' }}%
+                        </td>
+
+                    </tr>
+                </tfoot>
+            </ng-template>
+        </nz-card>
+        }
+
+        <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 my-4">
+            Avance de cumplimiento de acuerdos
+        </h3>
+
+        <nz-card class="rounded-2xl shadow-md mb-4">
+            <div class="" id="container-bar"></div>
+        </nz-card>
+    </div>
+
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 mb-4">
+            Cumplimiento de acuerdos por Sector
+        </h3>
+
+        @if(reporteSectores().length>0) {
+        <nz-card class="card-no-padding bg-transparent">
+
+            <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '200px' }" [nzFooter]="tplFooter"
+                class="custom-table">
+                <thead>
+                    <tr>
+                        <th [nzWidth]="'150px'">Sector</th>
+                        <th nzAlign="center" [nzWidth]="'100px'">Nº de Acuerdos</th>
+                        <th nzAlign="center" [nzWidth]="'100px'">Ejecutados</th>
+                        <th nzAlign="center" class="">Avance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of reporteSectores(); track item.sector) {
+                    <tr>
+                        <td>{{item.sector}}</td>
+                        <td nzAlign="center">{{item.acuerdos}}</td>
+                        <td nzAlign="center">{{item.ejecutados}}</td>
+                        <td nzAlign="center" class="">
+                            @if(item.porcentaje) {
+                            <div class="object-contain w-[85%]">
+                                <!-- <nz-progress [nzPercent]="item.porcentaje.toFixed(1)" [nzStrokeWidth]="'12'"
+                                        [nzStatus]="(item.porcentaje == 100) ? 'normal' : 'active'"
+                                        [nzStrokeColor]="(item.porcentaje > 70) ? '#1ca05a' : '#0866ae'"></nz-progress> -->
+                                <nz-progress [nzPercent]="item.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
+                                    [nzStatus]="item.porcentaje === 100 ? 'active' : 'normal'" [nzStrokeColor]="
+                                       item.porcentaje <= 20 ? '#D6D4D3' :        
+                                        item.porcentaje > 20 && item.porcentaje <= 50 ? '#DAEDE9' :      
+                                        item.porcentaje > 50 && item.porcentaje <= 99 ? '#6EC6D8' :      
+                                        '#018D86'                               
+                                    ">
+                                </nz-progress>
+                            </div>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </nz-table>
+
+            <ng-template #tplFooter>
+                <tfoot>
+                    <tr>
+                        <td class="w-[150px] font-bold">TOTAL</td>
+                        <td class="w-[100px] text-center font-bold">{{totalAcuerdos()}}</td>
+                        <td class="w-[100px] text-center font-bold">{{totalEjecutados()}}</td>
+                        <td class="text-center font-bold">
+
+                            {{ promedioPorcentajeSector() }}%
+
+                        </td>
+                    </tr>
+                </tfoot>
+            </ng-template>
+        </nz-card>
+        }
+
+        <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 my-4">
+            Ejecución por Tipo de acuerdos
+        </h3>
+
+        <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="mt-4">
+            <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+                <nz-card class="rounded-2xl shadow-md">
+                    <div id="container-radial"></div>
+                </nz-card>
+            </div>
+            <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+                <nz-card class="rounded-2xl shadow-md">
+                    <h4 class="text-sm lg:text-xl font-bold text-center">Avance total</h4>
+
+                    <div class="flex items-center gap-2 m-auto">
+
+                        <div>
+                            <img src="./assets/images/inicio/avance-total.svg" alt="">
+                        </div>
+
+                        <div>
+                            <span class="text-md lg:text-4xl font-bold">61.8 %</span>
+                        </div>
+
+                    </div>
+                    <ul class="list-none p-0">
+                        @for (item of radialChartInfoSgnl(); track item.color) {
+
+                        <li class="flex items-center mb-2">
+                            <span class="inline-block w-1 h-4 mr-2 rounded"
+                                [ngStyle]="{ 'background-color': item.color }"></span>
+                            <span class="text-xs">{{item.tipo}}</span>
+                        </li>
+                        }
+                    </ul>
+
+                    <!-- {{radialChartInfoSgnl()|json}} -->
+                </nz-card>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,5 +1,7 @@
+import { Component, OnInit, ViewContainerRef, computed, inject, signal } from '@angular/core';
+import { NzTableModule } from 'ng-zorro-antd/table';
 import { CommonModule } from '@angular/common';
-import { Component, ViewContainerRef, inject, signal } from '@angular/core';
+// import { Component, ViewContainerRef, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Chart, register } from '@antv/g2';
@@ -19,7 +21,19 @@ import { SectoresStore } from '@shared/stores/sectores.store';
 import { UbigeosStore } from '@shared/stores/ubigeos.store';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { feature } from 'topojson';
-import { environment } from '../../../environments/environment';
+// import { ReporteSectorModel, ReporteTotalModel } from '../../../libs/models/shared/reporte.model';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
+// import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
+// import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
+// import { SelectModel } from '../../../libs/models/shared/select.model';
+// import { EspaciosStore } from '../../../libs/shared/stores/espacios.store';
+// import { TraerReportesInterface } from '../../../libs/interfaces/reportes/reporte.interface';
+// import { ReporteMensualModel } from '../../../libs/models/reporte/reporte.model';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { tns, TinySliderInstance } from 'tiny-slider';
+import { environment } from '@environments/environment';
 
 // @ts-ignore
 register('data.feature', ({ name }) => {
@@ -58,7 +72,7 @@ register('data.feature', ({ name }) => {
 
   `,
 })
-export class PanelComponent {
+export class InicioComponent implements OnInit {
   filterReportForm!: UntypedFormGroup;
   reporteCabeceraIdSeleccionado: number | null = null;
   ubigeoSeleccionado: SelectModel | null = null;
@@ -82,8 +96,10 @@ export class PanelComponent {
   totalEjecutados = signal<number>(0);
   promedioPorcentajeSector = signal<number>(0);
   ubigeoSgnl = signal<SelectModel | null>(null);
+  ubigeoRngSgnl = signal<string>('Departamento');
+  radialChartInfoSgnl = signal<any>(null);
   periodoSeleccionado: Date | null = null;
-
+  slider!: TinySliderInstance;
   tipoAcuerdos: SelectModel[] = [
     { value: 1, label: 'ACUERDO' },
     { value: 2, label: 'COMPROMISO' }
@@ -136,6 +152,68 @@ export class PanelComponent {
     this.traerCodigo(null);
   }
 
+  ngOnInit(): void {
+    // Escucha los cambios en cada control y actualiza el signal en consecuencia
+    this.filterReportForm.get('departamentoSelect')?.valueChanges.subscribe(() => this.updateUbigeoRng());
+    this.filterReportForm.get('provinciaSelect')?.valueChanges.subscribe(() => this.updateUbigeoRng());
+    this.filterReportForm.get('distritoSelect')?.valueChanges.subscribe(() => this.updateUbigeoRng());
+
+    this.slider = tns({
+      container: '.tiny-slider-container',
+      items: 1,
+      gutter: 8,
+      "mouseDrag": true,
+      "slideBy": "page",
+      "swipeAngle": false,
+      "speed": 400,
+      "rewind": true,
+      // "edgePadding": 24,
+      controlsContainer: "#custom_controlsContainer",
+      prevButton: '#prev',
+      nextButton: '#next', // String selector
+      arrowKeys: true, // keyboard support
+      "nav": false,
+      responsive: {
+        575: {
+          items: 2
+        },
+        576: {
+          items: 2
+        },
+        768: {
+          items: 3
+        },
+        992: {
+          items: 4
+        },
+        1200: {
+          items: 6
+        },
+        1600: {
+          items: 7,
+          "mouseDrag": false,
+        },
+      }
+    });
+  }
+
+  private updateUbigeoRng(): void {
+    const depControl = this.filterReportForm.get('departamentoSelect');
+    const provControl = this.filterReportForm.get('provinciaSelect');
+    const disControl = this.filterReportForm.get('distritoSelect');
+
+    // Actualizamos el signal según los valores seleccionados
+    if (disControl?.value) {
+      this.ubigeoRngSgnl.set('Distrito');
+    } else if (provControl?.value) {
+      this.ubigeoRngSgnl.set('Distrito');
+    } else if (depControl?.value) {
+      this.ubigeoRngSgnl.set('Provincia');
+    } else {
+      this.ubigeoRngSgnl.set('Departamento');
+    }
+  }
+
   private traerCodigo(fechaCorte: Date | null): void {
     this.reportesService.obtenerCodigo(fechaCorte).then((data) => {
       if (data.success) {
@@ -153,16 +231,14 @@ export class PanelComponent {
     reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
     ubigeo = this.ubigeoSeleccionado?.value?.toString(),
     sector = this.sectorSeleccionado,
-    // espacio = this.espacioSeleccionado,
     espaciosSeleccionados = this.espaciosSeleccionados,
     tipoAcuerdo = this.tipoAcuerdoSeleccionado,
   }: TraerReportesInterface): void {
 
-    this.renderTableChart({
+    this.renderTotalChart({
       reporteCabeceraId,
       ubigeo,
       sector,
-      // espacio,
       espaciosSeleccionados,
       tipoAcuerdo
     });
@@ -171,7 +247,14 @@ export class PanelComponent {
       reporteCabeceraId,
       ubigeo,
       sector,
-      // espacio,
+      espaciosSeleccionados,
+      tipoAcuerdo
+    });
+
+    this.renderTableChart({
+      reporteCabeceraId,
+      ubigeo,
+      sector,
       espaciosSeleccionados,
       tipoAcuerdo
     });
@@ -180,7 +263,6 @@ export class PanelComponent {
       reporteCabeceraId,
       ubigeo,
       sector,
-      // espacio,
       espaciosSeleccionados,
       tipoAcuerdo
     });
@@ -189,16 +271,6 @@ export class PanelComponent {
       reporteCabeceraId,
       ubigeo,
       sector,
-      // espacio,
-      espaciosSeleccionados,
-      tipoAcuerdo
-    });
-
-    this.renderTotalChart({
-      reporteCabeceraId,
-      ubigeo,
-      sector,
-      // espacio,
       espaciosSeleccionados,
       tipoAcuerdo
     });
@@ -412,18 +484,18 @@ export class PanelComponent {
                 const { PorcentajeInt } = datum;
 
                 // Asignar colores según los rangos personalizados
-                if (PorcentajeInt === 0) {
-                  return '#f1f1f1';  // 0% => Gris
-                } else if (PorcentajeInt <= 50) {
-                  return '#DC0A15';   // <= 50% => Rojo
-                } else if (PorcentajeInt <= 90) {
-                  return '#0866ae';  // <= 90% => Azul
+                if (PorcentajeInt <= 50) {
+                  return '#D6D4D3';  // <= 50% => gris
+                } else if (PorcentajeInt > 50 && PorcentajeInt <= 75) {
+                  return '#DAEDE9';   // > 50 y <= 75% => agua
+                } else if (PorcentajeInt > 75 && PorcentajeInt <= 99) {
+                  return '#6EC6D8';  // > 75 y  <= 99% => aguamarina
                 } else {
-                  return '#1ca05a'; // > 90% => Verde
+                  return '#018D86'; // == 100% => verde
                 }
               },
               stroke: '#ffffff', // Color del borde (blanco en este caso)
-              lineWidth: 1,  // Grosor del borde
+              lineWidth: 2,  // Grosor del borde
             })
 
             .legend(false); // Deshabilitar la leyenda si no es necesaria
@@ -470,6 +542,7 @@ export class PanelComponent {
     this.radialChart = new Chart({
       container: 'container-radial',
       autoFit: true,
+      height: 275
     });
 
     // this.radialChart.coordinate({ type: 'theta', outerRadius: 0.8 });
@@ -479,66 +552,91 @@ export class PanelComponent {
     this.reportesService.obtenerReporteClasificacion(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo)
       // .then((data) => data.data)
       .then((data) => {
+        console.log(data);
 
+        this.radialChartInfoSgnl.set(data);
         if (this.radialChart) {
           this.radialChart
             .interval()
             .data(data)
             .transform({ type: 'stackY' })
             .encode('y', 'porcentaje')
-            .encode('color', 'tipo')
-            .scale('color', {
-              range: ['#0866ae', '#0bbbef', '#ffe045', '#DC0A15', '#c67036', '#1ca05a'],  // Paleta de colores personalizada
-            })
-            .legend('color', { position: 'bottom', layout: { justifyContent: 'center' } })
-            .label({
-              position: 'outside',
-              text: (data: any) => `${data.tipo}: ${data.porcentaje}%`,
-            })
+            // .style('fill', (d: any) => {
+            //   switch (d.tipo.trim()) {
+            //     case 'ASISTENCIA TÉCNICA':
+            //       return '#6EC6D8';
+
+            //     case 'ORIENTACIÓN':
+            //       return '#B6160F';
+
+            //     case 'FINANCIAMIENTO':
+            //       return '#032E4F';
+
+            //     case 'REUNION COMPLEMENTARIA':
+            //       return '#FFE230';
+
+            //     case 'VISITA A TERRITORIO':
+            //       return '#B0E2CB';
+
+            //     default:
+            //       return '#87C4B9';
+            //   }
+            // })
+
+            // Asigna los colores específicos a través de 'fill'
+            .style('fill', (d: any) => (d.color)) // Colores personalizados            // .scale('color', {
+            //   range: ['#032E4F', '#6EC6D8', '#FFE230', '#B6160F', '#B0E2CB', '#87C4B9'],  // Paleta de colores personalizada
+            // })
+            // .legend('color', { position: 'bottom', layout: { justifyContent: 'center' } })
+            .legend(false)
+            // .label({
+            //   position: 'outside',
+            //   text: (data: any) => `${data.tipo}: ${data.porcentaje}%`,
+            // })
             .tooltip(['tipo', 'acuerdos', 'ejecutados', 'avance']);
 
-          this.radialChart
-            .text()
-            .style('text', 'Avance total')
-            // Relative position
-            .style('x', '50%')
-            .style('y', '50%')
-            .style('dy', -25)
-            .style('fontSize', 18)
-            .style('fill', '#8c8c8c')
-            .style('textAlign', 'center')
-            .tooltip(false);
+          // this.radialChart
+          //   .text()
+          //   .style('text', 'Avance total')
+          //   // Relative position
+          //   .style('x', '50%')
+          //   .style('y', '50%')
+          //   .style('dy', -25)
+          //   .style('fontSize', 18)
+          //   .style('fill', '#8c8c8c')
+          //   .style('textAlign', 'center')
+          //   .tooltip(false);
 
-          this.radialChart
-            .text()
-            .style('text', () => {
+          // this.radialChart
+          //   .text()
+          //   .style('text', () => {
 
-              const totalTipos = data.length;
+          //     const totalTipos = data.length;
 
-              // Evitar división por cero
-              if (totalTipos === 0) return 0;
+          //     // Evitar división por cero
+          //     if (totalTipos === 0) return 0;
 
-              // Calcular la suma de los porcentajes
-              const sumaPorcentajes = data.reduce((sum, item) => sum + item.porcentaje, 0);
+          //     // Calcular la suma de los porcentajes
+          //     const sumaPorcentajes = data.reduce((sum, item) => sum + item.porcentaje, 0);
 
-              // Calcular el promedio
-              const promedio = sumaPorcentajes / totalTipos;
+          //     // Calcular el promedio
+          //     const promedio = sumaPorcentajes / totalTipos;
 
-              const result = parseFloat(promedio.toFixed(1)); // Redondear a 1 decimal
+          //     const result = parseFloat(promedio.toFixed(1)); // Redondear a 1 decimal
 
 
-              return `${result}%`;
+          //     return `${result}%`;
 
-            })
-            // Relative position
-            .style('x', '50%')
-            .style('y', '50%')
-            .style('dx', 0)
-            .style('dy', 25)
-            .style('fontSize', 44)
-            .style('fill', '#8c8c8c')
-            .style('textAlign', 'center')
-            .tooltip(false);
+          //   })
+          //   // Relative position
+          //   .style('x', '50%')
+          //   .style('y', '50%')
+          //   .style('dx', 0)
+          //   .style('dy', 25)
+          //   .style('fontSize', 44)
+          //   .style('fill', '#8c8c8c')
+          //   .style('textAlign', 'center')
+          //   .tooltip(false);
 
           // this.radialChart
           //   .text()
@@ -636,41 +734,55 @@ export class PanelComponent {
     this.barChart = new Chart({
       container: 'container-bar',
       autoFit: true,
+      height: 275
     });
 
     this.reportesService.obtenerReporteMensual(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo)
       // .then((data) => data.data)
       .then((data: ReporteMensualModel[]) => {
 
+        // console.log(data);
+
+
         if (this.barChart) {
           this.barChart
-            // .interval()
-            // .data(data)
-            // .encode('x', 'periodo')
-            // .encode('y', 'cantidad')
-            // .encode('color', 'tipo')
-            // .transform({ type: 'stackY' })
-            // .interaction('elementHighlight', { background: true });
-
             .interval()
             .data(data)
             .encode('x', 'periodo')
-            .encode('y', 'ejecutados')
-            .style('fill', (datum: ReporteMensualModel) => {
-              const { porcentaje } = datum;
+            .encode('y', 'valor')
+            // .encode('color', 'tipo')
+            .style('fill', (d: any) => (d.tipo === 'Acuerdos' ? '#D2EDF3' : '#6EC6D8')) // Asigna los colores específicos a través de 'fill'
+            .encode('key', (d: any) => d['tipo'] + d['periodo'])
+            // .transform({ type: 'stackY' })
+            .transform({ type: 'stackY', orderBy: (d) => (d['tipo'] === 'Acuerdos' ? 1 : 0) }) // Especifica el orden usando orderBy
+            .tooltip(['tipo', 'valor', 'avance']);
+          //   .interval()
+          //   .data(data)
+          //   .encode('x', 'periodo')
+          //   .encode('y', 'cantidad')
+          //   .encode('color', 'tipo')
+          //   .transform({ type: 'stackY' })
+          //   .interaction('elementHighlight', { background: true });
 
-              // Asignar colores según los rangos personalizados
-              if (porcentaje === 0) {
-                return '#4d4d4d';  // 0% => Gris
-              } else if (porcentaje <= 50) {
-                return '#DC0A15';   // <= 50% => Rojo
-              } else if (porcentaje <= 90) {
-                return '#0866ae';  // <= 90% => Azul
-              } else {
-                return '#1ca05a'; // > 90% => Verde
-              }
-            })
-            .tooltip(['acuerdos', 'ejecutados', 'avance'])
+          // .interval()
+          // .data(data)
+          // .encode('x', 'periodo')
+          // .encode('y', 'ejecutados')
+          // .style('fill', (datum: ReporteMensualModel) => {
+          //   const { porcentaje } = datum;
+
+          //   // Asignar colores según los rangos personalizados
+          //   if (porcentaje === 0) {
+          //     return '#4d4d4d';  // 0% => Gris
+          //   } else if (porcentaje <= 50) {
+          //     return '#DC0A15';   // <= 50% => Rojo
+          //   } else if (porcentaje <= 90) {
+          //     return '#0866ae';  // <= 90% => Azul
+          //   } else {
+          //     return '#1ca05a'; // > 90% => Verde
+          //   }
+          // })
+          // .tooltip(['acuerdos', 'ejecutados', 'avance'])
 
 
           this.barChart.render();

@@ -3,7 +3,7 @@ import { AccessGuard } from '@guards/access.guard';
 import { AuthGuard } from '@guards/auth.guard';
 
 export const PAGES_ROUTES: Routes = [
-  { canActivate: [AuthGuard, AccessGuard], path: 'panel', loadComponent: () => import('./panel/panel.component').then(m => m.PanelComponent) },
+  { canActivate: [AuthGuard, AccessGuard], path: 'panel', loadComponent: () => import('./panel/panel.component').then(m => m.InicioComponent) },
   { canActivate: [AuthGuard, AccessGuard], path: 'pedidos', loadChildren: () => import('./pedidos/pedidos.routes').then(m => m.PEDIDOS_ROUTES) },
   { canActivate: [AuthGuard, AccessGuard], path: 'acuerdos', loadChildren: () => import('./acuerdos/acuerdos.routes').then(m => m.ACUERDOS_ROUTES) },
   {
