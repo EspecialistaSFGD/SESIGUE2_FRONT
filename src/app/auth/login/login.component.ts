@@ -66,7 +66,7 @@ export class LoginComponent {
         [Validators.required, Validators.pattern(/^\d{8}$/)]
       ],
       // clave: [null, [Validators.required]],
-      clave: [null, [Validators.required, Validators.pattern(claveValidPattern)]],
+      clave: [null, [Validators.required, Validators.minLength(4)]],
       recordar: [localStorage.getItem('usuario') != null ? true : false]
     });
   }
