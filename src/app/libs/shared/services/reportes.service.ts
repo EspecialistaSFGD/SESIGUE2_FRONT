@@ -228,6 +228,34 @@ export class ReportesService extends BaseHttpService {
           results.forEach((res: ReporteMensualModel) => {
             res.porcentaje = Number(res.porcentaje.toFixed(1));
             res.avance = `${res.porcentaje}%`;
+
+
+            switch (res.tipo.trim()) {
+              case 'ASISTENCIA TÉCNICA':
+                res.color = '#6EC6D8';
+                break;
+
+              case 'ORIENTACIÓN':
+                res.color = '#B6160F';
+                break;
+
+              case 'FINANCIAMIENTO':
+                res.color = '#032E4F';
+                break;
+
+              case 'REUNION COMPLEMENTARIA':
+                res.color = '#FFE230';
+                break;
+
+              case 'VISITA A TERRITORIO':
+                res.color = '#B0E2CB';
+                break;
+
+              default:
+                res.color = '#87C4B9';
+                break;
+            }
+
           });
 
           // console.log(results);
@@ -244,7 +272,7 @@ export class ReportesService extends BaseHttpService {
     });
   }
 
-  obtenerReporteMensual(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: SelectModel[] | null = null, tipoAcuerdo: string | null): Promise<ReporteMensualModel[]> {
+  obtenerReporteMensual(reporteCabeceraId: number | null = null, ubigeo: string | null = null, sector: string | null, espacio: SelectModel[] | null = null, tipoAcuerdo: string | null): Promise<any[]> {
     let params = new HttpParams();
 
     if (reporteCabeceraId) params = params.append('reporteCabeceraId', reporteCabeceraId);
@@ -268,15 +296,24 @@ export class ReportesService extends BaseHttpService {
         next: (data) => {
           if (!data.success) return;
 
-          let results: ReporteMensualModel[] = [];
+          let results: any[] = [];
           results = data.data;
 
-          results.forEach((res: ReporteMensualModel) => {
-            res.porcentaje = Number(res.porcentaje.toFixed(1));
-            res.avance = `${res.porcentaje}%`;
-          });
+          // results.forEach((res: ReporteMensualModel) => {
+          //   res.porcentaje = Number(res.porcentaje.toFixed(1));
+          //   res.avance = `${res.porcentaje}%`;
+          // });
 
-          resolve(results);
+          // Transformar los datos al formato requerido por G2
+
+          // console.log(results);
+
+          const transformedData = results.flatMap(item => [
+            { tipo: 'Acuerdos', periodo: item.periodo, valor: item.acuerdos, avance: item.porcentaje + '%' },
+            { tipo: 'Ejecutados', periodo: item.periodo, valor: item.ejecutados, avance: item.porcentaje + '%' },
+          ]);
+
+          resolve(transformedData);
         },
         error: (error) => {
           console.error(error);

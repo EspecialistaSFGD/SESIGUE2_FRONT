@@ -38,6 +38,7 @@
             "styles": [
               "src/styles.less",
               "src/tailwind.css",
+              "src/tiny-slider.css",
               "src/dark.css"
             ],
             "scripts": []

@@ -8,7 +8,7 @@
         </div>
         <nz-form-control [nzErrorTip]="requiredDniTpl">
           <input id="usuario" (ngModelChange)="onUsuarioChange($event)" type="text" nz-input formControlName="usuario"
-            placeholder="Ingrese su usuario" #usr class="" (keypress)="onEnter($event)" onlyNumbers />
+            placeholder="Ingrese su Documento de Identidad" #usr class="" (keypress)="onEnter($event)" onlyNumbers />
 
           <ng-template #requiredDniTpl let-control>
             @if (control.errors?.['required']) {
@@ -29,14 +29,22 @@
           <label for="clave">Clave</label>
           <a class="login-form-forgot text-blue-700">Olvidé mi clave</a>
         </div>
-        <nz-form-control nzErrorTip="Por favor, ingrese su clave">
+        <nz-form-control [nzErrorTip]="requiredClaveTpl">
           <nz-input-group [nzSuffix]="suffixPwd" class="">
             <input id="clave" [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="clave" #pwd
-              placeholder="Ingrese su contraseña" />
+              placeholder="Ingrese su clave" />
           </nz-input-group>
           <ng-template #suffixPwd>
             <i class="cursor-pointer" nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
               (click)="passwordVisible = !passwordVisible"></i>
+          </ng-template>
+          <ng-template #requiredClaveTpl let-control>
+            @if (control.errors?.['required']) {
+            Campo requerido
+            }
+            @if (control.errors?.['pattern']) {
+            6 dígitos alfanuméricos
+            }
           </ng-template>
         </nz-form-control>
       </nz-form-item>

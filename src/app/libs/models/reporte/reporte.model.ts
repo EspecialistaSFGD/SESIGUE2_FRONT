@@ -15,5 +15,6 @@ export interface ReporteMensualModel {
     acuerdos: number;
     ejecutados: number;
     avance: string;
+    color: string;
 }
 
