@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, FechaService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
-import { AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AsistenciasTecnicasModalidad, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { ValidatorService } from '@core/services/validators';
 import { typeErrorControl } from '@core/helpers';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -311,6 +311,20 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     }
   }
 
+  obtenerLugar(){
+    const modalidad = this.formAsistencia.get('modalidad')
+    const lugarId = this.formAsistencia.get('lugarId')?.value
+    console.log(lugarId);
+    if(lugarId){
+      const lugar = this.lugares().find(item => item.lugarId == lugarId )
+      console.log(this.modalidades);
+      
+      console.log(lugar);
+      const getModalidad = this.modalidades.find( modalidad => modalidad.text == lugar?.nombre.toLowerCase() )
+      console.log(getModalidad);
+    }
+  }
+
   obtenerFechaLaborales(){
     const paginationLaboral: Pagination = {
       code: 0,
@@ -365,13 +379,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       }
   }
 
-
-  //TODO: borrar funcion
   setUbigeo(){
     const provincia = this.formAsistencia.get('provincia')
-    const distrito = this.formAsistencia.get('distrito')    
-    const autoridad = this.formAsistencia.get('autoridad')?.value    
-    const dni = this.formAsistencia.get('dniAutoridad')    
+    const distrito = this.formAsistencia.get('distrito')  
     const tipo = this.obtenerValueTipoEntidad()
     const regionales = ['GR','MR']
     regionales.includes(tipo?.abreviatura!) ? provincia?.disable() : provincia?.enable()
