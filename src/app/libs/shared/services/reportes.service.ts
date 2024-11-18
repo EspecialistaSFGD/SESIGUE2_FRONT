@@ -396,7 +396,20 @@ export class ReportesService extends BaseHttpService {
 
     this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
 
-    const tipoReporte = (tipo == 'ACUERDO') ? 'PrioridadAcuerdo' : 'Hito';
+    let tipoReporte: string = '';
+
+    switch (tipo) {
+      case 'PEDIDO':
+        tipoReporte = 'PrioridadAcuerdo';
+        break;
+
+      case 'ACUERDO':
+        tipoReporte = 'Acuerdo';
+        break;
+      default:
+        tipoReporte = 'HIto';
+        break;
+    }
 
     return new Promise((resolve, reject) => {
 

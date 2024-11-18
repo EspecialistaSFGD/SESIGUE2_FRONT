@@ -131,7 +131,7 @@ export class AvancesService {
 
         if (accesoId != null) avanceRequest.accesoId = Number(accesoId);
 
-        this.http.post(`${environment.api}/Avance/Validar`, avanceRequest).subscribe({
+        this.http.post(`${environment.api}/Avance/ValidarAvance`, avanceRequest).subscribe({
             next: (data) => {
                 this.msg.success('Avance validado correctamente');
                 this.listarAvances(avance.hitdoId, 1, 10, 'avanceId', 'ascend');
