@@ -44,11 +44,7 @@ register('data.feature', ({ name }) => {
 
   `,
 })
-<<<<<<< HEAD
-export class InicioComponent implements OnInit {
-=======
 export class PanelComponent {
->>>>>>> issue-20-crear-modulo-listar-agregar-asistencia-tecnica
   filterReportForm!: UntypedFormGroup;
   reporteCabeceraIdSeleccionado: number | null = null;
   ubigeoSeleccionado: SelectModel | null = null;
