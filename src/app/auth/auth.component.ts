@@ -37,15 +37,15 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   constructor() {
     this.route.queryParams.subscribe(params => {
-      if (!params['action']) {
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: { action: 'login' },
-          queryParamsHandling: 'merge',
-        });
-      } else {
-        this.currentAction = params['action'];
-      }
+      // if (!params['action']) {
+      //   this.router.navigate([], {
+      //     relativeTo: this.route,
+      //     queryParams: { action: 'login' },
+      //     queryParamsHandling: 'merge',
+      //   });
+      // } else {
+      //   this.currentAction = params['action'];
+      // }
     });
   }
 
