@@ -320,15 +320,22 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       currentPage: 1,
       total: 0
     }
+    console.log('fecha de min de atencion');
+    
+    console.log(this.fechaMinAtencion);
+    
     const getDay = this.today.getDate()
     const getMonth = this.today.getMonth() + 1
     const day = getDay < 10 ? `0${getDay}` : getDay
     const month = getMonth < 10 ? `0${getMonth}` : getMonth
     const fecha = `${day}/${month}/${this.today.getFullYear()}`
+    console.log(fecha);
+    console.log(paginationLaboral);
     this.fechaService.fechasLaborales(fecha,paginationLaboral)
       .subscribe(resp => {
         if(resp.success == true){
-          const fechas = resp.data          
+          const fechas = resp.data      
+          console.log(fechas)    
           this.fechaMinAtencion = fechas[fechas.length - 1].fecha
         }
       })    
