@@ -311,20 +311,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     }
   }
 
-  obtenerLugar(){
-    const modalidad = this.formAsistencia.get('modalidad')
-    const lugarId = this.formAsistencia.get('lugarId')?.value
-    console.log(lugarId);
-    if(lugarId){
-      const lugar = this.lugares().find(item => item.lugarId == lugarId )
-      console.log(this.modalidades);
-      
-      console.log(lugar);
-      const getModalidad = this.modalidades.find( modalidad => modalidad.text == lugar?.nombre.toLowerCase() )
-      console.log(getModalidad);
-    }
-  }
-
   obtenerFechaLaborales(){
     const paginationLaboral: Pagination = {
       code: 0,

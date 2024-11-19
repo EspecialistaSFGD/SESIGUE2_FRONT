@@ -45,7 +45,7 @@
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="lugarId">Lugar</nz-form-label>
             <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" class="select-form-control" (ngModelChange)="obtenerLugar()"
+              <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" class="select-form-control"
                 formControlName="lugarId" nzAllowClear nzShowSearch>
                 @for (lugar of lugares(); track $index) {
                 <nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
