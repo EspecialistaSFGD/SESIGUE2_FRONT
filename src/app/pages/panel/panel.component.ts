@@ -262,11 +262,11 @@ export class PanelComponent {
 
     if (selectedOption) {
       const { value, label } = selectedOption;
-      console.log(`Value: ${value}, Label: ${label}`);
+      // console.log(`Value: ${value}, Label: ${label}`);
       this.tipoAcuerdoSeleccionado = label!;
     } else {
       this.tipoAcuerdoSeleccionado = null;
-      console.log('No se encontró la opción seleccionada');
+      // console.log('No se encontró la opción seleccionada');
     }
 
     this.onRenderCharts({});
@@ -305,7 +305,7 @@ export class PanelComponent {
 
   onEspacioChange(value: SelectModel[] | null): void {
 
-    console.log(value);
+    // console.log(value);
 
 
     if (value == null) {
@@ -524,7 +524,7 @@ export class PanelComponent {
     this.reportesService.obtenerReporteClasificacion(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo)
       // .then((data) => data.data)
       .then((data) => {
-        console.log(data);
+        // console.log(data);
 
         this.radialChartInfoSgnl.set(data);
         if (this.radialChart) {
