@@ -43,6 +43,10 @@
 
 // @layout-body-background: #eee;
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 
 
 /* You can add global styles to this file, and also import other style files */
@@ -80,7 +84,9 @@
 .justify-center {
     justify-content: center;
 }
-
+.w-100{
+    width: 100%;
+}
 .container {
     width: 100%;
     // padding-right: var(--bs-gutter-x, .75rem);
@@ -115,7 +121,72 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
         }
     }
 }
+.form-control{
+    @apply outline-none border border-solid border-gray-400 w-full px-3 text-sm hover:border-blue-800 focus:border-blue-800 rounded;
+    padding-top: 0.315rem; /* 2px */
+    padding-bottom: 0.315rem; /* 2px */
+    &.ng-invalid.ng-touched{
+        @apply border-rose-500 hover:border-rose-500;
+    }
+    &:disabled {
+        @apply cursor-not-allowed border-gray-400 hover:border-gray-400 focus:border-gray-400 text-gray-400;
+    }
+}
+.select-form-control{
+    &.ant-select:not(.ant-select-customize-input){
+        .ant-select-selector{
+            @apply outline-none px-3 text-sm h-auto border-gray-400 hover:border-blue-800 focus:border-blue-800 rounded;
+            padding-top: 0.125rem; /* 2px */
+            padding-bottom: 0.125rem; /* 2px */
+        }
+    }
+    &.ng-invalid.ng-touched{
+        &.ant-select:not(.ant-select-customize-input){
+            .ant-select-selector{
+                @apply border-rose-500 hover:border-rose-500;
+            }
+        }
+    }
+}
+.datepicker-form-control{
+    &.ant-picker{
+        @apply w-full h-auto border-gray-400 hover:border-blue-800 focus:border-blue-800 rounded;
+        input{
+            @apply px-1 text-sm;
+            padding-top: 0.125rem; /* 2px */
+            padding-bottom: 0.125rem; /* 2px */
+        }
+    }
+    &.ng-invalid.ng-touched{
+        &.ant-picker{
+            @apply border-rose-500 hover:border-rose-500;
+        }
+    }
+}
+.radio-form-control{
+    &.ant-radio-group{
+        .ant-radio-wrapper{
+            @apply inline-flex items-center;
+            .ant-radio{
+                .ant-radio-inner{
+                    @apply w-6 h-6 border-gray-400 hover:border-blue-800 focus:border-blue-800;
+                    &:after{
+                        @apply w-8 h-8 top-auto left-auto rounded-full;
+                        margin-top: -5px;
+                        margin-left: -5px;
+                    }
+                }
+                + span {
+                    @apply mt-1 text-sm;
+                }
+            }
+        }
+    }
+}
 
+.text-danger{
+    @apply text-rose-500;
+}
 @media (min-width: 576px) {
     .container {
         max-width: 540px;

@@ -1,15 +1,11 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from '../../libs/guards/auth.guard';
-import { AcuerdosComponent } from './acuerdos.component';
-import { AcuerdoDetalleComponent } from './acuerdo-detalle/acuerdo-detalle.component';
 
-export const PEDIDOS_ROUTES: Routes = [
+export const ACUERDOS_ROUTES: Routes = [
   {
-    canActivate: [AuthGuard],
-    path: '', component: AcuerdosComponent,
+    path: '', loadComponent: () => import('./acuerdos.component').then(m => m.AcuerdosComponent),
     data: {
       title: 'Acuerdos',
     }
   },
-  { canActivate: [AuthGuard], path: 'acuerdo/:id', component: AcuerdoDetalleComponent },
+  { path: 'acuerdo/:id', loadComponent: () => import('./acuerdo-detalle/acuerdo-detalle.component').then(m => m.AcuerdoDetalleComponent) },
 ];
