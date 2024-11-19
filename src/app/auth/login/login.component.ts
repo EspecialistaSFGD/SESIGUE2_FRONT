@@ -14,6 +14,8 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { ThemeSwitcherComponent } from '../../libs/shared/components/theme-switcher/theme-switcher.component';
 import { OnlyNumbersDirective } from '../../libs/shared/directives/only-numbers.directive';
 
+const claveValidPattern = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\~-]{6,}$/;
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -63,7 +65,8 @@ export class LoginComponent {
         localStorage.getItem('usuario') || null,
         [Validators.required, Validators.pattern(/^\d{8}$/)]
       ],
-      clave: [null, [Validators.required]],
+      // clave: [null, [Validators.required]],
+      clave: [null, [Validators.required, Validators.pattern(claveValidPattern)]],
       recordar: [localStorage.getItem('usuario') != null ? true : false]
     });
   }
@@ -188,7 +191,9 @@ export class LoginComponent {
             //this.usuario.clave = "";
             setTimeout(() => { // this will make the execution after the above boolean has changed
               this.pwdElement.nativeElement.value = "";
-              this.pwdElement.nativeElement.focus();
+              this.usrElement.nativeElement.value = "";
+
+              this.usrElement.nativeElement.focus();
             }, 100);
             this.message.error(result.message);
             this.isLoading = false;
