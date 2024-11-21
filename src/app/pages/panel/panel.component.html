@@ -295,7 +295,7 @@
 
 
 <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="mt-4">
-    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="8" nzXl="8">
         <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 mb-4">Acuerdos
             por
             {{ubigeoRngSgnl()}}
@@ -336,7 +336,7 @@
         </nz-card>
     </div>
 
-    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="8" nzXl="8">
         <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 mb-4">
             Cumplimiento de acuerdos por {{ubigeoRngSgnl()}}
         </h3>
@@ -402,11 +402,15 @@
         </h3>
 
         <nz-card class="rounded-2xl shadow-md mb-4">
+            <div>
+                <span class="text-sm lg:text-xl font-bold">Avance total: 61.8 %</span>
+            </div>
+
             <div class="" id="container-bar"></div>
         </nz-card>
     </div>
 
-    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="8" nzXl="8">
         <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 mb-4">
             Cumplimiento de acuerdos por Sector
         </h3>
@@ -474,25 +478,49 @@
         </h3>
 
         <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="mt-4">
-            <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <nz-card class="rounded-2xl shadow-md">
-                    <div id="container-radial"></div>
+                    <div class="flex items-center gap-4 m-auto">
+                        <div id="container-radial" class="w-1/2"></div>
+
+                        <div class="w-1/2">
+                            <h4 class="text-sm lg:text-xl font-bold text-center">Avance total</h4>
+
+                            <div class="flex items-center gap-2 m-auto">
+                                <div>
+                                    <img src="./assets/images/inicio/avance-total.svg" alt="">
+                                </div>
+
+                                <div>
+                                    <span class="text-md lg:text-3xl font-bold">61.8 %</span>
+                                </div>
+                            </div>
+                            <ul class="list-none p-0">
+                                @for (item of radialChartInfoSgnl(); track item.color) {
+
+                                <li class="flex items-center mb-2">
+                                    <span class="inline-block w-1 h-4 mr-2 rounded"
+                                        [ngStyle]="{ 'background-color': item.color }"></span>
+                                    <span class="text-xs">{{item.tipo}}</span>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
                 </nz-card>
             </div>
-            <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+            <!-- <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
                 <nz-card class="rounded-2xl shadow-md">
                     <h4 class="text-sm lg:text-xl font-bold text-center">Avance total</h4>
 
                     <div class="flex items-center gap-2 m-auto">
-
                         <div>
                             <img src="./assets/images/inicio/avance-total.svg" alt="">
                         </div>
 
                         <div>
-                            <span class="text-md lg:text-4xl font-bold">61.8 %</span>
+                            <span class="text-md lg:text-3xl font-bold">61.8 %</span>
                         </div>
-
                     </div>
                     <ul class="list-none p-0">
                         @for (item of radialChartInfoSgnl(); track item.color) {
@@ -504,10 +532,8 @@
                         </li>
                         }
                     </ul>
-
-                    <!-- {{radialChartInfoSgnl()|json}} -->
                 </nz-card>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
