@@ -81,6 +81,18 @@
                   "with": "src/environments/environment.staging.ts"
                 }
               ]
+            },
+            "quality": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                },
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.quality.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
