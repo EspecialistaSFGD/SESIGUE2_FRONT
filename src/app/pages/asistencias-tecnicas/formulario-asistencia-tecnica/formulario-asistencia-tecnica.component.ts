@@ -316,21 +316,16 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       code: 0,
       columnSort: 'fecha',
       typeSort: 'DESC',
-      pageSize: 4,
+      pageSize: 6,
       currentPage: 1,
       total: 0
     }
-    console.log('fecha de min de atencion');
-    
-    console.log(this.fechaMinAtencion);
     
     const getDay = this.today.getDate()
     const getMonth = this.today.getMonth() + 1
     const day = getDay < 10 ? `0${getDay}` : getDay
     const month = getMonth < 10 ? `0${getMonth}` : getMonth
     const fecha = `${day}/${month}/${this.today.getFullYear()}`
-    console.log(fecha);
-    console.log(paginationLaboral);
     this.fechaService.fechasLaborales(fecha,paginationLaboral)
       .subscribe(resp => {
         if(resp.success == true){
