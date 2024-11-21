@@ -1,10 +1,9 @@
-import { Component, OnInit, ViewContainerRef, computed, inject, signal } from '@angular/core';
-import { NzTableModule } from 'ng-zorro-antd/table';
 import { CommonModule } from '@angular/common';
-// import { Component, ViewContainerRef, inject, signal } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Chart, register } from '@antv/g2';
+import { environment } from '@environments/environment';
 import { TraerReportesInterface } from '@libs/interfaces/reportes/reporte.interface';
 import { ReporteMensualModel } from '@libs/models/reporte/reporte.model';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -19,20 +18,8 @@ import { EspaciosStore } from '@shared/stores/espacios.store';
 import { SectoresStore } from '@shared/stores/sectores.store';
 import { UbigeosStore } from '@shared/stores/ubigeos.store';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { TinySliderInstance, tns } from 'tiny-slider';
 import { feature } from 'topojson';
-// import { ReporteSectorModel, ReporteTotalModel } from '../../../libs/models/shared/reporte.model';
-import { NzProgressModule } from 'ng-zorro-antd/progress';
-import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
-// import { SectoresStore } from '../../../libs/shared/stores/sectores.store';
-// import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
-// import { SelectModel } from '../../../libs/models/shared/select.model';
-// import { EspaciosStore } from '../../../libs/shared/stores/espacios.store';
-// import { TraerReportesInterface } from '../../../libs/interfaces/reportes/reporte.interface';
-// import { ReporteMensualModel } from '../../../libs/models/reporte/reporte.model';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { NzBadgeModule } from 'ng-zorro-antd/badge';
-import { tns, TinySliderInstance } from 'tiny-slider';
-import { environment } from '@environments/environment';
 
 // @ts-ignore
 register('data.feature', ({ name }) => {
@@ -55,7 +42,7 @@ register('data.feature', ({ name }) => {
 
   `,
 })
-export class InicioComponent implements OnInit {
+export class PanelComponent {
   filterReportForm!: UntypedFormGroup;
   reporteCabeceraIdSeleccionado: number | null = null;
   ubigeoSeleccionado: SelectModel | null = null;
