@@ -316,10 +316,11 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       code: 0,
       columnSort: 'fecha',
       typeSort: 'DESC',
-      pageSize: 4,
+      pageSize: 6,
       currentPage: 1,
       total: 0
     }
+    
     const getDay = this.today.getDate()
     const getMonth = this.today.getMonth() + 1
     const day = getDay < 10 ? `0${getDay}` : getDay
@@ -328,7 +329,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.fechaService.fechasLaborales(fecha,paginationLaboral)
       .subscribe(resp => {
         if(resp.success == true){
-          const fechas = resp.data          
+          const fechas = resp.data      
+          console.log(fechas)    
           this.fechaMinAtencion = fechas[fechas.length - 1].fecha
         }
       })    

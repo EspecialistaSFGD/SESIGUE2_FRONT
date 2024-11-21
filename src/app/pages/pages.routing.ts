@@ -1,6 +1,4 @@
 import { Routes } from '@angular/router';
-import { AccessGuard } from '@guards/access.guard';
-import { AuthGuard } from '@guards/auth.guard';
 
 export const PAGES_ROUTES: Routes = [
   { path: 'panel', loadComponent: () => import('./panel/panel.component').then(m => m.PanelComponent) },

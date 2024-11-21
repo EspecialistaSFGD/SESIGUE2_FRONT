@@ -28,7 +28,7 @@ import { FooterComponent } from '../libs/shared/layout/footer/footer.component';
   ],
   templateUrl: './auth.component.html',
 })
-export class AuthComponent implements OnInit, OnDestroy {
+export default class AuthComponent implements OnInit, OnDestroy {
   private route: ActivatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private authService = inject(AuthService);
@@ -36,17 +36,17 @@ export class AuthComponent implements OnInit, OnDestroy {
   public currentAction!: string;
 
   constructor() {
-    this.route.queryParams.subscribe(params => {
-      // if (!params['action']) {
-      //   this.router.navigate([], {
-      //     relativeTo: this.route,
-      //     queryParams: { action: 'login' },
-      //     queryParamsHandling: 'merge',
-      //   });
-      // } else {
-      //   this.currentAction = params['action'];
-      // }
-    });
+    // this.route.queryParams.subscribe(params => {
+    //   if (!params['action']) {
+    //     this.router.navigate([], {
+    //       relativeTo: this.route,
+    //       queryParams: { action: 'login' },
+    //       queryParamsHandling: 'merge',
+    //     });
+    //   } else {
+    //     this.currentAction = params['action'];
+    //   }
+    // });
   }
 
   ngOnInit(): void {
