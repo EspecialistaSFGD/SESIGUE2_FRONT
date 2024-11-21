@@ -8,7 +8,10 @@ import { parse, isAfter, isToday } from 'date-fns';
 export class DueToPipe implements PipeTransform {
 
   transform(plazo: string): boolean {
-    const parsedPlazo = parse(plazo, 'dd/MM/yyyy', new Date());
+
+    if (!plazo) return false;
+
+    const parsedPlazo = new Date(plazo);
     const today = new Date();
 
     return isAfter(today, parsedPlazo);

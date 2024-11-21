@@ -13,7 +13,6 @@ import { AcuerdoReporteModel } from '@models/pedido/acuerdo.model';
 import { AnchorModel } from '@models/shared/anchor.model';
 import { ReporteSectorModel, ReporteTotalModel } from '@models/shared/reporte.model';
 import { SelectModel } from '@models/shared/select.model';
-import { PageHeaderFullComponent } from '@shared/layout/page-header-full/page-header-full.component';
 import { ReportesService } from '@shared/services/reportes.service';
 import { UtilesService } from '@shared/services/utiles.service';
 import { EspaciosStore } from '@shared/stores/espacios.store';
@@ -48,24 +47,8 @@ register('data.feature', ({ name }) => {
     CommonModule,
     FormsModule,
     RouterModule,
-    // NzTableModule,
-    PageHeaderFullComponent,
     ReactiveFormsModule,
     NgZorroModule
-    // NzFormModule,
-    // NzSelectModule,
-    // NzDatePickerModule,
-    // NzInputModule,
-    // NzIconModule,
-    // EstadoComponent,
-    // NzButtonModule,
-    // NzSpaceModule,
-    // NzPageHeaderModule,
-    // NzCardModule,
-    // NzStatisticModule,
-    // NzProgressModule,
-    // NzToolTipModule,
-    // NzBadgeModule,
   ],
   templateUrl: './panel.component.html',
   styles: `
@@ -290,11 +273,11 @@ export class InicioComponent implements OnInit {
 
     if (selectedOption) {
       const { value, label } = selectedOption;
-      console.log(`Value: ${value}, Label: ${label}`);
+      // console.log(`Value: ${value}, Label: ${label}`);
       this.tipoAcuerdoSeleccionado = label!;
     } else {
       this.tipoAcuerdoSeleccionado = null;
-      console.log('No se encontró la opción seleccionada');
+      // console.log('No se encontró la opción seleccionada');
     }
 
     this.onRenderCharts({});
@@ -333,7 +316,7 @@ export class InicioComponent implements OnInit {
 
   onEspacioChange(value: SelectModel[] | null): void {
 
-    console.log(value);
+    // console.log(value);
 
 
     if (value == null) {
@@ -520,8 +503,12 @@ export class InicioComponent implements OnInit {
 
   private handleElementClick(evt: any): void {
     const { data } = evt;
-    if (data && data.data) {
+
+    if (data) {
       const ubigeoLength = data.data.properties.ubigeo.length;
+
+      // console.log(ubigeoLength);
+
 
       if (ubigeoLength === 2) {
         this.onDepChange(new SelectModel(data.data.properties.ubigeo, data.data.properties.departamento));
@@ -552,7 +539,7 @@ export class InicioComponent implements OnInit {
     this.reportesService.obtenerReporteClasificacion(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo)
       // .then((data) => data.data)
       .then((data) => {
-        console.log(data);
+        // console.log(data);
 
         this.radialChartInfoSgnl.set(data);
         if (this.radialChart) {

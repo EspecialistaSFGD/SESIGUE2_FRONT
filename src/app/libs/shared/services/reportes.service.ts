@@ -229,7 +229,6 @@ export class ReportesService extends BaseHttpService {
             res.porcentaje = Number(res.porcentaje.toFixed(1));
             res.avance = `${res.porcentaje}%`;
 
-
             switch (res.tipo.trim()) {
               case 'ASISTENCIA TÉCNICA':
                 res.color = '#6EC6D8';
@@ -258,7 +257,7 @@ export class ReportesService extends BaseHttpService {
 
           });
 
-          // console.log(results);
+          console.log(results);
 
           resolve(results);
         },
