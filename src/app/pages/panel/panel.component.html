@@ -317,19 +317,19 @@
                 <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12"
                     class="flex items-center gap-2">
                     <div class="w-4 h-4 bg-[#DAEDE9]"></div>
-                    <span class="leading-[14px]">Mayor al 20% y menor al 50% de avance</span>
+                    <span class="leading-[14px]">Mayor al 50% y menor al 75% de avance</span>
                 </div>
             </div>
             <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="px-4 py-2">
                 <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12"
                     class="flex items-center gap-2">
                     <div class="w-4 h-4 bg-[#6EC6D8]"></div>
-                    <span class="leading-[14px]">Mayor al 50 % y menor a 99 % de avance</span>
+                    <span class="leading-[14px]">Mayor al 75 % y menor a 99% de avance</span>
                 </div>
                 <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12"
                     class="flex items-center gap-2">
                     <div class="w-4 h-4 bg-[#D6D4D3]"></div>
-                    <span class="leading-[14px]">Menor al 20% de avance</span>
+                    <span class="leading-[14px]">Menor al 50% de avance</span>
                 </div>
             </div>
 
@@ -364,9 +364,9 @@
                             <div class="object-contain w-[85%]">
                                 <nz-progress [nzPercent]="item.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
                                     [nzStatus]="item.porcentaje === 100 ? 'active' : 'normal'" [nzStrokeColor]="
-                                        item.porcentaje <= 20 ? '#D6D4D3' :        
-                                        item.porcentaje > 20 && item.porcentaje <= 50 ? '#DAEDE9' :      
-                                        item.porcentaje > 50 && item.porcentaje <= 99 ? '#6EC6D8' :      
+                                        item.porcentaje <= 50 ? '#D6D4D3' :        
+                                        item.porcentaje > 50 && item.porcentaje <= 75 ? '#DAEDE9' :      
+                                        item.porcentaje > 75 && item.porcentaje <= 99 ? '#6EC6D8' :      
                                         '#018D86'                                
                                     ">
                                 </nz-progress>
@@ -383,12 +383,10 @@
                 <tfoot>
                     <tr>
                         <td class="w-[150px] font-bold">TOTAL</td>
-                        <td class="w-[100px] text-center font-bold">{{totales()?.total}}</td>
+                        <td class="w-[100px] text-center font-bold">{{totales()?.vigente}}</td>
                         <td class="w-[100px] text-center font-bold">{{totales()?.cumplido}}</td>
                         <td class=" text-center font-bold">
-                            {{ totales() && totales()?.cumplido !== undefined && totales()?.total !== undefined
-                            ? ((totales()?.cumplido! / totales()?.total!) * 100).toFixed(1)
-                            : 'N/A' }}%
+                            {{totales()?.porcentaje?.toFixed(1)}}%
                         </td>
 
                     </tr>
@@ -403,7 +401,8 @@
 
         <nz-card class="rounded-2xl shadow-md mb-4">
             <div>
-                <span class="text-sm lg:text-xl font-bold">Avance total: 61.8 %</span>
+                <span class="text-sm lg:text-xl font-bold">Avance del periodo:
+                    {{totales()?.porcentaje?.toFixed(1)}}%</span>
             </div>
 
             <div class="" id="container-bar"></div>
@@ -442,9 +441,9 @@
                                         [nzStrokeColor]="(item.porcentaje > 70) ? '#1ca05a' : '#0866ae'"></nz-progress> -->
                                 <nz-progress [nzPercent]="item.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
                                     [nzStatus]="item.porcentaje === 100 ? 'active' : 'normal'" [nzStrokeColor]="
-                                       item.porcentaje <= 20 ? '#D6D4D3' :        
-                                        item.porcentaje > 20 && item.porcentaje <= 50 ? '#DAEDE9' :      
-                                        item.porcentaje > 50 && item.porcentaje <= 99 ? '#6EC6D8' :      
+                                       item.porcentaje <= 50 ? '#D6D4D3' :        
+                                        item.porcentaje > 50 && item.porcentaje <= 75 ? '#DAEDE9' :      
+                                        item.porcentaje > 75 && item.porcentaje <= 99 ? '#6EC6D8' :      
                                         '#018D86'                               
                                     ">
                                 </nz-progress>
@@ -460,11 +459,11 @@
                 <tfoot>
                     <tr>
                         <td class="w-[150px] font-bold">TOTAL</td>
-                        <td class="w-[100px] text-center font-bold">{{totalAcuerdos()}}</td>
-                        <td class="w-[100px] text-center font-bold">{{totalEjecutados()}}</td>
+                        <td class="w-[100px] text-center font-bold">{{totales()?.vigente}}</td>
+                        <td class="w-[100px] text-center font-bold">{{totales()?.cumplido}}</td>
                         <td class="text-center font-bold">
 
-                            {{ promedioPorcentajeSector() }}%
+                            {{totales()?.porcentaje?.toFixed(1)}}%
 
                         </td>
                     </tr>
@@ -492,14 +491,15 @@
                                 </div>
 
                                 <div>
-                                    <span class="text-md lg:text-3xl font-bold">61.8 %</span>
+                                    <span
+                                        class="text-md lg:text-3xl font-bold">{{totales()?.porcentaje?.toFixed(1)}}%</span>
                                 </div>
                             </div>
                             <ul class="list-none p-0">
                                 @for (item of radialChartInfoSgnl(); track item.color) {
 
                                 <li class="flex items-center mb-2">
-                                    <span class="inline-block w-1 h-4 mr-2 rounded"
+                                    <span class="inline-block w-2 h-4 mr-2 rounded"
                                         [ngStyle]="{ 'background-color': item.color }"></span>
                                     <span class="text-xs">{{item.tipo}}</span>
                                 </li>
