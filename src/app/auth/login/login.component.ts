@@ -13,6 +13,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { ThemeSwitcherComponent } from '../../libs/shared/components/theme-switcher/theme-switcher.component';
 import { OnlyNumbersDirective } from '../../libs/shared/directives/only-numbers.directive';
+import { ValidatorService } from '@core/services/validators';
 
 const claveValidPattern = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\~-]{6,}$/;
 
@@ -49,6 +50,7 @@ export class LoginComponent {
   private message = inject(NzMessageService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private validatorService = inject(ValidatorService)
 
   constructor() {
     this.authService.validarToken().subscribe(estaAutenticado => {
@@ -88,11 +90,12 @@ export class LoginComponent {
 
   onEnter(event: any): void {
     if (event.keyCode == 13) {
-      if (this.loginForm.valid) {
-        this.onLogin();
-      } else {
-        this.onNext();
-      }
+      this.loginForm.valid ? this.onLogin() : this.onNext()
+      // if (this.loginForm.valid) {
+      //   this.onLogin();
+      // } else {
+      //   this.onNext();
+      // }
     }
   }
 
@@ -159,7 +162,6 @@ export class LoginComponent {
         next: (result: any) => {
           if (result.success) {
             // this.hasValidUser = true;
-
             if (this.loginForm.get('recordar')?.value != null && this.loginForm.get('recordar')?.value == true) {
               localStorage.setItem('usuario', this.loginForm.get('usuario')?.value);
             } else {

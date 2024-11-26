@@ -71,5 +71,6 @@ export class ReporteTotalModel {
         public proceso?: number,
         public vencido?: number,
         public pendiente?: number,
+        public porcentaje?: number,
     ) { }
 }

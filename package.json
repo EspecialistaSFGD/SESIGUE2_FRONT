@@ -4,8 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve -o --configuration development",
-    "build": "ng build",
+    "build": "ng build --configuration=production --base-href --output-hashing=all",
     "build:staging": "ng build --configuration=staging --base-href --output-hashing=all",
+    "build:quality": "ng build --configuration=quality --base-href --output-hashing=all",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
