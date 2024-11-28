@@ -492,6 +492,21 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     });
   }
 
+  onEliinarAvance(avance: AvanceHitoModel): void {
+    this.confirmModal = this.modal.confirm({
+      nzTitle: `¿Deseas eliminar el avance?`,
+      nzContent: 'El avance será eliminado de forma permanente.',
+      nzIconType: 'exclamation-circle',
+      nzOkDanger: true,
+      nzOnOk: () => this.avancesService.eliminarAvance(avance).then(() => {
+        this.acuerdosService.listarAcuerdo(Number(this.id));
+        this.traerHitos({});
+        this.traerAvances({ hitoId: Number(this.hitoSeleccionadoId) });
+        this.modal.closeAll();
+      })
+    });
+  }
+
   onAvanceAddEdit(avance: AvanceHitoModel | null): void {
     const title = avance ? `Modificando avance` : 'Nuevo avance';
     this.avancesService.seleccionarAvanceById(avance?.avanceId);
@@ -517,7 +532,6 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
           label: labelOk,
           onClick: componentInstance => {
             return this.avancesService.agregarEditarAvance(componentInstance!.avanceForm.value).then((res) => {
-              console.log(res);
               this.acuerdosService.listarAcuerdo(Number(this.id));
               this.traerHitos({});
               this.traerAvances({ hitoId: Number(this.hitoSeleccionadoId) });

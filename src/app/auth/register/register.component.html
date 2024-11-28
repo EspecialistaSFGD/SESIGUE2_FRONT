@@ -4,7 +4,7 @@
             <nz-form-item class="mb-3">
                 <nz-form-label [nzSpan]="null" nzFor="dni" nzRequired>Nro. DNI</nz-form-label>
                 <nz-form-control nzSpan="null" [nzErrorTip]="requiredDniTpl">
-                    <nz-input-group [nzSuffix]="suffixDni" class="">
+                    <nz-input-group>
                         <input id="dni" nz-input formControlName="dni" placeholder="Ingrese su dni" #dni
                             (input)="onDniChange($event)" onlyNumbers />
                         <ng-template #requiredDniTpl let-control>
@@ -18,9 +18,9 @@
                             DNI en uso
                             }
                         </ng-template>
-                        <ng-template #suffixDni>
+                        <!-- <ng-template #suffixDni>
                             <span nz-icon [nzType]="this.authService.isLoading()?'loading':'search'"></span>
-                        </ng-template>
+                        </ng-template> -->
                     </nz-input-group>
                 </nz-form-control>
             </nz-form-item>
@@ -29,9 +29,21 @@
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="16" nzLg="16" nzXl="16">
             <nz-form-item class="mb-3">
                 <nz-form-label [nzSpan]="null" nzFor="nombre" nzRequired>Nombre completo</nz-form-label>
-                <nz-form-control nzSpan="null" [nzErrorTip]="requiredLabel">
+                <nz-form-control nzSpan="null" [nzErrorTip]="requiredNombreTpl">
                     <input id="nombre" nz-input formControlName="nombre" placeholder="Ingrese su nombre" #nombre
                         class="" />
+
+                    <ng-template #requiredNombreTpl let-control>
+                        @if (control.errors?.['required']) {
+                        Campo requerido
+                        }
+                        @if (control.errors?.['minlength']) {
+                        Mínimo 3 caracteres
+                        }
+                        @if (control.errors?.['maxlength']) {
+                        Máximo 100 caracteres
+                        }
+                    </ng-template>
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -81,11 +93,11 @@
 
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item class="mb-3">
-                <nz-form-label [nzSpan]="null" nzFor="telefono" nzRequired>Teléfono</nz-form-label>
+                <nz-form-label [nzSpan]="null" nzFor="telefono" nzRequired>Celular</nz-form-label>
                 <nz-form-control nzSpan="null" [nzErrorTip]="requiredTelefonoTpl">
                     <!-- <input id="telefono" nz-input formControlName="telefono" placeholder="Ingrese su telefono" #telefono
                         (input)="onTelefonoChange($event)" /> -->
-                    <input id="telefono" nz-input formControlName="telefono" placeholder="Ingrese su telefono"
+                    <input id="telefono" nz-input formControlName="telefono" placeholder="Ingrese su número de celular"
                         onlyNumbers />
 
                     <ng-template #requiredTelefonoTpl let-control>
@@ -93,7 +105,7 @@
                         Campo requerido
                         }
                         @if (control.errors?.['pattern']) {
-                        Ingrese sólo números
+                        Ingrese 9 números
                         }
                     </ng-template>
                 </nz-form-control>

@@ -56,17 +56,21 @@
 
             <!--  <td nzWidth="120px" nzAlign="center">{{ data.espacio }}</td> -->
             <!-- <td nzWidth="120px" nzAlign="center">{{ data.plazo }}</td> -->
+
             <td nzWidth="120px" nzAlign="center">
+                <!-- {{data.plazo!.toString() | dueTo}} -->
                 @if(data.plazo){
                 @if(data.nomEstadoRegistro!='DESESTIMADO' && data.nomEstadoRegistro!='CULMINADO'
                 ){
                 @if(data.plazo.toString() | dueTo) {
-                <span nzTooltipPlacement="left" nz-tooltip="Plazo vencido" class="text-red-500">{{ data.plazo }}</span>
+                <span nzTooltipPlacement="left" nz-tooltip="Plazo vencido" class="text-red-500">{{ data.plazo | date:
+                    'dd/MM/yyyy'
+                    }}</span>
                 }@else{
-                {{data.plazo}}
+                {{data.plazo | date: 'dd/MM/yyyy'}}
                 }
                 }@else{
-                {{data.plazo}}
+                {{data.plazo | date: 'dd/MM/yyyy'}}
                 }
                 }
             </td>

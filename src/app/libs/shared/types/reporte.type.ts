@@ -1,1 +1,1 @@
-export type ReporteType = 'ACUERDO' | 'HITO' | 'AVANCE';
+export type ReporteType = 'PEDIDO' | 'ACUERDO' | 'HITO' | 'AVANCE';

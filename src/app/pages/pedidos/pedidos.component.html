@@ -146,10 +146,14 @@
                 <nz-dropdown-menu #menu="nzDropdownMenu">
                     <ul nz-menu>
                         <li nz-menu-item>
-                            <a>Exportar pedidos</a>
+                            <button (click)="onDescargarReporte('PEDIDO')" nz-button nzType="text"
+                                type="button">Exportar
+                                pedidos</button>
                         </li>
                         <li nz-menu-item>
-                            <a>Exportar acuerdos</a>
+                            <button (click)="onDescargarReporte('ACUERDO')" nz-button nzType="text"
+                                type="button">Exportar
+                                acuerdos</button>
                         </li>
                     </ul>
                 </nz-dropdown-menu>
