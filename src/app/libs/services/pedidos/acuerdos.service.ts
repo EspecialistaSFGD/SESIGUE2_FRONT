@@ -158,7 +158,7 @@ export class AcuerdosService {
                     if (acuerdo.entidadId && acuerdo.entidad) acuerdo.entidadSelect = new SelectModel(acuerdo.entidadId, acuerdo.entidad);
                     if (acuerdo.clasificacion && acuerdo.clasificacionId) acuerdo.clasificacionSelect = new SelectModel(acuerdo.clasificacionId, acuerdo.clasificacion);
                     if (acuerdo.tipo && acuerdo.tipoId) acuerdo.tipoSelect = acuerdo.tipoId.toString();
-                    if (acuerdo.plazo) acuerdo.plazo = this.utilesService.stringToDate(acuerdo.plazo.toString());
+                    // if (acuerdo.plazo) acuerdo.plazo = this.utilesService.stringToDate(acuerdo.plazo.toString());
                 });
                 this.#acuerdosResult.update((v) => ({ ...v, acuerdos: res, isLoading: false, total: data.info.total }));
 
