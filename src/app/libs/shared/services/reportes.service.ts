@@ -229,7 +229,6 @@ export class ReportesService extends BaseHttpService {
             res.porcentaje = Number(res.porcentaje.toFixed(1));
             res.avance = `${res.porcentaje}%`;
 
-
             switch (res.tipo.trim()) {
               case 'ASISTENCIA TÉCNICA':
                 res.color = '#6EC6D8';
@@ -258,7 +257,7 @@ export class ReportesService extends BaseHttpService {
 
           });
 
-          // console.log(results);
+          console.log(results);
 
           resolve(results);
         },
@@ -387,16 +386,34 @@ export class ReportesService extends BaseHttpService {
     }
   }
 
-  descargarReporteAcuerdos(tipo: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend'): Promise<ResponseModel> {
+  descargarReporteAcuerdos(tipo: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend', grupos: number[] | null = null): Promise<ResponseModel> {
     let params = new HttpParams()
       .append('piCurrentPage', pageIndex)
       .append('piPageSize', pageSize)
       .append('columnSort', sortField)
       .append('typeSort', sortOrder);
+    if (grupos) {
+      for (let grupo of grupos) {
+        params = params.append('grupoId[]', grupo)
+      }
+    }
 
     this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
 
-    const tipoReporte = (tipo == 'ACUERDO') ? 'PrioridadAcuerdo' : 'Hito';
+    let tipoReporte: string = '';
+
+    switch (tipo) {
+      case 'PEDIDO':
+        tipoReporte = 'PrioridadAcuerdo';
+        break;
+
+      case 'ACUERDO':
+        tipoReporte = 'Acuerdo';
+        break;
+      default:
+        tipoReporte = 'HIto';
+        break;
+    }
 
     return new Promise((resolve, reject) => {
 

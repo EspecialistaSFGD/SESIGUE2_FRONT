@@ -32,6 +32,11 @@ import { ComentarioModel } from '../../libs/models/pedido/comentario.model';
 import { AuthService } from '../../libs/services/auth/auth.service';
 import { PedidoType } from '../../libs/shared/types/pedido.type';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { ReporteType } from '@libs/shared/types/reporte.type';
+import { ReporteDescargaComponent } from '@libs/shared/components/reporte-descarga/reporte-descarga.component';
+import { saveAs } from 'file-saver';
+import { AcuerdosService } from '@libs/services/pedidos/acuerdos.service';
+import { ReportesService } from '@libs/shared/services/reportes.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -65,8 +70,8 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   pageIndex: number = 1;
   pageSize: number = 10;
-  sortField: string | null = 'prioridadID';
-  sortOrder: string | null = 'descend';
+  sortField: string = 'prioridadID';
+  sortOrder: string = 'descend';
   isDrawervisible: boolean = false;
 
   cui: string | null = null;
@@ -97,6 +102,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   public utilesService = inject(UtilesService);
   confirmModal?: NzModalRef; // For testing by now
   private viewContainerRef = inject(ViewContainerRef);
+  private reportesService = inject(ReportesService);
 
   constructor() {
     this.crearSearForm();
@@ -778,6 +784,86 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.isDrawervisible = false;
   }
 
+  onDescargarReporte(tipo: ReporteType): void {
+    const sectores: number[] | null = this.sectoresSeleccionados ? this.sectoresSeleccionados!.map(item => Number(item.value)) : null
+    const modal = this.modal.create<ReporteDescargaComponent, ReporteType>({
+      nzTitle: `Descargando reporte de ${tipo}`,
+      nzContent: ReporteDescargaComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzData: tipo,
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => this.modal.closeAll()
+        },
+        {
+          type: 'primary',
+          label: 'Descargar',
+          onClick: componentInstance => {
+            const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
+
+            switch (tipo) {
+              case 'ACUERDO':
+                return this.reportesService.descargarReporteAcuerdos(
+                  tipo,
+                  this.pageIndex, page, 'acuerdoId', this.sortOrder
+                ).then((res) => {
+
+                  if (res.success == true) {
+                    var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+                    var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                    saveAs(blob, res.data.nombreArchivo);
+                  }
+
+                  this.modal.closeAll();
+                });
+
+              case 'PEDIDO':
+                return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'PrioridadId', this.sortOrder, sectores).then((res) => {
+
+                  if (res.success == true) {
+                    var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+                    var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                    saveAs(blob, res.data.nombreArchivo);
+                  }
+
+                  this.modal.closeAll();
+                });
+
+              case 'HITO':
+                return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'hitoId', this.sortOrder).then((res) => {
+
+                  if (res.success == true) {
+                    var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+                    var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                    saveAs(blob, res.data.nombreArchivo);
+                  }
+
+                  this.modal.closeAll();
+                });
+
+              default:
+                return;
+            }
+          },
+          loading: this.reportesService.isLoading(),
+          disabled: componentInstance => !componentInstance || !componentInstance.reporteDescargaForm.valid
+        }]
+    });
+
+    const instance = modal.getContentComponent();
+
+    modal.afterClose.subscribe(() => {
+      instance.reporteDescargaForm.reset();
+    });
+  }
+
   crearSearForm(): void {
     this.searchForm = this.fb.group({
       cui: [null],
@@ -864,5 +950,4 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       this.updateParamsSubject.next();
     }
   }
-
 }

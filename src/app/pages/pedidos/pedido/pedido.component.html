@@ -121,6 +121,13 @@
                         @if (control.errors?.['required']) {
                         Campo requerido
                         }
+                        @if (control.errors?.['minlength']) {
+                        Debe tener al menos 6 caracteres
+                        }
+                        @if (control.errors?.['maxlength']) {
+                        No debe exceder los 7 caracteres
+                        }
+
                         @if (control.errors?.['pattern']) {
                         @if(pedidoForm.get('tipoCodigoSelect')?.value == 2) {
                         Debe tener hasta 7 números

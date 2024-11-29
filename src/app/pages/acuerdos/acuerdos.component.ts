@@ -699,29 +699,75 @@ export class AcuerdosComponent implements OnInit {
         },
         {
           type: 'primary',
-          label: 'Comentar',
+          label: 'Descargar',
           onClick: componentInstance => {
             const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
 
-            if (tipo == 'ACUERDO') {
+            switch (tipo) {
+              case 'ACUERDO':
+                return this.reportesService.descargarReporteAcuerdos(
+                  tipo,
+                  this.pageIndex, page, 'acuerdoId', this.sortOrder
+                ).then((res) => {
 
-              return this.reportesService.descargarReporteAcuerdos(
-                tipo,
-                this.pageIndex, page, 'PrioridadId', this.sortOrder
-              ).then((res) => {
+                  if (res.success == true) {
+                    var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+                    var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-                if (res.success == true) {
-                  var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
-                  var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                    saveAs(blob, res.data.nombreArchivo);
+                  }
 
-                  saveAs(blob, res.data.nombreArchivo);
-                }
+                  this.modal.closeAll();
+                });
 
-                this.modal.closeAll();
-              });
+              case 'PEDIDO':
+                return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'PrioridadId', this.sortOrder).then((res) => {
+
+                  if (res.success == true) {
+                    var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+                    var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                    saveAs(blob, res.data.nombreArchivo);
+                  }
+
+                  this.modal.closeAll();
+                });
+
+              case 'HITO':
+                return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'hitoId', this.sortOrder).then((res) => {
+
+                  if (res.success == true) {
+                    var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+                    var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                    saveAs(blob, res.data.nombreArchivo);
+                  }
+
+                  this.modal.closeAll();
+                });
+
+              default:
+                return;
             }
+            // if (tipo == 'ACUERDO') {
 
-            return;
+            //   return this.reportesService.descargarReporteAcuerdos(
+            //     tipo,
+            //     this.pageIndex, page, 'PrioridadId', this.sortOrder
+            //   ).then((res) => {
+
+            //     if (res.success == true) {
+            //       var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+            //       var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+            //       saveAs(blob, res.data.nombreArchivo);
+            //     }
+
+            //     this.modal.closeAll();
+            //   });
+            // }
+
+            // return;
           },
           loading: this.reportesService.isLoading(),
           disabled: componentInstance => !componentInstance || !componentInstance.reporteDescargaForm.valid

@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewContainerRef, inject, signal } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Chart, register } from '@antv/g2';
+import { environment } from '@environments/environment';
 import { TraerReportesInterface } from '@libs/interfaces/reportes/reporte.interface';
 import { ReporteMensualModel } from '@libs/models/reporte/reporte.model';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -11,7 +12,6 @@ import { AcuerdoReporteModel } from '@models/pedido/acuerdo.model';
 import { AnchorModel } from '@models/shared/anchor.model';
 import { ReporteSectorModel, ReporteTotalModel } from '@models/shared/reporte.model';
 import { SelectModel } from '@models/shared/select.model';
-import { PageHeaderFullComponent } from '@shared/layout/page-header-full/page-header-full.component';
 import { ReportesService } from '@shared/services/reportes.service';
 import { UtilesService } from '@shared/services/utiles.service';
 import { EspaciosStore } from '@shared/stores/espacios.store';
@@ -20,7 +20,6 @@ import { UbigeosStore } from '@shared/stores/ubigeos.store';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { TinySliderInstance, tns } from 'tiny-slider';
 import { feature } from 'topojson';
-import { environment } from '../../../environments/environment';
 
 // @ts-ignore
 register('data.feature', ({ name }) => {
@@ -35,7 +34,6 @@ register('data.feature', ({ name }) => {
     CommonModule,
     FormsModule,
     RouterModule,
-    PageHeaderFullComponent,
     ReactiveFormsModule,
     NgZorroModule
   ],
@@ -492,8 +490,12 @@ export class PanelComponent {
 
   private handleElementClick(evt: any): void {
     const { data } = evt;
-    if (data && data.data) {
+
+    if (data) {
       const ubigeoLength = data.data.properties.ubigeo.length;
+
+      // console.log(ubigeoLength);
+
 
       if (ubigeoLength === 2) {
         this.onDepChange(new SelectModel(data.data.properties.ubigeo, data.data.properties.departamento));
@@ -517,8 +519,10 @@ export class PanelComponent {
       height: 275
     });
 
-    // this.radialChart.coordinate({ type: 'theta', outerRadius: 0.8 });
-    this.radialChart.coordinate({ type: 'theta', outerRadius: 0.8, innerRadius: 0.5 });
+    this.radialChart.coordinate({ type: 'theta', innerRadius: 0.5 });
+
+
+    // this.radialChart.coordinate({ type: 'theta', outerRadius: 0.8, innerRadius: 0.5 });
 
 
     this.reportesService.obtenerReporteClasificacion(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo)
@@ -527,33 +531,16 @@ export class PanelComponent {
         // console.log(data);
 
         this.radialChartInfoSgnl.set(data);
+
         if (this.radialChart) {
           this.radialChart
             .interval()
             .data(data)
             .transform({ type: 'stackY' })
             .encode('y', 'porcentaje')
-            // .style('fill', (d: any) => {
-            //   switch (d.tipo.trim()) {
-            //     case 'ASISTENCIA TÉCNICA':
-            //       return '#6EC6D8';
-
-            //     case 'ORIENTACIÓN':
-            //       return '#B6160F';
-
-            //     case 'FINANCIAMIENTO':
-            //       return '#032E4F';
-
-            //     case 'REUNION COMPLEMENTARIA':
-            //       return '#FFE230';
-
-            //     case 'VISITA A TERRITORIO':
-            //       return '#B0E2CB';
-
-            //     default:
-            //       return '#87C4B9';
-            //   }
-            // })
+            .style('stroke', 'white')
+            .style('inset', 1)
+            .style('radius', 10)
 
             // Asigna los colores específicos a través de 'fill'
             .style('fill', (d: any) => (d.color)) // Colores personalizados            // .scale('color', {
@@ -561,66 +548,20 @@ export class PanelComponent {
             // })
             // .legend('color', { position: 'bottom', layout: { justifyContent: 'center' } })
             .legend(false)
+            .label({ text: 'avance', fontSize: 12, fontWeight: 'bold' })
+            // .label({
+            //   text: (d: any, i: number, data: any) => (i < data.length - 3 ? d.avance : ''),
+            //   fontSize: 4,
+            //   dy: 6,
+            // })
+            .animate('enter', { type: 'waveIn' })
             // .label({
             //   position: 'outside',
             //   text: (data: any) => `${data.tipo}: ${data.porcentaje}%`,
             // })
             .tooltip(['tipo', 'acuerdos', 'ejecutados', 'avance']);
 
-          // this.radialChart
-          //   .text()
-          //   .style('text', 'Avance total')
-          //   // Relative position
-          //   .style('x', '50%')
-          //   .style('y', '50%')
-          //   .style('dy', -25)
-          //   .style('fontSize', 18)
-          //   .style('fill', '#8c8c8c')
-          //   .style('textAlign', 'center')
-          //   .tooltip(false);
 
-          // this.radialChart
-          //   .text()
-          //   .style('text', () => {
-
-          //     const totalTipos = data.length;
-
-          //     // Evitar división por cero
-          //     if (totalTipos === 0) return 0;
-
-          //     // Calcular la suma de los porcentajes
-          //     const sumaPorcentajes = data.reduce((sum, item) => sum + item.porcentaje, 0);
-
-          //     // Calcular el promedio
-          //     const promedio = sumaPorcentajes / totalTipos;
-
-          //     const result = parseFloat(promedio.toFixed(1)); // Redondear a 1 decimal
-
-
-          //     return `${result}%`;
-
-          //   })
-          //   // Relative position
-          //   .style('x', '50%')
-          //   .style('y', '50%')
-          //   .style('dx', 0)
-          //   .style('dy', 25)
-          //   .style('fontSize', 44)
-          //   .style('fill', '#8c8c8c')
-          //   .style('textAlign', 'center')
-          //   .tooltip(false);
-
-          // this.radialChart
-          //   .text()
-          //   .style('text', '%')
-          //   // Relative position
-          //   .style('x', '50%')
-          //   .style('y', '50%')
-          //   .style('dx', 35)
-          //   .style('dy', 25)
-          //   .style('fontSize', 34)
-          //   .style('fill', '#8c8c8c')
-          //   .style('textAlign', 'center');
 
           this.radialChart.render();
         }

@@ -384,18 +384,12 @@ export class TransferenciasFinancierasComponent {
   setParamsTipoUbigeo() {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value
     const ubigeo = this.formFilter.get('ubigeo')?.value
-    console.log(tipoUbigeo);
-    console.log(ubigeo);
-
     this.paramsNavigate({ tipoUbigeo, ubigeo })
   }
 
   changeUbigeoTipo() {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value
     const ubigeo = this.formFilter.get('ubigeo')?.value
-    console.log(tipoUbigeo);
-    console.log(ubigeo);
-
     if (ubigeo) {
       this.paramsNavigate({ tipoUbigeo, ubigeo })
     } else {
