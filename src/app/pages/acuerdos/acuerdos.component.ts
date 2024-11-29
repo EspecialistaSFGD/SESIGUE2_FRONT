@@ -699,7 +699,7 @@ export class AcuerdosComponent implements OnInit {
         },
         {
           type: 'primary',
-          label: 'Comentar',
+          label: 'Descargar',
           onClick: componentInstance => {
             const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
 
