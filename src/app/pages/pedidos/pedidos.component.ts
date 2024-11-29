@@ -801,7 +801,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
         },
         {
           type: 'primary',
-          label: 'Comentar',
+          label: 'Descargar',
           onClick: componentInstance => {
             const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
 
