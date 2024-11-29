@@ -6,6 +6,7 @@ export const PAGES_ROUTES: Routes = [
   { path: 'acuerdos', loadChildren: () => import('./acuerdos/acuerdos.routes').then(m => m.ACUERDOS_ROUTES) },
   { path: 'asistencias_tecnicas', loadComponent: () => import('./asistencias-tecnicas/asistencias-tecnicas.component').then(m => m.AsistenciasTecnicasComponent) },
   { path: 'transferencias_financieras', loadComponent: () => import('./transferencias-financieras/transferencias-financieras.component').then(m => m.TransferenciasFinancierasComponent) },
+  { path: 'sgd', loadChildren: () => import('./sgd/sgd.routing').then( r => r.SGD_ROUTES) },
   { path: 'configuraciones', loadChildren: () => import('./configuraciones/configuraciones.routes').then(m => m.CONFIG_ROUTES) },
   { path: '**', redirectTo: 'panel', pathMatch: 'full' },
 ];

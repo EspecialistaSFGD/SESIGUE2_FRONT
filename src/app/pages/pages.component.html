@@ -20,6 +20,10 @@
         <ul class="mt-8 border-r-0 bg-transparent" nz-menu [nzTheme]="(selectedTheme == 'dark' ? 'dark' : 'light' )"
           nzMode="inline" [nzInlineCollapsed]="this.isSiderCollapsed">
 
+          <li nz-menu-item routerLinkActive="ant-menu-item-selected">
+            <a routerLink="/sgd"><span nz-icon nzType="file" nzTheme="outline"></span> Sgd</a>
+          </li>
+
           @for (item of menuItems; track item.codigoMenu) {
           @if(item.children != null && item.children != undefined && item.children.length > 0) {
           <li nz-submenu nzOpen [nzTitle]="item.descripcionItem" [nzIcon]="item.iconoMenu!"
