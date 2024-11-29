@@ -785,6 +785,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   onDescargarReporte(tipo: ReporteType): void {
+    const sectores: number[] | null = this.sectoresSeleccionados ? this.sectoresSeleccionados!.map(item => Number(item.value)) : null
     const modal = this.modal.create<ReporteDescargaComponent, ReporteType>({
       nzTitle: `Descargando reporte de ${tipo}`,
       nzContent: ReporteDescargaComponent,
@@ -822,7 +823,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
                 });
 
               case 'PEDIDO':
-                return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'PrioridadId', this.sortOrder).then((res) => {
+                return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'PrioridadId', this.sortOrder, sectores).then((res) => {
 
                   if (res.success == true) {
                     var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
