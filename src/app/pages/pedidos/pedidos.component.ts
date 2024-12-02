@@ -245,7 +245,6 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     if(pedido){
       this.pedidosService.recuperarPedido(Number(pedido!.prioridadID)).then( resp => {
         const pedidoSelected = resp.data[0]
-        console.log(pedidoSelected);        
         if(pedidoSelected.validado == 0){
           this.actionAddEdit(pedido)
         } else {
