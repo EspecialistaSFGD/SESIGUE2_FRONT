@@ -113,7 +113,12 @@
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
                     }
-
+                    <!-- @if(authService.permisos()?.puede_editar_pedido){
+                    <button [disabled]="data.validado==1" (click)="onAddEdit(data)" *nzSpaceItem nz-button
+                        nzType="link">
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                    </button>
+                    } -->
                     @if(authService.permisos()?.puede_eliminar_pedido){
                     <button [disabled]="data.validado==1" *nzSpaceItem nz-button nzDanger nzType="link"
                         (click)="onDelete(data)">

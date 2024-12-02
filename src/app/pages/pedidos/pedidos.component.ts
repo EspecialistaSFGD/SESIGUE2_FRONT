@@ -239,6 +239,60 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   onAddEdit(pedido: PedidoModel | null): void {
+    // const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
+    // const labelOk = pedido ? 'Actualizar' : 'Agregar';
+    
+    if(pedido){
+      this.pedidosService.recuperarPedido(Number(pedido!.prioridadID)).then( resp => {
+        const pedidoSelected = resp.data[0]
+        if(pedidoSelected.validado == 0){
+          this.actionAddEdit(pedido)
+        } else {
+          this.onRefresh();
+        }
+      })      
+    } else {
+      this.actionAddEdit(pedido)
+    }
+
+    // this.pedidosService.seleccionarPedidoById(pedido?.prioridadID);
+    // this.espaciosStore.listarEventos();
+
+    // const modal = this.modal.create<PedidoComponent, PedidoType>({
+    //   nzTitle: title,
+    //   nzContent: PedidoComponent,
+    //   nzViewContainerRef: this.viewContainerRef,
+    //   nzData: this.authService.subTipo(),
+    //   nzClosable: false,
+    //   nzMaskClosable: false,
+    //   nzFooter: [
+    //     {
+    //       label: 'Cancelar',
+    //       type: 'default',
+    //       onClick: () => this.modal.closeAll(),
+    //     },
+    //     {
+    //       label: labelOk,
+    //       type: 'primary',
+    //       onClick: (componentInstance) => {
+    //         return this.pedidosService.agregarPedido(componentInstance!.pedidoForm.value).then((res) => {
+    //           this.traerPedidos({});
+    //           this.modal.closeAll();
+    //         });
+    //       },
+    //       loading: this.pedidosService.isEditing(),
+    //       disabled: (componentInstance) => !componentInstance?.pedidoForm.valid,
+    //     }
+    //   ]
+    // });
+
+    // const instance = modal.getContentComponent();
+    // modal.afterClose.subscribe(result => {
+    //   instance.pedidoForm.reset();
+    // });
+  }
+
+  actionAddEdit(pedido: PedidoModel | null): void {
     const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
     const labelOk = pedido ? 'Actualizar' : 'Agregar';
 
@@ -271,7 +325,6 @@ export class PedidosComponent implements OnInit, AfterViewInit {
           disabled: (componentInstance) => !componentInstance?.pedidoForm.valid,
         }
       ]
-
     });
 
     const instance = modal.getContentComponent();
