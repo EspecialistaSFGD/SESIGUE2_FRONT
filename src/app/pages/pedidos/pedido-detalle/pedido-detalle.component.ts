@@ -189,6 +189,7 @@ export class PedidoDetalleComponent {
   onAddEdit(value: AcuerdoPedidoModel | null, tipo: AcuerdoType | null, accion: AccionType): void {
     let title: string = '';
     let labelOk: string = '';
+    let sizeModal: string = 'normal'
 
     switch (accion) {
       case 'CREATE':
@@ -207,6 +208,7 @@ export class PedidoDetalleComponent {
         title = `Editar ${tipo}`;
         break;
       case 'CONVERT':
+        sizeModal = 'medium'
         title = 'Convertir PRE ACUERDO en ACUERDO';
         labelOk = 'Convertir';
         break;
@@ -222,6 +224,7 @@ export class PedidoDetalleComponent {
       nzMaskClosable: false,
       nzClosable: false,
       nzKeyboard: false,
+      nzWidth: sizeModal === 'normal' ? 580 : 940,
       nzData: { tipo, accion },
       nzFooter: [
         {
