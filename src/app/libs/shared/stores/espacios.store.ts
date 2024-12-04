@@ -1,11 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { environment } from '../../../../environments/environment.development';
+// import { environment } from '../../../../environments/environment.development';
 import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
 import { SelectModel } from '../../models/shared/select.model';
 import { EspacioModel, TipoEventoModel } from '../../models/shared/espacio.model';
 import { UtilesService } from '../services/utiles.service';
+import { environment } from '@environments/environment';
 
 interface State {
   espacios: SelectModel[];
