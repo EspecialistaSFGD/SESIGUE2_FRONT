@@ -6,7 +6,7 @@
                 <nz-form-control nzSpan="null" [nzErrorTip]="requiredDniTpl">
                     <nz-input-group>
                         <input id="dni" nz-input formControlName="dni" placeholder="Ingrese su dni" #dni
-                            (input)="onDniChange($event)" onlyNumbers />
+                            (input)="onDniChange($event)"/>
                         <ng-template #requiredDniTpl let-control>
                             @if (control.errors?.['required']) {
                             Campo requerido
@@ -97,8 +97,7 @@
                 <nz-form-control nzSpan="null" [nzErrorTip]="requiredTelefonoTpl">
                     <!-- <input id="telefono" nz-input formControlName="telefono" placeholder="Ingrese su telefono" #telefono
                         (input)="onTelefonoChange($event)" /> -->
-                    <input id="telefono" nz-input formControlName="telefono" placeholder="Ingrese su número de celular"
-                        onlyNumbers />
+                    <input id="telefono" nz-input formControlName="telefono" placeholder="Ingrese su número de celular"/>
 
                     <ng-template #requiredTelefonoTpl let-control>
                         @if (control.errors?.['required']) {
