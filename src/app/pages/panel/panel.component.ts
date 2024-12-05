@@ -343,6 +343,8 @@ export class PanelComponent {
   }
 
   onProvChange(value: SelectModel | null): void {
+    console.log(value);
+
     const provControl = this.filterReportForm.get('provinciaSelect');
     const depControl = this.filterReportForm.get('departamentoSelect');
     const disControl = this.filterReportForm.get('distritoSelect');
@@ -410,6 +412,8 @@ export class PanelComponent {
 
     // Determina la URL del TopoJSON y el feature basado en el ubigeo
     const { topoJsonUrl, rqDataFeature } = this.getTopoJsonUrlAndFeature(ubigeo ?? null);
+    console.log(topoJsonUrl, rqDataFeature);
+
 
     this.geoChart = new Chart({
       container: 'container',
@@ -479,6 +483,8 @@ export class PanelComponent {
 
   private getTopoJsonUrlAndFeature(ubigeo: string | null): { topoJsonUrl: string, rqDataFeature: string } {
     const baseUrl = environment.topoJsonUrl;
+    console.table(ubigeo);
+
     if (ubigeo?.length === 2) {
       return { topoJsonUrl: `${baseUrl}/provincias/${ubigeo}.topo.json`, rqDataFeature: ubigeo };
     }
@@ -488,22 +494,57 @@ export class PanelComponent {
     return { topoJsonUrl: `${baseUrl}/departamentos/departamentos.topo.json`, rqDataFeature: 'departamentos' };
   }
 
+  // private handleElementClick(evt: any): void {
+  //   const { data } = evt;
+
+  //   if (data) {
+  //     const ubigeoLength = data.data.properties.ubigeo.length;
+
+
+  //     if (ubigeoLength === 2) {
+  //       this.onDepChange(new SelectModel(data.data.properties.ubigeo, data.data.properties.departamento));
+  //     } else if (ubigeoLength === 4) {
+  //       this.onProvChange(new SelectModel(data.data.properties.ubigeo, data.data.properties.prov));
+  //     }
+  //   }
+  // }
+
   private handleElementClick(evt: any): void {
     const { data } = evt;
 
     if (data) {
       const ubigeoLength = data.data.properties.ubigeo.length;
+      const ubigeoValue = data.data.properties.ubigeo;
 
-      // console.log(ubigeoLength);
+      console.log(data.data.properties);
 
 
       if (ubigeoLength === 2) {
-        this.onDepChange(new SelectModel(data.data.properties.ubigeo, data.data.properties.departamento));
+        // Departamento seleccionado
+        this.onDepChange({ value: ubigeoValue, label: data.data.properties.departamento } as SelectModel);
       } else if (ubigeoLength === 4) {
-        this.onProvChange(new SelectModel(data.data.properties.ubigeo, data.data.properties.prov));
+        // Provincia seleccionada
+        this.onProvChange({ value: ubigeoValue, label: data.data.properties.prov } as SelectModel);
+      } else {
+        // Distrito seleccionado
+        this.onDisChange({ value: ubigeoValue, label: data.data.properties.dis } as SelectModel);
       }
+
+      // Actualiza las señales y cualquier otra lógica adicional
+      this.ubigeoRngSgnl.set(this.determineUbigeoRng(ubigeoLength));
     }
   }
+
+
+  private determineUbigeoRng(length: number): string {
+    if (length === 2) {
+      return 'Provincia';
+    } else if (length === 4) {
+      return 'Distrito';
+    }
+    return 'Departamento';
+  }
+
 
   renderRadiaChart({
     reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
