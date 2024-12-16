@@ -2,9 +2,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { SelectModel } from '../../models/shared/select.model';
 import { Observable, catchError, map, of } from 'rxjs';
-import { environment } from '../../../../environments/environment.development';
+// import { environment } from '../../../../environments/environment.development';
 import { parse } from 'date-fns';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
+import { environment } from '@environments/environment';
 
 @Injectable({
     providedIn: 'root'

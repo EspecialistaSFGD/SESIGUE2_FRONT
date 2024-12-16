@@ -257,7 +257,7 @@ export class ReportesService extends BaseHttpService {
 
           });
 
-          console.log(results);
+          // console.log(results);
 
           resolve(results);
         },

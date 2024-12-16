@@ -60,22 +60,22 @@ export class AsistenciasTecnicasComponent {
     this.obtenerDepartamentos()
   }
 
-  getParams(){
+  getParams() {
     this.route.queryParams.subscribe(params => {
-      if(Object.keys(params).length > 0){
-        this.paramsExist = true      
+      if (Object.keys(params).length > 0) {
+        this.paramsExist = true
         const relations = [
           { param: 'entidad', field: 'entidadId' },
           { param: 'tipoEntidad', field: 'tipoEntidadId' },
           { param: 'espacio', field: 'espacioId' },
         ]
 
-        let campo = params['campo'] ?? 'fechaAtencion'        
-        const finded = relations.find( item => item.param == campo)       
-        if(finded){
+        let campo = params['campo'] ?? 'fechaAtencion'
+        const finded = relations.find(item => item.param == campo)
+        if (finded) {
           campo = finded.field
-        }        
-        
+        }
+
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
         this.pagination.pageSize = params['cantidad']
@@ -84,11 +84,11 @@ export class AsistenciasTecnicasComponent {
       } else {
         this.pagination.columnSort = 'fechaAtencion'
       }
-      
+
     });
   }
 
-  obtenerAsistenciasTecnicas() {    
+  obtenerAsistenciasTecnicas() {
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas(this.pagination)
       .subscribe(resp => {
         if (resp.success == true) {
@@ -127,12 +127,12 @@ export class AsistenciasTecnicasComponent {
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
-    const sortsNames = ['ascend','descend']
-    const sorts = params.sort.find( item => sortsNames.includes(item.value!))    
-    const qtySorts = params.sort.reduce( (total, item) => {
-      return sortsNames.includes( item.value! ) ? total + 1 : total
-    }, 0) 
-    const ordenar = sorts?.value!.slice(0, -3)      
+    const sortsNames = ['ascend', 'descend']
+    const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+    const qtySorts = params.sort.reduce((total, item) => {
+      return sortsNames.includes(item.value!) ? total + 1 : total
+    }, 0)
+    const ordenar = sorts?.value!.slice(0, -3)
     this.router.navigate(
       [],
       {
@@ -203,6 +203,6 @@ export class AsistenciasTecnicasComponent {
       evidenciaReunion: '',
       evidenciaAsistencia: ''
     }
-    this.showNzModal = true    
+    this.showNzModal = true
   }
 }

@@ -1,10 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { environment } from '../../../../environments/environment.development';
+// import { environment } from '../../../../environments/environment.development';
 import { Observable, catchError, map, of } from 'rxjs';
 import { ResponseModel } from '../../models/shared/response.model';
 import { SelectModel } from '../../models/shared/select.model';
+import { environment } from '@environments/environment';
 
 interface State {
   tipos: SelectModel[];

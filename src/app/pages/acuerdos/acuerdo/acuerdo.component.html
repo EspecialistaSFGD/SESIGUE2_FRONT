@@ -1,5 +1,4 @@
 <form [formGroup]="acuerdoForm" nz-form nzLayout="vertical">
-
     @if (this.nzModalData.tipo == 'ACUERDO' && (this.nzModalData.accion == 'RECREATE')) {
     <legend>Información del Pedido</legend>
 
@@ -208,7 +207,7 @@
                 <nz-form-label nzRequired [nzSpan]="null" nzFor="pre_acuerdo" nzRequired>Pre acuerdo</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                     <textarea nz-input id="pre_acuerdo" formControlName="pre_acuerdo"
-                        placeholder="Ingrese el pre acuerdo" [nzAutosize]="{ minRows: 4 }"></textarea>
+                        placeholder="Ingrese el pre acuerdo" [nzAutosize]="{ minRows: 2 }"></textarea>
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -218,7 +217,7 @@
                 <nz-form-label nzRequired [nzSpan]="null" nzFor="acuerdo" nzRequired>Acuerdo</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                     <textarea nz-input id="acuerdo" formControlName="acuerdo" placeholder="Ingrese el acuerdo"
-                        [nzAutosize]="{ minRows: 4 }"></textarea>
+                        [nzAutosize]="{ minRows: 2 }"></textarea>
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -254,8 +253,8 @@
     }
 
     <!-- @if(this.nzModalData.accion !== 'CONVERT' ) { -->
-    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 20, lg: 20 }">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="8" nzXl="8">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Clasificación</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
@@ -269,7 +268,7 @@
             </nz-form-item>
         </div>
 
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="8" nzXl="8">
             <nz-form-item>
                 <nz-form-label nzRequired [nzSpan]="null">Plazo</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
@@ -278,9 +277,7 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
-    </div>
-
-    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+ 
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Responsable</nz-form-label>
