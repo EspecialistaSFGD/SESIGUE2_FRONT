@@ -453,7 +453,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.distritos.set([])
       console.log('CHANGE TIPO');
       controlProv?.disable()
-      controlDist?.disable()
+      this.districtDisabled = true
+      // controlDist?.disable()
+
       controlProv?.reset()
       controlDist?.reset()
 
@@ -481,6 +483,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
           } else {
             this.provincias.set([])
           }
+        } else if(this.tipoMancomunidad == 'GR'){
+          this.changeAutoridad()
         }
         if (controlUbigeo?.value) {
           const ubigeo = controlUbigeo?.value.slice(0, 2)
@@ -606,7 +610,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const controlDNI = this.formAsistencia.get('dniAutoridad')
     const controlNombre = this.formAsistencia.get('nombreAutoridad')
     const controlCargo = this.formAsistencia.get('cargoAutoridad')
-
+    
     const autoridad = controlAutoridad?.value
     if (autoridad) {
       this.obtenerAlcaldePorUbigeo(ubigeo)
@@ -763,6 +767,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       if (!this.mancomunidadesAbrev.includes(this.tipoMancomunidad)) {
         if (this.tipoMancomunidad == 'GL') {
           controlProvincia?.enable()
+        } else if (this.tipoMancomunidad == 'GR'){
+        this.changeAutoridad()
         }
       }
     }
@@ -847,8 +853,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const tipoEntidad = this.formAsistencia.get('tipoEntidadId')?.value
     // console.log(tipoEntidad);
     // console.log(this.tipoMancomunidad);
-
-
+    
     this.ubigeoService.getProvinces(departamento)
       .subscribe(resp => {
         if (resp.success == true) {
@@ -860,10 +865,12 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   obtenerUbigeoDistritos(provincia: string) {
+    console.log('Activar distrito');
+    
+    this.districtDisabled = false
     this.ubigeoService.getDistricts(provincia)
       .subscribe(resp => {
         if (resp.success == true) {
-          this.districtDisabled = false
           this.distritos.set(resp.data)
         }
       })
