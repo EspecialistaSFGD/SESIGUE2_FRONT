@@ -446,9 +446,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       const controlDpto = this.formAsistencia.get('departamento')
       const controlProv = this.formAsistencia.get('provincia')
       const controlDist = this.formAsistencia.get('distrito')
-      // const controlEntidadId = this.formAsistencia.get('entidadId')
-
-      // const gobiernos = ['GR','GL']
+      
       this.provincias.set([])
       this.distritos.set([])
       console.log('CHANGE TIPO');
@@ -490,86 +488,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
           const ubigeo = controlUbigeo?.value.slice(0, 2)
           this.obtenerEntidadPorUbigeo(`${ubigeo}0000`)
         }
-        // controlDist?.reset()
       }
-
-      // if(this.mancomunidadesAbrev.includes(this.tipoMancomunidad)){        
-      //   departamento?.setValue('')
-      //   provincia?.setValue('')
-      //   distrito?.setValue('')
-      //   departamento?.disable()
-      //   provincia?.disable()
-      //   distrito?.disable()
-      //   entidadId?.setValue('')
-      //   this.obtenerMancomunidades()
-      // } else {
-      //   departamento?.enable()
-      //   this.setUbigeo()
-      //   const departamentoValue = departamento?.value
-
-      //   if(departamentoValue){
-      //     this.obtenerEntidadPorUbigeo(`${departamentoValue}0000`)
-      //   }
-      // }
     }
   }
-
-
-  // setUbigeo(){
-  //   console.log('set ubigeo');
-  //   const controlDpto = this.formAsistencia.get('departamento')
-  //   const controlProv = this.formAsistencia.get('provincia')
-  //   const controlDist = this.formAsistencia.get('distrito')  
-  //   const tipo = this.obtenerValueTipoEntidad()
-  //   const gobiernos = ['GR','GL']
-  //   const mancomunidades = ['MM','MR']
-  //   console.log(this.mancomunidadesAbrev);
-  //   console.log(this.tipoMancomunidad);
-
-  //   if(!this.mancomunidadesAbrev.includes(this.tipoMancomunidad)){
-  //     console.log('Es ubigeo');
-  //     if(this.tipoMancomunidad == gobiernos[0]){
-
-  //     }
-  //   }
-
-  //   // if(tipo){
-  //   //   // console.log(tipo);
-  //   //   if(gobiernos.includes(tipo?.abreviatura!)){
-  //   //     controlDpto?.enable()
-  //   //     if(tipo.abreviatura == gobiernos[0]){
-  //   //       controlProv?.disable()
-  //   //       controlDist?.disable()
-  //   //       controlProv?.reset()
-  //   //       controlDist?.reset()
-  //   //     } else {
-  //   //       controlProv?.enable()
-  //   //     }
-  //   //   } else {
-  //   //     controlDpto?.disable()
-  //   //     controlProv?.disable()
-  //   //     controlDist?.disable()
-  //   //     this.provincias.set([])
-  //   //     this.distritos.set([]) 
-  //   //   }
-  //   // }
-
-  //   // regionales.includes(tipo?.abreviatura!) ? provincia?.disable() : provincia?.enable()
-  //   // regionales.includes(tipo?.abreviatura!) ? distrito?.disable() : distrito?.enable()
-  //   // if (regionales.includes(tipo?.abreviatura!)) {    
-  //   //   provincia?.reset()
-  //   //   // distrito?.reset()
-  //   //   this.provincias.set([])
-  //   //   this.distritos.set([])       
-  //   // }
-  //   // const mancomunidadMuni = ['MM']
-  //   // if (mancomunidadMuni.includes(tipo?.abreviatura!)) {
-  //   //   distrito?.clearValidators()
-  //   // }
-  //   // if(tipo){
-  //   //   this.tipoMancomunidad = tipo?.abreviatura
-  //   // }
-  // }
 
   obtenerValueTipoEntidad() {
     const tipoId = this.formAsistencia.get('tipoEntidadId')?.value
@@ -610,7 +531,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const controlDNI = this.formAsistencia.get('dniAutoridad')
     const controlNombre = this.formAsistencia.get('nombreAutoridad')
     const controlCargo = this.formAsistencia.get('cargoAutoridad')
-    
+
     const autoridad = controlAutoridad?.value
     if (autoridad) {
       this.obtenerAlcaldePorUbigeo(ubigeo)
@@ -619,27 +540,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       controlNombre?.setValue('')
       controlCargo?.setValue('')
     }
-
-    // if(this.mancomunidadesAbrev.includes(this.tipoMancomunidad)){
-    //   // this.obtenerAlcaldePorUbigeo(ubigeo)
-    //   // console.log('MANCOMUNIDAD');      
-    //   // console.log(ubigeo);
-
-    // } else {
-    //   const autoridad = this.formAsistencia.get('autoridad')?.value
-    //   const dni = this.formAsistencia.get('dniAutoridad')
-    //   const nombre = this.formAsistencia.get('nombreAutoridad')
-    //   const cargo = this.formAsistencia.get('cargoAutoridad')
-
-    //   if(autoridad && ubigeo){
-    //     this.obtenerAlcaldePorUbigeo(ubigeo)
-    //   } else {
-    //     dni?.setValue('')
-    //     nombre?.setValue('')
-    //     cargo?.setValue('')
-    //   }
-    //   // this.setUbigeo()
-    // }
 
   }
 
