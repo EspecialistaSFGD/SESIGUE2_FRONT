@@ -386,7 +386,7 @@ export class ReportesService extends BaseHttpService {
     }
   }
 
-  descargarReporteAcuerdos(tipo: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend', grupos: number[] | null = null): Promise<ResponseModel> {
+  descargarReporteAcuerdos(tipo: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend', grupos: number[] | null = null, espacios: number[] | null = null, ubigeo: string | null = null, cui: string | null = null): Promise<ResponseModel> {
     let params = new HttpParams()
       .append('piCurrentPage', pageIndex)
       .append('piPageSize', pageSize)
@@ -397,6 +397,15 @@ export class ReportesService extends BaseHttpService {
         params = params.append('grupoId[]', grupo)
       }
     }
+
+    if (espacios) {
+      for (let espacio of espacios) {
+        params = params.append('eventoId[]', espacio)
+      }
+    }
+
+    params = ubigeo ? params.append('ubigeo[]', `${ubigeo}`) : params
+    params = cui ? params.append('cui', `${cui}`) : params
 
     this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
 
