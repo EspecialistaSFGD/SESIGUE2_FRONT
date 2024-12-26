@@ -838,7 +838,13 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   onDescargarReporte(tipo: ReporteType): void {
+    const cui: string | null = this.cui ? this.cui : null
     const sectores: number[] | null = this.sectoresSeleccionados ? this.sectoresSeleccionados!.map(item => Number(item.value)) : null
+    const espacios: number[] | null = this.espaciosSeleccionados ? this.espaciosSeleccionados!.map(item => Number(item.value)) : null
+    let ubigeo: string | null = this.depSeleccionado ? `${this.depSeleccionado.value}` : null
+    ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
+    ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
+
     const modal = this.modal.create<ReporteDescargaComponent, ReporteType>({
       nzTitle: `Descargando reporte de ${tipo}`,
       nzContent: ReporteDescargaComponent,
@@ -860,9 +866,11 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
             switch (tipo) {
               case 'ACUERDO':
+                console.log('ES UN ACUERDO');
+                
                 return this.reportesService.descargarReporteAcuerdos(
                   tipo,
-                  this.pageIndex, page, 'acuerdoId', this.sortOrder
+                  this.pageIndex, page, 'acuerdoId', this.sortOrder, sectores, espacios, ubigeo, cui
                 ).then((res) => {
 
                   if (res.success == true) {
@@ -876,7 +884,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
                 });
 
               case 'PEDIDO':
-                return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'PrioridadId', this.sortOrder, sectores).then((res) => {
+                return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'PrioridadId', this.sortOrder, sectores, espacios, ubigeo, cui).then((res) => {
 
                   if (res.success == true) {
                     var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
