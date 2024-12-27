@@ -386,7 +386,7 @@ export class ReportesService extends BaseHttpService {
     }
   }
 
-  descargarReporteAcuerdos(tipo: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend', grupos: number[] | null = null, espacios: number[] | null = null, ubigeo: string | null = null, cui: string | null = null): Promise<ResponseModel> {
+  descargarReporteAcuerdos(tipo: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend', grupos: number[] | null = null, tipoEspacio: string | null = null, espacios: number[] | null = null, ubigeo: string | null = null, cui: string | null = null): Promise<ResponseModel> {
     let params = new HttpParams()
       .append('piCurrentPage', pageIndex)
       .append('piPageSize', pageSize)
@@ -397,6 +397,8 @@ export class ReportesService extends BaseHttpService {
         params = params.append('grupoId[]', grupo)
       }
     }
+
+    params = tipoEspacio ? params.append('tipoEspacio', tipoEspacio) : params
 
     if (espacios) {
       for (let espacio of espacios) {

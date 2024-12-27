@@ -55,7 +55,7 @@ export class PedidosService {
 
     constructor() { }
     //TODO: quitar en el caso de que PCM sea el sector a solicitar
-    listarPedidos(cui: string | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null, dis: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = 'prioridadID', sortOrder: string | null = 'descend'): void {
+    listarPedidos(cui: string | null = null, tipoEspacio: string | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null, dis: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = 'prioridadID', sortOrder: string | null = 'descend'): void {
         // debugger;
         let params = new HttpParams();
 
@@ -86,6 +86,7 @@ export class PedidosService {
             params = params.append('ubigeo[]', `${dep.value}`);
         }
 
+        params = tipoEspacio ? params.append('tipoEspacio', tipoEspacio) : params;
         params = (pageIndex !== null) ? params.append('piCurrentPage', `${pageIndex}`) : params;
         params = (pageSize !== null) ? params.append('piPageSize', `${pageSize}`) : params;
         params = (sortField !== null) ? params.append('columnSort', `${sortField}`) : params;

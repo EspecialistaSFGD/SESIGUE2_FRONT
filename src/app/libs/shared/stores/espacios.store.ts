@@ -41,7 +41,6 @@ export class EspaciosStore {
     this.listarTiposEvento();
   }
 
-
   listarEventos(codigoTipoEvento: number | null = null, estado: number = 1, vigente: number = 1, pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend'): void {
     let params = new HttpParams()
       .append('estado', `${estado}`)

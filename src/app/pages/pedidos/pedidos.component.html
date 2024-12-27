@@ -154,7 +154,7 @@
                     <span class="button-text">Imprimir acuerdos</span>
                 </button> -->
 
-                <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu">
+                <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
                     <span nz-icon nzType="file-excel" nzTheme="outline"></span>
                     <span class="button-text">Exportar</span>
                     <span nz-icon nzType="down"></span>
@@ -206,7 +206,7 @@
 
             <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <nz-form-item>
-                    <nz-form-label [nzSpan]="null">TIpos de Espacio</nz-form-label>
+                    <nz-form-label [nzSpan]="null">Tipos de Espacio</nz-form-label>
                     <!-- {{this.espaciosStore.tiposEspacio()|json}} -->
                     <nz-form-control nzSpan="null">
                         <nz-select nzPlaceHolder="Seleccione" id="tipoEspacio" #tipoEspacio

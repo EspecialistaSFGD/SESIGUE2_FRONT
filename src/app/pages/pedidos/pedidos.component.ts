@@ -218,6 +218,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   traerPedidos(
     {
       cui = this.cui,
+      tipoEspacioSeleccionado = this.tipoEspacioSeleccionado,
       espaciosSeleccionados = this.espaciosSeleccionados,
       sectoresSeleccionados = (this.authService.sector() && this.authService.subTipo() != 'PCM') ? [this.authService.sector()!] : this.sectoresSeleccionados,
       depSeleccionado = (this.authService.departamento()) ? this.authService.departamento() : this.depSeleccionado,
@@ -230,7 +231,11 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     }: TraerPedidosInterface
   ): void {
     if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
-      this.pedidosService.listarPedidos(cui, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
+      let tipoEspacio: string | null = null
+      if(tipoEspacioSeleccionado){
+        tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == tipoEspacioSeleccionado.value)?.label!;
+      }      
+      this.pedidosService.listarPedidos(cui, tipoEspacio, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
     }
   }
 
@@ -400,9 +405,12 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
     const wasPreviouslySelected = this.tipoEspacioSeleccionado != null;
 
+    console.log(value);
+    
     this.tipoEspacioSeleccionado = value;
     // this.traerAcuerdos({ tipoEspacioSeleccionado: value });
-    // debugger;
+    // debugger;    
+    
     if (value != null) {
       // this.espaciosStore.limpiarEspacios();
       this.espaciosStore.listarEventos(Number(value.value));
@@ -413,9 +421,13 @@ export class PedidosComponent implements OnInit, AfterViewInit {
         this.searchForm.patchValue({ espacio: null });
         this.filterCounter.update(x => x - 1);
       }
+      // const modelValue: SelectModel[] = [value]
+      // this.onEspacioChange(modelValue);
+      this.traerPedidos({ tipoEspacioSeleccionado: value });
     } else {
       this.onEspacioChange(null);
     }
+    ;
 
     if (value == null && wasPreviouslySelected) {
       this.filterCounter.update(x => x - 1);
@@ -432,7 +444,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   onEspacioChange(value: SelectModel[] | null): void {
     if (this.clearingFilters) {
       return;
-    }
+    }   
 
     value = value || [];
 
@@ -851,6 +863,11 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     let ubigeo: string | null = this.depSeleccionado ? `${this.depSeleccionado.value}` : null
     ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
     ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
+    let tipoEspacio: string | null = null
+      if(this.tipoEspacioSeleccionado){
+        tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;
+      }
+
     this.loading = true
 
     let sortField = 'prioridadID'
@@ -858,7 +875,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       case 'ACUERDO': sortField = 'acuerdoId'; break;
       case 'HITO': sortField = 'hitoId'; break;
     }
-    this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, 0, sortField, this.sortOrder, sectores, espacios, ubigeo, cui)
+    this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, 0, sortField, this.sortOrder, sectores, tipoEspacio, espacios, ubigeo, cui)
       .then((res) => {
         if (res.success == true) {
           this.generarExcel(res.data.archivo, res.data.nombreArchivo);
