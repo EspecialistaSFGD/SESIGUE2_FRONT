@@ -239,7 +239,6 @@ export class HitosComponent {
           onClick: componentInstance => {
             return this.avancesService.agregarComentarioDesdeListadoHitos(componentInstance!.comentarioForm.value).then((res) => {
               this.traerHitos({});
-              console.log(res);
               this.modal.closeAll();
             });
           },
@@ -663,8 +662,6 @@ export class HitosComponent {
     const estados: number[] | null = this.estadosSelecionados ? this.estadosSelecionados!.map(item => Number(item.value)) : null
     const clasificaciones: number[] | null = this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas!.map(item => Number(item.value)) : null
     const tipos: number | null = this.tipoSeleccionado ? Number(this.tipoSeleccionado) : null
-    console.log('tipo seleccionado');
-    console.log(this.tipoSeleccionado);
     
     let ubigeo: string | null = this.depSeleccionado ? `${this.depSeleccionado.value}` : null
     ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
