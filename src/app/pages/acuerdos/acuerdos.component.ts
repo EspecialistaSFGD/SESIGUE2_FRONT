@@ -700,6 +700,7 @@ export class AcuerdosComponent implements OnInit {
     let ubigeo: string | null = this.depSeleccionado ? `${this.depSeleccionado.value}` : null
     ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
     ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
+
     let tipoEspacio: string | null = null
       if(this.tipoEspacioSeleccionado){
         tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;

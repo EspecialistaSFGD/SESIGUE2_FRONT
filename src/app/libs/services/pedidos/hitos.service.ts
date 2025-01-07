@@ -227,11 +227,11 @@ export class HitosService {
         }
 
         if (dis !== null) {
-            params = params.append('ubigeo[]', `${dis.value}`);
+            params = params.append('ubigeo', `${dis.value}`);
         } else if (prov !== null) {
-            params = params.append('ubigeo[]', `${prov.value}`);
+            params = params.append('ubigeo', `${prov.value}`);
         } else if (dep !== null) {
-            params = params.append('ubigeo[]', `${dep.value}`);
+            params = params.append('ubigeo', `${dep.value}`);
         }
 
         params = (pageIndex !== null) ? params.append('piCurrentPage', `${pageIndex}`) : params;

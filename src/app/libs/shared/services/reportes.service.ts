@@ -416,10 +416,16 @@ export class ReportesService extends BaseHttpService {
         params = params.append('clasificaciones[]', clasificacion)
       }
     }
-
-    params = ubigeo ? params.append('ubigeo[]', `${ubigeo}`) : params
-    params = cui ? params.append('cui', `${cui}`) : params
+    
+    // params = ubigeo ? params.append('ubigeo[]', `${ubigeo}`) : params
+    params = ubigeo ? params.append('ubigeo', `${ubigeo}`) : params
+    params = cui ? params.append('codigo', `${cui}`) : params
     params = tipo ? params.append('tipoId', `${tipo}`) : params
+
+    console.log("UBIGEOS");
+    console.log(ubigeo);
+    console.log(params);
+    
 
     this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
 
