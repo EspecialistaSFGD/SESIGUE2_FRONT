@@ -21,6 +21,7 @@ export class TraerAcuerdosInterface {
     constructor(
         public cui?: string | null,
         public clasificacionesSeleccionadas?: SelectModel[] | null,
+        public tipoEspacioSeleccionado?: SelectModel | null,
         public tipoSeleccionado?: SelectModel | null,
         public estadosSelecionados?: SelectModel[] | null,
         public espaciosSeleccionados?: SelectModel[] | null,

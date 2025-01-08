@@ -77,7 +77,7 @@ export class AcuerdosComponent implements OnInit {
   fechaDateFormat = 'dd/MM/yyyy';
   title: string = `Lista de acuerdos y compromisos`;
 
-  loading:boolean = false;
+  loading: boolean = false;
   pageIndex: number = 1;
   pageSize: number = 10;
   sortField: string = 'acuerdoID';
@@ -374,6 +374,7 @@ export class AcuerdosComponent implements OnInit {
     {
       cui = this.cui,
       clasificacionesSeleccionadas = this.clasificacionesSeleccionadas,
+      tipoEspacioSeleccionado = this.tipoEspacioSeleccionado,
       tipoSeleccionado = this.tipoSeleccionado,
       estadosSelecionados = this.estadosSelecionados,
       espaciosSeleccionados = this.espaciosSeleccionados,
@@ -388,7 +389,11 @@ export class AcuerdosComponent implements OnInit {
     }: TraerAcuerdosInterface
   ): void {
     if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
-      this.acuerdosService.listarAcuerdos(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
+      let tipoEspacio: string | null = null
+      if (tipoEspacioSeleccionado) {
+        tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == tipoEspacioSeleccionado.value)?.label!;
+      }
+      this.acuerdosService.listarAcuerdos(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, tipoEspacio, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
     }
   }
 
@@ -485,6 +490,7 @@ export class AcuerdosComponent implements OnInit {
 
     if (!this.cargandoUbigeo && !skipNavigation) {
       // this.traerAcuerdos({});
+      this.traerAcuerdos({});
       this.updateParamsSubject.next();
     }
   }
@@ -702,9 +708,9 @@ export class AcuerdosComponent implements OnInit {
     ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
 
     let tipoEspacio: string | null = null
-      if(this.tipoEspacioSeleccionado){
-        tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;
-      }
+    if (this.tipoEspacioSeleccionado) {
+      tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;
+    }
 
     this.loading = true
 
@@ -721,7 +727,7 @@ export class AcuerdosComponent implements OnInit {
           this.loading = false
         }
       })
-    
+
   }
 
   // onDescargarReporte(tipo: ReporteType): void {

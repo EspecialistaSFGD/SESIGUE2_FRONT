@@ -183,7 +183,7 @@ export class HitosComponent {
   ): void {
     if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
       let tipoEspacio: string | null = null
-      if(tipoEspacioSeleccionado){
+      if (tipoEspacioSeleccionado) {
         tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == tipoEspacioSeleccionado.value)?.label!;
       }
       this.hitosService.listarHitosGenerales(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, tipoEspacio, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
@@ -419,6 +419,7 @@ export class HitosComponent {
 
     if (!this.cargandoUbigeo && !skipNavigation) {
       // this.traerHitos({});
+      this.traerHitos({});
       this.updateParamsSubject.next();
     }
   }
@@ -662,12 +663,12 @@ export class HitosComponent {
     const estados: number[] | null = this.estadosSelecionados ? this.estadosSelecionados!.map(item => Number(item.value)) : null
     const clasificaciones: number[] | null = this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas!.map(item => Number(item.value)) : null
     const tipos: number | null = this.tipoSeleccionado ? Number(this.tipoSeleccionado) : null
-    
+
     let ubigeo: string | null = this.depSeleccionado ? `${this.depSeleccionado.value}` : null
     ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
     ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
     let tipoEspacio: string | null = null
-    if(this.tipoEspacioSeleccionado){
+    if (this.tipoEspacioSeleccionado) {
       tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;
     }
 
