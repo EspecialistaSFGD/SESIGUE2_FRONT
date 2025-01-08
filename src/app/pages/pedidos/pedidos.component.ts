@@ -232,9 +232,9 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   ): void {
     if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
       let tipoEspacio: string | null = null
-      if(tipoEspacioSeleccionado){
+      if (tipoEspacioSeleccionado) {
         tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == tipoEspacioSeleccionado.value)?.label!;
-      }      
+      }
       this.pedidosService.listarPedidos(cui, tipoEspacio, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
     }
   }
@@ -247,16 +247,16 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   onAddEdit(pedido: PedidoModel | null): void {
     // const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
     // const labelOk = pedido ? 'Actualizar' : 'Agregar';
-    
-    if(pedido){
-      this.pedidosService.recuperarPedido(Number(pedido!.prioridadID)).then( resp => {
+
+    if (pedido) {
+      this.pedidosService.recuperarPedido(Number(pedido!.prioridadID)).then(resp => {
         const pedidoSelected = resp.data[0]
-        if(pedidoSelected.validado == 0){
+        if (pedidoSelected.validado == 0) {
           this.actionAddEdit(pedido)
         } else {
           this.onRefresh();
         }
-      })      
+      })
     } else {
       this.actionAddEdit(pedido)
     }
@@ -406,11 +406,11 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     const wasPreviouslySelected = this.tipoEspacioSeleccionado != null;
 
     console.log(value);
-    
+
     this.tipoEspacioSeleccionado = value;
     // this.traerAcuerdos({ tipoEspacioSeleccionado: value });
     // debugger;    
-    
+
     if (value != null) {
       // this.espaciosStore.limpiarEspacios();
       this.espaciosStore.listarEventos(Number(value.value));
@@ -437,6 +437,8 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
     if (!this.cargandoUbigeo && !skipNavigation) {
       // this.traerAcuerdos({});
+      // console.log('CARGANDO PEDIDO');
+      this.traerPedidos({})
       this.updateParamsSubject.next();
     }
   }
@@ -444,7 +446,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   onEspacioChange(value: SelectModel[] | null): void {
     if (this.clearingFilters) {
       return;
-    }   
+    }
 
     value = value || [];
 
@@ -864,9 +866,9 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
     ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
     let tipoEspacio: string | null = null
-      if(this.tipoEspacioSeleccionado){
-        tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;
-      }
+    if (this.tipoEspacioSeleccionado) {
+      tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;
+    }
 
     this.loading = true
 
@@ -914,7 +916,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   //           switch (tipo) {
   //             case 'ACUERDO':
   //               console.log('ES UN ACUERDO');
-                
+
   //               return this.reportesService.descargarReporteAcuerdos(
   //                 tipo,
   //                 this.pageIndex, page, 'acuerdoId', this.sortOrder, sectores, espacios, ubigeo, cui
