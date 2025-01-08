@@ -46,6 +46,7 @@ export class AcuerdoComponent {
   requiredLabel: string = 'Campo requerido';
 
 
+  sizeColumns: number = 8;
   nzModalData: AddEditAcuerdoModel = inject(NZ_MODAL_DATA);
   today = new Date();
   acuerdosService = inject(AcuerdosService);
@@ -114,6 +115,10 @@ export class AcuerdoComponent {
       sectorCtrl?.clearValidators();
       acuerdoModificadoCtrl?.setValidators([Validators.required]);
       es_preAcuerdoBoolCtrl?.patchValue(false);
+    }
+    if (this.nzModalData.accion == 'RECREATE') {
+      this.sizeColumns = 6
+      // this.nzModalData.accion
     }
 
     prioridadIdCtrl?.updateValueAndValidity();

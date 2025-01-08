@@ -995,6 +995,7 @@ export class AcuerdosComponent implements OnInit {
     let title = 'Nuevo acuerdo';
     let labelOk = 'Crear';
 
+    let widthModal = '520px'
     switch (accion) {
       case 'EDIT':
         title = 'Editar acuerdo';
@@ -1011,6 +1012,7 @@ export class AcuerdosComponent implements OnInit {
       case 'RECREATE':
         title = 'Crear acuerdo desde Mesa Técnica';
         labelOk = 'Guardar';
+        widthModal = '60%';
         break;
       default:
         break;
@@ -1019,6 +1021,7 @@ export class AcuerdosComponent implements OnInit {
     // this.acuerdosService.seleccionarAcuerdoById(acuerdo?.acuerdoId || null);
     this.espaciosStore.listarEventos();
 
+
     const modal = this.modal.create<AcuerdoComponent, AddEditAcuerdoModel>({
       nzTitle: title,
       nzContent: AcuerdoComponent,
@@ -1026,6 +1029,7 @@ export class AcuerdosComponent implements OnInit {
       nzMaskClosable: false,
       nzClosable: false,
       nzKeyboard: false,
+      nzWidth: widthModal,
       nzData: { tipo, accion },
       nzFooter: [
         {

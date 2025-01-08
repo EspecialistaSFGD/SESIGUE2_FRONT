@@ -19,7 +19,8 @@
     </div>
 
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" [nzMd]="sizeColumns" [nzLg]="sizeColumns"
+            [nzXl]="sizeColumns">
             <nz-form-item class="mb-4">
                 <nz-form-label [nzSpan]="null">Sector</nz-form-label>
                 <nz-form-control nzSpan="null">
@@ -33,7 +34,8 @@
             </nz-form-item>
         </div>
 
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" [nzMd]="sizeColumns" [nzLg]="sizeColumns"
+            [nzXl]="sizeColumns">
             <nz-form-item class="mb-4">
                 <nz-form-label [nzSpan]="null">Departamento</nz-form-label>
                 <nz-form-control nzSpan="null">
@@ -49,7 +51,8 @@
         </div>
 
         @if(acuerdoForm.get('departamentoSelect')?.value != null) {
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" [nzMd]="sizeColumns" [nzLg]="sizeColumns"
+            [nzXl]="sizeColumns">
             <nz-form-item class="mb-3">
                 <nz-form-label [nzSpan]="null">Provincia</nz-form-label>
                 <nz-form-control nzSpan="null">
@@ -66,7 +69,8 @@
         }
 
         @if(acuerdoForm.get('provinciaSelect')?.value != null) {
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" [nzMd]="sizeColumns" [nzLg]="sizeColumns"
+            [nzXl]="sizeColumns">
             <nz-form-item class="mb-3">
                 <nz-form-label [nzSpan]="null">Distrito</nz-form-label>
                 <nz-form-control nzSpan="null">
@@ -84,9 +88,11 @@
     </div>
 
     <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" [nzMd]="sizeColumns" [nzLg]="sizeColumns"
+            [nzXl]="sizeColumns">
             <nz-form-item>
-                <nz-form-label [nzSpan]="null" nzRequired>Tipo de código</nz-form-label>
+                <!-- <nz-form-label [nzSpan]="null" nzRequired>Tipo de código</nz-form-label> -->
+                <nz-form-label [nzSpan]="null" nzRequired>Tipo de inversión</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
                     <nz-select nzPlaceHolder="Todos" id="tipoCodigoSelect" #tipoCodigoSelect
                         formControlName="tipoCodigoSelect" (ngModelChange)="onCodigoChange($event)">
@@ -99,7 +105,8 @@
         </div>
 
         @if(acuerdoForm.get('tipoCodigoSelect')?.value != null && acuerdoForm.get('tipoCodigoSelect')?.value != 1) {
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" [nzMd]="sizeColumns" [nzLg]="sizeColumns"
+            [nzXl]="sizeColumns">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>CUI</nz-form-label>
                 <nz-form-control nzSpan="null" [nzErrorTip]="cuiLengthTpl">
@@ -123,10 +130,11 @@
             </nz-form-item>
         </div>
         }
-    </div>
+        <!-- </div>
 
-    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }"> -->
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" [nzMd]="sizeColumns" [nzLg]="sizeColumns"
+            [nzXl]="sizeColumns">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Eje estratégico</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
@@ -140,9 +148,10 @@
             </nz-form-item>
         </div>
 
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="12">
+        <div nz-col class="gutter-row" nzXs="24" nzSm="24" [nzMd]="sizeColumns" [nzLg]="sizeColumns"
+            [nzXl]="sizeColumns">
             <nz-form-item>
-                <nz-form-label [nzSpan]="null" nzRequired>Tipo de intervención</nz-form-label>
+                <nz-form-label [nzSpan]="null" nzRequired>Tipo de intervención de pedido</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
                     <nz-select [nzMaxTagCount]="3" id="tipoIntervencionSelect" nzPlaceHolder="Seleccione"
                         #tipoIntervencionSelect formControlName="tipoIntervencionSelect" [compareWith]="compareFn"
@@ -161,7 +170,7 @@
                 <nz-form-label nzRequired [nzSpan]="null" nzFor="aspectoCriticoResolver">Pedido</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                     <textarea nz-input id="aspectoCriticoResolver" formControlName="aspectoCriticoResolver"
-                        placeholder="Ingrese el pedido" nzAutosize></textarea>
+                        placeholder="Ingrese el pedido" nzAutosize [rows]="2"></textarea>
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -277,7 +286,7 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
- 
+
         <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Responsable</nz-form-label>
@@ -293,7 +302,7 @@
         </div>
 
         @if(acuerdoForm.get('responsableSelect')?.value != null && this.nzModalData.accion == 'RECREATE') {
-        <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="16" nzLg="16" nzXl="16">
+        <!-- <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="16" nzLg="16" nzXl="16">
             <nz-form-item>
                 <nz-form-label [nzSpan]="null">Entidad</nz-form-label>
                 <nz-form-control nzSpan="null">
@@ -304,7 +313,7 @@
                     </nz-select>
                 </nz-form-control>
             </nz-form-item>
-        </div>
+        </div> -->
         }
     </div>
     <!-- } -->

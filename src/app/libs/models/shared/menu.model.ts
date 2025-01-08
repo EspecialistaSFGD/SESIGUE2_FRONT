@@ -12,6 +12,7 @@ export class MenuModel extends SeguridadModel {
         public ordenMenu?: number,
         public iconoItem?: string,
         public ordenItem?: number,
+        public esExterno?: boolean,
         public botones?: any[],
         public children?: MenuModel[],
     ) {
