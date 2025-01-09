@@ -225,8 +225,8 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void { }
 
   obtenerEventos(){
-    this.espaciosStore.obtenerEventos(null, 1, 3, 1, 100, 'eventoId', 'descend')
-    .subscribe(resp => {
+    this.espaciosStore.obtenerEventos(null, 1, 2, 1, 100, 'eventoId', 'descend')
+    .subscribe(resp => {      
       this.hayEventosIniciados = resp.data.length > 0;
     })
   }

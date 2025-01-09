@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -20,6 +20,7 @@ import { AddEditAcuerdoModel } from '../../../libs/models/shared/add-edit-acuerd
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
 import { PedidosStore } from '../../../libs/shared/stores/pedidos.store';
+import { EspacioStoreResponse } from '@core/interfaces';
 
 @Component({
   selector: 'app-acuerdo',
@@ -57,6 +58,8 @@ export class AcuerdoComponent {
   pedidosStore = inject(PedidosStore);
   private fb = inject(UntypedFormBuilder);
 
+  public espacios: WritableSignal<EspacioStoreResponse[]> = signal<EspacioStoreResponse[]>([]);
+
 
   pedidoSeleccionado: PedidoModel | null = this.pedidosService.pedidoSeleccionado();
   acuerdoSeleccionado: AcuerdoPedidoModel | null = this.acuerdosService.acuerdoSeleccionado();
@@ -68,6 +71,7 @@ export class AcuerdoComponent {
 
   constructor() {
     this.crearAcuerdoForm();
+    this.obtenerEventos()
 
     const acuerdoModificadoCtrl = this.acuerdoForm.get('acuerdoModificado');
     const acuerdoCtrl = this.acuerdoForm.get('acuerdo');
@@ -105,6 +109,9 @@ export class AcuerdoComponent {
       espacioCtrl?.setValidators([Validators.required]);
       es_preAcuerdoBoolCtrl?.patchValue(false);
 
+    if (this.nzModalData.accion == 'RECREATE') {
+      this.sizeColumns = 6      
+    }
     }
 
     if (this.nzModalData.tipo == 'ACUERDO' && this.nzModalData.accion == 'CONVERT') {
@@ -114,10 +121,6 @@ export class AcuerdoComponent {
       sectorCtrl?.clearValidators();
       acuerdoModificadoCtrl?.setValidators([Validators.required]);
       es_preAcuerdoBoolCtrl?.patchValue(false);
-    }
-    if (this.nzModalData.accion == 'RECREATE') {
-      this.sizeColumns = 6
-      // this.nzModalData.accion
     }
 
     prioridadIdCtrl?.updateValueAndValidity();
@@ -134,6 +137,16 @@ export class AcuerdoComponent {
     // if (this.pedidoSeleccionado?.fechaEvento != null) {
     //   this.fechaEvento = this.pedidoSeleccionado?.fechaEvento;
     // }
+  }
+
+  obtenerEventos(){
+    this.espaciosStore.obtenerEventos(null, 1, 2, 1, 100, 'eventoId', 'descend')
+    .subscribe(resp => {      
+      this.espacios.set(resp.data);      
+      if(resp.data.length == 1){
+        this.acuerdoForm.get('espacioSelect')?.setValue(resp.data[0].eventoId)
+      }
+    })
   }
 
   onClasificacionAcuerdosChange(value: SelectModel): void {
@@ -174,9 +187,7 @@ export class AcuerdoComponent {
     const disCtrl = this.acuerdoForm.get('distritoSelect');
     disCtrl?.reset();
 
-    if (value && value.value) {
-      console.log(value.value);
-      
+    if (value && value.value) {      
       this.ubigeosStore.listarDistritos(value.value?.toString());
     }
 
@@ -266,7 +277,7 @@ export class AcuerdoComponent {
       eventoId: [(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId],
       espacioSelect: [null],
       sectorSelect: [null],
-      tipoCodigoSelect: [null],
+      tipoCodigoSelect: [ '2' ],
       cuis: [null],
       departamentoSelect: [this.pedidoSeleccionado?.departamentoSelect],
       provinciaSelect: [this.pedidoSeleccionado?.provinciaSelect],

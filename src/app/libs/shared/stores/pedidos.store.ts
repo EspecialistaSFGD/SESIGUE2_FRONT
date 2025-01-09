@@ -50,6 +50,11 @@ export class PedidosStore {
                         estadosRes.push(new SelectModel(Number(x.grupoID), x.nombre));
                     });
 
+                    // console.log('IN SERVICE');
+                    // console.log(estadosRes);
+                    
+                    
+
                     switch (tipo) {
                         case 5:
                             this.#pedidosResult.update((state) => ({ ...state, tiposIntervencion: estadosRes }));

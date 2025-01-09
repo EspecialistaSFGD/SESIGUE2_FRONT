@@ -72,6 +72,8 @@ export class EspaciosStore {
     this.http.get<ResponseModelPaginated>(`${environment.api}/Evento/ListarEvento`, { params })
       .subscribe({
         next: (data) => {
+          console.log(data.data);
+          
 
           const eventos: EspacioModel[] = data.data;
 
