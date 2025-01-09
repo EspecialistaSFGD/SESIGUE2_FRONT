@@ -61,7 +61,7 @@ export class AcuerdosService {
 
     constructor() { }
 
-    listarAcuerdos(cui: string | null = null, clasificacion: SelectModel[] | null = null, tipo: SelectModel | null = null, estadoAcuerdo: SelectModel[] | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, dis: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
+    listarAcuerdos(cui: string | null = null, clasificacion: SelectModel[] | null = null, tipo: SelectModel | null = null, estadoAcuerdo: SelectModel[] | null = null, tipoEspacio: string | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, dis: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
         // debugger;
         let params = new HttpParams();
 
@@ -99,13 +99,13 @@ export class AcuerdosService {
         }
 
         if (dis !== null) {
-            params = params.append('ubigeo[]', `${dis.value}`);
+            params = params.append('ubigeo', `${dis.value}`);
         } else if (prov !== null) {
-            params = params.append('ubigeo[]', `${prov.value}`);
+            params = params.append('ubigeo', `${prov.value}`);
         } else if (dep !== null) {
-            params = params.append('ubigeo[]', `${dep.value}`);
+            params = params.append('ubigeo', `${dep.value}`);
         }
-
+        params = tipoEspacio ? params.append('tipoEspacio', tipoEspacio) : params;
         params = (pageIndex !== null) ? params.append('piCurrentPage', `${pageIndex}`) : params;
         params = (pageSize !== null) ? params.append('piPageSize', `${pageSize}`) : params;
         params = (sortField !== null) ? params.append('columnSort', `${sortField}`) : params;

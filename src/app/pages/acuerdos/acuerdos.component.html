@@ -144,7 +144,7 @@
                     <span class="button-text">Imprimir acuerdos</span>
                 </button> -->
 
-                <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu">
+                <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
                     <span nz-icon nzType="file-excel" nzTheme="outline"></span>
                     <span class="button-text">Exportar</span>
                     <span nz-icon nzType="down"></span>

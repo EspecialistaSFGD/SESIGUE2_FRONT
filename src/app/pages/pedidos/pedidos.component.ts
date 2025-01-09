@@ -68,6 +68,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   // entidadSeleccionada: SelectModel = { value: 1, label: 'GOBIERNO REGIONAL DE LORETO' };
   title: string = `Lista de pedidos`;
 
+  loading: boolean = false
   pageIndex: number = 1;
   pageSize: number = 10;
   sortField: string = 'prioridadID';
@@ -217,6 +218,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   traerPedidos(
     {
       cui = this.cui,
+      tipoEspacioSeleccionado = this.tipoEspacioSeleccionado,
       espaciosSeleccionados = this.espaciosSeleccionados,
       sectoresSeleccionados = (this.authService.sector() && this.authService.subTipo() != 'PCM') ? [this.authService.sector()!] : this.sectoresSeleccionados,
       depSeleccionado = (this.authService.departamento()) ? this.authService.departamento() : this.depSeleccionado,
@@ -229,7 +231,11 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     }: TraerPedidosInterface
   ): void {
     if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
-      this.pedidosService.listarPedidos(cui, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
+      let tipoEspacio: string | null = null
+      if (tipoEspacioSeleccionado) {
+        tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == tipoEspacioSeleccionado.value)?.label!;
+      }
+      this.pedidosService.listarPedidos(cui, tipoEspacio, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
     }
   }
 
@@ -241,16 +247,16 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   onAddEdit(pedido: PedidoModel | null): void {
     // const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
     // const labelOk = pedido ? 'Actualizar' : 'Agregar';
-    
-    if(pedido){
-      this.pedidosService.recuperarPedido(Number(pedido!.prioridadID)).then( resp => {
+
+    if (pedido) {
+      this.pedidosService.recuperarPedido(Number(pedido!.prioridadID)).then(resp => {
         const pedidoSelected = resp.data[0]
-        if(pedidoSelected.validado == 0){
+        if (pedidoSelected.validado == 0) {
           this.actionAddEdit(pedido)
         } else {
           this.onRefresh();
         }
-      })      
+      })
     } else {
       this.actionAddEdit(pedido)
     }
@@ -399,9 +405,12 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
     const wasPreviouslySelected = this.tipoEspacioSeleccionado != null;
 
+    console.log(value);
+
     this.tipoEspacioSeleccionado = value;
     // this.traerAcuerdos({ tipoEspacioSeleccionado: value });
-    // debugger;
+    // debugger;    
+
     if (value != null) {
       // this.espaciosStore.limpiarEspacios();
       this.espaciosStore.listarEventos(Number(value.value));
@@ -412,9 +421,13 @@ export class PedidosComponent implements OnInit, AfterViewInit {
         this.searchForm.patchValue({ espacio: null });
         this.filterCounter.update(x => x - 1);
       }
+      // const modelValue: SelectModel[] = [value]
+      // this.onEspacioChange(modelValue);
+      this.traerPedidos({ tipoEspacioSeleccionado: value });
     } else {
       this.onEspacioChange(null);
     }
+    ;
 
     if (value == null && wasPreviouslySelected) {
       this.filterCounter.update(x => x - 1);
@@ -424,6 +437,8 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
     if (!this.cargandoUbigeo && !skipNavigation) {
       // this.traerAcuerdos({});
+      // console.log('CARGANDO PEDIDO');
+      this.traerPedidos({})
       this.updateParamsSubject.next();
     }
   }
@@ -837,85 +852,127 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.isDrawervisible = false;
   }
 
-  onDescargarReporte(tipo: ReporteType): void {
-    const sectores: number[] | null = this.sectoresSeleccionados ? this.sectoresSeleccionados!.map(item => Number(item.value)) : null
-    const modal = this.modal.create<ReporteDescargaComponent, ReporteType>({
-      nzTitle: `Descargando reporte de ${tipo}`,
-      nzContent: ReporteDescargaComponent,
-      nzViewContainerRef: this.viewContainerRef,
-      nzData: tipo,
-      nzMaskClosable: false,
-      nzClosable: false,
-      nzKeyboard: false,
-      nzFooter: [
-        {
-          label: 'Cancelar',
-          onClick: () => this.modal.closeAll()
-        },
-        {
-          type: 'primary',
-          label: 'Descargar',
-          onClick: componentInstance => {
-            const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
-
-            switch (tipo) {
-              case 'ACUERDO':
-                return this.reportesService.descargarReporteAcuerdos(
-                  tipo,
-                  this.pageIndex, page, 'acuerdoId', this.sortOrder
-                ).then((res) => {
-
-                  if (res.success == true) {
-                    var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
-                    var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-                    saveAs(blob, res.data.nombreArchivo);
-                  }
-
-                  this.modal.closeAll();
-                });
-
-              case 'PEDIDO':
-                return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'PrioridadId', this.sortOrder, sectores).then((res) => {
-
-                  if (res.success == true) {
-                    var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
-                    var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-                    saveAs(blob, res.data.nombreArchivo);
-                  }
-
-                  this.modal.closeAll();
-                });
-
-              case 'HITO':
-                return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'hitoId', this.sortOrder).then((res) => {
-
-                  if (res.success == true) {
-                    var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
-                    var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-                    saveAs(blob, res.data.nombreArchivo);
-                  }
-
-                  this.modal.closeAll();
-                });
-
-              default:
-                return;
-            }
-          },
-          loading: this.reportesService.isLoading(),
-          disabled: componentInstance => !componentInstance || !componentInstance.reporteDescargaForm.valid
-        }]
-    });
-
-    const instance = modal.getContentComponent();
-
-    modal.afterClose.subscribe(() => {
-      instance.reporteDescargaForm.reset();
-    });
+  generarExcel(archivo: any, nombreArchivo: string): void {
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
   }
+
+  onDescargarReporte(tipo: ReporteType): void {
+    const cui: string | null = this.cui ? this.cui : null
+    const sectores: number[] | null = this.sectoresSeleccionados ? this.sectoresSeleccionados!.map(item => Number(item.value)) : null
+    const espacios: number[] | null = this.espaciosSeleccionados ? this.espaciosSeleccionados!.map(item => Number(item.value)) : null
+    let ubigeo: string | null = this.depSeleccionado ? `${this.depSeleccionado.value}` : null
+    ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
+    ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
+    let tipoEspacio: string | null = null
+    if (this.tipoEspacioSeleccionado) {
+      tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;
+    }
+
+    this.loading = true
+
+    let sortField = 'prioridadID'
+    switch (tipo) {
+      case 'ACUERDO': sortField = 'acuerdoId'; break;
+      case 'HITO': sortField = 'hitoId'; break;
+    }
+    this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, 0, sortField, this.sortOrder, sectores, tipoEspacio, espacios, ubigeo, cui)
+      .then((res) => {
+        if (res.success == true) {
+          this.generarExcel(res.data.archivo, res.data.nombreArchivo);
+          this.loading = false
+        }
+      })
+  }
+
+  // onDescargarReporte(tipo: ReporteType): void {
+  //   const cui: string | null = this.cui ? this.cui : null
+  //   const sectores: number[] | null = this.sectoresSeleccionados ? this.sectoresSeleccionados!.map(item => Number(item.value)) : null
+  //   const espacios: number[] | null = this.espaciosSeleccionados ? this.espaciosSeleccionados!.map(item => Number(item.value)) : null
+  //   let ubigeo: string | null = this.depSeleccionado ? `${this.depSeleccionado.value}` : null
+  //   ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
+  //   ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
+
+  //   const modal = this.modal.create<ReporteDescargaComponent, ReporteType>({
+  //     nzTitle: `Descargando reporte de ${tipo}`,
+  //     nzContent: ReporteDescargaComponent,
+  //     nzViewContainerRef: this.viewContainerRef,
+  //     nzData: tipo,
+  //     nzMaskClosable: false,
+  //     nzClosable: false,
+  //     nzKeyboard: false,
+  //     nzFooter: [
+  //       {
+  //         label: 'Cancelar',
+  //         onClick: () => this.modal.closeAll()
+  //       },
+  //       {
+  //         type: 'primary',
+  //         label: 'Descargar',
+  //         onClick: componentInstance => {
+  //           const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
+
+  //           switch (tipo) {
+  //             case 'ACUERDO':
+  //               console.log('ES UN ACUERDO');
+
+  //               return this.reportesService.descargarReporteAcuerdos(
+  //                 tipo,
+  //                 this.pageIndex, page, 'acuerdoId', this.sortOrder, sectores, espacios, ubigeo, cui
+  //               ).then((res) => {
+
+  //                 if (res.success == true) {
+  //                   var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+  //                   var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+  //                   saveAs(blob, res.data.nombreArchivo);
+  //                 }
+
+  //                 this.modal.closeAll();
+  //               });
+
+  //             case 'PEDIDO':
+  //               return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'PrioridadId', this.sortOrder, sectores, espacios, ubigeo, cui).then((res) => {
+
+  //                 if (res.success == true) {
+  //                   var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+  //                   var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+  //                   saveAs(blob, res.data.nombreArchivo);
+  //                 }
+
+  //                 this.modal.closeAll();
+  //               });
+
+  //             case 'HITO':
+  //               return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'hitoId', this.sortOrder).then((res) => {
+
+  //                 if (res.success == true) {
+  //                   var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+  //                   var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+  //                   saveAs(blob, res.data.nombreArchivo);
+  //                 }
+
+  //                 this.modal.closeAll();
+  //               });
+
+  //             default:
+  //               return;
+  //           }
+  //         },
+  //         loading: this.reportesService.isLoading(),
+  //         disabled: componentInstance => !componentInstance || !componentInstance.reporteDescargaForm.valid
+  //       }]
+  //   });
+
+  //   const instance = modal.getContentComponent();
+
+  //   modal.afterClose.subscribe(() => {
+  //     instance.reporteDescargaForm.reset();
+  //   });
+  // }
 
   crearSearForm(): void {
     this.searchForm = this.fb.group({

@@ -34,10 +34,18 @@
           </li>
           } @else {
           <li nz-menu-item routerLinkActive="ant-menu-item-selected" nzMatchRouterExact>
+            @if (item.esExterno) {
+            <a class="flex items-center" [href]="item.direccionUrl" target="_blank">
+              <span nz-icon [nzType]="item.iconoMenu!" nzTheme="outline"></span>
+              <span>{{item.descripcionItem}}</span>
+            </a>
+            } @else {
             <a class="flex items-center" [routerLink]="item.direccionUrl">
               <span nz-icon [nzType]="item.iconoMenu!" nzTheme="outline"></span>
               <span>{{item.descripcionItem}}</span>
             </a>
+            }
+
             }
             }
         </ul>
