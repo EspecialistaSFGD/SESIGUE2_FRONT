@@ -42,7 +42,6 @@ import { PedidosStore } from '../../../libs/shared/stores/pedidos.store';
 export class AcuerdoComponent {
   acuerdoForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
-  // fechaEvento: Date | null = null;
   requiredLabel: string = 'Campo requerido';
 
 
@@ -176,6 +175,8 @@ export class AcuerdoComponent {
     disCtrl?.reset();
 
     if (value && value.value) {
+      console.log(value.value);
+      
       this.ubigeosStore.listarDistritos(value.value?.toString());
     }
 
