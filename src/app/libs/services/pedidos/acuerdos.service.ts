@@ -280,7 +280,7 @@ export class AcuerdosService {
         if (acuerdo.responsableSelect) ots.responsableId = Number(acuerdo.responsableSelect.value);
         ots.accesoId = this.authService.getCodigoUsuario();
         ots.entidadId = (acuerdo.entidadSelect) ? Number(acuerdo.entidadSelect.value) : 0;
-        ots.es_preAcuerdo = 0;
+        ots.es_preAcuerdo = Number(acuerdo.pre_acuerdo);
 
         return new Promise((resolve, reject) => {
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/RegistrarAcuerdoExpress`, ots).subscribe({

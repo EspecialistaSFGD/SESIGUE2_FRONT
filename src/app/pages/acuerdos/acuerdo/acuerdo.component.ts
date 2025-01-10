@@ -277,7 +277,7 @@ export class AcuerdoComponent {
       prioridadId: [this.pedidoSeleccionado?.prioridadID],
       acuerdo: [this.nzModalData.accion === 'CONVERT' ? preAcuerdoValue : this.acuerdoSeleccionado?.acuerdo], // Si la condición se cumple, usamos pre_acuerdo
       pre_acuerdo: [{
-        value: preAcuerdoValue,
+        value: (this.nzModalData.accion == 'RECREATE') ? 1 : preAcuerdoValue,
         disabled: this.nzModalData.accion === 'CONVERT'  // Condición para deshabilitar
       }],
       clasificacionSelect: [this.acuerdoSeleccionado?.clasificacionSelect, [Validators.required]],
