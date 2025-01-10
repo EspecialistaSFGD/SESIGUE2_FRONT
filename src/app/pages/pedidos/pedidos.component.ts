@@ -22,7 +22,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { PageHeaderComponent } from '../../libs/shared/layout/page-header/page-header.component';
-import { PedidoModel } from '../../libs/models/pedido';
+import { AcuerdoPedidoModel, PedidoModel } from '../../libs/models/pedido';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { PedidoComponent } from './pedido/pedido.component';
 import { PermisoModel } from '../../libs/models/auth/permiso.model';
@@ -37,6 +37,10 @@ import { ReporteDescargaComponent } from '@libs/shared/components/reporte-descar
 import { saveAs } from 'file-saver';
 import { AcuerdosService } from '@libs/services/pedidos/acuerdos.service';
 import { ReportesService } from '@libs/shared/services/reportes.service';
+import { AcuerdoType } from '@libs/shared/types/acuerdo.type';
+import { AccionType } from '@libs/shared/types/accion.type';
+import { AcuerdoComponent } from '../acuerdos/acuerdo/acuerdo.component';
+import { AddEditAcuerdoModel } from '@libs/models/shared/add-edit-acuerdo.model';
 
 @Component({
   selector: 'app-pedidos',
@@ -58,10 +62,12 @@ import { ReportesService } from '@libs/shared/services/reportes.service';
     NzBadgeModule,
     NzToolTipModule,
     NzAvatarModule,
+    AcuerdoComponent
   ],
   templateUrl: './pedidos.component.html',
   styles: ``
 })
+
 export class PedidosComponent implements OnInit, AfterViewInit {
   searchForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
@@ -74,6 +80,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   sortField: string = 'prioridadID';
   sortOrder: string = 'descend';
   isDrawervisible: boolean = false;
+  hayEventosIniciados: boolean = false;
 
   cui: string | null = null;
   espaciosSeleccionados: SelectModel[] | null = null;
@@ -91,6 +98,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   private clearingFilters = false;
   private timeout: any;
 
+  public acuerdosService = inject(AcuerdosService);
   public pedidosService = inject(PedidosService);
   private fb = inject(UntypedFormBuilder);
   public espaciosStore = inject(EspaciosStore);
@@ -202,6 +210,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.obtenerEventos()
     this.searchForm.patchValue({
       cui: this.cui,
       tipoEspacio: this.tipoEspacioSeleccionado,
@@ -214,6 +223,13 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void { }
+
+  obtenerEventos(){
+    this.espaciosStore.obtenerEventos(null, 1, 2, 1, 100, 'eventoId', 'descend')
+    .subscribe(resp => {      
+      this.hayEventosIniciados = resp.data.length > 0;
+    })
+  }
 
   traerPedidos(
     {
@@ -243,6 +259,56 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   onRefresh(): void {
     this.traerPedidos({});
   }
+
+  onAddEditExpress(acuerdo: AcuerdoPedidoModel | null, tipo: AcuerdoType, accion: AccionType): void {
+      let title = 'Crear acuerdo desde Mesa Técnica';
+      let labelOk = 'Guardar';  
+      let widthModal = '60%'
+
+      this.espaciosStore.listarEventos();
+  
+  
+      const modal = this.modal.create<AcuerdoComponent, AddEditAcuerdoModel>({
+        nzTitle: title,
+        nzContent: AcuerdoComponent,
+        nzViewContainerRef: this.viewContainerRef,
+        nzMaskClosable: false,
+        nzClosable: false,
+        nzKeyboard: false,
+        nzWidth: widthModal,
+        nzData: { tipo, accion },
+        nzFooter: [
+          {
+            label: 'Cancelar',
+            type: 'default',
+            onClick: () => this.modal.closeAll(),
+          },
+          {
+            label: labelOk,
+            type: 'primary',
+            onClick: (componentInstance) => {              
+              if (accion == 'RECREATE') {
+                return this.acuerdosService.agregarAcuerdoExpress(componentInstance!.acuerdoForm.value).then((res) => {
+                  this.traerPedidos({})
+                  this.modal.closeAll();
+                });
+              } else {
+                return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then((res) => {
+                  this.modal.closeAll();
+                });
+              }
+            },
+            loading: this.acuerdosService.isEditing(),
+            disabled: (componentInstance) => !componentInstance?.acuerdoForm.valid,
+          }
+        ]
+      });
+  
+      const instance = modal.getContentComponent();
+      modal.afterClose.subscribe(result => {
+        instance.acuerdoForm.reset();
+      });
+    }
 
   onAddEdit(pedido: PedidoModel | null): void {
     // const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
@@ -404,8 +470,6 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     }
 
     const wasPreviouslySelected = this.tipoEspacioSeleccionado != null;
-
-    console.log(value);
 
     this.tipoEspacioSeleccionado = value;
     // this.traerAcuerdos({ tipoEspacioSeleccionado: value });

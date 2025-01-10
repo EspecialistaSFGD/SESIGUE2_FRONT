@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -20,6 +20,7 @@ import { AddEditAcuerdoModel } from '../../../libs/models/shared/add-edit-acuerd
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { UbigeosStore } from '../../../libs/shared/stores/ubigeos.store';
 import { PedidosStore } from '../../../libs/shared/stores/pedidos.store';
+import { EspacioStoreResponse } from '@core/interfaces';
 
 @Component({
   selector: 'app-acuerdo',
@@ -42,10 +43,9 @@ import { PedidosStore } from '../../../libs/shared/stores/pedidos.store';
 export class AcuerdoComponent {
   acuerdoForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
-  // fechaEvento: Date | null = null;
   requiredLabel: string = 'Campo requerido';
 
-
+  disabledSector: boolean = false;
   sizeColumns: number = 8;
   nzModalData: AddEditAcuerdoModel = inject(NZ_MODAL_DATA);
   today = new Date();
@@ -57,6 +57,8 @@ export class AcuerdoComponent {
   ubigeosStore = inject(UbigeosStore);
   pedidosStore = inject(PedidosStore);
   private fb = inject(UntypedFormBuilder);
+
+  public espacios: WritableSignal<EspacioStoreResponse[]> = signal<EspacioStoreResponse[]>([]);
 
 
   pedidoSeleccionado: PedidoModel | null = this.pedidosService.pedidoSeleccionado();
@@ -106,6 +108,11 @@ export class AcuerdoComponent {
       espacioCtrl?.setValidators([Validators.required]);
       es_preAcuerdoBoolCtrl?.patchValue(false);
 
+    if (this.nzModalData.accion == 'RECREATE') {
+      this.sizeColumns = 6
+      this.disabledSector = true
+      // const sector = Number(localStorage.getItem('codigoSector')) ?? 0            
+    }
     }
 
     if (this.nzModalData.tipo == 'ACUERDO' && this.nzModalData.accion == 'CONVERT') {
@@ -115,10 +122,6 @@ export class AcuerdoComponent {
       sectorCtrl?.clearValidators();
       acuerdoModificadoCtrl?.setValidators([Validators.required]);
       es_preAcuerdoBoolCtrl?.patchValue(false);
-    }
-    if (this.nzModalData.accion == 'RECREATE') {
-      this.sizeColumns = 6
-      // this.nzModalData.accion
     }
 
     prioridadIdCtrl?.updateValueAndValidity();
@@ -135,6 +138,30 @@ export class AcuerdoComponent {
     // if (this.pedidoSeleccionado?.fechaEvento != null) {
     //   this.fechaEvento = this.pedidoSeleccionado?.fechaEvento;
     // }
+  }
+
+  obtenerEventos(){
+    this.espaciosStore.obtenerEventos(null, 1, 2, 1, 100, 'eventoId', 'descend')
+    .subscribe(resp => {      
+      this.espacios.set(resp.data);                  
+      if(resp.data.length >= 1){
+        this.acuerdoForm.get('espacioSelect')?.setValue(resp.data[0])
+        this.acuerdoForm.get('eventoId')?.setValue(resp.data[0].eventoId)
+      }
+    })
+  }
+
+  ngOnInit(): void {
+    
+    this.obtenerEventos()    
+    const sector = Number(localStorage.getItem('codigoSector')) ?? 0
+    this.sectoresStore.sectores().map(item => {
+      if(item.value == sector){        
+        const modelSector = item      
+        this.acuerdoForm.get('sectorSelect')?.setValue(modelSector)
+      }
+    })
+    this.acuerdoForm.get('ejeEstrategicoSelect')?.setValue('OTROS')
   }
 
   onClasificacionAcuerdosChange(value: SelectModel): void {
@@ -175,7 +202,7 @@ export class AcuerdoComponent {
     const disCtrl = this.acuerdoForm.get('distritoSelect');
     disCtrl?.reset();
 
-    if (value && value.value) {
+    if (value && value.value) {      
       this.ubigeosStore.listarDistritos(value.value?.toString());
     }
 
@@ -243,14 +270,14 @@ export class AcuerdoComponent {
 
 
   crearAcuerdoForm(): void {
-    const preAcuerdoValue = this.acuerdoSeleccionado?.pre_acuerdo;
+    const preAcuerdoValue = this.acuerdoSeleccionado?.pre_acuerdo;  
 
     this.acuerdoForm = this.fb.group({
       acuerdoId: [this.acuerdoSeleccionado?.acuerdoId],
       prioridadId: [this.pedidoSeleccionado?.prioridadID],
       acuerdo: [this.nzModalData.accion === 'CONVERT' ? preAcuerdoValue : this.acuerdoSeleccionado?.acuerdo], // Si la condición se cumple, usamos pre_acuerdo
       pre_acuerdo: [{
-        value: preAcuerdoValue,
+        value: (this.nzModalData.accion == 'RECREATE') ? 1 : preAcuerdoValue,
         disabled: this.nzModalData.accion === 'CONVERT'  // Condición para deshabilitar
       }],
       clasificacionSelect: [this.acuerdoSeleccionado?.clasificacionSelect, [Validators.required]],
@@ -262,10 +289,11 @@ export class AcuerdoComponent {
       acuerdoModificado: [(this.nzModalData.accion == 'CONVERT' ? this.acuerdoSeleccionado?.pre_acuerdo : null)],
       //TODO: tener en cuenta para una edición especial del acuerdo
       acuerdo_original: [null],
-      eventoId: [(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId],
+      eventoId: [(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId], //(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId
       espacioSelect: [null],
+      // sectorSelect: [{ value: '', disabled: this.nzModalData.accion == 'RECREATE' }],
       sectorSelect: [null],
-      tipoCodigoSelect: [null],
+      tipoCodigoSelect: [ '2' ],
       cuis: [null],
       departamentoSelect: [this.pedidoSeleccionado?.departamentoSelect],
       provinciaSelect: [this.pedidoSeleccionado?.provinciaSelect],
@@ -273,6 +301,6 @@ export class AcuerdoComponent {
       aspectoCriticoResolver: [null],
       ejeEstrategicoSelect: [null],
       tipoIntervencionSelect: [null],
-    });
+    });    
   }
 }

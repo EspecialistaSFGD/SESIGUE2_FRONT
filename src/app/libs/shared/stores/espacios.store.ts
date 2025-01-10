@@ -41,6 +41,18 @@ export class EspaciosStore {
     this.listarTiposEvento();
   }
 
+  obtenerEventos(codigoTipoEvento: number | null = null, estado: number = 1, vigente: number = 1, pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend'){
+    let params = new HttpParams()
+      .append('estado', `${estado}`)
+      .append('vigente', `${vigente}`)
+      .append('piCurrentPage', `${pageIndex}`)
+      .append('piPageSize', `${pageSize}`)
+      .append('columnSort', `${sortField}`)
+      .append('typeSort', `${sortOrder}`);
+      if (codigoTipoEvento != null) params = params.append('codigoTipoEvento', `${codigoTipoEvento}`);
+      return this.http.get<ResponseModelPaginated>(`${environment.api}/Evento/ListarEvento`, { params })
+  }
+
   listarEventos(codigoTipoEvento: number | null = null, estado: number = 1, vigente: number = 1, pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend'): void {
     let params = new HttpParams()
       .append('estado', `${estado}`)
@@ -60,6 +72,8 @@ export class EspaciosStore {
     this.http.get<ResponseModelPaginated>(`${environment.api}/Evento/ListarEvento`, { params })
       .subscribe({
         next: (data) => {
+          console.log(data.data);
+          
 
           const eventos: EspacioModel[] = data.data;
 
