@@ -110,7 +110,7 @@ export class AcuerdoComponent {
       es_preAcuerdoBoolCtrl?.patchValue(false);
 
     if (this.nzModalData.accion == 'RECREATE') {
-      this.sizeColumns = 6      
+      this.sizeColumns = 6            
     }
     }
 
@@ -147,6 +147,18 @@ export class AcuerdoComponent {
         this.acuerdoForm.get('espacioSelect')?.setValue(resp.data[0].eventoId)
       }
     })
+  }
+
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    const sector = Number(localStorage.getItem('codigoSector')) ?? 0
+      console.log('sector');
+      
+      console.log(sector);
+      console.log(this.sectoresStore.sectores());
+      this.acuerdoForm.get('sectorSelect')?.setValue(sector)
+      console.log(this.acuerdoForm.value);
   }
 
   onClasificacionAcuerdosChange(value: SelectModel): void {
@@ -256,6 +268,10 @@ export class AcuerdoComponent {
 
   crearAcuerdoForm(): void {
     const preAcuerdoValue = this.acuerdoSeleccionado?.pre_acuerdo;
+    console.log('IN FORM');
+    
+    console.log(this.acuerdoSeleccionado);
+    
 
     this.acuerdoForm = this.fb.group({
       acuerdoId: [this.acuerdoSeleccionado?.acuerdoId],
@@ -274,9 +290,9 @@ export class AcuerdoComponent {
       acuerdoModificado: [(this.nzModalData.accion == 'CONVERT' ? this.acuerdoSeleccionado?.pre_acuerdo : null)],
       //TODO: tener en cuenta para una edición especial del acuerdo
       acuerdo_original: [null],
-      eventoId: [(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId],
+      eventoId: [this.pedidoSeleccionado?.eventoId], //(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId
       espacioSelect: [null],
-      sectorSelect: [null],
+      sectorSelect: [{ value: '', disabled: this.nzModalData.accion == 'RECREATE' }],
       tipoCodigoSelect: [ '2' ],
       cuis: [null],
       departamentoSelect: [this.pedidoSeleccionado?.departamentoSelect],
