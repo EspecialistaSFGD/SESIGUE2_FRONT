@@ -245,9 +245,9 @@ export class AcuerdosService {
     }
 
     agregarAcuerdoExpress(acuerdo: AcuerdoPedidoExpressModel): Promise<ResponseModel> {
-        const ots: AcuerdoPedidoExpressModel = {} as AcuerdoPedidoExpressModel;
+        const ots: AcuerdoPedidoExpressModel = {} as AcuerdoPedidoExpressModel;    
 
-        if (acuerdo.espacioSelect) ots.eventoId = Number(acuerdo.espacioSelect.value);
+        if (acuerdo.espacioSelect) ots.eventoId = Number(acuerdo.eventoId); //Number(acuerdo.espacioSelect.value);
         if (acuerdo.sectorSelect) ots.grupoId = Number(acuerdo.sectorSelect.value);
         // if (acuerdo.provinciaSelect) ots.ubigeo = acuerdo.provinciaSelect.value?.toString();
 
@@ -322,7 +322,7 @@ export class AcuerdosService {
 
         if (acuerdo.acuerdo) ots.acuerdo = acuerdo.acuerdo;
         if (acuerdo.pre_acuerdo) ots.pre_acuerdo = acuerdo.pre_acuerdo;
-        if (acuerdo.eventoId) ots.eventoId = acuerdo.eventoId;
+        if (acuerdo.eventoId) ots.eventoId = acuerdo.eventoId;     
 
         return new Promise((resolve, reject) => {
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/ConvertirPreAcuerdo`, ots).subscribe({

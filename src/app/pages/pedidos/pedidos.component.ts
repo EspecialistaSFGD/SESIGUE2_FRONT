@@ -286,7 +286,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
           {
             label: labelOk,
             type: 'primary',
-            onClick: (componentInstance) => {
+            onClick: (componentInstance) => {              
               if (accion == 'RECREATE') {
                 return this.acuerdosService.agregarAcuerdoExpress(componentInstance!.acuerdoForm.value).then((res) => {
                   this.traerPedidos({})

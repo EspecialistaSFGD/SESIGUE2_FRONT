@@ -7,14 +7,33 @@
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Espacio</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
-                    <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione" formControlName="espacioSelect" [compareWith]="compareFn" nzShowSearch nzAllowClear
+                    <!-- <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione" formControlName="espacioSelect" [compareWith]="compareFn" nzShowSearch nzAllowClear
                         (ngModelChange)="onEspacioChange($event)">
-                            @for(espacio of espacios(); track $index){
-                                <nz-option [nzLabel]="espacio.nombre" [nzValue]="espacio.eventoId"></nz-option>
-                            }
+                            <nz-option *ngFor="let espacio of espacios()" nzLabel="{{espacio.nombre}} - {{espacio.eventoId}}" [nzValue]="espacio.eventoId"></nz-option>
+                    </nz-select> -->
+                    <nz-select nzPlaceHolder="Seleccionat lugar" id="espacioSelect"
+                        formControlName="espacioSelect" nzAllowClear nzShowSearch (ngModelChange)="onEspacioChange($event)">
+                        @for (espacio of espacios(); track $index) {
+                        <nz-option [nzValue]="espacio" nzLabel="{{espacio.nombre}}"></nz-option>
+                        }
                     </nz-select>
+                    <!-- <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione"
+                        formControlName="espacioSelect" [compareWith]="compareFn" nzAllowClear nzShowSearch
+                        (ngModelChange)="onEspacioChange($event)">
+                        <nz-option *ngFor="let espacio of espacios()" [nzLabel]="espacio.nombre"
+                            [nzValue]="espacio"></nz-option>
+                    </nz-select> -->
+                    <!-- <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione" #espacioSelect
+                        formControlName="espacioSelect" [compareWith]="compareFn" nzShowSearch nzAllowClear
+                        (ngModelChange)="onEspacioChange($event)">
+                        <nz-option *ngFor="let esp of this.espaciosStore.espacios()" [nzLabel]="esp.label!"
+                            [nzValue]="esp"></nz-option>
+                    </nz-select> -->
                 </nz-form-control>
             </nz-form-item>
+        </div>
+        <div class="w-full">
+            {{espaciosStore.espacios()}}
         </div>
     </div>
 
@@ -24,11 +43,17 @@
             <nz-form-item class="mb-4">
                 <nz-form-label [nzSpan]="null">Sector</nz-form-label>
                 <nz-form-control nzSpan="null">
-                    <nz-select [nzMaxTagCount]="3" id="sectorSelect" nzPlaceHolder="Seleccione" #sectorSelect
+                    <!-- <nz-select [nzMaxTagCount]="3" id="sectorSelect" nzPlaceHolder="Seleccione" #sectorSelect
                         formControlName="sectorSelect" [compareWith]="compareFn" nzAllowClear nzShowSearch
                         (ngModelChange)="onSectorChange($event)">
-                        <nz-option *ngFor="let sec of this.sectoresStore.sectores()" [nzLabel]="sec.label!"
+                        <nz-option *ngFor="let sec of this.sectoresStore.sectores()" nzLabel="{{sec.label!}} - {{sec.value}}"
                             [nzValue]="sec"></nz-option>
+                    </nz-select> -->
+                    <nz-select nzPlaceHolder="Seleccionat sector" id="sectorSelect" [nzDisabled]="disabledSector"
+                        formControlName="sectorSelect" nzAllowClear nzShowSearch (ngModelChange)="onSectorChange($event)">
+                        @for (sector of this.sectoresStore.sectores(); track $index) {
+                        <nz-option [nzValue]="sector" nzLabel="{{sector.label}}"></nz-option>
+                        }
                     </nz-select>
                 </nz-form-control>
             </nz-form-item>
@@ -138,8 +163,7 @@
             <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzRequired>Eje estratégico</nz-form-label>
                 <nz-form-control nzSpan="null" nzErrorTip="Campo requerido">
-                    <nz-select [nzMaxTagCount]="3" id="ejeEstrategicoSelect" nzPlaceHolder="Seleccione"
-                        #ejeEstrategicoSelect formControlName="ejeEstrategicoSelect" [compareWith]="compareFn"
+                    <nz-select id="ejeEstrategicoSelect" formControlName="ejeEstrategicoSelect"
                         nzAllowClear (ngModelChange)="onEjeEstrategicoChange($event)">
                         <nz-option *ngFor="let eje of this.pedidosStore.ejesEstrategicos()" [nzLabel]="eje.label!"
                             [nzValue]="eje.label!"></nz-option>

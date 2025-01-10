@@ -45,7 +45,7 @@ export class AcuerdoComponent {
   fechaDateFormat = 'dd/MM/yyyy';
   requiredLabel: string = 'Campo requerido';
 
-
+  disabledSector: boolean = false;
   sizeColumns: number = 8;
   nzModalData: AddEditAcuerdoModel = inject(NZ_MODAL_DATA);
   today = new Date();
@@ -71,7 +71,6 @@ export class AcuerdoComponent {
 
   constructor() {
     this.crearAcuerdoForm();
-    this.obtenerEventos()
 
     const acuerdoModificadoCtrl = this.acuerdoForm.get('acuerdoModificado');
     const acuerdoCtrl = this.acuerdoForm.get('acuerdo');
@@ -110,7 +109,9 @@ export class AcuerdoComponent {
       es_preAcuerdoBoolCtrl?.patchValue(false);
 
     if (this.nzModalData.accion == 'RECREATE') {
-      this.sizeColumns = 6            
+      this.sizeColumns = 6
+      this.disabledSector = true
+      // const sector = Number(localStorage.getItem('codigoSector')) ?? 0            
     }
     }
 
@@ -142,23 +143,25 @@ export class AcuerdoComponent {
   obtenerEventos(){
     this.espaciosStore.obtenerEventos(null, 1, 2, 1, 100, 'eventoId', 'descend')
     .subscribe(resp => {      
-      this.espacios.set(resp.data);      
-      if(resp.data.length == 1){
-        this.acuerdoForm.get('espacioSelect')?.setValue(resp.data[0].eventoId)
+      this.espacios.set(resp.data);                  
+      if(resp.data.length >= 1){
+        this.acuerdoForm.get('espacioSelect')?.setValue(resp.data[0])
+        this.acuerdoForm.get('eventoId')?.setValue(resp.data[0].eventoId)
       }
     })
   }
 
   ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
+    
+    this.obtenerEventos()    
     const sector = Number(localStorage.getItem('codigoSector')) ?? 0
-      console.log('sector');
-      
-      console.log(sector);
-      console.log(this.sectoresStore.sectores());
-      this.acuerdoForm.get('sectorSelect')?.setValue(sector)
-      console.log(this.acuerdoForm.value);
+    this.sectoresStore.sectores().map(item => {
+      if(item.value == sector){        
+        const modelSector = item      
+        this.acuerdoForm.get('sectorSelect')?.setValue(modelSector)
+      }
+    })
+    this.acuerdoForm.get('ejeEstrategicoSelect')?.setValue('OTROS')
   }
 
   onClasificacionAcuerdosChange(value: SelectModel): void {
@@ -267,11 +270,7 @@ export class AcuerdoComponent {
 
 
   crearAcuerdoForm(): void {
-    const preAcuerdoValue = this.acuerdoSeleccionado?.pre_acuerdo;
-    console.log('IN FORM');
-    
-    console.log(this.acuerdoSeleccionado);
-    
+    const preAcuerdoValue = this.acuerdoSeleccionado?.pre_acuerdo;  
 
     this.acuerdoForm = this.fb.group({
       acuerdoId: [this.acuerdoSeleccionado?.acuerdoId],
@@ -290,9 +289,10 @@ export class AcuerdoComponent {
       acuerdoModificado: [(this.nzModalData.accion == 'CONVERT' ? this.acuerdoSeleccionado?.pre_acuerdo : null)],
       //TODO: tener en cuenta para una edición especial del acuerdo
       acuerdo_original: [null],
-      eventoId: [this.pedidoSeleccionado?.eventoId], //(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId
+      eventoId: [(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId], //(this.nzModalData.accion == 'RECREATE') ? null : this.pedidoSeleccionado?.eventoId
       espacioSelect: [null],
-      sectorSelect: [{ value: '', disabled: this.nzModalData.accion == 'RECREATE' }],
+      // sectorSelect: [{ value: '', disabled: this.nzModalData.accion == 'RECREATE' }],
+      sectorSelect: [null],
       tipoCodigoSelect: [ '2' ],
       cuis: [null],
       departamentoSelect: [this.pedidoSeleccionado?.departamentoSelect],
@@ -301,6 +301,6 @@ export class AcuerdoComponent {
       aspectoCriticoResolver: [null],
       ejeEstrategicoSelect: [null],
       tipoIntervencionSelect: [null],
-    });
+    });    
   }
 }
