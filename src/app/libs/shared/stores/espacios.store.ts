@@ -1,11 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { environment } from '../../../../environments/environment.development';
+// import { environment } from '../../../../environments/environment.development';
 import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
 import { SelectModel } from '../../models/shared/select.model';
 import { EspacioModel, TipoEventoModel } from '../../models/shared/espacio.model';
 import { UtilesService } from '../services/utiles.service';
+import { environment } from '@environments/environment';
 
 interface State {
   espacios: SelectModel[];
@@ -40,6 +41,17 @@ export class EspaciosStore {
     this.listarTiposEvento();
   }
 
+  obtenerEventos(codigoTipoEvento: number | null = null, estado: number = 1, vigente: number = 1, pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend'){
+    let params = new HttpParams()
+      .append('estado', `${estado}`)
+      .append('vigente', `${vigente}`)
+      .append('piCurrentPage', `${pageIndex}`)
+      .append('piPageSize', `${pageSize}`)
+      .append('columnSort', `${sortField}`)
+      .append('typeSort', `${sortOrder}`);
+      if (codigoTipoEvento != null) params = params.append('codigoTipoEvento', `${codigoTipoEvento}`);
+      return this.http.get<ResponseModelPaginated>(`${environment.api}/Evento/ListarEvento`, { params })
+  }
 
   listarEventos(codigoTipoEvento: number | null = null, estado: number = 1, vigente: number = 1, pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend'): void {
     let params = new HttpParams()
@@ -60,6 +72,8 @@ export class EspaciosStore {
     this.http.get<ResponseModelPaginated>(`${environment.api}/Evento/ListarEvento`, { params })
       .subscribe({
         next: (data) => {
+          console.log(data.data);
+          
 
           const eventos: EspacioModel[] = data.data;
 

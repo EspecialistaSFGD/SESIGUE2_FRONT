@@ -7,6 +7,7 @@ import { AvanceHitoModel } from '../../models/pedido';
 import { UtilesService } from '../../shared/services/utiles.service';
 import { SelectModel } from '../../models/shared/select.model';
 import { ComentarioAvanceModel, ComentarioModel } from '../../models/pedido/comentario.model';
+import { AvanceHitoRequestModel } from '@libs/models/pedido/avance.model';
 const accesoId = localStorage.getItem('codigoUsuario') || null;
 const codigoSubTipo = localStorage.getItem('codigoSubTipo') || null;
 const codigoNivel = localStorage.getItem('codigoNivel') || null;
@@ -131,7 +132,7 @@ export class AvancesService {
 
         if (accesoId != null) avanceRequest.accesoId = Number(accesoId);
 
-        this.http.post(`${environment.api}/Avance/Validar`, avanceRequest).subscribe({
+        this.http.post(`${environment.api}/Avance/ValidarAvance`, avanceRequest).subscribe({
             next: (data) => {
                 this.msg.success('Avance validado correctamente');
                 this.listarAvances(avance.hitdoId, 1, 10, 'avanceId', 'ascend');
@@ -197,6 +198,37 @@ export class AvancesService {
                 },
             });
         });
+    }
+
+    eliminarAvance(avance: AvanceHitoModel): Promise<ResponseModel> {
+        this.#avancesResult.update((state) => ({
+            ...state,
+            isEditing: true,
+        }));
+
+        const hitoRequest: AvanceHitoRequestModel = new AvanceHitoRequestModel();
+        hitoRequest.avanceId = avance.avanceId;
+
+        if (accesoId != null) hitoRequest.accesoId = Number(accesoId);
+
+        return new Promise((resolve, reject) => {
+            this.http.post(`${environment.api}/Avance/DesestimarAvance`, hitoRequest).subscribe({
+                next: (data) => {
+                    this.msg.success('Avance eliminado correctamente');
+                    // this.listarHitos(hito.acuerdoID, null, 1, 10, 'hitoId', 'ascend');
+                    resolve(data);
+                },
+                error: (e) => {
+                    this.msg.error(`Error al eliminar Avance: ${e}`);
+                    reject(e);
+                },
+                complete: () => this.#avancesResult.update((state) => ({
+                    ...state,
+                    isEditing: false,
+                })),
+            });
+        })
+
     }
 
     seleccionarAvanceById(avanceId: number | undefined | null): void {

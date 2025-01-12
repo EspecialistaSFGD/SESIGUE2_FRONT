@@ -12,7 +12,7 @@
                 <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="2" nzXl="2">
                         <nz-form-item>
-                            <nz-form-label class="font-bold">Periodo</nz-form-label>
+                            <nz-form-label><span class="font-bold text-sm xl:text-xl">Periodo</span></nz-form-label>
                             <nz-form-control>
                                 <nz-date-picker class="w-full" nzMode="month" formControlName="periodo"
                                     nzFormat="MM/yyyy" (ngModelChange)="onPeriodoChange($event)"></nz-date-picker>
@@ -21,7 +21,7 @@
                     </div>
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="2" nzXl="2">
                         <nz-form-item>
-                            <nz-form-label class="font-bold">Sector</nz-form-label>
+                            <nz-form-label><span class="font-bold text-sm xl:text-xl">Sector</span></nz-form-label>
                             <nz-form-control>
                                 <nz-select [nzMaxTagCount]="3" id="sectorSelect" nzPlaceHolder="Seleccione"
                                     #sectorSelect formControlName="sectorSelect"
@@ -34,7 +34,8 @@
 
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
                         <nz-form-item>
-                            <nz-form-label class="font-bold" [nzSpan]="null">TIpos de Espacio</nz-form-label>
+                            <nz-form-label [nzSpan]="null"><span class="font-bold text-sm xl:text-xl">Tipos de
+                                    Espacio</span></nz-form-label>
                             <!-- {{this.espaciosStore.tiposEspacio()|json}} -->
                             <nz-form-control nzSpan="null">
                                 <nz-select nzPlaceHolder="Seleccione" id="tipoEspacio" #tipoEspacio
@@ -52,7 +53,7 @@
 
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
                         <nz-form-item>
-                            <nz-form-label class="font-bold">Espacio</nz-form-label>
+                            <nz-form-label><span class="font-bold text-sm xl:text-xl">Espacio</span></nz-form-label>
                             <!-- <nz-form-control>
                                 <nz-select [nzMaxTagCount]="3" id="espacioSelect" nzPlaceHolder="Seleccione"
                                     #espacioSelect formControlName="espacioSelect" [compareWith]="compareFn"
@@ -85,7 +86,8 @@
 
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
                         <nz-form-item>
-                            <nz-form-label class="font-bold">Departamento</nz-form-label>
+                            <nz-form-label><span
+                                    class="font-bold text-sm xl:text-xl">Departamento</span></nz-form-label>
                             <nz-form-control>
                                 <nz-select id="departamentoSelect" class="w-full" #departamentoSelect
                                     formControlName="departamentoSelect" nzPlaceHolder="Todos" nzShowSearch
@@ -101,7 +103,7 @@
                     @if(filterReportForm.get('departamentoSelect')?.value != null) {
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
                         <nz-form-item>
-                            <nz-form-label class="font-bold">Provincia</nz-form-label>
+                            <nz-form-label><span class="font-bold text-sm xl:text-xl">Provincia</span></nz-form-label>
                             <nz-form-control>
                                 <nz-select class="w-full" #provinciaSelect id="provinciaSelect"
                                     formControlName="provinciaSelect" nzPlaceHolder="Todas" nzShowSearch
@@ -118,7 +120,8 @@
                     @if(filterReportForm.get('provinciaSelect')?.value != null){
                     <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
                         <nz-form-item>
-                            <nz-form-label class="font-bold" [nzSpan]="null">Distrito</nz-form-label>
+                            <nz-form-label [nzSpan]="null"><span
+                                    class="font-bold text-sm xl:text-xl">Distrito</span></nz-form-label>
                             <nz-form-control nzSpan="null">
                                 <nz-select class="w-full" #distritoSelect id="distritoSelect"
                                     formControlName="distritoSelect" nzPlaceHolder="Todas" nzShowSearch
@@ -293,7 +296,7 @@
 
 
 <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="mt-4">
-    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="8" nzXl="8">
         <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 mb-4">Acuerdos
             por
             {{ubigeoRngSgnl()}}
@@ -315,26 +318,26 @@
                 <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12"
                     class="flex items-center gap-2">
                     <div class="w-4 h-4 bg-[#DAEDE9]"></div>
-                    <span class="leading-[14px]">Mayor al 20% y menor al 50% de avance</span>
+                    <span class="leading-[14px]">Mayor al 50% y menor al 75% de avance</span>
                 </div>
             </div>
             <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="px-4 py-2">
                 <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12"
                     class="flex items-center gap-2">
                     <div class="w-4 h-4 bg-[#6EC6D8]"></div>
-                    <span class="leading-[14px]">Mayor al 50 % y menor a 99 % de avance</span>
+                    <span class="leading-[14px]">Mayor al 75 % y menor a 99% de avance</span>
                 </div>
                 <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12"
                     class="flex items-center gap-2">
                     <div class="w-4 h-4 bg-[#D6D4D3]"></div>
-                    <span class="leading-[14px]">Menor al 20% de avance</span>
+                    <span class="leading-[14px]">Menor al 50% de avance</span>
                 </div>
             </div>
 
         </nz-card>
     </div>
 
-    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="8" nzXl="8">
         <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 mb-4">
             Cumplimiento de acuerdos por {{ubigeoRngSgnl()}}
         </h3>
@@ -345,10 +348,10 @@
                 class="custom-table">
                 <thead>
                     <tr>
-                        <th [nzWidth]="'150px'">Región</th>
-                        <th nzAlign="center" [nzWidth]="'100px'">Nº de Acuerdos</th>
+                        <th>{{ubigeoRngSgnl()}}</th>
+                        <th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
                         <th nzAlign="center" [nzWidth]="'100px'">Ejecutados</th>
-                        <th nzAlign="center" class="">Avance</th>
+                        <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -357,14 +360,14 @@
                         <td>{{item.id}}</td>
                         <td nzAlign="center">{{item.totalAcuerdo}}</td>
                         <td nzAlign="center">{{item.totalEjecutado}}</td>
-                        <td nzAlign="center" class="">
+                        <td nzAlign="center">
                             @if(item.porcentaje) {
                             <div class="object-contain w-[85%]">
                                 <nz-progress [nzPercent]="item.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
                                     [nzStatus]="item.porcentaje === 100 ? 'active' : 'normal'" [nzStrokeColor]="
-                                        item.porcentaje <= 20 ? '#D6D4D3' :        
-                                        item.porcentaje > 20 && item.porcentaje <= 50 ? '#DAEDE9' :      
-                                        item.porcentaje > 50 && item.porcentaje <= 99 ? '#6EC6D8' :      
+                                        item.porcentaje <= 50 ? '#D6D4D3' :        
+                                        item.porcentaje > 50 && item.porcentaje <= 75 ? '#DAEDE9' :      
+                                        item.porcentaje > 75 && item.porcentaje <= 99 ? '#6EC6D8' :      
                                         '#018D86'                                
                                     ">
                                 </nz-progress>
@@ -381,12 +384,10 @@
                 <tfoot>
                     <tr>
                         <td class="w-[150px] font-bold">TOTAL</td>
-                        <td class="w-[100px] text-center font-bold">{{totales()?.total}}</td>
+                        <td class="w-[100px] text-center font-bold">{{totales()?.vigente}}</td>
                         <td class="w-[100px] text-center font-bold">{{totales()?.cumplido}}</td>
                         <td class=" text-center font-bold">
-                            {{ totales() && totales()?.cumplido !== undefined && totales()?.total !== undefined
-                            ? ((totales()?.cumplido! / totales()?.total!) * 100).toFixed(1)
-                            : 'N/A' }}%
+                            {{totales()?.porcentaje?.toFixed(1)}}%
                         </td>
 
                     </tr>
@@ -400,11 +401,16 @@
         </h3>
 
         <nz-card class="rounded-2xl shadow-md mb-4">
+            <div>
+                <span class="text-sm lg:text-xl font-bold">Avance del periodo:
+                    {{totales()?.porcentaje?.toFixed(1)}}%</span>
+            </div>
+
             <div class="" id="container-bar"></div>
         </nz-card>
     </div>
 
-    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="8" nzLg="8" nzXl="8">
+    <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="8" nzXl="8">
         <h3 class="uppercase font-bold text-white bg-red-500 rounded-full text-center text-sm py-2 mx-6 mb-4">
             Cumplimiento de acuerdos por Sector
         </h3>
@@ -416,10 +422,10 @@
                 class="custom-table">
                 <thead>
                     <tr>
-                        <th [nzWidth]="'150px'">Sector</th>
-                        <th nzAlign="center" [nzWidth]="'100px'">Nº de Acuerdos</th>
+                        <th>Sector</th>
+                        <th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
                         <th nzAlign="center" [nzWidth]="'100px'">Ejecutados</th>
-                        <th nzAlign="center" class="">Avance</th>
+                        <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -436,9 +442,9 @@
                                         [nzStrokeColor]="(item.porcentaje > 70) ? '#1ca05a' : '#0866ae'"></nz-progress> -->
                                 <nz-progress [nzPercent]="item.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
                                     [nzStatus]="item.porcentaje === 100 ? 'active' : 'normal'" [nzStrokeColor]="
-                                       item.porcentaje <= 20 ? '#D6D4D3' :        
-                                        item.porcentaje > 20 && item.porcentaje <= 50 ? '#DAEDE9' :      
-                                        item.porcentaje > 50 && item.porcentaje <= 99 ? '#6EC6D8' :      
+                                       item.porcentaje <= 50 ? '#D6D4D3' :        
+                                        item.porcentaje > 50 && item.porcentaje <= 75 ? '#DAEDE9' :      
+                                        item.porcentaje > 75 && item.porcentaje <= 99 ? '#6EC6D8' :      
                                         '#018D86'                               
                                     ">
                                 </nz-progress>
@@ -454,11 +460,11 @@
                 <tfoot>
                     <tr>
                         <td class="w-[150px] font-bold">TOTAL</td>
-                        <td class="w-[100px] text-center font-bold">{{totalAcuerdos()}}</td>
-                        <td class="w-[100px] text-center font-bold">{{totalEjecutados()}}</td>
+                        <td class="w-[100px] text-center font-bold">{{totales()?.vigente}}</td>
+                        <td class="w-[100px] text-center font-bold">{{totales()?.cumplido}}</td>
                         <td class="text-center font-bold">
 
-                            {{ promedioPorcentajeSector() }}%
+                            {{totales()?.porcentaje?.toFixed(1)}}%
 
                         </td>
                     </tr>
@@ -472,25 +478,50 @@
         </h3>
 
         <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="mt-4">
-            <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+            <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <nz-card class="rounded-2xl shadow-md">
-                    <div id="container-radial"></div>
+                    <div class="flex items-center gap-4 m-auto">
+                        <div id="container-radial" class="w-1/2"></div>
+
+                        <div class="w-1/2">
+                            <h4 class="text-sm lg:text-xl font-bold text-center">Avance total</h4>
+
+                            <div class="flex items-center gap-2 m-auto">
+                                <div>
+                                    <img src="./assets/images/inicio/avance-total.svg" alt="">
+                                </div>
+
+                                <div>
+                                    <span
+                                        class="text-md lg:text-3xl font-bold">{{totales()?.porcentaje?.toFixed(1)}}%</span>
+                                </div>
+                            </div>
+                            <ul class="list-none p-0">
+                                @for (item of radialChartInfoSgnl(); track item.color) {
+
+                                <li class="flex items-center mb-2">
+                                    <span class="inline-block w-2 h-4 mr-2 rounded"
+                                        [ngStyle]="{ 'background-color': item.color }"></span>
+                                    <span class="text-xs">{{item.tipo}}</span>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
                 </nz-card>
             </div>
-            <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+            <!-- <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
                 <nz-card class="rounded-2xl shadow-md">
                     <h4 class="text-sm lg:text-xl font-bold text-center">Avance total</h4>
 
                     <div class="flex items-center gap-2 m-auto">
-
                         <div>
                             <img src="./assets/images/inicio/avance-total.svg" alt="">
                         </div>
 
                         <div>
-                            <span class="text-md lg:text-4xl font-bold">61.8 %</span>
+                            <span class="text-md lg:text-3xl font-bold">61.8 %</span>
                         </div>
-
                     </div>
                     <ul class="list-none p-0">
                         @for (item of radialChartInfoSgnl(); track item.color) {
@@ -502,10 +533,8 @@
                         </li>
                         }
                     </ul>
-
-                    <!-- {{radialChartInfoSgnl()|json}} -->
                 </nz-card>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>

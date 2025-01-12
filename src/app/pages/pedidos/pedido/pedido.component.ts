@@ -124,6 +124,7 @@ export class PedidoComponent {
 
   onCodigoChange(codigo: any) {
     if (codigo == null) return;
+    console.log(codigo);
 
     const cuisControl = this.pedidoForm.get('cuis');
     cuisControl?.reset();
@@ -133,7 +134,7 @@ export class PedidoComponent {
         cuisControl?.clearValidators();
         break;
       case 2:
-        cuisControl?.setValidators([Validators.required, Validators.pattern(/^[0-9]{1,7}$/)]);
+        cuisControl?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(7)]);
         break;
       case 3:
         cuisControl?.setValidators([Validators.required, Validators.pattern(/^[0-9]{1,6}$/)]);

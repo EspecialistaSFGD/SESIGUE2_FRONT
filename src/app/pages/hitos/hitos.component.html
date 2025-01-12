@@ -65,22 +65,26 @@
                     data.acuerdo }}</p>
             </td>
             <td nzWidth="120px" nzAlign="center">
+                <!-- {{data.plazo | json}} -->
                 @if(data.plazo){
-                @if(data.nomEstadoRegistro!='DESESTIMADO' && data.nomEstadoRegistro!='CULMINADO'
-                ){
-                @if(data.plazo.toString() | dueTo) {
-                <span nzTooltipPlacement="left" nz-tooltip="Plazo vencido" class="text-red-500">{{ data.plazo | date:
-                    'dd/MM/yyyy' }}</span>
-                }@else{
-                {{data.plazo|date: 'dd/MM/yyyy'}}
+                <!-- @if(data.nomEstadoRegistro!='DESESTIMADO' && data.nomEstadoRegistro!='CULMINADO'
+                ){ -->
+                @if(data.plazo | dueTo) {
+
+                <span nzTooltipPlacement="left" nz-tooltip="Plazo vencido" class="text-red-500">{{ data.plazo |
+                    date:'dd/MM/yyyy' }}</span>
                 }
-                }@else{
-                {{data.plazo|date: 'dd/MM/yyyy'}}
+
+                @else {
+                {{data.plazo | date:'dd/MM/yyyy'}}
                 }
+
                 }
             </td>
             <td nzWidth="120px" nzAlign="center">
-                <app-estado [title]="data.nomEstadoRegistroAC!" [isBadge]="false" />
+                @if(data.nomEstadoRegistroAC){
+                <app-estado [title]="data.nomEstadoRegistroAC" [isBadge]="false" />
+                }
             </td>
 
             <td nzWidth="150px">
@@ -156,7 +160,7 @@
                     <span class="button-text">Imprimir acuerdos</span>
                 </button> -->
 
-                <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu">
+                <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
                     <span nz-icon nzType="file-excel" nzTheme="outline"></span>
                     <span class="button-text">Exportar</span>
                     <span nz-icon nzType="down"></span>

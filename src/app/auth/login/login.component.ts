@@ -68,7 +68,7 @@ export class LoginComponent {
         [Validators.required, Validators.pattern(/^\d{8}$/)]
       ],
       // clave: [null, [Validators.required]],
-      clave: [null, [Validators.required, Validators.pattern(claveValidPattern)]],
+      clave: [null, [Validators.required, Validators.minLength(4)]],
       recordar: [localStorage.getItem('usuario') != null ? true : false]
     });
   }
@@ -205,7 +205,7 @@ export class LoginComponent {
           console.log(error);
         },
         complete: () => {
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/panel';
           this.router.navigateByUrl(returnUrl);
           this.isLoading = false;
         }

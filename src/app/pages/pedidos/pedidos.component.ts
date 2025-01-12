@@ -22,7 +22,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { PageHeaderComponent } from '../../libs/shared/layout/page-header/page-header.component';
-import { PedidoModel } from '../../libs/models/pedido';
+import { AcuerdoPedidoModel, PedidoModel } from '../../libs/models/pedido';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { PedidoComponent } from './pedido/pedido.component';
 import { PermisoModel } from '../../libs/models/auth/permiso.model';
@@ -32,6 +32,15 @@ import { ComentarioModel } from '../../libs/models/pedido/comentario.model';
 import { AuthService } from '../../libs/services/auth/auth.service';
 import { PedidoType } from '../../libs/shared/types/pedido.type';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { ReporteType } from '@libs/shared/types/reporte.type';
+import { ReporteDescargaComponent } from '@libs/shared/components/reporte-descarga/reporte-descarga.component';
+import { saveAs } from 'file-saver';
+import { AcuerdosService } from '@libs/services/pedidos/acuerdos.service';
+import { ReportesService } from '@libs/shared/services/reportes.service';
+import { AcuerdoType } from '@libs/shared/types/acuerdo.type';
+import { AccionType } from '@libs/shared/types/accion.type';
+import { AcuerdoComponent } from '../acuerdos/acuerdo/acuerdo.component';
+import { AddEditAcuerdoModel } from '@libs/models/shared/add-edit-acuerdo.model';
 
 @Component({
   selector: 'app-pedidos',
@@ -53,21 +62,25 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
     NzBadgeModule,
     NzToolTipModule,
     NzAvatarModule,
+    AcuerdoComponent
   ],
   templateUrl: './pedidos.component.html',
   styles: ``
 })
+
 export class PedidosComponent implements OnInit, AfterViewInit {
   searchForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
   // entidadSeleccionada: SelectModel = { value: 1, label: 'GOBIERNO REGIONAL DE LORETO' };
   title: string = `Lista de pedidos`;
 
+  loading: boolean = false
   pageIndex: number = 1;
   pageSize: number = 10;
-  sortField: string | null = 'prioridadID';
-  sortOrder: string | null = 'descend';
+  sortField: string = 'prioridadID';
+  sortOrder: string = 'descend';
   isDrawervisible: boolean = false;
+  hayEventosIniciados: boolean = false;
 
   cui: string | null = null;
   espaciosSeleccionados: SelectModel[] | null = null;
@@ -85,6 +98,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   private clearingFilters = false;
   private timeout: any;
 
+  public acuerdosService = inject(AcuerdosService);
   public pedidosService = inject(PedidosService);
   private fb = inject(UntypedFormBuilder);
   public espaciosStore = inject(EspaciosStore);
@@ -97,6 +111,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   public utilesService = inject(UtilesService);
   confirmModal?: NzModalRef; // For testing by now
   private viewContainerRef = inject(ViewContainerRef);
+  private reportesService = inject(ReportesService);
 
   constructor() {
     this.crearSearForm();
@@ -195,6 +210,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.obtenerEventos()
     this.searchForm.patchValue({
       cui: this.cui,
       tipoEspacio: this.tipoEspacioSeleccionado,
@@ -208,9 +224,17 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void { }
 
+  obtenerEventos(){
+    this.espaciosStore.obtenerEventos(null, 1, 2, 1, 100, 'eventoId', 'descend')
+    .subscribe(resp => {      
+      this.hayEventosIniciados = resp.data.length > 0;
+    })
+  }
+
   traerPedidos(
     {
       cui = this.cui,
+      tipoEspacioSeleccionado = this.tipoEspacioSeleccionado,
       espaciosSeleccionados = this.espaciosSeleccionados,
       sectoresSeleccionados = (this.authService.sector() && this.authService.subTipo() != 'PCM') ? [this.authService.sector()!] : this.sectoresSeleccionados,
       depSeleccionado = (this.authService.departamento()) ? this.authService.departamento() : this.depSeleccionado,
@@ -223,7 +247,11 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     }: TraerPedidosInterface
   ): void {
     if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
-      this.pedidosService.listarPedidos(cui, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
+      let tipoEspacio: string | null = null
+      if (tipoEspacioSeleccionado) {
+        tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == tipoEspacioSeleccionado.value)?.label!;
+      }
+      this.pedidosService.listarPedidos(cui, tipoEspacio, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
     }
   }
 
@@ -232,7 +260,111 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.traerPedidos({});
   }
 
+  onAddEditExpress(acuerdo: AcuerdoPedidoModel | null, tipo: AcuerdoType, accion: AccionType): void {
+      let title = 'Crear acuerdo desde Mesa Técnica';
+      let labelOk = 'Guardar';  
+      let widthModal = '60%'
+
+      this.espaciosStore.listarEventos();
+  
+  
+      const modal = this.modal.create<AcuerdoComponent, AddEditAcuerdoModel>({
+        nzTitle: title,
+        nzContent: AcuerdoComponent,
+        nzViewContainerRef: this.viewContainerRef,
+        nzMaskClosable: false,
+        nzClosable: false,
+        nzKeyboard: false,
+        nzWidth: widthModal,
+        nzData: { tipo, accion },
+        nzFooter: [
+          {
+            label: 'Cancelar',
+            type: 'default',
+            onClick: () => this.modal.closeAll(),
+          },
+          {
+            label: labelOk,
+            type: 'primary',
+            onClick: (componentInstance) => {              
+              if (accion == 'RECREATE') {
+                return this.acuerdosService.agregarAcuerdoExpress(componentInstance!.acuerdoForm.value).then((res) => {
+                  this.traerPedidos({})
+                  this.modal.closeAll();
+                });
+              } else {
+                return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then((res) => {
+                  this.modal.closeAll();
+                });
+              }
+            },
+            loading: this.acuerdosService.isEditing(),
+            disabled: (componentInstance) => !componentInstance?.acuerdoForm.valid,
+          }
+        ]
+      });
+  
+      const instance = modal.getContentComponent();
+      modal.afterClose.subscribe(result => {
+        instance.acuerdoForm.reset();
+      });
+    }
+
   onAddEdit(pedido: PedidoModel | null): void {
+    // const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
+    // const labelOk = pedido ? 'Actualizar' : 'Agregar';
+
+    if (pedido) {
+      this.pedidosService.recuperarPedido(Number(pedido!.prioridadID)).then(resp => {
+        const pedidoSelected = resp.data[0]
+        if (pedidoSelected.validado == 0) {
+          this.actionAddEdit(pedido)
+        } else {
+          this.onRefresh();
+        }
+      })
+    } else {
+      this.actionAddEdit(pedido)
+    }
+
+    // this.pedidosService.seleccionarPedidoById(pedido?.prioridadID);
+    // this.espaciosStore.listarEventos();
+
+    // const modal = this.modal.create<PedidoComponent, PedidoType>({
+    //   nzTitle: title,
+    //   nzContent: PedidoComponent,
+    //   nzViewContainerRef: this.viewContainerRef,
+    //   nzData: this.authService.subTipo(),
+    //   nzClosable: false,
+    //   nzMaskClosable: false,
+    //   nzFooter: [
+    //     {
+    //       label: 'Cancelar',
+    //       type: 'default',
+    //       onClick: () => this.modal.closeAll(),
+    //     },
+    //     {
+    //       label: labelOk,
+    //       type: 'primary',
+    //       onClick: (componentInstance) => {
+    //         return this.pedidosService.agregarPedido(componentInstance!.pedidoForm.value).then((res) => {
+    //           this.traerPedidos({});
+    //           this.modal.closeAll();
+    //         });
+    //       },
+    //       loading: this.pedidosService.isEditing(),
+    //       disabled: (componentInstance) => !componentInstance?.pedidoForm.valid,
+    //     }
+    //   ]
+    // });
+
+    // const instance = modal.getContentComponent();
+    // modal.afterClose.subscribe(result => {
+    //   instance.pedidoForm.reset();
+    // });
+  }
+
+  actionAddEdit(pedido: PedidoModel | null): void {
     const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
     const labelOk = pedido ? 'Actualizar' : 'Agregar';
 
@@ -265,7 +397,6 @@ export class PedidosComponent implements OnInit, AfterViewInit {
           disabled: (componentInstance) => !componentInstance?.pedidoForm.valid,
         }
       ]
-
     });
 
     const instance = modal.getContentComponent();
@@ -342,7 +473,8 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
     this.tipoEspacioSeleccionado = value;
     // this.traerAcuerdos({ tipoEspacioSeleccionado: value });
-    // debugger;
+    // debugger;    
+
     if (value != null) {
       // this.espaciosStore.limpiarEspacios();
       this.espaciosStore.listarEventos(Number(value.value));
@@ -353,9 +485,13 @@ export class PedidosComponent implements OnInit, AfterViewInit {
         this.searchForm.patchValue({ espacio: null });
         this.filterCounter.update(x => x - 1);
       }
+      // const modelValue: SelectModel[] = [value]
+      // this.onEspacioChange(modelValue);
+      this.traerPedidos({ tipoEspacioSeleccionado: value });
     } else {
       this.onEspacioChange(null);
     }
+    ;
 
     if (value == null && wasPreviouslySelected) {
       this.filterCounter.update(x => x - 1);
@@ -365,6 +501,8 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
     if (!this.cargandoUbigeo && !skipNavigation) {
       // this.traerAcuerdos({});
+      // console.log('CARGANDO PEDIDO');
+      this.traerPedidos({})
       this.updateParamsSubject.next();
     }
   }
@@ -778,6 +916,128 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.isDrawervisible = false;
   }
 
+  generarExcel(archivo: any, nombreArchivo: string): void {
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
+  }
+
+  onDescargarReporte(tipo: ReporteType): void {
+    const cui: string | null = this.cui ? this.cui : null
+    const sectores: number[] | null = this.sectoresSeleccionados ? this.sectoresSeleccionados!.map(item => Number(item.value)) : null
+    const espacios: number[] | null = this.espaciosSeleccionados ? this.espaciosSeleccionados!.map(item => Number(item.value)) : null
+    let ubigeo: string | null = this.depSeleccionado ? `${this.depSeleccionado.value}` : null
+    ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
+    ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
+    let tipoEspacio: string | null = null
+    if (this.tipoEspacioSeleccionado) {
+      tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;
+    }
+
+    this.loading = true
+
+    let sortField = 'prioridadID'
+    switch (tipo) {
+      case 'ACUERDO': sortField = 'acuerdoId'; break;
+      case 'HITO': sortField = 'hitoId'; break;
+    }
+    this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, 0, sortField, this.sortOrder, sectores, tipoEspacio, espacios, ubigeo, cui)
+      .then((res) => {
+        if (res.success == true) {
+          this.generarExcel(res.data.archivo, res.data.nombreArchivo);
+          this.loading = false
+        }
+      })
+  }
+
+  // onDescargarReporte(tipo: ReporteType): void {
+  //   const cui: string | null = this.cui ? this.cui : null
+  //   const sectores: number[] | null = this.sectoresSeleccionados ? this.sectoresSeleccionados!.map(item => Number(item.value)) : null
+  //   const espacios: number[] | null = this.espaciosSeleccionados ? this.espaciosSeleccionados!.map(item => Number(item.value)) : null
+  //   let ubigeo: string | null = this.depSeleccionado ? `${this.depSeleccionado.value}` : null
+  //   ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
+  //   ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
+
+  //   const modal = this.modal.create<ReporteDescargaComponent, ReporteType>({
+  //     nzTitle: `Descargando reporte de ${tipo}`,
+  //     nzContent: ReporteDescargaComponent,
+  //     nzViewContainerRef: this.viewContainerRef,
+  //     nzData: tipo,
+  //     nzMaskClosable: false,
+  //     nzClosable: false,
+  //     nzKeyboard: false,
+  //     nzFooter: [
+  //       {
+  //         label: 'Cancelar',
+  //         onClick: () => this.modal.closeAll()
+  //       },
+  //       {
+  //         type: 'primary',
+  //         label: 'Descargar',
+  //         onClick: componentInstance => {
+  //           const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
+
+  //           switch (tipo) {
+  //             case 'ACUERDO':
+  //               console.log('ES UN ACUERDO');
+
+  //               return this.reportesService.descargarReporteAcuerdos(
+  //                 tipo,
+  //                 this.pageIndex, page, 'acuerdoId', this.sortOrder, sectores, espacios, ubigeo, cui
+  //               ).then((res) => {
+
+  //                 if (res.success == true) {
+  //                   var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+  //                   var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+  //                   saveAs(blob, res.data.nombreArchivo);
+  //                 }
+
+  //                 this.modal.closeAll();
+  //               });
+
+  //             case 'PEDIDO':
+  //               return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'PrioridadId', this.sortOrder, sectores, espacios, ubigeo, cui).then((res) => {
+
+  //                 if (res.success == true) {
+  //                   var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+  //                   var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+  //                   saveAs(blob, res.data.nombreArchivo);
+  //                 }
+
+  //                 this.modal.closeAll();
+  //               });
+
+  //             case 'HITO':
+  //               return this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, page, 'hitoId', this.sortOrder).then((res) => {
+
+  //                 if (res.success == true) {
+  //                   var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+  //                   var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+  //                   saveAs(blob, res.data.nombreArchivo);
+  //                 }
+
+  //                 this.modal.closeAll();
+  //               });
+
+  //             default:
+  //               return;
+  //           }
+  //         },
+  //         loading: this.reportesService.isLoading(),
+  //         disabled: componentInstance => !componentInstance || !componentInstance.reporteDescargaForm.valid
+  //       }]
+  //   });
+
+  //   const instance = modal.getContentComponent();
+
+  //   modal.afterClose.subscribe(() => {
+  //     instance.reporteDescargaForm.reset();
+  //   });
+  // }
+
   crearSearForm(): void {
     this.searchForm = this.fb.group({
       cui: [null],
@@ -864,5 +1124,4 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       this.updateParamsSubject.next();
     }
   }
-
 }

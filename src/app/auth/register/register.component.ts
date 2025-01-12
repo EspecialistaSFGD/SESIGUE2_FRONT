@@ -19,7 +19,7 @@ import { EntidadesStore } from '../../libs/shared/stores/entidades.store';
 
 const dniValidPattern = /^\d{8}$/;
 const claveValidPattern = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\~-]{6,}$/;
-const telefonoValidPattern = /^\d+$/;
+const telefonoValidPattern = /^\d{9}$/;
 
 @Component({
   selector: 'app-register',
@@ -248,7 +248,7 @@ export class RegisterComponent {
       entidad: [null, [Validators.required]],
       sector: [null],
       perfil: [null, [Validators.required]],
-      nombre: [null, [Validators.required]],
+      nombre: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       dni: [null, [Validators.required, Validators.pattern(/^\d{8}$/)]],
       correo: [null, [Validators.required, Validators.email]],
       telefono: [null, [Validators.required, Validators.pattern(telefonoValidPattern)]],

@@ -1,11 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { environment } from '../../../../environments/environment.development';
+// import { environment } from '../../../../environments/environment.development';
 import { ResponseModel } from '../../models/shared/response.model';
 import { SelectModel } from '../../models/shared/select.model';
 import { EstadoAcuerdoModel } from '../../models/pedido/estado.model';
 import { SectorModel } from '../../models/shared/sector.model';
+import { environment } from '@environments/environment';
 
 interface State {
     tiposIntervencion: SelectModel[];
@@ -48,6 +49,11 @@ export class PedidosStore {
                     res.forEach((x: SectorModel) => {
                         estadosRes.push(new SelectModel(Number(x.grupoID), x.nombre));
                     });
+
+                    // console.log('IN SERVICE');
+                    // console.log(estadosRes);
+                    
+                    
 
                     switch (tipo) {
                         case 5:

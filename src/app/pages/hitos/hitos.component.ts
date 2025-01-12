@@ -77,6 +77,7 @@ export class HitosComponent {
   fechaDateFormat = 'dd/MM/yyyy';
   title: string = `Lista de Hitos`;
 
+  loading: boolean = false;
   pageIndex: number = 1;
   pageSize: number = 10;
   sortField: string = 'hitoId';
@@ -167,6 +168,7 @@ export class HitosComponent {
       cui = this.cui,
       clasificacionesSeleccionadas = this.clasificacionesSeleccionadas,
       tipoSeleccionado = this.tipoSeleccionado,
+      tipoEspacioSeleccionado = this.tipoEspacioSeleccionado,
       estadosSelecionados = this.estadosSelecionados,
       espaciosSeleccionados = this.espaciosSeleccionados,
       sectoresSeleccionados = (this.authService.sector() && this.authService.subTipo() != 'PCM') ? [this.authService.sector()!] : this.sectoresSeleccionados,
@@ -180,7 +182,11 @@ export class HitosComponent {
     }: TraerHitosListadoInterface
   ): void {
     if (!this.cargandoUbigeo) { // Solo llamar al servicio si no estamos cargando ubigeo
-      this.hitosService.listarHitosGenerales(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
+      let tipoEspacio: string | null = null
+      if (tipoEspacioSeleccionado) {
+        tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == tipoEspacioSeleccionado.value)?.label!;
+      }
+      this.hitosService.listarHitosGenerales(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, tipoEspacio, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
     }
   }
 
@@ -233,7 +239,6 @@ export class HitosComponent {
           onClick: componentInstance => {
             return this.avancesService.agregarComentarioDesdeListadoHitos(componentInstance!.comentarioForm.value).then((res) => {
               this.traerHitos({});
-              console.log(res);
               this.modal.closeAll();
             });
           },
@@ -414,6 +419,7 @@ export class HitosComponent {
 
     if (!this.cargandoUbigeo && !skipNavigation) {
       // this.traerHitos({});
+      this.traerHitos({});
       this.updateParamsSubject.next();
     }
   }
@@ -644,57 +650,96 @@ export class HitosComponent {
     });
   }
 
-  onDescargarReporte(tipo: ReporteType): void {
-    const modal = this.modal.create<ReporteDescargaComponent, ReporteType>({
-      nzTitle: `Descargando reporte de ${tipo}`,
-      nzContent: ReporteDescargaComponent,
-      nzViewContainerRef: this.viewContainerRef,
-      nzData: tipo,
-      nzMaskClosable: false,
-      nzClosable: false,
-      nzKeyboard: false,
-      nzFooter: [
-        {
-          label: 'Cancelar',
-          onClick: () => this.modal.closeAll()
-        },
-        {
-          type: 'primary',
-          label: 'Descargar',
-          onClick: componentInstance => {
-            const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
-
-            if (tipo == 'ACUERDO') {
-
-              return this.reportesService.descargarReporteAcuerdos(
-                tipo,
-                this.pageIndex, page, 'PrioridadId', this.sortOrder
-              ).then((res) => {
-
-                if (res.success == true) {
-                  var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
-                  var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-                  saveAs(blob, res.data.nombreArchivo);
-                }
-
-                this.modal.closeAll();
-              });
-            }
-
-            return;
-          },
-          loading: this.reportesService.isLoading(),
-          disabled: componentInstance => !componentInstance || !componentInstance.reporteDescargaForm.valid
-        }]
-    });
-
-    const instance = modal.getContentComponent();
-
-    modal.afterClose.subscribe(() => {
-      instance.reporteDescargaForm.reset();
-    });
+  generarExcel(archivo: any, nombreArchivo: string): void {
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
   }
+
+  onDescargarReporte(tipo: ReporteType): void {
+    const cui: string | null = this.cui ? this.cui : null
+    const sectores: number[] | null = this.sectoresSeleccionados ? this.sectoresSeleccionados!.map(item => Number(item.value)) : null
+    const espacios: number[] | null = this.espaciosSeleccionados ? this.espaciosSeleccionados!.map(item => Number(item.value)) : null
+    const estados: number[] | null = this.estadosSelecionados ? this.estadosSelecionados!.map(item => Number(item.value)) : null
+    const clasificaciones: number[] | null = this.clasificacionesSeleccionadas ? this.clasificacionesSeleccionadas!.map(item => Number(item.value)) : null
+    const tipos: number | null = this.tipoSeleccionado ? Number(this.tipoSeleccionado) : null
+
+    let ubigeo: string | null = this.depSeleccionado ? `${this.depSeleccionado.value}` : null
+    ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
+    ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
+    let tipoEspacio: string | null = null
+    if (this.tipoEspacioSeleccionado) {
+      tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;
+    }
+
+    this.loading = true
+
+    let sortField = 'prioridadID'
+    switch (tipo) {
+      case 'ACUERDO': sortField = 'acuerdoId'; break;
+      case 'HITO': sortField = 'hitoId'; break;
+    }
+
+    this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, 0, sortField, this.sortOrder, sectores, tipoEspacio, espacios, ubigeo, cui, estados, clasificaciones, tipos)
+      .then((res) => {
+        if (res.success == true) {
+          this.generarExcel(res.data.archivo, res.data.nombreArchivo);
+          this.loading = false
+        }
+      })
+  }
+
+  // onDescargarReporte(tipo: ReporteType): void {
+  //   const modal = this.modal.create<ReporteDescargaComponent, ReporteType>({
+  //     nzTitle: `Descargando reporte de ${tipo}`,
+  //     nzContent: ReporteDescargaComponent,
+  //     nzViewContainerRef: this.viewContainerRef,
+  //     nzData: tipo,
+  //     nzMaskClosable: false,
+  //     nzClosable: false,
+  //     nzKeyboard: false,
+  //     nzFooter: [
+  //       {
+  //         label: 'Cancelar',
+  //         onClick: () => this.modal.closeAll()
+  //       },
+  //       {
+  //         type: 'primary',
+  //         label: 'Descargar',
+  //         onClick: componentInstance => {
+  //           const page = (componentInstance!.reporteDescargaForm.value.esDescargaTotal) ? 0 : this.pageSize;
+
+  //           if (tipo == 'ACUERDO') {
+
+  //             return this.reportesService.descargarReporteAcuerdos(
+  //               tipo,
+  //               this.pageIndex, page, 'PrioridadId', this.sortOrder
+  //             ).then((res) => {
+
+  //               if (res.success == true) {
+  //                 var arrayBuffer = this.utilesService.base64ToArrayBuffer(res.data.archivo);
+  //                 var blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+  //                 saveAs(blob, res.data.nombreArchivo);
+  //               }
+
+  //               this.modal.closeAll();
+  //             });
+  //           }
+
+  //           return;
+  //         },
+  //         loading: this.reportesService.isLoading(),
+  //         disabled: componentInstance => !componentInstance || !componentInstance.reporteDescargaForm.valid
+  //       }]
+  //   });
+
+  //   const instance = modal.getContentComponent();
+
+  //   modal.afterClose.subscribe(() => {
+  //     instance.reporteDescargaForm.reset();
+  //   });
+  // }
 
   updateQueryParams() {
     this.updatingParams = true;

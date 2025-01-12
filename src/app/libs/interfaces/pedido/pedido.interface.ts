@@ -4,6 +4,7 @@ import { SelectModel } from "../../models/shared/select.model";
 export class TraerPedidosInterface {
     constructor(
         public cui?: string | null,
+        public tipoEspacioSeleccionado?: SelectModel | null,
         public espaciosSeleccionados?: SelectModel[] | null,
         public sectoresSeleccionados?: SelectModel[] | null,
         public depSeleccionado?: SelectModel | null,
@@ -20,6 +21,7 @@ export class TraerAcuerdosInterface {
     constructor(
         public cui?: string | null,
         public clasificacionesSeleccionadas?: SelectModel[] | null,
+        public tipoEspacioSeleccionado?: SelectModel | null,
         public tipoSeleccionado?: SelectModel | null,
         public estadosSelecionados?: SelectModel[] | null,
         public espaciosSeleccionados?: SelectModel[] | null,

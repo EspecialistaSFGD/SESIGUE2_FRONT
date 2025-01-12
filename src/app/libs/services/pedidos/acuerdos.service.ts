@@ -61,7 +61,7 @@ export class AcuerdosService {
 
     constructor() { }
 
-    listarAcuerdos(cui: string | null = null, clasificacion: SelectModel[] | null = null, tipo: SelectModel | null = null, estadoAcuerdo: SelectModel[] | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, dis: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
+    listarAcuerdos(cui: string | null = null, clasificacion: SelectModel[] | null = null, tipo: SelectModel | null = null, estadoAcuerdo: SelectModel[] | null = null, tipoEspacio: string | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, dis: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
         // debugger;
         let params = new HttpParams();
 
@@ -99,13 +99,13 @@ export class AcuerdosService {
         }
 
         if (dis !== null) {
-            params = params.append('ubigeo[]', `${dis.value}`);
+            params = params.append('ubigeo', `${dis.value}`);
         } else if (prov !== null) {
-            params = params.append('ubigeo[]', `${prov.value}`);
+            params = params.append('ubigeo', `${prov.value}`);
         } else if (dep !== null) {
-            params = params.append('ubigeo[]', `${dep.value}`);
+            params = params.append('ubigeo', `${dep.value}`);
         }
-
+        params = tipoEspacio ? params.append('tipoEspacio', tipoEspacio) : params;
         params = (pageIndex !== null) ? params.append('piCurrentPage', `${pageIndex}`) : params;
         params = (pageSize !== null) ? params.append('piPageSize', `${pageSize}`) : params;
         params = (sortField !== null) ? params.append('columnSort', `${sortField}`) : params;
@@ -158,7 +158,7 @@ export class AcuerdosService {
                     if (acuerdo.entidadId && acuerdo.entidad) acuerdo.entidadSelect = new SelectModel(acuerdo.entidadId, acuerdo.entidad);
                     if (acuerdo.clasificacion && acuerdo.clasificacionId) acuerdo.clasificacionSelect = new SelectModel(acuerdo.clasificacionId, acuerdo.clasificacion);
                     if (acuerdo.tipo && acuerdo.tipoId) acuerdo.tipoSelect = acuerdo.tipoId.toString();
-                    if (acuerdo.plazo) acuerdo.plazo = this.utilesService.stringToDate(acuerdo.plazo.toString());
+                    // if (acuerdo.plazo) acuerdo.plazo = this.utilesService.stringToDate(acuerdo.plazo.toString());
                 });
                 this.#acuerdosResult.update((v) => ({ ...v, acuerdos: res, isLoading: false, total: data.info.total }));
 
@@ -245,9 +245,9 @@ export class AcuerdosService {
     }
 
     agregarAcuerdoExpress(acuerdo: AcuerdoPedidoExpressModel): Promise<ResponseModel> {
-        const ots: AcuerdoPedidoExpressModel = {} as AcuerdoPedidoExpressModel;
+        const ots: AcuerdoPedidoExpressModel = {} as AcuerdoPedidoExpressModel;    
 
-        if (acuerdo.espacioSelect) ots.eventoId = Number(acuerdo.espacioSelect.value);
+        if (acuerdo.espacioSelect) ots.eventoId = Number(acuerdo.eventoId); //Number(acuerdo.espacioSelect.value);
         if (acuerdo.sectorSelect) ots.grupoId = Number(acuerdo.sectorSelect.value);
         // if (acuerdo.provinciaSelect) ots.ubigeo = acuerdo.provinciaSelect.value?.toString();
 
@@ -280,7 +280,7 @@ export class AcuerdosService {
         if (acuerdo.responsableSelect) ots.responsableId = Number(acuerdo.responsableSelect.value);
         ots.accesoId = this.authService.getCodigoUsuario();
         ots.entidadId = (acuerdo.entidadSelect) ? Number(acuerdo.entidadSelect.value) : 0;
-        ots.es_preAcuerdo = 0;
+        ots.es_preAcuerdo = Number(acuerdo.pre_acuerdo);
 
         return new Promise((resolve, reject) => {
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/RegistrarAcuerdoExpress`, ots).subscribe({
@@ -322,7 +322,7 @@ export class AcuerdosService {
 
         if (acuerdo.acuerdo) ots.acuerdo = acuerdo.acuerdo;
         if (acuerdo.pre_acuerdo) ots.pre_acuerdo = acuerdo.pre_acuerdo;
-        if (acuerdo.eventoId) ots.eventoId = acuerdo.eventoId;
+        if (acuerdo.eventoId) ots.eventoId = acuerdo.eventoId;     
 
         return new Promise((resolve, reject) => {
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/ConvertirPreAcuerdo`, ots).subscribe({

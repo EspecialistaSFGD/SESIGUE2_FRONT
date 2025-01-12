@@ -15,7 +15,7 @@
             Campo requerido
             }
             @if (control.errors?.['pattern']) {
-            Debe tener 8 números
+            Se requiere un DNI válido
             }
           </ng-template>
         </nz-form-control>
@@ -27,7 +27,7 @@
         <div class="flex items-center justify-between pb-1">
           <!-- <nz-form-label class="flex-auto" nzFor="clave" nzRequired nzLabelAlign="left">Clave</nz-form-label> -->
           <label for="clave">Clave</label>
-          <a class="login-form-forgot text-blue-700">Olvidé mi clave</a>
+          <!-- <a class="login-form-forgot text-blue-700">Olvidé mi clave</a> -->
         </div>
         <nz-form-control [nzErrorTip]="requiredClaveTpl">
           <nz-input-group [nzSuffix]="suffixPwd" class="">
@@ -42,8 +42,8 @@
             @if (control.errors?.['required']) {
             Campo requerido
             }
-            @if (control.errors?.['pattern']) {
-            6 dígitos alfanuméricos
+            @if (control.errors?.['minlength']) {
+            La longitud de la clave es insuficiente
             }
           </ng-template>
         </nz-form-control>

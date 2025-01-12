@@ -229,7 +229,6 @@ export class ReportesService extends BaseHttpService {
             res.porcentaje = Number(res.porcentaje.toFixed(1));
             res.avance = `${res.porcentaje}%`;
 
-
             switch (res.tipo.trim()) {
               case 'ASISTENCIA TÉCNICA':
                 res.color = '#6EC6D8';
@@ -387,20 +386,67 @@ export class ReportesService extends BaseHttpService {
     }
   }
 
-  descargarReporteAcuerdos(tipo: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend'): Promise<ResponseModel> {
+  descargarReporteAcuerdos(tipoReporte: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend', grupos: number[] | null = null, tipoEspacio: string | null = null, espacios: number[] | null = null, ubigeo: string | null = null, cui: string | null = null, estados: number[] | null = null, clasificaciones: number[] | null = null, tipo: number | null = null): Promise<ResponseModel> {
     let params = new HttpParams()
       .append('piCurrentPage', pageIndex)
       .append('piPageSize', pageSize)
       .append('columnSort', sortField)
       .append('typeSort', sortOrder);
+    if (grupos) {
+      for (let grupo of grupos) {
+        params = params.append('grupoId[]', grupo)
+      }
+    }
+
+    params = tipoEspacio ? params.append('tipoEspacio', tipoEspacio) : params
+
+    if (espacios) {
+      for (let espacio of espacios) {
+        params = params.append('eventoId[]', espacio)
+      }
+    }
+
+    if (estados) {
+      for (let estado of estados) {
+        params = params.append('estados[]', estado)
+      }
+    }
+    if(clasificaciones){
+      for (let clasificacion of clasificaciones) {
+        params = params.append('clasificaciones[]', clasificacion)
+      }
+    }
+    
+    // params = ubigeo ? params.append('ubigeo[]', `${ubigeo}`) : params
+    params = ubigeo ? params.append('ubigeo', `${ubigeo}`) : params
+    params = cui ? params.append('codigo', `${cui}`) : params
+    params = tipo ? params.append('tipoId', `${tipo}`) : params
+
+    console.log("UBIGEOS");
+    console.log(ubigeo);
+    console.log(params);
+    
 
     this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
 
-    const tipoReporte = (tipo == 'ACUERDO') ? 'PrioridadAcuerdo' : 'Hito';
+    let nombreReporte: string = '';
+
+    switch (tipoReporte) {
+      case 'PEDIDO':
+        nombreReporte = 'PrioridadAcuerdo';
+        break;
+
+      case 'ACUERDO':
+        nombreReporte = 'Acuerdo';
+        break;
+      default:
+        nombreReporte = 'HIto';
+        break;
+    }
 
     return new Promise((resolve, reject) => {
 
-      this.http.get<ResponseModel>(`${this.apiUrl}/${tipoReporte}/Exportar`, { params }).subscribe({
+      this.http.get<ResponseModel>(`${this.apiUrl}/${nombreReporte}/Exportar`, { params }).subscribe({
         next: (data) => {
           resolve(data);
         },

@@ -3,6 +3,7 @@ import { SelectModel } from "../../models/shared/select.model";
 export class TraerHitosListadoInterface {
     constructor(
         public cui?: string | null,
+        public tipoEspacioSeleccionado?: SelectModel | null,
         public clasificacionesSeleccionadas?: SelectModel[] | null,
         public tipoSeleccionado?: string | null,
         public estadosSelecionados?: SelectModel[] | null,

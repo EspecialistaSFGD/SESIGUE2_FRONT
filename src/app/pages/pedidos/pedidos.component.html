@@ -10,18 +10,18 @@
     (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
-            <th class="text-center w-10" nzColumnKey="validado"></th>
-            <th class="w-40" nzColumnKey="codigo">Código</th>
-            <th class="w-20 sm:w-56" nzColumnKey="aspectoCriticoResolver">Pedido</th>
-            <th class="w-40" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
-            <th nzWidth="120px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+            <th nzWidth="40px" nzAlign="center" nzColumnKey="validado"></th>
+            <th nzWidth="80px" nzColumnKey="codigo">Código</th>
+            <th nzWidth="50px" nzAlign="center" nzColumnKey="cantidadPreAcuerdos">Pre AC</th>
+            <th nzWidth="50px" nzAlign="center" nzColumnKey="cantidadAcuerdos">AC</th>
+            <th class="w-40 sm:w-56" nzColumnKey="aspectoCriticoResolver">Pedido</th>
+            <th class="w-20" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
+            <th nzWidth="100px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
             <th nzWidth="150px" nzAlign="center" nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
             <!-- <th nzWidth="150px" nzAlign="center" nzColumnKey="prioridadID" [nzSortFn]="true">ID</th> -->
-            <th nzWidth="300px" nzAlign="center" nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th>
-            <th nzWidth="300px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
-            <th nzWidth="80px" nzAlign="center" nzColumnKey="cuis">CUI</th>
-            <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadPreAcuerdos">Pre acuerdos</th>
-            <th nzWidth="100px" nzAlign="center" nzColumnKey="cantidadAcuerdos">Acuerdos</th>
+            <!-- <th nzWidth="300px" nzAlign="center" nzColumnKey="objetivoEstrategicoTerritorial">Eje estratégico</th> -->
+            <th nzWidth="240px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
+            <th nzWidth="70px" nzAlign="center" nzColumnKey="cuis">CUI</th>
             <th nzWidth="120px" nzAlign="center" nzColumnKey="comentarioPCM">Comentario PCM</th>
             <th nzRight nzWidth="110px" nzAlign="center" nzColumnKey="acciones"></th>
         </tr>
@@ -29,7 +29,7 @@
     <tbody>
         @for (data of this.pedidosService.pedidos(); track data.prioridadID) {
         <tr>
-            <td class="text-center w-10">
+            <td class="text-center">
                 @if(data.validado==1){
                 <nz-avatar [nzSize]="24" class="bg-green-500 dark:bg-green-400" nzIcon="check" nzTooltipPlacement="left"
                     nz-tooltip="Validado"></nz-avatar>
@@ -46,23 +46,36 @@
 
                 }
             </td>
-            <td class="w-40"><strong>{{data.codigo}}</strong></td>
+            <td class="w-40"><div class="cursor-pointer" nzTooltipPlacement="top" nz-tooltip
+                nzTooltipTitle="Ver detalle" (click)="onGestionarPedido(data)">{{data.codigo}}</div></td>
+            <td nzWidth="100px" nzAlign="center"><p  nzTooltipPlacement="top" nz-tooltip
+                nzTooltipTitle="Cantidad de pre acuerdos">{{ data.cantidadPreAcuerdos }}</p></td>
+            <td nzWidth="100px" nzAlign="center"><p  nzTooltipPlacement="top" nz-tooltip
+                nzTooltipTitle="Cantidad de acuerdos">{{ data.cantidadAcuerdos }}</p></td>
             <td class="w-20 sm:w-56">
                 <p class="line-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
-                    [nzTooltipTitle]="data.aspectoCriticoResolver">
+                    [nzTooltipTitle]="nameTooltip">
                     {{ data.aspectoCriticoResolver }}
                 </p>
             </td>
+            <ng-template #nameTooltip>
+                {{data.aspectoCriticoResolver}}
+                @if(data.comentarioPCM){
+                    <b>OBSERVADO</b>
+                    <p>{{data.comentarioPCM}}</p>
+                }
+            </ng-template>
+            
             <td>{{ data.espacio }}</td>
             <td nzWidth="120px" nzAlign="center">{{ data.sector }}</td>
             <td nzWidth="150px" nzAlign="center">{{ data.ubicacion }}</td>
             <!-- <td nzLeft nzWidth="120px" nzAlign="center">{{ data.prioridadID }}</td> -->
-            <td nzWidth="300px" nzAlign="center">
+            <!-- <td nzWidth="300px" nzAlign="center">
                 <p class="line-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
                     [nzTooltipTitle]="data.objetivoEstrategicoTerritorial">
                     {{ data.objetivoEstrategicoTerritorial }}
                 </p>
-            </td>
+            </td> -->
             <td nzWidth="300px" nzAlign="center">
                 <p class="line-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
                     [nzTooltipTitle]="data.intervencionesEstrategicas">
@@ -71,8 +84,6 @@
             </td>
 
             <td nzWidth="80px" nzAlign="center">{{ data.cuis }}</td>
-            <td nzWidth="100px" nzAlign="center">{{ data.cantidadPreAcuerdos }}</td>
-            <td nzWidth="100px" nzAlign="center">{{ data.cantidadAcuerdos }}</td>
             <td nzWidth="120px" nzAlign="center">{{ data.comentarioPCM }}</td>
             <td nzRight nzWidth="72px" nzAlign="center">
                 <nz-space>
@@ -103,7 +114,12 @@
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
                     }
-
+                    <!-- @if(authService.permisos()?.puede_editar_pedido){
+                    <button [disabled]="data.validado==1" (click)="onAddEdit(data)" *nzSpaceItem nz-button
+                        nzType="link">
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                    </button>
+                    } -->
                     @if(authService.permisos()?.puede_eliminar_pedido){
                     <button [disabled]="data.validado==1" *nzSpaceItem nz-button nzDanger nzType="link"
                         (click)="onDelete(data)">
@@ -138,7 +154,7 @@
                     <span class="button-text">Imprimir acuerdos</span>
                 </button> -->
 
-                <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu">
+                <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
                     <span nz-icon nzType="file-excel" nzTheme="outline"></span>
                     <span class="button-text">Exportar</span>
                     <span nz-icon nzType="down"></span>
@@ -146,13 +162,24 @@
                 <nz-dropdown-menu #menu="nzDropdownMenu">
                     <ul nz-menu>
                         <li nz-menu-item>
-                            <a>Exportar pedidos</a>
+                            <button (click)="onDescargarReporte('PEDIDO')" nz-button nzType="text"
+                                type="button">Exportar
+                                pedidos</button>
                         </li>
                         <li nz-menu-item>
-                            <a>Exportar acuerdos</a>
+                            <button (click)="onDescargarReporte('ACUERDO')" nz-button nzType="text"
+                                type="button">Exportar
+                                acuerdos</button>
                         </li>
                     </ul>
                 </nz-dropdown-menu>
+                @if(authService.permisos()?.puede_agregar_acuerdo_mt && hayEventosIniciados){
+                    <button *nzSpaceItem nz-button nzType="primary" (click)="onAddEditExpress(null, 'ACUERDO', 'RECREATE')">
+                        <span nz-icon nzType="plus" nzTheme="outline"></span>
+                        <span class="button-text">Agregar acuerdo express</span>
+                    </button>
+                    }
+
                 @if(authService.permisos()?.puede_agregar_pedido || authService.subTipo() == 'SECTOR'){
                 <button *nzSpaceItem nz-button nzType="primary" (click)="onAddEdit(null)">
                     <span nz-icon nzType="plus" nzTheme="outline"></span>
@@ -186,7 +213,7 @@
 
             <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
                 <nz-form-item>
-                    <nz-form-label [nzSpan]="null">TIpos de Espacio</nz-form-label>
+                    <nz-form-label [nzSpan]="null">Tipos de Espacio</nz-form-label>
                     <!-- {{this.espaciosStore.tiposEspacio()|json}} -->
                     <nz-form-control nzSpan="null">
                         <nz-select nzPlaceHolder="Seleccione" id="tipoEspacio" #tipoEspacio

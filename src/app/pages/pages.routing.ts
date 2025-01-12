@@ -8,5 +8,5 @@ export const PAGES_ROUTES: Routes = [
   { path: 'transferencias_financieras', loadComponent: () => import('./transferencias-financieras/transferencias-financieras.component').then(m => m.TransferenciasFinancierasComponent) },
   { path: 'sgd', loadChildren: () => import('./sgd/sgd.routing').then( r => r.SGD_ROUTES) },
   { path: 'configuraciones', loadChildren: () => import('./configuraciones/configuraciones.routes').then(m => m.CONFIG_ROUTES) },
-  { path: '**', redirectTo: 'panel', pathMatch: 'full' },
+  { path: 'hitos', loadChildren: () => import('./hitos/hitos.routes').then(r => r.HITOS_ROUTES) }
 ];

@@ -125,6 +125,11 @@ export class AuthService {
             const menusTransformados = this.transformarMenuParaNgZorro(data.menus);
             data.menus = menusTransformados.menusTransformados;
             data.permisos = menusTransformados.permisos;
+            data.menus.map((menu: MenuModel) => {
+              if (menu.esExterno) {
+                menu.direccionUrl = `${menu.direccionUrl}au=0&7B611A09B990B80849DBE7AF822D63E466D552839D9EC6E0=2B6AC8BbF4ADF440005AFC42EF337555FB0008BF9770791Z&gjXtIkEroS=SD_SSFD&codevento=62&ubig=0&de=&en=${data.entidad}&codsector=${data.sector}&iacp=${data.codigoUsuario}&sup=1`
+              }
+            })
 
             localStorage.setItem('menus', JSON.stringify(data.menus));
             localStorage.setItem('permisos', JSON.stringify(data.permisos));
