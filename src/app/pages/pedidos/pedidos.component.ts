@@ -224,11 +224,11 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void { }
 
-  obtenerEventos(){
-    this.espaciosStore.obtenerEventos(null, 1, 2, 1, 100, 'eventoId', 'descend')
-    .subscribe(resp => {      
-      this.hayEventosIniciados = resp.data.length > 0;
-    })
+  obtenerEventos() {
+    this.espaciosStore.obtenerEventos(null, 1, [2], 1, 100, 'eventoId', 'descend')
+      .subscribe(resp => {
+        this.hayEventosIniciados = resp.data.length > 0;
+      })
   }
 
   traerPedidos(
@@ -261,54 +261,54 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   onAddEditExpress(acuerdo: AcuerdoPedidoModel | null, tipo: AcuerdoType, accion: AccionType): void {
-      let title = 'Crear acuerdo desde Mesa Técnica';
-      let labelOk = 'Guardar';  
-      let widthModal = '60%'
+    let title = 'Crear acuerdo desde Mesa Técnica';
+    let labelOk = 'Guardar';
+    let widthModal = '60%'
 
-      this.espaciosStore.listarEventos();
-  
-  
-      const modal = this.modal.create<AcuerdoComponent, AddEditAcuerdoModel>({
-        nzTitle: title,
-        nzContent: AcuerdoComponent,
-        nzViewContainerRef: this.viewContainerRef,
-        nzMaskClosable: false,
-        nzClosable: false,
-        nzKeyboard: false,
-        nzWidth: widthModal,
-        nzData: { tipo, accion },
-        nzFooter: [
-          {
-            label: 'Cancelar',
-            type: 'default',
-            onClick: () => this.modal.closeAll(),
+    // this.espaciosStore.listarEventos();
+
+
+    const modal = this.modal.create<AcuerdoComponent, AddEditAcuerdoModel>({
+      nzTitle: title,
+      nzContent: AcuerdoComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzMaskClosable: false,
+      nzClosable: false,
+      nzKeyboard: false,
+      nzWidth: widthModal,
+      nzData: { tipo, accion },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: labelOk,
+          type: 'primary',
+          onClick: (componentInstance) => {
+            if (accion == 'RECREATE') {
+              return this.acuerdosService.agregarAcuerdoExpress(componentInstance!.acuerdoForm.value).then((res) => {
+                this.traerPedidos({})
+                this.modal.closeAll();
+              });
+            } else {
+              return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then((res) => {
+                this.modal.closeAll();
+              });
+            }
           },
-          {
-            label: labelOk,
-            type: 'primary',
-            onClick: (componentInstance) => {              
-              if (accion == 'RECREATE') {
-                return this.acuerdosService.agregarAcuerdoExpress(componentInstance!.acuerdoForm.value).then((res) => {
-                  this.traerPedidos({})
-                  this.modal.closeAll();
-                });
-              } else {
-                return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then((res) => {
-                  this.modal.closeAll();
-                });
-              }
-            },
-            loading: this.acuerdosService.isEditing(),
-            disabled: (componentInstance) => !componentInstance?.acuerdoForm.valid,
-          }
-        ]
-      });
-  
-      const instance = modal.getContentComponent();
-      modal.afterClose.subscribe(result => {
-        instance.acuerdoForm.reset();
-      });
-    }
+          loading: this.acuerdosService.isEditing(),
+          disabled: (componentInstance) => !componentInstance?.acuerdoForm.valid,
+        }
+      ]
+    });
+
+    const instance = modal.getContentComponent();
+    modal.afterClose.subscribe(result => {
+      instance.acuerdoForm.reset();
+    });
+  }
 
   onAddEdit(pedido: PedidoModel | null): void {
     // const title = pedido ? 'Editar Pedido' : 'Agregar Pedido';
@@ -369,7 +369,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     const labelOk = pedido ? 'Actualizar' : 'Agregar';
 
     this.pedidosService.seleccionarPedidoById(pedido?.prioridadID);
-    this.espaciosStore.listarEventos();
+    this.espaciosStore.listarEventos(null, 1, [1]);
 
     const modal = this.modal.create<PedidoComponent, PedidoType>({
       nzTitle: title,

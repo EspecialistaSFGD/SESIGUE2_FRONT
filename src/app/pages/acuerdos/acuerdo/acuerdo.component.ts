@@ -108,11 +108,11 @@ export class AcuerdoComponent {
       espacioCtrl?.setValidators([Validators.required]);
       es_preAcuerdoBoolCtrl?.patchValue(false);
 
-    if (this.nzModalData.accion == 'RECREATE') {
-      this.sizeColumns = 6
-      this.disabledSector = true
-      // const sector = Number(localStorage.getItem('codigoSector')) ?? 0            
-    }
+      if (this.nzModalData.accion == 'RECREATE') {
+        this.sizeColumns = 6
+        this.disabledSector = true
+        // const sector = Number(localStorage.getItem('codigoSector')) ?? 0
+      }
     }
 
     if (this.nzModalData.tipo == 'ACUERDO' && this.nzModalData.accion == 'CONVERT') {
@@ -140,24 +140,23 @@ export class AcuerdoComponent {
     // }
   }
 
-  obtenerEventos(){
-    this.espaciosStore.obtenerEventos(null, 1, 2, 1, 100, 'eventoId', 'descend')
-    .subscribe(resp => {      
-      this.espacios.set(resp.data);                  
-      if(resp.data.length >= 1){
-        this.acuerdoForm.get('espacioSelect')?.setValue(resp.data[0])
-        this.acuerdoForm.get('eventoId')?.setValue(resp.data[0].eventoId)
-      }
-    })
+  obtenerEventosEspacios() {
+    this.espaciosStore.obtenerEventos(null, 1, [2])
+      .subscribe(resp => {
+        this.espacios.set(resp.data);
+        if (resp.data.length >= 1) {
+          this.acuerdoForm.get('espacioSelect')?.setValue(resp.data[0])
+          this.acuerdoForm.get('eventoId')?.setValue(resp.data[0].eventoId)
+        }
+      })
   }
 
   ngOnInit(): void {
-    
-    this.obtenerEventos()    
+    this.obtenerEventosEspacios()
     const sector = Number(localStorage.getItem('codigoSector')) ?? 0
     this.sectoresStore.sectores().map(item => {
-      if(item.value == sector){        
-        const modelSector = item      
+      if (item.value == sector) {
+        const modelSector = item
         this.acuerdoForm.get('sectorSelect')?.setValue(modelSector)
       }
     })
@@ -202,7 +201,7 @@ export class AcuerdoComponent {
     const disCtrl = this.acuerdoForm.get('distritoSelect');
     disCtrl?.reset();
 
-    if (value && value.value) {      
+    if (value && value.value) {
       this.ubigeosStore.listarDistritos(value.value?.toString());
     }
 
@@ -270,7 +269,7 @@ export class AcuerdoComponent {
 
 
   crearAcuerdoForm(): void {
-    const preAcuerdoValue = this.acuerdoSeleccionado?.pre_acuerdo;  
+    const preAcuerdoValue = this.acuerdoSeleccionado?.pre_acuerdo;
 
     this.acuerdoForm = this.fb.group({
       acuerdoId: [this.acuerdoSeleccionado?.acuerdoId],
@@ -293,7 +292,7 @@ export class AcuerdoComponent {
       espacioSelect: [null],
       // sectorSelect: [{ value: '', disabled: this.nzModalData.accion == 'RECREATE' }],
       sectorSelect: [null],
-      tipoCodigoSelect: [ '2' ],
+      tipoCodigoSelect: ['2'],
       cuis: [null],
       departamentoSelect: [this.pedidoSeleccionado?.departamentoSelect],
       provinciaSelect: [this.pedidoSeleccionado?.provinciaSelect],
@@ -301,6 +300,6 @@ export class AcuerdoComponent {
       aspectoCriticoResolver: [null],
       ejeEstrategicoSelect: [null],
       tipoIntervencionSelect: [null],
-    });    
+    });
   }
 }
