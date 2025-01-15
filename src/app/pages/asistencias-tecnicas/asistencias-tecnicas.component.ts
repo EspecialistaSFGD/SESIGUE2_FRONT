@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
@@ -35,6 +35,7 @@ export class AsistenciasTecnicasComponent {
     total: 0
   }
 
+
   atencionActions: ButtonsActions = {
     new: false,
     edit: false,
@@ -58,6 +59,8 @@ export class AsistenciasTecnicasComponent {
   private ubigeoService = inject(UbigeosService)
   private authStore = inject(AuthService)
 
+
+  public navigationAuth = computed(() => this.authStore.navigationAuth())
 
   constructor() {
     this.getParams()
@@ -97,12 +100,10 @@ export class AsistenciasTecnicasComponent {
     });
   }
 
-  getPermissions(){
-    console.log(this.authStore.usuarioAuth());
-    
-    const navigation = this.authStore.navigationAuth()
-    const atenciones = navigation.find( nav => nav.descripcionItem == 'Atenciones')
-    atenciones?.botones?.map( btn => {
+  getPermissions() {
+    const navigation = this.authStore.navigationAuth()!
+    const atenciones = navigation.find(nav => nav.descripcionItem == 'Atenciones')
+    atenciones?.botones?.map(btn => {
       this.atencionActions.new = btn.descripcionBoton === 'Agregar' ? true : this.atencionActions.new
       this.atencionActions.edit = btn.descripcionBoton === 'Editar' ? true : this.atencionActions.edit
       this.atencionActions.delete = btn.descripcionBoton === 'Eliminar' ? true : this.atencionActions.delete

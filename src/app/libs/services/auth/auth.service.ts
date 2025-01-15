@@ -33,7 +33,8 @@ interface State {
   distrito: SelectModel | null;
   sector: SelectModel | null;
   permisos: PermisoModel | null;
-  codigoPerfil: number | null
+  codigoPerfil: number | null,
+  navigation: UsuarioNavigation[] | null
 }
 
 const DEFAULT_PERMISOS: PermisoModel = {
@@ -90,12 +91,13 @@ export class AuthService {
     sector: this.getSectorSelect(),
     permisos: this.getPermisos(),
     codigoPerfil: this.getCodigoPerfil(),
+    navigation: this.getNavigation()
   });
 
   public usuarioAuth = computed(() => this.#usuario())
 
-  private _navigationAuth = signal<UsuarioNavigation[]>([])
-  public navigationAuth = computed(() => this._navigationAuth())
+  // private _navigationAuth = signal<UsuarioNavigation[]>([])
+  public navigationAuth = computed(() => this.#usuario().navigation)
 
   public nombreTrabajador = computed(() => this.#usuario().nombreTrabajador);
   public token = computed(() => this.#usuario().token);
@@ -125,10 +127,10 @@ export class AuthService {
       tap((resp: ResponseModel) => {
         const data = resp.data;
 
+
         if (resp.success && data != null) {
           if (data.menus != null) {
-            const navigation = data.menus
-            this._navigationAuth.set(navigation)
+            this.#usuario.update((v) => ({ ...v, navigation: data.menus }));
 
             const menusTransformados = this.transformarMenuParaNgZorro(data.menus);
             data.menus = menusTransformados.menusTransformados;
@@ -146,7 +148,6 @@ export class AuthService {
             this.#usuario.update((v) => ({ ...v, isAuthenticated: true }));
           }
 
-          
           // this.#usuario.update((v) => ({ ...v, perfil: data.perfil }));
 
           if (data.nombreTrabajador != null) {
@@ -345,9 +346,9 @@ export class AuthService {
         ...menuPrincipal,
         children: subMenus.map(subMenu => ({
           ...subMenu,
-          botones: undefined // Eliminar la propiedad botones del submenú
+          // botones: undefined // Eliminar la propiedad botones del submenú
         })),
-        botones: undefined // Eliminar la propiedad botones del menú principal
+        // botones: undefined // Eliminar la propiedad botones del menú principal
       };
     });
 
@@ -390,6 +391,16 @@ export class AuthService {
     const permisos = JSON.parse(permisosFromStorage) as PermisoModel;
 
     return permisos;
+  }
+
+  private getNavigation(): UsuarioNavigation[] | null {
+    const navigationStorage = localStorage.getItem('menus') || null;
+
+    if (navigationStorage == null) return null;
+
+    const navigation = JSON.parse(navigationStorage) as UsuarioNavigation[];
+
+    return navigation;
   }
 
   private getSubTipo(): PedidoType | null {
@@ -595,6 +606,11 @@ export class AuthService {
             token: resp.data.token.codigo,
             refreshToken: resp.data.refreshToken.codigo,
           }));
+
+          if (resp.data.menus != null) {
+            const navigation = resp.data.menus
+            // this._navigationAuth.set(navigation)
+          }
         })
       );
   }
@@ -681,7 +697,8 @@ export class AuthService {
       distrito: null,
       sector: null,
       permisos: null,
-      codigoPerfil: null
+      codigoPerfil: null,
+      navigation: null
     });
 
     // window.location.reload();
