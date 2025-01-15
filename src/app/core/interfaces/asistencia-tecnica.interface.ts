@@ -48,6 +48,6 @@ export interface AsistenciaTecnicaResponse {
   evidenciaReunion: string,
   evidenciaAsistencia: string,
   estado?: boolean,
-  fechaRegistro?: Date
+  // fechaRegistro?: Date
   code?: number
 }

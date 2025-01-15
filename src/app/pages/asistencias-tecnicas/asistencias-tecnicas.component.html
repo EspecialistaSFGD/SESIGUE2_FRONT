@@ -9,7 +9,7 @@
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención</th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
       <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
-      <th nzWidth="150px" nzAlign="center"nzColumnKey="tipoEntidad" [nzSortFn]="true">Tipo de entidad</th>
+      <th nzWidth="150px" nzAlign="center" nzColumnKey="tipoEntidad" [nzSortFn]="true">Tipo de entidad</th>
       <th nzWidth="150px" nzColumnKey="entidad">Entidad</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="autoridad" [nzSortFn]="true">Autoridad</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
@@ -31,11 +31,15 @@
       <td nzAlign="center">{{getTextEnum(asistencia.clasificacion, 'clasificacion') | titlecase}}</td>
       <td nzAlign="center">
         <nz-space>
+          @if(atencionActions.edit){
           <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(asistencia)"><span nz-icon
               nzType="edit" nzTheme="outline"></span></button>
+          }
+          @if(atencionActions.delete){
           <button *nzSpaceItem nz-button nzDanger nzType="link"
             (click)="eliminarAsistencia(asistencia.asistenciaId!)"><span nz-icon nzType="delete"
               nzTheme="outline"></span></button>
+          }
         </nz-space>
       </td>
     </tr>
@@ -48,10 +52,12 @@
     <p class="mb-2 sm:mb-0">Resultados ({{pagination.total}})</p>
     <div>
       <nz-space>
+        @if(atencionActions.new){
         <button nz-button nzType="primary" (click)="crearAsistenciaTecnica()">
           <span nz-icon nzType="plus" nzTheme="outline"></span>
           <span class="button-text">Nueva Atención</span>
         </button>
+        }
       </nz-space>
     </div>
   </div>

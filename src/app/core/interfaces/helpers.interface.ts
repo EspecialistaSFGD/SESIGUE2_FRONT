@@ -10,3 +10,8 @@ export interface ItemEnum {
   value: string,
   text: string
 }
+export interface ButtonsActions {
+	new: boolean,
+	edit: boolean,
+	delete: boolean
+}
