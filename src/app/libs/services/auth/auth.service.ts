@@ -12,6 +12,7 @@ import { MenuModel } from '../../models/shared/menu.model';
 import { PermisoModel } from '../../models/auth/permiso.model';
 import { SelectModel } from '../../models/shared/select.model';
 import { PedidoType } from '../../shared/types/pedido.type';
+import { UsuarioNavigation, UsuarioPermisos } from '@core/interfaces';
 
 const codigoUsuario = Number(localStorage.getItem('codigoUsuario')) || 0;
 const codigoPerfil = Number(localStorage.getItem('codigoPerfil')) || 0;
@@ -91,6 +92,11 @@ export class AuthService {
     codigoPerfil: this.getCodigoPerfil(),
   });
 
+  public usuarioAuth = computed(() => this.#usuario())
+
+  private _navigationAuth = signal<UsuarioNavigation[]>([])
+  public navigationAuth = computed(() => this._navigationAuth())
+
   public nombreTrabajador = computed(() => this.#usuario().nombreTrabajador);
   public token = computed(() => this.#usuario().token);
   public reFresh = computed(() => this.#usuario().refreshToken);
@@ -117,11 +123,13 @@ export class AuthService {
 
     return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, ots).pipe(
       tap((resp: ResponseModel) => {
-
         const data = resp.data;
 
         if (resp.success && data != null) {
           if (data.menus != null) {
+            const navigation = data.menus
+            this._navigationAuth.set(navigation)
+
             const menusTransformados = this.transformarMenuParaNgZorro(data.menus);
             data.menus = menusTransformados.menusTransformados;
             data.permisos = menusTransformados.permisos;
@@ -135,9 +143,11 @@ export class AuthService {
             localStorage.setItem('permisos', JSON.stringify(data.permisos));
 
             this.#usuario.update((v) => ({ ...v, permisos: data.permisos }));
-
             this.#usuario.update((v) => ({ ...v, isAuthenticated: true }));
           }
+
+          
+          // this.#usuario.update((v) => ({ ...v, perfil: data.perfil }));
 
           if (data.nombreTrabajador != null) {
             if (data.nombreTrabajador != "") {
@@ -154,6 +164,7 @@ export class AuthService {
           }
 
           if (data.codigoPerfil != null && data.codigoPerfil != '') {
+            this.#usuario.update((v) => ({ ...v, codigoPerfil: data.codigoPerfil }));
             localStorage.setItem('codigoPerfil', data.codigoPerfil);
           }
 

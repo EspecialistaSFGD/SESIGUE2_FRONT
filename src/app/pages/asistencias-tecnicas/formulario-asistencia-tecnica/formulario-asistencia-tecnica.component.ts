@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, FechaService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
-import { AsistenciasTecnicasModalidad, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { ValidatorService } from '@core/services/validators';
 import { typeErrorControl } from '@core/helpers';
+import { AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, FechaService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
+import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { NzUploadFile } from 'ng-zorro-antd/upload';
+import { AuthService } from '@libs/services/auth/auth.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 @Component({
   selector: 'app-formulario-asistencia-tecnica',
@@ -57,6 +58,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   fileMeet: File | null = null;
   fileAttendance: File | null = null;
 
+  sector!: number
+
   pagination: Pagination = {
     code: 0,
     columnSort: 'lugarId',
@@ -84,6 +87,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private ssiService = inject(SsiService)
   private fechaService = inject(FechaService)
   private alcaldeService = inject(AlcaldesService)
+  private authStore = inject(AuthService)
 
   get congresistas(): FormArray {
     return this.formAsistencia.get('congresistas') as FormArray;
@@ -101,6 +105,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     tipo: ['', Validators.required],
     modalidad: ['', Validators.required],
     fechaAtencion: ['', Validators.required],
+    sectorId: [''],
     lugarId: ['', Validators.required],
     tipoEntidadId: ['', Validators.required],
     entidadId: ['1', Validators.required],
@@ -124,8 +129,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     agendas: this.fb.array([])
   })
 
+
+
   ngOnChanges(changes: SimpleChanges) {
-    // this.setFormData()
+    this.sector = this.authStore.usuarioAuth().codigoPerfil!
     this.setParamsData()
   }
 
@@ -156,7 +163,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   ngOnInit() {
-    // this.setFormData()
+    // console.log(this.authStore.Usuario());    
     this.getAllPlaces()
     this.getAllTipoEntidades()
     this.getAllEspacios()
@@ -176,29 +183,12 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     let dniAutoridad = ''
 
     if (!this.create) {
-      // const fechaAtencion = this.asistenciaTecnica.fechaAtencion
-      // const autoridad = this.asistenciaTecnica.autoridad
-      // const ubigeo = this.asistenciaTecnica.ubigeoEntidad
-      // const departamento = ubigeo.slice(0, 2)
-      // const provincia = ubigeo.slice(0, 4)
-      // const distrito = ubigeo
-      // const entidad = this.asistenciaTecnica.nombreEntidad
-      // let dniAutoridad = this.asistenciaTecnica.dniAutoridad
-
       this.setCongresistasParams()
       this.setParticipantesParams()
       this.setAgendasParams()
-
     }
     const setUbigeo = `${provincia}01`
-    // console.log('PARAMS');
-    // console.log(departamento);
-    // console.log(provincia);
-    // console.log(distrito);
-
     this.formAsistencia.reset({ ...this.asistenciaTecnica, fechaAtencion, autoridad, dniAutoridad, departamento, provincia: setUbigeo, distrito, ubigeo, entidad })
-
-    // console.log(this.formAsistencia.value);
   }
 
   setCongresistasParams() {
