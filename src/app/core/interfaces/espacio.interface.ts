@@ -6,7 +6,8 @@ export interface EspaciosResponses extends DataResponses {
 
 export interface EspacioResponse {
 	espacioId?: string,
-	nombre: string
+	nombre: string,
+	estado: boolean
 }
 
 export interface EspacioStoreResponse {

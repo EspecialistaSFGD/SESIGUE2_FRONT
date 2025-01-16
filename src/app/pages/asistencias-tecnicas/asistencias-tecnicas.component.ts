@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -34,7 +35,15 @@ export class AsistenciasTecnicasComponent {
     total: 0
   }
 
-  paramsExist: boolean = false
+
+  atencionActions: ButtonsActions = {
+    new: false,
+    edit: false,
+    delete: false
+  }
+
+  loadingData: boolean = true
+  // paramsExist: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
   showNzModal: boolean = false
@@ -43,19 +52,29 @@ export class AsistenciasTecnicasComponent {
   tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value: value.toLowerCase(), text }))
   modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value: value.toLowerCase(), text }))
   clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }))
+  public orientaciones:ItemEnum[] = [
+    { value: '1', text: 'Actividad' },
+    { value: '2', text: 'Proyecto' },
+    { value: '3', text: 'Idea' },
+    { value: '4', text: 'Programa' }
+  ]
 
   private modal = inject(NzModalService);
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
   private ubigeoService = inject(UbigeosService)
+  private authStore = inject(AuthService)
 
+
+  public navigationAuth = computed(() => this.authStore.navigationAuth())
 
   constructor() {
     this.getParams()
   }
 
   ngOnInit() {
+    this.getPermissions()
     this.obtenerAsistenciasTecnicas()
     this.obtenerDepartamentos()
   }
@@ -63,7 +82,8 @@ export class AsistenciasTecnicasComponent {
   getParams() {
     this.route.queryParams.subscribe(params => {
       if (Object.keys(params).length > 0) {
-        this.paramsExist = true
+        // this.paramsExist = true
+        this.loadingData = false
         const relations = [
           { param: 'entidad', field: 'entidadId' },
           { param: 'tipoEntidad', field: 'tipoEntidadId' },
@@ -88,9 +108,20 @@ export class AsistenciasTecnicasComponent {
     });
   }
 
+  getPermissions() {
+    const navigation = this.authStore.navigationAuth()!
+    const atenciones = navigation.find(nav => nav.descripcionItem == 'Atenciones')
+    atenciones?.botones?.map(btn => {
+      this.atencionActions.new = btn.descripcionBoton === 'Agregar' ? true : this.atencionActions.new
+      this.atencionActions.edit = btn.descripcionBoton === 'Editar' ? true : this.atencionActions.edit
+      this.atencionActions.delete = btn.descripcionBoton === 'Eliminar' ? true : this.atencionActions.delete
+    })
+  }
+
   obtenerAsistenciasTecnicas() {
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas(this.pagination)
       .subscribe(resp => {
+        this.loadingData = false
         if (resp.success == true) {
           this.asistenciasTecnicas.set(resp.data)
           const { pageIndex, pageSize, total } = resp.info!
@@ -178,10 +209,12 @@ export class AsistenciasTecnicasComponent {
     this.create = true
     const fechaAtencion = new Date();
     this.asistenciaTecnica = {
+      tipoPerfil: '',
       tipo: '',
       modalidad: '',
       fechaAtencion,
       lugarId: '',
+      sectorId: '',
       nombreLugar: '',
       tipoEntidadId: '',
       nombreTipoEntidad: '',
@@ -192,11 +225,14 @@ export class AsistenciasTecnicasComponent {
       dniAutoridad: '',
       nombreAutoridad: '',
       cargoAutoridad: '',
+      contactoAutoridad: '',
       congresista: false,
       dniCongresista: '',
       nombreCongresista: '',
       clasificacion: '',
       espacioId: '',
+      unidadId: '',
+      orientacionId: '',
       nombreEspacio: '',
       tema: '',
       comentarios: '',
