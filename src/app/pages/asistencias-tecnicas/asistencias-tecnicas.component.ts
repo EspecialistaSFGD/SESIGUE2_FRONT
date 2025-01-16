@@ -42,7 +42,8 @@ export class AsistenciasTecnicasComponent {
     delete: false
   }
 
-  paramsExist: boolean = false
+  loadingData: boolean = true
+  // paramsExist: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
   showNzModal: boolean = false
@@ -75,7 +76,8 @@ export class AsistenciasTecnicasComponent {
   getParams() {
     this.route.queryParams.subscribe(params => {
       if (Object.keys(params).length > 0) {
-        this.paramsExist = true
+        // this.paramsExist = true
+        this.loadingData = false
         const relations = [
           { param: 'entidad', field: 'entidadId' },
           { param: 'tipoEntidad', field: 'tipoEntidadId' },
@@ -113,6 +115,7 @@ export class AsistenciasTecnicasComponent {
   obtenerAsistenciasTecnicas() {
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas(this.pagination)
       .subscribe(resp => {
+        this.loadingData = false
         if (resp.success == true) {
           this.asistenciasTecnicas.set(resp.data)
           const { pageIndex, pageSize, total } = resp.info!

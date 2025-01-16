@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, FechaService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
+import { SectoresStore } from '@libs/shared/stores/sectores.store';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 
@@ -43,12 +44,15 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   tipoMancomunidad: string = ''
 
   entidad: EntidadResponse[] = []
+  // public sectores = signal<SectorResponse[]>([])
   public lugares = signal<LugarResponse[]>([])
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   public mancomunidades = signal<EntidadResponse[]>([])
   public espacios = signal<EspacioResponse[]>([])
   public gobiernoParticipantes = signal<NivelGobiernoResponse[]>([])
   public agendaClasificaciones = signal<ClasificacionResponse[]>([])
+
+  perfil!: number
 
   temaCount = 1500
   comentariosCount = 900
@@ -57,8 +61,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   fileListAttendance: NzUploadFile[] = [];
   fileMeet: File | null = null;
   fileAttendance: File | null = null;
-
-  sector!: number
 
   pagination: Pagination = {
     code: 0,
@@ -89,6 +91,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private alcaldeService = inject(AlcaldesService)
   private authStore = inject(AuthService)
 
+  public sectoresStore = inject(SectoresStore)
+
   get congresistas(): FormArray {
     return this.formAsistencia.get('congresistas') as FormArray;
   }
@@ -105,7 +109,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     tipo: ['', Validators.required],
     modalidad: ['', Validators.required],
     fechaAtencion: ['', Validators.required],
-    sectorId: [''],
+    sectorId: [this.authStore.sector()?.value],
+    sector: ['frferfewrfer'],
     lugarId: ['', Validators.required],
     tipoEntidadId: ['', Validators.required],
     entidadId: ['1', Validators.required],
@@ -129,11 +134,33 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     agendas: this.fb.array([])
   })
 
-
-
   ngOnChanges(changes: SimpleChanges) {
-    this.sector = this.authStore.usuarioAuth().codigoPerfil!
+    this.setSectorForm()
     this.setParamsData()
+  }
+
+  setSectorForm() {
+
+    this.perfil = this.authStore.usuarioAuth().codigoPerfil!
+    if (this.perfil === 12) {
+      this.formAsistencia.get('tipo')?.setValue('atencion')
+      const sectorAuth = this.authStore.sector()
+
+      // const sectores: SectorResponse[] = this.sectoresStore.sectores().map(item => {
+      //   return { value: item.value, label: item.label }
+      // }) as SectorResponse[]
+
+      // this.sectores.set(sectores)
+
+
+      console.log(this.authStore.sector());
+      this.formAsistencia.reset({ sectorId: sectorAuth?.value, sector: sectorAuth?.label })
+
+      this.formAsistencia.get('sectorId')?.patchValue(sectorAuth?.value)
+      console.log(this.sectoresStore.sectores());
+      console.log(this.formAsistencia.value);
+
+    }
   }
 
   alertMessageError(control: string) {
@@ -334,6 +361,17 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       .subscribe(resp => {
         if (resp.success = true) {
           this.lugares.set(resp.data)
+          // const estado = this.sector === 12 ? true : false
+          // const lugares: LugarResponse[] = []
+          // resp.data.find(item => {
+          //   if (item.estado == estado) {
+          //     lugares.push(item)
+          //   }
+          //   if (!estado) {
+          //     this.formAsistencia.get('lugarId')?.setValue(item.lugarId)
+          //   }
+          // })
+          // this.lugares.set(lugares)
         }
       })
   }
@@ -374,7 +412,17 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.clasificacionService.getAllClasificaciones(this.pagination)
       .subscribe(resp => {
         if (resp.success = true) {
-          this.agendaClasificaciones.set(resp.data)
+          const estado = this.perfil === 12 ? true : false
+          const clasificaciones: ClasificacionResponse[] = []
+          resp.data.find(item => {
+            if (item.estado == estado) {
+              clasificaciones.push(item)
+            }
+            if (!estado) {
+              this.formAsistencia.get('clasificacionId')?.setValue(item.clasificacionId)
+            }
+          })
+          this.agendaClasificaciones.set(clasificaciones)
         }
       })
   }
@@ -436,7 +484,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       const controlDpto = this.formAsistencia.get('departamento')
       const controlProv = this.formAsistencia.get('provincia')
       const controlDist = this.formAsistencia.get('distrito')
-      
+
       this.provincias.set([])
       this.distritos.set([])
       console.log('CHANGE TIPO');
@@ -471,7 +519,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
           } else {
             this.provincias.set([])
           }
-        } else if(this.tipoMancomunidad == 'GR'){
+        } else if (this.tipoMancomunidad == 'GR') {
           this.changeAutoridad()
         }
         if (controlUbigeo?.value) {
@@ -657,9 +705,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       if (!this.mancomunidadesAbrev.includes(this.tipoMancomunidad)) {
         if (this.tipoMancomunidad == 'GL') {
           controlProvincia?.enable()
-        } else if (this.tipoMancomunidad == 'GR'){
-        this.changeAutoridad()
+        } else if (this.tipoMancomunidad == 'GR') {
+          // this.changeAutoridad()
         }
+        this.changeAutoridad()
       }
     }
   }
@@ -743,7 +792,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const tipoEntidad = this.formAsistencia.get('tipoEntidadId')?.value
     // console.log(tipoEntidad);
     // console.log(this.tipoMancomunidad);
-    
+
     this.ubigeoService.getProvinces(departamento)
       .subscribe(resp => {
         if (resp.success == true) {
@@ -756,7 +805,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   obtenerUbigeoDistritos(provincia: string) {
     console.log('Activar distrito');
-    
+
     this.districtDisabled = false
     this.ubigeoService.getDistricts(provincia)
       .subscribe(resp => {

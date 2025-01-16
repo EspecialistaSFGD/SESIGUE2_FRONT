@@ -3,6 +3,7 @@
   nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
   <ng-container *nzModalContent>
     <form [formGroup]="formAsistencia" nz-form nzLayout="vertical" autocomplete="off">
+      @if (perfil === 12) {
       <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="12">
           <nz-form-item>
@@ -17,6 +18,7 @@
           </nz-form-item>
         </div>
       </div>
+      }
       <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="6">
           <nz-form-item>
@@ -31,6 +33,7 @@
           </nz-form-item>
         </div>
         <div nz-col nzSpan="6">
+          @if (perfil === 12) {
           <nz-form-item>
             <nz-form-label [nzSpan]="null">Modalidad</nz-form-label>
             <nz-radio-group class="radio-form-control" formControlName="modalidad" (ngModelChange)="obtenerModalidad()">
@@ -41,6 +44,24 @@
             <div class="text-danger" *ngIf="alertMessageError('modalidad')">{{msgErrorControl('modalidad','Modalidad')}}
             </div>
           </nz-form-item>
+          } @else if (perfil === 1) {
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null" nzFor="sectorId">Sector</nz-form-label>
+            <nz-form-control nzSpan="null">
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="sector" placeholder="" formControlName="sector">
+              </nz-form-control>
+              <!-- <nz-select nzPlaceHolder="Seleccionat lugar" id="sectorId" class="select-form-control"
+                formControlName="sectorId" nzAllowClear nzShowSearch>
+                @for (sector of sectores(); track $index) {
+                <nz-option [nzValue]="sector.value" nzLabel="{{sector.label}} - {{sector.value}}"></nz-option>
+                }
+              </nz-select> -->
+              <div class="text-danger" *ngIf="alertMessageError('sectorId')">{{msgErrorControl('sectorId','Sector')}}
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+          }
         </div>
         <div nz-col nzSpan="6">
           <nz-form-item>
@@ -207,6 +228,8 @@
           </nz-form-item>
         </div>
       </div>
+
+      @if(perfil === 12){
       <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="24">
           <div class="border border-solid border-grey-800 ">
@@ -280,6 +303,8 @@
           </div>
         </div>
       </div>
+      }
+
       <!-- <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="6">
           <nz-form-item>

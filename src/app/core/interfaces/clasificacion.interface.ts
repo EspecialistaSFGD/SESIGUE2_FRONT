@@ -6,5 +6,6 @@ export interface ClasificacionesResponses extends DataResponses {
 
 export interface ClasificacionResponse {
   clasificacionId?: string,
-  nombre: string
+  nombre: string,
+  estado: boolean
 }
