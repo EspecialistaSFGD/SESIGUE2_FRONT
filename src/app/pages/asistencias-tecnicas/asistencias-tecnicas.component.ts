@@ -52,6 +52,12 @@ export class AsistenciasTecnicasComponent {
   tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value: value.toLowerCase(), text }))
   modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value: value.toLowerCase(), text }))
   clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }))
+  public orientaciones:ItemEnum[] = [
+    { value: '1', text: 'Actividad' },
+    { value: '2', text: 'Proyecto' },
+    { value: '3', text: 'Idea' },
+    { value: '4', text: 'Programa' }
+  ]
 
   private modal = inject(NzModalService);
   private router = inject(Router);
@@ -203,10 +209,12 @@ export class AsistenciasTecnicasComponent {
     this.create = true
     const fechaAtencion = new Date();
     this.asistenciaTecnica = {
+      tipoPerfil: '',
       tipo: '',
       modalidad: '',
       fechaAtencion,
       lugarId: '',
+      sectorId: '',
       nombreLugar: '',
       tipoEntidadId: '',
       nombreTipoEntidad: '',
@@ -217,11 +225,14 @@ export class AsistenciasTecnicasComponent {
       dniAutoridad: '',
       nombreAutoridad: '',
       cargoAutoridad: '',
+      contactoAutoridad: '',
       congresista: false,
       dniCongresista: '',
       nombreCongresista: '',
       clasificacion: '',
       espacioId: '',
+      unidadId: '',
+      orientacionId: '',
       nombreEspacio: '',
       tema: '',
       comentarios: '',

@@ -23,9 +23,11 @@ export enum AsistenciasTecnicasClasificacion {
 export interface AsistenciaTecnicaResponse {
   asistenciaId?: string,
   codigo?: string,
+  tipoPerfil: string,
   tipo: string,
   modalidad: string,
   fechaAtencion: Date,
+  sectorId: string,
   lugarId: string,
   nombreLugar: string,
   tipoEntidadId: string,
@@ -37,11 +39,14 @@ export interface AsistenciaTecnicaResponse {
   dniAutoridad: string,
   nombreAutoridad: string,
   cargoAutoridad: string,
+  contactoAutoridad: string,
   congresista: boolean,
   dniCongresista: string,
   nombreCongresista: string,
   clasificacion: string,
   espacioId: string,
+  unidadId: string,
+  orientacionId: string,
   nombreEspacio: string,
   tema: string,
   comentarios: string,
@@ -49,5 +54,5 @@ export interface AsistenciaTecnicaResponse {
   evidenciaAsistencia: string,
   estado?: boolean,
   // fechaRegistro?: Date
-  code?: number
+  code?: number,
 }
