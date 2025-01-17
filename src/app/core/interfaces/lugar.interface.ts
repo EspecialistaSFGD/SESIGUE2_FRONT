@@ -6,5 +6,6 @@ export interface LugaresResponses extends DataResponses {
 
 export interface LugarResponse {
   lugarId?: string,
-  nombre: string
+  nombre: string,
+  estado: boolean
 }

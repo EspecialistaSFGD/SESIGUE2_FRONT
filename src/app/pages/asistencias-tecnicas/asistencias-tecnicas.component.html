@@ -1,12 +1,12 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-  [nzData]="asistenciasTecnicas()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="pagination.total"
+  [nzData]="asistenciasTecnicas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total"
   [nzPageSize]="pagination.pageSize" [nzPageIndex]="pagination.currentPage"
   (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
       <!-- <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código</th> -->
-      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención</th>
+      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención </th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
       <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="tipoEntidad" [nzSortFn]="true">Tipo de entidad</th>
@@ -65,5 +65,5 @@
 
 <app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos"
   [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica" [departamentos]="departamentos()"
-  [clasificaciones]="clasificaciones" (addFormDate)="getAddFormAdded($event)"
+  [clasificaciones]="clasificaciones" [orientaciones]="orientaciones" (addFormDate)="getAddFormAdded($event)"
   (setCloseShow)="showNzModal = false"></app-formulario-asistencia-tecnica>
