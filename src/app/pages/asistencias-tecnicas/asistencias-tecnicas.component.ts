@@ -42,7 +42,7 @@ export class AsistenciasTecnicasComponent {
     delete: false
   }
 
-  loadingData: boolean = true
+  loadingData: boolean = false
   // paramsExist: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
@@ -52,7 +52,7 @@ export class AsistenciasTecnicasComponent {
   tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value: value.toLowerCase(), text }))
   modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value: value.toLowerCase(), text }))
   clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }))
-  public orientaciones:ItemEnum[] = [
+  public orientaciones: ItemEnum[] = [
     { value: '1', text: 'Actividad' },
     { value: '2', text: 'Proyecto' },
     { value: '3', text: 'Idea' },
@@ -80,6 +80,7 @@ export class AsistenciasTecnicasComponent {
   }
 
   getParams() {
+    this.loadingData = true
     this.route.queryParams.subscribe(params => {
       if (Object.keys(params).length > 0) {
         // this.paramsExist = true
@@ -119,6 +120,7 @@ export class AsistenciasTecnicasComponent {
   }
 
   obtenerAsistenciasTecnicas() {
+    this.loadingData = true
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas(this.pagination)
       .subscribe(resp => {
         this.loadingData = false
@@ -147,10 +149,6 @@ export class AsistenciasTecnicasComponent {
 
   getTextEnum(value: string, kind: string): string {
     let text = value
-    console.log('TEXT ENUM');
-    console.log(kind);
-    console.log(value);
-    
     if (kind == 'tipo') {
       text = this.tipos.find(item => item.value.toLowerCase() == value)!.text
     } else if (kind == 'modalidad') {
