@@ -58,6 +58,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   controlCui:boolean = false
   columnUbigeo: string = '6'
+  columnaSpace: string = '6'
+  columnaComments: string = '24'
   placeId: string = ''
   spaceId: string = ''
   clasificaId: string = ''
@@ -154,7 +156,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.perfil = this.authStore.usuarioAuth().codigoPerfil!
     if(this.perfil === 1){
       // this.addAgendadRow()
-      this.columnUbigeo = '4'      
+      this.columnUbigeo = '4'  
+      this.columnaSpace = '12'    
+      this.columnaComments = '12'    
       const sectorAuth = this.authStore.sector()
       this.entidadesStore.listarEntidades(0, 1, Number(sectorAuth?.value));
       this.formAsistencia.setValidators([Validators.required])
@@ -208,7 +212,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const provincia = this.create ? '' : ubigeo.slice(0, 4)
     const distrito = this.create ? '' : ubigeo
     const entidad = this.create ? '' : this.asistenciaTecnica.nombreEntidad
-    const sectorId = this.create ? sectorAuth?.value : this.asistenciaTecnica.sectorId
+    let sectorId = this.create ? sectorAuth?.value : this.asistenciaTecnica.sectorId
     let lugarId = this.create ? '' : this.asistenciaTecnica.lugarId
     let clasificacion = this.create ? '' : this.asistenciaTecnica.clasificacion
     let espacioId = this.create ? '' : this.asistenciaTecnica.espacioId
@@ -221,12 +225,13 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.setAgendasParams()
     } else {
       if(this.perfil === 1){
+        sectorId = sectorAuth?.value
         tipoPerfil = 1
         tipo = 'atencion'
         clasificacion = 'inversion'
         lugarId = this.placeId
         espacioId = this.spaceId
-        modalidad = AsistenciasTecnicasModalidad.PRESENCIAL.toLowerCase()        
+        modalidad = AsistenciasTecnicasModalidad.PRESENCIAL       
       }
     }
     // console.log(sectorAuth);    
