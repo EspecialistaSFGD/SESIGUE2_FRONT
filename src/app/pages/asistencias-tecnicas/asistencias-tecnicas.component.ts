@@ -121,8 +121,6 @@ export class AsistenciasTecnicasComponent {
   obtenerAsistenciasTecnicas() {
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas(this.pagination)
       .subscribe(resp => {
-        console.log(resp);
-        
         this.loadingData = false
         if (resp.success == true) {
           this.asistenciasTecnicas.set(resp.data)
@@ -148,37 +146,17 @@ export class AsistenciasTecnicasComponent {
   }
 
   getTextEnum(value: string, kind: string): string {
-    console.log(kind);
-    
     let text = value
+    console.log('TEXT ENUM');
+    console.log(kind);
+    console.log(value);
+    
     if (kind == 'tipo') {
-      // const tex = this.tipos.find(item => item.value.toLowerCase() == value)!.text
-      this.tipos.find(item => {
-        // item.value.toLowerCase() == value
-        console.log(item.value);
-        console.log(value);
-        
-      })
-      // console.log(text);
-      
+      text = this.tipos.find(item => item.value.toLowerCase() == value)!.text
     } else if (kind == 'modalidad') {
-      this.modalidaades.find(item => {
-        // item.value.toLowerCase() == value
-        console.log(item.value);
-        console.log(value);
-        
-      })
-      // const tex = this.modalidaades.find(item => item.value.toLowerCase() == value)!.text
-      // console.log(text);
+      text = this.modalidaades.find(item => item.value.toLowerCase() == value)!.text
     } else if (kind == 'clasificacion') {
-      this.clasificaciones.find(item => {
-        // item.value.toLowerCase() == value
-        console.log(item.value);
-        console.log(value);
-        
-      })
-      // const tex = this.clasificaciones.find(item => item.value.toLowerCase() == value)!.text
-      // console.log(text);
+      text = this.clasificaciones.find(item => item.value.toLowerCase() == value)!.text
     }
     return text
   }

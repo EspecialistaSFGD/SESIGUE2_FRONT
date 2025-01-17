@@ -7,7 +7,8 @@ export interface AsistenciasTecnicasResponse extends DataResponses {
 export enum AsistenciasTecnicasTipos {
   ASESORAMIENTO = 'asesoramiento',
   ASISTENCIA = 'asistencia técnica',
-  COORDINACION = 'coordinación'
+  COORDINACION = 'coordinación',
+  ATENCION = 'atención'
 }
 
 export enum AsistenciasTecnicasModalidad {
