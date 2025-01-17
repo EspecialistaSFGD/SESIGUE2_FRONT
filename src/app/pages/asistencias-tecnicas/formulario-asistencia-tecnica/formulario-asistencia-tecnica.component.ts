@@ -56,7 +56,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   perfil!: number
 
-  controlCui:boolean = false
+  controlCui: boolean = false
   columnUbigeo: string = '6'
   columnaSpace: string = '6'
   columnaComments: string = '24'
@@ -154,11 +154,11 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   getSectorAuth() {
     this.perfil = this.authStore.usuarioAuth().codigoPerfil!
-    if(this.perfil === 1){
+    if (this.perfil === 1) {
       // this.addAgendadRow()
-      this.columnUbigeo = '4'  
-      this.columnaSpace = '12'    
-      this.columnaComments = '12'    
+      this.columnUbigeo = '4'
+      this.columnaSpace = '12'
+      this.columnaComments = '12'
       const sectorAuth = this.authStore.sector()
       this.entidadesStore.listarEntidades(0, 1, Number(sectorAuth?.value));
       this.formAsistencia.setValidators([Validators.required])
@@ -191,14 +191,14 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     return typeErrorControl(text, errors)
   }
 
-  ngOnInit() {   
+  ngOnInit() {
     this.getAllPlaces()
     this.getAllTipoEntidades()
     this.getAllEspacios()
     this.getAllNivelGobiernos()
     this.getAllClasificaciones()
     this.obtenerFechaLaborales()
-    this.getSectorAuth()   
+    this.getSectorAuth()
   }
 
   setParamsData() {
@@ -212,32 +212,41 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const provincia = this.create ? '' : ubigeo.slice(0, 4)
     const distrito = this.create ? '' : ubigeo
     const entidad = this.create ? '' : this.asistenciaTecnica.nombreEntidad
-    let sectorId = this.create ? sectorAuth?.value : this.asistenciaTecnica.sectorId
+    const orientacionId = this.create ? '' : `${this.asistenciaTecnica.orientacionId}`
+    let sectorId = this.create ? '' : this.asistenciaTecnica.sectorId
     let lugarId = this.create ? '' : this.asistenciaTecnica.lugarId
     let clasificacion = this.create ? '' : this.asistenciaTecnica.clasificacion
     let espacioId = this.create ? '' : this.asistenciaTecnica.espacioId
     let tipoPerfil = 0
-    let dniAutoridad = ''
+    let dniAutoridad = this.create ? '' : this.asistenciaTecnica.dniAutoridad
+    let contactoAutoridad = this.create ? '' : this.asistenciaTecnica.contactoAutoridad
+
+    console.log(this.asistenciaTecnica);
+
 
     if (!this.create) {
       this.setCongresistasParams()
       this.setParticipantesParams()
       this.setAgendasParams()
+      if (this.perfil === 1) {
+        sectorId = sectorAuth?.value! as string
+      }
     } else {
-      if(this.perfil === 1){
-        sectorId = sectorAuth?.value
+      if (this.perfil === 1) {
+        sectorId = sectorAuth?.value! as string
         tipoPerfil = 1
         tipo = 'atencion'
         clasificacion = 'inversion'
         lugarId = this.placeId
         espacioId = this.spaceId
-        modalidad = AsistenciasTecnicasModalidad.PRESENCIAL       
+        modalidad = AsistenciasTecnicasModalidad.PRESENCIAL
       }
     }
-    // console.log(sectorAuth);    
 
     const setUbigeo = `${provincia}01`
-    this.formAsistencia.reset({ ...this.asistenciaTecnica, tipo, fechaAtencion, autoridad, dniAutoridad, departamento, provincia: setUbigeo, distrito, ubigeo, entidad, sectorId, lugarId, clasificacion, espacioId, tipoPerfil,modalidad })    
+    this.formAsistencia.reset({ ...this.asistenciaTecnica, tipo, fechaAtencion, autoridad, dniAutoridad, contactoAutoridad, departamento, provincia: setUbigeo, distrito, ubigeo, entidad, sectorId, lugarId, clasificacion, espacioId, tipoPerfil, modalidad, orientacionId })
+    console.log(this.formAsistencia.value);
+
   }
 
   setCongresistasParams() {
@@ -380,7 +389,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   getAllPlaces() {
     this.lugarService.getAllLugares(this.pagination)
-      .subscribe(resp => {        
+      .subscribe(resp => {
         if (resp.success = true) {
           const estado = this.perfil === 12 ? true : false
           const lugares: LugarResponse[] = []
@@ -411,7 +420,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.pagination.columnSort = 'nombre'
     this.pagination.pageSize = 20
     this.espacioService.getAllEspacios(this.pagination)
-      .subscribe(resp => {       
+      .subscribe(resp => {
         if (resp.success = true) {
           const estado = this.perfil === 12 ? true : false
           const espacios: EspacioResponse[] = []
@@ -419,9 +428,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
             if (item.estado == estado) {
               espacios.push(item)
             }
-            if (!item.estado) {        
+            if (!item.estado) {
               this.spaceId = item.espacioId!
-            }            
+            }
           })
           this.espacios.set(espacios)
         }
@@ -441,7 +450,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   getAllClasificaciones() {
     this.pagination.columnSort = 'nombre'
     this.clasificacionService.getAllClasificaciones(this.pagination)
-      .subscribe(resp => {        
+      .subscribe(resp => {
         if (resp.success = true) {
           const estado = this.perfil === 12 ? true : false
           const clasificaciones: ClasificacionResponse[] = []
@@ -449,7 +458,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
             if (item.estado == estado) {
               clasificaciones.push(item)
             }
-            if(!item.estado){
+            if (!item.estado) {
               this.clasificaId = item.clasificacionId!
             }
           })
@@ -518,7 +527,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
       this.provincias.set([])
       this.distritos.set([])
-      console.log('CHANGE TIPO');
       controlProv?.disable()
       this.districtDisabled = true
       // controlDist?.disable()
@@ -679,7 +687,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     }
   }
 
-  addAgendadRow(){
+  addAgendadRow() {
     const agendaRow = this.fb.group({
       agendaId: [''],
       clasificacionId: ['', Validators.required],
@@ -843,7 +851,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   obtenerUbigeoDistritos(provincia: string) {
-    if(provincia){
+    if (provincia) {
       this.districtDisabled = false
       this.ubigeoService.getDistricts(provincia)
         .subscribe(resp => {
@@ -918,12 +926,12 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     return inversion
   }
 
-  obtenerOrientacion(){
+  obtenerOrientacion() {
     const orientacion = this.formAsistencia.get('orientacionId')?.value
-    const cuis:number[] = [2,3]
+    const cuis: number[] = [2, 3]
     const agendas = this.formAsistencia.get('agendas') as FormArray
-    if(cuis.includes(Number(orientacion))){
-      if(agendas.length == 0){
+    if (cuis.includes(Number(orientacion))) {
+      if (agendas.length == 0) {
         this.addAgendadRow()
       }
       agendas.at(0).get('clasificacionId')?.setValue(this.clasificaId)
@@ -950,8 +958,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   saveOrEdit() {
     console.log(this.formAsistencia.value);
     console.log(this.formAsistencia.invalid);
-    
-    
+
+
     if (this.formAsistencia.invalid) {
       return this.formAsistencia.markAllAsTouched()
     }
