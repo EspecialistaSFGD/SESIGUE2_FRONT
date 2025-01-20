@@ -213,7 +213,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const distrito = this.create ? '' : ubigeo
     const entidad = this.create ? '' : this.asistenciaTecnica.nombreEntidad
     const orientacionId = this.create ? '' : `${this.asistenciaTecnica.orientacionId}`
-    let sectorId = this.create ? '' : this.asistenciaTecnica.sectorId
+    let sectorId = this.create ? `${sectorAuth?.value!}`  : this.asistenciaTecnica.sectorId
     let lugarId = this.create ? '' : this.asistenciaTecnica.lugarId
     let clasificacion = this.create ? '' : this.asistenciaTecnica.clasificacion
     let espacioId = this.create ? '' : this.asistenciaTecnica.espacioId
@@ -221,19 +221,16 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     let dniAutoridad = this.create ? '' : this.asistenciaTecnica.dniAutoridad
     let contactoAutoridad = this.create ? '' : this.asistenciaTecnica.contactoAutoridad
 
-    console.log(this.asistenciaTecnica);
-
-
     if (!this.create) {
       this.setCongresistasParams()
       this.setParticipantesParams()
       this.setAgendasParams()
       if (this.perfil === 1) {
-        sectorId = sectorAuth?.value! as string
+        // sectorId = sectorAuth?.value! as string
       }
     } else {
       if (this.perfil === 1) {
-        sectorId = sectorAuth?.value! as string
+        // sectorId = sectorAuth?.value! as string
         tipoPerfil = 1
         tipo = 'atencion'
         clasificacion = 'inversion'
@@ -245,8 +242,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
     const setUbigeo = `${provincia}01`
     this.formAsistencia.reset({ ...this.asistenciaTecnica, tipo, fechaAtencion, autoridad, dniAutoridad, contactoAutoridad, departamento, provincia: setUbigeo, distrito, ubigeo, entidad, sectorId, lugarId, clasificacion, espacioId, tipoPerfil, modalidad, orientacionId })
-    console.log(this.formAsistencia.value);
-
   }
 
   setCongresistasParams() {
@@ -956,10 +951,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   saveOrEdit() {
-    console.log(this.formAsistencia.value);
-    console.log(this.formAsistencia.invalid);
-
-
     if (this.formAsistencia.invalid) {
       return this.formAsistencia.markAllAsTouched()
     }
@@ -973,8 +964,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     let congresistas = formValues.congresistas
     let participantes = formValues.participantes
     let agendas = formValues.agendas
-
-    console.log(formValues)
 
     if (this.create) {
       this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ...formValues, fechaAtencion })
