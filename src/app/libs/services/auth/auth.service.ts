@@ -462,7 +462,7 @@ export class AuthService {
 
     let ots: UsuarioRequestModel = {} as UsuarioRequestModel;
 
-    if (usuario.perfil) ots.codigoPerfil = Number(usuario.perfil.value);
+    if (usuario.perfil) ots.codigoPerfil = Number(usuario.perfil); //Number(usuario.perfil.value);
     if (usuario.tipo) ots.tipo = Number(usuario.tipo.value);
     if (usuario.sector) ots.sector = Number(usuario.sector.value);
     if (usuario.dep != null && usuario.dep != undefined) ots.codigoDepartamento = usuario.dep.value!.toString();

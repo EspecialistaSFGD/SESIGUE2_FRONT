@@ -222,8 +222,10 @@ export class RegisterComponent {
   onPerfilChange(event: SelectModel): void { }
 
   onRegister(): void {
+    this.registerForm.get('perfil')?.patchValue(`${18}`)    
     this.authService.registrarUsuario(this.registerForm.value).subscribe({
       next: (v) => {
+        console.log(v)
         if (v?.success) {
           if (v.data != 0) {
             this.router.navigate(['/auth'], { queryParams: { action: 'login' } });
@@ -232,11 +234,9 @@ export class RegisterComponent {
       },
       error: (e) => {
         console.error(e);
-        // this.msg.error(e.error.message);
       },
       complete: () => this.registerForm.reset(),
     });
-
   }
 
   onCreateRegisterForm(): void {
@@ -247,7 +247,7 @@ export class RegisterComponent {
       dis: [null],
       entidad: [null, [Validators.required]],
       sector: [null],
-      perfil: [null, [Validators.required]],
+      perfil: [null],
       nombre: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       dni: [null, [Validators.required, Validators.pattern(/^\d{8}$/)]],
       correo: [null, [Validators.required, Validators.email]],
