@@ -12,6 +12,7 @@ import { MenuModel } from '../../models/shared/menu.model';
 import { PermisoModel } from '../../models/auth/permiso.model';
 import { SelectModel } from '../../models/shared/select.model';
 import { PedidoType } from '../../shared/types/pedido.type';
+import { UsuarioNavigation, UsuarioPermisos } from '@core/interfaces';
 
 const codigoUsuario = Number(localStorage.getItem('codigoUsuario')) || 0;
 const codigoPerfil = Number(localStorage.getItem('codigoPerfil')) || 0;
@@ -32,7 +33,8 @@ interface State {
   distrito: SelectModel | null;
   sector: SelectModel | null;
   permisos: PermisoModel | null;
-  codigoPerfil: number | null
+  codigoPerfil: number | null,
+  navigation: UsuarioNavigation[] | null
 }
 
 const DEFAULT_PERMISOS: PermisoModel = {
@@ -89,7 +91,13 @@ export class AuthService {
     sector: this.getSectorSelect(),
     permisos: this.getPermisos(),
     codigoPerfil: this.getCodigoPerfil(),
+    navigation: this.getNavigation()
   });
+
+  public usuarioAuth = computed(() => this.#usuario())
+
+  // private _navigationAuth = signal<UsuarioNavigation[]>([])
+  public navigationAuth = computed(() => this.#usuario().navigation)
 
   public nombreTrabajador = computed(() => this.#usuario().nombreTrabajador);
   public token = computed(() => this.#usuario().token);
@@ -117,11 +125,13 @@ export class AuthService {
 
     return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, ots).pipe(
       tap((resp: ResponseModel) => {
-
         const data = resp.data;
+
 
         if (resp.success && data != null) {
           if (data.menus != null) {
+            this.#usuario.update((v) => ({ ...v, navigation: data.menus }));
+
             const menusTransformados = this.transformarMenuParaNgZorro(data.menus);
             data.menus = menusTransformados.menusTransformados;
             data.permisos = menusTransformados.permisos;
@@ -135,9 +145,10 @@ export class AuthService {
             localStorage.setItem('permisos', JSON.stringify(data.permisos));
 
             this.#usuario.update((v) => ({ ...v, permisos: data.permisos }));
-
             this.#usuario.update((v) => ({ ...v, isAuthenticated: true }));
           }
+
+          // this.#usuario.update((v) => ({ ...v, perfil: data.perfil }));
 
           if (data.nombreTrabajador != null) {
             if (data.nombreTrabajador != "") {
@@ -154,6 +165,7 @@ export class AuthService {
           }
 
           if (data.codigoPerfil != null && data.codigoPerfil != '') {
+            this.#usuario.update((v) => ({ ...v, codigoPerfil: data.codigoPerfil }));
             localStorage.setItem('codigoPerfil', data.codigoPerfil);
           }
 
@@ -334,9 +346,9 @@ export class AuthService {
         ...menuPrincipal,
         children: subMenus.map(subMenu => ({
           ...subMenu,
-          botones: undefined // Eliminar la propiedad botones del submenú
+          // botones: undefined // Eliminar la propiedad botones del submenú
         })),
-        botones: undefined // Eliminar la propiedad botones del menú principal
+        // botones: undefined // Eliminar la propiedad botones del menú principal
       };
     });
 
@@ -379,6 +391,16 @@ export class AuthService {
     const permisos = JSON.parse(permisosFromStorage) as PermisoModel;
 
     return permisos;
+  }
+
+  private getNavigation(): UsuarioNavigation[] | null {
+    const navigationStorage = localStorage.getItem('menus') || null;
+
+    if (navigationStorage == null) return null;
+
+    const navigation = JSON.parse(navigationStorage) as UsuarioNavigation[];
+
+    return navigation;
   }
 
   private getSubTipo(): PedidoType | null {
@@ -584,6 +606,11 @@ export class AuthService {
             token: resp.data.token.codigo,
             refreshToken: resp.data.refreshToken.codigo,
           }));
+
+          if (resp.data.menus != null) {
+            const navigation = resp.data.menus
+            // this._navigationAuth.set(navigation)
+          }
         })
       );
   }
@@ -670,7 +697,8 @@ export class AuthService {
       distrito: null,
       sector: null,
       permisos: null,
-      codigoPerfil: null
+      codigoPerfil: null,
+      navigation: null
     });
 
     // window.location.reload();
