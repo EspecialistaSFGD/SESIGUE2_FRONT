@@ -471,6 +471,7 @@ export class AuthService {
     if (usuario.clave) ots.contrasena = usuario.clave;
     if (usuario.correo) ots.correoNotificacion = usuario.correo;
     if (usuario.nombre) ots.nombresPersona = usuario.nombre;
+    if (usuario.telefono) ots.telefono = usuario.telefono;
     ots.tipoDocumento = 1;
     if (usuario.dni) ots.numeroDocumento = usuario.dni;
     ots.esActivo = true;

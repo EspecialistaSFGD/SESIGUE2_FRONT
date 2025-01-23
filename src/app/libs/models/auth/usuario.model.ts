@@ -10,6 +10,7 @@ export class UsuarioModel {
         public correo?: string,
         public nombre?: string,
         public dni?: string,
+        public telefono?: string,
         public entidad?: SelectModel,
         public perfil?: SelectModel,
         public tipo?: SelectModel,
@@ -32,6 +33,7 @@ export interface UsuarioRequestModel {
     codigoUsuario: number;
     nombreUsuario: string;
     contrasena: string;
+    telefono: string,
     correoNotificacion: string;
     nombresPersona: string;
     tipoDocumento: number;
