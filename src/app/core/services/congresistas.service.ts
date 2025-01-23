@@ -36,11 +36,11 @@ export class CongresistasService {
       )
   }
 
-  actualizarCongresista(congresista: CongresistaResponse) {
+  actualizarCongresista(congresista: CongresistaResponse) {    
       const headers = this.helpersServices.getAutorizationToken()
       return this.http.put<CongresistasResponses>(`${this.urlCongresista}/ActualizarCongresista/${congresista.congresistaId}`, congresista, { headers })
         .pipe(
-          tap(resp => {
+          tap(resp => {            
             return resp
           }),
           map(valid => valid.success),
