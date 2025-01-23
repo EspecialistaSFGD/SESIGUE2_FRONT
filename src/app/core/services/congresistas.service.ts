@@ -35,4 +35,28 @@ export class CongresistasService {
         catchError(err => of(err))
       )
   }
+
+  actualizarCongresista(congresista: CongresistaResponse) {
+      const headers = this.helpersServices.getAutorizationToken()
+      return this.http.put<CongresistasResponses>(`${this.urlCongresista}/ActualizarCongresista/${congresista.congresistaId}`, congresista, { headers })
+        .pipe(
+          tap(resp => {
+            return resp
+          }),
+          map(valid => valid.success),
+          catchError(err => of(err))
+        )
+    }
+
+    deleteAsistenciaTecnica(congresistaId: string) {
+        const headers = this.helpersServices.getAutorizationToken()
+        return this.http.delete<CongresistaResponse>(`${this.urlCongresista}/EliminarCongresista/${congresistaId}`, { headers })
+          .pipe(
+            tap(resp => {
+              return resp
+            }),
+            map(valid => valid),
+            catchError(err => of(err))
+          )
+      }
 }

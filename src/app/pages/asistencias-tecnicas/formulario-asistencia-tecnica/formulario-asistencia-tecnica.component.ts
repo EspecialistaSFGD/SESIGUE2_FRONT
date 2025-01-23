@@ -964,6 +964,16 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     if (this.formAsistencia.invalid) {
       return this.formAsistencia.markAllAsTouched()
     }
+
+    if(this.perfil == 12){
+      this.formAsistencia.get('contactoAutoridad')?.setValue('')
+      this.formAsistencia.get('unidadId')?.setValue('')
+      this.formAsistencia.get('orientacionId')?.setValue('')
+    }
+
+    console.log(this.formAsistencia.value);
+    
+    this.formAsistencia.get('estado')?.setValue(true)
     const dateForm = new Date(this.formAsistencia.get('fechaAtencion')?.value)
     const getMonth = dateForm.getMonth() + 1
     const getDay = dateForm.getDate()
@@ -1029,12 +1039,44 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
           }
         })
     } else {
-      this.asistenciaTecnicaService.actualizarAsistenciaTecnica({ ...formValues, fechaAtencion, asistenciaId: this.asistenciaTecnica.asistenciaId })
+      const asistenciaId = this.asistenciaTecnica.asistenciaId
+      this.asistenciaTecnicaService.actualizarAsistenciaTecnica({ ...formValues, fechaAtencion, asistenciaId })
         .subscribe(resp => {
           if (resp == true) {
+            console.log('ACTUALIZANDO ASISTENCIA');
+            
             this.addFormDate.emit(true)
             this.showModal = false
-            // this.resetForm()
+            this.resetForm()
+            if (congresistas.length > 0) {
+              for (let data of congresistas) {
+                if (data.congresista) {
+                  data.descripcion = 'Congresista'
+                }
+                const congresista: CongresistaResponse = { ...data }                
+                if(data.congresistaId){
+                  this.congresistaService.actualizarCongresista(congresista)
+                    .subscribe(respCongresista => {                      
+                      if (respCongresista == true) {
+                      }
+                    })                  
+                } else {                
+                  this.congresistaService.registrarCongresista(congresista)
+                    .subscribe(respCongresista => {                      
+                      if (respCongresista.success == true) {
+                        const congresistaId = respCongresista.data
+                        const asistenciaCongresista: AsistenciaTecnicaCongresistaResponse = { ...data, asistenciaId, congresistaId }
+                        this.asistenciaTecnicaCongresistaService.registrarCongresista(asistenciaCongresista)
+                          .subscribe(response => {
+                            if (response == true) {
+                            }
+                          })
+                      }
+                    })
+                }
+
+              }
+            }
             this.closeModal()
             this.messageService.create('success', 'Se ha actualizado con exito')
           }
