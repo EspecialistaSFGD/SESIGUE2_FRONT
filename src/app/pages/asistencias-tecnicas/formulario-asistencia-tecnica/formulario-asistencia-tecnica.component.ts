@@ -721,7 +721,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       if (!this.create) {
         const participantes = this.formAsistencia.get('participantes') as FormArray
         const participanteId = participantes.at(i).get('participanteId')?.value
-        this.asistenciaTecnicaParticipanteService.eliminarAgenda(participanteId)
+        this.asistenciaTecnicaParticipanteService.eliminarParticipante(participanteId)
           .subscribe(resp => {
             if (resp.success == true) {
               this.participantes.removeAt(i)
@@ -1042,9 +1042,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       const asistenciaId = this.asistenciaTecnica.asistenciaId
       this.asistenciaTecnicaService.actualizarAsistenciaTecnica({ ...formValues, fechaAtencion, asistenciaId })
         .subscribe(resp => {
-          if (resp == true) {
-            console.log('ACTUALIZANDO ASISTENCIA');
-            
+          if (resp == true) {            
             this.addFormDate.emit(true)
             this.showModal = false
             this.resetForm()
@@ -1075,6 +1073,42 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
                     })
                 }
 
+              }
+            }
+            if (participantes.length > 0) {
+              for (let data of participantes) {
+                if(data.participanteId){
+                  this.asistenciaTecnicaParticipanteService.actualizarParticipante(data)
+                    .subscribe(resp => {
+                      if (resp == true) {
+                      }
+                    })
+                } else {
+                  const participante: AsistenciaTecnicaParticipanteResponse = { ...data, asistenciaId }
+                  this.asistenciaTecnicaParticipanteService.registrarParticipante(participante)
+                    .subscribe(resp => {
+                      if (resp == true) {
+                      }
+                    })
+                }
+              }
+            }
+            if (agendas.length > 0) {
+              for (let data of agendas) {
+                if(data.agendaId){
+                this.asistenciaTecnicaAgendaService.actualizarAgenda(data)
+                  .subscribe(response => {
+                    if (response == true) {
+                    }
+                  })
+                } else {
+                  const agenda: AsistenciaTecnicaAgendaResponse = { ...data, asistenciaId }
+                  this.asistenciaTecnicaAgendaService.registrarAgenda(agenda)
+                    .subscribe(response => {
+                      if (response == true) {
+                      }
+                    })
+                }
               }
             }
             this.closeModal()
