@@ -43,7 +43,7 @@
     <p class="mb-2 sm:mb-0">Resultados {{cargasMasivas().length}}</p>
     <div>
       <nz-space>
-        <button nz-button nzType="primary">
+        <button nz-button nzType="primary" (click)="showNzModal = true">
           <span nz-icon nzType="plus" nzTheme="outline"></span>
           <span class="button-text">Subir Excel</span>
         </button>
@@ -54,7 +54,4 @@
   </div>
 </ng-template>
 
-<!-- <app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos"
-  [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica" [departamentos]="departamentos()"
-  [clasificaciones]="clasificaciones" [orientaciones]="orientaciones" (addFormDate)="getAddFormAdded($event)"
-  (setCloseShow)="showNzModal = false"></app-formulario-asistencia-tecnica> -->
+<app-carga-masiva [showModal]="showNzModal" (setCloseShow)="showNzModal = false" (setCloseShow)="showNzModal = false" (addFormDate)="getAddFormAdded($event)"/>

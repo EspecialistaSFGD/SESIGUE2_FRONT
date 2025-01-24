@@ -7,6 +7,7 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import CargaMasivaComponent from './carga-masiva/carga-masiva.component';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-sgd',
@@ -31,36 +32,29 @@ export default class SgdComponent {
   }
 
   confirmModal?: NzModalRef;
-  tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value: value.toLowerCase(), text }))
-  modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value: value.toLowerCase(), text }))
-  clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }))
+  showNzModal: boolean = false
 
+  private fb = inject(FormBuilder)
   private cargaMasivaService = inject(CargasMasivasService)
 
   ngOnInit(): void {
     this.getBulkUpload()
   }
 
-  getBulkUpload(){
+  getBulkUpload(){    
     this.loadingData = true
     this.cargaMasivaService.getAllAsistenciasTecnicas(this.pagination)
-      .subscribe((resp) => {
-      this.loadingData = false
-      console.log(resp);
-      this.cargasMasivas.set(resp.data)
-      this.pagination.total = resp.info!.total
+      .subscribe((resp) => {    
+        this.loadingData = false
+        this.cargasMasivas.set(resp.data)
+        this.pagination.total = resp.info!.total
     })
   }
 
-  getTextEnum(value: string, kind: string): string {
-    let text = value
-    if (kind == 'tipo') {
-      text = this.tipos.find(item => item.value.toLowerCase() == value)!.text
-    } else if (kind == 'modalidad') {
-      text = this.modalidaades.find(item => item.value.toLowerCase() == value)!.text
-    } else if (kind == 'clasificacion') {
-      text = this.clasificaciones.find(item => item.value.toLowerCase() == value)!.text
+  getAddFormAdded(success: boolean) {
+    if (success) {
+      this.getBulkUpload()
+      this.showNzModal = true
     }
-    return text
   }
 }

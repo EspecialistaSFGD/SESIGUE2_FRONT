@@ -1,1 +1,27 @@
-<app-page-header [title]="title" backUrl="sgd" />
+<nz-modal [(nzVisible)]="showModal" nzTitle="Carga masiva de documentos" nzMaskClosable="false"
+  nzKeyboard="false" [nzOkText]="loading ? 'Subiendo Archivo...' : 'Subir Archivo' " [nzOkLoading]="loading" (nzOnOk)="uploadBulkUpload()"
+  nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
+	<ng-container *nzModalContent>
+		<form [formGroup]="formCargaMasiva" nz-form nzLayout="vertical" autocomplete="off">
+			<div nz-col nzSpan="24">
+				<nz-form-item>
+					<nz-form-label [nzSpan]="null" nzFor="archivo">Archivo</nz-form-label>
+					<nz-upload [(nzFileList)]="fileListMeet" [nzBeforeUpload]="beforeUploadMeet" nzAccept=".xlsx">
+						<div
+							class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 hover:bg-punche-blue-500 hover:text-white">
+							<span nz-icon nzType="upload"></span>
+							Selecionar Archivo
+						</div>
+					</nz-upload>
+					<div class="flex flex-col gap-1 mt-2">
+						@for(msg of errors; track $index){
+							<div class="text-danger">{{msg}}</div>
+						}
+					</div>
+					<div class="text-danger" *ngIf="alertMessageError('fechaAtencion')">
+              {{msgErrorControl('fechaAtencion','Fecha de atención')}}</div>
+				</nz-form-item>
+			</div>
+		</form>
+	</ng-container>
+</nz-modal>

@@ -20,11 +20,12 @@ export class CargasMasivasService {
       return this.http.get<CargasMasivasResponses>(`${this.urlCargasMasivas}/ListarCargasMasivas`, { headers, params })
     }
   
-    registrarCargaMasiva(cargaMasiva: CargaMasivaSaveResponse) {
+    subirCargaMasiva(cargaMasiva: CargaMasivaSaveResponse) {
       cargaMasiva.code = Number(localStorage.getItem('codigoUsuario')) ?? 0
       const formData = this.generateFormData(cargaMasiva)
       const headers = this.helpersServices.getAutorizationToken()
-      return this.http.post<CargasMasivasResponses>(`${this.urlCargasMasivas}/RegistrarAsistenciaTecnica`, formData, { headers })
+           
+      return this.http.post<CargasMasivasResponses>(`${this.urlCargasMasivas}/SubirCargaMasiva`, formData, { headers })
         .pipe(
           tap(resp => {
             return resp
