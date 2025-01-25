@@ -21,9 +21,11 @@
       <td nzAlign="center">{{cargaMasiva.totalFilas}}</td>
       <td nzAlign="center">{{cargaMasiva.fechaRegistro | date : 'dd/MM/yyyy hh:mm'}}</td>
       <td nzAlign="center">
-        <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles" (click)="showDetatalleCargaMasiva(cargaMasiva)">
-          <span nz-icon nzType="eye" nzTheme="outline"></span>
-        </button>
+        <a [routerLink]="['/sgd', cargaMasiva.id]">
+          <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles">
+            <span nz-icon nzType="eye" nzTheme="outline"></span>
+          </button>
+        </a>
       </td>
     </tr>
     }
@@ -48,4 +50,3 @@
 
 <app-carga-masiva [showModal]="showNzModalBulkUpload" (setCloseShow)="showNzModalBulkUpload = false" (setCloseShow)="showNzModalBulkUpload = false" (addFormDate)="getAddFormAdded($event)"/>
 
-<app-detalles [showModalDetail]="showNzModalDetail" [cargaMasiva]="cargaMasivaDetail" (setCloseShow)="showNzModalDetail = false"/>

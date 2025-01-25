@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { Pagination } from '@core/interfaces';
 import { CargaMasivaResponse } from '@core/interfaces/carga-masiva.interface';
 import { CargasMasivasService } from '@core/services';
@@ -8,12 +9,11 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import CargaMasivaComponent from './carga-masiva/carga-masiva.component';
-import { DetallesComponent } from './detalles/detalles.component';
 
 @Component({
   selector: 'app-sgd',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, NgZorroModule, CargaMasivaComponent, DetallesComponent],
+  imports: [CommonModule, RouterModule, PageHeaderComponent, NgZorroModule, CargaMasivaComponent ],
   templateUrl: './sgd.component.html',
   styles: ``
 })
@@ -36,7 +36,6 @@ export default class SgdComponent {
 
   confirmModal?: NzModalRef;
   showNzModalBulkUpload: boolean = false
-  showNzModalDetail: boolean = false
 
   private fb = inject(FormBuilder)
   private cargaMasivaService = inject(CargasMasivasService)
@@ -60,11 +59,5 @@ export default class SgdComponent {
       this.getBulkUpload()
       this.showNzModalBulkUpload = true
     }
-  }
-
-  showDetatalleCargaMasiva(cargaMasiva: CargaMasivaResponse) {
-    this.cargaMasivaDetail = cargaMasiva
-    this.showNzModalDetail = true
-
   }
 }
