@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Pagination } from '@core/interfaces';
-import { CargaMasivaResponse, CargaMasivaSaveResponse, CargasMasivasResponses } from '@core/interfaces/carga-masiva.interface';
+import { CargaMasivaDetailResponse, CargaMasivaResponse, CargaMasivaSaveResponse, CargasMasivasResponses } from '@core/interfaces/carga-masiva.interface';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({
@@ -33,6 +33,12 @@ export class CargasMasivasService {
           map(valid => valid),
           catchError(err => of(err))
         )
+    }
+
+    atencionesCargaMasiva(cargaMasivaId: number, pagination: Pagination): Observable<CargaMasivaDetailResponse> {
+      const params = this.helpersServices.setParams(pagination)
+      const headers = this.helpersServices.getAutorizationToken()
+      return this.http.get<CargaMasivaDetailResponse>(`${this.urlCargasMasivas}/AtencionesCargasMasivas/${cargaMasivaId}`, { headers, params })
     }
 
     private generateFormData(cargaMasiva: CargaMasivaSaveResponse): FormData {

@@ -1,18 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ItemEnum, Pagination } from '@core/interfaces';
+import { FormBuilder } from '@angular/forms';
+import { Pagination } from '@core/interfaces';
 import { CargaMasivaResponse } from '@core/interfaces/carga-masiva.interface';
 import { CargasMasivasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import CargaMasivaComponent from './carga-masiva/carga-masiva.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DetallesComponent } from './detalles/detalles.component';
 
 @Component({
   selector: 'app-sgd',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, NgZorroModule, CargaMasivaComponent],
+  imports: [CommonModule, PageHeaderComponent, NgZorroModule, CargaMasivaComponent, DetallesComponent],
   templateUrl: './sgd.component.html',
   styles: ``
 })
@@ -31,8 +32,11 @@ export default class SgdComponent {
     total: 0
   }
 
+  cargaMasivaDetail!: CargaMasivaResponse
+
   confirmModal?: NzModalRef;
-  showNzModal: boolean = false
+  showNzModalBulkUpload: boolean = false
+  showNzModalDetail: boolean = false
 
   private fb = inject(FormBuilder)
   private cargaMasivaService = inject(CargasMasivasService)
@@ -54,7 +58,13 @@ export default class SgdComponent {
   getAddFormAdded(success: boolean) {
     if (success) {
       this.getBulkUpload()
-      this.showNzModal = true
+      this.showNzModalBulkUpload = true
     }
+  }
+
+  showDetatalleCargaMasiva(cargaMasiva: CargaMasivaResponse) {
+    this.cargaMasivaDetail = cargaMasiva
+    this.showNzModalDetail = true
+
   }
 }
