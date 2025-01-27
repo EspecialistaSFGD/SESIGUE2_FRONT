@@ -46,7 +46,7 @@ export default class SgdComponent {
 
   getBulkUpload(){    
     this.loadingData = true
-    this.cargaMasivaService.getAllAsistenciasTecnicas(this.pagination)
+    this.cargaMasivaService.getAllCargasMasivas(this.pagination)
       .subscribe((resp) => {    
         this.loadingData = false
         this.cargasMasivas.set(resp.data)

@@ -1,67 +1,69 @@
 <nz-page-header nzBackIcon [nzGhost]="false">
-	<nz-page-header-title>Detalle de carga masiva</nz-page-header-title>
-
-
-	<nz-page-header-extra>
-			<nz-space>
-					<button>Solicitar
-							desestimación</button>
-			</nz-space>
-	</nz-page-header-extra>
+	<nz-page-header-title>Detalle de Carga Masiva de {{cargaMasiva().nombreTabla | titlecase }}</nz-page-header-title>
 
 	<nz-page-header-content>
-			<nz-descriptions nzSize="small" [nzColumn]="{ xxl: 4, xl: 4, lg: 2, md: 2, sm: 2, xs: 1 }" nzBordered>
-					<nz-descriptions-item nzTitle="Sector">sector avlues
-					</nz-descriptions-item>
+		<nz-descriptions nzSize="small" [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }" nzBordered>
+			<nz-descriptions-item nzTitle="Archivo">{{cargaMasiva().nombreArchivo}}</nz-descriptions-item>
 
-					<nz-descriptions-item nzTitle="Departamento">departamento value
-					</nz-descriptions-item>
+			<nz-descriptions-item nzTitle="Descargar">
+				<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar Archivo"
+					(click)="downloadFile(cargaMasiva().directorioArchivo, cargaMasiva().nombreArchivo)">
+					<span nz-icon nzType="file-excel" nzTheme="outline"></span>
+				</button>
+			</nz-descriptions-item>
 
-					<nz-descriptions-item nzTitle="Provincia">
-							Provincia value
-					</nz-descriptions-item>
+			<nz-descriptions-item nzTitle="Total de filas">{{cargaMasiva().totalFilas}}</nz-descriptions-item>
 
-					<nz-descriptions-item nzTitle="Distrito">
-							distrito value
-					</nz-descriptions-item>
+			<nz-descriptions-item nzTitle="Filas gurdadas">{{cargaMasiva().filasGuardadas}}</nz-descriptions-item>
 
-					<nz-descriptions-item nzTitle="CUI">cui value
-					</nz-descriptions-item>
+			<nz-descriptions-item nzTitle="Fecha de registro">{{cargaMasiva().fechaRegistro}}</nz-descriptions-item>
 
-					<nz-descriptions-item
-							nzTitle="Intervenciones Estratégicas">intervencion value
-					</nz-descriptions-item>
-
-					<nz-descriptions-item
-							nzTitle="Clasificacion">value
-					</nz-descriptions-item>
-
-					<nz-descriptions-item nzTitle="Responsable">
-							resposable value
-					</nz-descriptions-item>
-
-
-					<nz-descriptions-item nzTitle="Pedido" [nzSpan]="4">
-							pedido value
-					</nz-descriptions-item>
-
-					<nz-descriptions-item nzTitle="Acuerdo" [nzSpan]="4">
-							acuerdo cotendio
-
-					</nz-descriptions-item>
-
-					<nz-descriptions-item nzTitle="Plazo">
-
-							Plazo value
-					</nz-descriptions-item>
-
-					<nz-descriptions-item nzTitle="Espacio">
-							Espacio value
-					</nz-descriptions-item>
-
-					<nz-descriptions-item nzTitle="Estado">
-							estado value
-					</nz-descriptions-item>
-			</nz-descriptions>
+			<nz-descriptions-item nzTitle="Estado">{{cargaMasiva().estado | titlecase}}</nz-descriptions-item>
+		</nz-descriptions>
 	</nz-page-header-content>
 </nz-page-header>
+
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+	[nzData]="cargaMasivaDetail()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total"
+	[nzPageSize]="pagination.pageSize" [nzPageIndex]="pagination.currentPage">
+	<thead>
+		<tr>
+			<th nzWidth="100px" nzAlign="center" nzColumnKey="validado" [nzSortFn]="true">Validado</th>
+			<th nzWidth="100px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
+			<th nzLeft nzWidth="200px" nzColumnKey="numeroExpediente" [nzSortFn]="true">Expediente</th>
+			<th nzLeft nzWidth="200px" nzColumnKey="documentoTitulo" [nzSortFn]="true">Documento</th>
+			<th nzWidth="500px" nzColumnKey="nombreAutoridad" [nzSortFn]="true">Destino</th>
+			<th nzWidth="200px" nzAlign="center" nzColumnKey="nombresResponsable" [nzSortFn]="true">Responsable</th>
+			<th nzWidth="150px" nzAlign="center" nzColumnKey="tipoEntidadSlug" [nzSortFn]="true">Tipo Entidad</th>
+			<th nzWidth="150px" nzAlign="center" nzColumnKey="departamento" [nzSortFn]="true">Departamento</th>
+			<th nzWidth="150px" nzAlign="center" nzColumnKey="provincia" [nzSortFn]="true">Provincia</th>
+			<th nzWidth="150px" nzAlign="center" nzColumnKey="distrito" [nzSortFn]="true">Distrito</th>
+		</tr>
+	</thead>
+	<tbody>
+		@for(detail of cargaMasivaDetail(); track $index){
+		<tr>
+			<td nzAlign="center" >
+				<nz-avatar [nzSize]="24" [ngClass]="{ 'bg-green-500' : detail.validado, 'bg-gray-300' : !detail.validado }" nzIcon="check" [nz-tooltip]=" detail.validado ? 'Validado' : 'Sin validar'"></nz-avatar>
+			</td>
+			<td nzAlign="center" >{{detail.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
+			<td>{{detail.numeroExpediente}}</td>
+			<td>{{detail.documentoTitulo}}</td>
+			<td>
+				<p [innerHTML]="replaceToNewLine(detail.nombreAutoridad)"></p>
+			</td>
+			<td nzAlign="center">{{detail.nombresResponsable}}</td>
+			<td nzAlign="center">{{detail.tipoEntidadSlug}}</td>
+			<td nzAlign="center">{{detail.departamento}}</td>
+			<td nzAlign="center">{{detail.provincia}}</td>
+			<td nzAlign="center">{{detail.distrito}}</td>
+		</tr>
+		}
+	</tbody>
+</nz-table>
+
+<ng-template #Header>
+	<div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+		<p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+	</div>
+</ng-template>

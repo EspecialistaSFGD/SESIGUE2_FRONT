@@ -4,10 +4,14 @@ export interface CargasMasivasResponses extends DataResponses {
 	data: CargaMasivaResponse[],
 }
 
-export interface CargaMasivaSaveResponse {
+export interface CargaMasivaUploadResponse {
 	code: number,
 	tabla: string,
 	archivo: string,
+}
+
+export interface CargaMasivaResponseDetail extends DataResponses {
+	data: CargaMasivaResponse,
 }
 
 export interface CargaMasivaResponse {
@@ -19,21 +23,4 @@ export interface CargaMasivaResponse {
 	totalFilas: number,
 	filasGuardadas: number
 	fechaRegistro: Date,
-}
-
-export interface CargaMasivaDetailResponse {
-	id?: string,
-	fechaRegistro: Date,
-	fechaAtencion: Date,
-	numeroExpediente: string,
-	documentoTitulo: string,
-	nombreAutoridad: string,
-	tema: string,
-	nombresResponsable: string,
-	tipoEntidadNombre: string,
-	tipoEntidadSlug: string,
-	departamento: string,
-	provincia: string,
-	distrito: string,
-	validado: string
 }

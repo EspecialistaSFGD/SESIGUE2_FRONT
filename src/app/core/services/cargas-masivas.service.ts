@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { Pagination } from '@core/interfaces';
-import { CargaMasivaDetailResponse, CargaMasivaResponse, CargaMasivaSaveResponse, CargasMasivasResponses } from '@core/interfaces/carga-masiva.interface';
+import { AtencionesCargasMasivasResponses, Pagination } from '@core/interfaces';
+import { CargaMasivaResponse, CargaMasivaUploadResponse, CargasMasivasResponses, CargaMasivaResponseDetail } from '@core/interfaces/carga-masiva.interface';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({
@@ -14,13 +14,21 @@ export class CargasMasivasService {
     private http = inject(HttpClient)
     private helpersServices = inject(HelpersService);
   
-    getAllAsistenciasTecnicas(pagination: Pagination): Observable<CargasMasivasResponses> {
+    getAllCargasMasivas(pagination: Pagination): Observable<CargasMasivasResponses> {
       const params = this.helpersServices.setParams(pagination)
+      params.append('tabla', 'atencion')
       const headers = this.helpersServices.getAutorizationToken()
+      console.log(params);
+      
       return this.http.get<CargasMasivasResponses>(`${this.urlCargasMasivas}/ListarCargasMasivas`, { headers, params })
     }
+
+    getCargaMasiva(cargaMasivaId: string): Observable<CargaMasivaResponseDetail> {
+      const headers = this.helpersServices.getAutorizationToken()
+      return this.http.get<CargaMasivaResponseDetail>(`${this.urlCargasMasivas}/ObtenerCargaMasiva/${cargaMasivaId}`, { headers })
+    }
   
-    subirCargaMasiva(cargaMasiva: CargaMasivaSaveResponse) {
+    subirCargaMasiva(cargaMasiva: CargaMasivaUploadResponse) {
       cargaMasiva.code = Number(localStorage.getItem('codigoUsuario')) ?? 0
       const formData = this.generateFormData(cargaMasiva)
       const headers = this.helpersServices.getAutorizationToken()
@@ -35,13 +43,13 @@ export class CargasMasivasService {
         )
     }
 
-    atencionesCargaMasiva(cargaMasivaId: number, pagination: Pagination): Observable<CargaMasivaDetailResponse> {
+    atencionesCargaMasiva(cargaMasivaId: string, pagination: Pagination): Observable<AtencionesCargasMasivasResponses> {
       const params = this.helpersServices.setParams(pagination)
       const headers = this.helpersServices.getAutorizationToken()
-      return this.http.get<CargaMasivaDetailResponse>(`${this.urlCargasMasivas}/AtencionesCargasMasivas/${cargaMasivaId}`, { headers, params })
+      return this.http.get<AtencionesCargasMasivasResponses>(`${this.urlCargasMasivas}/AtencionesCargasMasivas/${cargaMasivaId}`, { headers, params })
     }
 
-    private generateFormData(cargaMasiva: CargaMasivaSaveResponse): FormData {
+    private generateFormData(cargaMasiva: CargaMasivaUploadResponse): FormData {
         const formData = new FormData()
         formData.append('code', `${cargaMasiva.code}`)
         formData.append('archivo', cargaMasiva.archivo)

@@ -57,3 +57,24 @@ export interface AsistenciaTecnicaResponse {
   // fechaRegistro?: Date
   code?: number,
 }
+
+export interface AtencionesCargasMasivasResponses extends DataResponses {
+  data: AtencionCargaMasivaResponse[],
+}
+
+export interface AtencionCargaMasivaResponse {
+  id?: string,
+	fechaRegistro: Date,
+	fechaAtencion: Date,
+	numeroExpediente: string,
+	documentoTitulo: string,
+	nombreAutoridad: string,
+	tema: string,
+	nombresResponsable: string,
+	tipoEntidadNombre: string,
+	tipoEntidadSlug: string,
+	departamento: string,
+	provincia: string,
+	distrito: string,
+	validado: string
+}
