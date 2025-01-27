@@ -389,6 +389,14 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     });
   }
 
+  validateEntidadByHito() :boolean{
+    const entidadAcuerdo = this.hitosService.hitoSeleccionado()?.entidadId
+    const authEntidad = localStorage.getItem('entidad')
+    console.log(entidadAcuerdo);  
+    console.log(authEntidad);  
+    return entidadAcuerdo == authEntidad
+  }
+
   onAvanceAddComentario(avance: AvanceHitoModel): void {
     if (avance == null) return;
 
