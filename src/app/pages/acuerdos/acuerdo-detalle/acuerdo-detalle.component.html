@@ -8,10 +8,15 @@
         <nz-page-header-extra>
             <nz-space>
                 <button
-                    [disabled]="(acuerdosService.acuerdoSeleccionado()?.plazo!.toString() | dueTo)||acuerdosService.isDesestimating()"
+                    [disabled]="!authService.permisos()?.puede_solicitar_desestimacion || acuerdosService.isDesestimating()"
                     *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
                     nzDanger>Solicitar
                     desestimación</button>
+                <!-- <button
+                    [disabled]="(acuerdosService.acuerdoSeleccionado()?.plazo!.toString() | dueTo)||acuerdosService.isDesestimating()"
+                    *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
+                    nzDanger>Solicitar
+                    desestimación</button> -->
             </nz-space>
         </nz-page-header-extra>
         }
@@ -253,6 +258,7 @@
     (nzQueryParams)="onQueryParamsChangeAvances($event)" class="mt-8">
     <thead>
         <tr>
+            <th></th>
             <th nzColumnKey="fecha">Fecha</th>
             <th nzColumnKey="avance">Avance</th>
             <th class="text-center" nzColumnKey="evidencia">Evidencia</th>
@@ -265,6 +271,18 @@
     </thead>
     <tbody>
         <tr *ngFor="let data of this.avancesService.avances()">
+            <td class="text-center w-10">
+                @switch (data.estado) {
+                @case (0) {
+                <nz-avatar [nzSize]="24" class="bg-red-500" nz-tooltip="Desestimado" nzIcon="close"></nz-avatar> }
+                @case (1) {
+                @if(data.validado==1){
+                <nz-avatar [nzSize]="24" class="bg-green-500" nzIcon="check" nz-tooltip="Validado"></nz-avatar>
+                }@else {
+                <nz-avatar [nzSize]="24" class="bg-gray-300" nz-tooltip="Sin validar" nzIcon="check"></nz-avatar> }
+                }
+                }
+            </td>
             <td>{{ data.fecha }} </td>
             <td>{{ data.avance }}</td>
             <td class="text-center">
@@ -282,10 +300,11 @@
             <td class="text-center">{{ data.comentarioEjecutora || '-' }}</td>
             <td nzRight class="w-40">
                 <nz-space>
+                    <p></p>
                     @if(authService.permisos()?.puede_editar_avance){
                     <!-- @if(true){ -->
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Editar avance"
-                        (click)="onAvanceAddEdit(data)" [disabled]="acuerdosService.isDesestimated()">
+                        (click)="onAvanceAddEdit(data)" [disabled]="acuerdosService.isDesestimated() || data.validado == 1">
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
                     }
@@ -297,14 +316,14 @@
 
                     @if(authService.permisos()?.puede_validar_avance_sector){
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Validar avance"
-                        (click)="onValidarAvance(data)" [disabled]="acuerdosService.isDesestimated()">
-                        <span class="text-green-500" nz-icon nzType="check-circle" nzTheme="outline"></span>
+                        (click)="onValidarAvance(data)" [disabled]="acuerdosService.isDesestimated() || data.validado == 1">
+                        <span [ngClass]="{ 'text-grey-500' : data.validado == 1, 'text-green-500' : data.validado == 0 }" nz-icon nzType="check-circle" nzTheme="outline"></span>
                     </button>
                     }
 
                     @if(authService.permisos()?.puede_eliminar_avance){
                     <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar"
-                        [disabled]="acuerdosService.isDesestimated()" (click)="onEliinarAvance(data)">
+                        [disabled]="acuerdosService.isDesestimated() || data.validado == 1" (click)="onEliinarAvance(data)">
                         <span nz-icon nzType="delete" nzTheme="outline"></span>
                     </button>
                     }

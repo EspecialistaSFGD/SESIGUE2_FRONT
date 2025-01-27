@@ -970,8 +970,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.formAsistencia.get('unidadId')?.setValue('')
       this.formAsistencia.get('orientacionId')?.setValue('')
     }
-
-    console.log(this.formAsistencia.value);
     
     this.formAsistencia.get('estado')?.setValue(true)
     const dateForm = new Date(this.formAsistencia.get('fechaAtencion')?.value)

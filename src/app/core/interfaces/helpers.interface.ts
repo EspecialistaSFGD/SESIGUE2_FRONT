@@ -11,7 +11,9 @@ export interface ItemEnum {
   text: string
 }
 export interface ButtonsActions {
-	new: boolean,
-	edit: boolean,
-	delete: boolean
+	new?: boolean,
+	edit?: boolean,
+	delete?: boolean,
+  view?: boolean,
+  upload?: boolean
 }
