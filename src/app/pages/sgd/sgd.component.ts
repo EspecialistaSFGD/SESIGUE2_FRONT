@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Pagination } from '@core/interfaces';
+import { ButtonsActions, Pagination } from '@core/interfaces';
 import { CargaMasivaResponse } from '@core/interfaces/carga-masiva.interface';
 import { CargasMasivasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import CargaMasivaComponent from './carga-masiva/carga-masiva.component';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-sgd',
@@ -32,6 +33,11 @@ export default class SgdComponent {
     total: 0
   }
 
+  sgdActions: ButtonsActions = {
+      view: false,
+      upload: false
+    }
+
   cargaMasivaDetail!: CargaMasivaResponse
 
   confirmModal?: NzModalRef;
@@ -39,9 +45,23 @@ export default class SgdComponent {
 
   private fb = inject(FormBuilder)
   private cargaMasivaService = inject(CargasMasivasService)
+  private authStore = inject(AuthService)
+  
+  
+    public navigationAuth = computed(() => this.authStore.navigationAuth())
 
   ngOnInit(): void {
+    this.getPermissions()
     this.getBulkUpload()
+  }
+
+  getPermissions() {
+    const navigation = this.authStore.navigationAuth()!
+    const atenciones = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'sgd')
+    atenciones?.botones?.map(btn => {
+      this.sgdActions.view = btn.descripcionBoton === 'Ver' ? true : this.sgdActions.view
+      this.sgdActions.upload = btn.descripcionBoton === 'Subir' ? true : this.sgdActions.upload
+    })
   }
 
   getBulkUpload(){    

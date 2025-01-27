@@ -21,11 +21,13 @@
       <td nzAlign="center">{{cargaMasiva.totalFilas}}</td>
       <td nzAlign="center">{{cargaMasiva.fechaRegistro | date : 'dd/MM/yyyy hh:mm'}}</td>
       <td nzAlign="center">
-        <a [routerLink]="['/sgd', cargaMasiva.id]">
-          <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles">
-            <span nz-icon nzType="eye" nzTheme="outline"></span>
-          </button>
-        </a>
+        @if(sgdActions.view){
+          <a [routerLink]="['/sgd', cargaMasiva.id]">
+            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles">
+              <span nz-icon nzType="eye" nzTheme="outline"></span>
+            </button>
+          </a>
+        }
       </td>
     </tr>
     }
@@ -37,12 +39,12 @@
     <p class="mb-2 sm:mb-0">Resultados {{cargasMasivas().length}}</p>
     <div>
       <nz-space>
-        <button nz-button nzType="primary" (click)="showNzModalBulkUpload = true">
-          <span nz-icon nzType="plus" nzTheme="outline"></span>
-          <span class="button-text">Subir Excel</span>
-        </button>
-        <!-- @if(atencionActions.new){
-        } -->
+        @if(sgdActions.upload){
+          <button nz-button nzType="primary" (click)="showNzModalBulkUpload = true">
+            <span nz-icon nzType="upload" nzTheme="outline"></span>
+            <span class="button-text">Subir Excel</span>
+          </button>
+        }
       </nz-space>
     </div>
   </div>

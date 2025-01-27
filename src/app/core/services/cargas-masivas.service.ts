@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '@environments/environment';
-import { HelpersService } from './helpers.service';
 import { AtencionesCargasMasivasResponses, Pagination } from '@core/interfaces';
-import { CargaMasivaResponse, CargaMasivaUploadResponse, CargasMasivasResponses, CargaMasivaResponseDetail } from '@core/interfaces/carga-masiva.interface';
+import { CargaMasivaResponseDetail, CargaMasivaUploadResponse, CargasMasivasResponses } from '@core/interfaces/carga-masiva.interface';
+import { environment } from '@environments/environment';
 import { catchError, map, Observable, of, tap } from 'rxjs';
+import { HelpersService } from './helpers.service';
 
 @Injectable({
   providedIn: 'root'
