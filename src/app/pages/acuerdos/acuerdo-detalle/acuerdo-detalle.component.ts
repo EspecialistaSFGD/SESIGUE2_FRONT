@@ -89,7 +89,7 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
   pageIndexAvance: number = 1;
   pageSizeAvance: number = 10;
   sortFieldAvance: string = 'avanceId';
-  sortOrderAvance: string = 'ascend';
+  sortOrderAvance: string = 'descend';
   hitoSeleccionadoId: number | null = null; // ID del hito seleccionado
   // hitoSeleccionado: HitoAcuerdoModel | null = null;
   queryParamsChangeEventCnt = 0;
