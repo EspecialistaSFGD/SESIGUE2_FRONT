@@ -28,6 +28,7 @@ interface State {
   subTipo: PedidoType;
   canViewPedidos: boolean;
   selectedTheme: string;
+  entidad: string | null,
   departamento: SelectModel | null;
   provincia: SelectModel | null;
   distrito: SelectModel | null;
@@ -85,6 +86,7 @@ export class AuthService {
     subTipo: this.getSubTipo(),
     canViewPedidos: false,
     selectedTheme: localStorage['theme'] || 'system',
+    entidad: null,
     departamento: this.getDepartamentoSelect(),
     provincia: this.getProvinciaSelect(),
     distrito: this.getDistritoSelect(),
@@ -113,6 +115,7 @@ export class AuthService {
   public sector = computed(() => this.#usuario().sector);
   public permisos = computed(() => this.#usuario().permisos);
   public codigoPerfil = computed(() => this.#usuario().codigoPerfil);
+  public entidad = computed(() => this.#usuario().entidad);
 
   constructor() {
     this.initTheme();
@@ -126,7 +129,6 @@ export class AuthService {
     return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, ots).pipe(
       tap((resp: ResponseModel) => {
         const data = resp.data;
-
 
         if (resp.success && data != null) {
           if (data.menus != null) {
@@ -162,6 +164,11 @@ export class AuthService {
 
           if (data.codigoUsuario != null && data.codigoUsuario != '') {
             localStorage.setItem('codigoUsuario', data.codigoUsuario);
+          }
+
+          if (data.entidad != null) {
+            this.#usuario.update((v) => ({ ...v, entidad: data.entidad }));
+            localStorage.setItem('entidad', data.entidad);
           }
 
           if (data.codigoPerfil != null && data.codigoPerfil != '') {
@@ -693,6 +700,7 @@ export class AuthService {
       subTipo: null,
       canViewPedidos: false,
       selectedTheme: localStorage['theme'] || 'system',
+      entidad: null,
       departamento: null,
       provincia: null,
       distrito: null,
