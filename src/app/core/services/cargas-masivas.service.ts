@@ -18,8 +18,6 @@ export class CargasMasivasService {
       const params = this.helpersServices.setParams(pagination)
       params.append('tabla', 'atencion')
       const headers = this.helpersServices.getAutorizationToken()
-      console.log(params);
-      
       return this.http.get<CargasMasivasResponses>(`${this.urlCargasMasivas}/ListarCargasMasivas`, { headers, params })
     }
 
