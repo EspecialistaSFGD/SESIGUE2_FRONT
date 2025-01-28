@@ -8,12 +8,13 @@ export enum AsistenciasTecnicasTipos {
   ASESORAMIENTO = 'asesoramiento',
   ASISTENCIA = 'asistencia técnica',
   COORDINACION = 'coordinación',
-  ATENCION = 'atención'
+  ATENCION = 'atención',
+  DOCUMENTO = 'documento'
 }
 
 export enum AsistenciasTecnicasModalidad {
   PRESENCIAL = 'presencial',
-  VIRTUALS = 'virtual'
+  VIRTUALS = 'virtual',
 }
 
 export enum AsistenciasTecnicasClasificacion {
@@ -54,6 +55,7 @@ export interface AsistenciaTecnicaResponse {
   evidenciaReunion: string,
   evidenciaAsistencia: string,
   estado?: boolean,
+  validado?: boolean,
   // fechaRegistro?: Date
   code?: number,
 }

@@ -144,6 +144,7 @@ export class AuthService {
                   sup = data.entidad == 3402 ? 1 : 2
                 }
 
+                const departamento = data.ubigeoEntidad ? Number(data.ubigeoEntidad.slice(0,2)) : 0
                 const ubigeo = data.ubigeoEntidad ? Number(data.ubigeoEntidad) : 0
                 const sector = data.sector ? data.sector : 0
                 const entidadId = data.entidad
@@ -151,6 +152,7 @@ export class AuthService {
 
                 const aliasDataParams: ItemEnum[] = [
                   { value: 'UBIGEO', text: `${ubigeo}` },
+                  { value: 'DEPARTAMENTO_ID', text: `${departamento}` },
                   { value: 'SECTOR_ID', text: sector },
                   { value: 'ENTIDAD_ID', text: entidadId },
                   { value: 'USUARIO_ID', text: usuarioId },
