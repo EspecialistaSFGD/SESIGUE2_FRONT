@@ -16,7 +16,7 @@
 
 			<nz-descriptions-item nzTitle="Filas gurdadas">{{cargaMasiva().filasGuardadas}}</nz-descriptions-item>
 
-			<nz-descriptions-item nzTitle="Fecha de registro">{{cargaMasiva().fechaRegistro}}</nz-descriptions-item>
+			<nz-descriptions-item nzTitle="Fecha de registro">{{cargaMasiva().fechaRegistro | date : 'dd/MM/yyyy HH:mm'}}</nz-descriptions-item>
 
 			<nz-descriptions-item nzTitle="Estado">{{cargaMasiva().estado | titlecase}}</nz-descriptions-item>
 		</nz-descriptions>
