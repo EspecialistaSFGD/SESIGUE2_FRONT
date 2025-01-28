@@ -481,7 +481,6 @@ export class PanelComponent {
 
   private getTopoJsonUrlAndFeature(ubigeo: string | null): { topoJsonUrl: string, rqDataFeature: string } {
     const baseUrl = environment.topoJsonUrl;
-    console.table(ubigeo);
 
     if (ubigeo?.length === 2) {
       return { topoJsonUrl: `${baseUrl}/provincias/${ubigeo}.topo.json`, rqDataFeature: ubigeo };

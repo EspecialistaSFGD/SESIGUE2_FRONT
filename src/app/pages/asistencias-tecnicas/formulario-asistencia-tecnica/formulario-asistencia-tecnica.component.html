@@ -10,7 +10,9 @@
             <nz-form-label [nzSpan]="null">Tipo de atención</nz-form-label>
             <nz-radio-group class="radio-form-control" formControlName="tipo">
               @for (tipo of tipos; track $index){
-              <label nz-radio [nzValue]="tipo.value">{{tipo.text| titlecase }}</label>
+                @if (tipo.text != 'documento') {
+                  <label nz-radio [nzValue]="tipo.value">{{tipo.text| titlecase }}</label>
+                }
               }
             </nz-radio-group>
             <div class="text-danger" *ngIf="alertMessageError('tipo')">{{msgErrorControl('tipo','Tipo de atención')}}

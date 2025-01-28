@@ -6,6 +6,7 @@ export class MenuModel extends SeguridadModel {
         public codigoMenu: number,
         public descripcionItem: string,
         public direccionUrl: string,
+        public paramsUrl: string,
         public parentMenu: number,
         public codigoMenuPadre: number,
         public iconoMenu?: string,
