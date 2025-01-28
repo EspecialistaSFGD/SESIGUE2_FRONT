@@ -129,7 +129,7 @@ export class AuthService {
     return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, ots).pipe(
       tap((resp: ResponseModel) => {
         const data = resp.data;
-
+        
         if (resp.success && data != null) {
           if (data.menus != null) {
             this.#usuario.update((v) => ({ ...v, navigation: data.menus }));
@@ -139,7 +139,15 @@ export class AuthService {
             data.permisos = menusTransformados.permisos;
             data.menus.map((menu: MenuModel) => {
               if (menu.esExterno) {
-                menu.direccionUrl = `${menu.direccionUrl}au=0&7B611A09B990B80849DBE7AF822D63E466D552839D9EC6E0=2B6AC8BbF4ADF440005AFC42EF337555FB0008BF9770791Z&gjXtIkEroS=SD_SSFD&codevento=62&ubig=0&de=&en=${data.entidad}&codsector=${data.sector}&iacp=${data.codigoUsuario}&sup=1`
+                let sup = 0
+                if(Number(data.sector) != 0){
+                  sup = data.entidad == 3402 ? 1 : 2
+                }
+                const ubigeo = data.ubigeoEntidad ? data.ubigeoEntidad : 0
+                const sector = data.sector ? data.sector : 0
+                
+                // menu.direccionUrl = `${menu.direccionUrl}au=0&7B611A09B990B80849DBE7AF822D63E466D552839D9EC6E0=2B6AC8BbF4ADF440005AFC42EF337555FB0008BF9770791Z&gjXtIkEroS=SD_SSFD&codevento=62&ubig=0&de=&en=${data.entidad}&codsector=${data.sector}&iacp=${data.codigoUsuario}&sup=1`
+                menu.direccionUrl = `${menu.direccionUrl}au=0&7B611A09B990B80849DBE7AF822D63E466D552839D9EC6E0=2B6AC8BbF4ADF440005AFC42EF337555FB0008BF9770791Z&gjXtIkEroS=SD_SSFD&ubig=${Number(ubigeo)}&de=6&en=${data.entidad}&codsector=${sector}&iacp=${data.codigoUsuario}&sup=${sup}`
               }
             })
 
