@@ -42,8 +42,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private timeoutId: any;
   fechaMinAtencion = new Date
   today = new Date();
-  mancomunidadesAbrev: string[] = ['MR', 'MM']
-  tipoMancomunidad: string = ''
+  mancomunidadesSlug: string[] = ['MR', 'MM']
+  localsValidSlug: string[] = ['GL','MP','MD']
+  tipoEntidadSlug: string = ''
 
   entidad: EntidadResponse[] = []
   // public sectores = signal<SectorResponse[]>([])
@@ -133,8 +134,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     entidad: [{ value: '', disabled: true }],
     autoridad: ['', Validators.required],
     dniAutoridad: [''],
-    nombreAutoridad: ['', Validators.required],
-    documentoTitulo: [''],
+    nombreAutoridad: [{ value: '', disabled: false }, Validators.required],
+    documentoTitulo: [{ value: '', disabled: false }],
     numeroExpediente: [''],
     cargoAutoridad: ['', [Validators.required, Validators.maxLength(50)]],
     contactoAutoridad: ['',],
@@ -142,7 +143,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     unidadId: [''],
     orientacionId: [''],
     clasificacion: ['', Validators.required],
-    tema: ['', Validators.required],
+    tema: [{ value: '', disabled: false }, Validators.required],
     validado: [false, Validators.required],
     comentarios: [''],
     evidenciaReunion: [''],
@@ -196,6 +197,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   ngOnInit() {
+    this.getAtencion()
     this.getSectorAuth()
     this.getAllKinds()
     this.getAllPlaces()
@@ -203,7 +205,14 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.getAllEspacios()
     this.getAllNivelGobiernos()
     this.getAllClasificaciones()
-    this.obtenerFechaLaborales()
+    this.obtenerFechaLaborales()    
+  }
+
+  getAtencion(){
+    console.log('Atencion get');
+    
+    console.log(this.asistenciaTecnica);
+    
   }
 
   setParamsData() {
@@ -244,11 +253,22 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       }
     }
 
-    console.log(this.asistenciaTecnica);
     
+    this.setControlsForm()
 
     const setUbigeo = `${provincia}01`
     this.formAsistencia.reset({ ...this.asistenciaTecnica, tipo, fechaAtencion, autoridad, dniAutoridad, contactoAutoridad, departamento, provincia: setUbigeo, distrito, ubigeo, entidad, sectorId, lugarId, clasificacion, espacioId, tipoPerfil, modalidad, orientacionId, validado })
+  }
+
+  setControlsForm(){
+    const controlTema = this.formAsistencia.get('tema')
+    this.esDocumento ? controlTema?.disable() : controlTema?.enable()
+    
+    const controlDocumentoTitulo = this.formAsistencia.get('documentoTitulo')
+    this.esDocumento ? controlDocumentoTitulo?.disable() : controlDocumentoTitulo?.enable()
+
+    const controlNombreAutoridad = this.formAsistencia.get('nombreAutoridad')
+    this.esDocumento ? controlNombreAutoridad?.disable() : controlNombreAutoridad?.enable()
   }
 
   setCongresistasParams() {
@@ -464,7 +484,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   changeTipoEntidad() {
     const tipo = this.obtenerValueTipoEntidad()
     if (tipo) {
-      this.tipoMancomunidad = tipo.abreviatura
+      this.tipoEntidadSlug = tipo.abreviatura
       const controlDpto = this.formAsistencia.get('departamento')
       const controlProv = this.formAsistencia.get('provincia')
       const controlDist = this.formAsistencia.get('distrito')
@@ -478,15 +498,14 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       controlProv?.reset()
       controlDist?.reset()
 
-      if (this.mancomunidadesAbrev.includes(this.tipoMancomunidad)) {
+      if (this.mancomunidadesSlug.includes(this.tipoEntidadSlug)) {
         controlDpto?.disable()
         controlDpto?.reset()
         this.obtenerMancomunidades()
       } else {
         controlDpto?.enable()
         const controlUbigeo = this.formAsistencia.get('ubigeo')
-
-        if (this.tipoMancomunidad == 'GL') {
+        if (this.localsValidSlug.includes(this.tipoEntidadSlug)) {
           if (controlUbigeo?.value != '') {
             controlProv?.enable()
             const ubigeo = controlUbigeo?.value.slice(0, 2)
@@ -494,7 +513,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
           } else {
             this.provincias.set([])
           }
-        } else if (this.tipoMancomunidad == 'GR') {
+        } else if (this.tipoEntidadSlug == 'GR') {
           this.changeAutoridad()
         }
         if (controlUbigeo?.value) {
@@ -688,10 +707,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.obtenerEntidadPorUbigeo(`${ubigeo}0000`)
       // this.setUbigeo()
 
-      if (!this.mancomunidadesAbrev.includes(this.tipoMancomunidad)) {
-        if (this.tipoMancomunidad == 'GL') {
+      if (!this.mancomunidadesSlug.includes(this.tipoEntidadSlug)) {
+        if (this.localsValidSlug.includes(this.tipoEntidadSlug)) {
           controlProvincia?.enable()
-        } else if (this.tipoMancomunidad == 'GR') {
+        } else if (this.tipoEntidadSlug == 'GR') {
           // this.changeAutoridad()
         }
         this.changeAutoridad()
@@ -700,6 +719,12 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
   obtenerUbigeoProvincia(ubigeo: string) {
     if (ubigeo) {
+      const tipo = this.obtenerValueTipoEntidad()
+      if (tipo) {
+        this.tipoEntidadSlug = tipo.abreviatura    
+      }
+      this.districtDisabled = this.tipoEntidadSlug == 'MP' ? true : false
+      
       const ubigeoDist = ubigeo.slice(0, 4)
       this.formAsistencia.get('distrito')?.reset();
       this.obtenerUbigeoDistritos(ubigeoDist)
@@ -760,10 +785,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   obtenerMancomunidades() {
-    if (this.mancomunidadesAbrev.includes(this.tipoMancomunidad)) {
+    if (this.mancomunidadesSlug.includes(this.tipoEntidadSlug)) {
       this.pagination.columnSort = 'entidad'
       this.pagination.pageSize = 300
-      this.entidadService.getMancomunidades(this.tipoMancomunidad, this.pagination)
+      this.entidadService.getMancomunidades(this.tipoEntidadSlug, this.pagination)
         .subscribe(resp => {
           if (resp.success == true) {
             if (resp.data.length > 0) {
@@ -788,7 +813,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   obtenerUbigeoDistritos(provincia: string) {
     if (provincia) {
-      this.districtDisabled = false
+      // this.districtDisabled = false
       this.ubigeoService.getDistricts(provincia)
         .subscribe(resp => {
           if (resp.success == true) {
