@@ -37,6 +37,8 @@ export interface AsistenciaTecnicaResponse {
   entidadId: string,
   ubigeoEntidad: string,
   nombreEntidad: string,
+  documentoTitulo?: string,
+  numeroExpediente?: string,
   autoridad: boolean,
   dniAutoridad: string,
   nombreAutoridad: string,

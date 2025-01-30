@@ -10,8 +10,7 @@
                 <button
                     [disabled]="!authService.permisos()?.puede_solicitar_desestimacion || acuerdosService.isDesestimating()"
                     *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
-                    nzDanger>Solicitar
-                    desestimación</button>
+                    nzDanger>Solicitar desestimación</button>
                 <!-- <button
                     [disabled]="(acuerdosService.acuerdoSeleccionado()?.plazo!.toString() | dueTo)||acuerdosService.isDesestimating()"
                     *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
@@ -29,11 +28,15 @@
                 </nz-descriptions-item>
 
                 <nz-descriptions-item nzTitle="Provincia">
-                    {{this.acuerdosService.acuerdoSeleccionado()?.provincia}}
+                    <div class="w-32">
+                        {{this.acuerdosService.acuerdoSeleccionado()?.provincia}}
+                    </div>
                 </nz-descriptions-item>
 
                 <nz-descriptions-item nzTitle="Distrito">
-                    {{this.acuerdosService.acuerdoSeleccionado()?.distrito}}
+                    <div class="w-32">
+                        {{this.acuerdosService.acuerdoSeleccionado()?.distrito}}
+                    </div>
                 </nz-descriptions-item>
 
                 <nz-descriptions-item nzTitle="CUI">{{this.acuerdosService.acuerdoSeleccionado()?.cuis}}
@@ -81,21 +84,22 @@
                 </nz-descriptions-item>
 
                 <nz-descriptions-item nzTitle="Plazo">
-
-                    @if(acuerdosService.acuerdoSeleccionado()?.plazo){
-                    <!-- @if(acuerdosService.acuerdoSeleccionado()?.nomEstadoRegistro!='DESESTIMADO' &&
-                    acuerdosService.acuerdoSeleccionado()?.nomEstadoRegistro!='CULMINADO'
-                    ){ -->
-                    @if(acuerdosService.acuerdoSeleccionado()?.plazo!.toString() | dueTo) {
-                    <span nz-tooltip="Plazo vencido" class="text-red-500">{{
-                        acuerdosService.acuerdoSeleccionado()?.plazo | date: 'dd/MM/yyyy'
-                        }}</span>
-                    }@else{
-                    {{acuerdosService.acuerdoSeleccionado()?.plazo | date: 'dd/MM/yyyy'}}
-                    }
-                    }
-
-                    <!-- {{this.acuerdosService.acuerdoSeleccionado()?.plazo}} -->
+                    <div class="w-24">
+                        @if(acuerdosService.acuerdoSeleccionado()?.plazo){
+                        <!-- @if(acuerdosService.acuerdoSeleccionado()?.nomEstadoRegistro!='DESESTIMADO' &&
+                        acuerdosService.acuerdoSeleccionado()?.nomEstadoRegistro!='CULMINADO'
+                        ){ -->
+                        @if(acuerdosService.acuerdoSeleccionado()?.plazo!.toString() | dueTo) {
+                        <span nz-tooltip="Plazo vencido" class="text-red-500">{{
+                            acuerdosService.acuerdoSeleccionado()?.plazo | date: 'dd/MM/yyyy'
+                            }}</span>
+                        }@else{
+                        {{acuerdosService.acuerdoSeleccionado()?.plazo | date: 'dd/MM/yyyy'}}
+                        }
+                        }
+    
+                        <!-- {{this.acuerdosService.acuerdoSeleccionado()?.plazo}} -->
+                    </div>
                 </nz-descriptions-item>
 
                 <nz-descriptions-item nzTitle="Espacio">
@@ -317,7 +321,7 @@
 
                     @if(authService.permisos()?.puede_validar_avance_sector){
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Validar avance"
-                        (click)="onValidarAvance(data)" [disabled]="acuerdosService.isDesestimated() || data.validado == 1">
+                        (click)="onValidarAvance(data)" [disabled]="acuerdosService.isDesestimated() && data.validado == 1">
                         <span [ngClass]="{ 'text-grey-500' : data.validado == 1, 'text-green-500' : data.validado == 0 }" nz-icon nzType="check-circle" nzTheme="outline"></span>
                     </button>
                     }

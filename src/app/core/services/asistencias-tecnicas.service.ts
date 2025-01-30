@@ -89,6 +89,7 @@ export class AsistenciasTecnicasService {
     formData.append('evidenciaReunion', asistenciaTecnica.evidenciaReunion)
     formData.append('evidenciaAsistencia', asistenciaTecnica.evidenciaAsistencia)
     formData.append('estado', `${asistenciaTecnica.estado}`)
+    formData.append('validado', `${asistenciaTecnica.validado}`)
 
     return formData
   }

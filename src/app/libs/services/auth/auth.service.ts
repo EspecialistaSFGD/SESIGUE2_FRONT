@@ -141,7 +141,7 @@ export class AuthService {
               if (menu.esExterno) {
                 let sup = 0
                 if(Number(data.sector) != 0){
-                  sup = data.entidad == 3402 ? 1 : 2
+                  sup = data.entidad == 3402 ? 2 : 1
                 }
 
                 const departamento = data.ubigeoEntidad ? Number(data.ubigeoEntidad.slice(0,2)) : 0

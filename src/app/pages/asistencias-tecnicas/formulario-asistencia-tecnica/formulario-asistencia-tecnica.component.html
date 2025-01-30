@@ -3,23 +3,23 @@
   nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
   <ng-container *nzModalContent>
     <form [formGroup]="formAsistencia" nz-form nzLayout="vertical" autocomplete="off">
-      @if (perfil === 12) {
-      <div nz-row [nzGutter]="16">
-        <div nz-col nzSpan="12">
-          <nz-form-item>
-            <nz-form-label [nzSpan]="null">Tipo de atención</nz-form-label>
-            <nz-radio-group class="radio-form-control" formControlName="tipo">
-              @for (tipo of tipos; track $index){
-                @if (tipo.text != 'documento') {
-                  <label nz-radio [nzValue]="tipo.value">{{tipo.text| titlecase }}</label>
+      @if (perfil === 12 && !esDocumento) {
+        <div nz-row [nzGutter]="16">
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null">Tipo de atención</nz-form-label>
+              <nz-radio-group class="radio-form-control" formControlName="tipo">
+                @for (tipo of tipos; track $index){
+                  @if (tipo.text != 'documento') {
+                    <label nz-radio [nzValue]="tipo.value">{{tipo.text| titlecase }}</label>
+                  }
                 }
-              }
-            </nz-radio-group>
-            <div class="text-danger" *ngIf="alertMessageError('tipo')">{{msgErrorControl('tipo','Tipo de atención')}}
-            </div>
-          </nz-form-item>
+              </nz-radio-group>
+              <div class="text-danger" *ngIf="alertMessageError('tipo')">{{msgErrorControl('tipo','Tipo de atención')}}
+              </div>
+            </nz-form-item>
+          </div>
         </div>
-      </div>
       }
       <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="6">
@@ -27,7 +27,7 @@
             <nz-form-label [nzSpan]="null" nzFor="fechaAtencion">Fecha de atención</nz-form-label>
             <nz-form-control nzSpan="null">
               <nz-date-picker id="fechaAtencion" class="datepicker-form-control" formControlName="fechaAtencion"
-                nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy"
+                nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy" [nzDisabled]="esDocumento"
                 [nzDisabledDate]="disableDates"></nz-date-picker>
             </nz-form-control>
             <div class="text-danger" *ngIf="alertMessageError('fechaAtencion')">
@@ -38,7 +38,7 @@
           @if (perfil === 12) {
           <nz-form-item>
             <nz-form-label [nzSpan]="null">Modalidad</nz-form-label>
-            <nz-radio-group class="radio-form-control" formControlName="modalidad" (ngModelChange)="obtenerModalidad()">
+            <nz-radio-group class="radio-form-control" formControlName="modalidad" (ngModelChange)="obtenerModalidad()" [nzDisabled]="esDocumento">
               @for (modalidad of modalidades; track $index){
               <label nz-radio [nzValue]="modalidad.value">{{modalidad.text | titlecase }}</label>
               }
@@ -47,7 +47,8 @@
             </div>
           </nz-form-item>
           } @else if (perfil === 1) {
-          <nz-form-item>
+            <ng-container *ngTemplateOutlet="controlSector"></ng-container>
+          <!-- <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="sectorId">Sector</nz-form-label>
             <nz-form-control nzSpan="null">
               <nz-select nzPlaceHolder="Seleccionat sector" id="sectorId" class="select-form-control"
@@ -59,14 +60,14 @@
               <div class="text-danger" *ngIf="alertMessageError('sectorId')">{{msgErrorControl('sectorId','Sector')}}
               </div>
             </nz-form-control>
-          </nz-form-item>
+          </nz-form-item> -->
           }
         </div>
         <div nz-col nzSpan="6">
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="lugarId">Lugar</nz-form-label>
             <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" class="select-form-control" nzDisabled="{{ perfil === 1 ? true : false }}"
+              <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" class="select-form-control" nzDisabled="{{ perfil === 1 || esDocumento ? true : false }}"
                 formControlName="lugarId" nzAllowClear nzShowSearch>
                 @for (lugar of lugares(); track $index) {
                 <nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
@@ -93,75 +94,81 @@
         </div>
       </div>
       <div nz-row [nzGutter]="16">
-        <div nz-col nzSpan="6">
+        @if (tipoEntidadSlug == 'GN') {
+          <div nz-col nzSpan="12">
+            <ng-container *ngTemplateOutlet="controlSector"></ng-container>
+          </div>
+        } @else {
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null" nzFor="departamento">Departamento</nz-form-label>
+              @if(mancomunidadesSlug.includes(tipoEntidadSlug)){
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="departamento" placeholder="" formControlName="departamento">
+              </nz-form-control>
+              } @else {
+              <nz-form-control nzSpan="null">
+                <nz-select nzPlaceHolder="Seleccionar departamento" id="departamento" class="select-form-control"
+                  formControlName="departamento" (ngModelChange)="obtenerUbigeoDepartamento($event)" nzAllowClear
+                  nzShowSearch>
+                  @for (departamento of departamentos; track $index) {
+                  <nz-option [nzValue]="departamento.departamentoId" nzLabel="{{departamento.departamento}}"></nz-option>
+                  }
+                </nz-select>
+                <div class="text-danger" *ngIf="alertMessageError('departamento')">
+                  {{msgErrorControl('departamento','Departamento')}}</div>
+              </nz-form-control>
+              }
+  
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null" nzFor="provincia">Provincia</nz-form-label>
+              @if(mancomunidadesSlug.includes(tipoEntidadSlug)){
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="provincia" placeholder="" formControlName="provincia">
+              </nz-form-control>
+              } @else {
+              <nz-form-control nzSpan="null">
+                <nz-select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
+                  formControlName="provincia" (ngModelChange)="obtenerUbigeoProvincia($event)" nzAllowClear nzShowSearch>
+                  @for (provincia of provincias(); track $index) {
+                  <nz-option [nzValue]="provincia.provinciaId" nzLabel="{{provincia.provincia}}"></nz-option>
+                  }
+                </nz-select>
+                <div class="text-danger" *ngIf="alertMessageError('provincia')">
+                  {{msgErrorControl('provincia','Provincia')}}</div>
+              </nz-form-control>
+              }
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label nzRequired [nzSpan]="null" nzFor="distrito">Distrito</nz-form-label>
+              @if(mancomunidadesSlug.includes(tipoEntidadSlug)){
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="distrito" placeholder="" formControlName="distrito">
+              </nz-form-control>
+              } @else {
+              <nz-form-control nzSpan="null">
+                <nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" class="select-form-control"
+                  formControlName="distrito" (ngModelChange)="obtenerUbigeoDistito($event)"
+                  [nzDisabled]="districtDisabled" nzAllowClear nzShowSearch>
+                  @for (distrito of distritos(); track $index) {
+                  <nz-option [nzValue]="distrito.distritoId" nzLabel="{{distrito.distrito}}"></nz-option>
+                  }
+                </nz-select>
+                <div class="text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}
+                </div>
+              </nz-form-control>
+              }
+            </nz-form-item>
+          </div>
+        }
+        <div nz-col [nzSpan]="tipoEntidadSlug == 'GN' ? 12 : 6">
           <nz-form-item>
-            <nz-form-label [nzSpan]="null" nzFor="departamento">Departamento</nz-form-label>
-            @if(mancomunidadesAbrev.includes(tipoMancomunidad)){
-            <nz-form-control nzSpan="null">
-              <input type="text" class="form-control" id="departamento" placeholder="" formControlName="departamento">
-            </nz-form-control>
-            } @else {
-            <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionar departamento" id="departamento" class="select-form-control"
-                formControlName="departamento" (ngModelChange)="obtenerUbigeoDepartamento($event)" nzAllowClear
-                nzShowSearch>
-                @for (departamento of departamentos; track $index) {
-                <nz-option [nzValue]="departamento.departamentoId" nzLabel="{{departamento.departamento}}"></nz-option>
-                }
-              </nz-select>
-              <div class="text-danger" *ngIf="alertMessageError('departamento')">
-                {{msgErrorControl('departamento','Departamento')}}</div>
-            </nz-form-control>
-            }
-
-          </nz-form-item>
-        </div>
-        <div nz-col nzSpan="6">
-          <nz-form-item>
-            <nz-form-label [nzSpan]="null" nzFor="provincia">Provincia</nz-form-label>
-            @if(mancomunidadesAbrev.includes(tipoMancomunidad)){
-            <nz-form-control nzSpan="null">
-              <input type="text" class="form-control" id="provincia" placeholder="" formControlName="provincia">
-            </nz-form-control>
-            } @else {
-            <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
-                formControlName="provincia" (ngModelChange)="obtenerUbigeoProvincia($event)" nzAllowClear nzShowSearch>
-                @for (provincia of provincias(); track $index) {
-                <nz-option [nzValue]="provincia.provinciaId" nzLabel="{{provincia.provincia}}"></nz-option>
-                }
-              </nz-select>
-              <div class="text-danger" *ngIf="alertMessageError('provincia')">
-                {{msgErrorControl('provincia','Provincia')}}</div>
-            </nz-form-control>
-            }
-          </nz-form-item>
-        </div>
-        <div nz-col nzSpan="6">
-          <nz-form-item>
-            <nz-form-label nzRequired [nzSpan]="null" nzFor="distrito">Distrito</nz-form-label>
-            @if(mancomunidadesAbrev.includes(tipoMancomunidad)){
-            <nz-form-control nzSpan="null">
-              <input type="text" class="form-control" id="distrito" placeholder="" formControlName="distrito">
-            </nz-form-control>
-            } @else {
-            <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" class="select-form-control"
-                formControlName="distrito" (ngModelChange)="obtenerUbigeoDistito($event)"
-                [nzDisabled]="districtDisabled" nzAllowClear nzShowSearch>
-                @for (distrito of distritos(); track $index) {
-                <nz-option [nzValue]="distrito.distritoId" nzLabel="{{distrito.distrito}}"></nz-option>
-                }
-              </nz-select>
-              <div class="text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}
-              </div>
-            </nz-form-control>
-            }
-          </nz-form-item>
-        </div>
-        <div nz-col nzSpan="6">
-          <nz-form-item>
-            @if(mancomunidadesAbrev.includes(tipoMancomunidad)){
+            @if(mancomunidadesSlug.includes(tipoEntidadSlug)){
             <nz-form-label [nzSpan]="null" nzFor="entidad">Mancomunidad</nz-form-label>
             <nz-select nzPlaceHolder="Seleccionar mancomunidad" id="entidadId" class="w-full select-form-control"
               (ngModelChange)="changeMancomunidad()" formControlName="entidadId" nzAllowClear nzShowSearch>
@@ -180,68 +187,114 @@
           </nz-form-item>
         </div>
       </div>
-      <div nz-row [nzGutter]="16">
-        <div nz-col nzSpan="6">
-          <nz-form-item>
-            <nz-form-label nzRequired [nzSpan]="null">Participa Autoridad</nz-form-label>
-            <nz-radio-group class="radio-form-control" formControlName="autoridad" (ngModelChange)="changeAutoridad()">
-              @for (participa of participar; track $index){
-              <label nz-radio [nzValue]="participa == 'si' ? true : false">{{participa | titlecase }}</label>
-              }
-            </nz-radio-group>
-            <div class="text-danger" *ngIf="alertMessageError('autoridad')">{{msgErrorControl('autoridad','Autoridad')}}
-            </div>
-          </nz-form-item>
-        </div>
-        <div nz-col [nzSpan]="columnUbigeo">
-          <nz-form-item>
-            <nz-form-label [nzSpan]="null" nzFor="dniAutoridad">DNI</nz-form-label>
-            <nz-form-control nzSpan="null">
-              <input type="text" id="dniAutoridad" class="form-control" placeholder="Ingresa el DNI aquí"
-                formControlName="dniAutoridad">
-            </nz-form-control>
-            <div class="text-danger" *ngIf="alertMessageError('dniAutoridad')">{{msgErrorControl('dniAutoridad','DNI')}}
-            </div>
-          </nz-form-item>
-        </div>
-        <div nz-col [nzSpan]="6">
-          <nz-form-item>
-            <nz-form-label [nzSpan]="null" nzFor="nombreAutoridad">Nombre</nz-form-label>
-            <nz-form-control nzSpan="null">
-              <input type="text" class="form-control" id="nombreAutoridad" placeholder="Ingresa el nombre aquí"
-                formControlName="nombreAutoridad">
-            </nz-form-control>
-            <div class="text-danger" *ngIf="alertMessageError('nombreAutoridad')">
-              {{msgErrorControl('nombreAutoridad','Nombre')}}</div>
-          </nz-form-item>
-        </div>
-        <div nz-col [nzSpan]="columnUbigeo">
-          <nz-form-item>
-            <nz-form-label [nzSpan]="null" nzFor="cargoAutoridad">Cargo</nz-form-label>
-            <nz-form-control nzSpan="null">
-              <input type="text" class="form-control" id="cargoAutoridad" placeholder="Ingrese el cargo aquí"
-                formControlName="cargoAutoridad">
-            </nz-form-control>
-            <div class="text-danger" *ngIf="alertMessageError('cargoAutoridad')">
-              {{msgErrorControl('cargoAutoridad','Cargo')}}</div>
-          </nz-form-item>
-        </div>
-        @if(perfil === 1){
-          <div nz-col [nzSpan]="columnUbigeo">
+      @if (!esDocumento) {
+        <div nz-row [nzGutter]="16">
+          <div nz-col nzSpan="6">
             <nz-form-item>
-              <nz-form-label [nzSpan]="null" nzFor="contactoAutoridad">Contacto</nz-form-label>
-              <nz-form-control nzSpan="null">
-                <input type="text" class="form-control" id="contactoAutoridad" placeholder="Ingrese el contacto aquí"
-                  formControlName="contactoAutoridad">
-              </nz-form-control>
-              <div class="text-danger" *ngIf="alertMessageError('contactoAutoridad')">
-                {{msgErrorControl('contactoAutoridad','Contacto')}}</div>
+              <nz-form-label nzRequired [nzSpan]="null">Participa Autoridad</nz-form-label>
+              <nz-radio-group class="radio-form-control" formControlName="autoridad" (ngModelChange)="changeAutoridad()">
+                @for (participa of participar; track $index){
+                <label nz-radio [nzValue]="participa == 'si' ? true : false">{{participa | titlecase }}</label>
+                }
+              </nz-radio-group>
+              <div class="text-danger" *ngIf="alertMessageError('autoridad')">{{msgErrorControl('autoridad','Autoridad')}}
+              </div>
             </nz-form-item>
           </div>
-        }
-      </div>
+          <div nz-col [nzSpan]="columnUbigeo">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null" nzFor="dniAutoridad">DNI</nz-form-label>
+              <nz-form-control nzSpan="null">
+                <input type="text" id="dniAutoridad" class="form-control" placeholder="Ingresa el DNI aquí"
+                  formControlName="dniAutoridad">
+              </nz-form-control>
+              <div class="text-danger" *ngIf="alertMessageError('dniAutoridad')">{{msgErrorControl('dniAutoridad','DNI')}}
+              </div>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="6">
+            <ng-container *ngTemplateOutlet="controlParticipante"></ng-container>
+            <!-- <nz-form-item>
+              <nz-form-label [nzSpan]="null" nzFor="nombreAutoridad">Nombre</nz-form-label>
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="nombreAutoridad" placeholder="Ingresa el nombre aquí"
+                  formControlName="nombreAutoridad">
+              </nz-form-control>
+              <div class="text-danger" *ngIf="alertMessageError('nombreAutoridad')">
+                {{msgErrorControl('nombreAutoridad','Nombre')}}</div>
+            </nz-form-item> -->
+          </div>
+          <div nz-col [nzSpan]="columnUbigeo">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null" nzFor="cargoAutoridad">Cargo</nz-form-label>
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="cargoAutoridad" placeholder="Ingrese el cargo aquí"
+                  formControlName="cargoAutoridad">
+              </nz-form-control>
+              <div class="text-danger" *ngIf="alertMessageError('cargoAutoridad')">
+                {{msgErrorControl('cargoAutoridad','Cargo')}}</div>
+            </nz-form-item>
+          </div>
+          @if(perfil === 1){
+            <div nz-col [nzSpan]="columnUbigeo">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzFor="contactoAutoridad">Contacto</nz-form-label>
+                <nz-form-control nzSpan="null">
+                  <input type="text" class="form-control" id="contactoAutoridad" placeholder="Ingrese el contacto aquí"
+                    formControlName="contactoAutoridad">
+                </nz-form-control>
+                <div class="text-danger" *ngIf="alertMessageError('contactoAutoridad')">
+                  {{msgErrorControl('contactoAutoridad','Contacto')}}</div>
+              </nz-form-item>
+            </div>
+          }
+        </div>
+      } @else {
+        <div nz-row [nzGutter]="16">
+          <div nz-col [nzSpan]="6">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null" nzFor="documentoTitulo">Documento</nz-form-label>
+              <nz-form-control nzSpan="null">
+                <input nz-input type="text" class="form-control" id="documentoTitulo" placeholder="Ingrese el documento aquí"
+                  formControlName="documentoTitulo">
+              </nz-form-control>
+              <div class="text-danger" *ngIf="alertMessageError('documentoTitulo')">
+                {{msgErrorControl('documentoTitulo','documento')}}</div>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="6">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null" nzFor="numeroExpediente">Expediente</nz-form-label>
+              <nz-form-control nzSpan="null">
+                <input type="text" class="form-control" id="numeroExpediente" placeholder="Ingrese el contacto aquí"
+                  formControlName="numeroExpediente">
+              </nz-form-control>
+              <div class="text-danger" *ngIf="alertMessageError('numeroExpediente')">
+                {{msgErrorControl('numeroExpediente','expediente')}}</div>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="6">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacios</nz-form-label>
+              <nz-form-control nzSpan="null">
+                <nz-select class="select-form-control" nzPlaceHolder="Seleccionar espacio" id="espacioId" [nzDisabled]="perfil === 1 || esDocumento ? true : false"
+                  formControlName="espacioId" nzAllowClear nzShowSearch>
+                  @for (espacio of espacios(); track $index){
+                  <nz-option [nzValue]="espacio.espacioId" nzLabel="{{espacio.nombre}}"></nz-option>
+                  }
+                </nz-select>
+                <div class="text-danger" *ngIf="alertMessageError('espacioId')">{{msgErrorControl('espacioId','Espacio')}}
+                </div>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="6">
+            <ng-container *ngTemplateOutlet="controlClasificacion"></ng-container>
+          </div>          
+        </div>
+      }
 
-      @if(perfil === 12){
+      @if(perfil === 12 && !esDocumento){
       <div nz-row [nzGutter]="16">
         <div nz-col nzSpan="24">
           <div class="border border-solid border-grey-800 ">
@@ -363,38 +416,31 @@
         </div>
       </div> -->
       <div nz-row [nzGutter]="16" [ngClass]="{ 'mt-3' : perfil == 12 }">
-        <div nz-col [nzSpan]="columnaSpace">
-          <nz-form-item>
-            <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacios</nz-form-label>
-            <nz-form-control nzSpan="null">
-              <nz-select class="select-form-control" nzPlaceHolder="Seleccionar espacio" id="espacioId" nzDisabled="{{ perfil === 1 ? true : false }}"
-                formControlName="espacioId" nzAllowClear nzShowSearch>
-                @for (espacio of espacios(); track $index){
-                <nz-option [nzValue]="espacio.espacioId" nzLabel="{{espacio.nombre}}"></nz-option>
-                }
-              </nz-select>
-              <div class="text-danger" *ngIf="alertMessageError('espacioId')">{{msgErrorControl('espacioId','Espacio')}}
-              </div>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-        <div nz-col [nzSpan]="columnaSpace">
-          <nz-form-item>
-            <nz-form-label [nzSpan]="null">Clasificación</nz-form-label>
-            <nz-radio-group class="radio-form-control" formControlName="clasificacion"
-              (ngModelChange)="obtenerClasificacion()">
-              @for (clasificacion of clasificaciones; track $index){
-              <label nz-radio [nzValue]="clasificacion.value">{{clasificacion.text| titlecase }}</label>
-              }
-            </nz-radio-group>
-            <div class="text-danger" *ngIf="alertMessageError('clasificacion')">
-              {{msgErrorControl('clasificacion','Clasificacion')}}</div>
-          </nz-form-item>
-        </div>
-        @if(perfil == 12){
-          <div nz-col nzSpan="12">
+        @if(!esDocumento) {
+          <div nz-col [nzSpan]="columnaSpace">
             <nz-form-item>
-              <nz-form-label [nzSpan]="null" nzFor="tema">Tema</nz-form-label>
+              <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacios</nz-form-label>
+              <nz-form-control nzSpan="null">
+                <nz-select class="select-form-control" nzPlaceHolder="Seleccionar espacio" id="espacioId" [nzDisabled]="perfil === 1 || esDocumento ? true : false"
+                  formControlName="espacioId" nzAllowClear nzShowSearch>
+                  @for (espacio of espacios(); track $index){
+                  <nz-option [nzValue]="espacio.espacioId" nzLabel="{{espacio.nombre}}"></nz-option>
+                  }
+                </nz-select>
+                <div class="text-danger" *ngIf="alertMessageError('espacioId')">{{msgErrorControl('espacioId','Espacio')}}
+                </div>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="columnaSpace">
+            <ng-container *ngTemplateOutlet="controlClasificacion"></ng-container>
+          </div>
+        }
+        @if(perfil == 12){
+          <div nz-col nzSpan="12">            
+            <ng-container *ngTemplateOutlet="controlTema"></ng-container>
+            <!-- <nz-form-item>
+              <nz-form-label [nzSpan]="null" nzFor="tema"> {{ esDocumento ? 'Asunto' : 'Tema' }} </nz-form-label>
               <nz-form-control nzSpan="null">
                 <input type="text" class="form-control" id="tema" placeholder="Ingrese el tema aquí"
                   (keyup)="caracteresContador('tema',1500)" formControlName="tema">
@@ -405,8 +451,13 @@
                 <div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : temaCount < 20 }">{{temaCount}}
                 </div>
               </div>
-            </nz-form-item>
+            </nz-form-item> -->
           </div>
+          @if(esDocumento){
+            <div nz-col nzSpan="12">
+              <ng-container *ngTemplateOutlet="controlParticipante"></ng-container>
+            </div>
+          }
         }
       </div>
       @if(perfil == 1){
@@ -454,7 +505,7 @@
           }
         </div>
       }
-      @if (perfil === 12) {
+      @if (perfil === 12 && !esDocumento) {
       <div nz-row [nzGutter]="16" class="mt-2">
         <div nz-col nzSpan="12">
           <div class="border border-solid border-grey-800 ">
@@ -563,36 +614,39 @@
         <div nz-row [nzGutter]="16" [ngClass]="{ 'mt-4' : perfil === 12 }">
           @if(perfil === 1){
             <div nz-col nzSpan="12">
-              <nz-form-item>
+              <ng-container *ngTemplateOutlet="controlTema"></ng-container>
+              <!-- <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzFor="tema">Consulta</nz-form-label>
                 <textarea class="form-control" id="tema" formControlName="tema"
                   (keyup)="caracteresContador('tema',900)" placeholder="Ingrese la consulta aquí"
                   rows="2"></textarea>
                 <div class="flex justify-between">
                   <div class="w-full text-danger" *ngIf="alertMessageError('tema')">
-                    {{msgErrorControl('tema','Comentarios')}}</div>
+                    {{msgErrorControl('tema','Consulta')}}</div>
+                  <div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : comentariosCount < 20 }">
+                    {{comentariosCount}}</div>
+                </div>
+              </nz-form-item> -->
+            </div>
+          }
+          @if(!esDocumento){
+            <div nz-col [nzSpan]="columnaComments">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="null" nzFor="comentarios">@if(perfil === 1){ Orientación } @else { Comentarios }</nz-form-label>
+                <textarea class="form-control" id="comentarios" formControlName="comentarios"
+                  (keyup)="caracteresContador('comentarios',900)" placeholder="Ingrese el comentario aquí"
+                  rows="2"></textarea>
+                <div class="flex justify-between">
+                  <div class="w-full text-danger" *ngIf="alertMessageError('comentarios')">
+                    {{msgErrorControl('comentarios','Comentarios')}}</div>
                   <div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : comentariosCount < 20 }">
                     {{comentariosCount}}</div>
                 </div>
               </nz-form-item>
             </div>
           }
-          <div nz-col [nzSpan]="columnaComments">
-            <nz-form-item>
-              <nz-form-label [nzSpan]="null" nzFor="comentarios">@if(perfil === 1){ Orientación } @else { Comentarios }</nz-form-label>
-              <textarea class="form-control" id="comentarios" formControlName="comentarios"
-                (keyup)="caracteresContador('comentarios',900)" placeholder="Ingrese el comentario aquí"
-                rows="2"></textarea>
-              <div class="flex justify-between">
-                <div class="w-full text-danger" *ngIf="alertMessageError('comentarios')">
-                  {{msgErrorControl('comentarios','Comentarios')}}</div>
-                <div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : comentariosCount < 20 }">
-                  {{comentariosCount}}</div>
-              </div>
-            </nz-form-item>
-          </div>
         </div>
-      @if (perfil === 12) {
+      @if (perfil === 12 && !esDocumento) {
         <div nz-row [nzGutter]="16">
           <div nz-col nzSpan="12">
             <nz-form-item>
@@ -620,6 +674,74 @@
           </div>
         </div>
       }
+      <ng-template #controlClasificacion>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null">Clasificación</nz-form-label>
+          <nz-radio-group class="radio-form-control" formControlName="clasificacion" (ngModelChange)="obtenerClasificacion()">
+            @for (clasificacion of clasificaciones; track $index){
+            <label nz-radio [nzValue]="clasificacion.value">{{clasificacion.text| titlecase }}</label>
+            }
+          </nz-radio-group>
+          <div class="text-danger" *ngIf="alertMessageError('clasificacion')">
+            {{msgErrorControl('clasificacion','Clasificacion')}}</div>
+        </nz-form-item>
+      </ng-template>
+
+      <ng-template #controlParticipante>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="nombreAutoridad">{{ esDocumento ? 'Participante' : 'Nombre'}}</nz-form-label>
+          <nz-form-control nzSpan="null">
+            @if (esDocumento) {
+              <textarea nz-input class="form-control" id="nombreAutoridad" formControlName="nombreAutoridad"
+                  (keyup)="caracteresContador('nombreAutoridad',900)" placeholder="Ingrese el participante aquí"
+                  rows="2"></textarea>
+            } @else {
+              <input type="text" class="form-control" id="nombreAutoridad" placeholder="Ingresa el nombre aquí"
+                formControlName="nombreAutoridad">
+            }
+            </nz-form-control>
+          <div class="text-danger" *ngIf="alertMessageError('autoridad')">{{msgErrorControl('autoridad','participante')}}
+          </div>
+        </nz-form-item>
+      </ng-template>
+
+      <ng-template #controlTema>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="tema"> {{ perfil == 12 ? esDocumento ? 'Asunto' : 'Tema' : 'Consulta' }} </nz-form-label>
+          <nz-form-control nzSpan="null">
+            @if (esDocumento) {
+                <textarea nz-input class="form-control" id="tema" formControlName="tema"
+                  (keyup)="caracteresContador('tema',1500)" placeholder="Ingrese el asunto aquí" rows="2"></textarea>
+            } @else {
+              <input type="text" class="form-control" id="tema" placeholder="Ingrese el tema aquí"
+                (keyup)="caracteresContador('tema',1500)" formControlName="tema">
+            }
+          </nz-form-control>
+          <div class="flex justify-between">
+            <div class="w-full text-danger" *ngIf="alertMessageError('tema')">
+              {{msgErrorControl('tema','Tema')}}</div>
+            <div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : temaCount < 20 }">{{temaCount}}
+            </div>
+          </div>
+        </nz-form-item>
+      </ng-template>
+
+      <ng-template #controlSector>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="sectorId">Sector</nz-form-label>
+          <nz-form-control nzSpan="null">
+            <nz-select nzPlaceHolder="Seleccionat sector" id="sectorId" class="select-form-control"
+              formControlName="sectorId" nzAllowClear nzShowSearch [nzDisabled]="perfil == 1">
+              @for (sector of sectoresStore.sectores(); track $index) {
+              <nz-option [nzValue]="sector.value" nzLabel="{{sector.label}}"></nz-option>
+              }
+            </nz-select>
+            <div class="text-danger" *ngIf="alertMessageError('sectorId')">{{msgErrorControl('sectorId','Sector')}}
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </ng-template>
+      
     </form>
   </ng-container>
 </nz-modal>
