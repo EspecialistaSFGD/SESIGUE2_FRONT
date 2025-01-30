@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { AuthLoginModel, AuthRequestModel, UsuarioModel, UsuarioRequestModel } from '../../models/auth/usuario.model';
 import { environment } from '../../../../environments/environment';
-import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
+import { Observable, catchError, first, map, of, switchMap, tap } from 'rxjs';
 import { Token } from '../../models/auth/token.model';
 import { parseISO } from 'date-fns';
 import { ResponseModel } from '../../models/shared/response.model';
@@ -12,7 +12,7 @@ import { MenuModel } from '../../models/shared/menu.model';
 import { PermisoModel } from '../../models/auth/permiso.model';
 import { SelectModel } from '../../models/shared/select.model';
 import { PedidoType } from '../../shared/types/pedido.type';
-import { UsuarioNavigation, UsuarioPermisos } from '@core/interfaces';
+import { ItemEnum, UsuarioNavigation, UsuarioPermisos } from '@core/interfaces';
 
 const codigoUsuario = Number(localStorage.getItem('codigoUsuario')) || 0;
 const codigoPerfil = Number(localStorage.getItem('codigoPerfil')) || 0;
@@ -28,6 +28,7 @@ interface State {
   subTipo: PedidoType;
   canViewPedidos: boolean;
   selectedTheme: string;
+  entidad: string | null,
   departamento: SelectModel | null;
   provincia: SelectModel | null;
   distrito: SelectModel | null;
@@ -85,6 +86,7 @@ export class AuthService {
     subTipo: this.getSubTipo(),
     canViewPedidos: false,
     selectedTheme: localStorage['theme'] || 'system',
+    entidad: null,
     departamento: this.getDepartamentoSelect(),
     provincia: this.getProvinciaSelect(),
     distrito: this.getDistritoSelect(),
@@ -113,6 +115,7 @@ export class AuthService {
   public sector = computed(() => this.#usuario().sector);
   public permisos = computed(() => this.#usuario().permisos);
   public codigoPerfil = computed(() => this.#usuario().codigoPerfil);
+  public entidad = computed(() => this.#usuario().entidad);
 
   constructor() {
     this.initTheme();
@@ -126,8 +129,7 @@ export class AuthService {
     return this.http.post<ResponseModel>(`${environment.api}/Login/Autenticar`, ots).pipe(
       tap((resp: ResponseModel) => {
         const data = resp.data;
-
-
+        
         if (resp.success && data != null) {
           if (data.menus != null) {
             this.#usuario.update((v) => ({ ...v, navigation: data.menus }));
@@ -137,7 +139,42 @@ export class AuthService {
             data.permisos = menusTransformados.permisos;
             data.menus.map((menu: MenuModel) => {
               if (menu.esExterno) {
-                menu.direccionUrl = `${menu.direccionUrl}au=0&7B611A09B990B80849DBE7AF822D63E466D552839D9EC6E0=2B6AC8BbF4ADF440005AFC42EF337555FB0008BF9770791Z&gjXtIkEroS=SD_SSFD&codevento=62&ubig=0&de=&en=${data.entidad}&codsector=${data.sector}&iacp=${data.codigoUsuario}&sup=1`
+                let sup = 0
+                if(Number(data.sector) != 0){
+                  sup = data.entidad == 3402 ? 2 : 1
+                }
+
+                const departamento = data.ubigeoEntidad ? Number(data.ubigeoEntidad.slice(0,2)) : 0
+                const ubigeo = data.ubigeoEntidad ? Number(data.ubigeoEntidad) : 0
+                const sector = data.sector ? data.sector : 0
+                const entidadId = data.entidad
+                const usuarioId = data.codigoUsuario
+
+                const aliasDataParams: ItemEnum[] = [
+                  { value: 'UBIGEO', text: `${ubigeo}` },
+                  { value: 'DEPARTAMENTO_ID', text: `${departamento}` },
+                  { value: 'SECTOR_ID', text: sector },
+                  { value: 'ENTIDAD_ID', text: entidadId },
+                  { value: 'USUARIO_ID', text: usuarioId },
+                  { value: 'SUP_ID', text: sup }
+                ]
+                
+                let paramsUrl = menu.paramsUrl
+                const paramsNav = paramsUrl.split('&')
+                for(let param of paramsNav){
+                  const alias = param.split('=')[1]
+                  const firstChar = alias[0];
+                  const lastChar = alias[alias.length - 1];
+                  
+                  if(firstChar === '[' && lastChar === ']' ){
+                    const getAlias = alias.slice(1, -1);
+                    const valueToAlias = aliasDataParams.find(item => item.value === getAlias )?.text
+                    paramsUrl = paramsUrl.replaceAll(alias, `${valueToAlias}`)
+                  }
+                }
+                // menu.direccionUrl = `${menu.direccionUrl}au=0&7B611A09B990B80849DBE7AF822D63E466D552839D9EC6E0=2B6AC8BbF4ADF440005AFC42EF337555FB0008BF9770791Z&gjXtIkEroS=SD_SSFD&codevento=62&ubig=0&de=&en=${data.entidad}&codsector=${data.sector}&iacp=${data.codigoUsuario}&sup=1`
+                // menu.direccionUrl = `${menu.direccionUrl}au=0&7B611A09B990B80849DBE7AF822D63E466D552839D9EC6E0=2B6AC8BbF4ADF440005AFC42EF337555FB0008BF9770791Z&gjXtIkEroS=SD_SSFD&ubig=${Number(ubigeo)}&de=6&en=${data.entidad}&codsector=${sector}&iacp=${data.codigoUsuario}&sup=${sup}`
+                menu.direccionUrl = `${menu.direccionUrl}${paramsUrl}`
               }
             })
 
@@ -162,6 +199,11 @@ export class AuthService {
 
           if (data.codigoUsuario != null && data.codigoUsuario != '') {
             localStorage.setItem('codigoUsuario', data.codigoUsuario);
+          }
+
+          if (data.entidad != null) {
+            this.#usuario.update((v) => ({ ...v, entidad: data.entidad }));
+            localStorage.setItem('entidad', data.entidad);
           }
 
           if (data.codigoPerfil != null && data.codigoPerfil != '') {
@@ -462,7 +504,7 @@ export class AuthService {
 
     let ots: UsuarioRequestModel = {} as UsuarioRequestModel;
 
-    if (usuario.perfil) ots.codigoPerfil = Number(usuario.perfil.value);
+    if (usuario.perfil) ots.codigoPerfil = Number(usuario.perfil); //Number(usuario.perfil.value);
     if (usuario.tipo) ots.tipo = Number(usuario.tipo.value);
     if (usuario.sector) ots.sector = Number(usuario.sector.value);
     if (usuario.dep != null && usuario.dep != undefined) ots.codigoDepartamento = usuario.dep.value!.toString();
@@ -471,6 +513,7 @@ export class AuthService {
     if (usuario.clave) ots.contrasena = usuario.clave;
     if (usuario.correo) ots.correoNotificacion = usuario.correo;
     if (usuario.nombre) ots.nombresPersona = usuario.nombre;
+    if (usuario.telefono) ots.telefono = usuario.telefono;
     ots.tipoDocumento = 1;
     if (usuario.dni) ots.numeroDocumento = usuario.dni;
     ots.esActivo = true;
@@ -692,6 +735,7 @@ export class AuthService {
       subTipo: null,
       canViewPedidos: false,
       selectedTheme: localStorage['theme'] || 'system',
+      entidad: null,
       departamento: null,
       provincia: null,
       distrito: null,

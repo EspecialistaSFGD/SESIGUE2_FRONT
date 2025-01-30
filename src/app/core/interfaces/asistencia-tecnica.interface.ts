@@ -8,12 +8,13 @@ export enum AsistenciasTecnicasTipos {
   ASESORAMIENTO = 'asesoramiento',
   ASISTENCIA = 'asistencia técnica',
   COORDINACION = 'coordinación',
-  ATENCION = 'atención'
+  ATENCION = 'atención',
+  DOCUMENTO = 'documento'
 }
 
 export enum AsistenciasTecnicasModalidad {
   PRESENCIAL = 'presencial',
-  VIRTUALS = 'virtual'
+  VIRTUALS = 'virtual',
 }
 
 export enum AsistenciasTecnicasClasificacion {
@@ -36,6 +37,8 @@ export interface AsistenciaTecnicaResponse {
   entidadId: string,
   ubigeoEntidad: string,
   nombreEntidad: string,
+  documentoTitulo?: string,
+  numeroExpediente?: string,
   autoridad: boolean,
   dniAutoridad: string,
   nombreAutoridad: string,
@@ -54,6 +57,28 @@ export interface AsistenciaTecnicaResponse {
   evidenciaReunion: string,
   evidenciaAsistencia: string,
   estado?: boolean,
+  validado?: boolean,
   // fechaRegistro?: Date
   code?: number,
+}
+
+export interface AtencionesCargasMasivasResponses extends DataResponses {
+  data: AtencionCargaMasivaResponse[],
+}
+
+export interface AtencionCargaMasivaResponse {
+  id?: string,
+	fechaRegistro: Date,
+	fechaAtencion: Date,
+	numeroExpediente: string,
+	documentoTitulo: string,
+	nombreAutoridad: string,
+	tema: string,
+	nombresResponsable: string,
+	tipoEntidadNombre: string,
+	tipoEntidadSlug: string,
+	departamento: string,
+	provincia: string,
+	distrito: string,
+	validado: string
 }

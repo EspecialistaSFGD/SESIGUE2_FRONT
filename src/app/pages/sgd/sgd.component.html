@@ -1,0 +1,54 @@
+<app-page-header [title]="title.toUpperCase()" backUrl="panel" />
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+  [nzData]="cargasMasivas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total"
+  [nzPageSize]="pagination.pageSize" [nzPageIndex]="pagination.currentPage">
+  <thead>
+    <tr>
+      <th nzWidth="100px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">Estado</th>
+      <th nzLeft nzWidth="200px" nzColumnKey="nombreArchivo" [nzSortFn]="true">Archivo</th>
+      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="filasGuardadas" [nzSortFn]="true">Filas Guardadas</th>
+      <th nzWidth="100px" nzAlign="center" nzColumnKey="totalFilas" [nzSortFn]="true">Total de filas</th>
+      <th nzWidth="150px" nzAlign="center" nzColumnKey="fechaRegistro" [nzSortFn]="true">Fecha de registro</th>
+      <th nzWidth="100px" nzAlign="center">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for(cargaMasiva of cargasMasivas(); track $index){
+    <tr>
+      <td nzAlign="center">{{cargaMasiva.estado}}</td>
+      <td>{{cargaMasiva.nombreArchivo}}</td>
+      <td nzAlign="center">{{cargaMasiva.filasGuardadas}}</td>
+      <td nzAlign="center">{{cargaMasiva.totalFilas}}</td>
+      <td nzAlign="center">{{cargaMasiva.fechaRegistro | date : 'dd/MM/yyyy hh:mm'}}</td>
+      <td nzAlign="center">
+        @if(sgdActions.view){
+          <a [routerLink]="['/sgd', cargaMasiva.id]">
+            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles">
+              <span nz-icon nzType="eye" nzTheme="outline"></span>
+            </button>
+          </a>
+        }
+      </td>
+    </tr>
+    }
+  </tbody>
+</nz-table>
+
+<ng-template #Header>
+  <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+    <p class="mb-2 sm:mb-0">Resultados {{cargasMasivas().length}}</p>
+    <div>
+      <nz-space>
+        @if(sgdActions.upload){
+          <button nz-button nzType="primary" (click)="showNzModalBulkUpload = true">
+            <span nz-icon nzType="upload" nzTheme="outline"></span>
+            <span class="button-text">Subir Excel</span>
+          </button>
+        }
+      </nz-space>
+    </div>
+  </div>
+</ng-template>
+
+<app-carga-masiva [showModal]="showNzModalBulkUpload" (setCloseShow)="showNzModalBulkUpload = false" (setCloseShow)="showNzModalBulkUpload = false" (addFormDate)="getAddFormAdded($event)"/>
+

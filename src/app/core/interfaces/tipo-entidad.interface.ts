@@ -7,5 +7,6 @@ export interface TipoEntidadesResponses extends DataResponses {
 export interface TipoEntidadResponse {
     tipoId?: string,
     nombre: string,
-    abreviatura: string
+    abreviatura: string,
+    estado: boolean
 }

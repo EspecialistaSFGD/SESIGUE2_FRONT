@@ -34,9 +34,9 @@ export class AsistenciaTecnicaParticipantesService {
       )
   }
 
-  actualizarAgenda(participante: AsistenciaTecnicaParticipanteResponse) {
+  actualizarParticipante(participante: AsistenciaTecnicaParticipanteResponse) {
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.post<AsistenciaTecnicaParticipantesResponses>(`${this.urlAsistenciaTecnicaParticipante}/ActualizarParticipante/${participante.participanteId}`, participante, { headers })
+    return this.http.put<AsistenciaTecnicaParticipantesResponses>(`${this.urlAsistenciaTecnicaParticipante}/ActualizarParticipante/${participante.participanteId}`, participante, { headers })
       .pipe(
         tap(resp => {
           return resp
@@ -46,7 +46,7 @@ export class AsistenciaTecnicaParticipantesService {
       )
   }
 
-  eliminarAgenda(agendaId: string) {
+  eliminarParticipante(agendaId: string) {
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.delete<AsistenciaTecnicaParticipantesResponses>(`${this.urlAsistenciaTecnicaParticipante}/EliminarParticipante/${agendaId}`, { headers })
       .pipe(

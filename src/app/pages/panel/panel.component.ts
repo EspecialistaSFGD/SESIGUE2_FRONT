@@ -412,8 +412,6 @@ export class PanelComponent {
 
     // Determina la URL del TopoJSON y el feature basado en el ubigeo
     const { topoJsonUrl, rqDataFeature } = this.getTopoJsonUrlAndFeature(ubigeo ?? null);
-    console.log(topoJsonUrl, rqDataFeature);
-
 
     this.geoChart = new Chart({
       container: 'container',
@@ -483,7 +481,6 @@ export class PanelComponent {
 
   private getTopoJsonUrlAndFeature(ubigeo: string | null): { topoJsonUrl: string, rqDataFeature: string } {
     const baseUrl = environment.topoJsonUrl;
-    console.table(ubigeo);
 
     if (ubigeo?.length === 2) {
       return { topoJsonUrl: `${baseUrl}/provincias/${ubigeo}.topo.json`, rqDataFeature: ubigeo };

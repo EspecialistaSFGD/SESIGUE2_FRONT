@@ -89,7 +89,7 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
   pageIndexAvance: number = 1;
   pageSizeAvance: number = 10;
   sortFieldAvance: string = 'avanceId';
-  sortOrderAvance: string = 'ascend';
+  sortOrderAvance: string = 'descend';
   hitoSeleccionadoId: number | null = null; // ID del hito seleccionado
   // hitoSeleccionado: HitoAcuerdoModel | null = null;
   queryParamsChangeEventCnt = 0;
@@ -387,6 +387,14 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     modal.afterClose.subscribe(result => {
       instance.comentarioForm.reset();
     });
+  }
+
+  validateEntidadByHito() :boolean{
+    const entidadAcuerdo = this.hitosService.hitoSeleccionado()?.entidadId
+    const authEntidad = localStorage.getItem('entidad')
+    console.log(entidadAcuerdo);  
+    console.log(authEntidad);  
+    return entidadAcuerdo == authEntidad
   }
 
   onAvanceAddComentario(avance: AvanceHitoModel): void {

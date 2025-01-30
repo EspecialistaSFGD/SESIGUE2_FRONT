@@ -35,7 +35,7 @@ export class AsistenciaTecnicaAgendasService {
 
   actualizarAgenda(agenda: AsistenciaTecnicaAgendaResponse) {
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.post<AsistenciaTecnicaAgendasResponses>(`${this.urlAsistenciaTecnicaAgenda}/ActualizarAgenda/${agenda.agendaId}`, agenda, { headers })
+    return this.http.put<AsistenciaTecnicaAgendasResponses>(`${this.urlAsistenciaTecnicaAgenda}/ActualizarAgenda/${agenda.agendaId}`, agenda, { headers })
       .pipe(
         tap(resp => {
           return resp
