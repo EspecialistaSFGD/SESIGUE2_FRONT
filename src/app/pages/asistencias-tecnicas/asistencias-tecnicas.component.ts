@@ -9,6 +9,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { AuthService } from '@libs/services/auth/auth.service';
+import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -242,5 +243,42 @@ export class AsistenciasTecnicasComponent {
       evidenciaAsistencia: ''
     }
     this.showNzModal = true
+    // this.generateComponentModal(true)
+  }
+
+  generateComponentModal(create: boolean): void{
+    const action = `${create ? 'Crear' : 'Actualizar' } atención`
+    const modal = this.modal.create<FormularioAtencionComponent>({
+      nzTitle: action,
+      nzWidth: '75%',
+      nzContent: FormularioAtencionComponent,
+      nzData: {
+        asistenciaTecnica: this.asistenciaTecnica,
+        tipos: this.tipos,
+        modalidades: this.modalidaades,
+        clasificaciones: this.clasificaciones,
+        orientaciones: this.orientaciones,
+        departamentos: this.departamentos
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: action,
+          type: 'primary',
+          onClick: (componentResponse) => {
+            console.log('actualizar o guardar formulario');
+            
+            // return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
+            //   this.traerAcuerdos({});
+            //   this.modal.closeAll();
+            // });
+          }
+        }
+      ]
+    })
   }
 }

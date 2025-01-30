@@ -3,7 +3,7 @@ import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, Simp
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
 import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, FechaService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
+import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, FechaService, LugaresService, NivelGobiernosService, SectoresService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -47,7 +47,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   tipoEntidadSlug: string = ''
 
   entidad: EntidadResponse[] = []
-  // public sectores = signal<SectorResponse[]>([])
+  public sectores = signal<SectorResponse[]>([])
   public lugares = signal<LugarResponse[]>([])
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   public mancomunidades = signal<EntidadResponse[]>([])
@@ -101,10 +101,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   private fechaService = inject(FechaService)
   private alcaldeService = inject(AlcaldesService)
   private authStore = inject(AuthService)
+  private sectorService = inject(SectoresService)
 
   public sectoresStore = inject(SectoresStore)
   public entidadesStore = inject(EntidadesStore)
-  // entidadesStore = inject(EntidadesStore);
 
   get congresistas(): FormArray {
     return this.formAsistencia.get('congresistas') as FormArray;
@@ -136,13 +136,13 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     dniAutoridad: [''],
     nombreAutoridad: [{ value: '', disabled: false }, Validators.required],
     documentoTitulo: [{ value: '', disabled: false }],
-    numeroExpediente: [''],
+    numeroExpediente: [{ value: '', disabled: false }],
     cargoAutoridad: ['', [Validators.required, Validators.maxLength(50)]],
     contactoAutoridad: ['',],
     espacioId: ['', Validators.required],
     unidadId: [''],
     orientacionId: [''],
-    clasificacion: ['', Validators.required],
+    clasificacion: [{ value: '', disabled: false }, Validators.required],
     tema: [{ value: '', disabled: false }, Validators.required],
     validado: [false, Validators.required],
     comentarios: [''],
@@ -197,7 +197,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   ngOnInit() {
-    this.getAtencion()
+    this.getAllSectores()
     this.getSectorAuth()
     this.getAllKinds()
     this.getAllPlaces()
@@ -208,11 +208,11 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.obtenerFechaLaborales()    
   }
 
-  getAtencion(){
-    console.log('Atencion get');
-    
-    console.log(this.asistenciaTecnica);
-    
+  getAllSectores(){
+    this.sectorService.getAllSectors()       
+      .subscribe( resp => {
+        // console.log(resp);
+      })
   }
 
   setParamsData() {
@@ -235,7 +235,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     let dniAutoridad = this.create ? '' : this.asistenciaTecnica.dniAutoridad
     let contactoAutoridad = this.create ? '' : this.asistenciaTecnica.contactoAutoridad
     let validado = this.create ? false : this.asistenciaTecnica.validado
-
+    
     if (!this.create) {
       this.esDocumento = tipo === AsistenciasTecnicasTipos.DOCUMENTO
       this.setCongresistasParams()
@@ -243,6 +243,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.setAgendasParams()
       this.getAllTipoEntidades()
     } else {
+      this.esDocumento = false
       if (this.perfil === 1) {
         tipoPerfil = 1
         tipo = 'atencion'
@@ -255,6 +256,11 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
     
     this.setControlsForm()
+    console.log(ubigeo);
+    console.log(departamento);
+    console.log(provincia);
+    console.log(distrito);
+    
 
     const setUbigeo = `${provincia}01`
     this.formAsistencia.reset({ ...this.asistenciaTecnica, tipo, fechaAtencion, autoridad, dniAutoridad, contactoAutoridad, departamento, provincia: setUbigeo, distrito, ubigeo, entidad, sectorId, lugarId, clasificacion, espacioId, tipoPerfil, modalidad, orientacionId, validado })
@@ -266,9 +272,16 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     
     const controlDocumentoTitulo = this.formAsistencia.get('documentoTitulo')
     this.esDocumento ? controlDocumentoTitulo?.disable() : controlDocumentoTitulo?.enable()
+    this.esDocumento ? controlTema?.disable() : controlTema?.enable()
+    
+    const controlNumeroExpediente = this.formAsistencia.get('numeroExpediente')
+    this.esDocumento ? controlNumeroExpediente?.disable() : controlNumeroExpediente?.enable()
 
     const controlNombreAutoridad = this.formAsistencia.get('nombreAutoridad')
     this.esDocumento ? controlNombreAutoridad?.disable() : controlNombreAutoridad?.enable()
+
+    const controlClasificacion = this.formAsistencia.get('clasificacion')
+    this.esDocumento ? controlClasificacion?.disable() : controlClasificacion?.enable()
   }
 
   setCongresistasParams() {
@@ -589,9 +602,11 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
         if (resp.success) {
           if (resp.data.length > 0) {
             const alcalde = resp.data[0]
-            dni?.setValue(alcalde.dni)
-            nombre?.setValue(alcalde.nombre)
-            cargo?.setValue(alcalde.cargo)
+            if(!this.esDocumento){
+              dni?.setValue(alcalde.dni)
+              nombre?.setValue(alcalde.nombre)
+              cargo?.setValue(alcalde.cargo)
+            }
           } else {
             dni?.setValue('')
             nombre?.setValue('')
@@ -917,6 +932,12 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   saveOrEdit() {
+   this.formAsistencia.get('tema')?.enable()  
+  this.formAsistencia.get('documentoTitulo')?.enable()    
+  this.formAsistencia.get('numeroExpediente')?.enable()
+  this.formAsistencia.get('nombreAutoridad')?.enable()
+  this.formAsistencia.get('clasificacion')?.enable()
+
     if (this.formAsistencia.invalid) {
       return this.formAsistencia.markAllAsTouched()
     }    
