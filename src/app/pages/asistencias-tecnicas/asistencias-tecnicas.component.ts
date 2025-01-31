@@ -10,6 +10,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
+import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -20,7 +21,8 @@ import { FormularioAtencionComponent } from './formulario-atencion/formulario-at
     CommonModule,
     PageHeaderComponent,
     NgZorroModule,
-    FormularioAsistenciaTecnicaComponent
+    FormularioAsistenciaTecnicaComponent,
+    FiltrosAtencionComponent
   ]
 })
 export class AsistenciasTecnicasComponent {
@@ -43,6 +45,7 @@ export class AsistenciasTecnicasComponent {
     delete: false
   }
 
+  filtrosVisible: boolean = false
   loadingData: boolean = false
   // paramsExist: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
@@ -211,6 +214,10 @@ export class AsistenciasTecnicasComponent {
       this.obtenerAsistenciasTecnicas()
       this.showNzModal = true
     }
+  }
+
+  changeFilters(visible: boolean) {
+    this.filtrosVisible = visible
   }
 
   crearAsistenciaTecnica() {
