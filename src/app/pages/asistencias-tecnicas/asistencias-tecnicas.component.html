@@ -5,7 +5,7 @@
   (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
-      <!-- <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código</th> -->
+      <th nzLeft nzWidth="42px" nzAlign="center" nzColumnKey="validado"></th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención </th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
       <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
@@ -18,26 +18,26 @@
     </tr>
   </thead>
   <tbody>
-    @for(asistencia of asistenciasTecnicas(); track $index){
+    @for(atencion of asistenciasTecnicas(); track $index){
     <tr>
-      <!-- <td nzAlign="center">{{asistencia.codigo}}</td> -->
-      <td nzAlign="center">{{getTextEnum(asistencia.tipo, 'tipo') | titlecase}}</td>
-      <td nzAlign="center">{{getTextEnum(asistencia.modalidad, 'modalidad') | titlecase }}</td>
-      <td nzAlign="center">{{asistencia.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
-      <td nzAlign="center">{{asistencia.nombreTipoEntidad}}</td>
-      <td>{{asistencia.nombreEntidad}}</td>
-      <td nzAlign="center">{{asistencia.autoridad ? 'Si' : 'No' }}</td>
-      <td nzAlign="center">{{asistencia.nombreEspacio | titlecase }}</td>
-      <td nzAlign="center">{{getTextEnum(asistencia.clasificacion, 'clasificacion') | titlecase}}</td>
+      <td nzAlign="center"><nz-avatar [nzSize]="24" [ngClass]="{ 'bg-green-400' : atencion.validado && geDocumentAtencion(atencion), 'bg-gray-300' : !atencion.validado && geDocumentAtencion(atencion), 'bg-blue-400' : !geDocumentAtencion(atencion) }" nz-tooltip="{{ !geDocumentAtencion(atencion) ? '' :  atencion.validado ? 'Validado' : 'Sin Validar' }}" nzIcon="check"></nz-avatar></td>
+      <td nzAlign="center">{{getTextEnum(atencion.tipo, 'tipo') | titlecase}}</td>
+      <td nzAlign="center">{{getTextEnum(atencion.modalidad, 'modalidad') | titlecase }}</td>
+      <td nzAlign="center">{{atencion.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
+      <td nzAlign="center">{{atencion.nombreTipoEntidad}}</td>
+      <td>{{atencion.nombreEntidad}}</td>
+      <td nzAlign="center">{{atencion.autoridad ? 'Si' : 'No' }}</td>
+      <td nzAlign="center">{{atencion.nombreEspacio | titlecase }}</td>
+      <td nzAlign="center">{{getTextEnum(atencion.clasificacion, 'clasificacion') | titlecase}}</td>
       <td nzAlign="center">
         <nz-space>
           @if(atencionActions.edit){
-          <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(asistencia)"><span nz-icon
+          <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !geDocumentAtencion(atencion) ? 'Actualizar Atención' : '' }}" [disabled]="geDocumentAtencion(atencion) && atencion.validado"><span nz-icon
               nzType="edit" nzTheme="outline"></span></button>
           }
           @if(atencionActions.delete){
-          <button *nzSpaceItem nz-button nzDanger nzType="link"
-            (click)="eliminarAsistencia(asistencia.asistenciaId!)"><span nz-icon nzType="delete"
+          <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip="{{ !geDocumentAtencion(atencion) ? 'Eliminar Atención' : '' }}"
+            (click)="eliminarAsistencia(atencion.asistenciaId!)" [disabled]="geDocumentAtencion(atencion) && atencion.validado"><span nz-icon nzType="delete"
               nzTheme="outline"></span></button>
           }
         </nz-space>

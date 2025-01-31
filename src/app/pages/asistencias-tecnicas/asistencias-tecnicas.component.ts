@@ -148,6 +148,11 @@ export class AsistenciasTecnicasComponent {
       })
   }
 
+  geDocumentAtencion(atencion: AsistenciaTecnicaResponse) : boolean{
+    const type = atencion.tipo
+    return type == 'documento' ? true : false
+  }
+
   getTextEnum(value: string, kind: string): string {
     let text = value
     if (kind == 'tipo') {
