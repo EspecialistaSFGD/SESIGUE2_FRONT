@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, ClasificacionResponse, CongresistaResponse, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, FechaService, LugaresService, NivelGobiernosService, SectoresService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -24,12 +24,14 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
   ]
 })
 export class FormularioAsistenciaTecnicaComponent implements OnChanges {
+
   @Input() showModal!: boolean
   @Input() tipos!: ItemEnum[]
   @Input() modalidades!: ItemEnum[]
   @Input() clasificaciones!: ItemEnum[]
   @Input() orientaciones!: ItemEnum[]
   @Input() departamentos!: UbigeoDepartmentResponse[]
+  @Input() evento!: EventoResponse
   @Input() asistenciaTecnica!: AsistenciaTecnicaResponse
   @Input() create: boolean = true
   @Output() setCloseShow = new EventEmitter()
@@ -157,6 +159,20 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.setParamsData()
   }
 
+  getEvento() : EventoResponse{
+    const eventNull: EventoResponse = {
+      nombre: '',
+      abreviatura: '',
+      fechaRegistro: new Date,
+      vigente: '',
+      subTipo: '',
+      estado: '',
+      descripcionEstado: ''
+    }
+    const currentEvent = this.evento ? this.evento : eventNull
+    return currentEvent
+  }
+
   getSectorAuth() {
     this.perfil = this.authStore.usuarioAuth().codigoPerfil!
     if (this.perfil === 1) {
@@ -196,7 +212,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     return typeErrorControl(text, errors)
   }
 
-  ngOnInit() {
+  ngOnInit() {    
     this.getAllSectores()
     this.getSectorAuth()
     this.getAllKinds()
@@ -207,6 +223,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.getAllClasificaciones()
     this.obtenerFechaLaborales()    
   }
+
 
   getAllSectores(){
     this.sectorService.getAllSectors()       
@@ -253,14 +270,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
         modalidad = AsistenciasTecnicasModalidad.PRESENCIAL
       }
     }
-
     
-    this.setControlsForm()
-    console.log(ubigeo);
-    console.log(departamento);
-    console.log(provincia);
-    console.log(distrito);
-    
+    this.setControlsForm()    
 
     const setUbigeo = `${provincia}01`
     this.formAsistencia.reset({ ...this.asistenciaTecnica, tipo, fechaAtencion, autoridad, dniAutoridad, contactoAutoridad, departamento, provincia: setUbigeo, distrito, ubigeo, entidad, sectorId, lugarId, clasificacion, espacioId, tipoPerfil, modalidad, orientacionId, validado })
@@ -952,7 +963,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const validado = tipo == AsistenciasTecnicasTipos.DOCUMENTO ? validadoValue : false 
 
     this.formAsistencia.get('validado')?.setValue(validado)
-    const estado = true
+    const eventoId = this.evento.eventoId
 
     const dateForm = new Date(this.formAsistencia.get('fechaAtencion')?.value)
     const getMonth = dateForm.getMonth() + 1
@@ -966,7 +977,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     let agendas = formValues.agendas
 
     if (this.create) {
-      this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ...formValues, fechaAtencion, estado })
+      this.asistenciaTecnicaService.registrarAsistenciaTecnica({ ...formValues, fechaAtencion, eventoId })
         .subscribe(resp => {
           if (resp.success == true) {
             const asistencia = resp.data
@@ -1020,7 +1031,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
         })
     } else {
       const asistenciaId = this.asistenciaTecnica.asistenciaId
-      this.asistenciaTecnicaService.actualizarAsistenciaTecnica({ ...formValues, fechaAtencion, asistenciaId, estado })
+      this.asistenciaTecnicaService.actualizarAsistenciaTecnica({ ...formValues, fechaAtencion, asistenciaId })
         .subscribe(resp => {
           if (resp == true) {            
             this.addFormDate.emit(true)

@@ -5,7 +5,9 @@
   (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
-      <th nzLeft nzWidth="42px" nzAlign="center" nzColumnKey="validado"></th>
+      @if (this.perfilAuth == 11 || this.perfilAuth == 12){
+        <th nzLeft nzWidth="42px" nzAlign="center" nzColumnKey="validado"></th>
+      }
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención </th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
       <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
@@ -14,13 +16,15 @@
       <th nzWidth="150px" nzAlign="center" nzColumnKey="autoridad" [nzSortFn]="true">Autoridad</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
-      <th nzWidth="150px" nzAlign="center">Acciones</th>
+      <th nzWidth="150px" nzAlign="center">Acciones {{this.perfilAuth}}</th>
     </tr>
   </thead>
   <tbody>
     @for(atencion of asistenciasTecnicas(); track $index){
     <tr>
-      <td nzAlign="center"><nz-avatar [nzSize]="24" [ngClass]="{ 'bg-green-400' : atencion.validado && geDocumentAtencion(atencion), 'bg-gray-300' : !atencion.validado && geDocumentAtencion(atencion), 'bg-blue-400' : !geDocumentAtencion(atencion) }" nz-tooltip="{{ !geDocumentAtencion(atencion) ? '' :  atencion.validado ? 'Validado' : 'Sin Validar' }}" nzIcon="check"></nz-avatar></td>
+      @if (this.perfilAuth == 11 || this.perfilAuth == 12){
+        <td nzAlign="center"><nz-avatar [nzSize]="24" [ngClass]="{ 'bg-green-400' : atencion.validado && geDocumentAtencion(atencion), 'bg-gray-300' : !atencion.validado && geDocumentAtencion(atencion), 'bg-blue-400' : !geDocumentAtencion(atencion) }" nz-tooltip="{{ !geDocumentAtencion(atencion) ? '' :  atencion.validado ? 'Validado' : 'Sin Validar' }}" nzIcon="check"></nz-avatar></td>
+      }
       <td nzAlign="center">{{getTextEnum(atencion.tipo, 'tipo') | titlecase}}</td>
       <td nzAlign="center">{{getTextEnum(atencion.modalidad, 'modalidad') | titlecase }}</td>
       <td nzAlign="center">{{atencion.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
@@ -69,7 +73,9 @@
 
 <app-filtros-atencion [visible]="filtrosVisible" (visibleDrawer)="changeFilters(false)"/>
 
+<p>{{evento() | json}}</p>
+
 <app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos"
   [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica" [departamentos]="departamentos()"
   [clasificaciones]="clasificaciones" [orientaciones]="orientaciones" (addFormDate)="getAddFormAdded($event)"
-  (setCloseShow)="showNzModal = false"></app-formulario-asistencia-tecnica>
+  (setCloseShow)="showNzModal = false" [evento]="evento()!" />

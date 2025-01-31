@@ -1,4 +1,4 @@
-<nz-modal [(nzVisible)]="showModal" nzTitle="{{create ? 'Agregar' : 'Actualizar' }} Atención" nzMaskClosable="false"
+<nz-modal [(nzVisible)]="showModal" nzTitle="{{create ? 'Nueva' : 'Actualizar' }} Atención {{ perfil == 1 ? ': ' + getEvento().nombre : '' }}" nzMaskClosable="false"
   nzKeyboard="false" nzWidth="75%" nzOkText="{{create ? 'Agregar' : 'Actualizar' }} Atención" (nzOnOk)="saveOrEdit()"
   nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
   <ng-container *nzModalContent>
@@ -674,6 +674,7 @@
           </div>
         </div>
       }
+
       <ng-template #controlClasificacion>
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Clasificación</nz-form-label>
@@ -709,9 +710,12 @@
         <nz-form-item>
           <nz-form-label [nzSpan]="null" nzFor="tema"> {{ perfil == 12 ? esDocumento ? 'Asunto' : 'Tema' : 'Consulta' }} </nz-form-label>
           <nz-form-control nzSpan="null">
-            @if (esDocumento) {
+            @if (esDocumento || perfil == 1) {
                 <textarea nz-input class="form-control" id="tema" formControlName="tema"
-                  (keyup)="caracteresContador('tema',1500)" placeholder="Ingrese el asunto aquí" rows="2"></textarea>
+                  (keyup)="caracteresContador('tema', perfil == 1 ? 900 : 1500 )" placeholder="Ingrese el asunto aquí" rows="2"></textarea>
+
+                <!-- <textarea class="form-control" id="tema" formControlName="tema"
+                  (keyup)="caracteresContador('tema',900)" placeholder="Ingrese la consulta aquí" rows="2"></textarea> -->
             } @else {
               <input type="text" class="form-control" id="tema" placeholder="Ingrese el tema aquí"
                 (keyup)="caracteresContador('tema',1500)" formControlName="tema">
