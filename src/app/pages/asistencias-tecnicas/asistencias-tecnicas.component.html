@@ -55,11 +55,10 @@
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
     <p class="mb-2 sm:mb-0">Resultados ({{pagination.total}})</p>
     <div class="flex gap-2">
-        <button nz-button (click)="changeFilters(true)">
+        <!-- <button nz-button (click)="changeFilters(true)">
           <span nz-icon nzType="filter" nzTheme="outline"></span>
           <span class="button-text">Filtros</span>
-          <!-- <nz-badge class="button-text pl-1" nzStandalone [nzCount]="filterCounter()"></nz-badge> -->
-        </button>
+        </button> -->
 
         @if(atencionActions.new){
         <button nz-button nzType="primary" (click)="crearAsistenciaTecnica()">
@@ -72,8 +71,6 @@
 </ng-template>
 
 <app-filtros-atencion [visible]="filtrosVisible" (visibleDrawer)="changeFilters(false)"/>
-
-<p>{{evento() | json}}</p>
 
 <app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos"
   [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica" [departamentos]="departamentos()"
