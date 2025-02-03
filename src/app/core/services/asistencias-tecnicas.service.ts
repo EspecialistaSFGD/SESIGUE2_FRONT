@@ -22,6 +22,9 @@ export class AsistenciasTecnicasService {
   }
 
   registrarAsistenciaTecnica(asistenciaTecnica: AsistenciaTecnicaResponse) {
+    console.log('IN SERVICE');
+    
+    
     asistenciaTecnica.code = Number(localStorage.getItem('codigoUsuario')) ?? 0
     asistenciaTecnica.estado = true;
     const formData = this.generateFormData(asistenciaTecnica)
@@ -39,6 +42,7 @@ export class AsistenciasTecnicasService {
   actualizarAsistenciaTecnica(asistenciaTecnica: AsistenciaTecnicaResponse) {
     const formData = this.generateFormData(asistenciaTecnica)
     const headers = this.helpersServices.getAutorizationToken()
+    asistenciaTecnica.estado = true;
     return this.http.put<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/ActualizarAsistenciaTecnica/${asistenciaTecnica.asistenciaId}`, formData, { headers })
       .pipe(
         tap(resp => {
@@ -81,6 +85,7 @@ export class AsistenciasTecnicasService {
     formData.append('nombreCongresista', asistenciaTecnica.nombreCongresista)
     formData.append('espacioId', asistenciaTecnica.espacioId)
     formData.append('unidadId', asistenciaTecnica.unidadId)
+    formData.append('eventoId', asistenciaTecnica.eventoId)
     formData.append('orientacionId', asistenciaTecnica.orientacionId)
     formData.append('clasificacion', asistenciaTecnica.clasificacion)
     formData.append('tema', asistenciaTecnica.tema)
