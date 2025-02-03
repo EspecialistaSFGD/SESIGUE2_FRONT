@@ -146,6 +146,7 @@ export class AsistenciasTecnicasComponent {
 
   obtenerAsistenciasTecnicas() {
     this.loadingData = true
+    this.pagination.pageSize = 10
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas(this.pagination)
       .subscribe(resp => {
         this.loadingData = false
