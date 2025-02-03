@@ -92,11 +92,8 @@ export class AsistenciasTecnicasComponent {
   
 
   obtenerEventos() {
-    this.pagination.columnSort = 'eventoId'
-    this.pagination.pageSize = 100
-    this.pagination.typeSort = 'DESC'
     const vigenteId = this.perfilAuth == 1 ? 2 : 4
-    this.eventosService.getAllEventos(null, 1, [vigenteId], this.pagination)
+    this.eventosService.getAllEventos(null, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
       .subscribe(resp => {
         if(resp.data.length > 0){          
           this.evento.set(resp.data[0])
@@ -146,7 +143,7 @@ export class AsistenciasTecnicasComponent {
 
   obtenerAsistenciasTecnicas() {
     this.loadingData = true
-    this.asistenciaTecnicaService.getAllAsistenciasTecnicas(this.pagination)
+    this.asistenciaTecnicaService.getAllAsistenciasTecnicas({...this.pagination, pageSize: 10})
       .subscribe(resp => {
         this.loadingData = false
         if (resp.success == true) {
