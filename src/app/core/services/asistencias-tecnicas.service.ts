@@ -22,9 +22,6 @@ export class AsistenciasTecnicasService {
   }
 
   registrarAsistenciaTecnica(asistenciaTecnica: AsistenciaTecnicaResponse) {
-    console.log('IN SERVICE');
-    
-    
     asistenciaTecnica.code = Number(localStorage.getItem('codigoUsuario')) ?? 0
     asistenciaTecnica.estado = true;
     const formData = this.generateFormData(asistenciaTecnica)
