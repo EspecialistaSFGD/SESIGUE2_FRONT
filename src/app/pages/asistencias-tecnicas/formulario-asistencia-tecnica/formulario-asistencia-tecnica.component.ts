@@ -175,7 +175,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   getSectorAuth() {
     this.perfil = this.authStore.usuarioAuth().codigoPerfil!
-    if (this.perfil === 1) {
+    if (!this.permisosPCM()) {
       // this.addAgendadRow()
       this.columnUbigeo = '4'
       this.columnaSpace = '12'
@@ -261,7 +261,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.getAllTipoEntidades()
     } else {
       this.esDocumento = false
-      if (this.perfil === 1) {
+      if (!this.permisosPCM()) {
         tipoPerfil = 1
         tipo = 'atencion'
         clasificacion = 'inversion'
@@ -358,7 +358,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.tipos.find( item => {
       if(this.perfil === 12 && !tiposExternos.includes(item.value)){
         tipos.push(item)
-      }else if(this.perfil === 1 && item.value === 'atencion'){
+      }else if(!this.permisosPCM() && item.value === 'atencion'){
         tipos.push(item)
       }
     })
@@ -940,6 +940,11 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     } else {
       this.comentariosCount = qty - value.length;
     }
+  }
+
+  permisosPCM(){
+    const profilePCM = [11,12]
+    return profilePCM.includes(this.perfil)
   }
 
   saveOrEdit() {

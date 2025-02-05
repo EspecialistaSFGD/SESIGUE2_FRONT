@@ -89,10 +89,15 @@ export class AsistenciasTecnicasComponent {
     this.obtenerAsistenciasTecnicas()
     this.obtenerDepartamentos()
   }
+
+  permisosPCM(){
+    const profilePCM = [11,12]
+    return profilePCM.includes(this.perfilAuth)
+  }
   
 
   obtenerEventos() {
-    const vigenteId = this.perfilAuth == 1 ? 2 : 4
+    const vigenteId = !this.permisosPCM() ? 2 : 4
     this.eventosService.getAllEventos(null, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
       .subscribe(resp => {
         if(resp.data.length > 0){          
@@ -218,7 +223,6 @@ export class AsistenciasTecnicasComponent {
         this.asistenciaTecnicaService.deleteAsistenciaTecnica(asistenciaId)
           .subscribe(resp => {
             if (resp.success == true) {
-              console.log('Se ha eliminado con exito');
               this.obtenerAsistenciasTecnicas()
             }
           })

@@ -1,4 +1,4 @@
-<nz-modal [(nzVisible)]="showModal" nzTitle="{{create ? 'Nueva' : 'Actualizar' }} Atención {{ perfil == 1 ? ': ' + getEvento().nombre : '' }}" nzMaskClosable="false"
+<nz-modal [(nzVisible)]="showModal" nzTitle="{{create ? 'Nueva' : 'Actualizar' }} Atención {{ !permisosPCM() ? ': ' + getEvento().nombre : '' }}" nzMaskClosable="false"
   nzKeyboard="false" nzWidth="75%" nzOkText="{{create ? 'Agregar' : 'Actualizar' }} Atención" (nzOnOk)="saveOrEdit()"
   nzCancelText="Cancelar" (nzOnCancel)="closeModal()">
   <ng-container *nzModalContent>
@@ -46,7 +46,7 @@
             <div class="text-danger" *ngIf="alertMessageError('modalidad')">{{msgErrorControl('modalidad','Modalidad')}}
             </div>
           </nz-form-item>
-          } @else if (perfil === 1) {
+          } @else if (!permisosPCM()) {
             <ng-container *ngTemplateOutlet="controlSector"></ng-container>
           <!-- <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="sectorId">Sector</nz-form-label>
@@ -67,7 +67,7 @@
           <nz-form-item>
             <nz-form-label [nzSpan]="null" nzFor="lugarId">Lugar</nz-form-label>
             <nz-form-control nzSpan="null">
-              <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" class="select-form-control" nzDisabled="{{ perfil === 1 || esDocumento ? true : false }}"
+              <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" class="select-form-control" nzDisabled="{{ !permisosPCM() || esDocumento ? true : false }}"
                 formControlName="lugarId" nzAllowClear nzShowSearch>
                 @for (lugar of lugares(); track $index) {
                 <nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
@@ -235,7 +235,8 @@
                 {{msgErrorControl('cargoAutoridad','Cargo')}}</div>
             </nz-form-item>
           </div>
-          @if(perfil === 1){
+          <!-- perfil === 1 -->
+          @if(!permisosPCM()){
             <div nz-col [nzSpan]="columnUbigeo">
               <nz-form-item>
                 <nz-form-label [nzSpan]="null" nzFor="contactoAutoridad">Contacto</nz-form-label>
@@ -275,9 +276,9 @@
           </div>
           <div nz-col [nzSpan]="6">
             <nz-form-item>
-              <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacios</nz-form-label>
+              <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacios {{formAsistencia.get('espacioId')?.value}}</nz-form-label>
               <nz-form-control nzSpan="null">
-                <nz-select class="select-form-control" nzPlaceHolder="Seleccionar espacio" id="espacioId" [nzDisabled]="perfil === 1 || esDocumento ? true : false"
+                <nz-select class="select-form-control" nzPlaceHolder="Seleccionar espacio" id="espacioId" [nzDisabled]="!permisosPCM() || esDocumento ? true : false"
                   formControlName="espacioId" nzAllowClear nzShowSearch>
                   @for (espacio of espacios(); track $index){
                   <nz-option [nzValue]="espacio.espacioId" nzLabel="{{espacio.nombre}}"></nz-option>
@@ -421,7 +422,7 @@
             <nz-form-item>
               <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacios</nz-form-label>
               <nz-form-control nzSpan="null">
-                <nz-select class="select-form-control" nzPlaceHolder="Seleccionar espacio" id="espacioId" [nzDisabled]="perfil === 1 || esDocumento ? true : false"
+                <nz-select class="select-form-control" nzPlaceHolder="Seleccionar espacio" id="espacioId" [nzDisabled]="!permisosPCM() || esDocumento ? true : false"
                   formControlName="espacioId" nzAllowClear nzShowSearch>
                   @for (espacio of espacios(); track $index){
                   <nz-option [nzValue]="espacio.espacioId" nzLabel="{{espacio.nombre}}"></nz-option>
@@ -460,7 +461,8 @@
           }
         }
       </div>
-      @if(perfil == 1){
+      <!-- perfil == 1 -->
+      @if(!permisosPCM()){
         <div nz-row [nzGutter]="16">
           <div nz-col nzSpan="8">
             <nz-form-item>
@@ -612,7 +614,8 @@
       </div>
     }
         <div nz-row [nzGutter]="16" [ngClass]="{ 'mt-4' : perfil === 12 }">
-          @if(perfil === 1){
+          <!-- perfil === 1 -->
+          @if(!permisosPCM()){
             <div nz-col nzSpan="12">
               <ng-container *ngTemplateOutlet="controlTema"></ng-container>
               <!-- <nz-form-item>
@@ -632,7 +635,7 @@
           @if(!esDocumento){
             <div nz-col [nzSpan]="columnaComments">
               <nz-form-item>
-                <nz-form-label [nzSpan]="null" nzFor="comentarios">@if(perfil === 1){ Orientación } @else { Comentarios }</nz-form-label>
+                <nz-form-label [nzSpan]="null" nzFor="comentarios">@if(!permisosPCM()){ Orientación } @else { Comentarios }</nz-form-label>
                 <textarea class="form-control" id="comentarios" formControlName="comentarios"
                   (keyup)="caracteresContador('comentarios',900)" placeholder="Ingrese el comentario aquí"
                   rows="2"></textarea>
@@ -710,9 +713,9 @@
         <nz-form-item>
           <nz-form-label [nzSpan]="null" nzFor="tema"> {{ perfil == 12 ? esDocumento ? 'Asunto' : 'Tema' : 'Consulta' }} </nz-form-label>
           <nz-form-control nzSpan="null">
-            @if (esDocumento || perfil == 1) {
+            @if (esDocumento || !permisosPCM()) {
                 <textarea nz-input class="form-control" id="tema" formControlName="tema"
-                  (keyup)="caracteresContador('tema', perfil == 1 ? 900 : 1500 )" placeholder="Ingrese el asunto aquí" rows="2"></textarea>
+                  (keyup)="caracteresContador('tema', !permisosPCM() ? 900 : 1500 )" placeholder="Ingrese el asunto aquí" rows="2"></textarea>
 
                 <!-- <textarea class="form-control" id="tema" formControlName="tema"
                   (keyup)="caracteresContador('tema',900)" placeholder="Ingrese la consulta aquí" rows="2"></textarea> -->
@@ -735,7 +738,7 @@
           <nz-form-label [nzSpan]="null" nzFor="sectorId">Sector</nz-form-label>
           <nz-form-control nzSpan="null">
             <nz-select nzPlaceHolder="Seleccionat sector" id="sectorId" class="select-form-control"
-              formControlName="sectorId" nzAllowClear nzShowSearch [nzDisabled]="perfil == 1">
+              formControlName="sectorId" nzAllowClear nzShowSearch [nzDisabled]="!permisosPCM()">
               @for (sector of sectoresStore.sectores(); track $index) {
               <nz-option [nzValue]="sector.value" nzLabel="{{sector.label}}"></nz-option>
               }
