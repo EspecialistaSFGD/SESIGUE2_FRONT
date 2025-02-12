@@ -10,6 +10,14 @@ export interface ItemEnum {
   value: string,
   text: string
 }
+
+export interface ItemInfo {
+  icono: string,
+  titulo: string,
+  descripcion: string,
+  comentario: string
+}
+
 export interface ButtonsActions {
 	new?: boolean,
 	edit?: boolean,
