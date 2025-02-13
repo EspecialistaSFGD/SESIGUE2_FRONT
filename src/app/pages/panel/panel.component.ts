@@ -417,16 +417,22 @@ export class PanelComponent {
 
     // Determina la URL del TopoJSON y el feature basado en el ubigeo
     const { topoJsonUrl, rqDataFeature } = this.getTopoJsonUrlAndFeature(ubigeo ?? null);
+    console.log(topoJsonUrl);
 
     this.geoChart = new Chart({
       container: 'container',
       autoFit: true,
     });
-
+    
     this.reportesService.obtenerReporteResultado(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo)
       .then((response) => response.data)
       .then((data) => {
         this.acuerdos.set(data);
+        console.log('SERVICE RESULT');
+        
+        console.log(data);
+    console.log(rqDataFeature);
+        
 
         if (this.geoChart) {
           this.geoChart.clear(); // Limpiar el gráfico antes de renderizar nuevos datos

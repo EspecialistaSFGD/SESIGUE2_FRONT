@@ -3,6 +3,8 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { kindChart } from '@core/enums';
 import { ConfigChart, ItemInfo } from '@core/interfaces';
+import { DepartamentosService, DistritosService, ProvinciasService } from '@core/services';
+import { environment } from '@environments/environment';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { TinySliderInstance, tns } from 'tiny-slider';
@@ -24,8 +26,12 @@ export default class PanelAcuerdosComponent {
   chartAcuerdosProceso!: ConfigChart
   chartAcuerdosVencidos!: ConfigChart
   chartProyeccionCumplimientosHitos!: ConfigChart
+  mapChar!: ConfigChart
   
   private fb = inject(FormBuilder);
+  private mapaDepartamentosService = inject(DepartamentosService)
+  private mapaProvinciasService = inject(ProvinciasService)
+  private mapaDistritosService = inject(DistritosService)
 
   formPanel: FormGroup = this.fb.group({
     sector: [ '' ],
@@ -46,6 +52,7 @@ export default class PanelAcuerdosComponent {
     this.obtenerAcuerdosProceso()
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
+    this.obtenerServicioDepartamento()
   }
 
   tinySlider(){
@@ -102,7 +109,6 @@ export default class PanelAcuerdosComponent {
   obtenerAcuerdosProceso(){
     this.chartAcuerdosProceso = {
       kind: kindChart.BarChart,
-      title: 'acuerdo-chart-proceso',
       data: [
         {
           "titulo": "CUMPLIDOS",
@@ -139,7 +145,6 @@ export default class PanelAcuerdosComponent {
   obtenerAcuerdosVencidos(){
     this.chartAcuerdosVencidos = {
       kind: kindChart.BarChart,
-      title: 'acuerdo-chart-vencidos',
       data: [
         {
           "titulo": "CUMPLIDOS",
@@ -175,7 +180,6 @@ export default class PanelAcuerdosComponent {
   obtenerProyeccionCumplimientoHitos(){
     this.chartProyeccionCumplimientosHitos = {
       kind: kindChart.LineChart,
-      title: 'proyeccion-cumplimiento-hitos',
       data: [
         { month: 'Jan', city: 'Tokyo', temperature: 2 },
         { month: 'Jan', city: 'London', temperature: 3.9 },
@@ -202,4 +206,45 @@ export default class PanelAcuerdosComponent {
     }
   }
 
+  obtenerServicioDepartamento(){
+    // const { topoJsonUrl, rqDataFeature } = this.getTopoJsonUrlAndFeature('220602');
+
+    // console.log(topoJsonUrl,rqDataFeature);
+    // const mapaDepartamentos = this.mapaDepartamentosService.obtenerDepartamentosServicio('220602')
+    // console.log(mapaDepartamentos);
+
+    this.mapChar = {
+      kind: kindChart.GeoChart,
+      data: [
+        { month: 'Jan', city: 'Tokyo', temperature: 2 },
+        { month: 'Jan', city: 'London', temperature: 3.9 },
+        { month: 'Feb', city: 'Tokyo', temperature: 6.9 },
+        { month: 'Feb', city: 'London', temperature: 4.2 },
+        { month: 'Mar', city: 'Tokyo', temperature: 9.5 },
+        { month: 'Mar', city: 'London', temperature: 5.7 },
+        { month: 'Apr', city: 'Tokyo', temperature: 14.5 },
+        { month: 'Apr', city: 'London', temperature: 8.5 },
+        { month: 'May', city: 'Tokyo', temperature: 18.4 },
+        { month: 'May', city: 'London', temperature: 11.9 },
+        { month: 'Jun', city: 'Tokyo', temperature: 21.5 },
+        { month: 'Jun', city: 'London', temperature: 15.2 },
+      ],
+      axisX: {
+        title: 'month',
+        showTitle: false
+      },
+      axisY: {
+        title: 'temperature',
+        showTitle: false
+      },
+      legend: false
+    }
+
+    // const geoChart = new Chart({
+    //       container: 'container',
+    //       autoFit: true,
+    //     });
+    
+    
+  }
 }
