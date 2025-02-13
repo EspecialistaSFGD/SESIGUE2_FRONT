@@ -169,7 +169,7 @@
 				HITOS POR ACUERDOS EN PROCESO
 			</div>
 			<div class="bg-white rounded-b-2xl p-4">
-				 <app-bar-chart  [configChart]="chartAcuerdosProceso"/>
+				 <app-chart  [configChart]="chartAcuerdosProceso"/>
 			</div>
 		</div>
 
@@ -178,9 +178,19 @@
 				HITOS POR ACUERDOS VENCIDOS
 			</div>
 			<div class="bg-white rounded-b-2xl p-4">
-				<app-bar-chart  [configChart]="chartAcuerdosVencidos"/>
+				<app-chart  [configChart]="chartAcuerdosVencidos"/>
 			</div>
 		</div>
+
+		<div class="flex flex-col">
+			<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
+				PROYECCIÓN DE CUMPLIMIENTO DE HITOS - AÑO
+			</div>
+			<div class="bg-white rounded-b-2xl p-4">
+				<app-chart  [configChart]="chartProyeccionCumplimientosHitos"/>
+			</div>
+		</div>
+
 	</div>
 
 </div>

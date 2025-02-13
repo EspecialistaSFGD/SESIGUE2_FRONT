@@ -1,0 +1,4 @@
+export enum kindChart {
+    BarChart = 'BarChart',
+    LineChart = 'LineChart',
+  }

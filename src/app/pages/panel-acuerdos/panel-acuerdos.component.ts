@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { kindChart } from '@core/enums';
 import { ConfigChart, ItemInfo } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
@@ -22,6 +23,7 @@ export default class PanelAcuerdosComponent {
 
   chartAcuerdosProceso!: ConfigChart
   chartAcuerdosVencidos!: ConfigChart
+  chartProyeccionCumplimientosHitos!: ConfigChart
   
   private fb = inject(FormBuilder);
 
@@ -43,6 +45,7 @@ export default class PanelAcuerdosComponent {
     this.obtenerCardInfo()
     this.obtenerAcuerdosProceso()
     this.obtenerAcuerdosVencidos()
+    this.obtenerProyeccionCumplimientoHitos()
   }
 
   tinySlider(){
@@ -98,6 +101,7 @@ export default class PanelAcuerdosComponent {
 
   obtenerAcuerdosProceso(){
     this.chartAcuerdosProceso = {
+      kind: kindChart.BarChart,
       title: 'acuerdo-chart-proceso',
       data: [
         {
@@ -126,13 +130,15 @@ export default class PanelAcuerdosComponent {
         showTitle: false,
         showValue: true,
         axisValue: 'cantidad'
-      }
+      },
+      legend: false
     }
   }
 
 
   obtenerAcuerdosVencidos(){
     this.chartAcuerdosVencidos = {
+      kind: kindChart.BarChart,
       title: 'acuerdo-chart-vencidos',
       data: [
         {
@@ -161,7 +167,38 @@ export default class PanelAcuerdosComponent {
         showTitle: false,
         showValue: true,
         axisValue: 'cantidad'
-      }
+      },
+      legend: false
+    }
+  }
+
+  obtenerProyeccionCumplimientoHitos(){
+    this.chartProyeccionCumplimientosHitos = {
+      kind: kindChart.LineChart,
+      title: 'proyeccion-cumplimiento-hitos',
+      data: [
+        { month: 'Jan', city: 'Tokyo', temperature: 2 },
+        { month: 'Jan', city: 'London', temperature: 3.9 },
+        { month: 'Feb', city: 'Tokyo', temperature: 6.9 },
+        { month: 'Feb', city: 'London', temperature: 4.2 },
+        { month: 'Mar', city: 'Tokyo', temperature: 9.5 },
+        { month: 'Mar', city: 'London', temperature: 5.7 },
+        { month: 'Apr', city: 'Tokyo', temperature: 14.5 },
+        { month: 'Apr', city: 'London', temperature: 8.5 },
+        { month: 'May', city: 'Tokyo', temperature: 18.4 },
+        { month: 'May', city: 'London', temperature: 11.9 },
+        { month: 'Jun', city: 'Tokyo', temperature: 21.5 },
+        { month: 'Jun', city: 'London', temperature: 15.2 },
+      ],
+      axisX: {
+        title: 'month',
+        showTitle: false
+      },
+      axisY: {
+        title: 'temperature',
+        showTitle: false
+      },
+      legend: false
     }
   }
 

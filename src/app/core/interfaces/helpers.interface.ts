@@ -1,3 +1,4 @@
+import { kindChart } from "@core/enums";
 import { PaginationResponse } from "./pagination.interface";
 
 export interface DataResponses {
@@ -39,10 +40,12 @@ export interface Filters {
 }
 
 export interface ConfigChart {
+  kind: kindChart,
   title: string,
   data: any[],
   axisX: AxisChart,
-  axisY: AxisChart
+  axisY: AxisChart,
+  legend: boolean
 }
 
 export interface AxisChart {
