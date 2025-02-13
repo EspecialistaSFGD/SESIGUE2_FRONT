@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, EventoResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
+// import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
@@ -13,6 +13,7 @@ import { FormularioAtencionComponent } from './formulario-atencion/formulario-at
 import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
 import { EspaciosStore } from '@libs/shared/stores/espacios.store';
 import { EventosService } from '@core/services/eventos.service';
+import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 
 @Component({
   selector: 'app-asistencia-tecnica',

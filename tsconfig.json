@@ -6,7 +6,7 @@
       "@libs/*": ["./src/app/libs/*"],
       "@guards/*": ["./src/app/libs/guards/*"],
       "@models/*": ["./src/app/libs/models/*"],
-      "@shared/*": ["./src/app/libs/shared/*"],
+      "@shared/*": ["./src/app/shared/*"],
       "@core/*": ["./src/app/core/*"],
       "@environments/*": ["./src/environments/*"]
     },

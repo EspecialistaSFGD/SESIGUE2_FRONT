@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ItemInfo } from '@core/interfaces';
+import { ConfigChart, ItemInfo } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { SharedModule } from '@shared/shared.module';
 import { TinySliderInstance, tns } from 'tiny-slider';
 
 @Component({
   selector: 'app-panel-acuerdos',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, ReactiveFormsModule],
+  imports: [CommonModule, NgZorroModule, ReactiveFormsModule, SharedModule],
   templateUrl: './panel-acuerdos.component.html',
   styles: ``
 })
@@ -18,6 +19,9 @@ export default class PanelAcuerdosComponent {
 
   cardInfo: ItemInfo[] = []
   firstGroup: number[] = [1,2,3]
+
+  chartAcuerdosProceso!: ConfigChart
+  chartAcuerdosVencidos!: ConfigChart
   
   private fb = inject(FormBuilder);
 
@@ -35,9 +39,10 @@ export default class PanelAcuerdosComponent {
     this.tinySlider()    
   }
 
-  ngOnInit(): void {
-    
+  ngOnInit(): void {    
     this.obtenerCardInfo()
+    this.obtenerAcuerdosProceso()
+    this.obtenerAcuerdosVencidos()
   }
 
   tinySlider(){
@@ -89,6 +94,75 @@ export default class PanelAcuerdosComponent {
       { icono: 'acuerdos-pendiente.svg', titulo: '120', descripcion: 'Acuerdos pendientes', comentario: 'Acuerdos que no tienen definidos los hitos para su cumplimiento' },
       { icono: 'acuerdos-vencido.svg', titulo: '2700', descripcion: 'Acuerdos vencidos', comentario: 'Acuerdos que superaron el plazo establecido para su cumplimiento' }
     ]
+  }
+
+  obtenerAcuerdosProceso(){
+    this.chartAcuerdosProceso = {
+      title: 'acuerdo-chart-proceso',
+      data: [
+        {
+          "titulo": "CUMPLIDOS",
+          "cantidad": 15
+        },
+        {
+          "titulo": "PROCESO",
+          "cantidad":5
+        },
+        {
+          "titulo": "PENDIENTE",
+          "cantidad": 25
+        },
+        {
+          "titulo": "VENCIDO",
+          "cantidad": 40
+        }
+      ],
+      axisX: {
+        title: 'titulo',
+        showTitle: false
+      },
+      axisY: {
+        title: 'cantidad',
+        showTitle: false,
+        showValue: true,
+        axisValue: 'cantidad'
+      }
+    }
+  }
+
+
+  obtenerAcuerdosVencidos(){
+    this.chartAcuerdosVencidos = {
+      title: 'acuerdo-chart-vencidos',
+      data: [
+        {
+          "titulo": "CUMPLIDOS",
+          "cantidad": 10
+        },
+        {
+          "titulo": "PROCESO",
+          "cantidad": 50
+        },
+        {
+          "titulo": "PENDIENTE",
+          "cantidad": 5
+        },
+        {
+          "titulo": "VENCIDO",
+          "cantidad": 20
+        }
+      ],
+      axisX: {
+        title: 'titulo',
+        showTitle: false
+      },
+      axisY: {
+        title: 'cantidad',
+        showTitle: false,
+        showValue: true,
+        axisValue: 'cantidad'
+      }
+    }
   }
 
 }

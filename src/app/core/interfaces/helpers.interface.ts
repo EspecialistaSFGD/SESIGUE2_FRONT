@@ -37,3 +37,17 @@ export interface Filters {
   unidadOrganica?: string,
   especialista?: string,
 }
+
+export interface ConfigChart {
+  title: string,
+  data: any[],
+  axisX: AxisChart,
+  axisY: AxisChart
+}
+
+export interface AxisChart {
+  title: string,
+  showTitle?: boolean,
+  showValue?: boolean,
+  axisValue?: string;
+}
