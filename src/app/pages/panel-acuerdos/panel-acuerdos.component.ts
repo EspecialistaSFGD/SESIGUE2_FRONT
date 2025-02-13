@@ -19,7 +19,7 @@ export default class PanelAcuerdosComponent {
   slide!: TinySliderInstance;
 
   cardInfo: ItemInfo[] = []
-  firstGroup: number[] = [1,2,3]
+  firstGroup: string[] = ['Acuerdos por departamento','Cumplimiento de acuerdos por Departamento','Cumplimiento de acuerdos por Sector']
 
   chartAcuerdosProceso!: ConfigChart
   chartAcuerdosVencidos!: ConfigChart

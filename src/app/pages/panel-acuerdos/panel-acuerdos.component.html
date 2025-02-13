@@ -110,59 +110,6 @@
 		</nav>
 	</div>
 
-	<!-- <div class="grid grid-cols-3 gap-4">
-		@for (item of firstGroup; track $index) {
-			<div class="flex flex-col">
-				<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2">
-					titulo
-				</div>
-				<nz-card class="card-no-padding bg-transparent">
-					<nz-table nzSize="small" nzTemplateMode [nzFooter]="tplFooter"
-							class="custom-table">
-							<thead>
-									<tr>
-											<th>de</th>
-											<th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
-											<th nzAlign="center" [nzWidth]="'100px'">Ejecutados</th>
-											<th nzAlign="center" [nzWidth]="'100px'">Avance</th>
-									</tr>
-							</thead>
-							<tbody>
-								<tr>
-										<td>12</td>
-										<td nzAlign="center">45</td>
-										<td nzAlign="center">52</td>
-										<td nzAlign="center">
-											<div class="object-contain w-[85%]">
-													<nz-progress nzPercent="32.6" nzStrokeWidth="12"
-															nzStatus="normal" nzStrokeColor="#D6D4D3">
-													</nz-progress>
-
-											</div>
-										</td>
-								</tr>
-							</tbody>
-					</nz-table>
-
-					<ng-template #tplFooter>
-							<tfoot>
-									<tr>
-											<td class="w-[150px] font-bold">TOTAL</td>
-											<td class="w-[100px] text-center font-bold">22</td>
-											<td class="w-[100px] text-center font-bold">26</td>
-											<td class=" text-center font-bold">
-													80%
-											</td>
-
-									</tr>
-							</tfoot>
-					</ng-template>
-			</nz-card>
-
-			</div>
-		}
-	</div> -->
-
 	<div class="grid grid-cols-3 gap-4">
 		<div class="flex flex-col">
 			<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
@@ -190,7 +137,91 @@
 				<app-chart  [configChart]="chartProyeccionCumplimientosHitos"/>
 			</div>
 		</div>
+	</div>
 
+	<div class="grid grid-cols-3 gap-4">
+		<div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
+			<img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
+			<div class="flex flex-col">
+				<div class="text-xl sm:text-3xl font-bold">50</div>
+				<div class="text-sm font-bold">Hitos por cumplir</div>
+			</div>
+		</div>
+
+		<div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
+			<img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
+			<div class="flex flex-col">
+				<div class="text-xl sm:text-3xl font-bold">GR: 30</div>
+				<div class="text-xl sm:text-3xl font-bold">GN: 20</div>
+				<div class="text-sm font-bold">Hitos en Proceso por Nivel de Gobierno</div>
+			</div>
+		</div>
+
+		<div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
+			<img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
+			<div class="flex flex-col">
+				<div class="text-xl sm:text-3xl font-bold">GR: 30</div>
+				<div class="text-xl sm:text-3xl font-bold">GN: 20</div>
+				<div class="text-sm font-bold">Acuerdo en proceso por nivel de gobierno</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="grid grid-cols-3 gap-4">
+		@for (item of firstGroup; track $index) {
+			<div class="flex flex-col">
+				<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
+					{{item}}
+				</div>
+				@if($index == 0){
+					<h5>map</h5>
+				} @else {
+
+					<nz-card class="card-no-padding bg-transparent">
+						<nz-table nzSize="small" nzTemplateMode [nzFooter]="tplFooter"
+								class="custom-table">
+								<thead>
+										<tr>
+												<th>de</th>
+												<th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
+												<th nzAlign="center" [nzWidth]="'100px'">Ejecutados</th>
+												<th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+										</tr>
+								</thead>
+								<tbody>
+									<tr>
+											<td>12</td>
+											<td nzAlign="center">45</td>
+											<td nzAlign="center">52</td>
+											<td nzAlign="center">
+												<div class="object-contain w-[85%]">
+														<nz-progress nzPercent="32.6" nzStrokeWidth="12"
+																nzStatus="normal" nzStrokeColor="#D6D4D3">
+														</nz-progress>
+	
+												</div>
+											</td>
+									</tr>
+								</tbody>
+						</nz-table>
+	
+						<ng-template #tplFooter>
+								<tfoot>
+										<tr>
+												<td class="w-[150px] font-bold">TOTAL</td>
+												<td class="w-[100px] text-center font-bold">22</td>
+												<td class="w-[100px] text-center font-bold">26</td>
+												<td class=" text-center font-bold">
+														80%
+												</td>
+	
+										</tr>
+								</tfoot>
+						</ng-template>
+				</nz-card>
+				}
+			</div>
+		}
 	</div>
 
 </div>
