@@ -110,7 +110,7 @@
 		</nav>
 	</div>
 
-	<!-- <div class="grid grid-cols-3 gap-4">
+	<div class="grid grid-cols-3 gap-4">
 		<div class="flex flex-col">
 			<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
 				HITOS POR ACUERDOS EN PROCESO
@@ -165,7 +165,7 @@
 				<div class="text-sm font-bold">Acuerdo en proceso por nivel de gobierno</div>
 			</div>
 		</div>
-	</div> -->
+	</div>
 
 	<div class="grid grid-cols-3 gap-4">
 		@for (item of firstGroup; track $index) {
@@ -174,7 +174,9 @@
 					{{item}}
 				</div>
 				@if($index == 0){
-					<app-chart  [configChart]="mapChar"/>
+					<div class="bg-white rounded-b-3xl">
+						<app-geo-chart/>
+					</div>
 				} @else {
 
 					<nz-card class="card-no-padding bg-transparent">
