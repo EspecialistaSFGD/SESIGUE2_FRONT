@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { kindChart } from '@core/enums';
-import { ConfigChart, ItemInfo } from '@core/interfaces';
-import { DepartamentosService, DistritosService, ProvinciasService } from '@core/services';
+import { AcuerdoPanelDepartamentoResponse, AcuerdoPanelInfoResponse, AcuerdosPanelResponses, ConfigChart, ItemInfo } from '@core/interfaces';
+import { AcuerdosService, DepartamentosService, DistritosService, ProvinciasService } from '@core/services';
 import { environment } from '@environments/environment';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
@@ -20,7 +20,8 @@ export default class PanelAcuerdosComponent {
 
   slide!: TinySliderInstance;
 
-  cardInfo: ItemInfo[] = []
+  panelInfo: ItemInfo[] = []
+  panelDepartamentos = signal<AcuerdoPanelDepartamentoResponse[]>([])
   firstGroup: string[] = ['Acuerdos por departamento','Cumplimiento de acuerdos por Departamento','Cumplimiento de acuerdos por Sector']
 
   chartAcuerdosProceso!: ConfigChart
@@ -29,11 +30,14 @@ export default class PanelAcuerdosComponent {
   mapChar!: ConfigChart
   
   private fb = inject(FormBuilder);
-  private mapaDepartamentosService = inject(DepartamentosService)
-  private mapaProvinciasService = inject(ProvinciasService)
-  private mapaDistritosService = inject(DistritosService)
+  tipos: string[] = ['acuerdos', 'hitos']
+  private acuerdosService = inject(AcuerdosService)
+  // private mapaDepartamentosService = inject(DepartamentosService)
+  // private mapaProvinciasService = inject(ProvinciasService)
+  // private mapaDistritosService = inject(DistritosService)
 
   formPanel: FormGroup = this.fb.group({
+    tipo: [ this.tipos[0], Validators.required ],
     sector: [ '' ],
     tipoEspacio: [ '' ],
     espacio: [ '' ],
@@ -47,12 +51,43 @@ export default class PanelAcuerdosComponent {
     this.tinySlider()    
   }
 
-  ngOnInit(): void {    
-    this.obtenerCardInfo()
+  ngOnInit(): void {
+    this.obtenerAcuerdosPanel()    
     this.obtenerAcuerdosProceso()
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
     this.obtenerServicioDepartamento()
+  }
+
+  obtenerAcuerdosPanel(){
+    this.obtenerCardInfo()
+    this.acuerdosService.getAcuerdoDashboard()
+    .subscribe(resp => {
+      if(resp.success == true){
+        const info = resp.data.info
+        this.panelInfo = this.panelInfo.map(item => {
+          const data = info.find(i => i.condicion === item.code)
+          if(data){
+            item.titulo = data.cantidad.toString()
+          }
+          return item
+        })
+        this.panelDepartamentos.set(resp.data.departamentos)
+      }
+    })
+  }
+  
+  obtenerCardInfo(){
+    const tipolabel = this.formPanel.get('tipo')?.value
+    this.panelInfo = [
+      { code: 'establecidos', icono: 'acuerdos-total.svg', titulo: '0', descripcion: `${tipolabel} establecidos`, comentario: `${tipolabel} generados en las reuniones bilaterales` },
+      { code: 'desestimados', icono: 'acuerdos-desestimado.svg', titulo: '0', descripcion: `${tipolabel} desestimados`, comentario: `${tipolabel} que, por razón justificada, y en coordinación entre las partes, dejan de ser consideradas para la medición` },
+      { code: 'vigentes', icono: 'acuerdos-vigente.svg', titulo: '0', descripcion: `${tipolabel} vigentes`, comentario: `Resultado de la diferencia de ${tipolabel} establecidos menos los desestimados` },
+      { code: 'cumplidos', icono: 'acuerdos-cumplido.svg', titulo: '0', descripcion: `${tipolabel} cumplidos`, comentario: `${tipolabel} que han sido cumplidos por el gobierno Nacional, regional y/o local` },
+      { code: 'en_proceso', icono: 'acuerdos-proceso.svg', titulo: '0', descripcion: `${tipolabel} en proceso`, comentario: `${tipolabel} que se encuentran dentro del plazo para su cumplimiento` },
+      { code: 'pendientes', icono: 'acuerdos-pendiente.svg', titulo: '0', descripcion: `${tipolabel} pendientes`, comentario: `${tipolabel} que no tienen definidos los hitos para su cumplimiento` },
+      { code: 'vencidos', icono: 'acuerdos-vencido.svg', titulo: '0', descripcion: `${tipolabel} vencidos`, comentario: `${tipolabel} que superaron el plazo establecido para su cumplimiento` }
+    ]
   }
 
   tinySlider(){
@@ -92,18 +127,6 @@ export default class PanelAcuerdosComponent {
         },
       }
     });
-  }
-
-  obtenerCardInfo(){
-    this.cardInfo = [
-      { icono: 'acuerdos-total.svg', titulo: '2700', descripcion: 'Acuerdos establecidos', comentario: 'Acuerdos generados en las reuniones bilaterales' },
-      { icono: 'acuerdos-desestimado.svg', titulo: '48', descripcion: 'Acuerdos desestimados', comentario: 'Acuerdos que, por razón justificada, y en coordinación entre las partes, dejan de ser consideradas para la medición' },
-      { icono: 'acuerdos-vigente.svg', titulo: '2652', descripcion: 'Acuerdos vigentes', comentario: 'Resultado de la diferencia de acuerdos establecidos menos los desestimados' },
-      { icono: 'acuerdos-cumplido.svg', titulo: '1844', descripcion: 'Acuerdos cumplidos', comentario: 'Acuerdos que han sido cumplidos por el gobierno Nacional, regional y/o local' },
-      { icono: 'acuerdos-proceso.svg', titulo: '679', descripcion: 'Acuerdos en proceso', comentario: 'Acuerdos que se encuentran dentro del plazo para su cumplimiento' },
-      { icono: 'acuerdos-pendiente.svg', titulo: '120', descripcion: 'Acuerdos pendientes', comentario: 'Acuerdos que no tienen definidos los hitos para su cumplimiento' },
-      { icono: 'acuerdos-vencido.svg', titulo: '2700', descripcion: 'Acuerdos vencidos', comentario: 'Acuerdos que superaron el plazo establecido para su cumplimiento' }
-    ]
   }
 
   obtenerAcuerdosProceso(){

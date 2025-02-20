@@ -13,6 +13,7 @@ export interface ItemEnum {
 }
 
 export interface ItemInfo {
+  code:string,
   icono: string,
   titulo: string,
   descripcion: string,

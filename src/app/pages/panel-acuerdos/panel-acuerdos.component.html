@@ -2,7 +2,18 @@
 	<nz-page-header [nzGhost]="false" class="bg-punche-blue-50">
 		<nz-page-header-content>
 			<form [formGroup]="formPanel" nz-form nzLayout="vertical">
-				<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 24 }">
+				<div nz-row [nzGutter]="{ xs: 7, sm: 7, md: 14, lg: 7 }">
+					<div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+						<nz-form-item>
+							<nz-form-label><span class="font-bold text-base">Tipo</span></nz-form-label>
+							<nz-radio-group class="radio-form-control" formControlName="tipo">
+                @for (tipo of tipos; track $index){
+									<label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
+                }
+              </nz-radio-group>
+						</nz-form-item>
+					</div>
+
 					<div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
 						<nz-form-item>
 							<nz-form-label><span class="font-bold text-base">Sector</span></nz-form-label>
@@ -82,17 +93,17 @@
 
 	<div class="tiny-slider">
 		<div class="slider-container">
-			@for(info of cardInfo; track $index){
+			@for(info of panelInfo; track $index){
 			<div>
 				<div class="rounded-xl bg-punche-green-550 flex text-white gap-4 p-4 relative">
 					<img class="flex" src="./assets/images/inicio/{{info.icono}}" alt="{{info.titulo}}" srcset="">
 					<div class="flex">
 						<div class="flex flex-col">
 							<div class="text-xl sm:text-3xl font-bold">{{info.titulo}}</div>
-							<div class="text-sm font-bold">{{info.descripcion}}</div>
+							<div class="text-sm font-bold">{{info.descripcion | titlecase }}</div>
 						</div>
 					</div>
-					<span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip="{{info.comentario}}"></span>
+					<span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip="{{info.comentario | titlecase}}"></span>
 				</div>
 			</div>
 			}
@@ -168,7 +179,117 @@
 	</div>
 
 	<div class="grid grid-cols-3 gap-4">
-		@for (item of firstGroup; track $index) {
+		<div class="flex flex-col">
+			<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
+				Acuerdos por departamento
+			</div>
+			<div class="bg-white rounded-b-3xl">
+				<app-geo-chart/>
+			</div>
+		</div>
+
+		<div class="flex flex-col">
+			<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
+				Cumplimiento de acuerdos por Sector
+			</div>
+			<div class="bg-white rounded-b-3xl">
+				<nz-card class="card-no-padding bg-transparent">
+					<nz-table nzSize="small" nzTemplateMode [nzFooter]="tplFooter"
+							class="custom-table">
+							<thead>
+									<tr>
+											<th>de</th>
+											<th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
+											<th nzAlign="center" [nzWidth]="'100px'">Cumplidos</th>
+											<th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+									</tr>
+							</thead>
+							<tbody>
+								@for(departamento of panelDepartamentos(); track $index){
+								<tr>
+										<td>{{departamento.departamento}}</td>
+										<td nzAlign="center">{{ departamento.total - departamento.desestimados }}</td>
+										<td nzAlign="center">{{departamento.cumplidos}}</td>
+										<td nzAlign="center">
+											<div class="object-contain w-[85%]">
+													<nz-progress nzPercent="{{departamento.porcentaje}}" nzStrokeWidth="12"
+															nzStatus="normal" nzStrokeColor="#D6D4D3">
+													</nz-progress>
+
+											</div>
+										</td>
+
+								}
+							</tbody>
+					</nz-table>
+
+					<ng-template #tplFooter>
+							<tfoot>
+									<tr>
+											<td class="w-[150px] font-bold">TOTAL</td>
+											<td class="w-[100px] text-center font-bold">22</td>
+											<td class="w-[100px] text-center font-bold">26</td>
+											<td class=" text-center font-bold">
+													80%
+											</td>
+
+									</tr>
+							</tfoot>
+					</ng-template>
+			</nz-card>
+			</div>
+		</div>
+
+		<div class="flex flex-col">
+			<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
+				Cumplimiento de acuerdos por Departamento
+			</div>
+			<div class="bg-white rounded-b-3xl">
+				<nz-card class="card-no-padding bg-transparent">
+					<nz-table nzSize="small" nzTemplateMode [nzFooter]="tplFooter"
+							class="custom-table">
+							<thead>
+									<tr>
+											<th>de</th>
+											<th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
+											<th nzAlign="center" [nzWidth]="'100px'">Cumplidos</th>
+											<th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+									</tr>
+							</thead>
+							<tbody>
+								<tr>
+										<td>12</td>
+										<td nzAlign="center">45</td>
+										<td nzAlign="center">52</td>
+										<td nzAlign="center">
+											<div class="object-contain w-[85%]">
+													<nz-progress nzPercent="32.6" nzStrokeWidth="12"
+															nzStatus="normal" nzStrokeColor="#D6D4D3">
+													</nz-progress>
+
+											</div>
+										</td>
+								</tr>
+							</tbody>
+					</nz-table>
+
+					<ng-template #tplFooter>
+							<tfoot>
+									<tr>
+											<td class="w-[150px] font-bold">TOTAL</td>
+											<td class="w-[100px] text-center font-bold">22</td>
+											<td class="w-[100px] text-center font-bold">26</td>
+											<td class=" text-center font-bold">
+													80%
+											</td>
+
+									</tr>
+							</tfoot>
+					</ng-template>
+			</nz-card>
+			</div>
+		</div>
+		<!-- @for (item of firstGroup; track $index) {
 			<div class="flex flex-col">
 				<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
 					{{item}}
@@ -186,7 +307,7 @@
 										<tr>
 												<th>de</th>
 												<th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
-												<th nzAlign="center" [nzWidth]="'100px'">Ejecutados</th>
+												<th nzAlign="center" [nzWidth]="'100px'">Cumplidos</th>
 												<th nzAlign="center" [nzWidth]="'100px'">Avance</th>
 										</tr>
 								</thead>
@@ -223,7 +344,7 @@
 				</nz-card>
 				}
 			</div>
-		}
+		} -->
 	</div>
 
 </div>
