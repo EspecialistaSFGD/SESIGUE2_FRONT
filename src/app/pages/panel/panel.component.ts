@@ -423,16 +423,11 @@ export class PanelComponent {
       container: 'container',
       autoFit: true,
     });
-    
+
     this.reportesService.obtenerReporteResultado(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo)
       .then((response) => response.data)
       .then((data) => {
         this.acuerdos.set(data);
-        console.log('SERVICE RESULT');
-        
-        console.log(data);
-    console.log(rqDataFeature);
-        
 
         if (this.geoChart) {
           this.geoChart.clear(); // Limpiar el gráfico antes de renderizar nuevos datos

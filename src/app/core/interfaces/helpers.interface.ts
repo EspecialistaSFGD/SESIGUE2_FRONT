@@ -13,7 +13,7 @@ export interface ItemEnum {
 }
 
 export interface ItemInfo {
-  code:string,
+  code: string,
   icono: string,
   titulo: string,
   descripcion: string,
@@ -21,9 +21,9 @@ export interface ItemInfo {
 }
 
 export interface ButtonsActions {
-	new?: boolean,
-	edit?: boolean,
-	delete?: boolean,
+  new?: boolean,
+  edit?: boolean,
+  delete?: boolean,
   view?: boolean,
   upload?: boolean
 }
@@ -53,4 +53,9 @@ export interface AxisChart {
   showTitle?: boolean,
   showValue?: boolean,
   axisValue?: string;
+}
+
+export interface ThemeProgressBar {
+  percent: number,
+  theme: string
 }

@@ -1,24 +1,31 @@
 import { DataResponses } from "./helpers.interface";
 
 export interface AcuerdosPanelResponses extends DataResponses {
-		data: AcuerdosPanelResponse,
+  data: AcuerdosPanelResponse,
 }
 export interface AcuerdosPanelResponse {
-	info: AcuerdoPanelInfoResponse[],
-	departamentos: AcuerdoPanelDepartamentoResponse[],
+  info: AcuerdoPanelInfoResponse[],
+  departamentos: AcuerdoPanelDepartamentoResponse[],
 }
 export interface AcuerdoPanelInfoResponse {
-	acuerdoID?: string,
-	condicion: string,
-	cantidad: number
+  acuerdoID?: string,
+  condicion: string,
+  cantidad: number
 }
 
 export interface AcuerdoPanelDepartamentoResponse {
-	departamento: string,
-	pendientes: number,
-	cumplidos: number,
-	en_proceso: number,
-	desestimados: number,
-	porcentaje: number,
-	total: number,
+  departamento: string,
+  pendientes: number,
+  cumplidos: number,
+  en_proceso: number,
+  desestimados: number,
+  porcentaje: number,
+  vigentes: number,
+  total: number,
+}
+
+
+export interface AcuerdoPanelTotales {
+  vigentes: number,
+  cumplidos: number
 }

@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { kindChart } from '@core/enums';
-import { AcuerdoPanelDepartamentoResponse, AcuerdoPanelInfoResponse, AcuerdosPanelResponses, ConfigChart, ItemInfo } from '@core/interfaces';
-import { AcuerdosService, DepartamentosService, DistritosService, ProvinciasService } from '@core/services';
-import { environment } from '@environments/environment';
+import { sortObject, themeProgressBarPercente } from '@core/helpers';
+import { AcuerdoPanelDepartamentoResponse, AcuerdoPanelTotales, ConfigChart, ItemInfo } from '@core/interfaces';
+import { AcuerdosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { TinySliderInstance, tns } from 'tiny-slider';
@@ -22,62 +22,66 @@ export default class PanelAcuerdosComponent {
 
   panelInfo: ItemInfo[] = []
   panelDepartamentos = signal<AcuerdoPanelDepartamentoResponse[]>([])
-  firstGroup: string[] = ['Acuerdos por departamento','Cumplimiento de acuerdos por Departamento','Cumplimiento de acuerdos por Sector']
+  firstGroup: string[] = ['Acuerdos por departamento', 'Cumplimiento de acuerdos por Departamento', 'Cumplimiento de acuerdos por Sector']
 
   chartAcuerdosProceso!: ConfigChart
   chartAcuerdosVencidos!: ConfigChart
   chartProyeccionCumplimientosHitos!: ConfigChart
   mapChar!: ConfigChart
-  
+
   private fb = inject(FormBuilder);
   tipos: string[] = ['acuerdos', 'hitos']
   private acuerdosService = inject(AcuerdosService)
-  // private mapaDepartamentosService = inject(DepartamentosService)
-  // private mapaProvinciasService = inject(ProvinciasService)
-  // private mapaDistritosService = inject(DistritosService)
+
+  totalDepartamento: AcuerdoPanelTotales = {
+    vigentes: 0,
+    cumplidos: 0
+  }
+
 
   formPanel: FormGroup = this.fb.group({
-    tipo: [ this.tipos[0], Validators.required ],
-    sector: [ '' ],
-    tipoEspacio: [ '' ],
-    espacio: [ '' ],
-    departamento: [ '' ],
-    provincia: [ '' ],
-    distrito: [ '' ],
+    tipo: [this.tipos[0], Validators.required],
+    sector: [''],
+    tipoEspacio: [''],
+    espacio: [''],
+    departamento: [''],
+    provincia: [''],
+    distrito: [''],
   })
 
 
   ngAfterViewInit(): void {
-    this.tinySlider()    
+    this.tinySlider()
   }
 
   ngOnInit(): void {
-    this.obtenerAcuerdosPanel()    
+    this.obtenerAcuerdosPanel()
     this.obtenerAcuerdosProceso()
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
     this.obtenerServicioDepartamento()
   }
 
-  obtenerAcuerdosPanel(){
+  obtenerAcuerdosPanel() {
     this.obtenerCardInfo()
     this.acuerdosService.getAcuerdoDashboard()
-    .subscribe(resp => {
-      if(resp.success == true){
-        const info = resp.data.info
-        this.panelInfo = this.panelInfo.map(item => {
-          const data = info.find(i => i.condicion === item.code)
-          if(data){
-            item.titulo = data.cantidad.toString()
-          }
-          return item
-        })
-        this.panelDepartamentos.set(resp.data.departamentos)
-      }
-    })
+      .subscribe(resp => {
+        if (resp.success == true) {
+          const info = resp.data.info
+          this.panelInfo = this.panelInfo.map(item => {
+            const data = info.find(i => i.condicion === item.code)
+            if (data) {
+              item.titulo = data.cantidad.toString()
+            }
+            return item
+          })
+          const departamentopOrdenado = sortObject(resp.data.departamentos, 'porcentaje', 'DESC')
+          this.panelDepartamentos.set(departamentopOrdenado)
+        }
+      })
   }
-  
-  obtenerCardInfo(){
+
+  obtenerCardInfo() {
     const tipolabel = this.formPanel.get('tipo')?.value
     this.panelInfo = [
       { code: 'establecidos', icono: 'acuerdos-total.svg', titulo: '0', descripcion: `${tipolabel} establecidos`, comentario: `${tipolabel} generados en las reuniones bilaterales` },
@@ -90,7 +94,16 @@ export default class PanelAcuerdosComponent {
     ]
   }
 
-  tinySlider(){
+  colorBarraProgreso(porcentaje: number): string {
+    return themeProgressBarPercente(porcentaje)
+  }
+
+  generarPorcentaje(vigente: number, cumplidos: number) {
+    const porcentaje = cumplidos == 0 ? 0 : (cumplidos * 100) / vigente
+    return porcentaje
+  }
+
+  tinySlider() {
     this.slide = tns({
       container: '.slider-container',
       items: 1,
@@ -129,7 +142,7 @@ export default class PanelAcuerdosComponent {
     });
   }
 
-  obtenerAcuerdosProceso(){
+  obtenerAcuerdosProceso() {
     this.chartAcuerdosProceso = {
       kind: kindChart.BarChart,
       data: [
@@ -139,7 +152,7 @@ export default class PanelAcuerdosComponent {
         },
         {
           "titulo": "PROCESO",
-          "cantidad":5
+          "cantidad": 5
         },
         {
           "titulo": "PENDIENTE",
@@ -165,7 +178,7 @@ export default class PanelAcuerdosComponent {
   }
 
 
-  obtenerAcuerdosVencidos(){
+  obtenerAcuerdosVencidos() {
     this.chartAcuerdosVencidos = {
       kind: kindChart.BarChart,
       data: [
@@ -200,7 +213,7 @@ export default class PanelAcuerdosComponent {
     }
   }
 
-  obtenerProyeccionCumplimientoHitos(){
+  obtenerProyeccionCumplimientoHitos() {
     this.chartProyeccionCumplimientosHitos = {
       kind: kindChart.LineChart,
       data: [
@@ -229,7 +242,7 @@ export default class PanelAcuerdosComponent {
     }
   }
 
-  obtenerServicioDepartamento(){
+  obtenerServicioDepartamento() {
     // const { topoJsonUrl, rqDataFeature } = this.getTopoJsonUrlAndFeature('220602');
 
     // console.log(topoJsonUrl,rqDataFeature);
@@ -267,7 +280,7 @@ export default class PanelAcuerdosComponent {
     //       container: 'container',
     //       autoFit: true,
     //     });
-    
-    
+
+
   }
 }
