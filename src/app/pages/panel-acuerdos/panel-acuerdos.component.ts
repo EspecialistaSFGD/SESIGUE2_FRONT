@@ -75,6 +75,10 @@ export default class PanelAcuerdosComponent {
             }
             return item
           })
+          resp.data.departamentos.map(item => {
+            this.totalDepartamento.vigentes = this.totalDepartamento.vigentes + item.vigentes
+            this.totalDepartamento.cumplidos = this.totalDepartamento.cumplidos + item.cumplidos
+          })
           const departamentopOrdenado = sortObject(resp.data.departamentos, 'porcentaje', 'DESC')
           this.panelDepartamentos.set(departamentopOrdenado)
         }

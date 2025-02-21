@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { ChartComponent } from './chart/chart.component';
 import { GeoChartComponent } from './geo-chart/geo-chart.component';
+import { TableCardComponent } from './table-card/table-card.component';
 
 
 
@@ -8,11 +9,13 @@ import { GeoChartComponent } from './geo-chart/geo-chart.component';
   declarations: [],
   imports: [
     ChartComponent,
-    GeoChartComponent
+    GeoChartComponent,
+    TableCardComponent
   ],
   exports: [
     ChartComponent,
-    GeoChartComponent
+    GeoChartComponent,
+    TableCardComponent
   ]
 })
 export class SharedModule { }

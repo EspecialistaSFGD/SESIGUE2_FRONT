@@ -1,206 +1,238 @@
 <div class="site-page-header-ghost-wrapper mb-4 flex flex-col gap-5">
-	<nz-page-header [nzGhost]="false" class="bg-punche-blue-50">
-		<nz-page-header-content>
-			<form [formGroup]="formPanel" nz-form nzLayout="vertical">
-				<div nz-row [nzGutter]="{ xs: 7, sm: 7, md: 14, lg: 7 }">
-					<div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
-						<nz-form-item>
-							<nz-form-label><span class="font-bold text-base">Tipo</span></nz-form-label>
-							<nz-radio-group class="radio-form-control" formControlName="tipo">
-								@for (tipo of tipos; track $index){
-								<label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
-								}
-							</nz-radio-group>
-						</nz-form-item>
-					</div>
+  <nz-page-header [nzGhost]="false" class="bg-punche-blue-50">
+    <nz-page-header-content>
+      <form [formGroup]="formPanel" nz-form nzLayout="vertical">
+        <div nz-row [nzGutter]="{ xs: 7, sm: 7, md: 14, lg: 7 }">
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+            <nz-form-item>
+              <nz-form-label><span class="font-bold text-base">Tipo</span></nz-form-label>
+              <nz-radio-group class="radio-form-control" formControlName="tipo">
+                @for (tipo of tipos; track $index){
+                <label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
+                }
+              </nz-radio-group>
+            </nz-form-item>
+          </div>
 
-					<div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
-						<nz-form-item>
-							<nz-form-label><span class="font-bold text-base">Sector</span></nz-form-label>
-							<nz-form-control>
-								<nz-select id="sector" nzPlaceHolder="Seleccione sector" formControlName="sector"
-									nzAllowClear>
-									<nz-option nzLabel="sector" nzValue="sector" />
-								</nz-select> </nz-form-control>
-						</nz-form-item>
-					</div>
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+            <nz-form-item>
+              <nz-form-label><span class="font-bold text-base">Sector</span></nz-form-label>
+              <nz-form-control>
+                <nz-select id="sector" nzPlaceHolder="Seleccione sector" formControlName="sector" nzAllowClear>
+                  <nz-option nzLabel="sector" nzValue="sector" />
+                </nz-select> </nz-form-control>
+            </nz-form-item>
+          </div>
 
-					<div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
-						<nz-form-item>
-							<nz-form-label [nzSpan]="null">
-								<span class="font-bold text-base">Tipos de Espacio</span>
-							</nz-form-label>
-							<nz-form-control nzSpan="null">
-								<nz-select nzPlaceHolder="Seleccione tipo de espacio" id="tipoEspacio"
-									formControlName="tipoEspacio" nzAllowClear>
-									<nz-option nzLabel="tipo de espacio" nzValue="tipo" />
-								</nz-select>
-							</nz-form-control>
-						</nz-form-item>
-					</div>
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null">
+                <span class="font-bold text-base">Tipos de Espacio</span>
+              </nz-form-label>
+              <nz-form-control nzSpan="null">
+                <nz-select nzPlaceHolder="Seleccione tipo de espacio" id="tipoEspacio" formControlName="tipoEspacio"
+                  nzAllowClear>
+                  <nz-option nzLabel="tipo de espacio" nzValue="tipo" />
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
 
-					<div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
-						<nz-form-item>
-							<nz-form-label [nzSpan]="null">
-								<span class="font-bold text-base">Espacio</span>
-							</nz-form-label>
-							<nz-form-control nzSpan="null">
-								<nz-select nzPlaceHolder="Seleccione espacio" id="espacio" formControlName="espacio"
-									nzAllowClear>
-									<nz-option nzLabel="espacio" nzValue="espacio" />
-								</nz-select>
-							</nz-form-control>
-						</nz-form-item>
-					</div>
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null">
+                <span class="font-bold text-base">Espacio</span>
+              </nz-form-label>
+              <nz-form-control nzSpan="null">
+                <nz-select nzPlaceHolder="Seleccione espacio" id="espacio" formControlName="espacio" nzAllowClear>
+                  <nz-option nzLabel="espacio" nzValue="espacio" />
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
 
-					<div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
-						<nz-form-item>
-							<nz-form-label><span class="font-bold text-base">Departamento</span></nz-form-label>
-							<nz-form-control>
-								<nz-select id="departamento" class="w-full" formControlName="departamento"
-									nzPlaceHolder="Seleccione departamento" nzShowSearch nzAllowClear>
-									<nz-option nzValue="departamento" nzLabel="departamento" />
-								</nz-select>
-							</nz-form-control>
-						</nz-form-item>
-					</div>
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+            <nz-form-item>
+              <nz-form-label><span class="font-bold text-base">Departamento</span></nz-form-label>
+              <nz-form-control>
+                <nz-select id="departamento" class="w-full" formControlName="departamento"
+                  nzPlaceHolder="Seleccione departamento" nzShowSearch nzAllowClear>
+                  <nz-option nzValue="departamento" nzLabel="departamento" />
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
 
-					<div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
-						<nz-form-item>
-							<nz-form-label><span class="font-bold text-base">Provincia</span></nz-form-label>
-							<nz-form-control>
-								<nz-select class="w-full" id="provincia" formControlName="provincia"
-									nzPlaceHolder="Seleccione provincia" nzShowSearch nzAllowClear>
-									<nz-option nzValue="provincia" nzLabel="provincia" />
-								</nz-select>
-							</nz-form-control>
-						</nz-form-item>
-					</div>
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+            <nz-form-item>
+              <nz-form-label><span class="font-bold text-base">Provincia</span></nz-form-label>
+              <nz-form-control>
+                <nz-select class="w-full" id="provincia" formControlName="provincia"
+                  nzPlaceHolder="Seleccione provincia" nzShowSearch nzAllowClear>
+                  <nz-option nzValue="provincia" nzLabel="provincia" />
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
 
-					<div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
-						<nz-form-item>
-							<nz-form-label [nzSpan]="null"><span
-									class="font-bold text-base">Distrito</span></nz-form-label>
-							<nz-form-control nzSpan="null">
-								<nz-select class="w-full" id="distrito" formControlName="distrito"
-									nzPlaceHolder="Seleccione distrito" nzShowSearch nzAllowClear>
-									<nz-option nzValue="distrito" nzLabel="distrito" />
-								</nz-select>
-							</nz-form-control>
-						</nz-form-item>
-					</div>
-				</div>
-			</form>
-		</nz-page-header-content>
-	</nz-page-header>
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="null"><span class="font-bold text-base">Distrito</span></nz-form-label>
+              <nz-form-control nzSpan="null">
+                <nz-select class="w-full" id="distrito" formControlName="distrito" nzPlaceHolder="Seleccione distrito"
+                  nzShowSearch nzAllowClear>
+                  <nz-option nzValue="distrito" nzLabel="distrito" />
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+    </nz-page-header-content>
+  </nz-page-header>
 
-	<div class="tiny-slider">
-		<div class="slider-container">
-			@for(info of panelInfo; track $index){
-			<div>
-				<div class="rounded-xl bg-punche-green-550 flex text-white gap-4 p-4 relative">
-					<img class="flex" src="./assets/images/inicio/{{info.icono}}" alt="{{info.titulo}}" srcset="">
-					<div class="flex">
-						<div class="flex flex-col">
-							<div class="text-xl sm:text-3xl font-bold">{{info.titulo}}</div>
-							<div class="text-sm font-bold">{{info.descripcion | titlecase }}</div>
-						</div>
-					</div>
-					<span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
-						nzType="question-circle" nzTheme="outline" nz-tooltip="{{info.comentario | titlecase}}"></span>
-				</div>
-			</div>
-			}
-		</div>
-		<nav id="controls-slider-container"
-			class="hidden md:flex max-xl:hidden absolute w-full top-1/2 -translate-y-1/2 items-center justify-between">
-			<button aria-label="Slide anterior" type="button" id="prev"
-				class="w-8 h-8 absolute -left-4 bg-white rounded-full shadow-sm hover:shadow-lg active:shadow-2xl hover:bg-gray-50 active:bg-gray-100">
-				<span nz-icon nzType="left" nzTheme="outline"></span>
-			</button>
-			<button aria-label="Slide siguiente" id="next" type="button"
-				class="w-8 h-8 absolute -right-4 bg-white rounded-full shadow-sm hover:shadow-lg active:shadow-2xl hover:bg-gray-50 active:bg-gray-100">
-				<span nz-icon nzType="right" nzTheme="outline"></span>
-			</button>
-		</nav>
-	</div>
+  <div class="tiny-slider">
+    <div class="slider-container">
+      @for(info of panelInfo; track $index){
+      <div>
+        <div class="rounded-xl bg-punche-green-550 flex text-white gap-4 p-4 relative">
+          <img class="flex" src="./assets/images/inicio/{{info.icono}}" alt="{{info.titulo}}" srcset="">
+          <div class="flex">
+            <div class="flex flex-col">
+              <div class="text-xl sm:text-3xl font-bold">{{info.titulo}}</div>
+              <div class="text-sm font-bold">{{info.descripcion | titlecase }}</div>
+            </div>
+          </div>
+          <span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
+            nzType="question-circle" nzTheme="outline" nz-tooltip="{{info.comentario | titlecase}}"></span>
+        </div>
+      </div>
+      }
+    </div>
+    <nav id="controls-slider-container"
+      class="hidden md:flex max-xl:hidden absolute w-full top-1/2 -translate-y-1/2 items-center justify-between">
+      <button aria-label="Slide anterior" type="button" id="prev"
+        class="w-8 h-8 absolute -left-4 bg-white rounded-full shadow-sm hover:shadow-lg active:shadow-2xl hover:bg-gray-50 active:bg-gray-100">
+        <span nz-icon nzType="left" nzTheme="outline"></span>
+      </button>
+      <button aria-label="Slide siguiente" id="next" type="button"
+        class="w-8 h-8 absolute -right-4 bg-white rounded-full shadow-sm hover:shadow-lg active:shadow-2xl hover:bg-gray-50 active:bg-gray-100">
+        <span nz-icon nzType="right" nzTheme="outline"></span>
+      </button>
+    </nav>
+  </div>
 
-	<div class="grid grid-cols-3 gap-4">
-		<div class="flex flex-col">
-			<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
-				HITOS POR ACUERDOS EN PROCESO
-			</div>
-			<div class="bg-white rounded-b-2xl p-4">
-				<app-chart [configChart]="chartAcuerdosProceso" />
-			</div>
-		</div>
+  <div class="grid grid-cols-3 gap-4">
+    <div class="flex flex-col">
+      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
+        HITOS POR ACUERDOS EN PROCESO
+      </div>
+      <div class="bg-white rounded-b-2xl p-4">
+        <app-chart [configChart]="chartAcuerdosProceso" />
+      </div>
+    </div>
 
-		<div class="flex flex-col">
-			<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
-				HITOS POR ACUERDOS VENCIDOS
-			</div>
-			<div class="bg-white rounded-b-2xl p-4">
-				<app-chart [configChart]="chartAcuerdosVencidos" />
-			</div>
-		</div>
+    <div class="flex flex-col">
+      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
+        HITOS POR ACUERDOS VENCIDOS
+      </div>
+      <div class="bg-white rounded-b-2xl p-4">
+        <app-chart [configChart]="chartAcuerdosVencidos" />
+      </div>
+    </div>
 
-		<div class="flex flex-col">
-			<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
-				PROYECCIÓN DE CUMPLIMIENTO DE HITOS - AÑO
-			</div>
-			<div class="bg-white rounded-b-2xl p-4">
-				<app-chart [configChart]="chartProyeccionCumplimientosHitos" />
-			</div>
-		</div>
-	</div>
+    <div class="flex flex-col">
+      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
+        PROYECCIÓN DE CUMPLIMIENTO DE HITOS - AÑO
+      </div>
+      <div class="bg-white rounded-b-2xl p-4">
+        <app-chart [configChart]="chartProyeccionCumplimientosHitos" />
+      </div>
+    </div>
+  </div>
 
-	<div class="grid grid-cols-3 gap-4">
-		<div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
-			<img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
-			<div class="flex flex-col">
-				<div class="text-xl sm:text-3xl font-bold">50</div>
-				<div class="text-sm font-bold">Hitos por cumplir</div>
-			</div>
-		</div>
+  <div class="grid grid-cols-3 gap-4">
+    <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
+      <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
+      <div class="flex flex-col">
+        <div class="text-xl sm:text-3xl font-bold">50</div>
+        <div class="text-sm font-bold">Hitos por cumplir</div>
+      </div>
+    </div>
 
-		<div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
-			<img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
-			<div class="flex flex-col">
-				<div class="text-xl sm:text-3xl font-bold">GR: 30</div>
-				<div class="text-xl sm:text-3xl font-bold">GN: 20</div>
-				<div class="text-sm font-bold">Hitos en Proceso por Nivel de Gobierno</div>
-			</div>
-		</div>
+    <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
+      <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
+      <div class="flex flex-col">
+        <div class="text-xl sm:text-3xl font-bold">GR: 30</div>
+        <div class="text-xl sm:text-3xl font-bold">GN: 20</div>
+        <div class="text-sm font-bold">Hitos en Proceso por Nivel de Gobierno</div>
+      </div>
+    </div>
 
-		<div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
-			<img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
-			<div class="flex flex-col">
-				<div class="text-xl sm:text-3xl font-bold">GR: 30</div>
-				<div class="text-xl sm:text-3xl font-bold">GN: 20</div>
-				<div class="text-sm font-bold">Acuerdo en proceso por nivel de gobierno</div>
-			</div>
-		</div>
-	</div>
+    <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
+      <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
+      <div class="flex flex-col">
+        <div class="text-xl sm:text-3xl font-bold">GR: 30</div>
+        <div class="text-xl sm:text-3xl font-bold">GN: 20</div>
+        <div class="text-sm font-bold">Acuerdo en proceso por nivel de gobierno</div>
+      </div>
+    </div>
+  </div>
 
-	<div class="grid grid-cols-3 gap-4">
-		<div class="flex flex-col">
-			<div
-				class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
-				Acuerdos por departamento
-			</div>
-			<div class="bg-white rounded-b-3xl">
-				<!-- <app-geo-chart /> -->
-			</div>
-		</div>
+  <div class="grid grid-cols-3 gap-4">
+    <div class="flex flex-col">
+      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
+        Acuerdos por departamento
+      </div>
+      <div class="bg-white rounded-b-3xl">
+        <!-- <app-geo-chart /> -->
+      </div>
+    </div>
 
-		<div class="flex flex-col">
-			<div
-				class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
-				Cumplimiento de acuerdos por Departamento
-			</div>
-			<div class="bg-white rounded-b-3xl">
-				<nz-card class="card-no-padding bg-transparent">
-					<nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '420px' }" [nzFooter]="footerDepartamento"
+    <div class="flex flex-col">
+      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
+        Cumplimiento de acuerdos por Departamento
+      </div>
+      <div class="bg-white rounded-b-3xl">
+        <nz-card class="card-no-padding bg-transparent">
+          <app-table-card [scrollY]="420">
+            <ng-template #header>
+              <tr>
+                <th>Departamentos</th>
+                <th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
+                <th nzAlign="center" [nzWidth]="'100px'">Cumplidos</th>
+                <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+              </tr>
+            </ng-template>
+            <ng-template #body>
+              @for(departamento of panelDepartamentos(); track $index){
+              <tr>
+                <td>{{departamento.departamento}}</td>
+                <td nzAlign="center">{{departamento.vigentes }}</td>
+                <td nzAlign="center">{{departamento.cumplidos}}</td>
+                <td nzAlign="center">
+                  <div class="object-contain w-[85%]">
+                    <nz-progress [nzPercent]="departamento.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
+                      [nzStrokeColor]="colorBarraProgreso(departamento.porcentaje)">
+                    </nz-progress>
+
+                  </div>
+                </td>
+                }
+            </ng-template>
+            <ng-template #footer>
+              <tr>
+                <td class="w-[120px] font-bold">TOTAL</td>
+                <td class="w-[100px] text-center font-bold">{{totalDepartamento.vigentes}}</td>
+                <td class="w-[100px] text-center font-bold">{{totalDepartamento.cumplidos}}</td>
+                <td class="w-[100px] text-center font-bold">
+                  {{generarPorcentaje(totalDepartamento.vigentes,
+                  totalDepartamento.cumplidos).toFixed(1)}}%
+                </td>
+              </tr>
+            </ng-template>
+          </app-table-card>
+          <!-- <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '420px' }" [nzFooter]="footerDepartamento"
 						class="custom-table">
 						<thead>
 							<tr>
@@ -242,61 +274,59 @@
 								</td>
 							</tr>
 						</tfoot>
-					</ng-template>
-				</nz-card>
-			</div>
-		</div>
+					</ng-template> -->
+        </nz-card>
+      </div>
+    </div>
 
-		<div class="flex flex-col">
-			<div
-				class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
-				Cumplimiento de acuerdos por Departamento
-			</div>
-			<div class="bg-white rounded-b-3xl">
-				<nz-card class="card-no-padding bg-transparent">
-					<nz-table nzSize="small" nzTemplateMode [nzFooter]="tplFooter" class="custom-table">
-						<thead>
-							<tr>
-								<th>de</th>
-								<th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
-								<th nzAlign="center" [nzWidth]="'100px'">Cumplidos</th>
-								<th nzAlign="center" [nzWidth]="'100px'">Avance</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>12</td>
-								<td nzAlign="center">45</td>
-								<td nzAlign="center">52</td>
-								<td nzAlign="center">
-									<div class="object-contain w-[85%]">
-										<nz-progress nzPercent="32.6" nzStrokeWidth="12" nzStatus="normal"
-											nzStrokeColor="#D6D4D3">
-										</nz-progress>
+    <div class="flex flex-col">
+      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
+        Cumplimiento de acuerdos por Departamento
+      </div>
+      <div class="bg-white rounded-b-3xl">
+        <nz-card class="card-no-padding bg-transparent">
+          <nz-table nzSize="small" nzTemplateMode [nzFooter]="tplFooter" class="custom-table">
+            <thead>
+              <tr>
+                <th>de</th>
+                <th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
+                <th nzAlign="center" [nzWidth]="'100px'">Cumplidos</th>
+                <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>12</td>
+                <td nzAlign="center">45</td>
+                <td nzAlign="center">52</td>
+                <td nzAlign="center">
+                  <div class="object-contain w-[85%]">
+                    <nz-progress nzPercent="32.6" nzStrokeWidth="12" nzStatus="normal" nzStrokeColor="#D6D4D3">
+                    </nz-progress>
 
-									</div>
-								</td>
-							</tr>
-						</tbody>
-					</nz-table>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
 
-					<ng-template #tplFooter>
-						<tfoot>
-							<tr>
-								<td class="w-[150px] font-bold">TOTAL</td>
-								<td class="w-[100px] text-center font-bold">22</td>
-								<td class="w-[100px] text-center font-bold">26</td>
-								<td class=" text-center font-bold">
-									80%
-								</td>
+          <ng-template #tplFooter>
+            <tfoot>
+              <tr>
+                <td class="w-[150px] font-bold">TOTAL</td>
+                <td class="w-[100px] text-center font-bold">22</td>
+                <td class="w-[100px] text-center font-bold">26</td>
+                <td class=" text-center font-bold">
+                  80%
+                </td>
 
-							</tr>
-						</tfoot>
-					</ng-template>
-				</nz-card>
-			</div>
-		</div>
-		<!-- @for (item of firstGroup; track $index) {
+              </tr>
+            </tfoot>
+          </ng-template>
+        </nz-card>
+      </div>
+    </div>
+    <!-- @for (item of firstGroup; track $index) {
 			<div class="flex flex-col">
 				<div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
 					{{item}}
@@ -352,6 +382,6 @@
 				}
 			</div>
 		} -->
-	</div>
+  </div>
 
 </div>
