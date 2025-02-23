@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { kindChart } from '@core/enums';
 import { sortObject, themeProgressBarPercente } from '@core/helpers';
-import { AcuerdoPanelsResponse, AcuerdoPanelTotales, ConfigChart, ItemInfo } from '@core/interfaces';
+import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, ItemInfo } from '@core/interfaces';
 import { AcuerdosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
@@ -23,7 +23,11 @@ export default class PanelAcuerdosComponent {
   panelInfo: ItemInfo[] = []
   panelDepartamentos = signal<AcuerdoPanelsResponse[]>([])
   panelSectores = signal<AcuerdoPanelsResponse[]>([])
-  firstGroup: string[] = ['Acuerdos por departamento', 'Cumplimiento de acuerdos por Departamento', 'Cumplimiento de acuerdos por Sector']
+  cardsAcuerdos: CardInfo[] = [
+    { tipo: 'mapa', nombre: 'departamentos', descripccion: 'Acuerdos por departamento' },
+    { tipo: 'tabla', nombre: 'departamentos', descripccion: 'Cumplimiento de acuerdos por Departamento' },
+    { tipo: 'tabla', nombre: 'acuerdos', descripccion: 'Cumplimiento de acuerdos por Sector' },
+  ]
 
   chartAcuerdosProceso!: ConfigChart
   chartAcuerdosVencidos!: ConfigChart
@@ -107,6 +111,13 @@ export default class PanelAcuerdosComponent {
       { code: 'pendientes', icono: 'acuerdos-pendiente.svg', titulo: '0', descripcion: `${tipolabel} pendientes`, comentario: `${tipolabel} que no tienen definidos los hitos para su cumplimiento` },
       { code: 'vencidos', icono: 'acuerdos-vencido.svg', titulo: '0', descripcion: `${tipolabel} vencidos`, comentario: `${tipolabel} que superaron el plazo establecido para su cumplimiento` }
     ]
+  }
+
+  tipoCardTabla(tipo: string) {
+    return tipo == 'acuerdos' ? this.panelSectores() : this.panelDepartamentos()
+  }
+  totalesCardTabla(tipo: string): AcuerdoPanelTotales {
+    return tipo == 'acuerdos' ? this.totalSector : this.totalDepartamento;
   }
 
   colorBarraProgreso(porcentaje: number): string {

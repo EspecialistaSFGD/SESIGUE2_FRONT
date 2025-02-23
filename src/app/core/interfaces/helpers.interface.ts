@@ -20,6 +20,12 @@ export interface ItemInfo {
   comentario: string
 }
 
+export interface CardInfo {
+  tipo: string,
+  nombre: string,
+  descripccion: string
+}
+
 export interface ButtonsActions {
   new?: boolean,
   edit?: boolean,

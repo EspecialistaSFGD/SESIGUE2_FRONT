@@ -180,40 +180,36 @@
   </div>
 
   <div class="grid grid-cols-3 gap-4">
+    @for(card of cardsAcuerdos; track $index){
     <div class="flex flex-col">
       <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
-        Acuerdos por departamento
+        {{card.descripccion}}
       </div>
       <div class="bg-white rounded-b-3xl">
-        <!-- <app-geo-chart /> -->
-      </div>
-    </div>
-
-    <div class="flex flex-col">
-      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
-        Cumplimiento de acuerdos por Departamento
-      </div>
-      <div class="bg-white rounded-b-3xl">
+        @if(card.tipo == 'mapa'){
+        <app-geo-chart />
+        }
+        @if(card.tipo == 'tabla'){
         <nz-card class="card-no-padding bg-transparent">
           <app-table-card [scrollY]="420">
             <ng-template #header>
               <tr>
-                <th>Departamentos</th>
+                <th>{{card.nombre | titlecase }}</th>
                 <th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
                 <th nzAlign="center" [nzWidth]="'100px'">Cumplidos</th>
                 <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
               </tr>
             </ng-template>
             <ng-template #body>
-              @for(departamento of panelDepartamentos(); track $index){
+              @for(item of tipoCardTabla(card.nombre); track $index){
               <tr>
-                <td>{{departamento.nombre}}</td>
-                <td nzAlign="center">{{departamento.vigentes }}</td>
-                <td nzAlign="center">{{departamento.cumplidos}}</td>
+                <td>{{item.nombre}}</td>
+                <td nzAlign="center">{{item.vigentes }}</td>
+                <td nzAlign="center">{{item.cumplidos}}</td>
                 <td nzAlign="center">
                   <div class="object-contain w-[85%]">
-                    <nz-progress [nzPercent]="departamento.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
-                      [nzStrokeColor]="colorBarraProgreso(departamento.porcentaje)">
+                    <nz-progress [nzPercent]="item.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
+                      [nzStrokeColor]="colorBarraProgreso(item.porcentaje)">
                     </nz-progress>
 
                   </div>
@@ -223,65 +219,20 @@
             <ng-template #footer>
               <tr>
                 <td class="w-[120px] font-bold">TOTAL</td>
-                <td class="w-[100px] text-center font-bold">{{totalDepartamento.vigentes}}</td>
-                <td class="w-[100px] text-center font-bold">{{totalDepartamento.cumplidos}}</td>
+                <td class="w-[100px] text-center font-bold">{{totalesCardTabla(card.nombre).vigentes}}</td>
+                <td class="w-[100px] text-center font-bold">{{totalesCardTabla(card.nombre).cumplidos}}</td>
                 <td class="w-[100px] text-center font-bold">
-                  {{generarPorcentaje(totalDepartamento.vigentes,
-                  totalDepartamento.cumplidos).toFixed(1)}}%
+                  {{generarPorcentaje(totalesCardTabla(card.nombre).vigentes,
+                  totalesCardTabla(card.nombre).cumplidos).toFixed(1)}}%
                 </td>
               </tr>
             </ng-template>
           </app-table-card>
         </nz-card>
+        }
       </div>
     </div>
-
-    <div class="flex flex-col">
-      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
-        Cumplimiento de acuerdos por Sector
-      </div>
-      <div class="bg-white rounded-b-3xl">
-        <nz-card class="card-no-padding bg-transparent">
-          <app-table-card [scrollY]="420">
-            <ng-template #header>
-              <tr>
-                <th>Departamentos</th>
-                <th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
-                <th nzAlign="center" [nzWidth]="'100px'">Cumplidos</th>
-                <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
-              </tr>
-            </ng-template>
-            <ng-template #body>
-              @for(sector of panelSectores(); track $index){
-              <tr>
-                <td>{{sector.nombre}}</td>
-                <td nzAlign="center">{{sector.vigentes }}</td>
-                <td nzAlign="center">{{sector.cumplidos}}</td>
-                <td nzAlign="center">
-                  <div class="object-contain w-[85%]">
-                    <nz-progress [nzPercent]="sector.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
-                      [nzStrokeColor]="colorBarraProgreso(sector.porcentaje)">
-                    </nz-progress>
-
-                  </div>
-                </td>
-                }
-            </ng-template>
-            <ng-template #footer>
-              <tr>
-                <td class="w-[120px] font-bold">TOTAL</td>
-                <td class="w-[100px] text-center font-bold">{{totalSector.vigentes}}</td>
-                <td class="w-[100px] text-center font-bold">{{totalSector.cumplidos}}</td>
-                <td class="w-[100px] text-center font-bold">
-                  {{generarPorcentaje(totalSector.vigentes,
-                  totalSector.cumplidos).toFixed(1)}}%
-                </td>
-              </tr>
-            </ng-template>
-          </app-table-card>
-        </nz-card>
-      </div>
-    </div>
+    }
   </div>
 
 </div>
