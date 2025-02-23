@@ -65,3 +65,8 @@ export interface ThemeProgressBar {
   percent: number,
   theme: string
 }
+
+export interface UbigeoConfig {
+  tipo: string,
+  ubigeo: number,
+}

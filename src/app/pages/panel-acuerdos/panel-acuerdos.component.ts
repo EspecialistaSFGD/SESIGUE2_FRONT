@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Params, Router, convertToParamMap } from '@angular/router';
 import { kindChart } from '@core/enums';
 import { sortObject, themeProgressBarPercente } from '@core/helpers';
 import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, ItemInfo } from '@core/interfaces';
@@ -29,13 +30,16 @@ export default class PanelAcuerdosComponent {
     { tipo: 'tabla', nombre: 'acuerdos', descripccion: 'Cumplimiento de acuerdos por Sector' },
   ]
 
+  tipos: string[] = ['acuerdos', 'hitos']
+
   chartAcuerdosProceso!: ConfigChart
   chartAcuerdosVencidos!: ConfigChart
   chartProyeccionCumplimientosHitos!: ConfigChart
-  mapChar!: ConfigChart
+  // mapChar!: ConfigChart
 
   private fb = inject(FormBuilder);
-  tipos: string[] = ['acuerdos', 'hitos']
+  private router = inject(Router);
+  private route = inject(ActivatedRoute)
   private acuerdosService = inject(AcuerdosService)
 
   totalDepartamento: AcuerdoPanelTotales = {
@@ -47,7 +51,6 @@ export default class PanelAcuerdosComponent {
     cumplidos: 0
   }
 
-
   formPanel: FormGroup = this.fb.group({
     tipo: [this.tipos[0], Validators.required],
     sector: [''],
@@ -58,17 +61,27 @@ export default class PanelAcuerdosComponent {
     distrito: [''],
   })
 
-
   ngAfterViewInit(): void {
     this.tinySlider()
   }
 
   ngOnInit(): void {
+    this.setParamsData()
+    this.tinySlider()
     this.obtenerAcuerdosPanel()
     this.obtenerAcuerdosProceso()
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
-    this.obtenerServicioDepartamento()
+    this.valueChangeForm()
+    // this.obtenerServicioDepartamento()
+  }
+
+  setParamsData() {
+    this.route.queryParams.subscribe(params => {
+      if (Object.keys(params).length > 0) {
+        console.log(params);
+      }
+    })
   }
 
   obtenerAcuerdosPanel() {
@@ -268,45 +281,59 @@ export default class PanelAcuerdosComponent {
     }
   }
 
-  obtenerServicioDepartamento() {
-    // const { topoJsonUrl, rqDataFeature } = this.getTopoJsonUrlAndFeature('220602');
-
-    // console.log(topoJsonUrl,rqDataFeature);
-    // const mapaDepartamentos = this.mapaDepartamentosService.obtenerDepartamentosServicio('220602')
-    // console.log(mapaDepartamentos);
-
-    this.mapChar = {
-      kind: kindChart.GeoChart,
-      data: [
-        { month: 'Jan', city: 'Tokyo', temperature: 2 },
-        { month: 'Jan', city: 'London', temperature: 3.9 },
-        { month: 'Feb', city: 'Tokyo', temperature: 6.9 },
-        { month: 'Feb', city: 'London', temperature: 4.2 },
-        { month: 'Mar', city: 'Tokyo', temperature: 9.5 },
-        { month: 'Mar', city: 'London', temperature: 5.7 },
-        { month: 'Apr', city: 'Tokyo', temperature: 14.5 },
-        { month: 'Apr', city: 'London', temperature: 8.5 },
-        { month: 'May', city: 'Tokyo', temperature: 18.4 },
-        { month: 'May', city: 'London', temperature: 11.9 },
-        { month: 'Jun', city: 'Tokyo', temperature: 21.5 },
-        { month: 'Jun', city: 'London', temperature: 15.2 },
-      ],
-      axisX: {
-        title: 'month',
-        showTitle: false
-      },
-      axisY: {
-        title: 'temperature',
-        showTitle: false
-      },
-      legend: false
-    }
-
-    // const geoChart = new Chart({
-    //       container: 'container',
-    //       autoFit: true,
-    //     });
-
-
+  valueChangeForm() {
+    const valuesForm = this.formPanel?.value
+    this.getValueFormToParams(valuesForm)
+    this.formPanel.valueChanges
+      .subscribe(value => {
+        this.getValueFormToParams(value)
+      })
   }
+
+  getValueFormToParams(values: any) {
+    const keys = Object.keys(values).filter(campo => this.formPanel.get(campo)?.value?.trim() !== '');
+    const dataParams: any = {}
+    for (let key of keys) {
+      dataParams[`${key}`] = this.formPanel.get(key)?.value
+    }
+    this.onQueryParamsChange(dataParams)
+  }
+
+  onQueryParamsChange(queryParams: Params): void {
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams
+      }
+    );
+  }
+  // obtenerServicioDepartamento() {
+  //   this.mapChar = {
+  //     kind: kindChart.GeoChart,
+  //     data: [
+  //       { month: 'Jan', city: 'Tokyo', temperature: 2 },
+  //       { month: 'Jan', city: 'London', temperature: 3.9 },
+  //       { month: 'Feb', city: 'Tokyo', temperature: 6.9 },
+  //       { month: 'Feb', city: 'London', temperature: 4.2 },
+  //       { month: 'Mar', city: 'Tokyo', temperature: 9.5 },
+  //       { month: 'Mar', city: 'London', temperature: 5.7 },
+  //       { month: 'Apr', city: 'Tokyo', temperature: 14.5 },
+  //       { month: 'Apr', city: 'London', temperature: 8.5 },
+  //       { month: 'May', city: 'Tokyo', temperature: 18.4 },
+  //       { month: 'May', city: 'London', temperature: 11.9 },
+  //       { month: 'Jun', city: 'Tokyo', temperature: 21.5 },
+  //       { month: 'Jun', city: 'London', temperature: 15.2 },
+  //     ],
+  //     axisX: {
+  //       title: 'month',
+  //       showTitle: false
+  //     },
+  //     axisY: {
+  //       title: 'temperature',
+  //       showTitle: false
+  //     },
+  //     legend: false
+  //   }
+  // }
 }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
 import { Chart } from '@antv/g2';
 import { DepartamentosService } from '@core/services';
 
@@ -11,17 +11,32 @@ import { DepartamentosService } from '@core/services';
 })
 export class GeoChartComponent {
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
+  @Input() dataset: any;
+  @Input() ubigeo: string = ''
 
   chart: Chart | null = null;
+  topoJson: string = ''
   private mapaDepartamentosService = inject(DepartamentosService)
 
   ngAfterViewInit(): void {
     this.generateGeoChart()
   }
 
-  generateGeoChart() {
-    console.log('in service geo');
+  ngOnInit(): void {
+    this.setTopoJson()
+  }
 
+  setTopoJson() {
+    let kind = 'departamentos'
+    let codeName = 'departamento'
+    // if(this.ubigeo.length == 2){
+    //   kind = 'provincias'
+    // }
+
+    this.topoJson = `assets/data/json/${kind}}/${codeName}.topo.json`
+  }
+
+  generateGeoChart() {
     const chart = new Chart({
       container: this.chartContainer.nativeElement,
       autoFit: true,
@@ -42,7 +57,7 @@ export class GeoChartComponent {
       .coordinate({ type: 'mercator' })
       .data({
         type: 'fetch',
-        value: 'assets/data/json/departamentos/departamentos.topo.json',
+        value: this.topoJson,
         transform: [
           { type: 'feature', name: 'departamentos' },
           {
