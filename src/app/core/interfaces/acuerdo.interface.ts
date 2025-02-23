@@ -5,7 +5,8 @@ export interface AcuerdosPanelResponses extends DataResponses {
 }
 export interface AcuerdosPanelResponse {
   info: AcuerdoPanelInfoResponse[],
-  departamentos: AcuerdoPanelDepartamentoResponse[],
+  departamentos: AcuerdoPanelsResponse[],
+  sectores: AcuerdoPanelsResponse[],
 }
 export interface AcuerdoPanelInfoResponse {
   acuerdoID?: string,
@@ -13,8 +14,8 @@ export interface AcuerdoPanelInfoResponse {
   cantidad: number
 }
 
-export interface AcuerdoPanelDepartamentoResponse {
-  departamento: string,
+export interface AcuerdoPanelsResponse {
+  nombre: string,
   pendientes: number,
   cumplidos: number,
   en_proceso: number,

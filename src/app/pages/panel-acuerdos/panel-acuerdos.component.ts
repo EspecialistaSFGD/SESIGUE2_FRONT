@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { kindChart } from '@core/enums';
 import { sortObject, themeProgressBarPercente } from '@core/helpers';
-import { AcuerdoPanelDepartamentoResponse, AcuerdoPanelTotales, ConfigChart, ItemInfo } from '@core/interfaces';
+import { AcuerdoPanelsResponse, AcuerdoPanelTotales, ConfigChart, ItemInfo } from '@core/interfaces';
 import { AcuerdosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
@@ -21,7 +21,8 @@ export default class PanelAcuerdosComponent {
   slide!: TinySliderInstance;
 
   panelInfo: ItemInfo[] = []
-  panelDepartamentos = signal<AcuerdoPanelDepartamentoResponse[]>([])
+  panelDepartamentos = signal<AcuerdoPanelsResponse[]>([])
+  panelSectores = signal<AcuerdoPanelsResponse[]>([])
   firstGroup: string[] = ['Acuerdos por departamento', 'Cumplimiento de acuerdos por Departamento', 'Cumplimiento de acuerdos por Sector']
 
   chartAcuerdosProceso!: ConfigChart
@@ -34,6 +35,10 @@ export default class PanelAcuerdosComponent {
   private acuerdosService = inject(AcuerdosService)
 
   totalDepartamento: AcuerdoPanelTotales = {
+    vigentes: 0,
+    cumplidos: 0
+  }
+  totalSector: AcuerdoPanelTotales = {
     vigentes: 0,
     cumplidos: 0
   }
@@ -79,8 +84,14 @@ export default class PanelAcuerdosComponent {
             this.totalDepartamento.vigentes = this.totalDepartamento.vigentes + item.vigentes
             this.totalDepartamento.cumplidos = this.totalDepartamento.cumplidos + item.cumplidos
           })
-          const departamentopOrdenado = sortObject(resp.data.departamentos, 'porcentaje', 'DESC')
-          this.panelDepartamentos.set(departamentopOrdenado)
+          resp.data.sectores.map(item => {
+            this.totalSector.vigentes = this.totalSector.vigentes + item.vigentes
+            this.totalSector.cumplidos = this.totalSector.cumplidos + item.cumplidos
+          })
+          const departamentosOrdenado = sortObject(resp.data.departamentos, 'porcentaje', 'DESC')
+          this.panelDepartamentos.set(departamentosOrdenado)
+          const sectoresOrdenado = sortObject(resp.data.sectores, 'porcentaje', 'DESC')
+          this.panelSectores.set(sectoresOrdenado)
         }
       })
   }
