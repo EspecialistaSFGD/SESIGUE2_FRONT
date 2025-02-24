@@ -116,7 +116,9 @@ export default class PanelAcuerdosComponent {
     console.log(sector);
     console.log(tipoEspacio);
 
-    // this.formPanel.reset({ tipo, sector, tipoEspacio })
+    this.formPanel.reset({ tipo, sector, tipoEspacio })
+    console.log(this.formPanel?.value);
+    
     // console.log(this.formPanel?.value);
     // console.log(this.sectores().values);
   }
@@ -262,11 +264,21 @@ export default class PanelAcuerdosComponent {
     return porcentaje
   }
 
+  selectTipo(){
+    const tipoValue = this.formPanel.get('tipo')?.value
+    if(tipoValue){
+      this.dataParams.tipo = tipoValue
+      this.paramsChange()
+    }
+  }
+
   selectSector() {
     const sectorValue = this.formPanel.get('sector')?.value
-    this.paginationPanel.sector = sectorValue
-    this.dataParams.sector = sectorValue
-    this.paramsChange()
+    if(sectorValue){
+      this.paginationPanel.sector = sectorValue
+      this.dataParams.sector = sectorValue
+      this.paramsChange()
+    }
   }
 
   tinySlider() {
@@ -433,7 +445,6 @@ export default class PanelAcuerdosComponent {
         // queryParamsHandling: 'merge',
       }
     );
-    console.log(this.formPanel?.value);
   }
 
   // onQueryParamsChange(queryParams: Params): void {
