@@ -56,8 +56,11 @@
               <nz-form-label><span class="font-bold text-base">Departamento</span></nz-form-label>
               <nz-form-control>
                 <nz-select id="departamento" class="w-full" formControlName="departamento"
-                  nzPlaceHolder="Seleccione departamento" nzShowSearch nzAllowClear>
-                  <nz-option nzValue="departamento" nzLabel="departamento" />
+                  nzPlaceHolder="Seleccione departamento" nzShowSearch nzAllowClear
+                  (ngModelChange)="obtenerProvincias(formPanel.get('departamento')?.value)">
+                  @for(departamento of departamentos(); track $index){
+                  <nz-option [nzValue]="departamento.departamentoId" [nzLabel]="departamento.departamento" />
+                  }
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
@@ -68,8 +71,11 @@
               <nz-form-label><span class="font-bold text-base">Provincia</span></nz-form-label>
               <nz-form-control>
                 <nz-select class="w-full" id="provincia" formControlName="provincia"
-                  nzPlaceHolder="Seleccione provincia" nzShowSearch nzAllowClear>
-                  <nz-option nzValue="provincia" nzLabel="provincia" />
+                  nzPlaceHolder="Seleccione provincia" nzShowSearch nzAllowClear
+                  (ngModelChange)="obtenerDistrito(formPanel.get('provincia')?.value)">
+                  @for (provincia of provincias(); track $index) {
+                  <nz-option [nzValue]="provincia.provinciaId" [nzLabel]="provincia.provincia" />
+                  }
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
@@ -81,7 +87,9 @@
               <nz-form-control nzSpan="null">
                 <nz-select class="w-full" id="distrito" formControlName="distrito" nzPlaceHolder="Seleccione distrito"
                   nzShowSearch nzAllowClear>
-                  <nz-option nzValue="distrito" nzLabel="distrito" />
+                  @for (distrito of distritos(); track $index) {
+                  <nz-option [nzValue]="distrito.distritoId" [nzLabel]="distrito.distrito" />
+                  }
                 </nz-select>
               </nz-form-control>
             </nz-form-item>

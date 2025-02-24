@@ -4,8 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Params, Router, convertToParamMap } from '@angular/router';
 import { kindChart } from '@core/enums';
 import { sortObject, themeProgressBarPercente } from '@core/helpers';
-import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, ItemInfo } from '@core/interfaces';
-import { AcuerdosService } from '@core/services';
+import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, ItemInfo, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AcuerdosService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { TinySliderInstance, tns } from 'tiny-slider';
@@ -22,6 +22,9 @@ export default class PanelAcuerdosComponent {
   slide!: TinySliderInstance;
 
   panelInfo: ItemInfo[] = []
+  departamentos = signal<UbigeoDepartmentResponse[]>([])
+  provincias = signal<UbigeoProvinciaResponse[]>([])
+  distritos = signal<UbigeoDistritoResponse[]>([])
   panelDepartamentos = signal<AcuerdoPanelsResponse[]>([])
   panelSectores = signal<AcuerdoPanelsResponse[]>([])
   cardsAcuerdos: CardInfo[] = [
@@ -41,6 +44,7 @@ export default class PanelAcuerdosComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private acuerdosService = inject(AcuerdosService)
+  private ubigeoService = inject(UbigeosService)
 
   totalDepartamento: AcuerdoPanelTotales = {
     vigentes: 0,
@@ -55,10 +59,10 @@ export default class PanelAcuerdosComponent {
     tipo: [this.tipos[0], Validators.required],
     sector: [''],
     tipoEspacio: [''],
-    espacio: [''],
+    espacio: [{ value: '', disabled: true }],
     departamento: [''],
-    provincia: [''],
-    distrito: [''],
+    provincia: [{ value: '', disabled: true }],
+    distrito: [{ value: '', disabled: true }],
   })
 
   ngAfterViewInit(): void {
@@ -66,6 +70,7 @@ export default class PanelAcuerdosComponent {
   }
 
   ngOnInit(): void {
+    this.obtenerDepartamentos()
     this.setParamsData()
     this.tinySlider()
     this.obtenerAcuerdosPanel()
@@ -82,6 +87,41 @@ export default class PanelAcuerdosComponent {
         console.log(params);
       }
     })
+  }
+
+  obtenerDepartamentos() {
+    this.ubigeoService.getDepartments()
+      .subscribe(resp => {
+        this.departamentos.set(resp.data)
+      })
+  }
+
+  obtenerProvincias(ubigeo: string) {
+    if (ubigeo) {
+      const provinciaControl = this.formPanel.get('provincia')
+      provinciaControl?.setValue('')
+      provinciaControl?.enable()
+      const distritoControl = this.formPanel.get('distrito')
+      distritoControl?.setValue('')
+      distritoControl?.disable()
+      this.ubigeoService.getProvinces(ubigeo)
+        .subscribe(resp => {
+          this.provincias.set(resp.data)
+        })
+    }
+  }
+
+  obtenerDistrito(ubigeo: string) {
+    if (ubigeo) {
+      const setUbigeo = ubigeo.length > 4 ? ubigeo.slice(0, 4) : ubigeo
+      const distritoControl = this.formPanel.get('distrito')
+      distritoControl?.setValue('')
+      distritoControl?.enable()
+      this.ubigeoService.getDistricts(setUbigeo)
+        .subscribe(resp => {
+          this.distritos.set(resp.data)
+        })
+    }
   }
 
   obtenerAcuerdosPanel() {
