@@ -2,8 +2,8 @@
   <nz-page-header [nzGhost]="false" class="bg-punche-blue-50">
     <nz-page-header-content>
       <form [formGroup]="formPanel" nz-form nzLayout="vertical">
-        <div nz-row [nzGutter]="{ xs: 7, sm: 7, md: 14, lg: 7 }">
-          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+        <div nz-row [nzGutter]="{ xs: 24, sm: 24, md: 24, lg: 24 }">
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="6">
             <nz-form-item>
               <nz-form-label><span class="font-bold text-base">Tipo</span></nz-form-label>
               <nz-radio-group class="radio-form-control" formControlName="tipo">
@@ -13,51 +13,60 @@
               </nz-radio-group>
             </nz-form-item>
           </div>
-
-          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="6">
             <nz-form-item>
               <nz-form-label><span class="font-bold text-base">Sector</span></nz-form-label>
               <nz-form-control>
-                <nz-select id="sector" nzPlaceHolder="Seleccione sector" formControlName="sector" nzAllowClear>
-                  <nz-option nzLabel="sector" nzValue="sector" />
+                <nz-select id="sector" nzPlaceHolder="Seleccione sector" class="select-form-control"
+                  formControlName="sector" (ngModelChange)="selectSector()" nzAllowClear>
+                  @for(sector of sectores(); track $index){
+                  <nz-option [nzValue]="sector.grupoID" [nzLabel]="sector.nombre" />
+                  }
                 </nz-select> </nz-form-control>
             </nz-form-item>
           </div>
 
-          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="6">
             <nz-form-item>
               <nz-form-label [nzSpan]="null">
                 <span class="font-bold text-base">Tipos de Espacio</span>
               </nz-form-label>
               <nz-form-control nzSpan="null">
-                <nz-select nzPlaceHolder="Seleccione tipo de espacio" id="tipoEspacio" formControlName="tipoEspacio"
-                  nzAllowClear>
-                  <nz-option nzLabel="tipo de espacio" nzValue="tipo" />
+                <nz-select nzPlaceHolder="Seleccione tipo de espacio" id="tipoEspacio" class="select-form-control"
+                  formControlName="tipoEspacio" nzAllowClear
+                  (ngModelChange)="obtenerServicioEventos(formPanel.get('tipoEspacio')?.value)">
+                  @for (tipo of tipoEventos(); track $index) {
+                  <nz-option [nzValue]="tipo.codigoTipoEvento" [nzLabel]="tipo.descripcionTipoEvento" />
+                  }
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
           </div>
 
-          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="6">
             <nz-form-item>
               <nz-form-label [nzSpan]="null">
                 <span class="font-bold text-base">Espacio</span>
               </nz-form-label>
               <nz-form-control nzSpan="null">
-                <nz-select nzPlaceHolder="Seleccione espacio" id="espacio" formControlName="espacio" nzAllowClear>
-                  <nz-option nzLabel="espacio" nzValue="espacio" />
+                <nz-select nzPlaceHolder="Seleccione espacio" id="espacio" class="select-form-control"
+                  formControlName="espacio" nzAllowClear>
+                  @for (evento of eventos(); track $index) {
+                  <nz-option [nzValue]="evento.eventoId" [nzLabel]="evento.nombre" />
+                  }
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
           </div>
-
-          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+        </div>
+        <div nz-row [nzGutter]="{ xs: 24, sm: 24, md: 24, lg: 24}">
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="8">
             <nz-form-item>
               <nz-form-label><span class="font-bold text-base">Departamento</span></nz-form-label>
               <nz-form-control>
-                <nz-select id="departamento" class="w-full" formControlName="departamento"
+                <nz-select id="departamento" class="w-full" class="select-form-control" formControlName="departamento"
                   nzPlaceHolder="Seleccione departamento" nzShowSearch nzAllowClear
-                  (ngModelChange)="obtenerProvincias(formPanel.get('departamento')?.value)">
+                  (ngModelChange)="obtenerServicioProvincias(formPanel.get('departamento')?.value)">
                   @for(departamento of departamentos(); track $index){
                   <nz-option [nzValue]="departamento.departamentoId" [nzLabel]="departamento.departamento" />
                   }
@@ -66,13 +75,13 @@
             </nz-form-item>
           </div>
 
-          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="8">
             <nz-form-item>
               <nz-form-label><span class="font-bold text-base">Provincia</span></nz-form-label>
               <nz-form-control>
-                <nz-select class="w-full" id="provincia" formControlName="provincia"
+                <nz-select class="w-full" id="provincia" class="select-form-control" formControlName="provincia"
                   nzPlaceHolder="Seleccione provincia" nzShowSearch nzAllowClear
-                  (ngModelChange)="obtenerDistrito(formPanel.get('provincia')?.value)">
+                  (ngModelChange)="obtenerServicioDistrito(formPanel.get('provincia')?.value)">
                   @for (provincia of provincias(); track $index) {
                   <nz-option [nzValue]="provincia.provinciaId" [nzLabel]="provincia.provincia" />
                   }
@@ -81,12 +90,12 @@
             </nz-form-item>
           </div>
 
-          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="4">
+          <div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="4" nzXl="8">
             <nz-form-item>
               <nz-form-label [nzSpan]="null"><span class="font-bold text-base">Distrito</span></nz-form-label>
               <nz-form-control nzSpan="null">
-                <nz-select class="w-full" id="distrito" formControlName="distrito" nzPlaceHolder="Seleccione distrito"
-                  nzShowSearch nzAllowClear>
+                <nz-select class="w-full" id="distrito" class="select-form-control" formControlName="distrito"
+                  nzPlaceHolder="Seleccione distrito" nzShowSearch nzAllowClear>
                   @for (distrito of distritos(); track $index) {
                   <nz-option [nzValue]="distrito.distritoId" [nzLabel]="distrito.distrito" />
                   }

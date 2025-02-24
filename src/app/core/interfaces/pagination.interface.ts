@@ -12,3 +12,10 @@ export interface Pagination {
   currentPage: number,
   total: number
 }
+
+export interface PaginationPanel {
+  sector?: string,
+  tipoEspacio?: string,
+  espacio?: string,
+  ubigeo?: string
+}

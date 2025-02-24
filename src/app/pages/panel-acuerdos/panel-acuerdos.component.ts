@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Params, Router, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { kindChart } from '@core/enums';
 import { sortObject, themeProgressBarPercente } from '@core/helpers';
-import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, ItemInfo, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { AcuerdosService, UbigeosService } from '@core/services';
+import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, EventoResponse, ItemInfo, Pagination, PaginationPanel, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AcuerdosService, EventosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { TinySliderInstance, tns } from 'tiny-slider';
@@ -22,6 +22,9 @@ export default class PanelAcuerdosComponent {
   slide!: TinySliderInstance;
 
   panelInfo: ItemInfo[] = []
+  sectores = signal<SectorResponse[]>([])
+  tipoEventos = signal<TipoEventoResponse[]>([])
+  eventos = signal<EventoResponse[]>([])
   departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])
   distritos = signal<UbigeoDistritoResponse[]>([])
@@ -35,6 +38,9 @@ export default class PanelAcuerdosComponent {
 
   tipos: string[] = ['acuerdos', 'hitos']
 
+  dataParams: any = {}
+  paginationPanel: PaginationPanel = {}
+
   chartAcuerdosProceso!: ConfigChart
   chartAcuerdosVencidos!: ConfigChart
   chartProyeccionCumplimientosHitos!: ConfigChart
@@ -44,6 +50,9 @@ export default class PanelAcuerdosComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private acuerdosService = inject(AcuerdosService)
+  private sectoresService = inject(SectoresService)
+  private tipoEventosServices = inject(TipoEventosService)
+  private eventosServices = inject(EventosService)
   private ubigeoService = inject(UbigeosService)
 
   totalDepartamento: AcuerdoPanelTotales = {
@@ -70,61 +79,132 @@ export default class PanelAcuerdosComponent {
   }
 
   ngOnInit(): void {
-    this.obtenerDepartamentos()
     this.setParamsData()
-    this.tinySlider()
-    this.obtenerAcuerdosPanel()
+    this.obtenerServicioSectores()
+    this.obtenerServicioTipoEspacio()
+    this.obtenerServicioDepartamentos()
+    // this.tinySlider()
+    this.obtenerServicioAcuerdosPanel()
     this.obtenerAcuerdosProceso()
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
-    this.valueChangeForm()
+    // this.valueChangeForm()
     // this.obtenerServicioDepartamento()
   }
 
   setParamsData() {
     this.route.queryParams.subscribe(params => {
       if (Object.keys(params).length > 0) {
-        console.log(params);
+        this.setFormvalueToparams(params)
       }
     })
   }
 
-  obtenerDepartamentos() {
+  setFormvalueToparams(params: Params) {
+    const tipo = params['tipo'] ?? this.tipos[0]
+    const sector = params['sector'] ?? ''
+    const tipoEspacio = params['tipoEspacio'] ?? ''
+    const espacio = params['espacio'] ?? ''
+    const departamento = params['departamento'] ?? ''
+    const provincia = params['provincia'] ?? ''
+    const distrito = params['distrito'] ?? ''
+    if (tipoEspacio) {
+      // console.log(tipoEspacio);
+    }
+    console.log(params);
+    console.log(tipo);
+    console.log(sector);
+    console.log(tipoEspacio);
+
+    // this.formPanel.reset({ tipo, sector, tipoEspacio })
+    // console.log(this.formPanel?.value);
+    // console.log(this.sectores().values);
+  }
+
+  obtenerServicioSectores() {
+    this.sectoresService.getAllSectors()
+      .subscribe(resp => {
+        this.sectores.set(resp.data)
+      })
+  }
+
+  obtenerServicioTipoEspacio() {
+    const pagination: Pagination = {
+      code: 0,
+      columnSort: 'codigoTipoEvento',
+      typeSort: 'DESC',
+      pageSize: 10,
+      currentPage: 1,
+      total: 0
+    }
+    this.tipoEventosServices.getAllTipoEvento(pagination)
+      .subscribe(resp => {
+        this.tipoEventos.set(resp.data)
+      })
+  }
+
+  obtenerServicioEventos(eventoId: string) {
+    const espacioControl = this.formPanel.get('espacio')
+    espacioControl?.setValue('')
+    if (eventoId) {
+      espacioControl?.enable()
+      const pagination: Pagination = {
+        code: 0,
+        columnSort: 'eventoId',
+        typeSort: 'DESC',
+        pageSize: 100,
+        currentPage: 1,
+        total: 0
+      }
+      this.eventosServices.getAllEventos(Number(eventoId), 1, [1, 2, 3], pagination)
+        .subscribe(resp => {
+          this.eventos.set(resp.data)
+        })
+    } else {
+      espacioControl?.disable()
+    }
+  }
+
+  obtenerServicioDepartamentos() {
     this.ubigeoService.getDepartments()
       .subscribe(resp => {
         this.departamentos.set(resp.data)
       })
   }
 
-  obtenerProvincias(ubigeo: string) {
+  obtenerServicioProvincias(ubigeo: string) {
+    const provinciaControl = this.formPanel.get('provincia')
+    const distritoControl = this.formPanel.get('distrito')
+    provinciaControl?.setValue('')
+    distritoControl?.setValue('')
+    distritoControl?.disable()
     if (ubigeo) {
-      const provinciaControl = this.formPanel.get('provincia')
-      provinciaControl?.setValue('')
       provinciaControl?.enable()
-      const distritoControl = this.formPanel.get('distrito')
-      distritoControl?.setValue('')
-      distritoControl?.disable()
       this.ubigeoService.getProvinces(ubigeo)
         .subscribe(resp => {
           this.provincias.set(resp.data)
         })
+    } else {
+      provinciaControl?.disable()
     }
   }
 
-  obtenerDistrito(ubigeo: string) {
+  obtenerServicioDistrito(ubigeo: string) {
+    const distritoControl = this.formPanel.get('distrito')
+    distritoControl?.setValue('')
     if (ubigeo) {
       const setUbigeo = ubigeo.length > 4 ? ubigeo.slice(0, 4) : ubigeo
-      const distritoControl = this.formPanel.get('distrito')
-      distritoControl?.setValue('')
       distritoControl?.enable()
       this.ubigeoService.getDistricts(setUbigeo)
         .subscribe(resp => {
           this.distritos.set(resp.data)
         })
+    } else {
+      distritoControl?.disable()
     }
   }
 
-  obtenerAcuerdosPanel() {
+  obtenerServicioAcuerdosPanel() {
     this.obtenerCardInfo()
     this.acuerdosService.getAcuerdoDashboard()
       .subscribe(resp => {
@@ -180,6 +260,13 @@ export default class PanelAcuerdosComponent {
   generarPorcentaje(vigente: number, cumplidos: number) {
     const porcentaje = cumplidos == 0 ? 0 : (cumplidos * 100) / vigente
     return porcentaje
+  }
+
+  selectSector() {
+    const sectorValue = this.formPanel.get('sector')?.value
+    this.paginationPanel.sector = sectorValue
+    this.dataParams.sector = sectorValue
+    this.paramsChange()
   }
 
   tinySlider() {
@@ -321,33 +408,46 @@ export default class PanelAcuerdosComponent {
     }
   }
 
-  valueChangeForm() {
-    const valuesForm = this.formPanel?.value
-    this.getValueFormToParams(valuesForm)
-    this.formPanel.valueChanges
-      .subscribe(value => {
-        this.getValueFormToParams(value)
-      })
-  }
+  // valueChangeForm() {
+  //   this.formPanel.valueChanges
+  //     .subscribe(value => {
+  //       this.getValueFormToParams(value)
+  //     })
+  // }
 
-  getValueFormToParams(values: any) {
-    const keys = Object.keys(values).filter(campo => this.formPanel.get(campo)?.value?.trim() !== '');
-    const dataParams: any = {}
-    for (let key of keys) {
-      dataParams[`${key}`] = this.formPanel.get(key)?.value
-    }
-    this.onQueryParamsChange(dataParams)
-  }
+  // getValueFormToParams(values: any) {
+  //   const keys = Object.keys(values).filter(campo => this.formPanel.get(campo)?.value !== '');
+  //   const dataParams: any = {}
+  //   for (let key of keys) {
+  //     dataParams[`${key.trim()}`] = this.formPanel.get(key)?.value
+  //   }
+  //   this.onQueryParamsChange(dataParams)
+  // }
 
-  onQueryParamsChange(queryParams: Params): void {
+  paramsChange(): void {
     this.router.navigate(
       [],
       {
         relativeTo: this.route,
-        queryParams
+        queryParams: this.dataParams,
+        // queryParamsHandling: 'merge',
       }
     );
+    console.log(this.formPanel?.value);
   }
+
+  // onQueryParamsChange(queryParams: Params): void {
+  //   console.log(this.formPanel?.value);
+  //   console.log(queryParams);
+  //   this.router.navigate(
+  //     [],
+  //     {
+  //       relativeTo: this.route,
+  //       queryParams
+  //     }
+  //   );
+  // }
+
   // obtenerServicioDepartamento() {
   //   this.mapChar = {
   //     kind: kindChart.GeoChart,
