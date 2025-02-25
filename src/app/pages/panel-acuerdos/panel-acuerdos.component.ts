@@ -84,13 +84,20 @@ export default class PanelAcuerdosComponent {
     this.obtenerServicioTipoEspacio()
     this.obtenerServicioDepartamentos()
     // this.tinySlider()
-    this.obtenerServicioAcuerdosPanel()
+    this.obtenerServicios()
+    // this.obtenerServicioAcuerdosPanel()
+
     this.obtenerAcuerdosProceso()
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
     // this.valueChangeForm()
     // this.obtenerServicioDepartamento()
   }
+
+  obtenerServicios() {
+    this.obtenerServicioAcuerdosPanel()
+  }
+
 
   setParamsData() {
     this.route.queryParams.subscribe(params => {
@@ -108,19 +115,8 @@ export default class PanelAcuerdosComponent {
     const departamento = params['departamento'] ?? ''
     const provincia = params['provincia'] ?? ''
     const distrito = params['distrito'] ?? ''
-    if (tipoEspacio) {
-      // console.log(tipoEspacio);
-    }
-    console.log(params);
-    console.log(tipo);
-    console.log(sector);
-    console.log(tipoEspacio);
 
-    this.formPanel.reset({ tipo, sector, tipoEspacio })
-    console.log(this.formPanel?.value);
-    
-    // console.log(this.formPanel?.value);
-    // console.log(this.sectores().values);
+    // this.formPanel.reset({ tipo, sector, tipoEspacio })
   }
 
   obtenerServicioSectores() {
@@ -208,7 +204,7 @@ export default class PanelAcuerdosComponent {
 
   obtenerServicioAcuerdosPanel() {
     this.obtenerCardInfo()
-    this.acuerdosService.getAcuerdoDashboard()
+    this.acuerdosService.getAcuerdoDashboard(this.paginationPanel)
       .subscribe(resp => {
         if (resp.success == true) {
           const info = resp.data.info
@@ -264,20 +260,64 @@ export default class PanelAcuerdosComponent {
     return porcentaje
   }
 
-  selectTipo(){
+  selectTipo() {
     const tipoValue = this.formPanel.get('tipo')?.value
-    if(tipoValue){
+    if (tipoValue) {
       this.dataParams.tipo = tipoValue
-      this.paramsChange()
+      // this.paramsChange()
+      this.obtenerServicios()
     }
   }
 
   selectSector() {
     const sectorValue = this.formPanel.get('sector')?.value
-    if(sectorValue){
+    if (sectorValue) {
       this.paginationPanel.sector = sectorValue
       this.dataParams.sector = sectorValue
-      this.paramsChange()
+      // this.paramsChange()
+      this.obtenerServicios()
+    }
+  }
+
+  selectTipoEspacio() {
+    const tipoEspacioValue = this.formPanel.get('tipoEspacio')?.value
+    if (tipoEspacioValue) {
+      this.paginationPanel.tipoEspacio = tipoEspacioValue
+      this.obtenerServicios()
+    }
+  }
+
+  selectEspacio() {
+    const espaciovalue = this.formPanel.get('espacio')?.value
+    if (espaciovalue) {
+      this.paginationPanel.espacio = espaciovalue
+      this.obtenerServicios()
+    }
+  }
+
+  selectDepartamento() {
+    const departamentoValue = this.formPanel.get('departamento')?.value
+    if (departamentoValue) {
+      this.obtenerServicioProvincias(departamentoValue)
+      this.paginationPanel.ubigeo = `${departamentoValue}00`
+      this.obtenerServicios()
+    }
+  }
+
+  selectProvincia() {
+    const provinciaValue = this.formPanel.get('provincia')?.value
+    if (provinciaValue) {
+      this.obtenerServicioDistrito(provinciaValue)
+      this.paginationPanel.ubigeo = provinciaValue
+      this.obtenerServicios()
+    }
+  }
+
+  selectDistrito() {
+    const distritoValue = this.formPanel.get('distrito')?.value
+    if (distritoValue) {
+      this.paginationPanel.ubigeo = distritoValue
+      this.obtenerServicios()
     }
   }
 

@@ -1,6 +1,6 @@
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Pagination } from '@core/interfaces/pagination.interface';
+import { Pagination, PaginationPanel } from '@core/interfaces/pagination.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +12,12 @@ export class HelpersService {
     return new HttpHeaders().set('Autorization', `Bearer ${codigo}`)
   }
 
-  setParams(pagination: Pagination) {
+  setParams(pagination: Pagination | PaginationPanel) {
     pagination.code = Number(localStorage.getItem('codigoUsuario')) ?? 0
     let httpParams = new HttpParams();
     const params = Object.entries(pagination).map(([key, value]) => { return { key, value } })
+    console.log(params);
+
     for (let param of params) {
       httpParams = httpParams.append(param.key, param.value);
     }

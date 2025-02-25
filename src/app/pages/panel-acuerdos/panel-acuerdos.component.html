@@ -6,7 +6,8 @@
           <div class="col-span-2">
             <nz-form-item>
               <nz-form-label><span class="font-bold text-sm xl:text-xl">Tipo</span></nz-form-label>
-              <nz-radio-group class="radio-form-control flex md:flex-col gap-2" formControlName="tipo" (ngModelChange)="selectTipo()">
+              <nz-radio-group class="radio-form-control flex md:flex-col gap-2" formControlName="tipo"
+                (ngModelChange)="selectTipo()">
                 @for (tipo of tipos; track $index){
                 <label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
                 }
@@ -34,7 +35,7 @@
                   </nz-form-label>
                   <nz-form-control nzSpan="null">
                     <nz-select nzPlaceHolder="Seleccione tipo de espacio" id="tipoEspacio" class="select-form-control"
-                      formControlName="tipoEspacio" nzAllowClear
+                      formControlName="tipoEspacio" nzAllowClear (ngModelChange)="selectTipoEspacio()"
                       (ngModelChange)="obtenerServicioEventos(formPanel.get('tipoEspacio')?.value)">
                       @for (tipo of tipoEventos(); track $index) {
                       <nz-option [nzValue]="tipo.codigoTipoEvento" [nzLabel]="tipo.descripcionTipoEvento" />
@@ -51,7 +52,7 @@
                   </nz-form-label>
                   <nz-form-control nzSpan="null">
                     <nz-select nzPlaceHolder="Seleccione espacio" id="espacio" class="select-form-control"
-                      formControlName="espacio" nzAllowClear>
+                      formControlName="espacio" (ngModelChange)="selectEspacio()" nzAllowClear>
                       @for (evento of eventos(); track $index) {
                       <nz-option [nzValue]="evento.eventoId" [nzLabel]="evento.nombre" />
                       }
@@ -64,9 +65,9 @@
                 <nz-form-item>
                   <nz-form-label><span class="font-bold text-sm xl:text-xl">Departamento</span></nz-form-label>
                   <nz-form-control>
-                    <nz-select id="departamento" class="w-full" class="select-form-control" formControlName="departamento"
-                      nzPlaceHolder="Seleccione departamento" nzShowSearch nzAllowClear
-                      (ngModelChange)="obtenerServicioProvincias(formPanel.get('departamento')?.value)">
+                    <nz-select id="departamento" class="w-full" class="select-form-control"
+                      formControlName="departamento" nzPlaceHolder="Seleccione departamento" nzShowSearch nzAllowClear
+                      (ngModelChange)="selectDepartamento()">
                       @for(departamento of departamentos(); track $index){
                       <nz-option [nzValue]="departamento.departamentoId" [nzLabel]="departamento.departamento" />
                       }
@@ -81,7 +82,7 @@
                   <nz-form-control>
                     <nz-select class="w-full" id="provincia" class="select-form-control" formControlName="provincia"
                       nzPlaceHolder="Seleccione provincia" nzShowSearch nzAllowClear
-                      (ngModelChange)="obtenerServicioDistrito(formPanel.get('provincia')?.value)">
+                      (ngModelChange)="selectProvincia()">
                       @for (provincia of provincias(); track $index) {
                       <nz-option [nzValue]="provincia.provinciaId" [nzLabel]="provincia.provincia" />
                       }
@@ -92,10 +93,11 @@
 
               <div class="col-span-12 md:col-span-4" [ngClass]="{'hidden': !formPanel.get('provincia')?.value}">
                 <nz-form-item>
-                  <nz-form-label [nzSpan]="null"><span class="font-bold text-sm xl:text-xl">Distrito</span></nz-form-label>
+                  <nz-form-label [nzSpan]="null"><span
+                      class="font-bold text-sm xl:text-xl">Distrito</span></nz-form-label>
                   <nz-form-control nzSpan="null">
                     <nz-select class="w-full" id="distrito" class="select-form-control" formControlName="distrito"
-                      nzPlaceHolder="Seleccione distrito" nzShowSearch nzAllowClear>
+                      nzPlaceHolder="Seleccione distrito" nzShowSearch (ngModelChange)="selectDistrito()" nzAllowClear>
                       @for (distrito of distritos(); track $index) {
                       <nz-option [nzValue]="distrito.distritoId" [nzLabel]="distrito.distrito" />
                       }

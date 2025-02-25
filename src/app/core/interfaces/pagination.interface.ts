@@ -14,6 +14,7 @@ export interface Pagination {
 }
 
 export interface PaginationPanel {
+  code?: string
   sector?: string,
   tipoEspacio?: string,
   espacio?: string,
