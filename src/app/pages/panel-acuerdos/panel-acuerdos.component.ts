@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { kindChart } from '@core/enums';
 import { sortObject, themeProgressBarPercente } from '@core/helpers';
-import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, EventoResponse, ItemInfo, Pagination, PaginationPanel, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, EventoResponse, GeoTopoJson, ItemInfo, Pagination, PaginationPanel, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AcuerdosService, EventosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
@@ -37,6 +37,10 @@ export default class PanelAcuerdosComponent {
   ]
 
   tipos: string[] = ['acuerdos', 'hitos']
+  topoJson: GeoTopoJson = {
+    geo: 'departamentos',
+    ubigeo: 'departamentos'
+  }
 
   dataParams: any = {}
   paginationPanel: PaginationPanel = {}
@@ -83,15 +87,12 @@ export default class PanelAcuerdosComponent {
     this.obtenerServicioSectores()
     this.obtenerServicioTipoEspacio()
     this.obtenerServicioDepartamentos()
-    // this.tinySlider()
     this.obtenerServicios()
-    // this.obtenerServicioAcuerdosPanel()
 
     this.obtenerAcuerdosProceso()
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
     // this.valueChangeForm()
-    // this.obtenerServicioDepartamento()
   }
 
   obtenerServicios() {
@@ -299,7 +300,9 @@ export default class PanelAcuerdosComponent {
     const departamentoValue = this.formPanel.get('departamento')?.value
     if (departamentoValue) {
       this.obtenerServicioProvincias(departamentoValue)
-      this.paginationPanel.ubigeo = `${departamentoValue}00`
+      this.paginationPanel.ubigeo = `${departamentoValue}0000`
+      this.topoJson.geo = 'provincias'
+      this.topoJson.ubigeo = departamentoValue
       this.obtenerServicios()
     }
   }
@@ -309,6 +312,8 @@ export default class PanelAcuerdosComponent {
     if (provinciaValue) {
       this.obtenerServicioDistrito(provinciaValue)
       this.paginationPanel.ubigeo = provinciaValue
+      this.topoJson.geo = 'distritos'
+      this.topoJson.ubigeo = provinciaValue
       this.obtenerServicios()
     }
   }
@@ -317,6 +322,8 @@ export default class PanelAcuerdosComponent {
     const distritoValue = this.formPanel.get('distrito')?.value
     if (distritoValue) {
       this.paginationPanel.ubigeo = distritoValue
+      // this.topoJson.geo = 'distritos'
+      // this.topoJson.ubigeo = distritoValue
       this.obtenerServicios()
     }
   }
@@ -497,34 +504,5 @@ export default class PanelAcuerdosComponent {
   //       queryParams
   //     }
   //   );
-  // }
-
-  // obtenerServicioDepartamento() {
-  //   this.mapChar = {
-  //     kind: kindChart.GeoChart,
-  //     data: [
-  //       { month: 'Jan', city: 'Tokyo', temperature: 2 },
-  //       { month: 'Jan', city: 'London', temperature: 3.9 },
-  //       { month: 'Feb', city: 'Tokyo', temperature: 6.9 },
-  //       { month: 'Feb', city: 'London', temperature: 4.2 },
-  //       { month: 'Mar', city: 'Tokyo', temperature: 9.5 },
-  //       { month: 'Mar', city: 'London', temperature: 5.7 },
-  //       { month: 'Apr', city: 'Tokyo', temperature: 14.5 },
-  //       { month: 'Apr', city: 'London', temperature: 8.5 },
-  //       { month: 'May', city: 'Tokyo', temperature: 18.4 },
-  //       { month: 'May', city: 'London', temperature: 11.9 },
-  //       { month: 'Jun', city: 'Tokyo', temperature: 21.5 },
-  //       { month: 'Jun', city: 'London', temperature: 15.2 },
-  //     ],
-  //     axisX: {
-  //       title: 'month',
-  //       showTitle: false
-  //     },
-  //     axisY: {
-  //       title: 'temperature',
-  //       showTitle: false
-  //     },
-  //     legend: false
-  //   }
   // }
 }

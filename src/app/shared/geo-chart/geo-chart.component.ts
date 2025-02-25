@@ -1,71 +1,74 @@
-import { Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart } from '@antv/g2';
-import { DepartamentosService } from '@core/services';
+import { themeProgressBarPercente } from '@core/helpers';
+import { GeoTopoJson } from '@core/interfaces';
+import { environment } from '@environments/environment';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 
 @Component({
   selector: 'app-geo-chart',
   standalone: true,
-  imports: [],
+  imports: [NgZorroModule],
   templateUrl: './geo-chart.component.html',
   styles: ``
 })
 export class GeoChartComponent {
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
-  @Input() dataset: any;
-  @Input() ubigeo: string = ''
-
-  chart: Chart | null = null;
-  topoJson: string = ''
-  private mapaDepartamentosService = inject(DepartamentosService)
-
-  ngAfterViewInit(): void {
-    this.generateGeoChart()
+  @Input() dataset: any = [];
+  @Input() geoTopoJson: GeoTopoJson = {
+    geo: 'departamentos',
+    ubigeo: 'departamentos'
   }
 
-  ngOnInit(): void {
-    this.setTopoJson()
+  chart!: Chart;
+
+  ngOnChanges(changes: SimpleChanges) {
+    // const chart = new Chart({
+    //   container: this.chartContainer.nativeElement,
+    //   autoFit: true,
+    // });
+
+    // chart.destroy();
+    if (this.dataset.length) {
+      this.generateGeoChart()
+    }
   }
 
   setTopoJson() {
-    let kind = 'departamentos'
-    let codeName = 'departamento'
-    // if(this.ubigeo.length == 2){
-    //   kind = 'provincias'
-    // }
-
-    this.topoJson = `assets/data/json/${kind}}/${codeName}.topo.json`
+    let ubigeo = this.geoTopoJson.ubigeo
+    switch (this.geoTopoJson.geo) {
+      case 'provincias': ubigeo = this.geoTopoJson.ubigeo.slice(0, 2); break;
+      case 'distritos': ubigeo = this.geoTopoJson.ubigeo.slice(0, 4); break;
+    }
+    return { topoJsonUrl: `assets/data/json/${this.geoTopoJson.geo}/${ubigeo}.topo.json`, rqDataFeature: ubigeo }
   }
 
   generateGeoChart() {
-    const chart = new Chart({
+    const { topoJsonUrl, rqDataFeature } = this.setTopoJson();
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    this.chart = new Chart({
       container: this.chartContainer.nativeElement,
       autoFit: true,
-    });;
+    });
 
-    const mapaDepartamentos = this.mapaDepartamentosService.obtenerDepartamentosServicio('220602')
-    const dataTest = this.mapaDepartamentosService.testDpto()
-
-
-    chart.clear(); // Limpiar el gráfico antes de renderizar nuevos datos
-
-    chart.geoPath()
-
-    chart.clear(); // Limpiar el gráfico antes de renderizar nuevos datos
-
-    chart
+    this.chart
       .geoPath()
       .coordinate({ type: 'mercator' })
       .data({
         type: 'fetch',
-        value: this.topoJson,
+        value: topoJsonUrl,
         transform: [
-          { type: 'feature', name: 'departamentos' },
+          { type: 'feature', name: rqDataFeature },
           {
             type: 'join',
-            join: dataTest,
-            on: ['id', 'id'],
-            select: ['totalEjecutado', 'porcentaje', 'porcentajeStr'],
-            as: ['Ejecutados', 'PorcentajeInt', 'Porcentaje'],
+            join: this.dataset,
+            on: ['id', 'nombre'],
+            select: ['cumplidos', 'porcentaje', 'porcentajeStr'],
+            as: ['cumplidos', 'PorcentajeInt', 'Porcentaje'],
           },
         ],
       })
@@ -94,10 +97,13 @@ export class GeoChartComponent {
 
       .legend(false); // Deshabilitar la leyenda si no es necesaria
 
-    chart.render();
+    this.chart.render();
 
-    // chart.on('element:click', this.handleElementClick.bind(this));
+    this.chart.on('element:click', this.eventGeoMap.bind(this));
+  }
 
-    // chart.on('element:click', this.handleElementClick.bind(this));
+  private eventGeoMap(evt: any): void {
+    const { data } = evt;
+    console.log(data);
   }
 }
