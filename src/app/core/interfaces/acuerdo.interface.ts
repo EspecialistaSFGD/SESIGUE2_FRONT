@@ -5,7 +5,7 @@ export interface AcuerdosPanelResponses extends DataResponses {
 }
 export interface AcuerdosPanelResponse {
   info: AcuerdoPanelInfoResponse[],
-  departamentos: AcuerdoPanelsResponse[],
+  ubigeo: AcuerdoPanelsResponse[],
   sectores: AcuerdoPanelsResponse[],
 }
 export interface AcuerdoPanelInfoResponse {

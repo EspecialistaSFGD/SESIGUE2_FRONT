@@ -60,7 +60,7 @@ export default class PanelAcuerdosComponent {
   private eventosServices = inject(EventosService)
   private ubigeoService = inject(UbigeosService)
 
-  totalDepartamento: AcuerdoPanelTotales = {
+  totalUbigeo: AcuerdoPanelTotales = {
     vigentes: 0,
     cumplidos: 0
   }
@@ -216,17 +216,17 @@ export default class PanelAcuerdosComponent {
             }
             return item
           })
-          resp.data.departamentos.map(item => {
-            this.totalDepartamento.vigentes = this.totalDepartamento.vigentes + item.vigentes
-            this.totalDepartamento.cumplidos = this.totalDepartamento.cumplidos + item.cumplidos
+          resp.data.ubigeo.map(item => {
+            this.totalUbigeo.vigentes = this.totalUbigeo.vigentes + item.vigentes
+            this.totalUbigeo.cumplidos = this.totalUbigeo.cumplidos + item.cumplidos
           })
           resp.data.sectores.map(item => {
             this.totalSector.vigentes = this.totalSector.vigentes + item.vigentes
             this.totalSector.cumplidos = this.totalSector.cumplidos + item.cumplidos
           })
 
-          const departamentosOrdenado = sortObject(resp.data.departamentos, 'porcentaje', 'DESC')
-          this.panelDepartamentos.set(departamentosOrdenado)
+          const ubigeoOrdenado = sortObject(resp.data.ubigeo, 'porcentaje', 'DESC')
+          this.panelDepartamentos.set(ubigeoOrdenado)
           const sectoresOrdenado = sortObject(resp.data.sectores, 'porcentaje', 'DESC')
           this.panelSectores.set(sectoresOrdenado)
         }
@@ -250,7 +250,7 @@ export default class PanelAcuerdosComponent {
     return tipo == 'acuerdos' ? this.panelSectores() : this.panelDepartamentos()
   }
   totalesCardTabla(tipo: string): AcuerdoPanelTotales {
-    return tipo == 'acuerdos' ? this.totalSector : this.totalDepartamento;
+    return tipo == 'acuerdos' ? this.totalSector : this.totalUbigeo;
   }
 
   colorBarraProgreso(porcentaje: number): string {
