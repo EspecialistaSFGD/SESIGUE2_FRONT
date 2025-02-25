@@ -21,7 +21,8 @@ export default class PanelAcuerdosComponent {
 
   slide!: TinySliderInstance;
 
-  panelInfo: ItemInfo[] = []
+  panelAcuerdosInfo: ItemInfo[] = []
+  panelHitosInfo: ItemInfo[] = []
   sectores = signal<SectorResponse[]>([])
   tipoEventos = signal<TipoEventoResponse[]>([])
   eventos = signal<EventoResponse[]>([])
@@ -83,7 +84,6 @@ export default class PanelAcuerdosComponent {
   }
 
   ngOnInit(): void {
-    this.setParamsData()
     this.obtenerServicioSectores()
     this.obtenerServicioTipoEspacio()
     this.obtenerServicioDepartamentos()
@@ -100,25 +100,25 @@ export default class PanelAcuerdosComponent {
   }
 
 
-  setParamsData() {
-    this.route.queryParams.subscribe(params => {
-      if (Object.keys(params).length > 0) {
-        this.setFormvalueToparams(params)
-      }
-    })
-  }
+  // setParamsData() {
+  //   this.route.queryParams.subscribe(params => {
+  //     if (Object.keys(params).length > 0) {
+  //       this.setFormvalueToparams(params)
+  //     }
+  //   })
+  // }
 
-  setFormvalueToparams(params: Params) {
-    const tipo = params['tipo'] ?? this.tipos[0]
-    const sector = params['sector'] ?? ''
-    const tipoEspacio = params['tipoEspacio'] ?? ''
-    const espacio = params['espacio'] ?? ''
-    const departamento = params['departamento'] ?? ''
-    const provincia = params['provincia'] ?? ''
-    const distrito = params['distrito'] ?? ''
+  // setFormvalueToparams(params: Params) {
+  //   const tipo = params['tipo'] ?? this.tipos[0]
+  //   const sector = params['sector'] ?? ''
+  //   const tipoEspacio = params['tipoEspacio'] ?? ''
+  //   const espacio = params['espacio'] ?? ''
+  //   const departamento = params['departamento'] ?? ''
+  //   const provincia = params['provincia'] ?? ''
+  //   const distrito = params['distrito'] ?? ''
 
-    // this.formPanel.reset({ tipo, sector, tipoEspacio })
-  }
+  //   this.formPanel.reset({ tipo, sector, tipoEspacio })
+  // }
 
   obtenerServicioSectores() {
     this.sectoresService.getAllSectors()
@@ -209,7 +209,7 @@ export default class PanelAcuerdosComponent {
       .subscribe(resp => {
         if (resp.success == true) {
           const info = resp.data.info
-          this.panelInfo = this.panelInfo.map(item => {
+          this.panelAcuerdosInfo = this.panelAcuerdosInfo.map(item => {
             const data = info.find(i => i.condicion === item.code)
             if (data) {
               item.titulo = data.cantidad.toString()
@@ -224,6 +224,7 @@ export default class PanelAcuerdosComponent {
             this.totalSector.vigentes = this.totalSector.vigentes + item.vigentes
             this.totalSector.cumplidos = this.totalSector.cumplidos + item.cumplidos
           })
+
           const departamentosOrdenado = sortObject(resp.data.departamentos, 'porcentaje', 'DESC')
           this.panelDepartamentos.set(departamentosOrdenado)
           const sectoresOrdenado = sortObject(resp.data.sectores, 'porcentaje', 'DESC')
@@ -234,7 +235,7 @@ export default class PanelAcuerdosComponent {
 
   obtenerCardInfo() {
     const tipolabel = this.formPanel.get('tipo')?.value
-    this.panelInfo = [
+    this.panelAcuerdosInfo = [
       { code: 'establecidos', icono: 'acuerdos-total.svg', titulo: '0', descripcion: `${tipolabel} establecidos`, comentario: `${tipolabel} generados en las reuniones bilaterales` },
       { code: 'desestimados', icono: 'acuerdos-desestimado.svg', titulo: '0', descripcion: `${tipolabel} desestimados`, comentario: `${tipolabel} que, por razón justificada, y en coordinación entre las partes, dejan de ser consideradas para la medición` },
       { code: 'vigentes', icono: 'acuerdos-vigente.svg', titulo: '0', descripcion: `${tipolabel} vigentes`, comentario: `Resultado de la diferencia de ${tipolabel} establecidos menos los desestimados` },
@@ -275,57 +276,72 @@ export default class PanelAcuerdosComponent {
     if (sectorValue) {
       this.paginationPanel.sector = sectorValue
       this.dataParams.sector = sectorValue
-      // this.paramsChange()
-      this.obtenerServicios()
+    } else {
+      delete this.paginationPanel.sector
     }
+    this.obtenerServicios()
   }
 
   selectTipoEspacio() {
     const tipoEspacioValue = this.formPanel.get('tipoEspacio')?.value
     if (tipoEspacioValue) {
-      this.paginationPanel.tipoEspacio = tipoEspacioValue
-      this.obtenerServicios()
+      // this.paginationPanel.tipoEspacio = tipoEspacioValue
+    } else {
+      // delete this.dataParams.tipoEspacio
     }
+    // this.obtenerServicios()
   }
 
   selectEspacio() {
     const espaciovalue = this.formPanel.get('espacio')?.value
     if (espaciovalue) {
       this.paginationPanel.espacio = espaciovalue
-      this.obtenerServicios()
+    } else {
+      delete this.paginationPanel.espacio
     }
+    this.obtenerServicios()
   }
 
   selectDepartamento() {
     const departamentoValue = this.formPanel.get('departamento')?.value
     if (departamentoValue) {
       this.obtenerServicioProvincias(departamentoValue)
-      this.paginationPanel.ubigeo = `${departamentoValue}0000`
+      this.paginationPanel.ubigeo = departamentoValue
       this.topoJson.geo = 'provincias'
       this.topoJson.ubigeo = departamentoValue
-      this.obtenerServicios()
+    } else {
+      delete this.paginationPanel.ubigeo
+      this.topoJson.geo = 'departamentos'
+      this.topoJson.ubigeo = this.topoJson.geo
     }
+    this.obtenerServicios()
   }
 
   selectProvincia() {
+    const departamentoValue = this.formPanel.get('departamento')?.value
     const provinciaValue = this.formPanel.get('provincia')?.value
     if (provinciaValue) {
       this.obtenerServicioDistrito(provinciaValue)
-      this.paginationPanel.ubigeo = provinciaValue
+      this.paginationPanel.ubigeo = provinciaValue.slice(0, 4)
       this.topoJson.geo = 'distritos'
       this.topoJson.ubigeo = provinciaValue
-      this.obtenerServicios()
+    } else {
+      this.paginationPanel.ubigeo = departamentoValue
+      this.topoJson.geo = 'provincias'
+      this.topoJson.ubigeo = departamentoValue
     }
+    this.obtenerServicios()
   }
 
   selectDistrito() {
+    const provinciaValue = this.formPanel.get('provincia')?.value
     const distritoValue = this.formPanel.get('distrito')?.value
     if (distritoValue) {
       this.paginationPanel.ubigeo = distritoValue
-      // this.topoJson.geo = 'distritos'
-      // this.topoJson.ubigeo = distritoValue
-      this.obtenerServicios()
+    } else {
+      this.paginationPanel.ubigeo = provinciaValue
     }
+    this.obtenerServicios()
   }
 
   tinySlider() {

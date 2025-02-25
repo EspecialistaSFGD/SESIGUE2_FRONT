@@ -67,8 +67,8 @@ export class GeoChartComponent {
             type: 'join',
             join: this.dataset,
             on: ['id', 'nombre'],
-            select: ['cumplidos', 'porcentaje', 'porcentajeStr'],
-            as: ['cumplidos', 'PorcentajeInt', 'Porcentaje'],
+            select: ['cumplidos', 'porcentaje'],
+            as: ['Cumplidos', 'Porcentaje'],
           },
         ],
       })
@@ -78,17 +78,25 @@ export class GeoChartComponent {
       // Definir el campo para la escala de color usando style
       .style({
         fill: (datum: any) => {
-          const { PorcentajeInt } = datum;
-
+          const { Porcentaje } = datum;
           // Asignar colores según los rangos personalizados
-          if (PorcentajeInt <= 50) {
-            return '#D6D4D3';  // <= 50% => gris
-          } else if (PorcentajeInt > 50 && PorcentajeInt <= 75) {
+          // if (Porcentaje <= 50) {
+          //   return '#D6D4D3';  // <= 50% => gris
+          // } else if (Porcentaje > 50 && Porcentaje <= 75) {
+          //   return '#DAEDE9';   // > 50 y <= 75% => agua
+          // } else if (Porcentaje > 75 && Porcentaje <= 99) {
+          //   return '#6EC6D8';  // > 75 y  <= 99% => aguamarina
+          // } else {
+          //   return '#018D86'; // == 100% => verde
+          // }
+          if (Porcentaje > 50 && Porcentaje <= 75) {
             return '#DAEDE9';   // > 50 y <= 75% => agua
-          } else if (PorcentajeInt > 75 && PorcentajeInt <= 99) {
+          } else if (Porcentaje > 75 && Porcentaje <= 99) {
             return '#6EC6D8';  // > 75 y  <= 99% => aguamarina
+          } else if (Porcentaje > 99) {
+            return '#018D86';  // > 100% => verde
           } else {
-            return '#018D86'; // == 100% => verde
+            return '#D6D4D3'; // == 100% => gris
           }
         },
         stroke: '#ffffff', // Color del borde (blanco en este caso)
