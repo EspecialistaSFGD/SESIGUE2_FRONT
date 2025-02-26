@@ -19,4 +19,5 @@ export interface PaginationPanel {
   tipoEspacio?: string,
   espacio?: string,
   ubigeo?: string
+  estado?: string
 }

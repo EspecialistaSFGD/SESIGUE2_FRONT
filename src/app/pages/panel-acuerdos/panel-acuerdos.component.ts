@@ -5,7 +5,8 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { kindChart } from '@core/enums';
 import { sortObject, themeProgressBarPercente } from '@core/helpers';
 import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, EventoResponse, GeoTopoJson, ItemInfo, Pagination, PaginationPanel, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { AcuerdosService, EventosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
+import { HitoPanelCumplimientoResponse, HitoPanelInfoResponse } from '@core/interfaces/hito.interface';
+import { AcuerdosService, EventosService, HitosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { TinySliderInstance, tns } from 'tiny-slider';
@@ -23,6 +24,9 @@ export default class PanelAcuerdosComponent {
 
   panelAcuerdosInfo: ItemInfo[] = []
   panelHitosInfo: ItemInfo[] = []
+  // hitosEstados = signal<HitoPanelInfoResponse[]>([])
+  hitosEstados: HitoPanelInfoResponse[] = []
+  hitosCumplimientos = signal<HitoPanelCumplimientoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   tipoEventos = signal<TipoEventoResponse[]>([])
   eventos = signal<EventoResponse[]>([])
@@ -55,6 +59,7 @@ export default class PanelAcuerdosComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private acuerdosService = inject(AcuerdosService)
+  private hitosServices = inject(HitosService)
   private sectoresService = inject(SectoresService)
   private tipoEventosServices = inject(TipoEventosService)
   private eventosServices = inject(EventosService)
@@ -89,14 +94,16 @@ export default class PanelAcuerdosComponent {
     this.obtenerServicioDepartamentos()
     this.obtenerServicios()
 
-    this.obtenerAcuerdosProceso()
-    this.obtenerAcuerdosVencidos()
-    this.obtenerProyeccionCumplimientoHitos()
     // this.valueChangeForm()
   }
 
   obtenerServicios() {
     this.obtenerServicioAcuerdosPanel()
+    this.obtenerServicioHitosPanel()
+
+    this.obtenerAcuerdosProceso()
+    this.obtenerAcuerdosVencidos()
+    this.obtenerProyeccionCumplimientoHitos()
   }
 
 
@@ -235,7 +242,7 @@ export default class PanelAcuerdosComponent {
 
   obtenerCardInfo() {
     const tipolabel = this.formPanel.get('tipo')?.value
-    this.panelAcuerdosInfo = [
+    const panelInfo: ItemInfo[] = [
       { code: 'establecidos', icono: 'acuerdos-total.svg', titulo: '0', descripcion: `${tipolabel} establecidos`, comentario: `${tipolabel} generados en las reuniones bilaterales` },
       { code: 'desestimados', icono: 'acuerdos-desestimado.svg', titulo: '0', descripcion: `${tipolabel} desestimados`, comentario: `${tipolabel} que, por razón justificada, y en coordinación entre las partes, dejan de ser consideradas para la medición` },
       { code: 'vigentes', icono: 'acuerdos-vigente.svg', titulo: '0', descripcion: `${tipolabel} vigentes`, comentario: `Resultado de la diferencia de ${tipolabel} establecidos menos los desestimados` },
@@ -244,6 +251,28 @@ export default class PanelAcuerdosComponent {
       { code: 'pendientes', icono: 'acuerdos-pendiente.svg', titulo: '0', descripcion: `${tipolabel} pendientes`, comentario: `${tipolabel} que no tienen definidos los hitos para su cumplimiento` },
       { code: 'vencidos', icono: 'acuerdos-vencido.svg', titulo: '0', descripcion: `${tipolabel} vencidos`, comentario: `${tipolabel} que superaron el plazo establecido para su cumplimiento` }
     ]
+    this.panelAcuerdosInfo = panelInfo
+    this.panelHitosInfo = panelInfo
+  }
+
+  obtenerServicioHitosPanel() {
+    this.obtenerCardInfo()
+    this.hitosServices.getHitoDashboard({ ...this.paginationPanel, estado: '2' })
+      .subscribe(resp => {
+        if (resp.success) {
+          const info = resp.data.info
+          this.panelHitosInfo = this.panelHitosInfo.map(item => {
+            const data = info.find(i => i.condicion === item.code)
+            if (data) {
+              item.titulo = data.cantidad.toString()
+            }
+            return item
+          })
+          // this.hitosEstados.set(resp.data.estados)
+          this.hitosEstados = resp.data.estados
+          this.hitosCumplimientos.set(resp.data.cumplimientos)
+        }
+      })
   }
 
   tipoCardTabla(tipo: string) {
@@ -425,7 +454,7 @@ export default class PanelAcuerdosComponent {
       data: [
         {
           "titulo": "CUMPLIDOS",
-          "cantidad": 10
+          "cantidad": 2191
         },
         {
           "titulo": "PROCESO",
@@ -433,11 +462,11 @@ export default class PanelAcuerdosComponent {
         },
         {
           "titulo": "PENDIENTE",
-          "cantidad": 5
+          "cantidad": 512
         },
         {
           "titulo": "VENCIDO",
-          "cantidad": 20
+          "cantidad": 2743 - 40
         }
       ],
       axisX: {
@@ -458,25 +487,133 @@ export default class PanelAcuerdosComponent {
     this.chartProyeccionCumplimientosHitos = {
       kind: kindChart.LineChart,
       data: [
-        { month: 'Jan', city: 'Tokyo', temperature: 2 },
-        { month: 'Jan', city: 'London', temperature: 3.9 },
-        { month: 'Feb', city: 'Tokyo', temperature: 6.9 },
-        { month: 'Feb', city: 'London', temperature: 4.2 },
-        { month: 'Mar', city: 'Tokyo', temperature: 9.5 },
-        { month: 'Mar', city: 'London', temperature: 5.7 },
-        { month: 'Apr', city: 'Tokyo', temperature: 14.5 },
-        { month: 'Apr', city: 'London', temperature: 8.5 },
-        { month: 'May', city: 'Tokyo', temperature: 18.4 },
-        { month: 'May', city: 'London', temperature: 11.9 },
-        { month: 'Jun', city: 'Tokyo', temperature: 21.5 },
-        { month: 'Jun', city: 'London', temperature: 15.2 },
+        {
+          "fecha": "2024-03",
+          "estado": "pendientes",
+          "cantidad": 37
+        },
+        {
+          "fecha": "2024-03",
+          "estado": "cumplidos",
+          "cantidad": 414
+        },
+        {
+          "fecha": "2024-04",
+          "estado": "pendientes",
+          "cantidad": 11
+        },
+        {
+          "fecha": "2024-04",
+          "estado": "cumplidos",
+          "cantidad": 66
+        },
+        {
+          "fecha": "2024-05",
+          "estado": "pendientes",
+          "cantidad": 57
+        },
+        {
+          "fecha": "2024-05",
+          "estado": "cumplidos",
+          "cantidad": 170
+        },
+        {
+          "fecha": "2024-06",
+          "estado": "pendientes",
+          "cantidad": 54
+        },
+        {
+          "fecha": "2024-06",
+          "estado": "cumplidos",
+          "cantidad": 172
+        },
+        {
+          "fecha": "2024-07",
+          "estado": "pendientes",
+          "cantidad": 11
+        },
+        {
+          "fecha": "2024-07",
+          "estado": "cumplidos",
+          "cantidad": 35
+        },
+        {
+          "fecha": "2024-08",
+          "estado": "pendientes",
+          "cantidad": 66
+        },
+        {
+          "fecha": "2024-08",
+          "estado": "cumplidos",
+          "cantidad": 118
+        },
+        {
+          "fecha": "2024-09",
+          "estado": "pendientes",
+          "cantidad": 93
+        },
+        {
+          "fecha": "2024-09",
+          "estado": "cumplidos",
+          "cantidad": 296
+        },
+        {
+          "fecha": "2024-10",
+          "estado": "pendientes",
+          "cantidad": 75
+        },
+        {
+          "fecha": "2024-10",
+          "estado": "cumplidos",
+          "cantidad": 152
+        },
+        {
+          "fecha": "2024-11",
+          "estado": "pendientes",
+          "cantidad": 74
+        },
+        {
+          "fecha": "2024-11",
+          "estado": "cumplidos",
+          "cantidad": 53
+        },
+        {
+          "fecha": "2024-12",
+          "estado": "pendientes",
+          "cantidad": 136
+        },
+        {
+          "fecha": "2024-12",
+          "estado": "cumplidos",
+          "cantidad": 150
+        },
+        {
+          "fecha": "2025-01",
+          "estado": "pendientes",
+          "cantidad": 90
+        },
+        {
+          "fecha": "2025-01",
+          "estado": "cumplidos",
+          "cantidad": 89
+        },
+        {
+          "fecha": "2025-02",
+          "estado": "pendientes",
+          "cantidad": 111
+        },
+        {
+          "fecha": "2025-02",
+          "estado": "cumplidos",
+          "cantidad": 34
+        }
       ],
       axisX: {
-        title: 'month',
+        title: 'fecha',
         showTitle: false
       },
       axisY: {
-        title: 'temperature',
+        title: 'cantidad',
         showTitle: false
       },
       legend: false
