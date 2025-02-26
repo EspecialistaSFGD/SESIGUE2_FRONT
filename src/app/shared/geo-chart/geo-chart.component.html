@@ -1,0 +1,26 @@
+<div class="flex flex-col gap-4">
+  <div #chartContainer></div>
+  <nz-card class="rounded-2xl shadow-md card-no-padding">
+    <h4 class="text-white bg-[#5C95C1] px-4 py-2 text-sm rounded-md">Leyenda</h4>
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="px-4 py-2">
+      <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12" class="flex items-center gap-2">
+        <div class="w-4 h-4 bg-[#018D86]"></div>
+        <span class="leading-[14px]">100% de avance</span>
+      </div>
+      <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12" class="flex items-center gap-2">
+        <div class="w-4 h-4 bg-[#DAEDE9]"></div>
+        <span class="leading-[14px]">Mayor al 50% y menor al 75% de avance</span>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }" class="px-4 py-2">
+      <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12" class="flex items-center gap-2">
+        <div class="w-4 h-4 bg-[#6EC6D8]"></div>
+        <span class="leading-[14px]">Mayor al 75 % y menor a 99% de avance</span>
+      </div>
+      <div nz-col class="gutter-row" nzXs="12" nzSm="12" nzMd="8" nzLg="12" nzXl="12" class="flex items-center gap-2">
+        <div class="w-4 h-4 bg-[#D6D4D3]"></div>
+        <span class="leading-[14px]">Menor al 50% de avance</span>
+      </div>
+    </div>
+  </nz-card>
+</div>

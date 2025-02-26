@@ -10,14 +10,14 @@ import { SectoresResponses } from '@core/interfaces';
 })
 export class SectoresService {
   private urlSector: string = `${environment.api}/Sector`
-    private http = inject(HttpClient)
-    private helpersServices = inject(HelpersService);
+  private http = inject(HttpClient)
+  private helpersServices = inject(HelpersService);
 
-    getAllSectors(grupoId: number = 0, tipo: number = 4): Observable<SectoresResponses>{
-      let params = new HttpParams()
-      params.append('grupoId', `${grupoId}`)
-      params.append('tipo', `${tipo}`);
-      const headers = this.helpersServices.getAutorizationToken()
-      return this.http.get<SectoresResponses>(`${this.urlSector}`, { headers, params })
-    }
+  getAllSectors(grupoId: number = 0, tipo: number = 2): Observable<SectoresResponses> {
+    let params = new HttpParams()
+      .append('grupoId', `${grupoId}`)
+      .append('tipo', `${tipo}`);
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<SectoresResponses>(`${this.urlSector}`, { headers, params })
+  }
 }
