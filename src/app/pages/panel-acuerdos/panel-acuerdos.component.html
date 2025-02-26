@@ -112,9 +112,9 @@
     </nz-page-header-content>
   </nz-page-header>
 
-  <div class="tiny-slider">
-    <div class="slider-container">
-      @for(info of changeTipoPanel(); track $index){
+  <app-slider-tiny>
+    <ng-template #items>
+      @for(info of formPanel.get('tipo')?.value == 'hitos' ? panelHitosInfo : panelAcuerdosInfo ; track $index){
       <div>
         <div class="rounded-xl bg-punche-green-550 flex text-white gap-4 p-4 relative">
           <img class="flex" src="./assets/images/inicio/{{info.icono}}" alt="{{info.titulo}}" srcset="">
@@ -129,19 +129,8 @@
         </div>
       </div>
       }
-    </div>
-    <nav id="controls-slider-container"
-      class="hidden md:flex max-xl:hidden absolute w-full top-1/2 -translate-y-1/2 items-center justify-between">
-      <button aria-label="Slide anterior" type="button" id="prev"
-        class="w-8 h-8 absolute -left-4 bg-white rounded-full shadow-sm hover:shadow-lg active:shadow-2xl hover:bg-gray-50 active:bg-gray-100">
-        <span nz-icon nzType="left" nzTheme="outline"></span>
-      </button>
-      <button aria-label="Slide siguiente" id="next" type="button"
-        class="w-8 h-8 absolute -right-4 bg-white rounded-full shadow-sm hover:shadow-lg active:shadow-2xl hover:bg-gray-50 active:bg-gray-100">
-        <span nz-icon nzType="right" nzTheme="outline"></span>
-      </button>
-    </nav>
-  </div>
+    </ng-template>
+  </app-slider-tiny>
 
   <div class="grid grid-cols-3 gap-4">
     <div class="flex flex-col">

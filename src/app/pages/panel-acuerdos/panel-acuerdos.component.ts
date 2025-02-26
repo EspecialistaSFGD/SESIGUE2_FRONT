@@ -9,7 +9,6 @@ import { HitoPanelCumplimientoResponse } from '@core/interfaces/hito.interface';
 import { AcuerdosService, EventosService, HitosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
-import { TinySliderInstance, tns } from 'tiny-slider';
 
 @Component({
   selector: 'app-panel-acuerdos',
@@ -20,12 +19,8 @@ import { TinySliderInstance, tns } from 'tiny-slider';
 })
 export default class PanelAcuerdosComponent {
 
-  slide!: TinySliderInstance;
-
   panelAcuerdosInfo: ItemInfo[] = []
   panelHitosInfo: ItemInfo[] = []
-  // hitosPorAcuerdoProceso: PanelInfoResponse[] = []
-  // hitosPorAcuerdoVencidos: PanelInfoResponse[] = []
   hitosPorAcuerdoProceso = signal<PanelInfoResponse[]>([])
   hitosPorAcuerdoVencidos = signal<PanelInfoResponse[]>([])
   hitosCumplimientos = signal<HitoPanelCumplimientoResponse[]>([])
@@ -98,18 +93,11 @@ export default class PanelAcuerdosComponent {
     provincia: [{ value: '', disabled: true }],
     distrito: [{ value: '', disabled: true }],
   })
-
-  ngAfterViewInit(): void {
-    this.tinySlider()
-  }
-
   ngOnInit(): void {
     this.obtenerServicioSectores()
     this.obtenerServicioTipoEspacio()
     this.obtenerServicioDepartamentos()
     this.obtenerServicios()
-
-    // this.valueChangeForm()
   }
 
   obtenerServicios() {
@@ -120,28 +108,6 @@ export default class PanelAcuerdosComponent {
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
   }
-
-
-  // setParamsData() {
-  //   this.route.queryParams.subscribe(params => {
-  //     if (Object.keys(params).length > 0) {
-  //       this.setFormvalueToparams(params)
-  //     }
-  //   })
-  // }
-
-  // setFormvalueToparams(params: Params) {
-  //   const tipo = params['tipo'] ?? this.tipos[0]
-  //   const sector = params['sector'] ?? ''
-  //   const tipoEspacio = params['tipoEspacio'] ?? ''
-  //   const espacio = params['espacio'] ?? ''
-  //   const departamento = params['departamento'] ?? ''
-  //   const provincia = params['provincia'] ?? ''
-  //   const distrito = params['distrito'] ?? ''
-
-  //   this.formPanel.reset({ tipo, sector, tipoEspacio })
-  // }
-
   obtenerServicioSectores() {
     this.sectoresService.getAllSectors()
       .subscribe(resp => {
@@ -226,7 +192,7 @@ export default class PanelAcuerdosComponent {
   }
 
   obtenerServicioAcuerdosPanel() {
-    this.obtenerCardInfo()
+    this.panelAcuerdosInfo = this.obtenerCardInfo()
     this.acuerdosService.getAcuerdoDashboard(this.paginationPanel)
       .subscribe(resp => {
         if (resp.success == true) {
@@ -270,7 +236,7 @@ export default class PanelAcuerdosComponent {
     }
   }
 
-  obtenerCardInfo() {
+  obtenerCardInfo(): ItemInfo[] {
     const tipolabel = this.formPanel.get('tipo')?.value
     const panelInfo: ItemInfo[] = [
       { code: 'establecidos', icono: 'acuerdos-total.svg', titulo: '0', descripcion: `${tipolabel} establecidos`, comentario: `${tipolabel} generados en las reuniones bilaterales` },
@@ -281,12 +247,11 @@ export default class PanelAcuerdosComponent {
       { code: 'pendientes', icono: 'acuerdos-pendiente.svg', titulo: '0', descripcion: `${tipolabel} pendientes`, comentario: `${tipolabel} que no tienen definidos los hitos para su cumplimiento` },
       { code: 'vencidos', icono: 'acuerdos-vencido.svg', titulo: '0', descripcion: `${tipolabel} vencidos`, comentario: `${tipolabel} que superaron el plazo establecido para su cumplimiento` }
     ]
-    this.panelAcuerdosInfo = panelInfo
-    this.panelHitosInfo = panelInfo
+    return panelInfo
   }
 
   obtenerServicioHitosPanel() {
-    this.obtenerCardInfo()
+    this.panelHitosInfo = this.obtenerCardInfo()
     this.hitosServices.getHitoDashboard({ ...this.paginationPanel, estado: '2' })
       .subscribe(resp => {
         if (resp.success) {
@@ -300,8 +265,6 @@ export default class PanelAcuerdosComponent {
           })
           this.obtenerNivelDeGobierno(info, 'hito')
           this.obtenerTotalHitosCumplir()
-          // this.hitosPorAcuerdoProceso = resp.data.acuerdos_proceso
-          // this.hitosPorAcuerdoVencidos = resp.data.acuerdos_vencidos
           this.hitosPorAcuerdoProceso.set(resp.data.acuerdos_proceso)
           this.hitosPorAcuerdoVencidos.set(resp.data.acuerdos_vencidos)
           this.hitosCumplimientos.set(resp.data.cumplimientos)
@@ -325,15 +288,6 @@ export default class PanelAcuerdosComponent {
     return porcentaje
   }
 
-  changeTipoPanel(): ItemInfo[] {
-    const tipoControlValue = this.formPanel.get('tipo')?.value
-    console.log(tipoControlValue);
-    console.log(this.panelHitosInfo);
-    console.log(this.panelAcuerdosInfo);
-
-    return tipoControlValue == 'hito' ? this.panelHitosInfo : this.panelAcuerdosInfo
-  }
-
   obtenerTotalHitosCumplir() {
     let total = 0
     this.panelHitosInfo.map(item => {
@@ -347,10 +301,8 @@ export default class PanelAcuerdosComponent {
 
   selectTipo() {
     const tipoValue = this.formPanel.get('tipo')?.value
-    this.changeTipoPanel()
     if (tipoValue) {
       this.dataParams.tipo = tipoValue
-      // this.paramsChange()
       this.obtenerServicios()
     }
   }
@@ -368,12 +320,6 @@ export default class PanelAcuerdosComponent {
 
   selectTipoEspacio() {
     const tipoEspacioValue = this.formPanel.get('tipoEspacio')?.value
-    if (tipoEspacioValue) {
-      // this.paginationPanel.tipoEspacio = tipoEspacioValue
-    } else {
-      // delete this.dataParams.tipoEspacio
-    }
-    // this.obtenerServicios()
   }
 
   selectEspacio() {
@@ -428,45 +374,6 @@ export default class PanelAcuerdosComponent {
     this.obtenerServicios()
   }
 
-  tinySlider() {
-    this.slide = tns({
-      container: '.slider-container',
-      items: 1,
-      gutter: 12,
-      "mouseDrag": true,
-      "slideBy": "page",
-      "swipeAngle": false,
-      "speed": 400,
-      "rewind": true,
-      controlsContainer: "#controls-slider-container",
-      prevButton: '#prev',
-      nextButton: '#next',
-      arrowKeys: true,
-      "nav": false,
-      responsive: {
-        575: {
-          items: 2
-        },
-        576: {
-          items: 2
-        },
-        768: {
-          items: 3
-        },
-        992: {
-          items: 4
-        },
-        1200: {
-          items: 6
-        },
-        1600: {
-          items: 7,
-          "mouseDrag": false,
-        },
-      }
-    });
-  }
-
   obtenerAcuerdosProceso() {
     this.chartAcuerdosProceso = {
       kind: kindChart.BarChart,
@@ -516,43 +423,4 @@ export default class PanelAcuerdosComponent {
       legend: false
     }
   }
-
-  // valueChangeForm() {
-  //   this.formPanel.valueChanges
-  //     .subscribe(value => {
-  //       this.getValueFormToParams(value)
-  //     })
-  // }
-
-  // getValueFormToParams(values: any) {
-  //   const keys = Object.keys(values).filter(campo => this.formPanel.get(campo)?.value !== '');
-  //   const dataParams: any = {}
-  //   for (let key of keys) {
-  //     dataParams[`${key.trim()}`] = this.formPanel.get(key)?.value
-  //   }
-  //   this.onQueryParamsChange(dataParams)
-  // }
-
-  paramsChange(): void {
-    this.router.navigate(
-      [],
-      {
-        relativeTo: this.route,
-        queryParams: this.dataParams,
-        // queryParamsHandling: 'merge',
-      }
-    );
-  }
-
-  // onQueryParamsChange(queryParams: Params): void {
-  //   console.log(this.formPanel?.value);
-  //   console.log(queryParams);
-  //   this.router.navigate(
-  //     [],
-  //     {
-  //       relativeTo: this.route,
-  //       queryParams
-  //     }
-  //   );
-  // }
 }
