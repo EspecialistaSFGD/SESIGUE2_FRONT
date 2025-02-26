@@ -15,36 +15,19 @@ export class ChartComponent {
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
 
   @Input() configChart!: ConfigChart
+  @Input() dataset: any[] = []
   chart!: Chart;
 
-  ngAfterViewInit(): void {
-    // this.generateCharts()
-    if (this.configChart.data.length) {
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.dataset.length) {
       this.generateCharts()
     }
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    // this.chart = new Chart({
-    //   container: this.chartContainer.nativeElement,
-    //   autoFit: true,
-    //   height: 275
-    // });
-
-    // chart.destroy();
-    // if (this.configChart.data.length) {
-    //   this.generateCharts()
-    // }
-  }
-
-  ngOnInit(): void {
   }
 
   generateCharts() {
     switch (this.configChart.kind) {
       case kindChart.BarChart: this.generateBarChart(); break;
       case kindChart.LineChart: this.generateLineChart(); break;
-      // case kindChart.GeoChart: this.generateGeoChart(); break;
     }
   }
 
@@ -75,7 +58,7 @@ export class ChartComponent {
 
     this.chart
       .interval()
-      .data(this.configChart.data)
+      .data(this.dataset)
       .encode('x', this.configChart.axisX.title)
       .encode('y', this.configChart.axisY.title)
       .style('fill', '#6EC6D8')
@@ -112,10 +95,10 @@ export class ChartComponent {
     this.chart = this.newChart();
 
     this.chart
-      .data(this.configChart.data)
+      .data(this.dataset)
       .encode('x', this.configChart.axisX.title)
       .encode('y', this.configChart.axisY.title)
-      .encode('color', 'estado')
+      // .encode('color', this.configChart.colorLine!)
       // .scale('x', {
       //   range: [0, 1],
       // })
@@ -125,6 +108,9 @@ export class ChartComponent {
       .axis('x', axisX)
       .axis('y', axisY)
       .legend(this.configChart.legend);
+    if (this.configChart.colorLine) {
+      this.chart.encode('color', this.configChart.colorLine)
+    }
 
     this.chart.line().encode('shape', 'smooth');
 

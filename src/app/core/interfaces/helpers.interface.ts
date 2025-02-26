@@ -48,9 +48,9 @@ export interface Filters {
 
 export interface ConfigChart {
   kind: kindChart,
-  data: any[],
   axisX: AxisChart,
   axisY: AxisChart,
+  colorLine?: string,
   legend: boolean
 }
 

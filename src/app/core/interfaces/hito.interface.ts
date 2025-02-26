@@ -7,7 +7,8 @@ export interface HitosPanelResponses extends DataResponses {
 
 export interface HitosPanelResponse {
   info: PanelInfoResponse[],
-  estados: PanelInfoResponse[],
+  acuerdos_proceso: PanelInfoResponse[],
+  acuerdos_vencidos: PanelInfoResponse[],
   cumplimientos: HitoPanelCumplimientoResponse[]
 }
 

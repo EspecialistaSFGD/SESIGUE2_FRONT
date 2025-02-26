@@ -24,7 +24,10 @@ export default class PanelAcuerdosComponent {
 
   panelAcuerdosInfo: ItemInfo[] = []
   panelHitosInfo: ItemInfo[] = []
-  hitosEstados: PanelInfoResponse[] = []
+  // hitosPorAcuerdoProceso: PanelInfoResponse[] = []
+  // hitosPorAcuerdoVencidos: PanelInfoResponse[] = []
+  hitosPorAcuerdoProceso = signal<PanelInfoResponse[]>([])
+  hitosPorAcuerdoVencidos = signal<PanelInfoResponse[]>([])
   hitosCumplimientos = signal<HitoPanelCumplimientoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   tipoEventos = signal<TipoEventoResponse[]>([])
@@ -297,7 +300,10 @@ export default class PanelAcuerdosComponent {
           })
           this.obtenerNivelDeGobierno(info, 'hito')
           this.obtenerTotalHitosCumplir()
-          this.hitosEstados = resp.data.estados
+          // this.hitosPorAcuerdoProceso = resp.data.acuerdos_proceso
+          // this.hitosPorAcuerdoVencidos = resp.data.acuerdos_vencidos
+          this.hitosPorAcuerdoProceso.set(resp.data.acuerdos_proceso)
+          this.hitosPorAcuerdoVencidos.set(resp.data.acuerdos_vencidos)
           this.hitosCumplimientos.set(resp.data.cumplimientos)
         }
       })
@@ -319,6 +325,15 @@ export default class PanelAcuerdosComponent {
     return porcentaje
   }
 
+  changeTipoPanel(): ItemInfo[] {
+    const tipoControlValue = this.formPanel.get('tipo')?.value
+    console.log(tipoControlValue);
+    console.log(this.panelHitosInfo);
+    console.log(this.panelAcuerdosInfo);
+
+    return tipoControlValue == 'hito' ? this.panelHitosInfo : this.panelAcuerdosInfo
+  }
+
   obtenerTotalHitosCumplir() {
     let total = 0
     this.panelHitosInfo.map(item => {
@@ -332,6 +347,7 @@ export default class PanelAcuerdosComponent {
 
   selectTipo() {
     const tipoValue = this.formPanel.get('tipo')?.value
+    this.changeTipoPanel()
     if (tipoValue) {
       this.dataParams.tipo = tipoValue
       // this.paramsChange()
@@ -454,26 +470,8 @@ export default class PanelAcuerdosComponent {
   obtenerAcuerdosProceso() {
     this.chartAcuerdosProceso = {
       kind: kindChart.BarChart,
-      data: [
-        {
-          "titulo": "CUMPLIDOS",
-          "cantidad": 15
-        },
-        {
-          "titulo": "PROCESO",
-          "cantidad": 5
-        },
-        {
-          "titulo": "PENDIENTE",
-          "cantidad": 25
-        },
-        {
-          "titulo": "VENCIDO",
-          "cantidad": 40
-        }
-      ],
       axisX: {
-        title: 'titulo',
+        title: 'condicion',
         showTitle: false
       },
       axisY: {
@@ -486,30 +484,11 @@ export default class PanelAcuerdosComponent {
     }
   }
 
-
   obtenerAcuerdosVencidos() {
     this.chartAcuerdosVencidos = {
       kind: kindChart.BarChart,
-      data: [
-        {
-          "titulo": "CUMPLIDOS",
-          "cantidad": 2191
-        },
-        {
-          "titulo": "PROCESO",
-          "cantidad": 50
-        },
-        {
-          "titulo": "PENDIENTE",
-          "cantidad": 512
-        },
-        {
-          "titulo": "VENCIDO",
-          "cantidad": 2743 - 40
-        }
-      ],
       axisX: {
-        title: 'titulo',
+        title: 'condicion',
         showTitle: false
       },
       axisY: {
@@ -525,128 +504,6 @@ export default class PanelAcuerdosComponent {
   obtenerProyeccionCumplimientoHitos() {
     this.chartProyeccionCumplimientosHitos = {
       kind: kindChart.LineChart,
-      data: [
-        {
-          "fecha": "2024-03",
-          "estado": "pendientes",
-          "cantidad": 37
-        },
-        {
-          "fecha": "2024-03",
-          "estado": "cumplidos",
-          "cantidad": 414
-        },
-        {
-          "fecha": "2024-04",
-          "estado": "pendientes",
-          "cantidad": 11
-        },
-        {
-          "fecha": "2024-04",
-          "estado": "cumplidos",
-          "cantidad": 66
-        },
-        {
-          "fecha": "2024-05",
-          "estado": "pendientes",
-          "cantidad": 57
-        },
-        {
-          "fecha": "2024-05",
-          "estado": "cumplidos",
-          "cantidad": 170
-        },
-        {
-          "fecha": "2024-06",
-          "estado": "pendientes",
-          "cantidad": 54
-        },
-        {
-          "fecha": "2024-06",
-          "estado": "cumplidos",
-          "cantidad": 172
-        },
-        {
-          "fecha": "2024-07",
-          "estado": "pendientes",
-          "cantidad": 11
-        },
-        {
-          "fecha": "2024-07",
-          "estado": "cumplidos",
-          "cantidad": 35
-        },
-        {
-          "fecha": "2024-08",
-          "estado": "pendientes",
-          "cantidad": 66
-        },
-        {
-          "fecha": "2024-08",
-          "estado": "cumplidos",
-          "cantidad": 118
-        },
-        {
-          "fecha": "2024-09",
-          "estado": "pendientes",
-          "cantidad": 93
-        },
-        {
-          "fecha": "2024-09",
-          "estado": "cumplidos",
-          "cantidad": 296
-        },
-        {
-          "fecha": "2024-10",
-          "estado": "pendientes",
-          "cantidad": 75
-        },
-        {
-          "fecha": "2024-10",
-          "estado": "cumplidos",
-          "cantidad": 152
-        },
-        {
-          "fecha": "2024-11",
-          "estado": "pendientes",
-          "cantidad": 74
-        },
-        {
-          "fecha": "2024-11",
-          "estado": "cumplidos",
-          "cantidad": 53
-        },
-        {
-          "fecha": "2024-12",
-          "estado": "pendientes",
-          "cantidad": 136
-        },
-        {
-          "fecha": "2024-12",
-          "estado": "cumplidos",
-          "cantidad": 150
-        },
-        {
-          "fecha": "2025-01",
-          "estado": "pendientes",
-          "cantidad": 90
-        },
-        {
-          "fecha": "2025-01",
-          "estado": "cumplidos",
-          "cantidad": 89
-        },
-        {
-          "fecha": "2025-02",
-          "estado": "pendientes",
-          "cantidad": 111
-        },
-        {
-          "fecha": "2025-02",
-          "estado": "cumplidos",
-          "cantidad": 34
-        }
-      ],
       axisX: {
         title: 'fecha',
         showTitle: false
@@ -655,6 +512,7 @@ export default class PanelAcuerdosComponent {
         title: 'cantidad',
         showTitle: false
       },
+      colorLine: 'estado',
       legend: false
     }
   }

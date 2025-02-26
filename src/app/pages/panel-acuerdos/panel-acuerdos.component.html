@@ -114,7 +114,7 @@
 
   <div class="tiny-slider">
     <div class="slider-container">
-      @for(info of panelAcuerdosInfo; track $index){
+      @for(info of changeTipoPanel(); track $index){
       <div>
         <div class="rounded-xl bg-punche-green-550 flex text-white gap-4 p-4 relative">
           <img class="flex" src="./assets/images/inicio/{{info.icono}}" alt="{{info.titulo}}" srcset="">
@@ -149,7 +149,7 @@
         HITOS POR ACUERDOS EN PROCESO
       </div>
       <div class="bg-white rounded-b-2xl p-4">
-        <app-chart [configChart]="chartAcuerdosProceso" />
+        <app-chart [configChart]="chartAcuerdosProceso" [dataset]=" this.hitosPorAcuerdoProceso()" />
       </div>
     </div>
 
@@ -158,7 +158,7 @@
         HITOS POR ACUERDOS VENCIDOS
       </div>
       <div class="bg-white rounded-b-2xl p-4">
-        <app-chart [configChart]="chartAcuerdosVencidos" />
+        <app-chart [configChart]="chartAcuerdosVencidos" [dataset]="hitosPorAcuerdoVencidos()" />
       </div>
     </div>
 
@@ -167,7 +167,7 @@
         PROYECCIÓN DE CUMPLIMIENTO DE HITOS - AÑO
       </div>
       <div class="bg-white rounded-b-2xl p-4">
-        <app-chart [configChart]="chartProyeccionCumplimientosHitos" />
+        <app-chart [configChart]="chartProyeccionCumplimientosHitos" [dataset]="hitosCumplimientos()" />
       </div>
     </div>
   </div>
