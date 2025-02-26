@@ -1,10 +1,12 @@
 import { ItemEnum } from "./helpers.interface";
 
-// export interface PanelInfoTipoNivelGobierno {
-//   tipo: PanelInfoNivelGobierno
-// }
+export interface PanelInfoResponse {
+  acuerdoID?: string,
+  condicion: string,
+  cantidad: number
+}
 
-export interface PanelInfoNivelGobierno {
-  tipo: string,
-  nivelGobierno: ItemEnum[]
+export interface PanelNivelGobierno {
+  gn: number,
+  gl: number
 }

@@ -1,17 +1,13 @@
 import { DataResponses } from "./helpers.interface";
+import { PanelInfoResponse } from "./panel.interface";
 
 export interface AcuerdosPanelResponses extends DataResponses {
   data: AcuerdosPanelResponse,
 }
 export interface AcuerdosPanelResponse {
-  info: AcuerdoPanelInfoResponse[],
+  info: PanelInfoResponse[],
   ubigeo: AcuerdoPanelsResponse[],
   sectores: AcuerdoPanelsResponse[],
-}
-export interface AcuerdoPanelInfoResponse {
-  acuerdoID?: string,
-  condicion: string,
-  cantidad: number
 }
 
 export interface AcuerdoPanelsResponse {

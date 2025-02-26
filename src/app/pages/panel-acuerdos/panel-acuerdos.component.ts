@@ -4,8 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { kindChart } from '@core/enums';
 import { sortObject, themeProgressBarPercente } from '@core/helpers';
-import { AcuerdoPanelInfoResponse, AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, EventoResponse, GeoTopoJson, ItemInfo, Pagination, PaginationPanel, PanelInfoNivelGobierno, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { HitoPanelCumplimientoResponse, HitoPanelInfoResponse } from '@core/interfaces/hito.interface';
+import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, EventoResponse, GeoTopoJson, ItemInfo, Pagination, PaginationPanel, PanelInfoResponse, PanelNivelGobierno, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { HitoPanelCumplimientoResponse } from '@core/interfaces/hito.interface';
 import { AcuerdosService, EventosService, HitosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
@@ -24,8 +24,7 @@ export default class PanelAcuerdosComponent {
 
   panelAcuerdosInfo: ItemInfo[] = []
   panelHitosInfo: ItemInfo[] = []
-  // hitosEstados = signal<HitoPanelInfoResponse[]>([])
-  hitosEstados: HitoPanelInfoResponse[] = []
+  hitosEstados: PanelInfoResponse[] = []
   hitosCumplimientos = signal<HitoPanelCumplimientoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   tipoEventos = signal<TipoEventoResponse[]>([])
@@ -41,8 +40,6 @@ export default class PanelAcuerdosComponent {
     { tipo: 'tabla', nombre: 'acuerdos', descripccion: 'Cumplimiento de acuerdos por Sector' },
   ]
 
-  panelPorNivelGobierno: PanelInfoNivelGobierno[] = []
-
   tipos: string[] = ['acuerdos', 'hitos']
   topoJson: GeoTopoJson = {
     geo: 'departamentos',
@@ -55,7 +52,6 @@ export default class PanelAcuerdosComponent {
   chartAcuerdosProceso!: ConfigChart
   chartAcuerdosVencidos!: ConfigChart
   chartProyeccionCumplimientosHitos!: ConfigChart
-  // mapChar!: ConfigChart
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -66,6 +62,15 @@ export default class PanelAcuerdosComponent {
   private tipoEventosServices = inject(TipoEventosService)
   private eventosServices = inject(EventosService)
   private ubigeoService = inject(UbigeosService)
+
+  acuerdoNivelGobierno: PanelNivelGobierno = {
+    gn: 0,
+    gl: 0
+  }
+  hitoNivelGobierno: PanelNivelGobierno = {
+    gn: 0,
+    gl: 0
+  }
 
   totalUbigeo: AcuerdoPanelTotales = {
     vigentes: 0,
@@ -230,7 +235,7 @@ export default class PanelAcuerdosComponent {
             }
             return item
           })
-          this.obtenerNiveldeGobiernoAcuerdos(info)
+          this.obtenerNivelDeGobierno(info, 'acuerdo')
           resp.data.ubigeo.map(item => {
             this.totalUbigeo.vigentes = this.totalUbigeo.vigentes + item.vigentes
             this.totalUbigeo.cumplidos = this.totalUbigeo.cumplidos + item.cumplidos
@@ -248,22 +253,18 @@ export default class PanelAcuerdosComponent {
       })
   }
 
-  obtenerNiveldeGobiernoAcuerdos(info: AcuerdoPanelInfoResponse[]) {
-    const nivelGobierno: PanelInfoNivelGobierno = {
-      tipo: 'acuerdo',
-      nivelGobierno: []
-    }
-    info.map(item => {
-      if (item.condicion.includes('_')) {
-        const niveles = item.condicion.split('_')[0]
-        if (niveles == 'proceso') {
-          const estado = item.condicion.split('_')[1]
-          nivelGobierno.nivelGobierno.push({ value: estado, text: item.cantidad.toString() })
-        }
-      }
-    })
+  obtenerNivelDeGobierno(info: PanelInfoResponse[], panel: string) {
+    const nivelGobierno = info.filter(item => item.condicion.split('_')[0] == 'proceso')
+    const nivelGobiernoGN = nivelGobierno.find(item => item.condicion == 'proceso_GN')
+    const nivelGobiernoGL = nivelGobierno.find(item => item.condicion == 'proceso_GL')
 
-    this.panelPorNivelGobierno.push(nivelGobierno)
+    if (panel == 'acuerdo') {
+      this.acuerdoNivelGobierno.gn = nivelGobiernoGN ? nivelGobiernoGN.cantidad : 0
+      this.acuerdoNivelGobierno.gl = nivelGobiernoGL ? nivelGobiernoGL.cantidad : 0
+    } else if (panel == 'hito') {
+      this.hitoNivelGobierno.gn = nivelGobiernoGN ? nivelGobiernoGN.cantidad : 0
+      this.hitoNivelGobierno.gl = nivelGobiernoGL ? nivelGobiernoGL.cantidad : 0
+    }
   }
 
   obtenerCardInfo() {
@@ -294,30 +295,12 @@ export default class PanelAcuerdosComponent {
             }
             return item
           })
-          this.obtenerNiveldeGobiernoHitos(info)
+          this.obtenerNivelDeGobierno(info, 'hito')
           this.obtenerTotalHitosCumplir()
           this.hitosEstados = resp.data.estados
           this.hitosCumplimientos.set(resp.data.cumplimientos)
         }
       })
-  }
-
-  obtenerNiveldeGobiernoHitos(info: HitoPanelInfoResponse[]) {
-    const nivelGobierno: PanelInfoNivelGobierno = {
-      tipo: 'hito',
-      nivelGobierno: []
-    }
-    info.map(item => {
-      if (item.condicion.includes('_')) {
-        const niveles = item.condicion.split('_')[0]
-        if (niveles == 'proceso') {
-          const estado = item.condicion.split('_')[1]
-          nivelGobierno.nivelGobierno.push({ value: estado, text: item.cantidad.toString() })
-        }
-      }
-    })
-
-    this.panelPorNivelGobierno.push(nivelGobierno)
   }
 
   tipoCardTabla(tipo: string) {

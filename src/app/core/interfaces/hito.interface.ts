@@ -1,18 +1,14 @@
 import { DataResponses } from "./helpers.interface";
+import { PanelInfoResponse } from "./panel.interface";
 
 export interface HitosPanelResponses extends DataResponses {
   data: HitosPanelResponse,
 }
-export interface HitosPanelResponse {
-  info: HitoPanelInfoResponse[],
-  estados: HitoPanelInfoResponse[],
-  cumplimientos: HitoPanelCumplimientoResponse[]
-}
 
-export interface HitoPanelInfoResponse {
-  acuerdoID?: string,
-  condicion: string,
-  cantidad: number
+export interface HitosPanelResponse {
+  info: PanelInfoResponse[],
+  estados: PanelInfoResponse[],
+  cumplimientos: HitoPanelCumplimientoResponse[]
 }
 
 export interface HitoPanelCumplimientoResponse {
