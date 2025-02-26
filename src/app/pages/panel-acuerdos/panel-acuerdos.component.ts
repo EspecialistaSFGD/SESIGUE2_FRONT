@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { kindChart } from '@core/enums';
 import { sortObject, themeProgressBarPercente } from '@core/helpers';
-import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, EventoResponse, GeoTopoJson, ItemInfo, Pagination, PaginationPanel, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AcuerdoPanelInfoResponse, AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, EventoResponse, GeoTopoJson, ItemInfo, Pagination, PaginationPanel, PanelInfoNivelGobierno, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { HitoPanelCumplimientoResponse, HitoPanelInfoResponse } from '@core/interfaces/hito.interface';
 import { AcuerdosService, EventosService, HitosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -41,6 +41,8 @@ export default class PanelAcuerdosComponent {
     { tipo: 'tabla', nombre: 'acuerdos', descripccion: 'Cumplimiento de acuerdos por Sector' },
   ]
 
+  panelPorNivelGobierno: PanelInfoNivelGobierno[] = []
+
   tipos: string[] = ['acuerdos', 'hitos']
   topoJson: GeoTopoJson = {
     geo: 'departamentos',
@@ -72,6 +74,11 @@ export default class PanelAcuerdosComponent {
   totalSector: AcuerdoPanelTotales = {
     vigentes: 0,
     cumplidos: 0
+  }
+  totalHitoInfo: AcuerdoPanelTotales = {
+    vigentes: 0,
+    cumplidos: 0,
+    total: 0
   }
 
   formPanel: FormGroup = this.fb.group({
@@ -223,6 +230,7 @@ export default class PanelAcuerdosComponent {
             }
             return item
           })
+          this.obtenerNiveldeGobiernoAcuerdos(info)
           resp.data.ubigeo.map(item => {
             this.totalUbigeo.vigentes = this.totalUbigeo.vigentes + item.vigentes
             this.totalUbigeo.cumplidos = this.totalUbigeo.cumplidos + item.cumplidos
@@ -238,6 +246,24 @@ export default class PanelAcuerdosComponent {
           this.panelSectores.set(sectoresOrdenado)
         }
       })
+  }
+
+  obtenerNiveldeGobiernoAcuerdos(info: AcuerdoPanelInfoResponse[]) {
+    const nivelGobierno: PanelInfoNivelGobierno = {
+      tipo: 'acuerdo',
+      nivelGobierno: []
+    }
+    info.map(item => {
+      if (item.condicion.includes('_')) {
+        const niveles = item.condicion.split('_')[0]
+        if (niveles == 'proceso') {
+          const estado = item.condicion.split('_')[1]
+          nivelGobierno.nivelGobierno.push({ value: estado, text: item.cantidad.toString() })
+        }
+      }
+    })
+
+    this.panelPorNivelGobierno.push(nivelGobierno)
   }
 
   obtenerCardInfo() {
@@ -268,11 +294,30 @@ export default class PanelAcuerdosComponent {
             }
             return item
           })
-          // this.hitosEstados.set(resp.data.estados)
+          this.obtenerNiveldeGobiernoHitos(info)
+          this.obtenerTotalHitosCumplir()
           this.hitosEstados = resp.data.estados
           this.hitosCumplimientos.set(resp.data.cumplimientos)
         }
       })
+  }
+
+  obtenerNiveldeGobiernoHitos(info: HitoPanelInfoResponse[]) {
+    const nivelGobierno: PanelInfoNivelGobierno = {
+      tipo: 'hito',
+      nivelGobierno: []
+    }
+    info.map(item => {
+      if (item.condicion.includes('_')) {
+        const niveles = item.condicion.split('_')[0]
+        if (niveles == 'proceso') {
+          const estado = item.condicion.split('_')[1]
+          nivelGobierno.nivelGobierno.push({ value: estado, text: item.cantidad.toString() })
+        }
+      }
+    })
+
+    this.panelPorNivelGobierno.push(nivelGobierno)
   }
 
   tipoCardTabla(tipo: string) {
@@ -289,6 +334,17 @@ export default class PanelAcuerdosComponent {
   generarPorcentaje(vigente: number, cumplidos: number) {
     const porcentaje = cumplidos == 0 ? 0 : (cumplidos * 100) / vigente
     return porcentaje
+  }
+
+  obtenerTotalHitosCumplir() {
+    let total = 0
+    this.panelHitosInfo.map(item => {
+      total = total + Number(item.titulo)
+      if (item.code == 'cumplidos') {
+        this.totalHitoInfo.cumplidos = Number(item.titulo)
+      }
+    })
+    this.totalHitoInfo.total = total
   }
 
   selectTipo() {

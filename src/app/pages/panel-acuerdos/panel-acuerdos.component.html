@@ -176,28 +176,22 @@
     <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
       <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
       <div class="flex flex-col">
-        <div class="text-xl sm:text-3xl font-bold">50</div>
+        <div class="text-xl sm:text-3xl font-bold">{{totalHitoInfo.total! - totalHitoInfo.cumplidos}}</div>
         <div class="text-sm font-bold">Hitos por cumplir</div>
       </div>
     </div>
 
+    @for (tipo of panelPorNivelGobierno; track $index) {
     <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
       <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
       <div class="flex flex-col">
-        <div class="text-xl sm:text-3xl font-bold">GR: 30</div>
-        <div class="text-xl sm:text-3xl font-bold">GN: 20</div>
-        <div class="text-sm font-bold">Hitos en Proceso por Nivel de Gobierno</div>
+        @for(nivel of tipo.nivelGobierno; track $index){
+        <div class="text-xl sm:text-3xl font-bold">{{nivel.value}}: {{nivel.text}}</div>
+        }
+        <div class="text-sm font-bold">{{tipo.tipo | titlecase}} en Proceso por Nivel de Gobierno</div>
       </div>
     </div>
-
-    <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
-      <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
-      <div class="flex flex-col">
-        <div class="text-xl sm:text-3xl font-bold">GR: 30</div>
-        <div class="text-xl sm:text-3xl font-bold">GN: 20</div>
-        <div class="text-sm font-bold">Acuerdo en proceso por nivel de gobierno</div>
-      </div>
-    </div>
+    }
   </div>
 
   <div class="grid grid-cols-3 gap-4">

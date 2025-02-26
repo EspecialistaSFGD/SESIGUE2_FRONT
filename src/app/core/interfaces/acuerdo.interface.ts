@@ -28,5 +28,6 @@ export interface AcuerdoPanelsResponse {
 
 export interface AcuerdoPanelTotales {
   vigentes: number,
-  cumplidos: number
+  cumplidos: number,
+  total?: number
 }
