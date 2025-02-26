@@ -4,12 +4,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { kindChart } from '@core/enums';
 import { sortObject, themeProgressBarPercente } from '@core/helpers';
-import { AcuerdoPanelInfoResponse, AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, EventoResponse, GeoTopoJson, ItemInfo, Pagination, PaginationPanel, PanelInfoNivelGobierno, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { HitoPanelCumplimientoResponse, HitoPanelInfoResponse } from '@core/interfaces/hito.interface';
+import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, EventoResponse, GeoTopoJson, ItemInfo, Pagination, PaginationPanel, PanelInfoResponse, PanelNivelGobierno, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { HitoPanelCumplimientoResponse } from '@core/interfaces/hito.interface';
 import { AcuerdosService, EventosService, HitosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
-import { TinySliderInstance, tns } from 'tiny-slider';
 
 @Component({
   selector: 'app-panel-acuerdos',
@@ -20,12 +19,10 @@ import { TinySliderInstance, tns } from 'tiny-slider';
 })
 export default class PanelAcuerdosComponent {
 
-  slide!: TinySliderInstance;
-
   panelAcuerdosInfo: ItemInfo[] = []
   panelHitosInfo: ItemInfo[] = []
-  // hitosEstados = signal<HitoPanelInfoResponse[]>([])
-  hitosEstados: HitoPanelInfoResponse[] = []
+  hitosPorAcuerdoProceso = signal<PanelInfoResponse[]>([])
+  hitosPorAcuerdoVencidos = signal<PanelInfoResponse[]>([])
   hitosCumplimientos = signal<HitoPanelCumplimientoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   tipoEventos = signal<TipoEventoResponse[]>([])
@@ -41,8 +38,6 @@ export default class PanelAcuerdosComponent {
     { tipo: 'tabla', nombre: 'acuerdos', descripccion: 'Cumplimiento de acuerdos por Sector' },
   ]
 
-  panelPorNivelGobierno: PanelInfoNivelGobierno[] = []
-
   tipos: string[] = ['acuerdos', 'hitos']
   topoJson: GeoTopoJson = {
     geo: 'departamentos',
@@ -55,7 +50,6 @@ export default class PanelAcuerdosComponent {
   chartAcuerdosProceso!: ConfigChart
   chartAcuerdosVencidos!: ConfigChart
   chartProyeccionCumplimientosHitos!: ConfigChart
-  // mapChar!: ConfigChart
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -66,6 +60,15 @@ export default class PanelAcuerdosComponent {
   private tipoEventosServices = inject(TipoEventosService)
   private eventosServices = inject(EventosService)
   private ubigeoService = inject(UbigeosService)
+
+  acuerdoNivelGobierno: PanelNivelGobierno = {
+    gn: 0,
+    gl: 0
+  }
+  hitoNivelGobierno: PanelNivelGobierno = {
+    gn: 0,
+    gl: 0
+  }
 
   totalUbigeo: AcuerdoPanelTotales = {
     vigentes: 0,
@@ -90,18 +93,11 @@ export default class PanelAcuerdosComponent {
     provincia: [{ value: '', disabled: true }],
     distrito: [{ value: '', disabled: true }],
   })
-
-  ngAfterViewInit(): void {
-    this.tinySlider()
-  }
-
   ngOnInit(): void {
     this.obtenerServicioSectores()
     this.obtenerServicioTipoEspacio()
     this.obtenerServicioDepartamentos()
     this.obtenerServicios()
-
-    // this.valueChangeForm()
   }
 
   obtenerServicios() {
@@ -112,28 +108,6 @@ export default class PanelAcuerdosComponent {
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
   }
-
-
-  // setParamsData() {
-  //   this.route.queryParams.subscribe(params => {
-  //     if (Object.keys(params).length > 0) {
-  //       this.setFormvalueToparams(params)
-  //     }
-  //   })
-  // }
-
-  // setFormvalueToparams(params: Params) {
-  //   const tipo = params['tipo'] ?? this.tipos[0]
-  //   const sector = params['sector'] ?? ''
-  //   const tipoEspacio = params['tipoEspacio'] ?? ''
-  //   const espacio = params['espacio'] ?? ''
-  //   const departamento = params['departamento'] ?? ''
-  //   const provincia = params['provincia'] ?? ''
-  //   const distrito = params['distrito'] ?? ''
-
-  //   this.formPanel.reset({ tipo, sector, tipoEspacio })
-  // }
-
   obtenerServicioSectores() {
     this.sectoresService.getAllSectors()
       .subscribe(resp => {
@@ -218,7 +192,7 @@ export default class PanelAcuerdosComponent {
   }
 
   obtenerServicioAcuerdosPanel() {
-    this.obtenerCardInfo()
+    this.panelAcuerdosInfo = this.obtenerCardInfo()
     this.acuerdosService.getAcuerdoDashboard(this.paginationPanel)
       .subscribe(resp => {
         if (resp.success == true) {
@@ -230,7 +204,7 @@ export default class PanelAcuerdosComponent {
             }
             return item
           })
-          this.obtenerNiveldeGobiernoAcuerdos(info)
+          this.obtenerNivelDeGobierno(info, 'acuerdo')
           resp.data.ubigeo.map(item => {
             this.totalUbigeo.vigentes = this.totalUbigeo.vigentes + item.vigentes
             this.totalUbigeo.cumplidos = this.totalUbigeo.cumplidos + item.cumplidos
@@ -248,25 +222,21 @@ export default class PanelAcuerdosComponent {
       })
   }
 
-  obtenerNiveldeGobiernoAcuerdos(info: AcuerdoPanelInfoResponse[]) {
-    const nivelGobierno: PanelInfoNivelGobierno = {
-      tipo: 'acuerdo',
-      nivelGobierno: []
-    }
-    info.map(item => {
-      if (item.condicion.includes('_')) {
-        const niveles = item.condicion.split('_')[0]
-        if (niveles == 'proceso') {
-          const estado = item.condicion.split('_')[1]
-          nivelGobierno.nivelGobierno.push({ value: estado, text: item.cantidad.toString() })
-        }
-      }
-    })
+  obtenerNivelDeGobierno(info: PanelInfoResponse[], panel: string) {
+    const nivelGobierno = info.filter(item => item.condicion.split('_')[0] == 'proceso')
+    const nivelGobiernoGN = nivelGobierno.find(item => item.condicion == 'proceso_GN')
+    const nivelGobiernoGL = nivelGobierno.find(item => item.condicion == 'proceso_GL')
 
-    this.panelPorNivelGobierno.push(nivelGobierno)
+    if (panel == 'acuerdo') {
+      this.acuerdoNivelGobierno.gn = nivelGobiernoGN ? nivelGobiernoGN.cantidad : 0
+      this.acuerdoNivelGobierno.gl = nivelGobiernoGL ? nivelGobiernoGL.cantidad : 0
+    } else if (panel == 'hito') {
+      this.hitoNivelGobierno.gn = nivelGobiernoGN ? nivelGobiernoGN.cantidad : 0
+      this.hitoNivelGobierno.gl = nivelGobiernoGL ? nivelGobiernoGL.cantidad : 0
+    }
   }
 
-  obtenerCardInfo() {
+  obtenerCardInfo(): ItemInfo[] {
     const tipolabel = this.formPanel.get('tipo')?.value
     const panelInfo: ItemInfo[] = [
       { code: 'establecidos', icono: 'acuerdos-total.svg', titulo: '0', descripcion: `${tipolabel} establecidos`, comentario: `${tipolabel} generados en las reuniones bilaterales` },
@@ -277,12 +247,11 @@ export default class PanelAcuerdosComponent {
       { code: 'pendientes', icono: 'acuerdos-pendiente.svg', titulo: '0', descripcion: `${tipolabel} pendientes`, comentario: `${tipolabel} que no tienen definidos los hitos para su cumplimiento` },
       { code: 'vencidos', icono: 'acuerdos-vencido.svg', titulo: '0', descripcion: `${tipolabel} vencidos`, comentario: `${tipolabel} que superaron el plazo establecido para su cumplimiento` }
     ]
-    this.panelAcuerdosInfo = panelInfo
-    this.panelHitosInfo = panelInfo
+    return panelInfo
   }
 
   obtenerServicioHitosPanel() {
-    this.obtenerCardInfo()
+    this.panelHitosInfo = this.obtenerCardInfo()
     this.hitosServices.getHitoDashboard({ ...this.paginationPanel, estado: '2' })
       .subscribe(resp => {
         if (resp.success) {
@@ -294,30 +263,13 @@ export default class PanelAcuerdosComponent {
             }
             return item
           })
-          this.obtenerNiveldeGobiernoHitos(info)
+          this.obtenerNivelDeGobierno(info, 'hito')
           this.obtenerTotalHitosCumplir()
-          this.hitosEstados = resp.data.estados
+          this.hitosPorAcuerdoProceso.set(resp.data.acuerdos_proceso)
+          this.hitosPorAcuerdoVencidos.set(resp.data.acuerdos_vencidos)
           this.hitosCumplimientos.set(resp.data.cumplimientos)
         }
       })
-  }
-
-  obtenerNiveldeGobiernoHitos(info: HitoPanelInfoResponse[]) {
-    const nivelGobierno: PanelInfoNivelGobierno = {
-      tipo: 'hito',
-      nivelGobierno: []
-    }
-    info.map(item => {
-      if (item.condicion.includes('_')) {
-        const niveles = item.condicion.split('_')[0]
-        if (niveles == 'proceso') {
-          const estado = item.condicion.split('_')[1]
-          nivelGobierno.nivelGobierno.push({ value: estado, text: item.cantidad.toString() })
-        }
-      }
-    })
-
-    this.panelPorNivelGobierno.push(nivelGobierno)
   }
 
   tipoCardTabla(tipo: string) {
@@ -351,7 +303,6 @@ export default class PanelAcuerdosComponent {
     const tipoValue = this.formPanel.get('tipo')?.value
     if (tipoValue) {
       this.dataParams.tipo = tipoValue
-      // this.paramsChange()
       this.obtenerServicios()
     }
   }
@@ -369,12 +320,6 @@ export default class PanelAcuerdosComponent {
 
   selectTipoEspacio() {
     const tipoEspacioValue = this.formPanel.get('tipoEspacio')?.value
-    if (tipoEspacioValue) {
-      // this.paginationPanel.tipoEspacio = tipoEspacioValue
-    } else {
-      // delete this.dataParams.tipoEspacio
-    }
-    // this.obtenerServicios()
   }
 
   selectEspacio() {
@@ -429,68 +374,11 @@ export default class PanelAcuerdosComponent {
     this.obtenerServicios()
   }
 
-  tinySlider() {
-    this.slide = tns({
-      container: '.slider-container',
-      items: 1,
-      gutter: 12,
-      "mouseDrag": true,
-      "slideBy": "page",
-      "swipeAngle": false,
-      "speed": 400,
-      "rewind": true,
-      controlsContainer: "#controls-slider-container",
-      prevButton: '#prev',
-      nextButton: '#next',
-      arrowKeys: true,
-      "nav": false,
-      responsive: {
-        575: {
-          items: 2
-        },
-        576: {
-          items: 2
-        },
-        768: {
-          items: 3
-        },
-        992: {
-          items: 4
-        },
-        1200: {
-          items: 6
-        },
-        1600: {
-          items: 7,
-          "mouseDrag": false,
-        },
-      }
-    });
-  }
-
   obtenerAcuerdosProceso() {
     this.chartAcuerdosProceso = {
       kind: kindChart.BarChart,
-      data: [
-        {
-          "titulo": "CUMPLIDOS",
-          "cantidad": 15
-        },
-        {
-          "titulo": "PROCESO",
-          "cantidad": 5
-        },
-        {
-          "titulo": "PENDIENTE",
-          "cantidad": 25
-        },
-        {
-          "titulo": "VENCIDO",
-          "cantidad": 40
-        }
-      ],
       axisX: {
-        title: 'titulo',
+        title: 'condicion',
         showTitle: false
       },
       axisY: {
@@ -503,30 +391,11 @@ export default class PanelAcuerdosComponent {
     }
   }
 
-
   obtenerAcuerdosVencidos() {
     this.chartAcuerdosVencidos = {
       kind: kindChart.BarChart,
-      data: [
-        {
-          "titulo": "CUMPLIDOS",
-          "cantidad": 2191
-        },
-        {
-          "titulo": "PROCESO",
-          "cantidad": 50
-        },
-        {
-          "titulo": "PENDIENTE",
-          "cantidad": 512
-        },
-        {
-          "titulo": "VENCIDO",
-          "cantidad": 2743 - 40
-        }
-      ],
       axisX: {
-        title: 'titulo',
+        title: 'condicion',
         showTitle: false
       },
       axisY: {
@@ -542,128 +411,6 @@ export default class PanelAcuerdosComponent {
   obtenerProyeccionCumplimientoHitos() {
     this.chartProyeccionCumplimientosHitos = {
       kind: kindChart.LineChart,
-      data: [
-        {
-          "fecha": "2024-03",
-          "estado": "pendientes",
-          "cantidad": 37
-        },
-        {
-          "fecha": "2024-03",
-          "estado": "cumplidos",
-          "cantidad": 414
-        },
-        {
-          "fecha": "2024-04",
-          "estado": "pendientes",
-          "cantidad": 11
-        },
-        {
-          "fecha": "2024-04",
-          "estado": "cumplidos",
-          "cantidad": 66
-        },
-        {
-          "fecha": "2024-05",
-          "estado": "pendientes",
-          "cantidad": 57
-        },
-        {
-          "fecha": "2024-05",
-          "estado": "cumplidos",
-          "cantidad": 170
-        },
-        {
-          "fecha": "2024-06",
-          "estado": "pendientes",
-          "cantidad": 54
-        },
-        {
-          "fecha": "2024-06",
-          "estado": "cumplidos",
-          "cantidad": 172
-        },
-        {
-          "fecha": "2024-07",
-          "estado": "pendientes",
-          "cantidad": 11
-        },
-        {
-          "fecha": "2024-07",
-          "estado": "cumplidos",
-          "cantidad": 35
-        },
-        {
-          "fecha": "2024-08",
-          "estado": "pendientes",
-          "cantidad": 66
-        },
-        {
-          "fecha": "2024-08",
-          "estado": "cumplidos",
-          "cantidad": 118
-        },
-        {
-          "fecha": "2024-09",
-          "estado": "pendientes",
-          "cantidad": 93
-        },
-        {
-          "fecha": "2024-09",
-          "estado": "cumplidos",
-          "cantidad": 296
-        },
-        {
-          "fecha": "2024-10",
-          "estado": "pendientes",
-          "cantidad": 75
-        },
-        {
-          "fecha": "2024-10",
-          "estado": "cumplidos",
-          "cantidad": 152
-        },
-        {
-          "fecha": "2024-11",
-          "estado": "pendientes",
-          "cantidad": 74
-        },
-        {
-          "fecha": "2024-11",
-          "estado": "cumplidos",
-          "cantidad": 53
-        },
-        {
-          "fecha": "2024-12",
-          "estado": "pendientes",
-          "cantidad": 136
-        },
-        {
-          "fecha": "2024-12",
-          "estado": "cumplidos",
-          "cantidad": 150
-        },
-        {
-          "fecha": "2025-01",
-          "estado": "pendientes",
-          "cantidad": 90
-        },
-        {
-          "fecha": "2025-01",
-          "estado": "cumplidos",
-          "cantidad": 89
-        },
-        {
-          "fecha": "2025-02",
-          "estado": "pendientes",
-          "cantidad": 111
-        },
-        {
-          "fecha": "2025-02",
-          "estado": "cumplidos",
-          "cantidad": 34
-        }
-      ],
       axisX: {
         title: 'fecha',
         showTitle: false
@@ -672,46 +419,8 @@ export default class PanelAcuerdosComponent {
         title: 'cantidad',
         showTitle: false
       },
+      colorLine: 'estado',
       legend: false
     }
   }
-
-  // valueChangeForm() {
-  //   this.formPanel.valueChanges
-  //     .subscribe(value => {
-  //       this.getValueFormToParams(value)
-  //     })
-  // }
-
-  // getValueFormToParams(values: any) {
-  //   const keys = Object.keys(values).filter(campo => this.formPanel.get(campo)?.value !== '');
-  //   const dataParams: any = {}
-  //   for (let key of keys) {
-  //     dataParams[`${key.trim()}`] = this.formPanel.get(key)?.value
-  //   }
-  //   this.onQueryParamsChange(dataParams)
-  // }
-
-  paramsChange(): void {
-    this.router.navigate(
-      [],
-      {
-        relativeTo: this.route,
-        queryParams: this.dataParams,
-        // queryParamsHandling: 'merge',
-      }
-    );
-  }
-
-  // onQueryParamsChange(queryParams: Params): void {
-  //   console.log(this.formPanel?.value);
-  //   console.log(queryParams);
-  //   this.router.navigate(
-  //     [],
-  //     {
-  //       relativeTo: this.route,
-  //       queryParams
-  //     }
-  //   );
-  // }
 }
