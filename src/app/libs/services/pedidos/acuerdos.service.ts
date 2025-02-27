@@ -389,7 +389,7 @@ export class AcuerdosService {
 
             let formData: FormData = new FormData();
 
-            if (desestimacion.acuerdoId != null) formData.append('acuerdoId', `${desestimacion.acuerdoId}`);
+            // if (desestimacion.acuerdoId != null) formData.append('acuerdoId', `${desestimacion.acuerdoId}`);
 
             if (desestimacion.motivoDesestimacion != null) formData.append('motivoDesestimacion', desestimacion.motivoDesestimacion);
 
@@ -400,7 +400,7 @@ export class AcuerdosService {
 
             formData.append('accesoId', this.authService.getCodigoUsuario().toString());
 
-            this.http.post(`${environment.api}/Acuerdo/DesestimarAcuerdo`, formData).subscribe({
+            this.http.put(`${environment.api}/Acuerdo/DesestimarAcuerdo/${desestimacion.acuerdoId}`, formData).subscribe({
                 next: (data: ResponseModel) => {
                     this.msg.success(data.message);
                     resolve(data);

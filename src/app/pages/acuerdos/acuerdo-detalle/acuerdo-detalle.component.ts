@@ -392,8 +392,6 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
   validateEntidadByHito() :boolean{
     const entidadAcuerdo = this.hitosService.hitoSeleccionado()?.entidadId
     const authEntidad = localStorage.getItem('entidad')
-    console.log(entidadAcuerdo);  
-    console.log(authEntidad);  
     return entidadAcuerdo == authEntidad
   }
 
@@ -410,7 +408,9 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
       case 'SECTOR':
         tipoCompentario = 2;
         break;
-      case 'PROVINCIA':
+      case 'REGION':
+      case 'PROVINCIAL':
+      case 'DISTRITAL':
         tipoCompentario = 3;
         break;
       case 'EJECUTORA':
@@ -420,7 +420,6 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
         tipoCompentario = null;
         break;
     }
-
 
     this.avancesService.seleccionarAvanceById(avance.avanceId);
 

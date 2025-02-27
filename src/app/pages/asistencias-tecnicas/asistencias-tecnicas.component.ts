@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, EventoResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
@@ -10,6 +10,9 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
+import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
+import { EspaciosStore } from '@libs/shared/stores/espacios.store';
+import { EventosService } from '@core/services/eventos.service';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -20,13 +23,17 @@ import { FormularioAtencionComponent } from './formulario-atencion/formulario-at
     CommonModule,
     PageHeaderComponent,
     NgZorroModule,
-    FormularioAsistenciaTecnicaComponent
+    FormularioAsistenciaTecnicaComponent,
+    FiltrosAtencionComponent
   ]
 })
+
 export class AsistenciasTecnicasComponent {
   title: string = `Lista de Atenciones`;
   public asistenciasTecnicas = signal<AsistenciaTecnicaResponse[]>([])
   public departamentos = signal<UbigeoDepartmentResponse[]>([])
+  public evento = signal<EventoResponse | null>(null)
+
   pagination: Pagination = {
     code: 0,
     columnSort: 'fechaAtencion',
@@ -36,15 +43,15 @@ export class AsistenciasTecnicasComponent {
     total: 0
   }
 
-
   atencionActions: ButtonsActions = {
     new: false,
     edit: false,
     delete: false
   }
 
+  perfilAuth: number = 0
+  filtrosVisible: boolean = false
   loadingData: boolean = false
-  // paramsExist: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
   showNzModal: boolean = false
@@ -66,6 +73,7 @@ export class AsistenciasTecnicasComponent {
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
   private ubigeoService = inject(UbigeosService)
   private authStore = inject(AuthService)
+  public eventosService = inject(EventosService)
 
 
   public navigationAuth = computed(() => this.authStore.navigationAuth())
@@ -75,9 +83,27 @@ export class AsistenciasTecnicasComponent {
   }
 
   ngOnInit() {
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.obtenerEventos()
     this.getPermissions()
     this.obtenerAsistenciasTecnicas()
     this.obtenerDepartamentos()
+  }
+
+  permisosPCM(){
+    const profilePCM = [11,12]
+    return profilePCM.includes(this.perfilAuth)
+  }
+  
+
+  obtenerEventos() {
+    const vigenteId = !this.permisosPCM() ? 2 : 4
+    this.eventosService.getAllEventos(null, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
+      .subscribe(resp => {
+        if(resp.data.length > 0){          
+          this.evento.set(resp.data[0])
+        }        
+      })
   }
 
   getParams() {
@@ -122,7 +148,7 @@ export class AsistenciasTecnicasComponent {
 
   obtenerAsistenciasTecnicas() {
     this.loadingData = true
-    this.asistenciaTecnicaService.getAllAsistenciasTecnicas(this.pagination)
+    this.asistenciaTecnicaService.getAllAsistenciasTecnicas({...this.pagination, pageSize: 10})
       .subscribe(resp => {
         this.loadingData = false
         if (resp.success == true) {
@@ -146,6 +172,11 @@ export class AsistenciasTecnicasComponent {
           this.departamentos.set(resp.data)
         }
       })
+  }
+
+  geDocumentAtencion(atencion: AsistenciaTecnicaResponse) : boolean{
+    const type = atencion.tipo
+    return type == 'documento' ? true : false
   }
 
   getTextEnum(value: string, kind: string): string {
@@ -192,7 +223,6 @@ export class AsistenciasTecnicasComponent {
         this.asistenciaTecnicaService.deleteAsistenciaTecnica(asistenciaId)
           .subscribe(resp => {
             if (resp.success == true) {
-              console.log('Se ha eliminado con exito');
               this.obtenerAsistenciasTecnicas()
             }
           })
@@ -206,6 +236,10 @@ export class AsistenciasTecnicasComponent {
       this.obtenerAsistenciasTecnicas()
       this.showNzModal = true
     }
+  }
+
+  changeFilters(visible: boolean) {
+    this.filtrosVisible = visible
   }
 
   crearAsistenciaTecnica() {
@@ -236,6 +270,7 @@ export class AsistenciasTecnicasComponent {
       espacioId: '',
       unidadId: '',
       orientacionId: '',
+      eventoId: '',
       nombreEspacio: '',
       tema: '',
       comentarios: '',

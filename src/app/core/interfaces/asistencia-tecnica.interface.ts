@@ -49,6 +49,7 @@ export interface AsistenciaTecnicaResponse {
   nombreCongresista: string,
   clasificacion: string,
   espacioId: string,
+  eventoId: string,
   unidadId: string,
   orientacionId: string,
   nombreEspacio: string,

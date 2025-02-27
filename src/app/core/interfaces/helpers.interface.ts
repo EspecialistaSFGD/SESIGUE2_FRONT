@@ -17,3 +17,15 @@ export interface ButtonsActions {
   view?: boolean,
   upload?: boolean
 }
+
+export interface Filters {
+  tipoEntidad?: string,
+  tipoAtencion?: string,
+  departameno?: string,
+  provincia?: string,
+  distrito?: string,
+  ubigeo?: string,
+  sector?: string,
+  unidadOrganica?: string,
+  especialista?: string,
+}
