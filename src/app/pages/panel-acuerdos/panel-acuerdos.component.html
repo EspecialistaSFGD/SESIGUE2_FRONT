@@ -1,0 +1,249 @@
+<div class="site-page-header-ghost-wrapper mb-4 flex flex-col gap-5">
+  <nz-page-header [nzGhost]="false" class="bg-punche-blue-50">
+    <nz-page-header-content>
+      <form [formGroup]="formPanel" nz-form nzLayout="vertical">
+        <div class="grid grid-cols-1 md:grid-cols-12 md:gap-4">
+          <div class="col-span-2">
+            <nz-form-item>
+              <nz-form-label><span class="font-bold text-sm xl:text-xl">Tipo</span></nz-form-label>
+              <nz-radio-group class="radio-form-control flex md:flex-col gap-2" formControlName="tipo"
+                (ngModelChange)="selectTipo()">
+                @for (tipo of tipos; track $index){
+                <label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
+                }
+              </nz-radio-group>
+            </nz-form-item>
+          </div>
+          <div class="col-span-10">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-x-4">
+              <div class="col-span-12 md:col-span-4">
+                <nz-form-item>
+                  <nz-form-label><span class="font-bold text-sm xl:text-xl">Sector</span></nz-form-label>
+                  <nz-form-control>
+                    <nz-select id="sector" nzPlaceHolder="Seleccione sector" class="select-form-control"
+                      formControlName="sector" (ngModelChange)="selectSector()" nzAllowClear>
+                      @for(sector of sectores(); track $index){
+                      <nz-option [nzValue]="sector.grupoID" [nzLabel]="sector.nombre" />
+                      }
+                    </nz-select> </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col-span-12 md:col-span-4">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="null">
+                    <span class="font-bold text-sm xl:text-xl">Tipos de Espacio</span>
+                  </nz-form-label>
+                  <nz-form-control nzSpan="null">
+                    <nz-select nzPlaceHolder="Seleccione tipo de espacio" id="tipoEspacio" class="select-form-control"
+                      formControlName="tipoEspacio" nzAllowClear (ngModelChange)="selectTipoEspacio()"
+                      (ngModelChange)="obtenerServicioEventos(formPanel.get('tipoEspacio')?.value)">
+                      @for (tipo of tipoEventos(); track $index) {
+                      <nz-option [nzValue]="tipo.codigoTipoEvento" [nzLabel]="tipo.descripcionTipoEvento" />
+                      }
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div class="col-span-12 md:col-span-4" [ngClass]="{'hidden': !formPanel.get('tipoEspacio')?.value}">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="null">
+                    <span class="font-bold text-sm xl:text-xl">Espacio</span>
+                  </nz-form-label>
+                  <nz-form-control nzSpan="null">
+                    <nz-select nzPlaceHolder="Seleccione espacio" id="espacio" class="select-form-control"
+                      formControlName="espacio" (ngModelChange)="selectEspacio()" nzAllowClear>
+                      @for (evento of eventos(); track $index) {
+                      <nz-option [nzValue]="evento.eventoId" [nzLabel]="evento.nombre" />
+                      }
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div class="col-span-12 md:col-span-4">
+                <nz-form-item>
+                  <nz-form-label><span class="font-bold text-sm xl:text-xl">Departamento</span></nz-form-label>
+                  <nz-form-control>
+                    <nz-select id="departamento" class="w-full" class="select-form-control"
+                      formControlName="departamento" nzPlaceHolder="Seleccione departamento" nzShowSearch nzAllowClear
+                      (ngModelChange)="selectDepartamento()">
+                      @for(departamento of departamentos(); track $index){
+                      <nz-option [nzValue]="departamento.departamentoId" [nzLabel]="departamento.departamento" />
+                      }
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div class="col-span-12 md:col-span-4" [ngClass]="{'hidden': !formPanel.get('departamento')?.value}">
+                <nz-form-item>
+                  <nz-form-label><span class="font-bold text-sm xl:text-xl">Provincia</span></nz-form-label>
+                  <nz-form-control>
+                    <nz-select class="w-full" id="provincia" class="select-form-control" formControlName="provincia"
+                      nzPlaceHolder="Seleccione provincia" nzShowSearch nzAllowClear
+                      (ngModelChange)="selectProvincia()">
+                      @for (provincia of provincias(); track $index) {
+                      <nz-option [nzValue]="provincia.provinciaId" [nzLabel]="provincia.provincia" />
+                      }
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div class="col-span-12 md:col-span-4" [ngClass]="{'hidden': !formPanel.get('provincia')?.value}">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="null"><span
+                      class="font-bold text-sm xl:text-xl">Distrito</span></nz-form-label>
+                  <nz-form-control nzSpan="null">
+                    <nz-select class="w-full" id="distrito" class="select-form-control" formControlName="distrito"
+                      nzPlaceHolder="Seleccione distrito" nzShowSearch (ngModelChange)="selectDistrito()" nzAllowClear>
+                      @for (distrito of distritos(); track $index) {
+                      <nz-option [nzValue]="distrito.distritoId" [nzLabel]="distrito.distrito" />
+                      }
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </nz-page-header-content>
+  </nz-page-header>
+
+  <app-slider-tiny>
+    <ng-template #items>
+      @for(info of formPanel.get('tipo')?.value == 'hitos' ? panelHitosInfo : panelAcuerdosInfo ; track $index){
+      <div>
+        <div class="rounded-xl bg-punche-green-550 flex text-white gap-4 p-4 relative">
+          <img class="flex" src="./assets/images/inicio/{{info.icono}}" alt="{{info.titulo}}" srcset="">
+          <div class="flex">
+            <div class="flex flex-col">
+              <div class="text-xl sm:text-3xl font-bold">{{info.titulo}}</div>
+              <div class="text-sm font-bold">{{info.descripcion | titlecase }}</div>
+            </div>
+          </div>
+          <span class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
+            nzType="question-circle" nzTheme="outline" nz-tooltip="{{info.comentario | titlecase}}"></span>
+        </div>
+      </div>
+      }
+    </ng-template>
+  </app-slider-tiny>
+
+  <div class="grid grid-cols-3 gap-4">
+    <div class="flex flex-col">
+      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
+        HITOS POR ACUERDOS EN PROCESO
+      </div>
+      <div class="bg-white rounded-b-2xl p-4">
+        <app-chart [configChart]="chartAcuerdosProceso" [dataset]=" this.hitosPorAcuerdoProceso()" />
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
+        HITOS POR ACUERDOS VENCIDOS
+      </div>
+      <div class="bg-white rounded-b-2xl p-4">
+        <app-chart [configChart]="chartAcuerdosVencidos" [dataset]="hitosPorAcuerdoVencidos()" />
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
+        PROYECCIÓN DE CUMPLIMIENTO DE HITOS - AÑO
+      </div>
+      <div class="bg-white rounded-b-2xl p-4">
+        <app-chart [configChart]="chartProyeccionCumplimientosHitos" [dataset]="hitosCumplimientos()" />
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4">
+    <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
+      <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
+      <div class="flex flex-col">
+        <div class="text-xl sm:text-3xl font-bold">{{totalHitoInfo.total! - totalHitoInfo.cumplidos}}</div>
+        <div class="text-sm font-bold">Hitos por cumplir</div>
+      </div>
+    </div>
+
+    <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
+      <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
+      <div class="flex flex-col">
+        <div class="text-xl sm:text-3xl font-bold">GN: {{hitoNivelGobierno.gn}}</div>
+        <div class="text-xl sm:text-3xl font-bold">GL: {{hitoNivelGobierno.gl}}</div>
+        <div class="text-sm font-bold">Hito en Proceso por Nivel de Gobierno</div>
+      </div>
+    </div>
+
+    <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
+      <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
+      <div class="flex flex-col">
+        <div class="text-xl sm:text-3xl font-bold">GN: {{acuerdoNivelGobierno.gn}}</div>
+        <div class="text-xl sm:text-3xl font-bold">GL: {{acuerdoNivelGobierno.gl}}</div>
+        <div class="text-sm font-bold">Acuerdo en Proceso por Nivel de Gobierno</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="grid grid-cols-3 gap-4">
+    @for(card of cardsAcuerdos; track $index){
+    <div class="flex flex-col">
+      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">
+        {{card.descripccion}}
+      </div>
+      <div class="bg-white rounded-b-3xl">
+        @if(card.tipo == 'mapa'){
+        <app-geo-chart [dataset]="panelDepartamentos()" [geoTopoJson]="topoJson" />
+        }
+        @if(card.tipo == 'tabla'){
+        <nz-card class="card-no-padding bg-transparent">
+          <app-table-card [scrollY]="580">
+            <ng-template #header>
+              <tr>
+                <th>{{card.nombre | titlecase }}</th>
+                <th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
+                <th nzAlign="center" [nzWidth]="'100px'">Cumplidos</th>
+                <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+              </tr>
+            </ng-template>
+            <ng-template #body>
+              @for(item of tipoCardTabla(card.nombre); track $index){
+              <tr>
+                <td>{{item.nombre}}</td>
+                <td nzAlign="center">{{item.vigentes }}</td>
+                <td nzAlign="center">{{item.cumplidos}}</td>
+                <td nzAlign="center">
+                  <div class="object-contain w-[85%]">
+                    <nz-progress [nzPercent]="item.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
+                      [nzStrokeColor]="colorBarraProgreso(item.porcentaje)">
+                    </nz-progress>
+
+                  </div>
+                </td>
+                }
+            </ng-template>
+            <ng-template #footer>
+              <tr>
+                <td class="w-[120px] font-bold">TOTAL</td>
+                <td class="w-[100px] text-center font-bold">{{totalesCardTabla(card.nombre).vigentes}}</td>
+                <td class="w-[100px] text-center font-bold">{{totalesCardTabla(card.nombre).cumplidos}}</td>
+                <td class="w-[100px] text-center font-bold">
+                  {{generarPorcentaje(totalesCardTabla(card.nombre).vigentes,
+                  totalesCardTabla(card.nombre).cumplidos).toFixed(1)}}%
+                </td>
+              </tr>
+            </ng-template>
+          </app-table-card>
+        </nz-card>
+        }
+      </div>
+    </div>
+    }
+  </div>
+
+</div>
