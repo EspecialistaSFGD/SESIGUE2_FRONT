@@ -14,7 +14,7 @@ export interface HitosPanelResponse {
 
 export interface HitoPanelCumplimientoResponse {
   fecha: Date
-  estado: string
-  cantidad: number
+  proyectado: string
+  cumplidos: number
 }
 

@@ -1,8 +1,9 @@
 import { Component, ElementRef, inject, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart } from '@antv/g2';
 import { kindChart } from '@core/enums';
-import { ConfigChart } from '@core/interfaces';
+import { ConfigChart, RowlineChart } from '@core/interfaces';
 import { DepartamentosService } from '@core/services';
+import { config } from 'rxjs';
 
 @Component({
   selector: 'app-chart',
@@ -35,7 +36,7 @@ export class ChartComponent {
     return new Chart({
       container: this.chartContainer.nativeElement,
       autoFit: true,
-      height: 275
+      height: this.configChart.height,
     });
   }
 
@@ -59,8 +60,8 @@ export class ChartComponent {
     this.chart
       .interval()
       .data(this.dataset)
-      .encode('x', this.configChart.axisX.title)
-      .encode('y', this.configChart.axisY.title)
+      .encode('x', this.configChart.axisX.serie)
+      .encode('y', this.configChart.axisY.serie)
       .style('fill', '#6EC6D8')
       .axis('x', axisX)
       .axis('y', axisY)
@@ -92,30 +93,65 @@ export class ChartComponent {
     if (this.chart) {
       this.chart.destroy();
     }
-    this.chart = this.newChart();
 
-    this.chart
-      .data(this.dataset)
-      .encode('x', this.configChart.axisX.title)
-      .encode('y', this.configChart.axisY.title)
-      // .encode('color', this.configChart.colorLine!)
-      // .scale('x', {
-      //   range: [0, 1],
-      // })
-      // .scale('y', {
-      //   nice: true,
-      // })
-      .axis('x', axisX)
-      .axis('y', axisY)
-      .legend(this.configChart.legend);
-    if (this.configChart.colorLine) {
-      this.chart.encode('color', this.configChart.colorLine)
+    this.chart = this.newChart();
+    this.chart.data(this.dataset).legend(this.configChart.legend);
+
+    this.chart.scale(this.configChart.axisX.serie, {
+      type: 'cat',
+      alias: this.configChart.axisX.title
+    });
+
+    this.chart.scale('value', {
+        alias: 'Valor'
+    });
+
+    for(let row of this.configChart.rowsLineChart!) {
+      this.generateRowChart(this.chart, row);
     }
 
-    this.chart.line().encode('shape', 'smooth');
-
-    this.chart.point().encode('shape', 'point').tooltip(false);
-
     this.chart.render();
+  }
+
+  generateRowChart(chart: Chart, row: RowlineChart) {
+    const axisX: any = {}
+    if (!this.configChart.axisX.showTitle) {
+      axisX.title = null
+    }
+
+    const axisY: any = {}
+    if (!this.configChart.axisY.showTitle) {
+      axisY.title = null
+    }
+    chart.line()
+    .encode('x', this.configChart.axisX.serie).encode('y', (d: any) => d[row.serie])
+    .encode('shape', 'smooth')
+    .tooltip({
+      items: [
+        (d) => ({
+          name: row.title,
+          value: d[row.serie]
+        }),
+      ],
+    })
+    .encode('color', row.color)
+    .label({
+      text: row.label.show ? (d: any) => d[row.serie] : '',
+      style: {
+        dx: -10,
+        dy: -12,
+      },
+    })
+    .scale('x', {
+      range: [0, 1],
+    })
+    .scale('y', {
+      domainMin: 0,
+      nice: true,
+    })
+    .axis('x', axisX)
+    .axis('y', axisX)
+    .legend(this.configChart.legend);
+    chart.point().encode('x', this.configChart.axisX.serie).encode('y', (d: any) => d[row.serie]).style('fill', 'white').tooltip(false).encode('color', row.color);
   }
 }

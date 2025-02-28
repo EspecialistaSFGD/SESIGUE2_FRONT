@@ -50,12 +50,27 @@ export interface ConfigChart {
   kind: kindChart,
   axisX: AxisChart,
   axisY: AxisChart,
-  colorLine?: string,
-  legend: boolean
+  legend: boolean,
+  height: number,
+  rowsLineChart?: RowlineChart[],
+}
+
+export interface RowlineChart {
+  title: string,
+  serie: string,
+  color: string,
+  label: LabelChart
+}
+
+export interface LabelChart {
+  show: boolean,
+  dx: number,
+  dy: number,
 }
 
 export interface AxisChart {
   title: string,
+  serie: string,
   showTitle?: boolean,
   showValue?: boolean,
   axisValue?: string;
