@@ -161,22 +161,12 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-2 gap-4">
-    <div class="flex flex-col">
-      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
-        ACUERDOS CUMPLIDOS POR SECTOR
-      </div>
-      <div class="bg-white rounded-b-2xl p-4" style="height: 307px;">
-        <!-- <app-chart [configChart]="chartProyeccionCumplimientosHitos" [dataset]="hitosCumplimientos()" /> -->
-      </div>
+  <div class="flex flex-col">
+    <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
+      HITOS CUMPLIDOS POR SECTOR
     </div>
-    <div class="flex flex-col">
-      <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
-        HITOS CUMPLIDOS POR SECTOR
-      </div>
-      <div class="bg-white rounded-b-2xl p-4" style="height: 307px;">
-        <!-- <app-chart [configChart]="chartProyeccionCumplimientosHitos" [dataset]="hitosCumplimientos()" /> -->
-      </div>
+    <div class="bg-white rounded-b-2xl p-4" style="height: 307px;">
+      <app-chart [configChart]="chartHitosSectores" [dataset]="hitosPorAcuerdoSectores()" />
     </div>
   </div>
 
@@ -238,8 +228,8 @@
                 <td nzAlign="center">{{item.cumplidos}}</td>
                 <td nzAlign="center">
                   <div class="object-contain w-[85%]">
-                    <nz-progress [nzPercent]="item.porcentaje.toFixed(1)" [nzStrokeWidth]="12"
-                      [nzStrokeColor]="colorBarraProgreso(item.porcentaje)">
+                    <nz-progress [nzPercent]="item.porcentaje!.toFixed(1)" [nzStrokeWidth]="12"
+                      [nzStrokeColor]="colorBarraProgreso(item.porcentaje!)">
                     </nz-progress>
 
                   </div>
