@@ -1,3 +1,4 @@
+import { AcuerdoPanelsResponse } from "./acuerdo.interface";
 import { DataResponses } from "./helpers.interface";
 import { PanelInfoResponse } from "./panel.interface";
 
@@ -10,11 +11,12 @@ export interface HitosPanelResponse {
   acuerdos_proceso: PanelInfoResponse[],
   acuerdos_vencidos: PanelInfoResponse[],
   cumplimientos: HitoPanelCumplimientoResponse[]
+  sectores:  AcuerdoPanelsResponse[]
 }
 
 export interface HitoPanelCumplimientoResponse {
   fecha: Date
-  estado: string
-  cantidad: number
+  proyectado: string
+  cumplidos: number
 }
 

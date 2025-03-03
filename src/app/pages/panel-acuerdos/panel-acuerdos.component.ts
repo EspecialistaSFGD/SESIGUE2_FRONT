@@ -23,6 +23,7 @@ export default class PanelAcuerdosComponent {
   panelHitosInfo: ItemInfo[] = []
   hitosPorAcuerdoProceso = signal<PanelInfoResponse[]>([])
   hitosPorAcuerdoVencidos = signal<PanelInfoResponse[]>([])
+  hitosPorAcuerdoSectores = signal<AcuerdoPanelsResponse[]>([])
   hitosCumplimientos = signal<HitoPanelCumplimientoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   tipoEventos = signal<TipoEventoResponse[]>([])
@@ -50,6 +51,7 @@ export default class PanelAcuerdosComponent {
   chartAcuerdosProceso!: ConfigChart
   chartAcuerdosVencidos!: ConfigChart
   chartProyeccionCumplimientosHitos!: ConfigChart
+  chartHitosSectores!: ConfigChart
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -107,6 +109,7 @@ export default class PanelAcuerdosComponent {
     this.obtenerAcuerdosProceso()
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
+    this.obtenerHitosPorAcuerdosSectores()
   }
   obtenerServicioSectores() {
     this.sectoresService.getAllSectors()
@@ -192,6 +195,8 @@ export default class PanelAcuerdosComponent {
   }
 
   obtenerServicioAcuerdosPanel() {
+    this.panelDepartamentos.set([])
+    this.panelSectores.set([])
     this.panelAcuerdosInfo = this.obtenerCardInfo()
     this.acuerdosService.getAcuerdoDashboard(this.paginationPanel)
       .subscribe(resp => {
@@ -268,6 +273,7 @@ export default class PanelAcuerdosComponent {
           this.hitosPorAcuerdoProceso.set(resp.data.acuerdos_proceso)
           this.hitosPorAcuerdoVencidos.set(resp.data.acuerdos_vencidos)
           this.hitosCumplimientos.set(resp.data.cumplimientos)
+          this.hitosPorAcuerdoSectores.set(resp.data.sectores)
         }
       })
   }
@@ -377,12 +383,15 @@ export default class PanelAcuerdosComponent {
   obtenerAcuerdosProceso() {
     this.chartAcuerdosProceso = {
       kind: kindChart.BarChart,
+      height: 276,
       axisX: {
-        title: 'condicion',
+        title: 'Condiciones',
+        serie: 'condicion',
         showTitle: false
       },
       axisY: {
-        title: 'cantidad',
+        title: 'Cantidades',
+        serie: 'cantidad',
         showTitle: false,
         showValue: true,
         axisValue: 'cantidad'
@@ -394,12 +403,15 @@ export default class PanelAcuerdosComponent {
   obtenerAcuerdosVencidos() {
     this.chartAcuerdosVencidos = {
       kind: kindChart.BarChart,
+      height: 276,
       axisX: {
-        title: 'condicion',
+        title: 'Condiciones',
+        serie: 'condicion',
         showTitle: false
       },
       axisY: {
-        title: 'cantidad',
+        title: 'Cantidades',
+        serie: 'cantidad',
         showTitle: false,
         showValue: true,
         axisValue: 'cantidad'
@@ -411,16 +423,44 @@ export default class PanelAcuerdosComponent {
   obtenerProyeccionCumplimientoHitos() {
     this.chartProyeccionCumplimientosHitos = {
       kind: kindChart.LineChart,
+      height: 276,
       axisX: {
-        title: 'fecha',
+        title: 'Fechas',
+        serie: 'fecha',
         showTitle: false
       },
       axisY: {
-        title: 'cantidad',
+        title: 'Proyectados',
+        serie: 'proyectado',
         showTitle: false
       },
-      colorLine: 'estado',
-      legend: false
+      legend: false,
+      rowsLineChart: [
+        { title: 'Proyectados', serie: 'proyectado', color: '#018d86', label: { show: true, dx: -10, dy: -12 } },
+        { title: 'Cumplidos', serie: 'cumplidos', color: '#6ec6d8', label: { show: true, dx: -10, dy: -12 } }
+      ]
+    }
+  }
+
+  obtenerHitosPorAcuerdosSectores() {
+    this.chartHitosSectores = {
+      kind: kindChart.LineChart,
+      height: 276,
+      axisX: {
+        title: 'Sectores',
+        serie: 'nombre',
+        showTitle: false
+      },
+      axisY: {
+        title: 'Cumplidos',
+        serie: 'cumplidos',
+        showTitle: false
+      },
+      legend: false,
+      rowsLineChart: [
+        { title: 'Proyectados', serie: 'total', color: '#018d86', label: { show: false, dx: -10, dy: -12 } },
+        { title: 'Cumplidos', serie: 'cumplidos', color: '#6ec6d8', label: { show: false, dx: -10, dy: -12 } }
+      ]
     }
   }
 }

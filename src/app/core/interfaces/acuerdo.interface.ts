@@ -16,7 +16,7 @@ export interface AcuerdoPanelsResponse {
   cumplidos: number,
   en_proceso: number,
   desestimados: number,
-  porcentaje: number,
+  porcentaje?: number,
   vigentes: number,
   total: number,
 }
