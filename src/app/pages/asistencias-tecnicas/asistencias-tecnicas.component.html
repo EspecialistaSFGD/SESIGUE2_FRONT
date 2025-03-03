@@ -44,6 +44,11 @@
             (click)="eliminarAsistencia(atencion.asistenciaId!)" [disabled]="geDocumentAtencion(atencion) && atencion.validado"><span nz-icon nzType="delete"
               nzTheme="outline"></span></button>
           }
+          @if(perfilAuth === 12){
+            <button *nzSpaceItem nz-button nzInfo nzType="link" nz-tooltip="{{ geDocumentAtencion(atencion) && !atencion.validado ? 'Validar Atención' : '' }}" (click)="validarAtencion(atencion.asistenciaId!)"
+              [disabled]="!geDocumentAtencion(atencion) || atencion.validado"><span nz-icon nzType="check"
+                nzTheme="outline"></span></button>
+          }
         </nz-space>
       </td>
     </tr>

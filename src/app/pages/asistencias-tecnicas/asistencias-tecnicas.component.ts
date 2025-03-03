@@ -214,6 +214,15 @@ export class AsistenciasTecnicasComponent {
     this.showNzModal = true
   }
 
+  validarAtencion(asistenciaId: string){
+    this.asistenciaTecnicaService.validarAsistenciaTecnica(asistenciaId)
+      .subscribe( resp => {
+        if(resp == true){
+          this.obtenerAsistenciasTecnicas()
+        }
+      })
+  }
+
   eliminarAsistencia(asistenciaId: string) {
     this.confirmModal = this.modal.confirm({
       nzTitle: '¿Está seguro de eliminar esta asistencia técnica?',

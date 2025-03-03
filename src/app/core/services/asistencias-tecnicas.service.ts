@@ -50,6 +50,18 @@ export class AsistenciasTecnicasService {
       )
   }
 
+  validarAsistenciaTecnica(asistenciaId: string) {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.put<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/ValidarAsistenciaTecnica/${asistenciaId}`, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid.success),
+        catchError(err => of(err))
+      )
+  }
+
   deleteAsistenciaTecnica(asistenciaId: string) {
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.delete<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/EliminarAsistenciaTecnica/${asistenciaId}`, { headers })
