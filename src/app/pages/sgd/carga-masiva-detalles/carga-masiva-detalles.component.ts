@@ -6,6 +6,7 @@ import { AtencionCargaMasivaResponse, Pagination } from '@core/interfaces';
 import { CargaMasivaResponse } from '@core/interfaces/carga-masiva.interface';
 import { CargasMasivasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -51,11 +52,26 @@ export default class CargaMasivaDetallesComponent {
 
   constructor() {
     this.cargaMasivaId = this.activatedRoute.snapshot.paramMap.get('id')!;
+    this.getParams()
   }
 
   ngOnInit(): void {
     this.getcargaMasiva()
     this.obtenerAtencionesCargaMasiva()
+  }
+
+  getParams() {
+    this.loadingData = true
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (Object.keys(params).length > 0) {
+        const campo = params['campo'] ?? 'fechaRegistro'
+        this.pagination.columnSort = campo
+        this.pagination.currentPage = params['pagina']
+        this.pagination.pageSize = params['cantidad']
+        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+        this.obtenerAtencionesCargaMasiva()
+      }
+    });
   }
 
   getcargaMasiva(){
@@ -113,4 +129,20 @@ export default class CargaMasivaDetallesComponent {
     const newText = text.replace(/\n/g, '<br>')
     return newText
   }
+
+  onQueryParamsChange(params: NzTableQueryParams): void {
+      const sortsNames = ['ascend', 'descend']
+      const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+      const qtySorts = params.sort.reduce((total, item) => {
+        return sortsNames.includes(item.value!) ? total + 1 : total
+      }, 0)
+      const ordenar = sorts?.value!.slice(0, -3)
+      this.router.navigate(
+        [],
+        {
+          relativeTo: this.activatedRoute,
+          queryParams: { pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar }
+        }
+      );
+    }
 }
