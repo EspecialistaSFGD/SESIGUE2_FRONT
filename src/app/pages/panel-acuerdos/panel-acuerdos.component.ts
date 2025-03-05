@@ -52,6 +52,7 @@ export default class PanelAcuerdosComponent {
   chartAcuerdosVencidos!: ConfigChart
   chartProyeccionCumplimientosHitos!: ConfigChart
   chartHitosSectores!: ConfigChart
+  chartHitosSectoresDoubleBar!: ConfigChart
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -110,6 +111,7 @@ export default class PanelAcuerdosComponent {
     this.obtenerAcuerdosVencidos()
     this.obtenerProyeccionCumplimientoHitos()
     this.obtenerHitosPorAcuerdosSectores()
+    this.obtenerHitosPorAcuerdoDourbleBarsSectores()
   }
   obtenerServicioSectores() {
     this.sectoresService.getAllSectors()
@@ -458,9 +460,29 @@ export default class PanelAcuerdosComponent {
       },
       legend: false,
       rowsLineChart: [
-        { title: 'Proyectados', serie: 'total', color: '#018d86', label: { show: false, dx: -10, dy: -12 } },
-        { title: 'Cumplidos', serie: 'cumplidos', color: '#6ec6d8', label: { show: false, dx: -10, dy: -12 } }
+        { title: 'Proyectados', serie: 'total', color: '#018d86', label: { show: true, dx: 7, dy: -22 } },
+        { title: 'Cumplidos', serie: 'cumplidos', color: '#6ec6d8', label: { show: true, dx: -10, dy: -8 } }
       ]
+    }
+  }
+
+  obtenerHitosPorAcuerdoDourbleBarsSectores() {
+    this.chartHitosSectoresDoubleBar = {
+      kind: kindChart.DoubleBarChart,
+      height: 276,
+      axisX: {
+        title: 'Condiciones',
+        serie: 'condicion',
+        showTitle: false
+      },
+      axisY: {
+        title: 'Cantidades',
+        serie: 'cantidad',
+        showTitle: false,
+        showValue: true,
+        axisValue: 'cantidad'
+      },
+      legend: false
     }
   }
 }
