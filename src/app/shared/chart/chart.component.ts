@@ -28,6 +28,7 @@ export class ChartComponent {
   generateCharts() {
     switch (this.configChart.kind) {
       case kindChart.BarChart: this.generateBarChart(); break;
+      case kindChart.DoubleBarChart: this.generateDoubleBarChart(); break;
       case kindChart.LineChart: this.generateLineChart(); break;
     }
   }
@@ -38,6 +39,67 @@ export class ChartComponent {
       autoFit: true,
       height: this.configChart.height,
     });
+  }
+
+  generateDoubleBarChart() {
+    const axisX: any = {}
+    if (!this.configChart.axisX.showTitle) {
+      axisX.title = null
+    }
+
+    const axisY: any = {}
+    if (!this.configChart.axisY.showTitle) {
+      axisY.title = null
+    }
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.chart = this.newChart();    
+    let dataset:any[] = []
+    this.dataset.map(item => {
+      const sector = item.nombre
+      const total = item.total
+      const cumplidos = item.cumplidos
+
+      dataset.push({
+        sector,
+        tipo: 'proyectado',
+        cantidad: total
+      })
+      dataset.push({
+        sector,
+        tipo: 'cumplido',
+        cantidad: cumplidos
+      })
+    });
+
+    this.chart
+    .interval()
+    .data(dataset)
+    .encode('x', 'sector')
+    .encode('y', 'cantidad')
+    .style('fill', (d: any) => (d.tipo === 'proyectado' ? '#D2EDF3' : '#6EC6D8'))
+    .tooltip({
+      items: [
+        (d) => ({
+          name: d.tipo,
+          value: d.cantidad
+        }),
+      ],
+    })
+    .scale('x', {
+      range: [0, 1],
+    })
+    .scale('y', {
+      domainMin: 0,
+      nice: true,
+    })
+    .axis('x', { title: false })
+    .axis('y',  { title: false })
+    .legend(false);
+
+    this.chart.render();
   }
 
 
@@ -138,8 +200,8 @@ export class ChartComponent {
     .label({
       text: row.label.show ? (d: any) => d[row.serie] : '',
       style: {
-        dx: -10,
-        dy: -12,
+        dx: row.label.dx ?? 0,
+        dy: row.label.dy ?? -4,
       },
     })
     .scale('x', {
