@@ -4,6 +4,7 @@ import { Component, inject, Renderer2, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AtencionCargaMasivaResponse, Pagination } from '@core/interfaces';
 import { CargaMasivaResponse } from '@core/interfaces/carga-masiva.interface';
+import { PipesModule } from '@core/pipes/pipes.module';
 import { CargasMasivasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -12,7 +13,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-carga-masiva-detalles',
   standalone: true,
-  imports: [CommonModule, NgZorroModule],
+  imports: [CommonModule, NgZorroModule, PipesModule],
   templateUrl: './carga-masiva-detalles.component.html',
   styles: ``
 })
