@@ -29,16 +29,16 @@
 	(nzQueryParams)="onQueryParamsChange($event)">
 	<thead>
 		<tr>
-			<th nzWidth="100px" nzAlign="center" nzColumnKey="validado" [nzSortFn]="true">Validado</th>
+			<th nzWidth="40px" nzAlign="center" nzColumnKey="validado" [nzSortFn]="true"></th>
 			<th nzWidth="100px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
-			<th nzLeft nzWidth="200px" nzColumnKey="numeroExpediente" [nzSortFn]="true">Expediente</th>
+			<th nzLeft nzWidth="150px" nzColumnKey="numeroExpediente" [nzSortFn]="true">Expediente</th>
 			<th nzLeft nzWidth="200px" nzColumnKey="documentoTitulo" [nzSortFn]="true">Documento</th>
-			<th nzWidth="500px" nzColumnKey="nombreAutoridad" [nzSortFn]="true">Destino</th>
-			<th nzWidth="200px" nzAlign="center" nzColumnKey="nombresResponsable" [nzSortFn]="true">Responsable</th>
-			<th nzWidth="150px" nzAlign="center" nzColumnKey="tipoEntidadSlug" [nzSortFn]="true">Tipo Entidad</th>
-			<th nzWidth="150px" nzAlign="center" nzColumnKey="departamento" [nzSortFn]="true">Departamento</th>
-			<th nzWidth="150px" nzAlign="center" nzColumnKey="provincia" [nzSortFn]="true">Provincia</th>
-			<th nzWidth="150px" nzAlign="center" nzColumnKey="distrito" [nzSortFn]="true">Distrito</th>
+			<th nzWidth="280px" nzColumnKey="nombreAutoridad" [nzSortFn]="true">Destino</th>
+			<th nzWidth="150px" nzAlign="center" nzColumnKey="nombresResponsable" [nzSortFn]="true">Responsable</th>
+			<th nzWidth="340px" nzAlign="center">Asunto</th>
+			<th nzWidth="180px" nzAlign="center">Entidad</th>
+			<th nzWidth="100px" nzAlign="center" nzColumnKey="tipoEntidadSlug" [nzSortFn]="true">Tipo Entidad</th>
+			<th nzWidth="150px" nzAlign="center">Ubigeo</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -54,10 +54,10 @@
 				<p [innerHTML]="replaceToNewLine(detail.nombreAutoridad)"></p>
 			</td>
 			<td nzAlign="center">{{detail.nombresResponsable}}</td>
-			<td nzAlign="center">{{detail.tipoEntidadSlug}}</td>
-			<td nzAlign="center">{{detail.departamento}}</td>
-			<td nzAlign="center">{{detail.provincia}}</td>
-			<td nzAlign="center">{{detail.distrito}}</td>
+			<td nzAlign="center">{{detail.tema}}</td>
+			<td nzAlign="center">{{detail.entidad}}</td>
+			<td nzAlign="center">{{detail.entidad | primeraLetra : 2 }}</td>
+			<td nzAlign="center">{{detail.departamento}} <br> {{detail.provincia}} <br> {{detail.distrito}}</td>
 		</tr>
 		}
 	</tbody>

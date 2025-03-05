@@ -76,6 +76,7 @@ export interface AtencionCargaMasivaResponse {
 	nombreAutoridad: string,
 	tema: string,
 	nombresResponsable: string,
+  entidad: string,
 	tipoEntidadNombre: string,
 	tipoEntidadSlug: string,
 	departamento: string,
