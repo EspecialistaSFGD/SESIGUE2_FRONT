@@ -459,7 +459,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const modalidad = this.formAsistencia.get('modalidad')?.value
     const lugar = this.formAsistencia.get('lugarId')
     switch (modalidad) {
-      case 'virtuals':
+      case 'virtual':
         this.lugares().map(item => {
           if (item.nombre.toLowerCase() == 'virtual') {
             lugar?.setValue(item.lugarId)
