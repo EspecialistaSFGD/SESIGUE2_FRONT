@@ -5,6 +5,7 @@ import { AsistenciaTecnicaResponse, AsistenciasTecnicasResponse } from '@core/in
 import { Pagination } from '@core/interfaces/pagination.interface';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
+import { ExportResponses } from '@core/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,11 @@ export class AsistenciasTecnicasService {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/ListarAsistenciasTecnicas`, { headers, params })
+  }
+
+  reporteAtenciones(){
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<ExportResponses>(`${this.urlAsistenciaTecnica}/ReporteAsistenciasTecnicas`, { headers })
   }
 
   registrarAsistenciaTecnica(asistenciaTecnica: AsistenciaTecnicaResponse) {

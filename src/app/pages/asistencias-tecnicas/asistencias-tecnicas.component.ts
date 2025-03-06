@@ -14,6 +14,8 @@ import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.co
 import { EspaciosStore } from '@libs/shared/stores/espacios.store';
 import { EventosService } from '@core/services/eventos.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import saveAs from 'file-saver';
+import { UtilesService } from '@libs/shared/services/utiles.service';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -52,6 +54,7 @@ export class AsistenciasTecnicasComponent {
 
   perfilAuth: number = 0
   filtrosVisible: boolean = false
+  loadingExport: boolean = false
   loadingData: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
@@ -75,6 +78,7 @@ export class AsistenciasTecnicasComponent {
   private ubigeoService = inject(UbigeosService)
   private authStore = inject(AuthService)
   public eventosService = inject(EventosService)
+  private utilesService = inject(UtilesService);
 
 
   public navigationAuth = computed(() => this.authStore.navigationAuth())
@@ -251,6 +255,24 @@ export class AsistenciasTecnicasComponent {
   changeFilters(visible: boolean) {
     this.filtrosVisible = visible
   }
+
+  reporteExcelAtenciones(){
+    this.loadingExport = true;
+    this.asistenciaTecnicaService.reporteAtenciones()
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+          this.loadingExport = false
+        }
+      })
+  }
+
+  generarExcel(archivo: any, nombreArchivo: string): void {
+      const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+      const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, nombreArchivo);
+    }
 
   crearAsistenciaTecnica() {
     this.create = true

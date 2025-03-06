@@ -67,6 +67,10 @@
         </button> -->
       }
 
+        <button nz-button nzType="default"  [nzLoading]="loadingExport" (click)="reporteExcelAtenciones()">
+          <span nz-icon nzType="file-excel"></span>
+          <span class="button-text">Exportar</span>
+        </button>
         @if(atencionActions.new){
         <button nz-button nzType="primary" (click)="crearAsistenciaTecnica()">
           <span nz-icon nzType="plus" nzTheme="outline"></span>
