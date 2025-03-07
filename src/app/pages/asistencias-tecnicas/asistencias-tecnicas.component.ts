@@ -1,21 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, EventoResponse, ItemEnum, Pagination, PaginationFilters, UbigeoDepartmentResponse } from '@core/interfaces';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, EventoResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 // import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
+import { EventosService } from '@core/services/eventos.service';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { UtilesService } from '@libs/shared/services/utiles.service';
+import saveAs from 'file-saver';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
-import { AuthService } from '@libs/services/auth/auth.service';
-import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
 import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
-import { EspaciosStore } from '@libs/shared/stores/espacios.store';
-import { EventosService } from '@core/services/eventos.service';
-import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
-import saveAs from 'file-saver';
-import { UtilesService } from '@libs/shared/services/utiles.service';
+import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
+import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -46,7 +45,7 @@ export class AsistenciasTecnicasComponent {
     total: 0
   }
 
-  paginationFilter: PaginationFilters = {}
+  paginationFilter: Pagination = {}
 
   atencionActions: ButtonsActions = {
     new: false,
@@ -261,7 +260,7 @@ export class AsistenciasTecnicasComponent {
     this.filtrosVisible = visible
   }
 
-  filtersToDrawer(paginationFilters: PaginationFilters){
+  filtersToDrawer(paginationFilters: Pagination){
     this.paginationFilter = paginationFilters
   }
 

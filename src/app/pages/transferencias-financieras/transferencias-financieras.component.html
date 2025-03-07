@@ -10,8 +10,8 @@
 		<nz-tab nzTitle="TRANSFERENCIAS DETALLE">
 			<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderDetail" nzShowSizeChanger nzSize="small"
 				[nzData]="transferDetails()" [nzFrontPagination]="false" [nzLoading]="loadingDetail"
-				[nzTotal]="paginationDetails.total" [nzPageSize]="paginationDetails.pageSize"
-				[nzPageIndex]="paginationDetails.currentPage" (nzQueryParams)="paramsDetailChange($event)">
+				[nzTotal]="paginationDetails.total!" [nzPageSize]="paginationDetails.pageSize!"
+				[nzPageIndex]="paginationDetails.currentPage!" (nzQueryParams)="paramsDetailChange($event)">
 				<thead>
 					<tr>
 						<th nzLeft nzWidth="100px">Nivel de gobierno</th>
@@ -51,8 +51,8 @@
 		</nz-tab>
 		<nz-tab nzTitle="TRANSFERENCIAS RESUMIDO">
 			<nz-table [nzScroll]="{ x: '1150px' }" nzTitle="Transferencias resumido" nzShowSizeChanger nzSize="small"
-				[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="pagination.total"
-				[nzPageSize]="pagination.pageSize" [nzPageIndex]="pagination.currentPage">
+				[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="pagination.total!"
+				[nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
 				<thead>
 					<tr>
 						<th nzLeft nzWidth="120px">Nivel de gobierno</th>

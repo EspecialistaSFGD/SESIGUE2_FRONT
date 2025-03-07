@@ -5,12 +5,24 @@ export interface PaginationResponse {
 }
 
 export interface Pagination {
-  code: number,
-  columnSort: string,
-  typeSort: string,
-  pageSize: number,
-  currentPage: number,
-  total: number
+  code?: number,
+  columnSort?: string,
+  typeSort?: string,
+  pageSize?: number,
+  currentPage?: number,
+  fechaInicio?: string,
+  fechaFin?: string,
+  tipoPerfil?: string,
+  tipo?: string,
+  sectorId?: string,
+  unidadId?: string,
+  tipoEspacioId?: string,
+  espacioId?: string,
+  tipoEntidadId?: string,
+  usuarioId?: string,
+  ubigeo?: string,
+  total?: number,
+  estado?: string
 }
 
 export interface PaginationPanel {
@@ -20,17 +32,4 @@ export interface PaginationPanel {
   espacio?: string,
   ubigeo?: string
   estado?: string
-}
-
-export interface PaginationFilters {
-  code?: string
-  fechaInicio?: string,
-  fechaFin?: string,
-  tipoPerfil?: string,
-  tipo?: string,
-  sectorId?: string,
-  unidadId?: string,
-  tipoEntidadId?: string,
-  usuarioId?: string,
-  ubigeo?: string
 }

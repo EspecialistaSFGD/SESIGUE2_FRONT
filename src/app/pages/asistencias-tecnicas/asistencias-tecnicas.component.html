@@ -1,7 +1,7 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-  [nzData]="asistenciasTecnicas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total"
-  [nzPageSize]="pagination.pageSize" [nzPageIndex]="pagination.currentPage"
+  [nzData]="asistenciasTecnicas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!"
   (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
@@ -80,7 +80,7 @@
   </div>
 </ng-template>
 
-<app-filtros-atencion [visible]="filtrosVisible" (visibleDrawer)="changeDrawerFilters(false)" (filters)="filtersToDrawer($event)" [tipos]="tipos"/>
+<app-filtros-atencion [visible]="filtrosVisible" (visibleDrawer)="changeDrawerFilters(false)" (filters)="filtersToDrawer($event)" (export)="reporteExcelAtenciones()" [tipos]="tipos"/>
 
 <app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos"
   [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica" [departamentos]="departamentos()"

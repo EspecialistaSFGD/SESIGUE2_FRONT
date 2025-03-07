@@ -21,8 +21,11 @@
 
 
 	<ng-template #footerTpl>
-		<!-- <div class="flex justify-end gap-2">
-			<button nz-button>Limpiar filtros</button>
-		</div> -->
+		<div class="flex justify-end gap-2">
+			<button nz-button nzType="primary" (click)="changeExport()">
+				<span nz-icon nzType="file-excel"></span>
+				<span class="button-text">Exportar</span>
+			  </button>
+		</div>
 	</ng-template>
 </nz-drawer>
