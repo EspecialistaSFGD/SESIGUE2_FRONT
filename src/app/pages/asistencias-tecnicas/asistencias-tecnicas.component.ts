@@ -5,15 +5,16 @@ import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, Asisten
 import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 // import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
+import { EventosService } from '@core/services/eventos.service';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { UtilesService } from '@libs/shared/services/utiles.service';
+import saveAs from 'file-saver';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
-import { AuthService } from '@libs/services/auth/auth.service';
-import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
 import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
-import { EspaciosStore } from '@libs/shared/stores/espacios.store';
-import { EventosService } from '@core/services/eventos.service';
-import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
+import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -44,6 +45,8 @@ export class AsistenciasTecnicasComponent {
     total: 0
   }
 
+  paginationFilter: Pagination = {}
+
   atencionActions: ButtonsActions = {
     new: false,
     edit: false,
@@ -52,6 +55,7 @@ export class AsistenciasTecnicasComponent {
 
   perfilAuth: number = 0
   filtrosVisible: boolean = false
+  loadingExport: boolean = false
   loadingData: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
@@ -75,6 +79,7 @@ export class AsistenciasTecnicasComponent {
   private ubigeoService = inject(UbigeosService)
   private authStore = inject(AuthService)
   public eventosService = inject(EventosService)
+  private utilesService = inject(UtilesService);
 
 
   public navigationAuth = computed(() => this.authStore.navigationAuth())
@@ -183,11 +188,14 @@ export class AsistenciasTecnicasComponent {
   getTextEnum(value: string, kind: string): string {
     let text = value
     if (kind == 'tipo') {
-      text = this.tipos.find(item => item.value.toLowerCase() == value)!.text
+      const existeTipo = this.tipos.find(item => item.value.toLowerCase() == value)
+      text = existeTipo ? existeTipo.text : value
     } else if (kind == 'modalidad') {
-      text = this.modalidaades.find(item => item.value.toLowerCase() == value)!.text
+      const existeModalidad = this.modalidaades.find(item => item.value.toLowerCase() == value)
+      text = existeModalidad ? existeModalidad.text : value
     } else if (kind == 'clasificacion') {
-      text = this.clasificaciones.find(item => item.value.toLowerCase() == value)!.text
+      const existeClasificacion = this.clasificaciones.find(item => item.value.toLowerCase() == value)
+      text = existeClasificacion ? existeClasificacion.text : value
     }
     return text
   }
@@ -212,6 +220,15 @@ export class AsistenciasTecnicasComponent {
     this.asistenciaTecnica = asistencia
     this.create = false
     this.showNzModal = true
+  }
+
+  validarAtencion(asistenciaId: string){
+    this.asistenciaTecnicaService.validarAsistenciaTecnica(asistenciaId)
+      .subscribe( resp => {
+        if(resp == true){
+          this.obtenerAsistenciasTecnicas()
+        }
+      })
   }
 
   eliminarAsistencia(asistenciaId: string) {
@@ -239,9 +256,31 @@ export class AsistenciasTecnicasComponent {
     }
   }
 
-  changeFilters(visible: boolean) {
+  changeDrawerFilters(visible: boolean) {
     this.filtrosVisible = visible
   }
+
+  filtersToDrawer(paginationFilters: Pagination){
+    this.paginationFilter = paginationFilters
+  }
+
+  reporteExcelAtenciones(){
+    this.loadingExport = true;
+    this.asistenciaTecnicaService.reporteAtenciones(this.paginationFilter)
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+          this.loadingExport = false
+        }
+      })
+  }
+
+  generarExcel(archivo: any, nombreArchivo: string): void {
+      const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+      const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, nombreArchivo);
+    }
 
   crearAsistenciaTecnica() {
     this.create = true

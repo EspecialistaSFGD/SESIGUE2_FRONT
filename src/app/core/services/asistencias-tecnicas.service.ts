@@ -5,6 +5,7 @@ import { AsistenciaTecnicaResponse, AsistenciasTecnicasResponse } from '@core/in
 import { Pagination } from '@core/interfaces/pagination.interface';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
+import { ExportResponses } from '@core/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,12 @@ export class AsistenciasTecnicasService {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/ListarAsistenciasTecnicas`, { headers, params })
+  }
+
+  reporteAtenciones(pagination: Pagination){
+    const params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<ExportResponses>(`${this.urlAsistenciaTecnica}/ReporteAsistenciasTecnicas`, { headers, params })
   }
 
   registrarAsistenciaTecnica(asistenciaTecnica: AsistenciaTecnicaResponse) {
@@ -41,6 +48,18 @@ export class AsistenciasTecnicasService {
     const headers = this.helpersServices.getAutorizationToken()
     asistenciaTecnica.estado = true;
     return this.http.put<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/ActualizarAsistenciaTecnica/${asistenciaTecnica.asistenciaId}`, formData, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid.success),
+        catchError(err => of(err))
+      )
+  }
+
+  validarAsistenciaTecnica(asistenciaId: string) {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.put<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/ValidarAsistenciaTecnica/${asistenciaId}`, { headers })
       .pipe(
         tap(resp => {
           return resp

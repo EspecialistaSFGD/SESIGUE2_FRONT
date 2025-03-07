@@ -14,7 +14,8 @@ export enum AsistenciasTecnicasTipos {
 
 export enum AsistenciasTecnicasModalidad {
   PRESENCIAL = 'presencial',
-  VIRTUALS = 'virtual',
+  VIRTUAL = 'virtual',
+  DOCUMENTO = 'documento'
 }
 
 export enum AsistenciasTecnicasClasificacion {
@@ -76,6 +77,7 @@ export interface AtencionCargaMasivaResponse {
 	nombreAutoridad: string,
 	tema: string,
 	nombresResponsable: string,
+  entidad: string,
 	tipoEntidadNombre: string,
 	tipoEntidadSlug: string,
 	departamento: string,
