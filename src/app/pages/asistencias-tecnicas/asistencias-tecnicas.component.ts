@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, EventoResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, EventoResponse, ItemEnum, Pagination, PaginationFilters, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 // import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
@@ -45,6 +45,8 @@ export class AsistenciasTecnicasComponent {
     currentPage: 1,
     total: 0
   }
+
+  paginationFilter: PaginationFilters = {}
 
   atencionActions: ButtonsActions = {
     new: false,
@@ -252,13 +254,17 @@ export class AsistenciasTecnicasComponent {
     }
   }
 
-  changeFilters(visible: boolean) {
+  changeDrawerFilters(visible: boolean) {
     this.filtrosVisible = visible
+  }
+
+  filtersToDrawer(paginationFilters: PaginationFilters){
+    this.paginationFilter = paginationFilters
   }
 
   reporteExcelAtenciones(){
     this.loadingExport = true;
-    this.asistenciaTecnicaService.reporteAtenciones()
+    this.asistenciaTecnicaService.reporteAtenciones(this.paginationFilter)
       .subscribe( resp => {
         if(resp.data){
           const data = resp.data;
