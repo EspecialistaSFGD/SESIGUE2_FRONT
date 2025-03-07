@@ -247,10 +247,10 @@
             </ng-template>
             <ng-template #footer>
               <tr>
-                <td class="w-[120px] font-bold">TOTAL</td>
-                <td class="w-[100px] text-center font-bold">{{totalesCardTabla(card.nombre).vigentes}}</td>
-                <td class="w-[100px] text-center font-bold">{{totalesCardTabla(card.nombre).cumplidos}}</td>
-                <td class="w-[100px] text-center font-bold">
+                <td class="w-[140px] font-bold">TOTAL</td>
+                <td class="w-[120px] text-center font-bold">{{totalesCardTabla(card.nombre).vigentes}}</td>
+                <td class="w-[140px] text-center font-bold">{{totalesCardTabla(card.nombre).cumplidos}}</td>
+                <td class="w-[140px] text-center font-bold text-center">
                   {{generarPorcentaje(totalesCardTabla(card.nombre).vigentes,
                   totalesCardTabla(card.nombre).cumplidos).toFixed(1)}}%
                 </td>
