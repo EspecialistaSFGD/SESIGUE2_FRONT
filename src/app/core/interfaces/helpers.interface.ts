@@ -94,3 +94,8 @@ export interface FileResponse {
  archivo: any,
   nombreArchivo: string
 }
+
+export interface ColorEstados {
+	color: string,
+	icon: string
+}

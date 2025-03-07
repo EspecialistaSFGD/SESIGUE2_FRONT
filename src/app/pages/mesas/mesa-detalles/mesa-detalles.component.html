@@ -1,0 +1,49 @@
+<app-page-header [title]="title.toUpperCase()" backUrl="panel" />
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+  [nzData]="mesas" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
+  <thead>
+    <tr>
+      <th nzWidth="100px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">Estado</th>
+      <th nzLeft nzWidth="200px" nzColumnKey="nombreArchivo" [nzSortFn]="true">Mesa</th>
+      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="filasGuardadas" [nzSortFn]="true">Perfil</th>
+      <th nzWidth="100px" nzAlign="center" nzColumnKey="totalFilas" [nzSortFn]="true">Sesión</th>
+      <th nzWidth="150px" nzAlign="center" nzColumnKey="fechaRegistro" [nzSortFn]="true">AM</th>
+      <th nzWidth="100px" nzAlign="center">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for(mesa of mesas; track $index){
+    <tr>
+      <td nzAlign="center">estado</td>
+      <td>{{mesa}}</td>
+      <td nzAlign="center">archiv pdf</td>
+      <td nzAlign="center">archivo pdf</td>
+      <td nzAlign="center">archivo pdf</td>
+      <td nzAlign="center">
+          <a [routerLink]="['/sgd', 1]">
+            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles">
+              <span nz-icon nzType="eye" nzTheme="outline"></span>
+            </button>
+          </a>
+      </td>
+    </tr>
+    }
+  </tbody>
+</nz-table>
+
+<ng-template #Header>
+  <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+    <p class="mb-2 sm:mb-0">Resultados {{mesas.length}}</p>
+    <div>
+      <nz-space>
+            <button nz-button nzType="primary">
+            <span nz-icon nzType="plus" nzTheme="outline"></span>
+            <span class="button-text">Nueva mesa</span>
+          </button>
+      </nz-space>
+    </div>
+  </div>
+</ng-template>
+
+
