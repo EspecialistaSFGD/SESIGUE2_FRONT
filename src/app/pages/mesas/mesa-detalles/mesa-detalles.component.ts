@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Pagination } from '@core/interfaces';
+import { MesaFilesResponse, Pagination } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 
@@ -13,7 +13,15 @@ import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header
   styles: ``
 })
 export default class MesaDetallesComponent {
-  title: string = `Sistema de Gestión Documentaria`;
+  title: string = `Mesas`;
+
+  files: MesaFilesResponse[] = [
+    {id: '1', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Dario', fecha: '07/03/2024' },
+    {id: '2', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Denisse', fecha: '22/02/2024' },
+    {id: '3', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Cecilia', fecha: '15/01/2024' },
+    {id: '4', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Pamela', fecha: '28/12/2023' },
+    {id: '5', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Veronica', fecha: '12/11/2023' },
+  ]
 
   loadingData: boolean = false
 
@@ -25,8 +33,4 @@ export default class MesaDetallesComponent {
     currentPage: 1,
     total: 0
   }
-
-
-  mesas:string[] = ['Mesa Técnica para el Desarrollo de la Provinicia de Condorcanqui - Amazonas','Mesa Técnica para el Desarrollo Integral de la provincia de Vilcas Huamán del departamento de Ayacucho','Mesa Técnica para el Desarrollo   Territorial de la provincia de Urubamba del   departamento de Cusco','Subgrupo de Trabajo 3: Plan de Desarrollo del “Espacio de diálogo para el desarrollo de la provincia de Cotabambas y distrito de Progreso de la provincia de Grau del departamento de Apurímac”']
-
 }

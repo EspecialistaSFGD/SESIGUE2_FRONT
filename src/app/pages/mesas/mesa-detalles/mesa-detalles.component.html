@@ -1,49 +1,102 @@
-<app-page-header [title]="title.toUpperCase()" backUrl="panel" />
-<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-  [nzData]="mesas" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
-  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
-  <thead>
-    <tr>
-      <th nzWidth="100px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">Estado</th>
-      <th nzLeft nzWidth="200px" nzColumnKey="nombreArchivo" [nzSortFn]="true">Mesa</th>
-      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="filasGuardadas" [nzSortFn]="true">Perfil</th>
-      <th nzWidth="100px" nzAlign="center" nzColumnKey="totalFilas" [nzSortFn]="true">Sesión</th>
-      <th nzWidth="150px" nzAlign="center" nzColumnKey="fechaRegistro" [nzSortFn]="true">AM</th>
-      <th nzWidth="100px" nzAlign="center">Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for(mesa of mesas; track $index){
-    <tr>
-      <td nzAlign="center">estado</td>
-      <td>{{mesa}}</td>
-      <td nzAlign="center">archiv pdf</td>
-      <td nzAlign="center">archivo pdf</td>
-      <td nzAlign="center">archivo pdf</td>
-      <td nzAlign="center">
-          <a [routerLink]="['/sgd', 1]">
-            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles">
-              <span nz-icon nzType="eye" nzTheme="outline"></span>
-            </button>
-          </a>
-      </td>
-    </tr>
-    }
-  </tbody>
-</nz-table>
+<nz-page-header nzBackIcon [nzGhost]="false">
+	<nz-page-header-title>Detalle de Mesa</nz-page-header-title>
 
-<ng-template #Header>
-  <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
-    <p class="mb-2 sm:mb-0">Resultados {{mesas.length}}</p>
-    <div>
-      <nz-space>
-            <button nz-button nzType="primary">
-            <span nz-icon nzType="plus" nzTheme="outline"></span>
-            <span class="button-text">Nueva mesa</span>
-          </button>
-      </nz-space>
-    </div>
-  </div>
-</ng-template>
+	<nz-page-header-content>
+		<nz-descriptions nzSize="small" [nzColumn]="{ xxl: 3, xl: 3, lg: 3, md: 2, sm: 2, xs: 1 }" nzBordered>
+			<nz-descriptions-item nzTitle="Codigo">MS-001</nz-descriptions-item>
+			<nz-descriptions-item nzTitle="Nombre">Mesa Técnica para el Desarrollo de la Provinicia de Condorcanqui -
+				Amazonas</nz-descriptions-item>
 
+			<nz-descriptions-item nzTitle="Estado">
+				<nz-tag nzColor="success" nz-tooltip nzTooltipTitle="Cerrado">
+					<span nz-icon nzType="check-circle"></span>
+					<span>Cerrado</span>
+				</nz-tag>
+			</nz-descriptions-item>
 
+			<nz-descriptions-item nzTitle="Perfiles"> 5 pefiles</nz-descriptions-item>
+
+			<nz-descriptions-item nzTitle="Sesiones">2 sesiones</nz-descriptions-item>
+
+			<nz-descriptions-item nzTitle="AM">4 Am</nz-descriptions-item>
+		</nz-descriptions>
+	</nz-page-header-content>
+</nz-page-header>
+
+<div class="grid grid-cols-2 gap-4 mt-4">
+	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
+		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
+			<h5 class="m-0 text-base font-semibold">Sesiones</h5>
+			<button nz-button nzType="default">
+				<span nz-icon nzType="plus" nzTheme="outline"></span>
+				<span class="button-text">Nueva</span>
+			</button>
+		</div>
+		<div class="flex border-solid ">
+			<nz-table [nzData]="files" class="w-full" [nzFrontPagination]="false" [nzShowPagination]="false" >
+				<thead>
+					<tr>
+						<th nzWidth="10px" nzAlign="center">Id</th>
+						<th nzWidth="56px" nzAlign="center">Nombre archivo</th>
+						<th nzWidth="40px" nzAlign="center">Usuario</th>
+						<th nzWidth="10px" nzAlign="center">Fecha</th>
+						<th nzWidth="10px"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@for(file of files; track $index){
+					<tr>
+						<td nzAlign="center">{{file.id}}</td>
+						<td nzAlign="center">{{file.nombreArchivo}}</td>
+						<td nzAlign="center">{{file.usuario}}</td>
+						<td nzAlign="center">{{file.fecha}}</td>
+						<td nzAlign="center">
+							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar">
+								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
+							</button>
+						</td>
+					</tr>
+					}
+				</tbody>
+			</nz-table>
+		</div>
+	</div>
+
+	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
+		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
+			<h5 class="m-0 text-base font-semibold">AM</h5>
+			<button nz-button nzType="default">
+				<span nz-icon nzType="plus" nzTheme="outline"></span>
+				<span class="button-text">Nueva</span>
+			</button>
+		</div>
+		<div class="flex border-solid ">
+			<nz-table [nzData]="files" class="w-full" [nzFrontPagination]="false" [nzShowPagination]="false" >
+				<thead>
+					<tr>
+						<th nzWidth="10px" nzAlign="center">Id</th>
+						<th nzWidth="56px" nzAlign="center">Nombre archivo</th>
+						<th nzWidth="40px" nzAlign="center">Usuario</th>
+						<th nzWidth="10px" nzAlign="center">Fecha</th>
+						<th nzWidth="10px"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@for(file of files; track $index){
+					<tr>
+						<td nzAlign="center">{{file.id}}</td>
+						<td nzAlign="center">{{file.nombreArchivo}}</td>
+						<td nzAlign="center">{{file.usuario}}</td>
+						<td nzAlign="center">{{file.fecha}}</td>
+						<td nzAlign="center">
+							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar">
+								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
+							</button>
+						</td>
+					</tr>
+					}
+				</tbody>
+			</nz-table>
+		</div>
+	</div>
+</div>

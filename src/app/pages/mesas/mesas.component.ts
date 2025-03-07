@@ -13,7 +13,7 @@ import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header
   styles: ``
 })
 export default class MesasComponent {
-  title: string = `Sistema de Gestión Documentaria`;
+  title: string = `Mesas`;
   
     loadingData: boolean = false
   

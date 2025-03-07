@@ -5,10 +5,11 @@
   <thead>
     <tr>
       <th nzWidth="24px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">Estado</th>
+      <th nzWidth="24px" nzAlign="center">Codigo</th>
       <th nzLeft nzWidth="200px" nzColumnKey="nombreArchivo" [nzSortFn]="true">Mesa</th>
-      <th nzWidth="32px" nzAlign="center" nzColumnKey="filasGuardadas" [nzSortFn]="true">Perfil</th>
-      <th nzWidth="32px" nzAlign="center" nzColumnKey="totalFilas" [nzSortFn]="true">Sesión</th>
-      <th nzWidth="32px" nzAlign="center" nzColumnKey="fechaRegistro" [nzSortFn]="true">AM</th>
+      <th nzWidth="32px" nzAlign="center">Perfil</th>
+      <th nzWidth="32px" nzAlign="center">Sesión</th>
+      <th nzWidth="32px" nzAlign="center">AM</th>
       <th nzWidth="24px" nzAlign="center"></th>
     </tr>
   </thead>
@@ -19,7 +20,9 @@
         <nz-tag [nzColor]="colorEstado(mesa.estado).color" nz-tooltip nzTooltipTitle="{{mesa.estado | titlecase }}">
             <span nz-icon [nzType]="colorEstado(mesa.estado).icon"></span>
         </nz-tag>
+        <!-- <nz-avatar nzIcon="user" style="background-color:#87d068;"></nz-avatar> -->
       </td>
+      <td nzAlign="center">MS-00{{$index + 1}}</td>
       <td>{{mesa.nombre}}</td>
       <td nzAlign="center">
         <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar">
@@ -37,7 +40,7 @@
         </button>
       </td>
       <td nzAlign="center">
-          <a [routerLink]="['/sgd', 1]">
+          <a [routerLink]="['/mesas', 1]">
             <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles">
               <span nz-icon nzType="eye" nzTheme="outline"></span>
             </button>
