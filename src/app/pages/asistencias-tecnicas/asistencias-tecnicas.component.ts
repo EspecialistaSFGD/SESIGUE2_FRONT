@@ -189,11 +189,14 @@ export class AsistenciasTecnicasComponent {
   getTextEnum(value: string, kind: string): string {
     let text = value
     if (kind == 'tipo') {
-      text = this.tipos.find(item => item.value.toLowerCase() == value)!.text
+      const existeTipo = this.tipos.find(item => item.value.toLowerCase() == value)
+      text = existeTipo ? existeTipo.text : value
     } else if (kind == 'modalidad') {
-      text = this.modalidaades.find(item => item.value.toLowerCase() == value)!.text
+      const existeModalidad = this.modalidaades.find(item => item.value.toLowerCase() == value)
+      text = existeModalidad ? existeModalidad.text : value
     } else if (kind == 'clasificacion') {
-      text = this.clasificaciones.find(item => item.value.toLowerCase() == value)!.text
+      const existeClasificacion = this.clasificaciones.find(item => item.value.toLowerCase() == value)
+      text = existeClasificacion ? existeClasificacion.text : value
     }
     return text
   }

@@ -15,6 +15,7 @@ export enum AsistenciasTecnicasTipos {
 export enum AsistenciasTecnicasModalidad {
   PRESENCIAL = 'presencial',
   VIRTUAL = 'virtual',
+  DOCUMENTO = 'documento'
 }
 
 export enum AsistenciasTecnicasClasificacion {
