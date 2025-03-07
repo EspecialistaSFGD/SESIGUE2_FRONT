@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ItemEnum, Pagination, PaginationFilters, TipoEntidadResponse } from '@core/interfaces';
+import { ItemEnum, Pagination, TipoEntidadResponse } from '@core/interfaces';
 import { TipoEntidadesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 
@@ -16,7 +16,8 @@ export class FiltrosAtencionComponent {
   @Input() visible: boolean = false
   @Input() tipos!: ItemEnum[]
   @Output() visibleDrawer = new EventEmitter()
-  @Output() filters = new EventEmitter<PaginationFilters>()
+  @Output() filters = new EventEmitter<Pagination>()
+  @Output() export = new EventEmitter<boolean>()
   
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
 
@@ -31,7 +32,7 @@ export class FiltrosAtencionComponent {
       currentPage: 1,
       total: 0
     }
-    paginationFilters: PaginationFilters = {}
+    paginationFilters: Pagination = {}
 
   formFilters: FormGroup = this.fb.group({
     fechaInicio: [''],
@@ -84,5 +85,10 @@ export class FiltrosAtencionComponent {
 
     generateFilters(){
       this.filters.emit(this.paginationFilters)
+    }
+
+    changeExport(){
+      this.changeVisibleDrawer(false)
+      this.export.emit(true)
     }
 }

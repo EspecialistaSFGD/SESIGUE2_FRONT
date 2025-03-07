@@ -1,7 +1,7 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-  [nzData]="cargasMasivas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total"
-  [nzPageSize]="pagination.pageSize" [nzPageIndex]="pagination.currentPage">
+  [nzData]="cargasMasivas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
   <thead>
     <tr>
       <th nzWidth="100px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">Estado</th>
