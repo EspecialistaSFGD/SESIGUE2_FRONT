@@ -120,9 +120,9 @@
 </div>
 
 <nz-table nzSize="small" [nzTitle]="HeaderAcuerdo" nzShowSizeChanger [nzData]="this.hitosService.hitos()"
-    [nzFrontPagination]="false" [nzShowPagination]="this.hitosService.total() > 10"
-    [nzLoading]="this.hitosService.isLoading()" [nzTotal]="this.hitosService.total()" [nzPageSize]="this.pageSize"
-    [nzPageIndex]="this.pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
+[nzFrontPagination]="false" [nzShowPagination]="this.hitosService.total() > 10"
+[nzLoading]="this.hitosService.isLoading()" [nzTotal]="this.hitosService.total()" [nzPageSize]="this.pageSize"
+[nzPageIndex]="this.pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
             <th></th>
