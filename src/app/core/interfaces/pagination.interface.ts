@@ -21,3 +21,16 @@ export interface PaginationPanel {
   ubigeo?: string
   estado?: string
 }
+
+export interface PaginationFilters {
+  code?: string
+  fechaInicio?: string,
+  fechaFin?: string,
+  tipoPerfil?: string,
+  tipo?: string,
+  sectorId?: string,
+  unidadId?: string,
+  tipoEntidadId?: string,
+  usuarioId?: string,
+  ubigeo?: string
+}

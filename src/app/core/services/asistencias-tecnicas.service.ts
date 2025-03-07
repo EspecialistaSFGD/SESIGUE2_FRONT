@@ -2,9 +2,10 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
 import { AsistenciaTecnicaResponse, AsistenciasTecnicasResponse } from '@core/interfaces/asistencia-tecnica.interface';
-import { Pagination } from '@core/interfaces/pagination.interface';
+import { Pagination, PaginationFilters } from '@core/interfaces/pagination.interface';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
+import { ExportResponses } from '@core/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,12 @@ export class AsistenciasTecnicasService {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/ListarAsistenciasTecnicas`, { headers, params })
+  }
+
+  reporteAtenciones(pagination: PaginationFilters){
+    const params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<ExportResponses>(`${this.urlAsistenciaTecnica}/ReporteAsistenciasTecnicas`, { headers, params })
   }
 
   registrarAsistenciaTecnica(asistenciaTecnica: AsistenciaTecnicaResponse) {

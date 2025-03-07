@@ -85,3 +85,12 @@ export interface UbigeoConfig {
   tipo: string,
   ubigeo: number,
 }
+
+export interface ExportResponses extends DataResponses {
+  data: FileResponse,
+}
+
+export interface FileResponse {
+ archivo: any,
+  nombreArchivo: string
+}

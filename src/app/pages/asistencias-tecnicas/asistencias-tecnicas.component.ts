@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, EventoResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, EventoResponse, ItemEnum, Pagination, PaginationFilters, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 // import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
@@ -14,6 +14,8 @@ import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.co
 import { EspaciosStore } from '@libs/shared/stores/espacios.store';
 import { EventosService } from '@core/services/eventos.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import saveAs from 'file-saver';
+import { UtilesService } from '@libs/shared/services/utiles.service';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -44,6 +46,8 @@ export class AsistenciasTecnicasComponent {
     total: 0
   }
 
+  paginationFilter: PaginationFilters = {}
+
   atencionActions: ButtonsActions = {
     new: false,
     edit: false,
@@ -52,6 +56,7 @@ export class AsistenciasTecnicasComponent {
 
   perfilAuth: number = 0
   filtrosVisible: boolean = false
+  loadingExport: boolean = false
   loadingData: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
@@ -75,6 +80,7 @@ export class AsistenciasTecnicasComponent {
   private ubigeoService = inject(UbigeosService)
   private authStore = inject(AuthService)
   public eventosService = inject(EventosService)
+  private utilesService = inject(UtilesService);
 
 
   public navigationAuth = computed(() => this.authStore.navigationAuth())
@@ -248,9 +254,31 @@ export class AsistenciasTecnicasComponent {
     }
   }
 
-  changeFilters(visible: boolean) {
+  changeDrawerFilters(visible: boolean) {
     this.filtrosVisible = visible
   }
+
+  filtersToDrawer(paginationFilters: PaginationFilters){
+    this.paginationFilter = paginationFilters
+  }
+
+  reporteExcelAtenciones(){
+    this.loadingExport = true;
+    this.asistenciaTecnicaService.reporteAtenciones(this.paginationFilter)
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+          this.loadingExport = false
+        }
+      })
+  }
+
+  generarExcel(archivo: any, nombreArchivo: string): void {
+      const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+      const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, nombreArchivo);
+    }
 
   crearAsistenciaTecnica() {
     this.create = true

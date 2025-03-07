@@ -60,13 +60,16 @@
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
     <p class="mb-2 sm:mb-0">Resultados ({{pagination.total}})</p>
     <div class="flex gap-2">
-      @if(perfilAuth != 1){
-        <!-- <button nz-button (click)="changeFilters(true)">
-          <span nz-icon nzType="filter" nzTheme="outline"></span>
+      @if(perfilAuth == 11 || perfilAuth == 12){
+        <button nz-button nzType="default" (click)="changeDrawerFilters(true)">
+          <span nz-icon nzType="filter"></span>
           <span class="button-text">Filtros</span>
-        </button> -->
+        </button>
+        <button nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteExcelAtenciones()">
+          <span nz-icon nzType="file-excel"></span>
+          <span class="button-text">Exportar</span>
+        </button>
       }
-
         @if(atencionActions.new){
         <button nz-button nzType="primary" (click)="crearAsistenciaTecnica()">
           <span nz-icon nzType="plus" nzTheme="outline"></span>
@@ -77,7 +80,7 @@
   </div>
 </ng-template>
 
-<app-filtros-atencion [visible]="filtrosVisible" (visibleDrawer)="changeFilters(false)" [tipos]="tipos"/>
+<app-filtros-atencion [visible]="filtrosVisible" (visibleDrawer)="changeDrawerFilters(false)" (filters)="filtersToDrawer($event)" [tipos]="tipos"/>
 
 <app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos"
   [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica" [departamentos]="departamentos()"
