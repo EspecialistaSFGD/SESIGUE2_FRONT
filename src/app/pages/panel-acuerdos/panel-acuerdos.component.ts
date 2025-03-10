@@ -21,6 +21,8 @@ export default class PanelAcuerdosComponent {
 
   panelAcuerdosInfo: ItemInfo[] = []
   panelHitosInfo: ItemInfo[] = []
+  acuerdosPanelInfo = signal<PanelInfoResponse[]>([])
+  hitosPanelInfo = signal<PanelInfoResponse[]>([])
   hitosPorAcuerdoProceso = signal<PanelInfoResponse[]>([])
   hitosPorAcuerdoVencidos = signal<PanelInfoResponse[]>([])
   hitosPorAcuerdoSectores = signal<AcuerdoPanelsResponse[]>([])
@@ -272,6 +274,8 @@ export default class PanelAcuerdosComponent {
           })
           this.obtenerNivelDeGobierno(info, 'hito')
           this.obtenerTotalHitosCumplir()
+          this.hitosPanelInfo.set(info)
+          this.acuerdosPanelInfo.set(info)
           this.hitosPorAcuerdoProceso.set(resp.data.acuerdos_proceso)
           this.hitosPorAcuerdoVencidos.set(resp.data.acuerdos_vencidos)
           this.hitosCumplimientos.set(resp.data.cumplimientos)
@@ -380,6 +384,25 @@ export default class PanelAcuerdosComponent {
       this.paginationPanel.ubigeo = provinciaValue
     }
     this.obtenerServicios()
+  }
+
+  obtenerPorCumplir(tipo: string){
+    let cantidad = 0
+    if(tipo == 'acuerdos'){
+      this.acuerdosPanelInfo().find( item => {
+        if(item.condicion == 'en_proceso' || item.condicion == 'pendientes'){
+          cantidad = cantidad + item.cantidad
+        }
+      })
+    }
+    if(tipo == 'hitos'){
+      this.hitosPanelInfo().find( item => {
+        if(item.condicion == 'en_proceso' || item.condicion == 'pendientes'){
+          cantidad = cantidad + item.cantidad
+        }
+      })
+    }
+    return cantidad
   }
 
   obtenerAcuerdosProceso() {

@@ -183,13 +183,13 @@
     <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
       <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
       <div class="flex flex-col">
-        <div class="text-xl sm:text-3xl font-bold">{{totalHitoInfo.total! - totalHitoInfo.cumplidos}}</div>
+        <div class="text-xl sm:text-3xl font-bold">{{obtenerPorCumplir('hitos')}}</div>
         <div class="text-sm font-bold">Hitos por cumplir</div>
       </div>
     </div>
 
     <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-8 items-center justify-center">
-      <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
+      <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos en proceso por nivel de gobierno" srcset="">
       <div class="flex flex-col">
         <div class="text-xl sm:text-3xl font-bold">GN: {{hitoNivelGobierno.gn}}</div>
         <div class="text-xl sm:text-3xl font-bold">GL: {{hitoNivelGobierno.gl}}</div>
@@ -216,7 +216,7 @@
       </div>
       <div class="bg-white rounded-b-3xl">
         @if(card.tipo == 'mapa'){
-        <app-geo-chart [dataset]="panelDepartamentos()" [geoTopoJson]="topoJson" />
+        <!-- <app-geo-chart [dataset]="panelDepartamentos()" [geoTopoJson]="topoJson" /> -->
         }
         @if(card.tipo == 'tabla'){
         <nz-card class="card-no-padding bg-transparent">
