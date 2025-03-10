@@ -61,6 +61,10 @@
     <p class="mb-2 sm:mb-0">Resultados ({{pagination.total}})</p>
     <div class="flex gap-2">
       @if(perfilAuth == 11 || perfilAuth == 12){
+        <a [routerLink]="['/atenciones/metas']" nz-button nzType="default">
+          <span nz-icon nzType="rise"></span>
+          <span class="button-text">Metas</span>
+        </a>
         <button nz-button nzType="default" (click)="changeDrawerFilters(true)">
           <span nz-icon nzType="filter"></span>
           <span class="button-text">Filtros</span>
