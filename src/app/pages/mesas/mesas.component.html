@@ -4,10 +4,9 @@
   [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
   <thead>
     <tr>
-      <th nzWidth="24px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">Estado</th>
+      <th nzWidth="32px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">Estado</th>
       <th nzWidth="24px" nzAlign="center">Codigo</th>
       <th nzLeft nzWidth="200px" nzColumnKey="nombreArchivo" [nzSortFn]="true">Mesa</th>
-      <th nzWidth="32px" nzAlign="center">Perfil</th>
       <th nzWidth="32px" nzAlign="center">Sesión</th>
       <th nzWidth="32px" nzAlign="center">AM</th>
       <th nzWidth="24px" nzAlign="center"></th>
@@ -19,29 +18,28 @@
       <td nzAlign="center">
         <nz-tag [nzColor]="colorEstado(mesa.estado).color" nz-tooltip nzTooltipTitle="{{mesa.estado | titlecase }}">
             <span nz-icon [nzType]="colorEstado(mesa.estado).icon"></span>
+            <span>{{mesa.estado | titlecase }}</span>
         </nz-tag>
-        <!-- <nz-avatar nzIcon="user" style="background-color:#87d068;"></nz-avatar> -->
       </td>
-      <td nzAlign="center">MS-00{{$index + 1}}</td>
+      <td nzAlign="center">
+        <a [routerLink]="['/mesas', 1]" class="font-bold"  nz-tooltip nzTooltipTitle="Ver Detalle">
+          MS25-00{{$index + 1}}
+        </a>
+      </td>
       <td>{{mesa.nombre}}</td>
       <td nzAlign="center">
-        <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar">
+        <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar sesión">
             <span nz-icon nzType="file-excel" nzTheme="outline"></span>
         </button>
       </td>
       <td nzAlign="center">
-        <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar">
-            <span nz-icon nzType="file-excel" nzTheme="outline"></span>
-        </button>
-      </td>
-      <td nzAlign="center">
-        <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar">
+        <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar ayuda memoria">
             <span nz-icon nzType="file-excel" nzTheme="outline"></span>
         </button>
       </td>
       <td nzAlign="center">
           <a [routerLink]="['/mesas', 1]">
-            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles">
+            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalle">
               <span nz-icon nzType="eye" nzTheme="outline"></span>
             </button>
           </a>
@@ -55,12 +53,12 @@
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
     <p class="mb-2 sm:mb-0">Resultados {{mesas.length}}</p>
     <div>
-      <!-- <nz-space>
-            <button nz-button nzType="primary">
+      <nz-space>
+            <!-- <button nz-button nzType="primary">
             <span nz-icon nzType="plus" nzTheme="outline"></span>
             <span class="button-text">Nueva mesa</span>
-          </button>
-      </nz-space> -->
+          </button> -->
+      </nz-space>
     </div>
   </div>
 </ng-template>
