@@ -9,43 +9,42 @@
       <th nzLeft nzWidth="200px" nzColumnKey="nombreArchivo" [nzSortFn]="true">Mesa</th>
       <th nzWidth="32px" nzAlign="center">Sesión</th>
       <th nzWidth="32px" nzAlign="center">AM</th>
-      <th nzWidth="24px" nzAlign="center"></th>
     </tr>
   </thead>
   <tbody>
     @for(mesa of mesas; track $index){
-    <tr>
-      <td nzAlign="center">
-        <nz-tag [nzColor]="colorEstado(mesa.estado).color" nz-tooltip nzTooltipTitle="{{mesa.estado | titlecase }}">
-            <span nz-icon [nzType]="colorEstado(mesa.estado).icon"></span>
-            <span>{{mesa.estado | titlecase }}</span>
-        </nz-tag>
-      </td>
-      <td nzAlign="center">
-        <a [routerLink]="['/mesas', 1]" class="font-bold"  nz-tooltip nzTooltipTitle="Ver Detalle">
-          MS25-00{{$index + 1}}
-        </a>
-      </td>
-      <td>{{mesa.nombre}}</td>
-      <td nzAlign="center">
-        <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar sesión">
-            <span nz-icon nzType="file-excel" nzTheme="outline"></span>
-        </button>
-      </td>
-      <td nzAlign="center">
-        <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar ayuda memoria">
-            <span nz-icon nzType="file-excel" nzTheme="outline"></span>
-        </button>
-      </td>
-      <td nzAlign="center">
-          <a [routerLink]="['/mesas', 1]">
-            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalle">
-              <span nz-icon nzType="eye" nzTheme="outline"></span>
-            </button>
+      <tr>
+        <td nzAlign="center">
+          <nz-tag [nzColor]="colorEstado(mesa.estado).color" nz-tooltip nzTooltipTitle="{{mesa.estado | titlecase }}">
+              <span nz-icon [nzType]="colorEstado(mesa.estado).icon"></span>
+              <span>{{mesa.estado | titlecase }}</span>
+          </nz-tag>
+        </td>
+        <td nzAlign="center">
+          <a [routerLink]="['/mesas', 1]" class="font-bold"  nz-tooltip nzTooltipTitle="Ver Detalle">
+            MS25-00{{$index + 1}}
           </a>
-      </td>
-    </tr>
-    }
+        </td>
+        <td>{{mesa.nombre}}</td>
+        <td nzAlign="center">
+          <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar sesión">
+              <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+          </button>
+        </td>
+        <td nzAlign="center">
+          <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar ayuda memoria">
+              <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+          </button>
+        </td>
+        <td nzAlign="center">
+            <a [routerLink]="['/mesas', 1]">
+              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalle">
+                <span nz-icon nzType="eye" nzTheme="outline"></span>
+              </button>
+            </a>
+        </td>
+      </tr>
+      }
   </tbody>
 </nz-table>
 
