@@ -68,10 +68,12 @@ export default class PanelAcuerdosComponent {
 
   acuerdoNivelGobierno: PanelNivelGobierno = {
     gn: 0,
+    gr: 0,
     gl: 0
   }
   hitoNivelGobierno: PanelNivelGobierno = {
     gn: 0,
+    gr: 0,
     gl: 0
   }
 
@@ -222,7 +224,7 @@ export default class PanelAcuerdosComponent {
             this.totalSector.vigentes = this.totalSector.vigentes + item.vigentes
             this.totalSector.cumplidos = this.totalSector.cumplidos + item.cumplidos
           })
-
+          this.acuerdosPanelInfo.set(info)
           const ubigeoOrdenado = sortObject(resp.data.ubigeo, 'porcentaje', 'DESC')
           this.panelDepartamentos.set(ubigeoOrdenado)
           const sectoresOrdenado = sortObject(resp.data.sectores, 'porcentaje', 'DESC')
@@ -233,14 +235,17 @@ export default class PanelAcuerdosComponent {
 
   obtenerNivelDeGobierno(info: PanelInfoResponse[], panel: string) {
     const nivelGobierno = info.filter(item => item.condicion.split('_')[0] == 'proceso')
-    const nivelGobiernoGN = nivelGobierno.find(item => item.condicion == 'proceso_GN')
-    const nivelGobiernoGL = nivelGobierno.find(item => item.condicion == 'proceso_GL')
+    const nivelGobiernoGN = nivelGobierno.find(item => item.condicion == 'proceso_NG_GN')
+    const nivelGobiernoGR = nivelGobierno.find(item => item.condicion == 'proceso_NG_GR')
+    const nivelGobiernoGL = nivelGobierno.find(item => item.condicion == 'proceso_NG_GL')
 
     if (panel == 'acuerdo') {
       this.acuerdoNivelGobierno.gn = nivelGobiernoGN ? nivelGobiernoGN.cantidad : 0
+      this.acuerdoNivelGobierno.gr = nivelGobiernoGR ? nivelGobiernoGR.cantidad : 0
       this.acuerdoNivelGobierno.gl = nivelGobiernoGL ? nivelGobiernoGL.cantidad : 0
     } else if (panel == 'hito') {
       this.hitoNivelGobierno.gn = nivelGobiernoGN ? nivelGobiernoGN.cantidad : 0
+      this.hitoNivelGobierno.gr = nivelGobiernoGR ? nivelGobiernoGR.cantidad : 0
       this.hitoNivelGobierno.gl = nivelGobiernoGL ? nivelGobiernoGL.cantidad : 0
     }
   }
@@ -275,7 +280,6 @@ export default class PanelAcuerdosComponent {
           this.obtenerNivelDeGobierno(info, 'hito')
           this.obtenerTotalHitosCumplir()
           this.hitosPanelInfo.set(info)
-          this.acuerdosPanelInfo.set(info)
           this.hitosPorAcuerdoProceso.set(resp.data.acuerdos_proceso)
           this.hitosPorAcuerdoVencidos.set(resp.data.acuerdos_vencidos)
           this.hitosCumplimientos.set(resp.data.cumplimientos)
@@ -389,7 +393,7 @@ export default class PanelAcuerdosComponent {
   obtenerPorCumplir(tipo: string){
     let cantidad = 0
     if(tipo == 'acuerdos'){
-      this.acuerdosPanelInfo().find( item => {
+      this.acuerdosPanelInfo().find( item => {         
         if(item.condicion == 'en_proceso' || item.condicion == 'pendientes'){
           cantidad = cantidad + item.cantidad
         }
