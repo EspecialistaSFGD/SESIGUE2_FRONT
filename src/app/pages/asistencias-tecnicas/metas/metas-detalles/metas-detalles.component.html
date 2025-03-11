@@ -1,39 +1,67 @@
-<nz-table [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-  [nzData]="metas" [nzFrontPagination]="false" [nzLoading]="loadingData">
+@if(showForm){
+  <form [formGroup]="formMeta" nz-form nzLayout="horizontal" autocomplete="off" class="mb-4">
+    <div nz-row [nzGutter]="16">
+      <div nz-col nzSpan="8">
+        <nz-form-label nzFor="fecha">Mes</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker nzMode="month" id="fecha" class="datepicker-form-control" formControlName="fecha"
+            nzPlaceHolder="Seleccionar mes"></nz-date-picker>
+        </nz-form-control>
+      </div>
+      <div nz-col nzSpan="8">
+        <nz-form-label nzFor="meta">Meta</nz-form-label>
+        <nz-form-control nzSpan="null">
+          <input type="text" class="form-control" id="meta" placeholder="Ingrese la cantidad de meta"
+            formControlName="meta">
+        </nz-form-control>
+      </div>
+      <div nz-col nzSpan="8" class="flex items-end">
+        <button class="w-full bg-primary text-white p-1.5 rounded" (click)="showForm = false">
+          <span class="button-text text-sm">Actualizar</span>
+        </button>
+      </div>
+    </div>
+  </form>
+}
+<nz-table [nzTitle]="Header" nzShowSizeChanger nzSize="small" [nzData]="metas" [nzFrontPagination]="false"
+  [nzLoading]="loadingData">
   <thead>
     <tr>
       <th nzWidth="8px" nzAlign="center">N°</th>
       <th nzWidth="20px" nzAlign="center">Mes</th>
       <th nzWidth="20px" nzAlign="center">Meta</th>
+      <th nzWidth="20px" nzAlign="center">Atenciones</th>
       <th nzWidth="20px" nzAlign="center"></th>
     </tr>
   </thead>
 
   <tbody>
     @for(meta of metas; track $index){
-      <tr>
-        <td nzAlign="center">{{$index + 1}}</td>
-        <td nzAlign="center">{{meta.fecha | date:'MM/yyyy'}}</td>
-        <td nzAlign="center">{{meta.meta}}</td>
-        <td nzAlign="center">
-					<button nz-button nzType="link" nz-tooltip="{{ !enabledEdit(meta.fecha) ? 'Editar Meta' : ''}}" [disabled]="enabledEdit(meta.fecha)">
-						<span nz-icon nzType="edit" nzTheme="outline"></span>
-					</button>
-				</td>
-      </tr>
-      }
+    <tr>
+      <td nzAlign="center">{{$index + 1}}</td>
+      <td nzAlign="center">{{meta.fecha | date:'MM/yyyy'}}</td>
+      <td nzAlign="center">{{meta.meta}}</td>
+      <td nzAlign="center">{{meta.meta + 2}}</td>
+      <td nzAlign="center">
+        <button nz-button nzType="link" (click)="showForm = true" nz-tooltip="{{ !enabledEdit(meta.fecha) ? 'Editar Meta' : ''}}"
+          [disabled]="enabledEdit(meta.fecha)">
+          <span nz-icon nzType="edit" nzTheme="outline"></span>
+        </button>
+      </td>
+    </tr>
+    }
   </tbody>
 </nz-table>
 
 <ng-template #Header>
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
-    <p class="mb-2 sm:mb-0">Resultados {{metas.length}}</p>
+    <p class="mb-2 sm:mb-0">Metas {{metas.length}}</p>
     <div>
       <nz-space>
-            <button nz-button nzType="primary">
+        <!-- <button nz-button nzType="primary" (click)="showForm = true" [disabled]="!enabledNewMeta() || showForm">
             <span nz-icon nzType="plus" nzTheme="outline"></span>
             <span class="button-text">Nueva meta</span>
-          </button>
+          </button> -->
       </nz-space>
     </div>
   </div>
