@@ -5,6 +5,8 @@ import { UsuariosService } from '@core/services/usuarios.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { MetasDetallesComponent } from './metas-detalles/metas-detalles.component';
 
 @Component({
   selector: 'app-metas',
@@ -32,6 +34,7 @@ export default class MetasComponent {
 
   private authStore = inject(AuthService)
   private usuariosService = inject(UsuariosService)
+  private modal = inject(NzModalService);
 
   ngOnInit(): void {
     this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value)    
@@ -50,4 +53,21 @@ export default class MetasComponent {
         }
       })
   }
+  generateComponentModal(usuarioId: string, nombre: string): void{
+      const titleModal = nombre
+      const modal = this.modal.create<MetasDetallesComponent>({
+        nzTitle: titleModal,
+        nzContent: MetasDetallesComponent,
+        nzData: {
+          usuarioId
+        },
+        nzFooter: [
+          {
+            label: 'Cancelar',
+            type: 'default',
+            onClick: () => this.modal.closeAll(),
+          }
+        ]
+      })
+    }
 }

@@ -26,7 +26,6 @@ export class UsuariosService {
       //     }
       // }
         // .append("entidadId", entidad)
-        console.log(params);
         
       const headers = this.helpersServices.getAutorizationToken()
       return this.http.get<UsuariosResponses>(`${this.urlUsuario}/ListarUsuarios`, { headers, params })

@@ -19,7 +19,11 @@
         <td >{{usuario.nombresPersona}}</td>
         <td nzAlign="center">03/2025</td>
         <td nzAlign="center">32</td>
-        <td nzAlign="center"></td>
+        <td nzAlign="center">
+          <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles" (click)="generateComponentModal(usuario.codigoUsuario!, usuario.nombresPersona)">
+            <span nz-icon nzType="eye" nzTheme="outline"></span>
+          </button>
+        </td>
       </tr>
       }
   </tbody>
