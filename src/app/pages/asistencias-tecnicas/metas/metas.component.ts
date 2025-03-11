@@ -57,6 +57,7 @@ export default class MetasComponent {
       const titleModal = nombre
       const modal = this.modal.create<MetasDetallesComponent>({
         nzTitle: titleModal,
+        nzWidth: '50%',
         nzContent: MetasDetallesComponent,
         nzData: {
           usuarioId

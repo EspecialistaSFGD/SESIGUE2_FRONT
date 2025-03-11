@@ -1,5 +1,5 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="atenciones" />
-<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+<nz-table [nzTitle]="Header" nzShowSizeChanger nzSize="small"
   [nzData]="usuarios()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
   [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
   <thead>
