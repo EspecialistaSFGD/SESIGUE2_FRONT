@@ -6,6 +6,8 @@
 				<nz-date-picker nzMode="month" id="fecha" class="w-full datepicker-form-control" formControlName="fecha"
 					nzPlaceHolder="Seleccionar mes"></nz-date-picker>
 			</nz-form-control>
+			<div class="text-danger" *ngIf="alertMessageError('fecha')">
+				{{msgErrorControl('fecha','Fecha')}}</div>
 		</div>
 	</div>
 
@@ -17,6 +19,8 @@
 					<input type="text" class="w-full form-control" id="meta" placeholder="Ingrese la cantidad de meta"
 						formControlName="meta">
 				</nz-form-control>
+				<div class="text-danger" *ngIf="alertMessageErrorTwoNivel(i,'meta')">
+					{{msgErrorControlTwoNivel(i,'meta','Meta')}}</div>
 			</div>
 		</div>
 	</div>

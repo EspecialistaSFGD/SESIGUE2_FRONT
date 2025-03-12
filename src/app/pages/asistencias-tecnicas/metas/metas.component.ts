@@ -92,9 +92,13 @@ export default class MetasComponent {
           label: 'Agregar Meta',
           type: 'primary',
           onClick: (componentResp) => {
-            const formNewmeta = componentResp?.formMeta.value
-            console.log('actualizar o guardar formulario');
-            console.log(formNewmeta);
+            const formNewmeta = componentResp!.formMeta
+            console.log('guardar formulario');
+            console.log(formNewmeta.value);
+
+            if (formNewmeta.invalid) {
+              return formNewmeta.markAllAsTouched()
+            }
             
             this.modal.closeAll()
             // return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
