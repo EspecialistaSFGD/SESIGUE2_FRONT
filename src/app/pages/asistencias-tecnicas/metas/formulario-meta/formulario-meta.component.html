@@ -1,1 +1,23 @@
-<p>formulario-meta works!</p>
+<form [formGroup]="formMeta" class="flex flex-col gap-3" autocomplete="off">
+	<div nz-row>
+		<div nz-col nzSpan="24">
+			<nz-form-label nzFor="fecha">Mes</nz-form-label>
+			<nz-form-control>
+				<nz-date-picker nzMode="month" id="fecha" class="w-full datepicker-form-control" formControlName="fecha"
+					nzPlaceHolder="Seleccionar mes"></nz-date-picker>
+			</nz-form-control>
+		</div>
+	</div>
+
+	<div formArrayName="usuarios" class="grid grid-cols-4 gap-3">
+		<div class="flex gap-4" *ngFor="let usuario of usuarios.controls; let i = index" [formGroupName]="i">
+			<div class="w-full">
+				<nz-form-label nzFor="meta">{{usuario.get('nombre')?.value}}</nz-form-label>
+				<nz-form-control nzSpan="null">
+					<input type="text" class="w-full form-control" id="meta" placeholder="Ingrese la cantidad de meta"
+						formControlName="meta">
+				</nz-form-control>
+			</div>
+		</div>
+	</div>
+</form>

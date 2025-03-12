@@ -76,15 +76,32 @@ export default class MetasComponent {
 
   modalNuevaMeta(){
     const modal = this.modal.create<FormularioMetaComponent>({
-      nzTitle: 'Agregar nueva meta',
+      nzTitle: 'Nueva Meta',
       nzWidth: '50%',
       nzContent: FormularioMetaComponent,
-      nzData: {},
+      nzData: {
+        usuarios: this.usuarios()
+      },
       nzFooter: [
         {
           label: 'Cancelar',
           type: 'default',
           onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Agregar Meta',
+          type: 'primary',
+          onClick: (componentResp) => {
+            const formNewmeta = componentResp?.formMeta.value
+            console.log('actualizar o guardar formulario');
+            console.log(formNewmeta);
+            
+            this.modal.closeAll()
+            // return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
+            //   this.traerAcuerdos({});
+            //   this.modal.closeAll();
+            // });
+          }
         }
       ]
     })

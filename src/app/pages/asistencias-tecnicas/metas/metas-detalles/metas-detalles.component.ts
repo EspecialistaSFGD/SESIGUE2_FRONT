@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MetaToDetails } from '@core/interfaces/meta.interface';
+import { MetaToDetails } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
@@ -26,8 +26,8 @@ export class MetasDetallesComponent {
   readonly meta: MetaToDetails = inject(NZ_MODAL_DATA);
   private fb = inject(FormBuilder)
 
-  public formMeta: FormGroup = this.fb.group({
-      fecha: [{ value: '', disabled: false }, Validators.required],
+  formMeta: FormGroup = this.fb.group({
+      fecha: ['', Validators.required],
       meta: ['', Validators.required],
   })
 
