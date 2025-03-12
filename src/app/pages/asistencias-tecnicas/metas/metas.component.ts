@@ -7,6 +7,7 @@ import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { MetasDetallesComponent } from './metas-detalles/metas-detalles.component';
+import { FormularioMetaComponent } from './formulario-meta/formulario-meta.component';
 
 @Component({
   selector: 'app-metas',
@@ -53,22 +54,39 @@ export default class MetasComponent {
         }
       })
   }
-  generateComponentModal(usuarioId: string, nombre: string): void{
-      const titleModal = nombre
-      const modal = this.modal.create<MetasDetallesComponent>({
-        nzTitle: titleModal,
-        nzWidth: '50%',
-        nzContent: MetasDetallesComponent,
-        nzData: {
-          usuarioId
-        },
-        nzFooter: [
-          {
-            label: 'Cancelar',
-            type: 'default',
-            onClick: () => this.modal.closeAll(),
-          }
-        ]
-      })
-    }
+
+  modalMetaDetalle(usuarioId: string, nombre: string): void{
+    const titleModal = nombre
+    const modal = this.modal.create<MetasDetallesComponent>({
+      nzTitle: titleModal,
+      nzWidth: '50%',
+      nzContent: MetasDetallesComponent,
+      nzData: {
+        usuarioId
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        }
+      ]
+    })
+  }
+
+  modalNuevaMeta(){
+    const modal = this.modal.create<FormularioMetaComponent>({
+      nzTitle: 'Agregar nueva meta',
+      nzWidth: '50%',
+      nzContent: FormularioMetaComponent,
+      nzData: {},
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        }
+      ]
+    })
+  }
 }

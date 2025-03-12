@@ -27,7 +27,7 @@ export class MetasDetallesComponent {
   private fb = inject(FormBuilder)
 
   public formMeta: FormGroup = this.fb.group({
-      fecha: ['', Validators.required],
+      fecha: [{ value: '', disabled: false }, Validators.required],
       meta: ['', Validators.required],
   })
 
@@ -47,6 +47,13 @@ export class MetasDetallesComponent {
     }
   }
 
+  submitForm(meta: MetasResp){
+    this.showForm = true
+    this.formMeta.reset(meta)
+    const controlFecha = this.formMeta.get('fecha')
+    controlFecha?.disable()
+  }
+
   enabledEdit(fecha: Date){
     const currentDate = new Date();
     return !(currentDate.getMonth() === fecha.getMonth() && currentDate.getFullYear() === fecha.getFullYear());
@@ -54,7 +61,6 @@ export class MetasDetallesComponent {
 
   enabledNewMeta(){
     const lastDate = this.metas[0].fecha
-    // this.enabledEdit(lastDate)
     return this.enabledEdit(lastDate)
   }
 }

@@ -43,7 +43,7 @@
       <td nzAlign="center">{{meta.meta}}</td>
       <td nzAlign="center">{{meta.meta + 2}}</td>
       <td nzAlign="center">
-        <button nz-button nzType="link" (click)="showForm = true" nz-tooltip="{{ !enabledEdit(meta.fecha) ? 'Editar Meta' : ''}}"
+        <button nz-button nzType="link" (click)="submitForm(meta)" nz-tooltip="{{ !enabledEdit(meta.fecha) ? 'Editar Meta' : ''}}"
           [disabled]="enabledEdit(meta.fecha)">
           <span nz-icon nzType="edit" nzTheme="outline"></span>
         </button>
