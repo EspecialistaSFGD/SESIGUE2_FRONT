@@ -14,31 +14,31 @@
 				[nzPageIndex]="paginationDetails.currentPage!" (nzQueryParams)="paramsDetailChange($event)">
 				<thead>
 					<tr>
-						<th nzLeft nzWidth="100px">Nivel de gobierno</th>
-						<th nzLeft nzWidth="100px">Departamento</th>
-						<th nzLeft nzWidth="100px">Provincia</th>
-						<th nzLeft nzWidth="100px">Distrito</th>
-						<th nzWidth="120px">Pliego</th>
-						<th nzWidth="150px" nzAlign="center">CUI</th>
-						<th nzWidth="150px" nzAlign="center">Transferencias</th>
-						<th nzWidth="150px" nzAlign="center">Dispositivo legal</th>
+						<th nzLeft nzWidth="100px" nzColumnKey="nivel_gobierno" [nzSortFn]="true">Nivel de gobierno</th>
+						<th nzLeft nzWidth="100px" nzColumnKey="departamento" [nzSortFn]="true">Departamento</th>
+						<th nzLeft nzWidth="100px" nzColumnKey="provincia" [nzSortFn]="true">Provincia</th>
+						<th nzLeft nzWidth="100px" nzColumnKey="distrito" [nzSortFn]="true">Distrito</th>
+						<th nzWidth="120px" nzColumnKey="pliego" [nzSortFn]="true">Pliego</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="monto" [nzSortFn]="true">Transferencias</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="resolucion" [nzSortFn]="true">Dispositivo legal</th>
 						<th nzWidth="150px" nzAlign="center">Fecha de publicación</th>
-						<th nzWidth="150px" nzAlign="center">Periodo</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="fecha_publicacion" [nzSortFn]="true">Periodo</th>
 					</tr>
 				</thead>
 				<tbody>
 					@for(detail of transferDetails(); track $index){
 					<tr>
 						<td>{{detail.nivel_gobierno}}</td>
-						<td>{{detail.departamento}}</td>
-						<td>{{detail.provincia}}</td>
-						<td>{{detail.distrito}}</td>
-						<td>{{detail.pliego}}</td>
+						<td>{{detail.ue_departamento}}</td>
+						<td>{{detail.ue_provincia}}</td>
+						<td>{{detail.ue_distrito}}</td>
+						<td>{{detail.pliego_matriz}}</td>
 						<td nzAlign="center">{{detail.codigo_unico}}</td>
-						<td nzAlign="center">{{detail.monto}}</td>
+						<td nzAlign="center">{{detail.transferencia}}</td>
 						<td nzAlign="center">{{detail.resolucion}}</td>
-						<td nzAlign="center">{{detail.fecha_publicacion | date : 'dd/MM/yyyy'}}</td>
-						<td nzAlign="center">{{detail.fecha_publicacion | date : 'yyyy'}}</td>
+						<td nzAlign="center">{{detail.fecha_publicacion}}</td>
+						<td nzAlign="center">{{detail.anio }}</td>
 					</tr>
 					}
 				</tbody>
@@ -95,7 +95,7 @@
 					<nz-select nzPlaceHolder="Seleccionar periodo" id="periodo" class="select-form-control"
 						(ngModelChange)="changePeriod()" formControlName="periodo" nzAllowClear nzShowSearch>
 						@for (periodo of generarPeriodos(); track $index) {
-						<nz-option [nzValue]="periodo" nzLabel="{{periodo}}"></nz-option>
+						<nz-option [nzValue]="periodo" [nzLabel]="periodo"></nz-option>
 						}
 					</nz-select>
 					<div class="text-danger" *ngIf="alertMessageError('periodo')">
@@ -103,27 +103,49 @@
 				</nz-form-control>
 			</div>
 			<div class="flex flex-col">
-				<label for="tipoProducto">Tipo de producto</label>
+				<label for="tipoProducto">Tipo de inversión</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar tipo producto" id="tipoProducto" class="select-form-control"
 						(ngModelChange)="changeTipoProducto()" formControlName="tipoProducto" nzAllowClear nzShowSearch>
 						@for (producto of tipoProductos; track $index) {
-						<nz-option [nzValue]="producto.toUpperCase()" nzLabel="{{producto | titlecase}}"></nz-option>
+						<nz-option [nzValue]="producto" nzLabel="{{producto | titlecase}}"></nz-option>
 						}
 					</nz-select>
 					<div class="text-danger" *ngIf="alertMessageError('tipoProducto')">
 						{{msgErrorControl('tipoProducto','tipo de producto')}}</div>
 				</nz-form-control>
 			</div>
+			<div class="flex flex-col">
+				<label for="dispositivo">Dispositivo</label>
+				<nz-form-control nzSpan="null">
+				  <input nz-input type="text" class="form-control" id="dispositivo" placeholder="Ingrese el dispositivo aquí" (keyup)="changeDispositivo($event)"
+					formControlName="dispositivo">
+				</nz-form-control>
+			</div>
+			<div class="flex flex-col">
+				<label for="cui">CUI</label>
+				<nz-form-control nzSpan="null">
+				  <input nz-input type="text" class="form-control" id="cui" placeholder="Ingrese el cui aquí" (keyup)="changeCui($event)"
+					formControlName="cui">
+				</nz-form-control>
+			</div>
 			@if(filtroUbigeo){
 			<div class="flex flex-col">
 				<!-- <label>Tipo ubigeo</label> -->
-				<nz-radio-group class="radio-form-control" formControlName="tipoUbigeo"
+				<!-- <nz-radio-group class="radio-form-control" formControlName="tipoUbigeo"
 					(ngModelChange)="changeUbigeoTipo()">
 					@for (tipo of tipoUbigeos; track $index){
 					<label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
 					}
-				</nz-radio-group>
+				</nz-radio-group> -->
+				<div class="flex gap-4 px-1">
+					@for (tipo of tipoUbigeos; track $index){
+						<label class="flex gap-3">
+							<input type="radio" class="form-control" formControlName="tipoUbigeo" [value]="tipo" (change)="changeUbigeoTipo()">
+							{{tipo | titlecase }}
+						</label>
+					}
+				</div>
 				<div class="text-danger" *ngIf="alertMessageError('tipoUbigeo')">
 					{{msgErrorControl('tipoUbigeo','Tipo ubigeo')}}
 				</div>
@@ -132,7 +154,7 @@
 				<label for="departamento">Departamento</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar departamento" id="departamento" class="select-form-control"
-						formControlName="departamento" (ngModelChange)="obtenerUbigeoDepartamento($event)" nzAllowClear
+						formControlName="departamento" (ngModelChange)="obtenerUbigeoDepartamento()" nzAllowClear
 						nzShowSearch>
 						@for (departamento of departamentos(); track $index) {
 						<nz-option [nzValue]="departamento.departamentoId"
@@ -147,8 +169,8 @@
 				<label for="provincia">Provincias</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
-						formControlName="provincia" (ngModelChange)="obtenerUbigeoProvincia($event)"
-						[nzDisabled]="provinceDisabled" nzAllowClear nzShowSearch>
+						formControlName="provincia"
+						[nzDisabled]="provinceDisabled" (ngModelChange)="obtenerUbigeoProvincia()" nzAllowClear nzShowSearch>
 						@for (provincia of provincias(); track $index) {
 						<nz-option [nzValue]="provincia.provinciaId" nzLabel="{{provincia.provincia}}"></nz-option>
 						}
@@ -161,8 +183,8 @@
 				<label for="distritos">Distritos</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" class="select-form-control"
-						formControlName="distrito" [nzDisabled]="districtDisabled"
-						(ngModelChange)="obtenerUbigeoDistrito($event)" nzAllowClear nzShowSearch>
+						formControlName="distrito" [nzDisabled]="districtDisabled" (ngModelChange)="obtenerUbigeoDistrito()"
+						nzAllowClear nzShowSearch>
 						@for (distrito of distritos(); track $index) {
 						<nz-option [nzValue]="distrito.distritoId" nzLabel="{{distrito.distrito}}"></nz-option>
 						}

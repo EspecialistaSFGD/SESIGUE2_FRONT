@@ -144,6 +144,12 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
     &:disabled {
         @apply cursor-not-allowed border-gray-400 hover:border-gray-400 focus:border-gray-400 text-gray-400;
     }
+
+    &[type="radio"] {
+        cursor: pointer;
+        transform: scale(1.6); /* Ajusta el tamaño */
+        width: 16px;
+    }
 }
 
 .select-form-control {

@@ -23,7 +23,9 @@ export interface Pagination {
   usuarioId?: string,
   ubigeo?: string,
   total?: number,
-  estado?: string
+  estado?: string,
+  dispositivo?: string,
+  cui?: string
 }
 
 export interface PaginationPanel {
