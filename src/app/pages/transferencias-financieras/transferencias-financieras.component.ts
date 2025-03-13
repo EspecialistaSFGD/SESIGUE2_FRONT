@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { generateRangeNumber, typeErrorControl } from '@core/helpers';
-import { EntidadResponse, Pagination, PaginationTransferences, TipoEntidadResponse, TransferenciaFinancieraResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { typeErrorControl } from '@core/helpers';
+import { Pagination, PaginationTransferences, TipoEntidadResponse, TransferenciaFinancieraResolucionResponse, TransferenciaFinancieraResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, TipoEntidadesService, TransferenciasFinancierasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -30,6 +30,7 @@ export class TransferenciasFinancierasComponent {
 
   private timeout: any;
 
+  public transferencesResolution = signal<TransferenciaFinancieraResolucionResponse[]>([])
   public transferDetails = signal<TransferenciaFinancieraResponse[]>([])
   public transferResume = signal<any>([])
 
@@ -107,7 +108,7 @@ export class TransferenciasFinancierasComponent {
   getParams() {
     this.route.queryParams.subscribe(params => {      
       if (Object.keys(params).length > 0) {
-        const periodo = Number(params['periodo']) ?? null
+        const periodo = Number(params['periodo']) ?? this.currentYear
         
         const ubigeoParams = params['ubigeo'] ?? null
         let departamento = ''
@@ -127,6 +128,7 @@ export class TransferenciasFinancierasComponent {
         
         this.formFilter.patchValue({...params, periodo, departamento, provincia, distrito})
         const paginationTransferences: PaginationTransferences = {...params }
+        this.obtenerTransferenciasResolucion(periodo)
         this.obtenerTransferenciasDetail(paginationTransferences)
       }
       // if (Object.keys(params).length > 0) {
@@ -193,7 +195,15 @@ export class TransferenciasFinancierasComponent {
     this.getParams()
   }
 
+  obtenerTransferenciasResolucion(periodo: number){    
+    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasResolucion(periodo)
+      .subscribe( resp => {
+        this.transferencesResolution.set(resp.data)
+      })
+  }
+
   obtenerTransferenciasDetail(pagination: PaginationTransferences) {
+    this.loadingDetail = true
     this.transferenciaFinancieraService.obtenerTransferenciasFinancierasDetalles(this.paginationDetails, pagination)
       .subscribe(resp => {
         if (resp.success == true) {
@@ -284,37 +294,9 @@ export class TransferenciasFinancierasComponent {
     this.paramsNavigate({ ubigeo })
   }
 
-  // enabledUbigeo(){
-  //   const tipoControlvalue = this.formFilter.get('tipo')
-  //   const tipoUbigeoValue = this.formFilter.get('tipoUbigeo')
-
-  //   return tipoControlvalue?.value == 'ubigeo' && tipoUbigeoValue?.value == 'pliego'
-  // }
-
-  // obtenerEntidadPorUbigeo(ubigeo: string) {
-  //   const tipo = this.formFilter.get('tipoUbigeo')
-  //   const ubigeoForm = this.formFilter.get('ubigeo')
-  //   const entidadForm = this.formFilter.get('entidad')
-  //   this.entidadService.getEntidadPorUbigeo(ubigeo)
-  //     .subscribe(resp => {
-  //       if (resp.success == true) {
-  //         const entidad = resp.data[0]
-  //         ubigeoForm?.setValue(entidad.ubigeo)
-  //         entidadForm?.setValue(entidad.entidad)
-  //         // const ubigeo = tipo?.value == 'territorio' ? entidad.ubigeo : entidad.entidad
-  //         // this.formFilter.get('ubigeo')?.setValue(ubigeo)
-  //         // const queryParams = { 'ubigeo': ubigeo }
-  //         // this.paramsNavigate(queryParams)
-  //       } else {
-  //         ubigeoForm?.setValue('')
-  //         entidadForm?.setValue('')
-  //       }
-  //     })
-  // }
-
   changePeriod() {
-    const period = this.formFilter.get('periodo')?.value
-    let queryParams = { 'periodo': period }
+    const periodo = this.formFilter.get('periodo')?.value
+    let queryParams = { periodo, dispositivo: '' }
     this.paramsNavigate(queryParams)
   }
 
@@ -326,54 +308,7 @@ export class TransferenciasFinancierasComponent {
   changeTipoEntidad() {
     const tipoEntidad = this.formFilter.get('tipoEntidadId')?.value
     this.paramsNavigate({ tipoEntidad })
-    // const tipo = this.formFilter.get('tipo')
-    // const mancomunidadControl = this.formFilter.get('mancomunidad')
-
-    // mancomunidadControl?.setValue('')
-    // if (tipo?.value == 'mancomunidad' && this.mancomunidadesAbrev.includes(tipoEntidad)) {
-    //   mancomunidadControl?.enable()
-    //   // this.obtenerMancomunidades()
-    //   let mancomunidad = mancomunidadControl?.value
-    //   mancomunidad = mancomunidad ? mancomunidad : null
-    //   this.paramsNavigate({ tipoEntidad, mancomunidad })
-    // } else {
-    //   mancomunidadControl?.disable()
-    //   this.paramsNavigate({ tipoEntidad, 'mancomunidad': null })
-    // }
   }
-
-  // obtenerMancomunidades() {
-  //   const tipoEntidad = this.formFilter.get('tipoEntidadId');
-  //   const tipoMancomunidad = tipoEntidad?.value
-
-  //   if (this.mancomunidadesAbrev.includes(tipoMancomunidad)) {
-  //     const pagination: Pagination = {
-  //       code: 1,
-  //       columnSort: 'entidad',
-  //       typeSort: 'ASC',
-  //       pageSize: 300,
-  //       currentPage: 1,
-  //       total: 10
-  //     }
-
-  //     this.entidadService.getMancomunidades(tipoMancomunidad, pagination)
-  //       .subscribe(resp => {
-  //         if (resp.success == true) {
-  //           if (resp.data.length > 0) {
-  //             const mancomunidad: EntidadResponse[] = resp.data
-  //             this.mancomunidades.set(mancomunidad)
-  //           }
-  //         }
-  //       })
-  //   }
-  // }
-
-  // changeMancomunidad(value: string) {
-  //   if (value) {
-  //     this.paramsNavigate({ 'mancomunidad': value })
-  //   }
-
-  // }
 
   setFilterKind(value: string) {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')
@@ -425,30 +360,19 @@ export class TransferenciasFinancierasComponent {
 
   onCloseDrawer() {
     this.isDrawervisible = false;
-    // this.changeUbigeoTipo()
   }
 
   setParamsTipoUbigeo() {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value
     const ubigeo = this.formFilter.get('ubigeo')?.value
-    // const period = this.formFilter.get('periodo')?.value
-    // let queryParams = { 'periodo': period }
-    // this.paramsNavigate(queryParams)
     this.paramsNavigate({ tipoUbigeo, ubigeo })
   }
 
-  changeDispositivo(event: any){
-    const dispositivoControl = this.formFilter.get('dispositivo')
-    clearTimeout(this.timeout);
-    var $this = this;
-    this.timeout = setTimeout(function () {      
-      if (event.keyCode != 13) {
-        const dispositivo = event.target.value        
-        $this.paramsNavigate({ dispositivo })    
-      }
-    }, 500);
+  changeDispositivo(){
+    const dispositivo = this.formFilter.get('dispositivo')?.value
+    this.paramsNavigate({ dispositivo })
   }
-
+  
   changeCui(event: any){
     const cuiControl = this.formFilter.get('cui')
     clearTimeout(this.timeout);
@@ -464,8 +388,6 @@ export class TransferenciasFinancierasComponent {
   changeUbigeoTipo() {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value
     const ubigeo = this.formFilter.get('ubigeo')?.value
-    // this.provinceDisabled = tipoUbigeo == 'pliego'
-    // this.districtDisabled = tipoUbigeo == 'pliego'
     this.disabledUbigeo()
     if (ubigeo) {
       this.paramsNavigate({ tipoUbigeo, ubigeo })

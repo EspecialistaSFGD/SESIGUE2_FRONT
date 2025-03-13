@@ -4,6 +4,14 @@ export interface TransferenciasFinancierasResponses extends DataResponses {
 	data: TransferenciaFinancieraResponse[]
 }
 
+export interface TransferenciasFinancierasResolucionResponses extends DataResponses {
+	data: TransferenciaFinancieraResolucionResponse[]
+}
+
+export interface TransferenciaFinancieraResolucionResponse {
+	resolucion: string
+}
+
 export interface TransferenciaFinancieraResponse {
 	// resolucion: string,
 	// presidente: string,

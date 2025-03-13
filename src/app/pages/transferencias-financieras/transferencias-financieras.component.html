@@ -116,10 +116,13 @@
 				</nz-form-control>
 			</div>
 			<div class="flex flex-col">
-				<label for="dispositivo">Dispositivo</label>
+				<label for="dispositivo">Dispositivo legal</label>
 				<nz-form-control nzSpan="null">
-				  <input nz-input type="text" class="form-control" id="dispositivo" placeholder="Ingrese el dispositivo aquí" (keyup)="changeDispositivo($event)"
-					formControlName="dispositivo">
+					<nz-select nzPlaceHolder="Seleccionar dispositivo" id="dispositivo" class="select-form-control" (ngModelChange)="changeDispositivo()" formControlName="dispositivo" nzAllowClear nzShowSearch>
+						@for (resolucion of transferencesResolution(); track $index) {
+						<nz-option [nzValue]="resolucion.resolucion" nzLabel="{{resolucion.resolucion}}"></nz-option>
+						}
+					</nz-select>
 				</nz-form-control>
 			</div>
 			<div class="flex flex-col">
@@ -132,12 +135,6 @@
 			@if(filtroUbigeo){
 			<div class="flex flex-col">
 				<!-- <label>Tipo ubigeo</label> -->
-				<!-- <nz-radio-group class="radio-form-control" formControlName="tipoUbigeo"
-					(ngModelChange)="changeUbigeoTipo()">
-					@for (tipo of tipoUbigeos; track $index){
-					<label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
-					}
-				</nz-radio-group> -->
 				<div class="flex gap-4 px-1">
 					@for (tipo of tipoUbigeos; track $index){
 						<label class="flex gap-3">
