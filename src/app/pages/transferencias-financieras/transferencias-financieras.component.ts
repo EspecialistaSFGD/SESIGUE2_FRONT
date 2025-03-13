@@ -103,14 +103,18 @@ export class TransferenciasFinancierasComponent {
 
   valueChangeForm(){
     // this.obtenerUbigeoDepartamento()
-    
   }
 
   getParams() {
     this.route.queryParams.subscribe(params => {      
       if (Object.keys(params).length > 0) {
+        const filterStorage = localStorage.getItem('transferencesFilters')
+        if(filterStorage){
+          params = JSON.parse(filterStorage)
+        }
         const periodo = Number(params['periodo']) ?? this.currentYear
         const ubigeoParams = params['ubigeo'] ?? null
+
         let departamento = ''
         let provincia = ''
         let distrito = ''
@@ -125,7 +129,7 @@ export class TransferenciasFinancierasComponent {
             distrito = ubigeoParams.slice(0,6)
           }
         }
-
+     
         this.paramsFilters = params
         
         this.formFilter.patchValue({...params, periodo, departamento, provincia, distrito})
@@ -272,8 +276,8 @@ export class TransferenciasFinancierasComponent {
     if(departamentovalue){
       this.obtenerProvincias(departamentovalue)
     }
-    const ubigeo = departamentovalue ? departamentovalue : undefined
-    this.paramsNavigate({ ubigeo  })
+    const ubigeo = departamentovalue ? departamentovalue : null    
+    this.paramsNavigate({ ubigeo })
   }
 
   obtenerUbigeoProvincia() {
@@ -283,9 +287,9 @@ export class TransferenciasFinancierasComponent {
     if(provinciaValue){
       const setProvincia = provinciaValue.slice(0,4)
       this.obtenerDistritos(setProvincia)
-    }
+    }    
     this.paramsNavigate({ ubigeo })
-    this.disabledUbigeo()
+    this.disabledControlUbigeo()
   }
 
   obtenerUbigeoDistrito() {
@@ -346,8 +350,6 @@ export class TransferenciasFinancierasComponent {
   }
 
   paramsNavigate(queryParams: Params) {
-    console.log(queryParams);
-    
     this.router.navigate(
       [],
       {
@@ -364,10 +366,12 @@ export class TransferenciasFinancierasComponent {
 
   deleteFilters(){
     localStorage.removeItem('transferencesFilters')
+    this.onCloseDrawer()
   }
 
   saveFilters(){    
     localStorage.setItem( 'transferencesFilters', JSON.stringify(this.paramsFilters) )
+    this.onCloseDrawer()
   }
 
   onCloseDrawer() {
@@ -401,17 +405,12 @@ export class TransferenciasFinancierasComponent {
   }
 
   changeUbigeoTipo() {
-    const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value
-    const ubigeo = this.formFilter.get('ubigeo')?.value
-    this.disabledUbigeo()
-    if (ubigeo) {
-      this.paramsNavigate({ tipoUbigeo, ubigeo })
-    } else {
-      this.paramsNavigate({ tipoUbigeo })
-    }
+    const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value    
+    this.disabledControlUbigeo()
+    this.paramsNavigate({ tipoUbigeo })
   }
 
-  disabledUbigeo(){
+  disabledControlUbigeo(){
     const tipoUbigeoValue = this.formFilter.get('tipoUbigeo')?.value
     const departamentoValue = this.formFilter.get('departamento')?.value
     const provinciaValue = this.formFilter.get('provincia')?.value
