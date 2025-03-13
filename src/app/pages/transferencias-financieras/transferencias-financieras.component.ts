@@ -27,6 +27,7 @@ export class TransferenciasFinancierasComponent {
   isDrawervisible: boolean = false;
   filtroUbigeo: boolean = true
   loadingDetail: boolean = true
+  paramsFilters: any
 
   private timeout: any;
 
@@ -109,7 +110,6 @@ export class TransferenciasFinancierasComponent {
     this.route.queryParams.subscribe(params => {      
       if (Object.keys(params).length > 0) {
         const periodo = Number(params['periodo']) ?? this.currentYear
-        
         const ubigeoParams = params['ubigeo'] ?? null
         let departamento = ''
         let provincia = ''
@@ -125,6 +125,8 @@ export class TransferenciasFinancierasComponent {
             distrito = ubigeoParams.slice(0,6)
           }
         }
+
+        this.paramsFilters = params
         
         this.formFilter.patchValue({...params, periodo, departamento, provincia, distrito})
         const paginationTransferences: PaginationTransferences = {...params }
@@ -270,7 +272,7 @@ export class TransferenciasFinancierasComponent {
     if(departamentovalue){
       this.obtenerProvincias(departamentovalue)
     }
-    const ubigeo = departamentovalue ? departamentovalue : null
+    const ubigeo = departamentovalue ? departamentovalue : undefined
     this.paramsNavigate({ ubigeo  })
   }
 
@@ -344,6 +346,8 @@ export class TransferenciasFinancierasComponent {
   }
 
   paramsNavigate(queryParams: Params) {
+    console.log(queryParams);
+    
     this.router.navigate(
       [],
       {
@@ -356,6 +360,14 @@ export class TransferenciasFinancierasComponent {
 
   onOpenDrawer() {
     this.isDrawervisible = true
+  }
+
+  deleteFilters(){
+    localStorage.removeItem('transferencesFilters')
+  }
+
+  saveFilters(){    
+    localStorage.setItem( 'transferencesFilters', JSON.stringify(this.paramsFilters) )
   }
 
   onCloseDrawer() {
@@ -375,6 +387,9 @@ export class TransferenciasFinancierasComponent {
   
   changeCui(event: any){
     const cuiControl = this.formFilter.get('cui')
+    const values = cuiControl?.value.slice(0,7)
+    cuiControl?.setValue(values)
+
     clearTimeout(this.timeout);
     var $this = this;
     this.timeout = setTimeout(function () {      
