@@ -101,7 +101,7 @@
 	<form *nzDrawerContent [formGroup]="formFilter">
 		<div class="flex flex-col w-full gap-4">
 			<div class="flex flex-col">
-				<label>Tipo</label>
+				<label class="text-sm">Tipo</label>
 				<nz-radio-group class="radio-form-control" formControlName="tipo"
 					(ngModelChange)="setFilterKind($event)">
 					@for (tipo of tipos; track $index){
@@ -112,7 +112,7 @@
 				</div>
 			</div>
 			<div class="flex flex-col">
-				<label for="periodo">Periodo</label>
+				<label class="text-sm" for="periodo">Periodo</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar periodo" id="periodo" class="select-form-control"
 						(ngModelChange)="changePeriod()" formControlName="periodo" nzAllowClear nzShowSearch>
@@ -125,7 +125,7 @@
 				</nz-form-control>
 			</div>
 			<div class="flex flex-col">
-				<label for="tipoProducto">Tipo de inversión</label>
+				<label class="text-sm" for="tipoProducto">Tipo de inversión</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar tipo producto" id="tipoProducto" class="select-form-control"
 						(ngModelChange)="changeTipoProducto()" formControlName="tipoProducto" nzAllowClear nzShowSearch>
@@ -138,7 +138,7 @@
 				</nz-form-control>
 			</div>
 			<div class="flex flex-col">
-				<label for="dispositivo">Dispositivo legal</label>
+				<label class="text-sm" for="dispositivo">Dispositivo legal</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar dispositivo" id="dispositivo" class="select-form-control" (ngModelChange)="changeDispositivo()" formControlName="dispositivo" nzAllowClear nzShowSearch>
 						@for (resolucion of transferencesResolution(); track $index) {
@@ -148,7 +148,7 @@
 				</nz-form-control>
 			</div>
 			<div class="flex flex-col">
-				<label for="cui">CUI</label>
+				<label class="text-sm" for="cui">CUI</label>
 				<nz-form-control nzSpan="null">
 				  <input nz-input type="text" class="form-control" id="cui" placeholder="Ingrese el cui aquí" (keyup)="changeCui($event)"
 					formControlName="cui">
@@ -169,35 +169,24 @@
 				</div>
 			</div>
 			<div class="flex flex-col">
-				<label for="departamento">Departamento</label>
-				<!-- <select nzPlaceHolder="Seleccionar departamento" id="departamento" class="select-form-control"
-						formControlName="departamento" (change)="obtenerUbigeoDepartamento()" >
-						@for (departamento of departamentos(); track $index) {
-						<option [value]="departamento.departamentoId">{{departamento.departamento}}</option>
-						}
-					</select>	 -->
-				<nz-form-control nzSpan="null">
-					<nz-select nzPlaceHolder="Seleccionar departamento" id="departamento" class="select-form-control"
-						formControlName="departamento" (ngModelChange)="obtenerUbigeoDepartamento()" nzAllowClear
-						nzShowSearch>
-						@for (departamento of departamentos(); track $index) {
-						<nz-option [nzValue]="departamento.departamentoId"
-							nzLabel="{{departamento.departamento}}"></nz-option>
-						}
-					</nz-select>					
-					<div class="text-danger" *ngIf="alertMessageError('departamento')">
-						{{msgErrorControl('departamento','Departamento')}}</div>
-				</nz-form-control>
+				<label class="text-sm" for="departamento">Departamentos</label>
+				<p-dropdown 
+					[options]="departamentos()" 
+					formControlName="departamento"
+					optionLabel="departamento"
+					[showClear]="true" 
+					placeholder="Select departamento"
+					(onChange)="obtenerUbigeoDepartamento()"/>
 			</div>
 			<div class="flex flex-col">
-				<label for="provincia">Provincias</label>
+				<label class="text-sm" for="provincia">Provincias</label>
 				<!-- <select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
 						formControlName="provincia" (change)="obtenerUbigeoProvincia()">
 						@for (provincia of provincias(); track $index) {
 						<option [value]="provincia.provinciaId">{{provincia.provincia}}</option>
 						}
 					</select> -->
-				<nz-form-control nzSpan="null">
+				<!-- <nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
 						formControlName="provincia"
 						[nzDisabled]="provinceDisabled" (ngModelChange)="obtenerUbigeoProvincia()" nzAllowClear nzShowSearch>
@@ -207,11 +196,25 @@
 					</nz-select>
 					<div class="text-danger" *ngIf="alertMessageError('provincia')">
 						{{msgErrorControl('provincia','Provincia')}}</div>
-				</nz-form-control>
+				</nz-form-control> -->
+				<p-dropdown 
+					[options]="provincias()" 
+					formControlName="provincia"
+					optionLabel="provincia"
+					[showClear]="true" 
+					placeholder="Selecionar provincia"
+					(onChange)="obtenerUbigeoProvincia()"/>
 			</div>
 			<div class="flex flex-col">
-				<label for="distritos">Distritos</label>
-				<nz-form-control nzSpan="null">
+				<label class="text-sm" for="distritos">Distritos</label>
+				<p-dropdown 
+					[options]="distritos()" 
+					formControlName="distrito"
+					optionLabel="distrito"
+					[showClear]="true" 
+					placeholder="Selecionar distrito"
+					(onChange)="obtenerUbigeoDistrito()"/>
+				<!-- <nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" class="select-form-control"
 						formControlName="distrito" [nzDisabled]="districtDisabled" (ngModelChange)="obtenerUbigeoDistrito()"
 						nzAllowClear nzShowSearch>
@@ -222,11 +225,11 @@
 					<div class="text-danger" *ngIf="alertMessageError('distrito')">
 						{{msgErrorControl('distrito','Distrito')}}
 					</div>
-				</nz-form-control>
+				</nz-form-control> -->
 			</div>
 			} @else {
 			<div class="flex flex-col">
-				<label for="tipoEntidad">Tipo de entidad</label>
+				<label class="text-sm" for="tipoEntidad">Tipo de entidad</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId"
 						class="select-form-control" formControlName="tipoEntidadId" nzAllowClear nzShowSearch

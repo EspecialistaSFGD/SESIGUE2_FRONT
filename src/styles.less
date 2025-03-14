@@ -5,6 +5,9 @@
 // @import "../node_modules/ng-zorro-antd/ng-zorro-antd.dark.less";
 // Override less variables to here
 // View all variables: https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/style/themes/default.less
+// @import "../node_modules/primeng/resources/themes/lara-light-blue/theme.css";
+// @import "../node_modules/primeng/resources/primeng.min.css";
+// @import "../node_modules/primeicons/primeicons.css";
 
 @primary-color: #0866ae;
 @info-color: #1890ff;
@@ -129,7 +132,6 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
         }
     }
 }
-
 .form-control {
     @apply outline-none border border-solid border-gray-400 w-full px-3 text-sm hover:border-blue-800 focus:border-blue-800 rounded;
     padding-top: 0.315rem;
@@ -226,6 +228,84 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
 .text-danger {
     @apply text-rose-500;
 }
+p-dropdown {
+    @apply w-full border border-gray-400 rounded-md bg-white text-gray-700;
+    .p-dropdown-clearable, .p-dropdown{
+        @apply rounded-md;
+        &.p-disabled{
+            @apply bg-gray-100;
+        }
+        @apply w-full px-4 py-2;
+        .p-placeholder{
+            @apply text-gray-400 text-sm;
+        }
+        timesicon{
+            @apply mr-5;
+            .p-dropdown-clear-icon {
+                @apply stroke-gray-200;
+            }
+        }
+        .p-dropdown-panel{
+            @apply bg-white border border-solid border-gray-400 rounded-md shadow-lg;
+            .p-dropdown-empty-message{
+                @apply px-2 py-1 hover:bg-gray-200;
+            }
+            .p-dropdown-items{
+                @apply p-0 m-0;
+                .p-dropdown-item {
+                    @apply px-2 py-1 hover:bg-gray-200;
+                }
+            }
+        }
+    }
+  }
+
+
+  // p-dropdown p-component p-inputwrapper p-dropdown-clearable
+  // p-dropdown p-component p-inputwrapper p-dropdown-clearable p-inputwrapper-filled
+
+  // p-dropdown p-component p-inputwrapper p-dropdown-clearable
+  // p-dropdown p-component p-inputwrapper p-dropdown-clearable p-inputwrapper-filled p-focus p-inputwrapper-focus
+
+
+
+// w-full md:w-56 p-component p-inputwrapper p-select undefined ng-valid ng-touched ng-dirty p-inputwrapper-filled
+// w-full md:w-56 p-component p-inputwrapper p-select undefined ng-valid ng-touched ng-dirty
+
+// p-dropdown p-component p-inputwrapper p-dropdown-clearable p-inputwrapper-filled
+// p-dropdown p-component p-inputwrapper p-dropdown-clearable
+
+// .p-select-sss {
+//     display: inline-flex;
+//     cursor: pointer;
+//     position: relative;
+//     user-select: none;
+//     background: var(--p-select-background);
+//     border: 1px solid var(--p-select-border-color);
+//     transition: background var(--p-select-transition-duration), color var(--p-select-transition-duration), border-color var(--p-select-transition-duration), outline-color var(--p-select-transition-duration), box-shadow var(--p-select-transition-duration);
+//     border-radius: var(--p-select-border-radius);
+//     outline-color: transparent;
+//     box-shadow: var(--p-select-shadow);
+// }
+//   ::ng-deep .p-dropdown {
+//     @apply w-full border border-gray-300 rounded-lg shadow-sm;
+//   }
+  
+//   ::ng-deep .p-dropdown-trigger {
+//     @apply text-gray-500 hover:text-gray-700;
+//   }
+  
+//   ::ng-deep .p-dropdown-panel {
+//     @apply bg-white border border-gray-300 rounded-lg shadow-lg;
+//   }
+  
+//   ::ng-deep .p-dropdown-item {
+//     @apply px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer;
+//   }
+  
+//   ::ng-deep .p-dropdown-item.p-highlight {
+//     @apply bg-blue-500 text-white;
+//   }
 
 @media (min-width: 576px) {
     .container {

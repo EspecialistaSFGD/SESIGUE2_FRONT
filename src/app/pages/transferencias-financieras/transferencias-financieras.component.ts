@@ -3,11 +3,13 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { typeErrorControl } from '@core/helpers';
-import { Pagination, PaginationTransferences, TipoEntidadResponse, TransferenciaFinancieraResolucionResponse, TransferenciaFinancieraResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { Pagination, TipoEntidadResponse, TransferenciaFinancieraResolucionResponse, TransferenciaFinancieraResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, TipoEntidadesService, TransferenciasFinancierasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-transferencias-financieras',
@@ -16,7 +18,8 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
     CommonModule,
     PageHeaderComponent,
     NgZorroModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DropdownModule
   ],
   templateUrl: './transferencias-financieras.component.html',
   styles: ``
@@ -42,8 +45,8 @@ export class TransferenciasFinancierasComponent {
   public distritos = signal<UbigeoDistritoResponse[]>([])
 
   countActions:number = 0
-  provinceDisabled: boolean = true
-  districtDisabled: boolean = true
+  // provinceDisabled: boolean = true
+  // districtDisabled: boolean = true
 
   paginationDetails: Pagination = {
     code: 0,
@@ -89,9 +92,9 @@ export class TransferenciasFinancierasComponent {
     dispositivo: [''],
     cui: [''],
     tipoUbigeo: [''],
-    departamento: [''],
-    provincia: [''],
-    distrito: [''],
+    departamento: [null],
+    provincia: [{value: null, disabled: true}],
+    distrito: [{value: null, disabled: true}],
     ubigeo: [''],
     tipoEntidadId: ['']
   })
@@ -108,7 +111,6 @@ export class TransferenciasFinancierasComponent {
   }
 
   getParams() {
-    console.log(this.countActions);
     this.route.queryParams.subscribe(params => {      
       if (Object.keys(params).length > 0) {
         const filterStorage = localStorage.getItem('transferencesFilters')
@@ -118,31 +120,34 @@ export class TransferenciasFinancierasComponent {
         const periodo = Number(params['periodo']) ?? this.currentYear
         const ubigeoParams = params['ubigeo'] ?? null
 
-        let departamento = ''
-        let provincia = ''
-        let distrito = ''
-        this.provinceDisabled = true
-        this.districtDisabled = true
+        let departamento = null
+        let provincia = null
+        let distrito = null
+
         if(ubigeoParams){
+          
           departamento = ubigeoParams.slice(0,2)
+          console.log(departamento);
           this.obtenerProvincias(departamento)
+          this.obtenerDepartamentoPorubigeo(departamento)
           if(ubigeoParams.length >= 4){
-            this.provinceDisabled = false
+            // this.provinceDisabled = false
             provincia = `${ubigeoParams.slice(0,4)}01`
             this.obtenerDistritos(provincia)
           }
           if(ubigeoParams.length >= 6){
-            this.districtDisabled = false
+            // this.districtDisabled = false
             distrito = ubigeoParams.slice(0,6)
           }
         }
      
         this.paramsFilters = params
         
-        this.formFilter.patchValue({...params, periodo, departamento, provincia, distrito})
-        const paginationTransferences: PaginationTransferences = {...params }
-        this.obtenerTransferenciasResolucion(periodo)
-        this.obtenerTransferenciasDetail(paginationTransferences)
+        
+        this.formFilter.patchValue({...params, periodo })
+        // console.log(this.formFilter.value);
+        // const paginationTransferences: PaginationTransferences = {...params }
+        this.pagination = {...params }
       }
       // if (Object.keys(params).length > 0) {
       //   let campo = params['campo'] ?? 'fecha_publicacion'
@@ -205,19 +210,22 @@ export class TransferenciasFinancierasComponent {
   ngOnInit() {
     this.obtenerTipoEntidad()
     this.obtenerDepartamentos()
+    this.obtenerTransferenciasResolucion()
+    this.obtenerTransferenciasDetail()
     this.getParams()
   }
 
-  obtenerTransferenciasResolucion(periodo: number){    
+  obtenerTransferenciasResolucion(){
+    const periodo = this.formFilter.get('periodo')?.value
     this.transferenciaFinancieraService.obtenerTransferenciasFinancierasResolucion(periodo)
       .subscribe( resp => {
         this.transferencesResolution.set(resp.data)
       })
   }
 
-  obtenerTransferenciasDetail(pagination: PaginationTransferences) {
+  obtenerTransferenciasDetail() {
     this.loadingDetail = true
-    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasDetalles(this.paginationDetails, pagination)
+    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasDetalles(this.paginationDetails, this.pagination)
       .subscribe(resp => {
         if (resp.success == true) {
           this.transferDetails.set(resp.data)
@@ -251,20 +259,34 @@ export class TransferenciasFinancierasComponent {
     this.ubigeoService.getDepartments()
       .subscribe(resp => {
         if (resp.success == true) {
-          this.departamentos.set(resp.data)
+          this.departamentos.set(resp.data) 
         }
       })
+  }
+
+  obtenerDepartamentoPorubigeo(ubigeo: string){
+    console.log(ubigeo);
+    
+    const departamento = this.departamentos().map( item => {
+      // item.departamentoId == ubigeo
+      console.log(item);
+      
+    } )
+    console.log(departamento);
+    
   }
 
   obtenerProvincias(departamento: string) {    
     this.ubigeoService.getProvinces(departamento)
       .subscribe(resp => {        
         if (resp.success == true) {
-          // this.provinceDisabled = false
-          // this.districtDisabled = true
           this.provincias.set(resp.data)
         }
       })
+  }
+
+  obtenerProvinciaPorUbigeo(ubigeo: string){
+
   }
 
   obtenerDistritos(provincia: string) {
@@ -272,80 +294,87 @@ export class TransferenciasFinancierasComponent {
     this.ubigeoService.getDistricts(setprovincia)
       .subscribe(resp => {        
         if (resp.success == true) {
-          // this.districtDisabled = false
           this.distritos.set(resp.data)
         }
       })
   }
 
   obtenerUbigeoDepartamento() {
-    const departamentovalue = this.formFilter.get('departamento')?.value
-    if(departamentovalue){
-      this.obtenerProvincias(departamentovalue)
-      console.log('DEPARTAMENTO');      
+    const departamentoControl = this.formFilter.get('departamento')?.value
+    if(departamentoControl){
+      const ubigeoDepartamento = departamentoControl.departamentoId
+      this.obtenerProvincias(ubigeoDepartamento)
+      this.paramsNavigate({ ubigeo: ubigeoDepartamento })
     } else {
-      console.log('SIN DEPARTAMENTO');      
-      const ubigeo = departamentovalue ? departamentovalue : null    
-      this.paramsNavigate({ ubigeo: departamentovalue })
+      this.provincias.set([])
+      this.formFilter.get('provincia')?.reset()
+      this.paramsNavigate({ ubigeo: null })
     }
+    this.formFilter.get('distrito')?.reset()
+    this.disabledControlUbigeo()
   }
 
   obtenerUbigeoProvincia() {
-    const departamentovalue = this.formFilter.get('departamento')?.value
-    const provinciaValue = this.formFilter.get('provincia')?.value
-    const ubigeo = provinciaValue ? provinciaValue.slice(0,4) : departamentovalue
-    if(provinciaValue){
-      const setProvincia = provinciaValue.slice(0,4)
-      this.obtenerDistritos(setProvincia)
-      this.paramsNavigate({ ubigeo: provinciaValue })
-      console.log('PROVINCIA');      
+    const departamentoControl = this.formFilter.get('departamento')?.value
+    const provinciaControl = this.formFilter.get('provincia')?.value
+    if(provinciaControl){
+      const ubigeoProvincia = provinciaControl.provinciaId.slice(0,4)
+      this.obtenerDistritos(ubigeoProvincia)
+
+      this.paramsNavigate({ ubigeo: ubigeoProvincia })
     } else {
-      this.paramsNavigate({ ubigeo: departamentovalue })
-    }    
-    // this.paramsNavigate({ ubigeo })
+      this.distritos.set([])
+      this.formFilter.get('distrito')?.reset()
+      const ubigeoDepartamento = departamentoControl.departamentoId
+      this.paramsNavigate({ ubigeo: ubigeoDepartamento })
+    }
     this.disabledControlUbigeo()
   }
 
   obtenerUbigeoDistrito() {
-    const departamentoValue = this.formFilter.get('departamento')?.value
-    const provinciaValue = this.formFilter.get('provincia')?.value
-    const distritoValue = this.formFilter.get('distrito')?.value
-    const ubigeo = distritoValue ? distritoValue : provinciaValue ? provinciaValue.slice(0,4) : departamentoValue
-    // this.paramsNavigate({ ubigeo })
+    const provinciaControl = this.formFilter.get('provincia')?.value
+    const distritoControl = this.formFilter.get('distrito')?.value
+    if(distritoControl){     
+      const ubigeoDistrito = distritoControl.distritoId
+      this.paramsNavigate({ ubigeo: ubigeoDistrito })
+    } else {
+      const ubigeoProvincia = provinciaControl.provinciaId
+      this.paramsNavigate({ ubigeo: ubigeoProvincia })
+    }
   }
 
   changePeriod() {
     const periodo = this.formFilter.get('periodo')?.value
     let queryParams = { periodo, dispositivo: '' }
-    // this.paramsNavigate(queryParams)
+    this.paramsNavigate(queryParams)
   }
 
   changeTipoProducto() {
     const tipoProducto = this.formFilter.get('tipoProducto')?.value
-    // this.paramsNavigate({ tipoProducto })
+    this.paramsNavigate({ tipoProducto })
   }
 
   changeTipoEntidad() {
     const tipoEntidad = this.formFilter.get('tipoEntidadId')?.value
-    // this.paramsNavigate({ tipoEntidad })
+    this.paramsNavigate({ tipoEntidad })
   }
 
   setFilterKind(value: string) {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')
-    const departamento = this.formFilter.get('departamento')
-    const provincia = this.formFilter.get('provincia')
-    const distrito = this.formFilter.get('distrito')
+    // const departamento = this.formFilter.get('departamento')
+    // const provincia = this.formFilter.get('provincia')
+    // const distrito = this.formFilter.get('distrito')
 
     if (value) {
       this.filtroUbigeo = value == 'ubigeo' ? true : false;
       if (this.filtroUbigeo) {
-        departamento?.setValue('')
-        provincia?.setValue('')
-        distrito?.setValue('')
+        // departamento?.setValue('')
+        // provincia?.setValue('')
+        // distrito?.setValue('')
         tipoUbigeo?.setValue(this.tipoUbigeos[0])
-        // this.paramsNavigate({ 'tipo': value, 'tipoEntidad': null, 'mancomunidad': null })
+        this.paramsNavigate({ 'tipo': value, 'tipoEntidad': null, 'mancomunidad': null })
       } else {
-        // this.paramsNavigate({ 'tipo': value, 'tipoUbigeo': null, 'ubigeo': null, 'entidad': null })
+        this.paramsNavigate({ 'tipo': value, 'tipoUbigeo': null, 'ubigeo': null, 'entidad': null })
       }
     }
   }
@@ -360,13 +389,10 @@ export class TransferenciasFinancierasComponent {
     const sorts = params.sort.find(item => sortsNames.includes(item.value!))
     const ordenar = sorts?.value!.slice(0, -3)
     const queryParams = { transferencia: 'detalle', pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar, tipo: this.tipos[0], periodo: this.currentYear, tipoUbigeo: this.tipoUbigeos[this.tipoUbigeos.length - 1] }
-    // this.paramsNavigate(queryParams)
+    this.paramsNavigate(queryParams)
   }
 
-  paramsNavigate(queryParams: Params) {
-    this.countActions ++
-    console.log(this.countActions);
-    
+  paramsNavigate(queryParams: Params) {    
     this.router.navigate(
       [],
       {
@@ -398,12 +424,12 @@ export class TransferenciasFinancierasComponent {
   setParamsTipoUbigeo() {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value
     const ubigeo = this.formFilter.get('ubigeo')?.value
-    // this.paramsNavigate({ tipoUbigeo, ubigeo })
+    this.paramsNavigate({ tipoUbigeo, ubigeo })
   }
 
   changeDispositivo(){
     const dispositivo = this.formFilter.get('dispositivo')?.value
-    // this.paramsNavigate({ dispositivo })
+    this.paramsNavigate({ dispositivo })
   }
   
   changeCui(event: any){
@@ -416,7 +442,7 @@ export class TransferenciasFinancierasComponent {
     this.timeout = setTimeout(function () {      
       if (event.keyCode != 13) {
         const cui = event.target.value        
-        // $this.paramsNavigate({ cui })    
+        $this.paramsNavigate({ cui })    
       }
     }, 500);
   }
@@ -424,21 +450,27 @@ export class TransferenciasFinancierasComponent {
   changeUbigeoTipo() {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value    
     this.disabledControlUbigeo()
-    // this.paramsNavigate({ tipoUbigeo })
+    this.paramsNavigate({ tipoUbigeo })
   }
 
   disabledControlUbigeo(){
     const tipoUbigeoValue = this.formFilter.get('tipoUbigeo')?.value
-    const departamentoValue = this.formFilter.get('departamento')?.value
-    const provinciaValue = this.formFilter.get('provincia')?.value
-    
-    this.provinceDisabled = true
-    this.districtDisabled = true
-    if(tipoUbigeoValue == 'territorio' && departamentoValue){
-      this.provinceDisabled = false
+    const departamentoControl = this.formFilter.get('departamento')
+    const provinciaControl = this.formFilter.get('provincia')
+    const distritoControl = this.formFilter.get('distrito')
+
+    provinciaControl?.disable()
+    distritoControl?.disable()
+
+    if(tipoUbigeoValue == 'territorio' && departamentoControl?.value){
+      provinciaControl?.enable()
     }
-    if(tipoUbigeoValue == 'territorio' && provinciaValue){
-      this.districtDisabled = false
+    if(tipoUbigeoValue == 'territorio' && provinciaControl?.value){
+      distritoControl?.enable()
+    }
+    if(tipoUbigeoValue == 'pliego'){
+      provinciaControl?.reset()
+      distritoControl?.reset()
     }
   }
 }
