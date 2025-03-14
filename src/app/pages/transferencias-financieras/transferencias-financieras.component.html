@@ -14,31 +14,53 @@
 				[nzPageIndex]="paginationDetails.currentPage!" (nzQueryParams)="paramsDetailChange($event)">
 				<thead>
 					<tr>
-						<th nzLeft nzWidth="100px" nzColumnKey="nivel_gobierno" [nzSortFn]="true">Nivel de gobierno</th>
-						<th nzLeft nzWidth="100px" nzColumnKey="departamento" [nzSortFn]="true">Departamento</th>
-						<th nzLeft nzWidth="100px" nzColumnKey="provincia" [nzSortFn]="true">Provincia</th>
-						<th nzLeft nzWidth="100px" nzColumnKey="distrito" [nzSortFn]="true">Distrito</th>
-						<th nzWidth="120px" nzColumnKey="pliego" [nzSortFn]="true">Pliego</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="monto" [nzSortFn]="true">Transferencias</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="resolucion" [nzSortFn]="true">Dispositivo legal</th>
-						<th nzWidth="150px" nzAlign="center">Fecha de publicación</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="fecha_publicacion" [nzSortFn]="true">Periodo</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="Tipo" [nzSortFn]="true">Tipo</th>
+						<th nzWidth="60px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="sub_tipo" [nzSortFn]="true">Sub Tipo</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="sub_tipo" [nzSortFn]="true">Tipo 1</th>
+						<th nzWidth="350px" nzColumnKey="Nombre_proyecto" [nzSortFn]="true">Nombre del proyecto</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="funcion" [nzSortFn]="true">Función</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="nivel_gobierno" [nzSortFn]="true">Nivel de Gobierno</th>
+						<th nzWidth="60px" nzAlign="center" nzColumnKey="UE_codigo_ubigeo" [nzSortFn]="true">UE CUI</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="UE_departamento" [nzSortFn]="true">UE Departamento</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="UE_provincia" [nzSortFn]="true">UE Provincia</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="UE_distrito" [nzSortFn]="true">UE Distrito</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="pliego" [nzSortFn]="true">Pliego</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="transferencia" [nzSortFn]="true">Transferencias</th>
+						<th nzWidth="60px" nzAlign="center" nzColumnKey="anio" [nzSortFn]="true">Año</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="periodo" [nzSortFn]="true">Periodo</th>
+						<th nzWidth="120px" nzAlign="center" nzColumnKey="resolucion" [nzSortFn]="true">Dispositivo legal</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="fecha_publicacion" [nzSortFn]="true">Fecha de publicación</th>
+						<th nzWidth="50px" nzAlign="center" nzColumnKey="anexos" [nzSortFn]="true">Anexos</th>
+						<th nzWidth="50px" nzAlign="center" nzColumnKey="fondes" [nzSortFn]="true">Fondes</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="fuente_financiamiento" [nzSortFn]="true">Fuente de financiamiento</th>
 					</tr>
 				</thead>
 				<tbody>
 					@for(detail of transferDetails(); track $index){
 					<tr>
-						<td>{{detail.nivel_gobierno}}</td>
-						<td>{{detail.ue_departamento}}</td>
-						<td>{{detail.ue_provincia}}</td>
-						<td>{{detail.ue_distrito}}</td>
-						<td>{{detail.pliego_matriz}}</td>
+						<td nzAlign="center">{{detail.tipo}}</td>
 						<td nzAlign="center">{{detail.codigo_unico}}</td>
+						<td nzAlign="center">{{detail.sub_tipo}}</td>
+						<td nzAlign="center">{{detail.tipo_1}}</td>
+						<td>{{detail.nombre_proyecto}}</td>
+						<td nzAlign="center">{{detail.sector}}</td>
+						<td nzAlign="center">{{detail.funcion}}</td>
+						<td nzAlign="center">{{detail.nivel_gobierno}}</td>
+						<td nzAlign="center">{{detail.ue_codigo_ubigeo}}</td>
+						<td nzAlign="center">{{detail.ue_departamento}}</td>
+						<td nzAlign="center">{{detail.ue_provincia}}</td>
+						<td nzAlign="center">{{detail.ue_distrito}}</td>
+						<td nzAlign="center">{{detail.pliego_matriz}}</td>
 						<td nzAlign="center">{{detail.transferencia}}</td>
+						<td nzAlign="center">{{detail.anio }}</td>
+						<td nzAlign="center">{{detail.periodo }}</td>
 						<td nzAlign="center">{{detail.resolucion}}</td>
 						<td nzAlign="center">{{detail.fecha_publicacion}}</td>
-						<td nzAlign="center">{{detail.anio }}</td>
+						<td nzAlign="center">{{detail.anexos}}</td>
+						<td nzAlign="center">{{detail.fondes}}</td>
+						<td nzAlign="center">{{detail.fuente_financiamiento}}</td>
 					</tr>
 					}
 				</tbody>
@@ -148,6 +170,12 @@
 			</div>
 			<div class="flex flex-col">
 				<label for="departamento">Departamento</label>
+				<!-- <select nzPlaceHolder="Seleccionar departamento" id="departamento" class="select-form-control"
+						formControlName="departamento" (change)="obtenerUbigeoDepartamento()" >
+						@for (departamento of departamentos(); track $index) {
+						<option [value]="departamento.departamentoId">{{departamento.departamento}}</option>
+						}
+					</select>	 -->
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar departamento" id="departamento" class="select-form-control"
 						formControlName="departamento" (ngModelChange)="obtenerUbigeoDepartamento()" nzAllowClear
@@ -163,6 +191,12 @@
 			</div>
 			<div class="flex flex-col">
 				<label for="provincia">Provincias</label>
+				<!-- <select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
+						formControlName="provincia" (change)="obtenerUbigeoProvincia()">
+						@for (provincia of provincias(); track $index) {
+						<option [value]="provincia.provinciaId">{{provincia.provincia}}</option>
+						}
+					</select> -->
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
 						formControlName="provincia"

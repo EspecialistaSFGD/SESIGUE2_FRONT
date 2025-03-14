@@ -41,6 +41,7 @@ export class TransferenciasFinancierasComponent {
   public provincias = signal<UbigeoProvinciaResponse[]>([])
   public distritos = signal<UbigeoDistritoResponse[]>([])
 
+  countActions:number = 0
   provinceDisabled: boolean = true
   districtDisabled: boolean = true
 
@@ -99,6 +100,7 @@ export class TransferenciasFinancierasComponent {
     // this.valueChangeForm()
     // this.getParams()
     // this.formFilter.get('periodo')?.setValue(`2024`)
+    // 
   }
 
   valueChangeForm(){
@@ -106,26 +108,31 @@ export class TransferenciasFinancierasComponent {
   }
 
   getParams() {
+    console.log(this.countActions);
     this.route.queryParams.subscribe(params => {      
       if (Object.keys(params).length > 0) {
         const filterStorage = localStorage.getItem('transferencesFilters')
-        if(filterStorage){
-          params = JSON.parse(filterStorage)
-        }
+        // if(filterStorage){
+        //   params = JSON.parse(filterStorage)
+        // }
         const periodo = Number(params['periodo']) ?? this.currentYear
         const ubigeoParams = params['ubigeo'] ?? null
 
         let departamento = ''
         let provincia = ''
         let distrito = ''
+        this.provinceDisabled = true
+        this.districtDisabled = true
         if(ubigeoParams){
           departamento = ubigeoParams.slice(0,2)
           this.obtenerProvincias(departamento)
           if(ubigeoParams.length >= 4){
+            this.provinceDisabled = false
             provincia = `${ubigeoParams.slice(0,4)}01`
             this.obtenerDistritos(provincia)
           }
           if(ubigeoParams.length >= 6){
+            this.districtDisabled = false
             distrito = ubigeoParams.slice(0,6)
           }
         }
@@ -275,9 +282,12 @@ export class TransferenciasFinancierasComponent {
     const departamentovalue = this.formFilter.get('departamento')?.value
     if(departamentovalue){
       this.obtenerProvincias(departamentovalue)
+      console.log('DEPARTAMENTO');      
+    } else {
+      console.log('SIN DEPARTAMENTO');      
+      const ubigeo = departamentovalue ? departamentovalue : null    
+      this.paramsNavigate({ ubigeo: departamentovalue })
     }
-    const ubigeo = departamentovalue ? departamentovalue : null    
-    this.paramsNavigate({ ubigeo })
   }
 
   obtenerUbigeoProvincia() {
@@ -287,8 +297,12 @@ export class TransferenciasFinancierasComponent {
     if(provinciaValue){
       const setProvincia = provinciaValue.slice(0,4)
       this.obtenerDistritos(setProvincia)
+      this.paramsNavigate({ ubigeo: provinciaValue })
+      console.log('PROVINCIA');      
+    } else {
+      this.paramsNavigate({ ubigeo: departamentovalue })
     }    
-    this.paramsNavigate({ ubigeo })
+    // this.paramsNavigate({ ubigeo })
     this.disabledControlUbigeo()
   }
 
@@ -297,23 +311,23 @@ export class TransferenciasFinancierasComponent {
     const provinciaValue = this.formFilter.get('provincia')?.value
     const distritoValue = this.formFilter.get('distrito')?.value
     const ubigeo = distritoValue ? distritoValue : provinciaValue ? provinciaValue.slice(0,4) : departamentoValue
-    this.paramsNavigate({ ubigeo })
+    // this.paramsNavigate({ ubigeo })
   }
 
   changePeriod() {
     const periodo = this.formFilter.get('periodo')?.value
     let queryParams = { periodo, dispositivo: '' }
-    this.paramsNavigate(queryParams)
+    // this.paramsNavigate(queryParams)
   }
 
   changeTipoProducto() {
     const tipoProducto = this.formFilter.get('tipoProducto')?.value
-    this.paramsNavigate({ tipoProducto })
+    // this.paramsNavigate({ tipoProducto })
   }
 
   changeTipoEntidad() {
     const tipoEntidad = this.formFilter.get('tipoEntidadId')?.value
-    this.paramsNavigate({ tipoEntidad })
+    // this.paramsNavigate({ tipoEntidad })
   }
 
   setFilterKind(value: string) {
@@ -329,9 +343,9 @@ export class TransferenciasFinancierasComponent {
         provincia?.setValue('')
         distrito?.setValue('')
         tipoUbigeo?.setValue(this.tipoUbigeos[0])
-        this.paramsNavigate({ 'tipo': value, 'tipoEntidad': null, 'mancomunidad': null })
+        // this.paramsNavigate({ 'tipo': value, 'tipoEntidad': null, 'mancomunidad': null })
       } else {
-        this.paramsNavigate({ 'tipo': value, 'tipoUbigeo': null, 'ubigeo': null, 'entidad': null })
+        // this.paramsNavigate({ 'tipo': value, 'tipoUbigeo': null, 'ubigeo': null, 'entidad': null })
       }
     }
   }
@@ -346,10 +360,13 @@ export class TransferenciasFinancierasComponent {
     const sorts = params.sort.find(item => sortsNames.includes(item.value!))
     const ordenar = sorts?.value!.slice(0, -3)
     const queryParams = { transferencia: 'detalle', pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar, tipo: this.tipos[0], periodo: this.currentYear, tipoUbigeo: this.tipoUbigeos[this.tipoUbigeos.length - 1] }
-    this.paramsNavigate(queryParams)
+    // this.paramsNavigate(queryParams)
   }
 
   paramsNavigate(queryParams: Params) {
+    this.countActions ++
+    console.log(this.countActions);
+    
     this.router.navigate(
       [],
       {
@@ -381,12 +398,12 @@ export class TransferenciasFinancierasComponent {
   setParamsTipoUbigeo() {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value
     const ubigeo = this.formFilter.get('ubigeo')?.value
-    this.paramsNavigate({ tipoUbigeo, ubigeo })
+    // this.paramsNavigate({ tipoUbigeo, ubigeo })
   }
 
   changeDispositivo(){
     const dispositivo = this.formFilter.get('dispositivo')?.value
-    this.paramsNavigate({ dispositivo })
+    // this.paramsNavigate({ dispositivo })
   }
   
   changeCui(event: any){
@@ -399,7 +416,7 @@ export class TransferenciasFinancierasComponent {
     this.timeout = setTimeout(function () {      
       if (event.keyCode != 13) {
         const cui = event.target.value        
-        $this.paramsNavigate({ cui })    
+        // $this.paramsNavigate({ cui })    
       }
     }, 500);
   }
@@ -407,7 +424,7 @@ export class TransferenciasFinancierasComponent {
   changeUbigeoTipo() {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value    
     this.disabledControlUbigeo()
-    this.paramsNavigate({ tipoUbigeo })
+    // this.paramsNavigate({ tipoUbigeo })
   }
 
   disabledControlUbigeo(){
