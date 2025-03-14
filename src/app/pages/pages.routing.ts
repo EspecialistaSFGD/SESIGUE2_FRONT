@@ -5,7 +5,7 @@ export const PAGES_ROUTES: Routes = [
   { path: 'panel_acuerdos', loadComponent: () => import('./panel-acuerdos/panel-acuerdos.component') },
   { path: 'pedidos', loadChildren: () => import('./pedidos/pedidos.routes').then(m => m.PEDIDOS_ROUTES) },
   { path: 'acuerdos', loadChildren: () => import('./acuerdos/acuerdos.routes').then(m => m.ACUERDOS_ROUTES) },
-  { path: 'atenciones', loadComponent: () => import('./asistencias-tecnicas/asistencias-tecnicas.component').then(m => m.AsistenciasTecnicasComponent) },
+  { path: 'atenciones', loadChildren: () => import('./asistencias-tecnicas/atenciones.routing').then( r => r.ATENCIONES_ROUTES )  },
   { path: 'transferencias_financieras', loadComponent: () => import('./transferencias-financieras/transferencias-financieras.component').then(m => m.TransferenciasFinancierasComponent) },
   { path: 'sgd', loadChildren: () => import('./sgd/sgd.routes').then(r => r.SGD_ROUTES) },
   { path: 'configuraciones', loadChildren: () => import('./configuraciones/configuraciones.routes').then(m => m.CONFIG_ROUTES) },

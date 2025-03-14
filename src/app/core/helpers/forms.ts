@@ -7,7 +7,7 @@ export const typeErrorControl = (text: string, errors: any) => {
   if (errors?.['required']) {
     msg = `${text} es requerido`
   } else if (errors?.['pattern']) {
-    msg = `No tiene un formato de ${text}`
+    msg = `Debe tener formato valido`
   } else if (errors?.['minlength']) {
     msg = `${text} debe tener minimo ${errors?.['minlength'].requiredLength} caracteres`
   } else if (errors?.['maxlength']) {

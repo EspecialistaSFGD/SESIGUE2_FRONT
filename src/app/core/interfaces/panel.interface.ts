@@ -8,5 +8,6 @@ export interface PanelInfoResponse {
 
 export interface PanelNivelGobierno {
   gn: number,
+  gr: number
   gl: number
 }

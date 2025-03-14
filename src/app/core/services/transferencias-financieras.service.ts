@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { Pagination, PaginationTransferences, TransferenciasFinancierasResolucionResponses, TransferenciasFinancierasResponses } from '@core/interfaces';
 import { environment } from '@environments/environment';
-import { HelpersService } from './helpers.service';
 import { Observable } from 'rxjs';
-import { Pagination, PaginationTransferences, TransferenciasFinancierasResponses } from '@core/interfaces';
+import { HelpersService } from './helpers.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +24,11 @@ export class TransferenciasFinancierasService {
       }
     }    
     return this.http.get<TransferenciasFinancierasResponses>(`${this.urlTransferencias}/ListarTransferenciaFinancieraDetalle`, { headers, params })
+  }
+
+  obtenerTransferenciasFinancierasResolucion(periodo: number): Observable<TransferenciasFinancierasResolucionResponses> {
+    const headers = this.helpersServices.getAutorizationToken()
+    const params = new HttpParams().append('periodo', periodo);
+    return this.http.get<TransferenciasFinancierasResolucionResponses>(`${this.urlTransferencias}/ListarTransferenciaFinancieraResolucion`, { headers, params })
   }
 }
