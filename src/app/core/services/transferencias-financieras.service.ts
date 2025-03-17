@@ -17,12 +17,12 @@ export class TransferenciasFinancierasService {
   obtenerTransferenciasFinancierasDetalles(pagination: Pagination, paginationTransferences: PaginationTransferences): Observable<TransferenciasFinancierasResponses> {
     let params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
-    const paramsPage = Object.entries(paginationTransferences).map(([key, value]) => { return { key, value } })
-    for (let paramPage of paramsPage) {
-      if(paramPage.value){
-        params = params.append(paramPage.key, paramPage.value);
-      }
-    }    
+    // const paramsPage = Object.entries(paginationTransferences).map(([key, value]) => { return { key, value } })
+    // for (let paramPage of paramsPage) {
+    //   if(paramPage.value){
+    //     params = params.append(paramPage.key, paramPage.value);
+    //   }
+    // }    
     return this.http.get<TransferenciasFinancierasResponses>(`${this.urlTransferencias}/ListarTransferenciaFinancieraDetalle`, { headers, params })
   }
 
@@ -30,11 +30,11 @@ export class TransferenciasFinancierasService {
     let params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     const paramsPage = Object.entries(paginationTransferences).map(([key, value]) => { return { key, value } })
-    for (let paramPage of paramsPage) {
-      if(paramPage.value){
-        params = params.append(paramPage.key, paramPage.value);
-      }
-    }    
+    // for (let paramPage of paramsPage) {
+    //   if(paramPage.value){
+    //     params = params.append(paramPage.key, paramPage.value);
+    //   }
+    // }    
     return this.http.get<TransferenciasFinancierasResumenResponses>(`${this.urlTransferencias}/ListarTranferenciasFinancierasResumen`, { headers, params })
   }
 

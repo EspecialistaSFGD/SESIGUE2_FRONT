@@ -69,7 +69,7 @@ export class TransferenciasFinancierasComponent {
 
   pagination: Pagination = {
     code: 0,
-    columnSort: 'fechaAtencion',
+    columnSort: 'pliego',
     typeSort: 'DESC',
     pageSize: 10,
     currentPage: 1,
@@ -113,8 +113,12 @@ export class TransferenciasFinancierasComponent {
         // if(filterStorage){
         //   params = JSON.parse(filterStorage)
         // }
-        const periodo = Number(params['periodo']) ?? this.currentYear
+        const periodo = params['periodo'] ?? this.currentYear
+        const columnSort =params['campo'] ?? 'pliego'
         const ubigeoParams = params['ubigeo'] ?? null
+        const pageSize = params['cantidad'] ?? 10
+        const currentPage = params['pagina'] ?? 1
+        const typeSort = params['ordenar'] ?? 'DESC'
 
         let departamento = null
         let provincia = null
@@ -125,7 +129,7 @@ export class TransferenciasFinancierasComponent {
           departamento = ubigeoParams.slice(0,2)
           console.log(departamento);
           this.obtenerProvincias(departamento)
-          this.obtenerDepartamentoPorubigeo(departamento)
+          // this.obtenerDepartamentoPorubigeo(departamento)
           if(ubigeoParams.length >= 4){
             // this.provinceDisabled = false
             provincia = `${ubigeoParams.slice(0,4)}01`
@@ -140,8 +144,12 @@ export class TransferenciasFinancierasComponent {
         this.paramsFilters = params
         
         
-        this.formFilter.patchValue({...params, periodo })
-        this.pagination = {...params }
+        this.formFilter.patchValue({...params, periodo: Number(periodo) })
+        // this.pagination = {...params }
+        this.pagination = {...params, columnSort, typeSort, pageSize, currentPage  }
+        this.obtenerTransferenciasDetail()
+        this.obtenerTransferenciasResumen()
+        this.obtenerTransferenciasResolucion()
       }
     });
   }
@@ -149,9 +157,6 @@ export class TransferenciasFinancierasComponent {
   ngOnInit() {
     this.obtenerTipoEntidad()
     this.obtenerDepartamentos()
-    this.obtenerTransferenciasResolucion()
-    this.obtenerTransferenciasDetail()
-    this.obtenerTransferenciasResumen()
     this.getParams()
   }
 
@@ -165,7 +170,7 @@ export class TransferenciasFinancierasComponent {
 
   obtenerTransferenciasDetail() {
     this.loadingDetail = true
-    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasDetalles(this.paginationDetails, this.pagination)
+    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasDetalles(this.pagination, this.paginationDetails)
       .subscribe(resp => {
         if (resp.success == true) {
           this.transferDetails.set(resp.data)
@@ -177,7 +182,7 @@ export class TransferenciasFinancierasComponent {
 
   obtenerTransferenciasResumen(){
     this.loadingResumen = true
-    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasResumem(this.paginationResumen, this.pagination)
+    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasResumem(this.pagination, this.paginationDetails)
       .subscribe( resp => {
         this.transferResume.set(resp.data)
         this.paginationResumen.total = resp.info?.total ?? 0
@@ -196,8 +201,8 @@ export class TransferenciasFinancierasComponent {
   }
 
   obtenerTipoEntidad() {
-    this.pagination.columnSort = 'nombre'
-    this.tipoEntidadService.getAllTipoEntidades(this.pagination)
+    // this.pagination.columnSort = 'nombre'
+    this.tipoEntidadService.getAllTipoEntidades({...this.pagination, columnSort: 'nombre'})
       .subscribe(resp => {
         if (resp.success = true) {
           this.tipoEntidades.set(resp.data)
@@ -214,17 +219,17 @@ export class TransferenciasFinancierasComponent {
       })
   }
 
-  obtenerDepartamentoPorubigeo(ubigeo: string){
-    console.log(ubigeo);
+  // obtenerDepartamentoPorubigeo(ubigeo: string){
+  //   console.log(ubigeo);
     
-    const departamento = this.departamentos().map( item => {
-      // item.departamentoId == ubigeo
-      console.log(item);
+  //   const departamento = this.departamentos().map( item => {
+  //     // item.departamentoId == ubigeo
+  //     console.log(item);
       
-    } )
-    console.log(departamento);
+  //   } )
+  //   console.log(departamento);
     
-  }
+  // }
 
   obtenerProvincias(departamento: string) {    
     this.ubigeoService.getProvinces(departamento)

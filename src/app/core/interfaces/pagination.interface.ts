@@ -21,11 +21,15 @@ export interface Pagination {
   espacioId?: string,
   tipoEntidadId?: string,
   usuarioId?: string,
-  ubigeo?: string,
   total?: number,
   estado?: string,
   dispositivo?: string,
-  cui?: string
+  periodo?: string,
+  tipoProducto?: string,
+  tipoUbigeo?: string,
+  ubigeo?: string,
+  cui?: string,
+  tipoEntidad?: string,
 }
 
 export interface PaginationPanel {
