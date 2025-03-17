@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { typeErrorControl } from '@core/helpers';
 import { Pagination, TipoEntidadResponse, TransferenciaFinancieraResolucionResponse, TransferenciaFinancieraResponse, TransferenciaFinancieraResumenResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { PipesModule } from '@core/pipes/pipes.module';
 import { EntidadesService, TipoEntidadesService, TransferenciasFinancierasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -19,7 +20,8 @@ import { DropdownModule } from 'primeng/dropdown';
     PageHeaderComponent,
     NgZorroModule,
     ReactiveFormsModule,
-    DropdownModule
+    DropdownModule,
+    PipesModule
   ],
   templateUrl: './transferencias-financieras.component.html',
   styles: ``
