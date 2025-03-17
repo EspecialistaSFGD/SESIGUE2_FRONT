@@ -13,23 +13,6 @@ export interface TransferenciaFinancieraResolucionResponse {
 }
 
 export interface TransferenciaFinancieraResponse {
-	// resolucion: string,
-	// presidente: string,
-	// fecha_publicacion: Date,
-	// codigo_unico: string,
-	// fuente_financiamiento: string,
-	// anexos: string,
-	// fondes: string,
-	// pliego: string,
-	// proyecto: string,
-	// monto: string,
-	// cod_ubigeo: string,
-	// departamento: string,
-	// provincia: string,
-	// distrito: string,
-	// tipo_proyecto: string,
-	// nivel_gobierno: string,
-	// sub_tipo_proyecto: string,
 	tipo: string,
 	codigo_snip: string,
 	codigo_unico: string,
@@ -53,6 +36,37 @@ export interface TransferenciaFinancieraResponse {
 	fondes: string,
 	fuente_financiamiento: string,
 }
+
+
+export interface TransferenciasFinancierasResumenResponses extends DataResponses {
+	data: TransferenciaFinancieraResumenResponse[]
+}
+
+export interface TransferenciaFinancieraResumenResponse {
+	tipo: string,
+	codigo_unico: string,
+	sector: string,
+	funcion: string,
+	nivel: string,
+	ue_departamento: string,
+	ue_provincia: string,
+	ue_distrito: string,
+	pliego: string,
+	ley: string,
+	transferencia: string,
+	periodo: string,
+	nombre_proyecto: string,
+	costoActualizado: string,
+	devAcumulado: string,
+	pim: string,
+	pia: string,
+	dev: string,
+	compromiso: string,
+	certificado: string,
+}
+
+
+
 
 export interface PaginationTransferences {
 	periodo?: string,

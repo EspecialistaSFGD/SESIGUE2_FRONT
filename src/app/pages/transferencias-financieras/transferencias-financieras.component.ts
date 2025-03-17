@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { typeErrorControl } from '@core/helpers';
-import { Pagination, TipoEntidadResponse, TransferenciaFinancieraResolucionResponse, TransferenciaFinancieraResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { Pagination, TipoEntidadResponse, TransferenciaFinancieraResolucionResponse, TransferenciaFinancieraResponse, TransferenciaFinancieraResumenResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, TipoEntidadesService, TransferenciasFinancierasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -30,13 +30,14 @@ export class TransferenciasFinancierasComponent {
   isDrawervisible: boolean = false;
   filtroUbigeo: boolean = true
   loadingDetail: boolean = true
+  loadingResumen: boolean = true
   paramsFilters: any
 
   private timeout: any;
 
   public transferencesResolution = signal<TransferenciaFinancieraResolucionResponse[]>([])
   public transferDetails = signal<TransferenciaFinancieraResponse[]>([])
-  public transferResume = signal<any>([])
+  public transferResume = signal<TransferenciaFinancieraResumenResponse[]>([])
 
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   // public mancomunidades = signal<EntidadResponse[]>([])
@@ -57,6 +58,14 @@ export class TransferenciasFinancierasComponent {
     total: 0
   }
 
+  paginationResumen: Pagination = {
+    code: 0,
+    columnSort: 'fecha_creacion',
+    typeSort: 'ASC',
+    pageSize: 10,
+    currentPage: 1,
+    total: 0
+  }
 
   pagination: Pagination = {
     code: 0,
@@ -67,8 +76,6 @@ export class TransferenciasFinancierasComponent {
     total: 0
   }
 
-
-  // mancomunidadesAbrev: string[] = ['MR', 'MM']
   tipos: string[] = ['ubigeo', 'mancomunidad']
   nowDate = new Date();
   
@@ -99,21 +106,10 @@ export class TransferenciasFinancierasComponent {
     tipoEntidadId: ['']
   })
 
-  constructor() {
-    // this.valueChangeForm()
-    // this.getParams()
-    // this.formFilter.get('periodo')?.setValue(`2024`)
-    // 
-  }
-
-  valueChangeForm(){
-    // this.obtenerUbigeoDepartamento()
-  }
-
   getParams() {
     this.route.queryParams.subscribe(params => {      
       if (Object.keys(params).length > 0) {
-        const filterStorage = localStorage.getItem('transferencesFilters')
+        // const filterStorage = localStorage.getItem('transferencesFilters')
         // if(filterStorage){
         //   params = JSON.parse(filterStorage)
         // }
@@ -145,65 +141,8 @@ export class TransferenciasFinancierasComponent {
         
         
         this.formFilter.patchValue({...params, periodo })
-        // console.log(this.formFilter.value);
-        // const paginationTransferences: PaginationTransferences = {...params }
         this.pagination = {...params }
       }
-      // if (Object.keys(params).length > 0) {
-      //   let campo = params['campo'] ?? 'fecha_publicacion'
-      //   this.paginationDetails.columnSort = campo
-      //   this.paginationDetails.currentPage = params['pagina']
-      //   this.paginationDetails.pageSize = params['cantidad']
-      //   this.paginationDetails.typeSort = params['ordenar'] ?? 'ASC'
-      //   this.loadingDetail = true
-      //   const dispositivo = params['dispositivo']  ? params['dispositivo'] : null
-      //   const cui = params['cui'] ? params['cui'] : null
-      //   const tipo = params['tipo'] ?? null
-      //   const periodo = params['periodo'] ?? null
-      //   const tipoProducto = params['tipoProducto'] ?? null
-      //   const ubigeoParams = params['ubigeo'] ?? null
-      //   const entidad = params['entidad'] ?? null
-      //   // let ubigeo = null
-      //   let tipoUbigeo = null
-      //   let tipoEntidad = null
-      //   // let mancomunidad = null
-
-      //   if (tipo == 'ubigeo') {
-      //     tipoUbigeo = params['tipoUbigeo'] ?? null
-      //     if (tipoUbigeo) {
-      //       // ubigeo = ubigeoParams
-      //       // ubigeo = tipoUbigeo == 'territorio' ? ubigeoParams : entidad
-      //     }
-      //   } else if (tipo == 'mancomunidad') {
-      //     tipoEntidad = params['tipoEntidad'] ?? null
-      //     // mancomunidad = params['mancomunidad'] ?? null
-      //   }
-      //   this.filtroUbigeo = tipo == 'ubigeo' ? true : false;
-
-      //   const ubigeoParms = params['ubigeo'] ?? null
-      //   const departamento = ubigeoParms ? ubigeoParms.slice(0, 2) : ''
-      //   let provincia = ubigeoParms ? `${ubigeoParms.slice(0, 4)}01` : ''
-      //   let distrito = ubigeoParms ? ubigeoParms : ''
-      //   // this.provinceDisabled = ubigeoParams ? false : true
-      //   // this.districtDisabled = ubigeoParams ? false : true
-
-        
-      //   if (ubigeoParams) {
-      //     // this.obtenerProvincias(departamento)
-      //     // this.obtenerDistritos(provincia)
-      //   }
-        
-      //   const tipoEntidadId = params['tipoEntidad'] ?? null
-      //   // this.formFilter.reset({ ...params, departamento, provincia, distrito, periodo: Number(periodo), tipoProducto, tipoEntidadId })
-      //   this.formFilter.reset({ ...params, departamento, periodo: Number(periodo), tipoProducto, tipoEntidadId })
-
-      //   // const paginationTransferences: PaginationTransferences = { periodo, tipoUbigeo, ubigeo, tipoEntidad, dispositivo, cui }
-      //   const paginationTransferences: PaginationTransferences = { periodo, tipoUbigeo, tipoEntidad, dispositivo, cui }
-      //   this.obtenerTransferenciasDetail(paginationTransferences)
-      // } else {
-      //   this.paginationDetails.columnSort = 'proyecto'
-      // }
-
     });
   }
 
@@ -212,6 +151,7 @@ export class TransferenciasFinancierasComponent {
     this.obtenerDepartamentos()
     this.obtenerTransferenciasResolucion()
     this.obtenerTransferenciasDetail()
+    this.obtenerTransferenciasResumen()
     this.getParams()
   }
 
@@ -232,6 +172,16 @@ export class TransferenciasFinancierasComponent {
           this.paginationDetails.total = resp.info!.total
           this.loadingDetail = false
         }
+      })
+  }
+
+  obtenerTransferenciasResumen(){
+    this.loadingResumen = true
+    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasResumem(this.paginationResumen, this.pagination)
+      .subscribe( resp => {
+        this.transferResume.set(resp.data)
+        this.paginationResumen.total = resp.info?.total ?? 0
+        this.loadingResumen = false
       })
   }
 

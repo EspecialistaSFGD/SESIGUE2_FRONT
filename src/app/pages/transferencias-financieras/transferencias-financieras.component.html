@@ -73,25 +73,58 @@
 		</nz-tab>
 		<nz-tab nzTitle="TRANSFERENCIAS RESUMIDO">
 			<nz-table [nzScroll]="{ x: '1150px' }" nzTitle="Transferencias resumido" nzShowSizeChanger nzSize="small"
-				[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="pagination.total!"
-				[nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
+				[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="paginationResumen.total!"
+				[nzPageSize]="paginationResumen.pageSize!" [nzPageIndex]="paginationResumen.currentPage!">
 				<thead>
 					<tr>
-						<th nzLeft nzWidth="120px">Nivel de gobierno</th>
-						<th nzLeft nzWidth="100px">Departamento</th>
-						<th nzLeft nzWidth="100px">Provincia</th>
-						<th nzLeft nzWidth="100px">Distrito</th>
-						<th nzWidth="100px" nzAlign="center">Pliego</th>
-						<th nzWidth="100px" nzAlign="center">CUI</th>
-						<th nzWidth="100px">Transferencias</th>
-						<th nzWidth="100px" nzAlign="center">Costo act.</th>
-						<th nzWidth="100px" nzAlign="center">Dcu. acuerdo</th>
-						<th nzWidth="100px" nzAlign="center">PIA</th>
-						<th nzWidth="100px" nzAlign="center">PIM</th>
-						<th nzWidth="100px" nzAlign="center">DEU</th>
-						<th nzWidth="100px" nzAlign="center">Dispositivo</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo</th>
+						<th nzWidth="60px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="funcion" [nzSortFn]="true">Función</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="nivel" [nzSortFn]="true">Nivel de Gobierno</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_departamento" [nzSortFn]="true">UE Departamento</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_provincia" [nzSortFn]="true">UE Provincia</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_distrito" [nzSortFn]="true">UE Distrito</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="pliego" [nzSortFn]="true">Pliego</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="ley" [nzSortFn]="true">Ley</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="transferencia" [nzSortFn]="true">Transferencias</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="periodo" [nzSortFn]="true">Periodo</th>
+						<th nzWidth="350px" nzColumnKey="nombre_proyecto" [nzSortFn]="true">Nombre del proyecto</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="costoActualizado" [nzSortFn]="true">Costo Actualizado</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="devAcumulado" [nzSortFn]="true">Dev Acumulado</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="pim" [nzSortFn]="true">PIM</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="pia" [nzSortFn]="true">PIA</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="dev" [nzSortFn]="true">DEV</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="compromiso" [nzSortFn]="true">Compromiso</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="certificado" [nzSortFn]="true">Certificado</th>
 					</tr>
 				</thead>
+				<tbody>
+					@for(detail of transferResume(); track $index){
+					<tr>
+						<td nzAlign="center">{{detail.tipo}}</td>
+						<td nzAlign="center">{{detail.codigo_unico}}</td>
+						<td nzAlign="center">{{detail.sector}}</td>
+						<td nzAlign="center">{{detail.funcion}}</td>
+						<td nzAlign="center">{{detail.nivel}}</td>
+						<td nzAlign="center">{{detail.ue_departamento}}</td>
+						<td nzAlign="center">{{detail.ue_provincia}}</td>
+						<td nzAlign="center">{{detail.ue_distrito}}</td>
+						<td nzAlign="center">{{detail.pliego}}</td>
+						<td nzAlign="center">{{detail.ley}}</td>
+						<td nzAlign="center">{{detail.transferencia}}</td>
+						<td nzAlign="center">{{detail.periodo}}</td>
+						<td nzAlign="center">{{detail.nombre_proyecto}}</td>
+						<td nzAlign="center">{{detail.costoActualizado}}</td>
+						<td nzAlign="center">{{detail.devAcumulado}}</td>
+						<td nzAlign="center">{{detail.pim}}</td>
+						<td nzAlign="center">{{detail.pia}}</td>
+						<td nzAlign="center">{{detail.dev}}</td>
+						<td nzAlign="center">{{detail.compromiso}}</td>
+						<td nzAlign="center">{{detail.certificado}}</td>
+					</tr>
+					}
+				</tbody>
 			</nz-table>
 		</nz-tab>
 	</nz-tabset>
