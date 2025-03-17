@@ -14,15 +14,22 @@ export interface Pagination {
   fechaFin?: string,
   tipoPerfil?: string,
   tipo?: string,
-  sectorId?: string,
+  sectorId?: number,
+  entidadId?:number,
   unidadId?: string,
   tipoEspacioId?: string,
   espacioId?: string,
   tipoEntidadId?: string,
   usuarioId?: string,
-  ubigeo?: string,
   total?: number,
-  estado?: string
+  estado?: string,
+  dispositivo?: string,
+  periodo?: string,
+  tipoProducto?: string,
+  tipoUbigeo?: string,
+  ubigeo?: string,
+  cui?: string,
+  tipoEntidad?: string,
 }
 
 export interface PaginationPanel {

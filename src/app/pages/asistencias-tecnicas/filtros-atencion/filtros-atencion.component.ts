@@ -65,14 +65,22 @@ export class FiltrosAtencionComponent {
     }
 
     changefechaInicio(){
-      const fechaInicioValue = this.formFilters.get('fechaInicio')?.value      
-      this.paginationFilters.fechaInicio = this.getFormatDate(fechaInicioValue)
+      const fechaInicioValue = this.formFilters.get('fechaInicio')?.value
+      if(fechaInicioValue){
+        this.paginationFilters.fechaInicio = this.getFormatDate(fechaInicioValue)
+      } else {
+        delete this.paginationFilters.fechaInicio
+      }
       this.generateFilters()
     }
     
     changeFechaFin(){
       const fechaFinValue = this.formFilters.get('fechaFin')?.value
-      this.paginationFilters.fechaFin = this.getFormatDate(fechaFinValue)
+      if(fechaFinValue){
+        this.paginationFilters.fechaFin = this.getFormatDate(fechaFinValue)
+      } else {
+        delete this.paginationFilters.fechaFin
+      }      
       this.generateFilters()
     }
 

@@ -2,12 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { generateRangeNumber, typeErrorControl } from '@core/helpers';
-import { EntidadResponse, Pagination, PaginationTransferences, TipoEntidadResponse, TransferenciaFinancieraResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { typeErrorControl } from '@core/helpers';
+import { Pagination, TipoEntidadResponse, TransferenciaFinancieraResolucionResponse, TransferenciaFinancieraResponse, TransferenciaFinancieraResumenResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, TipoEntidadesService, TransferenciasFinancierasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-transferencias-financieras',
@@ -16,7 +18,8 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
     CommonModule,
     PageHeaderComponent,
     NgZorroModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DropdownModule
   ],
   templateUrl: './transferencias-financieras.component.html',
   styles: ``
@@ -27,9 +30,14 @@ export class TransferenciasFinancierasComponent {
   isDrawervisible: boolean = false;
   filtroUbigeo: boolean = true
   loadingDetail: boolean = true
+  loadingResumen: boolean = true
+  paramsFilters: any
 
+  private timeout: any;
+
+  public transferencesResolution = signal<TransferenciaFinancieraResolucionResponse[]>([])
   public transferDetails = signal<TransferenciaFinancieraResponse[]>([])
-  public transferResume = signal<any>([])
+  public transferResume = signal<TransferenciaFinancieraResumenResponse[]>([])
 
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   // public mancomunidades = signal<EntidadResponse[]>([])
@@ -37,32 +45,41 @@ export class TransferenciasFinancierasComponent {
   public provincias = signal<UbigeoProvinciaResponse[]>([])
   public distritos = signal<UbigeoDistritoResponse[]>([])
 
-  provinceDisabled: boolean = true
-  districtDisabled: boolean = true
+  countActions:number = 0
+  // provinceDisabled: boolean = true
+  // districtDisabled: boolean = true
 
   paginationDetails: Pagination = {
     code: 0,
-    columnSort: 'proyecto',
+    columnSort: 'fecha_publicacion',
     typeSort: 'ASC',
-    pageSize: 10,
+    pageSize: 5,
     currentPage: 1,
     total: 0
   }
 
+  paginationResumen: Pagination = {
+    code: 0,
+    columnSort: 'fecha_creacion',
+    typeSort: 'ASC',
+    pageSize: 5,
+    currentPage: 1,
+    total: 0
+  }
 
   pagination: Pagination = {
     code: 0,
-    columnSort: 'fechaAtencion',
+    columnSort: 'pliego',
     typeSort: 'DESC',
-    pageSize: 10,
+    pageSize: 5,
     currentPage: 1,
     total: 0
   }
 
-
-  // mancomunidadesAbrev: string[] = ['MR', 'MM']
   tipos: string[] = ['ubigeo', 'mancomunidad']
   nowDate = new Date();
+  
+  currentYear: number = this.nowDate.getFullYear();
   periodoInicio: number = 2018
   tipoUbigeos: string[] = ['territorio', 'pliego']
   tipoProductos: string[] = ['proyecto', 'producto', 'estudio', 'actividad']
@@ -79,88 +96,97 @@ export class TransferenciasFinancierasComponent {
     tipo: [''],
     periodo: [''],
     tipoProducto: [''],
+    dispositivo: [''],
+    cui: [''],
     tipoUbigeo: [''],
-    departamento: [''],
-    provincia: [''],
-    distrito: [''],
+    departamento: [null],
+    provincia: [{value: null, disabled: true}],
+    distrito: [{value: null, disabled: true}],
     ubigeo: [''],
-    // entidad: [''],
-    tipoEntidadId: [''],
-    // mancomunidad: [''],
+    tipoEntidadId: ['']
   })
 
-  constructor() {
-    this.getParams()
-  }
-
   getParams() {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(params => {      
       if (Object.keys(params).length > 0) {
-        let campo = params['campo'] ?? 'proyecto'
-        this.paginationDetails.columnSort = campo
-        this.paginationDetails.currentPage = params['pagina']
-        this.paginationDetails.pageSize = params['cantidad']
-        this.paginationDetails.typeSort = params['ordenar'] ?? 'ASC'
-        this.loadingDetail = true
-        const tipo = params['tipo'] ?? null
-        const periodo = params['periodo'] ?? null
-        const tipoProducto = params['tipoProducto'] ?? null
-        const ubigeoParams = params['ubigeo'] ?? null
-        const entidad = params['entidad'] ?? null
-        let ubigeo = null
-        let tipoUbigeo = null
-        let tipoEntidad = null
-        // let mancomunidad = null
-
-        if (tipo == 'ubigeo') {
-          tipoUbigeo = params['tipoUbigeo'] ?? null
-          if (tipoUbigeo) {
-            ubigeo = tipoUbigeo == 'territorio' ? ubigeoParams : entidad
-          }
-        } else if (tipo == 'mancomunidad') {
-          tipoEntidad = params['tipoEntidad'] ?? null
-          // mancomunidad = params['mancomunidad'] ?? null
-        }
-        this.filtroUbigeo = tipo == 'ubigeo' ? true : false;
-
-        const ubigeoParms = params['ubigeo'] ?? null
-        const departamento = ubigeoParms ? ubigeoParms.slice(0, 2) : ''
-        let provincia = ubigeoParms ? ubigeoParms.slice(0, 4) : ''
-        let distrito = ubigeoParms ? ubigeoParms : ''
-        this.provinceDisabled = ubigeoParams ? false : true
-        this.districtDisabled = ubigeoParams ? false : true
-        if (ubigeoParams) {
-          this.obtenerProvincias(departamento)
-          this.obtenerDistritos(provincia)
-        }
-        const tipoEntidadId = params['tipoEntidad'] ?? null
-        this.formFilter.reset({ ...params, departamento, provincia, distrito, periodo: Number(periodo), tipoProducto, tipoEntidadId })
-        // if (tipo == 'mancomunidad') {
-        //   this.obtenerMancomunidades()
+        // const filterStorage = localStorage.getItem('transferencesFilters')
+        // if(filterStorage){
+        //   params = JSON.parse(filterStorage)
         // }
+        const periodo = params['periodo'] ?? this.currentYear
+        const columnSort =params['campo'] ?? 'pliego'
+        const ubigeoParams = params['ubigeo'] ?? null
+        const pageSize = params['cantidad'] ?? 10
+        const currentPage = params['pagina'] ?? 1
+        const typeSort = params['ordenar'] ?? 'DESC'
 
-        const paginationTransferences: PaginationTransferences = { periodo, tipoUbigeo, ubigeo, tipoEntidad }
-        this.obtenerTransferenciasDetail(paginationTransferences)
-      } else {
-        this.paginationDetails.columnSort = 'proyecto'
+        let departamento = null
+        let provincia = null
+        let distrito = null
+
+        if(ubigeoParams){
+          
+          departamento = ubigeoParams.slice(0,2)
+          console.log(departamento);
+          this.obtenerProvincias(departamento)
+          // this.obtenerDepartamentoPorubigeo(departamento)
+          if(ubigeoParams.length >= 4){
+            // this.provinceDisabled = false
+            provincia = `${ubigeoParams.slice(0,4)}01`
+            this.obtenerDistritos(provincia)
+          }
+          if(ubigeoParams.length >= 6){
+            // this.districtDisabled = false
+            distrito = ubigeoParams.slice(0,6)
+          }
+        }
+     
+        this.paramsFilters = params
+        
+        
+        this.formFilter.patchValue({...params, periodo: Number(periodo) })
+        // this.pagination = {...params }
+        this.pagination = {...params, columnSort, typeSort, pageSize, currentPage  }
+        this.obtenerTransferenciasDetail()
+        this.obtenerTransferenciasResumen()
+        this.obtenerTransferenciasResolucion()
       }
-
     });
   }
 
   ngOnInit() {
     this.obtenerTipoEntidad()
     this.obtenerDepartamentos()
+    this.getParams()
   }
 
-  obtenerTransferenciasDetail(pagination: PaginationTransferences) {
-    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasDetalles(this.paginationDetails, pagination)
+  obtenerTransferenciasResolucion(){
+    const periodo = this.formFilter.get('periodo')?.value
+    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasResolucion(periodo)
+      .subscribe( resp => {
+        this.transferencesResolution.set(resp.data)
+      })
+  }
+
+  obtenerTransferenciasDetail() {
+    this.loadingDetail = true
+    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasDetalles(this.pagination, this.paginationDetails)
       .subscribe(resp => {
         if (resp.success == true) {
           this.transferDetails.set(resp.data)
           this.paginationDetails.total = resp.info!.total
           this.loadingDetail = false
         }
+      })
+  }
+
+  obtenerTransferenciasResumen(){
+    this.loadingResumen = true
+    this.transferenciaFinancieraService.obtenerTransferenciasFinancierasResumem(this.pagination, this.paginationDetails)
+      .subscribe( resp => {
+        this.transferResume.set(resp.data)
+        this.paginationResumen.total = resp.info?.total ?? 0
+        this.loadingResumen = false
       })
   }
 
@@ -175,8 +201,7 @@ export class TransferenciasFinancierasComponent {
   }
 
   obtenerTipoEntidad() {
-    this.pagination.columnSort = 'nombre'
-    this.tipoEntidadService.getAllTipoEntidades(this.pagination)
+    this.tipoEntidadService.getAllTipoEntidades({...this.pagination, columnSort: 'nombre'})
       .subscribe(resp => {
         if (resp.success = true) {
           this.tipoEntidades.set(resp.data)
@@ -188,85 +213,93 @@ export class TransferenciasFinancierasComponent {
     this.ubigeoService.getDepartments()
       .subscribe(resp => {
         if (resp.success == true) {
-          this.departamentos.set(resp.data)
+          this.departamentos.set(resp.data) 
         }
       })
   }
 
-  obtenerProvincias(departamento: string) {
+  // obtenerDepartamentoPorubigeo(ubigeo: string){
+  //   console.log(ubigeo);
+    
+  //   const departamento = this.departamentos().map( item => {
+  //     // item.departamentoId == ubigeo
+  //     console.log(item);
+      
+  //   } )
+  //   console.log(departamento);
+    
+  // }
+
+  obtenerProvincias(departamento: string) {    
     this.ubigeoService.getProvinces(departamento)
-      .subscribe(resp => {
+      .subscribe(resp => {        
         if (resp.success == true) {
-          this.provinceDisabled = false
-          this.districtDisabled = true
           this.provincias.set(resp.data)
         }
       })
   }
 
+  obtenerProvinciaPorUbigeo(ubigeo: string){
+
+  }
+
   obtenerDistritos(provincia: string) {
-    this.ubigeoService.getDistricts(provincia)
-      .subscribe(resp => {
+    const setprovincia = provincia.slice(0,4)
+    this.ubigeoService.getDistricts(setprovincia)
+      .subscribe(resp => {        
         if (resp.success == true) {
-          this.districtDisabled = false
           this.distritos.set(resp.data)
         }
       })
   }
 
-  obtenerUbigeoDepartamento(ubigeo: string) {
-    if (ubigeo) {
-      this.formFilter.get('ubigeo')?.setValue(ubigeo)
-      this.formFilter.get('provincia')?.reset();
-      this.formFilter.get('distrito')?.reset();
-      this.obtenerProvincias(ubigeo)
-      this.setParamsTipoUbigeo()
-      // this.obtenerEntidadPorUbigeo(`${ubigeo}0000`)
+  obtenerUbigeoDepartamento() {
+    const departamentoControl = this.formFilter.get('departamento')?.value
+    if(departamentoControl){
+      const ubigeoDepartamento = departamentoControl.departamentoId
+      this.obtenerProvincias(ubigeoDepartamento)
+      this.paramsNavigate({ ubigeo: ubigeoDepartamento })
+    } else {
+      this.provincias.set([])
+      this.formFilter.get('provincia')?.reset()
+      this.paramsNavigate({ ubigeo: null })
     }
+    this.formFilter.get('distrito')?.reset()
+    this.disabledControlUbigeo()
   }
 
-  obtenerUbigeoProvincia(ubigeo: string) {
-    if (ubigeo) {
-      this.formFilter.get('ubigeo')?.setValue(ubigeo)
-      this.obtenerDistritos(ubigeo)
-      this.setParamsTipoUbigeo()
-      // this.obtenerEntidadPorUbigeo(`${ubigeo}01`)
+  obtenerUbigeoProvincia() {
+    const departamentoControl = this.formFilter.get('departamento')?.value
+    const provinciaControl = this.formFilter.get('provincia')?.value
+    if(provinciaControl){
+      const ubigeoProvincia = provinciaControl.provinciaId.slice(0,4)
+      this.obtenerDistritos(ubigeoProvincia)
+
+      this.paramsNavigate({ ubigeo: ubigeoProvincia })
+    } else {
+      this.distritos.set([])
+      this.formFilter.get('distrito')?.reset()
+      const ubigeoDepartamento = departamentoControl.departamentoId
+      this.paramsNavigate({ ubigeo: ubigeoDepartamento })
     }
+    this.disabledControlUbigeo()
   }
 
-  obtenerUbigeoDistrito(ubigeo: string) {
-    if (ubigeo) {
-      this.formFilter.get('ubigeo')?.setValue(ubigeo)
-      // this.obtenerEntidadPorUbigeo(ubigeo)
-      // this.changeUbigeoTipo()
-      this.setParamsTipoUbigeo()
+  obtenerUbigeoDistrito() {
+    const provinciaControl = this.formFilter.get('provincia')?.value
+    const distritoControl = this.formFilter.get('distrito')?.value
+    if(distritoControl){     
+      const ubigeoDistrito = distritoControl.distritoId
+      this.paramsNavigate({ ubigeo: ubigeoDistrito })
+    } else {
+      const ubigeoProvincia = provinciaControl.provinciaId
+      this.paramsNavigate({ ubigeo: ubigeoProvincia })
     }
   }
-
-  // obtenerEntidadPorUbigeo(ubigeo: string) {
-  //   const tipo = this.formFilter.get('tipoUbigeo')
-  //   const ubigeoForm = this.formFilter.get('ubigeo')
-  //   const entidadForm = this.formFilter.get('entidad')
-  //   this.entidadService.getEntidadPorUbigeo(ubigeo)
-  //     .subscribe(resp => {
-  //       if (resp.success == true) {
-  //         const entidad = resp.data[0]
-  //         ubigeoForm?.setValue(entidad.ubigeo)
-  //         entidadForm?.setValue(entidad.entidad)
-  //         // const ubigeo = tipo?.value == 'territorio' ? entidad.ubigeo : entidad.entidad
-  //         // this.formFilter.get('ubigeo')?.setValue(ubigeo)
-  //         // const queryParams = { 'ubigeo': ubigeo }
-  //         // this.paramsNavigate(queryParams)
-  //       } else {
-  //         ubigeoForm?.setValue('')
-  //         entidadForm?.setValue('')
-  //       }
-  //     })
-  // }
 
   changePeriod() {
-    const period = this.formFilter.get('periodo')?.value
-    let queryParams = { 'periodo': period }
+    const periodo = this.formFilter.get('periodo')?.value
+    let queryParams = { periodo, dispositivo: '' }
     this.paramsNavigate(queryParams)
   }
 
@@ -278,67 +311,20 @@ export class TransferenciasFinancierasComponent {
   changeTipoEntidad() {
     const tipoEntidad = this.formFilter.get('tipoEntidadId')?.value
     this.paramsNavigate({ tipoEntidad })
-    // const tipo = this.formFilter.get('tipo')
-    // const mancomunidadControl = this.formFilter.get('mancomunidad')
-
-    // mancomunidadControl?.setValue('')
-    // if (tipo?.value == 'mancomunidad' && this.mancomunidadesAbrev.includes(tipoEntidad)) {
-    //   mancomunidadControl?.enable()
-    //   // this.obtenerMancomunidades()
-    //   let mancomunidad = mancomunidadControl?.value
-    //   mancomunidad = mancomunidad ? mancomunidad : null
-    //   this.paramsNavigate({ tipoEntidad, mancomunidad })
-    // } else {
-    //   mancomunidadControl?.disable()
-    //   this.paramsNavigate({ tipoEntidad, 'mancomunidad': null })
-    // }
   }
-
-  // obtenerMancomunidades() {
-  //   const tipoEntidad = this.formFilter.get('tipoEntidadId');
-  //   const tipoMancomunidad = tipoEntidad?.value
-
-  //   if (this.mancomunidadesAbrev.includes(tipoMancomunidad)) {
-  //     const pagination: Pagination = {
-  //       code: 1,
-  //       columnSort: 'entidad',
-  //       typeSort: 'ASC',
-  //       pageSize: 300,
-  //       currentPage: 1,
-  //       total: 10
-  //     }
-
-  //     this.entidadService.getMancomunidades(tipoMancomunidad, pagination)
-  //       .subscribe(resp => {
-  //         if (resp.success == true) {
-  //           if (resp.data.length > 0) {
-  //             const mancomunidad: EntidadResponse[] = resp.data
-  //             this.mancomunidades.set(mancomunidad)
-  //           }
-  //         }
-  //       })
-  //   }
-  // }
-
-  // changeMancomunidad(value: string) {
-  //   if (value) {
-  //     this.paramsNavigate({ 'mancomunidad': value })
-  //   }
-
-  // }
 
   setFilterKind(value: string) {
     const tipoUbigeo = this.formFilter.get('tipoUbigeo')
-    const departamento = this.formFilter.get('departamento')
-    const provincia = this.formFilter.get('provincia')
-    const distrito = this.formFilter.get('distrito')
+    // const departamento = this.formFilter.get('departamento')
+    // const provincia = this.formFilter.get('provincia')
+    // const distrito = this.formFilter.get('distrito')
 
     if (value) {
       this.filtroUbigeo = value == 'ubigeo' ? true : false;
       if (this.filtroUbigeo) {
-        departamento?.setValue('')
-        provincia?.setValue('')
-        distrito?.setValue('')
+        // departamento?.setValue('')
+        // provincia?.setValue('')
+        // distrito?.setValue('')
         tipoUbigeo?.setValue(this.tipoUbigeos[0])
         this.paramsNavigate({ 'tipo': value, 'tipoEntidad': null, 'mancomunidad': null })
       } else {
@@ -348,20 +334,19 @@ export class TransferenciasFinancierasComponent {
   }
 
   generarPeriodos(): number[] {
-    const currentYear = this.nowDate.getFullYear();
-    const years = Array.from({ length: currentYear - this.periodoInicio + 1 }, (_, i) => this.periodoInicio + i)
-    return generateRangeNumber(this.periodoInicio, currentYear)
+    const years = Array.from({ length: this.currentYear - this.periodoInicio + 1 }, (_, i) => this.currentYear - i);     
+    return years
   }
 
   paramsDetailChange(params: NzTableQueryParams): void {
     const sortsNames = ['ascend', 'descend']
     const sorts = params.sort.find(item => sortsNames.includes(item.value!))
     const ordenar = sorts?.value!.slice(0, -3)
-    const queryParams = { transferencia: 'detalle', pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar }
+    const queryParams = { transferencia: 'detalle', pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar, tipo: this.tipos[0], periodo: this.currentYear, tipoUbigeo: this.tipoUbigeos[this.tipoUbigeos.length - 1] }
     this.paramsNavigate(queryParams)
   }
 
-  paramsNavigate(queryParams: Params) {
+  paramsNavigate(queryParams: Params) {    
     this.router.navigate(
       [],
       {
@@ -376,9 +361,18 @@ export class TransferenciasFinancierasComponent {
     this.isDrawervisible = true
   }
 
+  deleteFilters(){
+    localStorage.removeItem('transferencesFilters')
+    this.onCloseDrawer()
+  }
+
+  saveFilters(){    
+    localStorage.setItem( 'transferencesFilters', JSON.stringify(this.paramsFilters) )
+    this.onCloseDrawer()
+  }
+
   onCloseDrawer() {
     this.isDrawervisible = false;
-    this.changeUbigeoTipo()
   }
 
   setParamsTipoUbigeo() {
@@ -387,13 +381,50 @@ export class TransferenciasFinancierasComponent {
     this.paramsNavigate({ tipoUbigeo, ubigeo })
   }
 
+  changeDispositivo(){
+    const dispositivo = this.formFilter.get('dispositivo')?.value
+    this.paramsNavigate({ dispositivo })
+  }
+  
+  changeCui(event: any){
+    const cuiControl = this.formFilter.get('cui')
+    const values = cuiControl?.value.slice(0,7)
+    cuiControl?.setValue(values)
+
+    clearTimeout(this.timeout);
+    var $this = this;
+    this.timeout = setTimeout(function () {      
+      if (event.keyCode != 13) {
+        const cui = event.target.value        
+        $this.paramsNavigate({ cui })    
+      }
+    }, 500);
+  }
+
   changeUbigeoTipo() {
-    const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value
-    const ubigeo = this.formFilter.get('ubigeo')?.value
-    if (ubigeo) {
-      this.paramsNavigate({ tipoUbigeo, ubigeo })
-    } else {
-      this.paramsNavigate({ tipoUbigeo })
+    const tipoUbigeo = this.formFilter.get('tipoUbigeo')?.value    
+    this.disabledControlUbigeo()
+    this.paramsNavigate({ tipoUbigeo })
+  }
+
+  disabledControlUbigeo(){
+    const tipoUbigeoValue = this.formFilter.get('tipoUbigeo')?.value
+    const departamentoControl = this.formFilter.get('departamento')
+    const provinciaControl = this.formFilter.get('provincia')
+    const distritoControl = this.formFilter.get('distrito')
+
+    provinciaControl?.disable()
+    distritoControl?.disable()
+
+    if(tipoUbigeoValue == 'territorio' && departamentoControl?.value){
+      provinciaControl?.enable()
+    }
+    if(tipoUbigeoValue == 'territorio' && provinciaControl?.value){
+      distritoControl?.enable()
+    }
+    if(tipoUbigeoValue == 'pliego'){
+      provinciaControl?.reset()
+      distritoControl?.reset()
     }
   }
 }

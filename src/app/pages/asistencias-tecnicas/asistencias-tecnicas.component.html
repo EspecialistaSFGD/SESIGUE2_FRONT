@@ -8,6 +8,7 @@
       @if (this.permisosPCM()){
         <th nzLeft nzWidth="42px" nzAlign="center" nzColumnKey="validado"></th>
       }
+      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código </th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención </th>
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
       <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
@@ -25,6 +26,7 @@
       @if (this.permisosPCM()){
         <td nzAlign="center"><nz-avatar [nzSize]="24" [ngClass]="{ 'bg-green-400' : atencion.validado && geDocumentAtencion(atencion), 'bg-gray-300' : !atencion.validado && geDocumentAtencion(atencion), 'bg-blue-400' : !geDocumentAtencion(atencion) }" nz-tooltip="{{ !geDocumentAtencion(atencion) ? '' :  atencion.validado ? 'Validado' : 'Sin Validar' }}" nzIcon="check"></nz-avatar></td>
       }
+      <td nzAlign="center">{{atencion.codigo}}</td>
       <td nzAlign="center">{{getTextEnum(atencion.tipo, 'tipo') | titlecase}}</td>
       <td nzAlign="center">{{getTextEnum(atencion.modalidad, 'modalidad') | titlecase }}</td>
       <td nzAlign="center">{{atencion.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
@@ -61,6 +63,10 @@
     <p class="mb-2 sm:mb-0">Resultados ({{pagination.total}})</p>
     <div class="flex gap-2">
       @if(perfilAuth == 11 || perfilAuth == 12){
+        <a [routerLink]="['/atenciones/metas']" nz-button nzType="default">
+          <span nz-icon nzType="rise"></span>
+          <span class="button-text">Metas</span>
+        </a>
         <button nz-button nzType="default" (click)="changeDrawerFilters(true)">
           <span nz-icon nzType="filter"></span>
           <span class="button-text">Filtros</span>
