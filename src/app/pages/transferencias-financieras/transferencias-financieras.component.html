@@ -56,7 +56,7 @@
 						<td nzAlign="center" class="text-xs">{{detail.ue_provincia}}</td>
 						<td nzAlign="center" class="text-xs">{{detail.ue_distrito}}</td>
 						<td nzAlign="center" class="text-xs">{{detail.pliego_matriz}}</td>
-						<td nzAlign="center" class="text-xs">{{detail.transferencia | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{detail.transferencia | numero : 0 }}</td>
 						<td nzAlign="center" class="text-xs">{{detail.anio }}</td>
 						<td nzAlign="center" class="text-xs">{{detail.periodo }}</td>
 						<td nzAlign="center" class="text-xs">{{detail.resolucion}}</td>
@@ -114,20 +114,20 @@
 						<td nzAlign="center" class="text-xs">{{resumen.ue_provincia}}</td>
 						<td nzAlign="center" class="text-xs">{{resumen.ue_distrito}}</td>
 						<td nzAlign="center" class="text-xs">{{resumen.pliego}}</td>
-						<td nzAlign="center" class="text-xs">{{resumen.ley | number : '1.0-0' }}</td>
-						<td nzAlign="center" class="text-xs">{{resumen.transferencia | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.ley | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.transferencia | numero : 0 }}</td>
 						<td nzAlign="center" class="text-xs">{{resumen.periodo}}</td>
 						<td>
 							<p class="text-xsline-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
 							[nzTooltipTitle]="resumen.nombre_proyecto">{{resumen.nombre_proyecto}}</p>
 						</td>
-						<td nzAlign="center" class="text-xs">{{resumen.costoActualizado | number : '1.0-0' }}</td>
-						<td nzAlign="center" class="text-xs">{{resumen.devAcumulado | number : '1.0-0' }}</td>
-						<td nzAlign="center" class="text-xs">{{resumen.pim | number : '1.0-0' }}</td>
-						<td nzAlign="center" class="text-xs">{{resumen.pia | number : '1.0-0' }}</td>
-						<td nzAlign="center" class="text-xs">{{resumen.dev | number : '1.0-0' }}</td>
-						<td nzAlign="center" class="text-xs">{{resumen.compromiso | number : '1.0-0' }}</td>
-						<td nzAlign="center" class="text-xs">{{resumen.certificado | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.costoActualizado | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.devAcumulado | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.pim | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.pia | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.dev | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.compromiso | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.certificado | numero : 0 }}</td>
 					</tr>
 					}
 				</tbody>
