@@ -53,7 +53,7 @@ export class TransferenciasFinancierasComponent {
     code: 0,
     columnSort: 'fecha_publicacion',
     typeSort: 'ASC',
-    pageSize: 10,
+    pageSize: 5,
     currentPage: 1,
     total: 0
   }
@@ -62,7 +62,7 @@ export class TransferenciasFinancierasComponent {
     code: 0,
     columnSort: 'fecha_creacion',
     typeSort: 'ASC',
-    pageSize: 10,
+    pageSize: 5,
     currentPage: 1,
     total: 0
   }
@@ -71,7 +71,7 @@ export class TransferenciasFinancierasComponent {
     code: 0,
     columnSort: 'pliego',
     typeSort: 'DESC',
-    pageSize: 10,
+    pageSize: 5,
     currentPage: 1,
     total: 0
   }

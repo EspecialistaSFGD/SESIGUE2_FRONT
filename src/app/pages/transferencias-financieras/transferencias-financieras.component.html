@@ -40,27 +40,30 @@
 				<tbody>
 					@for(detail of transferDetails(); track $index){
 					<tr>
-						<td nzAlign="center">{{detail.tipo}}</td>
-						<td nzAlign="center">{{detail.codigo_unico}}</td>
-						<td nzAlign="center">{{detail.sub_tipo}}</td>
-						<td nzAlign="center">{{detail.tipo_1}}</td>
-						<td>{{detail.nombre_proyecto}}</td>
-						<td nzAlign="center">{{detail.sector}}</td>
-						<td nzAlign="center">{{detail.funcion}}</td>
-						<td nzAlign="center">{{detail.nivel_gobierno}}</td>
-						<td nzAlign="center">{{detail.ue_codigo_ubigeo}}</td>
-						<td nzAlign="center">{{detail.ue_departamento}}</td>
-						<td nzAlign="center">{{detail.ue_provincia}}</td>
-						<td nzAlign="center">{{detail.ue_distrito}}</td>
-						<td nzAlign="center">{{detail.pliego_matriz}}</td>
-						<td nzAlign="center">{{detail.transferencia}}</td>
-						<td nzAlign="center">{{detail.anio }}</td>
-						<td nzAlign="center">{{detail.periodo }}</td>
-						<td nzAlign="center">{{detail.resolucion}}</td>
-						<td nzAlign="center">{{detail.fecha_publicacion}}</td>
-						<td nzAlign="center">{{detail.anexos}}</td>
-						<td nzAlign="center">{{detail.fondes}}</td>
-						<td nzAlign="center">{{detail.fuente_financiamiento}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.tipo}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.codigo_unico}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.sub_tipo}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.tipo_1}}</td>
+						<td>
+							<p class="text-xsline-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
+							[nzTooltipTitle]="detail.nombre_proyecto">{{detail.nombre_proyecto}}</p>
+						</td>
+						<td nzAlign="center" class="text-xs">{{detail.sector}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.funcion}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.nivel_gobierno}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.ue_codigo_ubigeo}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.ue_departamento}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.ue_provincia}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.ue_distrito}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.pliego_matriz}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.transferencia | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{detail.anio }}</td>
+						<td nzAlign="center" class="text-xs">{{detail.periodo }}</td>
+						<td nzAlign="center" class="text-xs">{{detail.resolucion}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.fecha_publicacion}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.anexos}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.fondes}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.fuente_financiamiento}}</td>
 					</tr>
 					}
 				</tbody>
@@ -86,42 +89,45 @@
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_provincia" [nzSortFn]="true">UE Provincia</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_distrito" [nzSortFn]="true">UE Distrito</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="pliego" [nzSortFn]="true">Pliego</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="ley" [nzSortFn]="true">Ley</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="ley" [nzSortFn]="true">Ley de presupuesto</th>
 						<th nzWidth="150px" nzAlign="center" nzColumnKey="transferencia" [nzSortFn]="true">Transferencias</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="periodo" [nzSortFn]="true">Periodo</th>
 						<th nzWidth="350px" nzColumnKey="nombre_proyecto" [nzSortFn]="true">Nombre del proyecto</th>
 						<th nzWidth="150px" nzAlign="center" nzColumnKey="costoActualizado" [nzSortFn]="true">Costo Actualizado</th>
 						<th nzWidth="150px" nzAlign="center" nzColumnKey="devAcumulado" [nzSortFn]="true">Dev Acumulado</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="pim" [nzSortFn]="true">PIM</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="pia" [nzSortFn]="true">PIA</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="dev" [nzSortFn]="true">DEV</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="compromiso" [nzSortFn]="true">Compromiso</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="certificado" [nzSortFn]="true">Certificado</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="pim" [nzSortFn]="true">PIM</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="pia" [nzSortFn]="true">PIA</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="dev" [nzSortFn]="true">DEV</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="compromiso" [nzSortFn]="true">Compromiso</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="certificado" [nzSortFn]="true">Certificado</th>
 					</tr>
 				</thead>
 				<tbody>
-					@for(detail of transferResume(); track $index){
+					@for(resumen of transferResume(); track $index){
 					<tr>
-						<td nzAlign="center">{{detail.tipo}}</td>
-						<td nzAlign="center">{{detail.codigo_unico}}</td>
-						<td nzAlign="center">{{detail.sector}}</td>
-						<td nzAlign="center">{{detail.funcion}}</td>
-						<td nzAlign="center">{{detail.nivel}}</td>
-						<td nzAlign="center">{{detail.ue_departamento}}</td>
-						<td nzAlign="center">{{detail.ue_provincia}}</td>
-						<td nzAlign="center">{{detail.ue_distrito}}</td>
-						<td nzAlign="center">{{detail.pliego}}</td>
-						<td nzAlign="center">{{detail.ley}}</td>
-						<td nzAlign="center">{{detail.transferencia}}</td>
-						<td nzAlign="center">{{detail.periodo}}</td>
-						<td>{{detail.nombre_proyecto}}</td>
-						<td nzAlign="center">{{detail.costoActualizado}}</td>
-						<td nzAlign="center">{{detail.devAcumulado}}</td>
-						<td nzAlign="center">{{detail.pim}}</td>
-						<td nzAlign="center">{{detail.pia}}</td>
-						<td nzAlign="center">{{detail.dev}}</td>
-						<td nzAlign="center">{{detail.compromiso}}</td>
-						<td nzAlign="center">{{detail.certificado}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.tipo}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.codigo_unico}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.sector}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.funcion}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.nivel}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.ue_departamento}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.ue_provincia}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.ue_distrito}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.pliego}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.ley | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.transferencia | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.periodo}}</td>
+						<td>
+							<p class="text-xsline-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
+							[nzTooltipTitle]="resumen.nombre_proyecto">{{resumen.nombre_proyecto}}</p>
+						</td>
+						<td nzAlign="center" class="text-xs">{{resumen.costoActualizado | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.devAcumulado | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.pim | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.pia | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.dev | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.compromiso | number : '1.0-0' }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.certificado | number : '1.0-0' }}</td>
 					</tr>
 					}
 				</tbody>
@@ -213,23 +219,6 @@
 			</div>
 			<div class="flex flex-col">
 				<label class="text-sm" for="provincia">Provincias</label>
-				<!-- <select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
-						formControlName="provincia" (change)="obtenerUbigeoProvincia()">
-						@for (provincia of provincias(); track $index) {
-						<option [value]="provincia.provinciaId">{{provincia.provincia}}</option>
-						}
-					</select> -->
-				<!-- <nz-form-control nzSpan="null">
-					<nz-select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
-						formControlName="provincia"
-						[nzDisabled]="provinceDisabled" (ngModelChange)="obtenerUbigeoProvincia()" nzAllowClear nzShowSearch>
-						@for (provincia of provincias(); track $index) {
-						<nz-option [nzValue]="provincia.provinciaId" nzLabel="{{provincia.provincia}}"></nz-option>
-						}
-					</nz-select>
-					<div class="text-danger" *ngIf="alertMessageError('provincia')">
-						{{msgErrorControl('provincia','Provincia')}}</div>
-				</nz-form-control> -->
 				<p-dropdown 
 					[options]="provincias()" 
 					formControlName="provincia"
@@ -247,18 +236,6 @@
 					[showClear]="true" 
 					placeholder="Selecionar distrito"
 					(onChange)="obtenerUbigeoDistrito()"/>
-				<!-- <nz-form-control nzSpan="null">
-					<nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" class="select-form-control"
-						formControlName="distrito" [nzDisabled]="districtDisabled" (ngModelChange)="obtenerUbigeoDistrito()"
-						nzAllowClear nzShowSearch>
-						@for (distrito of distritos(); track $index) {
-						<nz-option [nzValue]="distrito.distritoId" nzLabel="{{distrito.distrito}}"></nz-option>
-						}
-					</nz-select>
-					<div class="text-danger" *ngIf="alertMessageError('distrito')">
-						{{msgErrorControl('distrito','Distrito')}}
-					</div>
-				</nz-form-control> -->
 			</div>
 			} @else {
 			<div class="flex flex-col">
