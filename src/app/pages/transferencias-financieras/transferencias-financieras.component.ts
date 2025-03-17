@@ -201,7 +201,6 @@ export class TransferenciasFinancierasComponent {
   }
 
   obtenerTipoEntidad() {
-    // this.pagination.columnSort = 'nombre'
     this.tipoEntidadService.getAllTipoEntidades({...this.pagination, columnSort: 'nombre'})
       .subscribe(resp => {
         if (resp.success = true) {
