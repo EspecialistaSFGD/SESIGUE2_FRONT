@@ -13,19 +13,13 @@ export class UsuariosService {
     private http = inject(HttpClient)
     private helpersServices = inject(HelpersService);
   
-    listarUsuario(pagination: Pagination): Observable<UsuariosResponses> {
+    listarUsuario(pagination: Pagination, perfiles: number[] | null = null): Observable<UsuariosResponses> {
       let params = this.helpersServices.setParams(pagination)
-        // .append("sectorId", sector)
-        // .append("entidadId", entidades)
-      // if (entidades.length > 0) {
-      //     // clasificacion.forEach((clas: SelectModel) => {
-      //     //     params = params.append('clasificacionId[]', `${clas.value}`);
-      //     // });
-      //     for(let entidad of entidades){
-      //       params = params.append('entidad[]', `${clas.value}`);
-      //     }
-      // }
-        // .append("entidadId", entidad)
+        if(perfiles){
+          for(let perfil of perfiles){
+            params = params.append('perfil[]', `${perfil}`);
+          }
+        }
         
       const headers = this.helpersServices.getAutorizationToken()
       return this.http.get<UsuariosResponses>(`${this.urlUsuario}/ListarUsuarios`, { headers, params })

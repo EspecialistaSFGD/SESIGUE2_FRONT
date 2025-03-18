@@ -46,7 +46,7 @@ export default class MetasComponent {
   obtenerServiceUsuariosPorSector(){
     this.pagination.sectorId = this.sectorAuth
     this.pagination.entidadId = this.entidadAuth
-    this.usuariosService.listarUsuario(this.pagination)
+    this.usuariosService.listarUsuario(this.pagination, [11,12])
       .subscribe( resp => {        
         this.usuarios.set(resp.data)
         if(resp.data.length > 0){
