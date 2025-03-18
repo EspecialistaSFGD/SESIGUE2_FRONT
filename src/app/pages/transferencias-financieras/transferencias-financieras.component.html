@@ -1,12 +1,16 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <div class="bg-white p-4">
-	<div class="relative">
+	<!-- <div class="relative">
+		<button nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteExcelTransferencias()">
+			<span nz-icon nzType="file-excel"></span>
+			<span class="button-text">Exportar</span>
+		  </button>
 		<button nz-button class="absolute right-0 top-0 z-10" (click)="onOpenDrawer()">
 			<span nz-icon nzType="filter" nzTheme="outline"></span>
 			<span class="button-text">Filtros</span>
 		</button>
-	</div>
-	<nz-tabset>
+	</div> -->
+	<nz-tabset [nzTabBarExtraContent]="actionTransferences">
 		<nz-tab nzTitle="TRANSFERENCIAS DETALLE">
 			<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderDetail" nzShowSizeChanger nzSize="small"
 				[nzData]="transferDetails()" [nzFrontPagination]="false" [nzLoading]="loadingDetail"
@@ -75,7 +79,7 @@
 			</ng-template>
 		</nz-tab>
 		<nz-tab nzTitle="TRANSFERENCIAS RESUMIDO">
-			<nz-table [nzScroll]="{ x: '1150px' }" nzTitle="Transferencias resumido" nzShowSizeChanger nzSize="small"
+			<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderResumen" nzShowSizeChanger nzSize="small"
 				[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="paginationResumen.total!"
 				[nzPageSize]="paginationResumen.pageSize!" [nzPageIndex]="paginationResumen.currentPage!">
 				<thead>
@@ -132,8 +136,25 @@
 					}
 				</tbody>
 			</nz-table>
+			<ng-template #HeaderResumen>
+				<div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+					<p class="mb-2 sm:mb-0">Resultados ({{paginationResumen.total}})</p>
+				</div>
+			</ng-template>
 		</nz-tab>
 	</nz-tabset>
+	<ng-template #actionTransferences>
+		<div class="flex gap-2">
+			<button nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteExcelTransferencias()">
+				<span nz-icon nzType="file-excel"></span>
+				<span class="button-text">Exportar</span>
+			  </button>
+			<button nz-button nzType="default" (click)="onOpenDrawer()">
+				<span nz-icon nzType="filter" nzTheme="outline"></span>
+				<span class="button-text">Filtros</span>
+			</button>
+		</div>
+	  </ng-template>
 </div>
 <nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzVisible]="isDrawervisible" [nzFooter]="footerDrawer"
 	nzTitle="Filtrar los resultados" (nzOnClose)="onCloseDrawer()">
