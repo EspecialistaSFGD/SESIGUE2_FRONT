@@ -14,31 +14,56 @@
 				[nzPageIndex]="paginationDetails.currentPage!" (nzQueryParams)="paramsDetailChange($event)">
 				<thead>
 					<tr>
-						<th nzLeft nzWidth="100px">Nivel de gobierno</th>
-						<th nzLeft nzWidth="100px">Departamento</th>
-						<th nzLeft nzWidth="100px">Provincia</th>
-						<th nzLeft nzWidth="100px">Distrito</th>
-						<th nzWidth="120px">Pliego</th>
-						<th nzWidth="150px" nzAlign="center">CUI</th>
-						<th nzWidth="150px" nzAlign="center">Transferencias</th>
-						<th nzWidth="150px" nzAlign="center">Dispositivo legal</th>
-						<th nzWidth="150px" nzAlign="center">Fecha de publicación</th>
-						<th nzWidth="150px" nzAlign="center">Periodo</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="Tipo" [nzSortFn]="true">Tipo</th>
+						<th nzWidth="60px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="sub_tipo" [nzSortFn]="true">Sub Tipo</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="sub_tipo" [nzSortFn]="true">Tipo 1</th>
+						<th nzWidth="350px" nzColumnKey="Nombre_proyecto" [nzSortFn]="true">Nombre del proyecto</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="funcion" [nzSortFn]="true">Función</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="nivel_gobierno" [nzSortFn]="true">Nivel de Gobierno</th>
+						<th nzWidth="60px" nzAlign="center" nzColumnKey="UE_codigo_ubigeo" [nzSortFn]="true">UE CUI</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="UE_departamento" [nzSortFn]="true">UE Departamento</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="UE_provincia" [nzSortFn]="true">UE Provincia</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="UE_distrito" [nzSortFn]="true">UE Distrito</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="pliego" [nzSortFn]="true">Pliego</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="transferencia" [nzSortFn]="true">Transferencias</th>
+						<th nzWidth="60px" nzAlign="center" nzColumnKey="anio" [nzSortFn]="true">Año</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="periodo" [nzSortFn]="true">Periodo</th>
+						<th nzWidth="120px" nzAlign="center" nzColumnKey="resolucion" [nzSortFn]="true">Dispositivo legal</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="fecha_publicacion" [nzSortFn]="true">Fecha de publicación</th>
+						<th nzWidth="50px" nzAlign="center" nzColumnKey="anexos" [nzSortFn]="true">Anexos</th>
+						<th nzWidth="50px" nzAlign="center" nzColumnKey="fondes" [nzSortFn]="true">Fondes</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="fuente_financiamiento" [nzSortFn]="true">Fuente de financiamiento</th>
 					</tr>
 				</thead>
 				<tbody>
 					@for(detail of transferDetails(); track $index){
 					<tr>
-						<td>{{detail.nivel_gobierno}}</td>
-						<td>{{detail.departamento}}</td>
-						<td>{{detail.provincia}}</td>
-						<td>{{detail.distrito}}</td>
-						<td>{{detail.pliego}}</td>
-						<td nzAlign="center">{{detail.codigo_unico}}</td>
-						<td nzAlign="center">{{detail.monto}}</td>
-						<td nzAlign="center">{{detail.resolucion}}</td>
-						<td nzAlign="center">{{detail.fecha_publicacion | date : 'dd/MM/yyyy'}}</td>
-						<td nzAlign="center">{{detail.fecha_publicacion | date : 'yyyy'}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.tipo}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.codigo_unico}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.sub_tipo}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.tipo_1}}</td>
+						<td>
+							<p class="text-xsline-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
+							[nzTooltipTitle]="detail.nombre_proyecto">{{detail.nombre_proyecto}}</p>
+						</td>
+						<td nzAlign="center" class="text-xs">{{detail.sector}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.funcion}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.nivel_gobierno}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.ue_codigo_ubigeo}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.ue_departamento}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.ue_provincia}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.ue_distrito}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.pliego_matriz}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.transferencia | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{detail.anio }}</td>
+						<td nzAlign="center" class="text-xs">{{detail.periodo }}</td>
+						<td nzAlign="center" class="text-xs">{{detail.resolucion}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.fecha_publicacion}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.anexos}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.fondes}}</td>
+						<td nzAlign="center" class="text-xs">{{detail.fuente_financiamiento}}</td>
 					</tr>
 					}
 				</tbody>
@@ -51,35 +76,71 @@
 		</nz-tab>
 		<nz-tab nzTitle="TRANSFERENCIAS RESUMIDO">
 			<nz-table [nzScroll]="{ x: '1150px' }" nzTitle="Transferencias resumido" nzShowSizeChanger nzSize="small"
-				[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="pagination.total!"
-				[nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
+				[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="paginationResumen.total!"
+				[nzPageSize]="paginationResumen.pageSize!" [nzPageIndex]="paginationResumen.currentPage!">
 				<thead>
 					<tr>
-						<th nzLeft nzWidth="120px">Nivel de gobierno</th>
-						<th nzLeft nzWidth="100px">Departamento</th>
-						<th nzLeft nzWidth="100px">Provincia</th>
-						<th nzLeft nzWidth="100px">Distrito</th>
-						<th nzWidth="100px" nzAlign="center">Pliego</th>
-						<th nzWidth="100px" nzAlign="center">CUI</th>
-						<th nzWidth="100px">Transferencias</th>
-						<th nzWidth="100px" nzAlign="center">Costo act.</th>
-						<th nzWidth="100px" nzAlign="center">Dcu. acuerdo</th>
-						<th nzWidth="100px" nzAlign="center">PIA</th>
-						<th nzWidth="100px" nzAlign="center">PIM</th>
-						<th nzWidth="100px" nzAlign="center">DEU</th>
-						<th nzWidth="100px" nzAlign="center">Dispositivo</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo</th>
+						<th nzWidth="60px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="funcion" [nzSortFn]="true">Función</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="nivel" [nzSortFn]="true">Nivel de Gobierno</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_departamento" [nzSortFn]="true">UE Departamento</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_provincia" [nzSortFn]="true">UE Provincia</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_distrito" [nzSortFn]="true">UE Distrito</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="pliego" [nzSortFn]="true">Pliego</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="ley" [nzSortFn]="true">Ley de presupuesto</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="transferencia" [nzSortFn]="true">Transferencias</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="periodo" [nzSortFn]="true">Periodo</th>
+						<th nzWidth="350px" nzColumnKey="nombre_proyecto" [nzSortFn]="true">Nombre del proyecto</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="costoActualizado" [nzSortFn]="true">Costo Actualizado</th>
+						<th nzWidth="150px" nzAlign="center" nzColumnKey="devAcumulado" [nzSortFn]="true">Dev Acumulado</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="pim" [nzSortFn]="true">PIM</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="pia" [nzSortFn]="true">PIA</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="dev" [nzSortFn]="true">DEV</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="compromiso" [nzSortFn]="true">Compromiso</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="certificado" [nzSortFn]="true">Certificado</th>
 					</tr>
 				</thead>
+				<tbody>
+					@for(resumen of transferResume(); track $index){
+					<tr>
+						<td nzAlign="center" class="text-xs">{{resumen.tipo}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.codigo_unico}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.sector}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.funcion}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.nivel}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.ue_departamento}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.ue_provincia}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.ue_distrito}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.pliego}}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.ley | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.transferencia | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.periodo}}</td>
+						<td>
+							<p class="text-xsline-clamp-1 sm:line-clamp-3" nzTooltipPlacement="left" nz-tooltip
+							[nzTooltipTitle]="resumen.nombre_proyecto">{{resumen.nombre_proyecto}}</p>
+						</td>
+						<td nzAlign="center" class="text-xs">{{resumen.costoActualizado | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.devAcumulado | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.pim | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.pia | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.dev | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.compromiso | numero : 0 }}</td>
+						<td nzAlign="center" class="text-xs">{{resumen.certificado | numero : 0 }}</td>
+					</tr>
+					}
+				</tbody>
 			</nz-table>
 		</nz-tab>
 	</nz-tabset>
 </div>
-<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzVisible]="isDrawervisible"
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzVisible]="isDrawervisible" [nzFooter]="footerDrawer"
 	nzTitle="Filtrar los resultados" (nzOnClose)="onCloseDrawer()">
 	<form *nzDrawerContent [formGroup]="formFilter">
 		<div class="flex flex-col w-full gap-4">
 			<div class="flex flex-col">
-				<label>Tipo</label>
+				<label class="text-sm">Tipo</label>
 				<nz-radio-group class="radio-form-control" formControlName="tipo"
 					(ngModelChange)="setFilterKind($event)">
 					@for (tipo of tipos; track $index){
@@ -90,12 +151,12 @@
 				</div>
 			</div>
 			<div class="flex flex-col">
-				<label for="periodo">Periodo</label>
+				<label class="text-sm" for="periodo">Periodo</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar periodo" id="periodo" class="select-form-control"
 						(ngModelChange)="changePeriod()" formControlName="periodo" nzAllowClear nzShowSearch>
 						@for (periodo of generarPeriodos(); track $index) {
-						<nz-option [nzValue]="periodo" nzLabel="{{periodo}}"></nz-option>
+						<nz-option [nzValue]="periodo" [nzLabel]="periodo"></nz-option>
 						}
 					</nz-select>
 					<div class="text-danger" *ngIf="alertMessageError('periodo')">
@@ -103,78 +164,82 @@
 				</nz-form-control>
 			</div>
 			<div class="flex flex-col">
-				<label for="tipoProducto">Tipo de producto</label>
+				<label class="text-sm" for="tipoProducto">Tipo de inversión</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionar tipo producto" id="tipoProducto" class="select-form-control"
 						(ngModelChange)="changeTipoProducto()" formControlName="tipoProducto" nzAllowClear nzShowSearch>
 						@for (producto of tipoProductos; track $index) {
-						<nz-option [nzValue]="producto.toUpperCase()" nzLabel="{{producto | titlecase}}"></nz-option>
+						<nz-option [nzValue]="producto" nzLabel="{{producto | titlecase}}"></nz-option>
 						}
 					</nz-select>
 					<div class="text-danger" *ngIf="alertMessageError('tipoProducto')">
 						{{msgErrorControl('tipoProducto','tipo de producto')}}</div>
 				</nz-form-control>
 			</div>
+			<div class="flex flex-col">
+				<label class="text-sm" for="dispositivo">Dispositivo legal</label>
+				<nz-form-control nzSpan="null">
+					<nz-select nzPlaceHolder="Seleccionar dispositivo" id="dispositivo" class="select-form-control" (ngModelChange)="changeDispositivo()" formControlName="dispositivo" nzAllowClear nzShowSearch>
+						@for (resolucion of transferencesResolution(); track $index) {
+						<nz-option [nzValue]="resolucion.resolucion" nzLabel="{{resolucion.resolucion}}"></nz-option>
+						}
+					</nz-select>
+				</nz-form-control>
+			</div>
+			<div class="flex flex-col">
+				<label class="text-sm" for="cui">CUI</label>
+				<nz-form-control nzSpan="null">
+				  <input nz-input type="text" class="form-control" id="cui" placeholder="Ingrese el cui aquí" (keyup)="changeCui($event)"
+					formControlName="cui">
+				</nz-form-control>
+			</div>
 			@if(filtroUbigeo){
 			<div class="flex flex-col">
-				<!-- <label>Tipo ubigeo</label> -->
-				<nz-radio-group class="radio-form-control" formControlName="tipoUbigeo"
-					(ngModelChange)="changeUbigeoTipo()">
+				<div class="flex gap-4 px-1">
 					@for (tipo of tipoUbigeos; track $index){
-					<label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
+						<label class="flex gap-3">
+							<input type="radio" class="form-control" formControlName="tipoUbigeo" [value]="tipo" (change)="changeUbigeoTipo()">
+							{{tipo | titlecase }}
+						</label>
 					}
-				</nz-radio-group>
+				</div>
 				<div class="text-danger" *ngIf="alertMessageError('tipoUbigeo')">
 					{{msgErrorControl('tipoUbigeo','Tipo ubigeo')}}
 				</div>
 			</div>
 			<div class="flex flex-col">
-				<label for="departamento">Departamento</label>
-				<nz-form-control nzSpan="null">
-					<nz-select nzPlaceHolder="Seleccionar departamento" id="departamento" class="select-form-control"
-						formControlName="departamento" (ngModelChange)="obtenerUbigeoDepartamento($event)" nzAllowClear
-						nzShowSearch>
-						@for (departamento of departamentos(); track $index) {
-						<nz-option [nzValue]="departamento.departamentoId"
-							nzLabel="{{departamento.departamento}}"></nz-option>
-						}
-					</nz-select>
-					<div class="text-danger" *ngIf="alertMessageError('departamento')">
-						{{msgErrorControl('departamento','Departamento')}}</div>
-				</nz-form-control>
+				<label class="text-sm" for="departamento">Departamentos</label>
+				<p-dropdown 
+					[options]="departamentos()" 
+					formControlName="departamento"
+					optionLabel="departamento"
+					[showClear]="true" 
+					placeholder="Select departamento"
+					(onChange)="obtenerUbigeoDepartamento()"/>
 			</div>
 			<div class="flex flex-col">
-				<label for="provincia">Provincias</label>
-				<nz-form-control nzSpan="null">
-					<nz-select nzPlaceHolder="Seleccionar provincia" id="provincia" class="select-form-control"
-						formControlName="provincia" (ngModelChange)="obtenerUbigeoProvincia($event)"
-						[nzDisabled]="provinceDisabled" nzAllowClear nzShowSearch>
-						@for (provincia of provincias(); track $index) {
-						<nz-option [nzValue]="provincia.provinciaId" nzLabel="{{provincia.provincia}}"></nz-option>
-						}
-					</nz-select>
-					<div class="text-danger" *ngIf="alertMessageError('provincia')">
-						{{msgErrorControl('provincia','Provincia')}}</div>
-				</nz-form-control>
+				<label class="text-sm" for="provincia">Provincias</label>
+				<p-dropdown 
+					[options]="provincias()" 
+					formControlName="provincia"
+					optionLabel="provincia"
+					[showClear]="true" 
+					placeholder="Selecionar provincia"
+					(onChange)="obtenerUbigeoProvincia()"/>
 			</div>
 			<div class="flex flex-col">
-				<label for="distritos">Distritos</label>
-				<nz-form-control nzSpan="null">
-					<nz-select nzPlaceHolder="Seleccionat distrito" id="distrito" class="select-form-control"
-						formControlName="distrito" [nzDisabled]="districtDisabled"
-						(ngModelChange)="obtenerUbigeoDistrito($event)" nzAllowClear nzShowSearch>
-						@for (distrito of distritos(); track $index) {
-						<nz-option [nzValue]="distrito.distritoId" nzLabel="{{distrito.distrito}}"></nz-option>
-						}
-					</nz-select>
-					<div class="text-danger" *ngIf="alertMessageError('distrito')">
-						{{msgErrorControl('distrito','Distrito')}}
-					</div>
-				</nz-form-control>
+				<label class="text-sm" for="distritos">Distritos</label>
+				<p-dropdown 
+					[options]="distritos()" 
+					formControlName="distrito"
+					optionLabel="distrito"
+					[showClear]="true" 
+					placeholder="Selecionar distrito"
+					(onChange)="obtenerUbigeoDistrito()"/>
 			</div>
 			} @else {
 			<div class="flex flex-col">
-				<label for="tipoEntidad">Tipo de entidad</label>
+				<label class="text-sm" for="tipoEntidad">Tipo de entidad</label>
 				<nz-form-control nzSpan="null">
 					<nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId"
 						class="select-form-control" formControlName="tipoEntidadId" nzAllowClear nzShowSearch
@@ -190,4 +255,11 @@
 			}
 		</div>
 	</form>
+	<ng-template #footerDrawer>
+        <div style="float: right">
+            <button nz-button style="margin-right: 8px;" (click)="deleteFilters();">Limpiar filtros</button>
+            <button nz-button nzType="primary" (click)="saveFilters()"><span nz-icon nzType="save"
+                    nzTheme="outline"></span> Guardar filtros</button>
+        </div>
+    </ng-template>
 </nz-drawer>

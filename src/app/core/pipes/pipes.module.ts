@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrimeraLetraPipe } from './primera-letra.pipe';
+import { NumeroPipe } from './numero.pipe';
 
 
 
@@ -8,10 +9,12 @@ import { PrimeraLetraPipe } from './primera-letra.pipe';
   declarations: [],
   imports: [
     CommonModule,
-    PrimeraLetraPipe
+    PrimeraLetraPipe,
+    NumeroPipe
   ],
   exports: [
-    PrimeraLetraPipe
+    PrimeraLetraPipe,
+    NumeroPipe
   ]
 })
 export class PipesModule { }
