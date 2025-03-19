@@ -95,15 +95,17 @@ export default class PanelAcuerdosComponent {
     tipo: [this.tipos[0], Validators.required],
     sector: [''],
     tipoEspacio: [''],
-    espacio: [{ value: '', disabled: true }],
+    espacio: [''],
     departamento: [''],
-    provincia: [{ value: '', disabled: true }],
-    distrito: [{ value: '', disabled: true }],
+    provincia: [''],
+    distrito: ['']
   })
+
   ngOnInit(): void {
     this.obtenerServicioSectores()
     this.obtenerServicioTipoEspacio()
     this.obtenerServicioDepartamentos()
+
     this.obtenerServicios()
   }
 
@@ -169,34 +171,34 @@ export default class PanelAcuerdosComponent {
   }
 
   obtenerServicioProvincias(ubigeo: string) {
-    const provinciaControl = this.formPanel.get('provincia')
-    const distritoControl = this.formPanel.get('distrito')
-    provinciaControl?.setValue('')
-    distritoControl?.setValue('')
-    distritoControl?.disable()
+    // const provinciaControl = this.formPanel.get('provincia')
+    // const distritoControl = this.formPanel.get('distrito')
+    // provinciaControl?.setValue('')
+    // distritoControl?.setValue('')
+    // distritoControl?.disable()
     if (ubigeo) {
-      provinciaControl?.enable()
+      // provinciaControl?.enable()
       this.ubigeoService.getProvinces(ubigeo)
         .subscribe(resp => {
           this.provincias.set(resp.data)
         })
     } else {
-      provinciaControl?.disable()
+      // provinciaControl?.disable()
     }
   }
 
   obtenerServicioDistrito(ubigeo: string) {
-    const distritoControl = this.formPanel.get('distrito')
-    distritoControl?.setValue('')
+    // const distritoControl = this.formPanel.get('distrito')
+    // distritoControl?.setValue('')
     if (ubigeo) {
       const setUbigeo = ubigeo.length > 4 ? ubigeo.slice(0, 4) : ubigeo
-      distritoControl?.enable()
+      // distritoControl?.enable()
       this.ubigeoService.getDistricts(setUbigeo)
         .subscribe(resp => {
           this.distritos.set(resp.data)
         })
     } else {
-      distritoControl?.disable()
+      // distritoControl?.disable()
     }
   }
 
@@ -266,25 +268,27 @@ export default class PanelAcuerdosComponent {
 
   obtenerServicioHitosPanel() {
     this.panelHitosInfo = this.obtenerCardInfo()
+    const item: PanelInfoResponse = { condicion: 'CUMPLIDOS', cantidad: 0 }
     this.hitosServices.getHitoDashboard({ ...this.paginationPanel, estado: '2' })
       .subscribe(resp => {
+        const info = resp.data.info
         if (resp.success) {
-          const info = resp.data.info
           this.panelHitosInfo = this.panelHitosInfo.map(item => {
             const data = info.find(i => i.condicion === item.code)
             if (data) {
               item.titulo = data.cantidad.toString()
             }
             return item
-          })
-          this.obtenerNivelDeGobierno(info, 'hito')
-          this.obtenerTotalHitosCumplir()
-          this.hitosPanelInfo.set(info)
-          this.hitosPorAcuerdoProceso.set(resp.data.acuerdos_proceso)
-          this.hitosPorAcuerdoVencidos.set(resp.data.acuerdos_vencidos)
-          this.hitosCumplimientos.set(resp.data.cumplimientos)
-          this.hitosPorAcuerdoSectores.set(resp.data.sectores)
-        }
+          })          
+        }        
+        this.obtenerNivelDeGobierno(info, 'hito')
+        this.obtenerTotalHitosCumplir()
+        const proceso = resp.data.acuerdos_proceso.length > 0 ? resp.data.acuerdos_proceso : [ item ]
+        this.hitosPorAcuerdoProceso.set(proceso)
+        const vencidos = resp.data.acuerdos_vencidos.length > 0 ? resp.data.acuerdos_proceso : [ item ]
+        this.hitosPorAcuerdoVencidos.set(vencidos)
+        this.hitosCumplimientos.set(resp.data.cumplimientos)
+        this.hitosPorAcuerdoSectores.set(resp.data.sectores)
       })
   }
 
@@ -317,10 +321,11 @@ export default class PanelAcuerdosComponent {
 
   selectTipo() {
     const tipoValue = this.formPanel.get('tipo')?.value
+    
     if (tipoValue) {
       this.dataParams.tipo = tipoValue
-      this.obtenerServicios()
     }
+    this.obtenerServicios()
   }
 
   selectSector() {
@@ -359,7 +364,7 @@ export default class PanelAcuerdosComponent {
       delete this.paginationPanel.ubigeo
       this.topoJson.geo = 'departamentos'
       this.topoJson.ubigeo = this.topoJson.geo
-    }
+    };
     this.obtenerServicios()
   }
 
