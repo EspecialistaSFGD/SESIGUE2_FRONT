@@ -8,6 +8,8 @@ import { PipesModule } from '@core/pipes/pipes.module';
 import { EntidadesService, TipoEntidadesService, TransferenciasFinancierasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { UtilesService } from '@libs/shared/services/utiles.service';
+import saveAs from 'file-saver';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 import { DropdownModule } from 'primeng/dropdown';
@@ -33,6 +35,7 @@ export class TransferenciasFinancierasComponent {
   filtroUbigeo: boolean = true
   loadingDetail: boolean = true
   loadingResumen: boolean = true
+  loadingExport: boolean = false
   paramsFilters: any
 
   private timeout: any;
@@ -93,6 +96,7 @@ export class TransferenciasFinancierasComponent {
   private ubigeoService = inject(UbigeosService)
   private entidadService = inject(EntidadesService)
   private tipoEntidadService = inject(TipoEntidadesService)
+  private utilesService = inject(UtilesService);
 
   public formFilter: FormGroup = this.fb.group({
     tipo: [''],
@@ -190,6 +194,24 @@ export class TransferenciasFinancierasComponent {
         this.paginationResumen.total = resp.info?.total ?? 0
         this.loadingResumen = false
       })
+  }
+
+  reporteExcelTransferencias(){
+    this.loadingExport = true;
+    this.transferenciaFinancieraService.reporteTransferenciasFinancieras(this.pagination)
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+          this.loadingExport = false
+        }
+      })
+  }
+
+  generarExcel(archivo: any, nombreArchivo: string): void {
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
   }
 
   alertMessageError(control: string) {
