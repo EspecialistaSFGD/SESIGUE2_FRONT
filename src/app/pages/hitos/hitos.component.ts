@@ -399,7 +399,7 @@ export class HitosComponent {
     // debugger;
     if (value != null) {
       // this.espaciosStore.limpiarEspacios();
-      this.espaciosStore.listarEventos(Number(value.value));
+      this.espaciosStore.listarEventos([Number(value.value)]);
 
 
       if (this.espaciosSeleccionados != null) {

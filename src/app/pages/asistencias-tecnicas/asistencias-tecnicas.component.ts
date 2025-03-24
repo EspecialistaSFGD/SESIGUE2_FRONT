@@ -53,7 +53,8 @@ export default class AsistenciasTecnicasComponent {
   atencionActions: ButtonsActions = {
     new: false,
     edit: false,
-    delete: false
+    delete: false,
+    report: false
   }
 
   perfilAuth: number = 0
@@ -109,7 +110,8 @@ export default class AsistenciasTecnicasComponent {
 
   obtenerEventos() {
     const vigenteId = this.permisosPCM ? 2 : 4
-    this.eventosService.getAllEventos(null, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
+    const tipoEvento = this.permisosPCM ? [9] : [8]
+    this.eventosService.getAllEventos(tipoEvento, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
       .subscribe(resp => {
         if(resp.data.length > 0){          
           this.evento.set(resp.data[0])
@@ -154,6 +156,8 @@ export default class AsistenciasTecnicasComponent {
       this.atencionActions.new = btn.descripcionBoton === 'Agregar' ? true : this.atencionActions.new
       this.atencionActions.edit = btn.descripcionBoton === 'Editar' ? true : this.atencionActions.edit
       this.atencionActions.delete = btn.descripcionBoton === 'Eliminar' ? true : this.atencionActions.delete
+      this.atencionActions.validate = btn.descripcionBoton === 'Validar' ? true : this.atencionActions.validate
+      this.atencionActions.report = btn.descripcionBoton === 'Reporte' ? true : this.atencionActions.report
     })
   }
 

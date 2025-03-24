@@ -41,7 +41,7 @@ export class EspaciosStore {
     this.listarTiposEvento();
   }
 
-  obtenerEventos(codigoTipoEvento: number | null = null, estado: number = 1, vigentes: number[] = [1, 2, 3], pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend') {
+  obtenerEventos(codigoTipoEvento: number[] | null = null, estado: number = 1, vigentes: number[] = [1, 2, 3], pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend') {
     let params = new HttpParams()
       .append('estado', `${estado}`)
       // .append('vigente', `${vigente}`)
@@ -53,11 +53,17 @@ export class EspaciosStore {
     for (let vigente of vigentes) {
       params = params.append('vigentes[]', `${vigente}`);
     }
-    if (codigoTipoEvento != null) params = params.append('codigoTipoEvento', `${codigoTipoEvento}`);
+    // if (codigoTipoEvento != null) params = params.append('codigoTipoEvento', `${codigoTipoEvento}`);
+    if (codigoTipoEvento != null){
+      for (let tipo of codigoTipoEvento) {
+        params = params.append('codigoTipoEvento[]', `${tipo}`);
+      }
+    }
+
     return this.http.get<ResponseModelPaginated>(`${environment.api}/Evento/ListarEvento`, { params })
   }
 
-  listarEventos(codigoTipoEvento: number | null = null, estado: number = 1, vigentes: number[] = [1, 2, 3], pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend'): void {
+  listarEventos(codigoTipoEvento: number[] | null = null, estado: number = 1, vigentes: number[] = [1, 2, 3], pageIndex: number | null = 1, pageSize: number | null = 100, sortField: string | null = 'eventoId', sortOrder: string | null = 'descend'): void {
     let params = new HttpParams()
       .append('estado', `${estado}`)
       // .append('vigente', `${vigente}`)
@@ -70,7 +76,12 @@ export class EspaciosStore {
       params = params.append('vigentes[]', `${vigente}`);
     }
 
-    if (codigoTipoEvento != null) params = params.append('codigoTipoEvento', `${codigoTipoEvento}`);
+    // if (codigoTipoEvento != null) params = params.append('codigoTipoEvento', `${codigoTipoEvento}`);
+    if (codigoTipoEvento != null){
+      for (let tipo of codigoTipoEvento) {
+        params = params.append('codigoTipoEvento[]', `${tipo}`);
+      }
+    }
 
     this.#espaciosResult.update((state) => ({
       ...state,
