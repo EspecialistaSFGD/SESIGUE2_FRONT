@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { EventoResponse, ItemEnum, Pagination, TipoEntidadResponse } from '@core/interfaces';
-import { EventosService, TipoEntidadesService } from '@core/services';
+import { EventoResponse, ItemEnum, Pagination, SectorResponse, TipoEntidadResponse } from '@core/interfaces';
+import { EventosService, SectoresService, TipoEntidadesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
@@ -23,10 +23,12 @@ export class FiltrosAtencionComponent {
   
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   public eventos = signal<EventoResponse[]>([])
+  sectores = signal<SectorResponse[]>([])
 
   private fb = inject(FormBuilder)
   private tipoEntidadService = inject(TipoEntidadesService)
   private eventosService = inject(EventosService)
+  private sectoresService = inject(SectoresService)
 
   pagination: Pagination = {
     code: 0,
@@ -48,6 +50,7 @@ export class FiltrosAtencionComponent {
     provincia: [''],
     distrito: [''],
     ubigeo: [''],
+    sectorId: [null],
     eventoId: [null],
     unidadOrganica: [''],
     especialista: [''],
@@ -55,7 +58,8 @@ export class FiltrosAtencionComponent {
 
   ngOnInit(): void {
     this.getAllTipoEntidades()
-    this.obtenerEventos()
+    this.obtenerServiciosEventos()
+    this.obtenerServicioSectores()
   }
 
   changeVisibleDrawer(visible: boolean){
@@ -70,13 +74,19 @@ export class FiltrosAtencionComponent {
       })
   }
 
-  obtenerEventos() {
+  obtenerServiciosEventos() {
     const vigenteId = this.permisosPCM ? [2,3,4] : [2,3]
     const tipoEvento = this.permisosPCM ? [8,9] : [8]
     this.eventosService.getAllEventos(tipoEvento, 1, vigenteId, {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
       .subscribe(resp => {
-        console.log(resp);
         this.eventos.set(resp.data)
+      })
+  }
+
+  obtenerServicioSectores() {
+    this.sectoresService.getAllSectors()
+      .subscribe(resp => {        
+        this.sectores.set(resp.data)
       })
   }
 
@@ -107,6 +117,17 @@ export class FiltrosAtencionComponent {
       // this.paginationFilters.eventoId = evento
     } else {
       delete this.paginationFilters.eventoId
+    }
+    
+    this.generateFilters()
+  }
+
+  changeSector(){
+    const sector = this.formFilters.get('sectorId')?.value
+    if(sector){
+      this.paginationFilters.sectorId = sector.grupoID
+    } else {
+      delete this.paginationFilters.sectorId
     }
     
     this.generateFilters()

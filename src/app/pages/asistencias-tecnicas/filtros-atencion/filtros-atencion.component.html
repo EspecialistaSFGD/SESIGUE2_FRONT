@@ -12,7 +12,7 @@
       </div> -->
 
       <div class="flex flex-col">
-        <label>Evento</label>
+        <label>Eventos</label>
         <p-dropdown 
           [options]="eventos()"
           formControlName="eventoId"
@@ -21,7 +21,7 @@
           placeholder="Seleccionar evento"
           (onChange)="changeEvento()"/>
       </div>
-      
+
       @if(permisosPCM){
         <div class="flex flex-col">
           <label>Fecha inicio</label>
@@ -43,6 +43,17 @@
               nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy">
             </nz-date-picker>
           </nz-form-control>
+        </div>
+
+        <div class="flex flex-col">
+          <label>Sectores</label>
+          <p-dropdown 
+            [options]="sectores()"
+            formControlName="sectorId"
+            optionLabel="nombre"
+            [showClear]="true" 
+            placeholder="Seleccionar sector"
+            (onChange)="changeSector()"/>
         </div>
       }
 		</div>
