@@ -5,7 +5,7 @@
   (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
-      @if (this.permisosPCM()){
+      @if (permisosPCM){
         <th nzLeft nzWidth="42px" nzAlign="center" nzColumnKey="validado"></th>
       }
       <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código </th>
@@ -23,7 +23,7 @@
   <tbody>
     @for(atencion of asistenciasTecnicas(); track $index){
     <tr>
-      @if (this.permisosPCM()){
+      @if (permisosPCM){
         <td nzAlign="center"><nz-avatar [nzSize]="24" [ngClass]="{ 'bg-green-400' : atencion.validado && geDocumentAtencion(atencion), 'bg-gray-300' : !atencion.validado && geDocumentAtencion(atencion), 'bg-blue-400' : !geDocumentAtencion(atencion) }" nz-tooltip="{{ !geDocumentAtencion(atencion) ? '' :  atencion.validado ? 'Validado' : 'Sin Validar' }}" nzIcon="check"></nz-avatar></td>
       }
       <td nzAlign="center">{{atencion.codigo}}</td>
@@ -86,7 +86,23 @@
   </div>
 </ng-template>
 
-<app-filtros-atencion [visible]="filtrosVisible" (visibleDrawer)="changeDrawerFilters(false)" (filters)="filtersToDrawer($event)" (export)="reporteExcelAtenciones()" [tipos]="tipos"/>
+<app-filtros-atencion [visible]="filtrosVisible" [permisosPCM]="permisosPCM" (visibleDrawer)="changeDrawerFilters(false)" (filters)="filtersToDrawer($event)" (export)="reporteExcelAtenciones()" [tipos]="tipos"/>
+
+<!-- <nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzVisible]="filtrosVisible"
+	nzTitle="Filtrar los resultados">
+	<form *nzDrawerContent nz-form nzLayout="vertical" autocomplete="off">
+		<div class="flex flex-col w-full gap-4">      
+			<div class="flex flex-col">
+				<label>Evento</label>
+				<p-dropdown 
+					[options]="departamentos()"
+					optionLabel="nombre"
+					[showClear]="true" 
+					placeholder="Seleccionar evento" />
+			</div>
+		</div>
+	</form>
+</nz-drawer> -->
 
 <app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos"
   [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica" [departamentos]="departamentos()"

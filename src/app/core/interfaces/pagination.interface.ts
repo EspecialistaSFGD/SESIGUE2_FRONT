@@ -21,6 +21,7 @@ export interface Pagination {
   espacioId?: string,
   tipoEntidadId?: string,
   usuarioId?: string,
+  eventoId?: string,
   total?: number,
   estado?: string,
   dispositivo?: string,

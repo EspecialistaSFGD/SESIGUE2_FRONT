@@ -15,6 +15,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -27,7 +28,8 @@ import { FormularioAtencionComponent } from './formulario-atencion/formulario-at
     NgZorroModule,
     RouterModule,
     FormularioAsistenciaTecnicaComponent,
-    FiltrosAtencionComponent
+    FiltrosAtencionComponent,
+    PrimeNgModule
   ]
 })
 
@@ -58,6 +60,7 @@ export default class AsistenciasTecnicasComponent {
   filtrosVisible: boolean = false
   loadingExport: boolean = false
   loadingData: boolean = false
+  permisosPCM: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
   showNzModal: boolean = false
@@ -91,20 +94,21 @@ export default class AsistenciasTecnicasComponent {
 
   ngOnInit() {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = this.setPermisosPCM()
     this.obtenerEventos()
     this.getPermissions()
     this.obtenerAsistenciasTecnicas()
     this.obtenerDepartamentos()
   }
 
-  permisosPCM(){
+  setPermisosPCM(){
     const profilePCM = [11,12]
     return profilePCM.includes(this.perfilAuth)
   }
   
 
   obtenerEventos() {
-    const vigenteId = !this.permisosPCM() ? 2 : 4
+    const vigenteId = this.permisosPCM ? 2 : 4
     this.eventosService.getAllEventos(null, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
       .subscribe(resp => {
         if(resp.data.length > 0){          

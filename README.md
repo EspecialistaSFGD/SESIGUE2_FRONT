@@ -22,3 +22,8 @@ npm run build
 <action type="Rewrite" url="/" />
 ```
 
+
+## INSTALAR ANGULAR
+````
+npm install -g @angular/cli@17.1.0
+```

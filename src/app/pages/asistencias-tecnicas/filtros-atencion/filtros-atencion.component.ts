@@ -1,28 +1,32 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ItemEnum, Pagination, TipoEntidadResponse } from '@core/interfaces';
-import { TipoEntidadesService } from '@core/services';
+import { EventoResponse, ItemEnum, Pagination, TipoEntidadResponse } from '@core/interfaces';
+import { EventosService, TipoEntidadesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
 @Component({
   selector: 'app-filtros-atencion',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, ReactiveFormsModule],
+  imports: [CommonModule, NgZorroModule, ReactiveFormsModule, PrimeNgModule],
   templateUrl: './filtros-atencion.component.html',
   styles: ``
 })
 export class FiltrosAtencionComponent {
   @Input() visible: boolean = false
   @Input() tipos!: ItemEnum[]
+  @Input() permisosPCM: boolean = false
   @Output() visibleDrawer = new EventEmitter()
   @Output() filters = new EventEmitter<Pagination>()
   @Output() export = new EventEmitter<boolean>()
   
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
+  public eventos = signal<EventoResponse[]>([])
 
   private fb = inject(FormBuilder)
   private tipoEntidadService = inject(TipoEntidadesService)
+  private eventosService = inject(EventosService)
 
   pagination: Pagination = {
       code: 0,
@@ -43,13 +47,14 @@ export class FiltrosAtencionComponent {
     provincia: [''],
     distrito: [''],
     ubigeo: [''],
-    sector: [''],
+    eventoId: [''],
     unidadOrganica: [''],
     especialista: [''],
   })
 
   ngOnInit(): void {
     this.getAllTipoEntidades()
+    this.obtenerEventos()
   }
 
   changeVisibleDrawer(visible: boolean){
@@ -57,46 +62,66 @@ export class FiltrosAtencionComponent {
   }
 
   getAllTipoEntidades() {    
-      this.pagination.columnSort = 'nombre'
-      this.tipoEntidadService.getAllTipoEntidades(this.pagination)
-        .subscribe(resp => {
-          this.tipoEntidades.set(resp.data)
-        })
-    }
+    this.pagination.columnSort = 'nombre'
+    this.tipoEntidadService.getAllTipoEntidades(this.pagination)
+      .subscribe(resp => {
+        this.tipoEntidades.set(resp.data)
+      })
+  }
 
-    changefechaInicio(){
-      const fechaInicioValue = this.formFilters.get('fechaInicio')?.value
-      if(fechaInicioValue){
-        this.paginationFilters.fechaInicio = this.getFormatDate(fechaInicioValue)
-      } else {
-        delete this.paginationFilters.fechaInicio
-      }
-      this.generateFilters()
+  obtenerEventos() {
+    console.log(this.permisosPCM);
+    const vigenteId = this.permisosPCM ? [2,3,4] : [2,4]
+    this.eventosService.getAllEventos(null, 1, vigenteId, {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
+      .subscribe(resp => {        
+        this.eventos.set(resp.data)
+      })
+  }
+
+  changefechaInicio(){
+    const fechaInicioValue = this.formFilters.get('fechaInicio')?.value
+    if(fechaInicioValue){
+      this.paginationFilters.fechaInicio = this.getFormatDate(fechaInicioValue)
+    } else {
+      delete this.paginationFilters.fechaInicio
     }
+    this.generateFilters()
+  }
     
-    changeFechaFin(){
-      const fechaFinValue = this.formFilters.get('fechaFin')?.value
-      if(fechaFinValue){
-        this.paginationFilters.fechaFin = this.getFormatDate(fechaFinValue)
-      } else {
-        delete this.paginationFilters.fechaFin
-      }      
-      this.generateFilters()
-    }
+  changeFechaFin(){
+    const fechaFinValue = this.formFilters.get('fechaFin')?.value
+    if(fechaFinValue){
+      this.paginationFilters.fechaFin = this.getFormatDate(fechaFinValue)
+    } else {
+      delete this.paginationFilters.fechaFin
+    }      
+    this.generateFilters()
+  }
 
-    getFormatDate(fecha: string){
-      const date = new Date(fecha)
-      const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`
-      const day = date.getDate() > 9 ? date.getDate() : `0${date.getDate()}`
-      return `${day}/${month}/${date.getFullYear()}`
+  changeEvento(){
+    const evento = this.formFilters.get('eventoId')?.value
+    if(evento){
+      console.log("hay evento");      
+      console.log(evento.eventoId);
+      this.paginationFilters.eventoId = evento.eventoId
+    } else {
+      console.log("no hay evento");
     }
+  }
 
-    generateFilters(){
-      this.filters.emit(this.paginationFilters)
-    }
+  getFormatDate(fecha: string){
+    const date = new Date(fecha)
+    const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`
+    const day = date.getDate() > 9 ? date.getDate() : `0${date.getDate()}`
+    return `${day}/${month}/${date.getFullYear()}`
+  }
 
-    changeExport(){
-      this.changeVisibleDrawer(false)
-      this.export.emit(true)
-    }
+  generateFilters(){
+    this.filters.emit(this.paginationFilters)
+  }
+
+  changeExport(){
+    this.changeVisibleDrawer(false)
+    this.export.emit(true)
+  }
 }

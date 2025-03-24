@@ -7,12 +7,13 @@ import { Pagination, TipoEntidadResponse, TransferenciaFinancieraResolucionRespo
 import { PipesModule } from '@core/pipes/pipes.module';
 import { EntidadesService, TipoEntidadesService, TransferenciasFinancierasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
-import { DropdownModule } from 'primeng/dropdown';
+// import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-transferencias-financieras',
@@ -22,7 +23,7 @@ import { DropdownModule } from 'primeng/dropdown';
     PageHeaderComponent,
     NgZorroModule,
     ReactiveFormsModule,
-    DropdownModule,
+    PrimeNgModule,
     PipesModule
   ],
   templateUrl: './transferencias-financieras.component.html',
