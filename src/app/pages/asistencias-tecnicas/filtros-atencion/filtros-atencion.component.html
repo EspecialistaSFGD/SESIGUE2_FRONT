@@ -2,37 +2,50 @@
 	nzTitle="Filtrar los resultados" [nzFooter]="footerFilter" (nzOnClose)="changeVisibleDrawer(false)">
 	<form *nzDrawerContent [formGroup]="formFilters" nz-form nzLayout="vertical" autocomplete="off">
 		<div class="flex flex-col w-full gap-4">
-			<div class="flex flex-col">
-				<label>Fecha inicio</label>
-				<nz-form-control nzSpan="null">
-					<nz-date-picker id="fechaInicio" class="datepicker-form-control" formControlName="fechaInicio" (ngModelChange)="changefechaInicio()"
-					  nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy"></nz-date-picker>
-				  </nz-form-control>
-			</div>
-			<div class="flex flex-col">
-				<label>Fecha fin</label>
-				<nz-form-control nzSpan="null">
-					<nz-date-picker id="fechaFin" class="datepicker-form-control" formControlName="fechaFin" (ngModelChange)="changeFechaFin()"
-					  nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy"></nz-date-picker>
-				  </nz-form-control>
-			</div>
-			<div class="flex flex-col">
+      @if(permisosPCM){
+        <div class="flex flex-col">
+          <label>Fecha inicio</label>
+          <nz-form-control nzSpan="null">
+            <nz-date-picker id="fechaInicio" class="datepicker-form-control" formControlName="fechaInicio" (ngModelChange)="changefechaInicio()"
+              nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy">
+            </nz-date-picker>
+          </nz-form-control>
+            <!-- <p-calendar
+              formControlName="fechaInicio"
+              dateFormat="dd/mm/yy"
+              (onChange)="changefechaInicio()"
+              /> -->
+        </div>
+        <div class="flex flex-col">
+          <label>Fecha fin</label>
+          <nz-form-control nzSpan="null">
+            <nz-date-picker id="fechaFin" class="datepicker-form-control" formControlName="fechaFin" (ngModelChange)="changeFechaFin()"
+              nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy">
+            </nz-date-picker>
+          </nz-form-control>
+        </div>
+      }
+
+
+			<!-- <div class="flex flex-col">
 				<label>Evento</label>
-				<!-- <nz-form-control nzSpan="null">
-					<nz-select formControlName="eventoId" nzPlaceHolder="Seleccionar evento" (ngModelChange)="changeSector()">
+				<nz-form-control nzSpan="null">
+					<nz-select formControlName="eventoId" nzPlaceHolder="Seleccionar evento" (ngModelChange)="changeEvento()">
 						<nz-option *ngFor="let evento of eventos()" [nzLabel]="evento.nombre" [nzValue]="evento.eventoId!"></nz-option>
 					</nz-select>
-				</nz-form-control> -->
-				<p-dropdown 
-					[options]="eventos()" 
-					formControlName="eventoId"
-					optionLabel="nombre"
-					[showClear]="true" 
-					placeholder="Seleccionar evento"
-					class="w-full"
-					appendTo="body"
-					(onChange)="changeEvento()"/>
-			</div>
+				</nz-form-control>
+      </div> -->
+
+      <div class="flex flex-col">
+        <label>Evento</label>
+        <p-dropdown 
+          [options]="eventos()"
+          formControlName="eventoId"
+          optionLabel="abreviatura"
+          [showClear]="true" 
+          placeholder="Seleccionar evento"
+          (onChange)="changeEvento()"/>
+      </div>
 		</div>
 	</form>
 

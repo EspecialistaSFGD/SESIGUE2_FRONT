@@ -29,14 +29,15 @@ export class FiltrosAtencionComponent {
   private eventosService = inject(EventosService)
 
   pagination: Pagination = {
-      code: 0,
-      columnSort: 'fechaRegistro',
-      typeSort: 'ASC',
-      pageSize: 10,
-      currentPage: 1,
-      total: 0
-    }
-    paginationFilters: Pagination = {}
+    code: 0,
+    columnSort: 'fechaRegistro',
+    typeSort: 'ASC',
+    pageSize: 10,
+    currentPage: 1,
+    total: 0
+  }
+
+  paginationFilters: Pagination = {}
 
   formFilters: FormGroup = this.fb.group({
     fechaInicio: [''],
@@ -47,7 +48,7 @@ export class FiltrosAtencionComponent {
     provincia: [''],
     distrito: [''],
     ubigeo: [''],
-    eventoId: [''],
+    eventoId: [null],
     unidadOrganica: [''],
     especialista: [''],
   })
@@ -70,10 +71,10 @@ export class FiltrosAtencionComponent {
   }
 
   obtenerEventos() {
-    console.log(this.permisosPCM);
-    const vigenteId = this.permisosPCM ? [2,3,4] : [2,4]
-    this.eventosService.getAllEventos(null, 1, vigenteId, {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
-      .subscribe(resp => {        
+    const vigenteId = this.permisosPCM ? [2,3,4] : [2,3]
+    const tipoEvento = this.permisosPCM ? null : 8
+    this.eventosService.getAllEventos(tipoEvento, 1, vigenteId, {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
+      .subscribe(resp => {
         this.eventos.set(resp.data)
       })
   }
@@ -101,12 +102,13 @@ export class FiltrosAtencionComponent {
   changeEvento(){
     const evento = this.formFilters.get('eventoId')?.value
     if(evento){
-      console.log("hay evento");      
-      console.log(evento.eventoId);
       this.paginationFilters.eventoId = evento.eventoId
+      // this.paginationFilters.eventoId = evento
     } else {
-      console.log("no hay evento");
+      delete this.paginationFilters.eventoId
     }
+    
+    this.generateFilters()
   }
 
   getFormatDate(fecha: string){
@@ -117,6 +119,12 @@ export class FiltrosAtencionComponent {
   }
 
   generateFilters(){
+    if(this.permisosPCM){
+      delete this.paginationFilters.tipoPerfil
+    } else {
+      this.paginationFilters.tipoPerfil = '1'
+    }
+    
     this.filters.emit(this.paginationFilters)
   }
 
