@@ -58,6 +58,7 @@ export default class AsistenciasTecnicasComponent {
   }
 
   perfilAuth: number = 0
+  sectorAuth: number = 0
   filtrosVisible: boolean = false
   loadingExport: boolean = false
   loadingData: boolean = false
@@ -95,6 +96,7 @@ export default class AsistenciasTecnicasComponent {
 
   ngOnInit() {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.sectorAuth = this.authStore.sector() ? Number(this.authStore.sector()?.value) : this.sectorAuth
     this.permisosPCM = this.setPermisosPCM()
     this.obtenerEventos()
     this.getPermissions()
@@ -270,6 +272,10 @@ export default class AsistenciasTecnicasComponent {
   }
 
   filtersToDrawer(paginationFilters: Pagination){
+    paginationFilters.perfil = this.perfilAuth;
+    if(!this.permisosPCM){
+      paginationFilters.sectorId = this.sectorAuth
+    }
     this.paginationFilter = paginationFilters
   }
 

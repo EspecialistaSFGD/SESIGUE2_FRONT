@@ -75,6 +75,7 @@ export class FiltrosAtencionComponent {
     const tipoEvento = this.permisosPCM ? [8,9] : [8]
     this.eventosService.getAllEventos(tipoEvento, 1, vigenteId, {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
       .subscribe(resp => {
+        console.log(resp);
         this.eventos.set(resp.data)
       })
   }

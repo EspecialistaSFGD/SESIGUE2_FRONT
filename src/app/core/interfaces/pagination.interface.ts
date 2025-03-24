@@ -12,6 +12,7 @@ export interface Pagination {
   currentPage?: number,
   fechaInicio?: string,
   fechaFin?: string,
+  perfil?: number,
   tipoPerfil?: string,
   tipo?: string,
   sectorId?: number,
