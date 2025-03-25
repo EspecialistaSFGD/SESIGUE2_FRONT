@@ -260,52 +260,16 @@ p-dropdown {
     }
   }
 
-
-  // p-dropdown p-component p-inputwrapper p-dropdown-clearable
-  // p-dropdown p-component p-inputwrapper p-dropdown-clearable p-inputwrapper-filled
-
-  // p-dropdown p-component p-inputwrapper p-dropdown-clearable
-  // p-dropdown p-component p-inputwrapper p-dropdown-clearable p-inputwrapper-filled p-focus p-inputwrapper-focus
-
-
-
-// w-full md:w-56 p-component p-inputwrapper p-select undefined ng-valid ng-touched ng-dirty p-inputwrapper-filled
-// w-full md:w-56 p-component p-inputwrapper p-select undefined ng-valid ng-touched ng-dirty
-
-// p-dropdown p-component p-inputwrapper p-dropdown-clearable p-inputwrapper-filled
-// p-dropdown p-component p-inputwrapper p-dropdown-clearable
-
-// .p-select-sss {
-//     display: inline-flex;
-//     cursor: pointer;
-//     position: relative;
-//     user-select: none;
-//     background: var(--p-select-background);
-//     border: 1px solid var(--p-select-border-color);
-//     transition: background var(--p-select-transition-duration), color var(--p-select-transition-duration), border-color var(--p-select-transition-duration), outline-color var(--p-select-transition-duration), box-shadow var(--p-select-transition-duration);
-//     border-radius: var(--p-select-border-radius);
-//     outline-color: transparent;
-//     box-shadow: var(--p-select-shadow);
-// }
-//   ::ng-deep .p-dropdown {
-//     @apply w-full border border-gray-300 rounded-lg shadow-sm;
-//   }
-  
-//   ::ng-deep .p-dropdown-trigger {
-//     @apply text-gray-500 hover:text-gray-700;
-//   }
-  
-//   ::ng-deep .p-dropdown-panel {
-//     @apply bg-white border border-gray-300 rounded-lg shadow-lg;
-//   }
-  
-//   ::ng-deep .p-dropdown-item {
-//     @apply px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer;
-//   }
-  
-//   ::ng-deep .p-dropdown-item.p-highlight {
-//     @apply bg-blue-500 text-white;
-//   }
+  .p-datatable-table{
+    .p-datatable-thead > tr > th{
+        border-width: 1px 0 1px 0;
+        @apply bg-gray-50 text-gray-700 px-2 py-2 border-gray-200;
+    }
+    .p-datatable-tbody > tr > td {
+        border-width: 0 0 1px 0;
+        @apply bg-white px-2 py-2 border-gray-200;
+    }
+  }
 
 @media (min-width: 576px) {
     .container {

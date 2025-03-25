@@ -8,6 +8,7 @@
       <th nzWidth="200px"nzColumnKey="nombresPersona" [nzSortFn]="true">Nombre</th>
       <th nzWidth="20px" nzAlign="center">Mes</th>
       <th nzWidth="20px" nzAlign="center">Meta</th>
+      <th nzWidth="20px" nzAlign="center">Atenciones</th>
       <th nzWidth="16px" nzAlign="center"></th>
     </tr>
   </thead>
@@ -19,6 +20,7 @@
         <td >{{usuario.nombresPersona}}</td>
         <td nzAlign="center">{{usuario.fecha | date: 'MM/yyyy'}}</td>
         <td nzAlign="center">{{usuario.meta}}</td>
+        <td nzAlign="center">{{usuario.atenciones}}</td>
         <td nzAlign="center">
           <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles" (click)="modalMetaDetalle(usuario.codigoUsuario!, usuario.nombresPersona)">
             <span nz-icon nzType="eye" nzTheme="outline"></span>

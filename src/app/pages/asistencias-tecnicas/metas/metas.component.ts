@@ -50,7 +50,7 @@ export default class MetasComponent {
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
         this.pagination.pageSize = params['cantidad']
-        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+        this.pagination.typeSort = params['ordenar'] ?? 'ASC'
         this.obtenerServiceUsuariosMeta()        
       }
     })
@@ -95,7 +95,10 @@ export default class MetasComponent {
         {
           label: 'Cancelar',
           type: 'default',
-          onClick: () => this.modal.closeAll(),
+          onClick: () => {
+            this.modal.closeAll(),
+            this.obtenerServiceUsuariosMeta()
+          }
         }
       ]
     })
@@ -138,7 +141,7 @@ export default class MetasComponent {
               const metaUsuario: MetaUsuarioResponse = {
                 usuarioId: usuario.usuarioId,
                 fecha: fechaMeta,
-                cantidad: usuario.meta  
+                meta: usuario.meta  
               }              
               this.usuarioMetasService.registarMetaUsuario(metaUsuario)
                 .subscribe( resp => {

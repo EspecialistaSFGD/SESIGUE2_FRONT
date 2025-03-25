@@ -16,53 +16,38 @@
         </nz-form-control>
       </div>
       <div nz-col nzSpan="8" class="flex items-end">
-        <button class="w-full bg-primary text-white p-1.5 rounded" (click)="showForm = false">
+        <button class="w-full bg-primary text-white p-1.5 rounded" (click)="updateMeta()">
           <span class="button-text text-sm">Actualizar</span>
         </button>
       </div>
     </div>
   </form>
 }
-<nz-table [nzTitle]="Header" nzShowSizeChanger nzSize="small" [nzData]="metas" [nzFrontPagination]="false"
-  [nzLoading]="loadingData">
-  <thead>
-    <tr>
-      <th nzWidth="8px" nzAlign="center">N°</th>
-      <th nzWidth="20px" nzAlign="center">Mes</th>
-      <th nzWidth="20px" nzAlign="center">Meta</th>
-      <th nzWidth="20px" nzAlign="center">Atenciones</th>
-      <th nzWidth="20px" nzAlign="center"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    @for(meta of metas; track $index){
-    <tr>
-      <td nzAlign="center">{{$index + 1}}</td>
-      <td nzAlign="center">{{meta.fecha | date:'MM/yyyy'}}</td>
-      <td nzAlign="center">{{meta.meta}}</td>
-      <td nzAlign="center">{{meta.meta + 2}}</td>
-      <td nzAlign="center">
-        <button nz-button nzType="link" (click)="submitForm(meta)" nz-tooltip="{{ !enabledEdit(meta.fecha) ? 'Editar Meta' : ''}}"
-          [disabled]="enabledEdit(meta.fecha)">
-          <span nz-icon nzType="edit" nzTheme="outline"></span>
-        </button>
-      </td>
-    </tr>
-    }
-  </tbody>
-</nz-table>
-
-<ng-template #Header>
-  <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
-    <p class="mb-2 sm:mb-0">Metas {{metas.length}}</p>
-    <div>
-      <nz-space>
-        <!-- <button nz-button nzType="primary" (click)="showForm = true" [disabled]="!enabledNewMeta() || showForm">
-            <span nz-icon nzType="plus" nzTheme="outline"></span>
-            <span class="button-text">Nueva meta</span>
-          </button> -->
-      </nz-space>
-    </div>
-  </div>
-</ng-template>
+<p-table [value]="usuarioMetas()" >
+  <ng-template pTemplate="header">
+      <tr>
+          <th>N°</th>
+          <th>Mes</th>
+          <th>Meta</th>
+          <th>Atenciones</th>
+          <th></th>
+      </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-meta let-i="rowIndex">
+      <tr>
+          <td class="text-center">{{ i + 1 }}</td>
+          <td class="text-center">{{ meta.fecha | date: 'MM/yyyy' }}</td>
+          <td class="text-center">{{ meta.meta }}</td>
+          <td class="text-center">{{ meta.atenciones }}</td>
+          <td class="text-center">
+              <!-- <div (click)="enabledEdit(meta.fecha) ? submitForm(meta) : ''" [ngClass]="{'cursor-pointer' : enabledEdit(meta.fecha) }">
+                <span nz-icon nzType="edit" nz-tooltip="{{ enabledEdit(meta.fecha) ? 'Editar Meta' : ''}}" [ngClass]="{ 'text-primary' : enabledEdit(meta.fecha), 'text-grey-100' : !enabledEdit(meta.fecha) }"></span>
+              </div> -->
+              <button nz-button nzType="link" (click)="submitForm(meta)" nz-tooltip="{{ enabledEdit(meta.fecha) ? 'Editar Meta' : ''}}"
+                [disabled]="!enabledEdit(meta.fecha)">
+                <span nz-icon nzType="edit" nzTheme="outline"></span>
+              </button>
+          </td>
+      <tr>
+  </ng-template>
+</p-table>

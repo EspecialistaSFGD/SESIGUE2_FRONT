@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { MetaUsuarioResponse, Pagination, UsuarioMetasResponses } from '@core/interfaces';
+import { MetaUsuarioResponse, MetaUsuariosResponses, Pagination, UsuarioMetasResponses } from '@core/interfaces';
 import { environment } from '@environments/environment';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
@@ -20,14 +20,31 @@ export class UsuarioMetasService {
   }
 
   registarMetaUsuario(usuarioMeta: MetaUsuarioResponse) {
-      const headers = this.helpersServices.getAutorizationToken()            
-      return this.http.post<MetaUsuarioResponse>(`${this.urlUsuarioMeta}/RegistrarMeta`, usuarioMeta, { headers })
-        .pipe(
-          tap(resp => {
-            return resp
-          }),
-          map(valid => valid),
-          catchError(err => of(err))
-        )
-    }
+    const headers = this.helpersServices.getAutorizationToken()            
+    return this.http.post<MetaUsuarioResponse>(`${this.urlUsuarioMeta}/RegistrarMeta`, usuarioMeta, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
+  }
+
+  updateMetaUsuario(usuarioMeta: MetaUsuarioResponse) {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.put<MetaUsuarioResponse>(`${this.urlUsuarioMeta}/ActualizarMeta/${usuarioMeta.metaId}`, usuarioMeta, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
+  }
+
+  obtenerMetaUsuario(usuarioId: number): Observable<MetaUsuariosResponses> {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<MetaUsuariosResponses>(`${this.urlUsuarioMeta}/ListarMeta/${usuarioId}`, { headers })
+  }
 }
