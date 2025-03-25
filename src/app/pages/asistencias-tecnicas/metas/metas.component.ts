@@ -7,6 +7,8 @@ import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMetaComponent } from './formulario-meta/formulario-meta.component';
 import { MetasDetallesComponent } from './metas-detalles/metas-detalles.component';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
   selector: 'app-metas',
@@ -27,24 +29,58 @@ export default class MetasComponent {
   pagination: Pagination = {
     columnSort: 'nombresPersona',
     typeSort: 'ASC',
-    pageSize: 15,
+    pageSize: 10,
     currentPage: 1,
     total: 0
   }
 
   private usuarioMetasService = inject(UsuarioMetasService)
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
   private modal = inject(NzModalService);
 
   ngOnInit(): void {
-    this.obtenerServiceUsuariosPorSector()
+    this.getParams()
   }
 
-  obtenerServiceUsuariosPorSector(){
+  getParams() {
+    this.route.queryParams.subscribe(params => {
+      if (Object.keys(params).length > 0) {
+
+        let campo = params['campo'] ?? 'nombresPersona'
+        this.pagination.columnSort = campo
+        this.pagination.currentPage = params['pagina']
+        this.pagination.pageSize = params['cantidad']
+        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+        this.obtenerServiceUsuariosMeta()        
+      }
+    })
+  }
+
+  obtenerServiceUsuariosMeta(){
+    this.loadingData = true
     this.usuarioMetasService.listarUsuario(this.pagination)
       .subscribe( resp => {
+        this.loadingData = false
         this.usuarios.set(resp.data)
         this.pagination.total = resp.info?.total ?? 0
       })
+  }
+
+  onQueryParams(params: NzTableQueryParams): void {
+    const sortsNames = ['ascend', 'descend']
+    const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+    const qtySorts = params.sort.reduce((total, item) => {
+      return sortsNames.includes(item.value!) ? total + 1 : total
+    }, 0)
+    const ordenar = sorts?.value!.slice(0, -3)   
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams: { pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar }
+      }
+    );
   }
 
   modalMetaDetalle(usuarioId: string, nombre: string): void{

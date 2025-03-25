@@ -1,11 +1,11 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="atenciones" />
 <nz-table [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-  [nzData]="usuarios()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
-  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
+  [nzData]="usuarios()" [nzFrontPagination]="false" [nzShowPagination]="this.pagination.total! > 10" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParams($event)">
   <thead>
     <tr>
       <th nzWidth="12px" nzAlign="center">N°</th>
-      <th nzWidth="200px"nzColumnKey="nombreArchivo" [nzSortFn]="true">Nombre</th>
+      <th nzWidth="200px"nzColumnKey="nombresPersona" [nzSortFn]="true">Nombre</th>
       <th nzWidth="20px" nzAlign="center">Mes</th>
       <th nzWidth="20px" nzAlign="center">Meta</th>
       <th nzWidth="16px" nzAlign="center"></th>
