@@ -16,6 +16,7 @@ import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.co
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { obtenerPermisosBotones } from '@core/helpers';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -50,12 +51,7 @@ export default class AsistenciasTecnicasComponent {
 
   paginationFilter: Pagination = {}
 
-  atencionActions: ButtonsActions = {
-    new: false,
-    edit: false,
-    delete: false,
-    report: false
-  }
+  atencionActions: ButtonsActions = {}
 
   perfilAuth: number = 0
   sectorAuth: number = 0
@@ -105,16 +101,16 @@ export default class AsistenciasTecnicasComponent {
   }
 
   setPermisosPCM(){
-    const profilePCM = [11,12]
+    const profilePCM = [11,12,23]
     return profilePCM.includes(this.perfilAuth)
   }
   
 
   obtenerEventos() {
-    const vigenteId = this.permisosPCM ? 2 : 4
+    const vigenteId = this.permisosPCM ? 4 : 2
     const tipoEvento = this.permisosPCM ? [9] : [8]
     this.eventosService.getAllEventos(tipoEvento, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
-      .subscribe(resp => {
+      .subscribe(resp => {        
         if(resp.data.length > 0){          
           this.evento.set(resp.data[0])
         }        
@@ -154,13 +150,7 @@ export default class AsistenciasTecnicasComponent {
   getPermissions() {
     const navigation = this.authStore.navigationAuth()!
     const atenciones = navigation.find(nav => nav.descripcionItem == 'Atenciones')
-    atenciones?.botones?.map(btn => {
-      this.atencionActions.new = btn.descripcionBoton === 'Agregar' ? true : this.atencionActions.new
-      this.atencionActions.edit = btn.descripcionBoton === 'Editar' ? true : this.atencionActions.edit
-      this.atencionActions.delete = btn.descripcionBoton === 'Eliminar' ? true : this.atencionActions.delete
-      this.atencionActions.validate = btn.descripcionBoton === 'Validar' ? true : this.atencionActions.validate
-      this.atencionActions.report = btn.descripcionBoton === 'Reporte' ? true : this.atencionActions.report
-    })
+    this.atencionActions = obtenerPermisosBotones(atenciones!.botones!)    
   }
 
   obtenerAsistenciasTecnicas() {
@@ -292,10 +282,10 @@ export default class AsistenciasTecnicasComponent {
   }
 
   generarExcel(archivo: any, nombreArchivo: string): void {
-      const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
-      const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      saveAs(blob, nombreArchivo);
-    }
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
+  }
 
   crearAsistenciaTecnica() {
     this.create = true
