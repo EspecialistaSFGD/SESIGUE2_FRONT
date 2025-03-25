@@ -43,7 +43,7 @@ export class FormularioMetaComponent {
     const usuarios:UsuarioResponse[]  = this.dataMetaNew.usuarios
     for(let usuario of usuarios){
       const usuariosRow = this.fb.group({
-        usuario: [usuario.codigoUsuario, Validators.required],
+        usuarioId: [usuario.codigoUsuario, Validators.required],
         nombre: [usuario.nombresPersona],
         meta: [ '32', [Validators.required, Validators.pattern(this.validatorService.NumberPattern)]],
       })

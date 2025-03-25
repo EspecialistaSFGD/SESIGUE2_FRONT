@@ -10,3 +10,11 @@ export interface UsuarioMetaResponse {
 	fecha: string
 	meta: string
 }
+
+
+export interface MetaUsuarioResponse {
+	metaId?: string,
+	usuarioId: string,
+	fecha: string,
+	cantidad: string,
+}

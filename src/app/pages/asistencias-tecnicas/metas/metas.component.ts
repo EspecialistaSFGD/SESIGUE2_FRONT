@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { Pagination, UsuarioMetaResponse } from '@core/interfaces';
+import { MetaUsuarioResponse, Pagination, UsuarioMetaResponse } from '@core/interfaces';
 import { UsuarioMetasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -9,6 +9,7 @@ import { FormularioMetaComponent } from './formulario-meta/formulario-meta.compo
 import { MetasDetallesComponent } from './metas-detalles/metas-detalles.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { dateZeroMonthDay } from '@core/helpers';
 
 @Component({
   selector: 'app-metas',
@@ -23,13 +24,12 @@ export default class MetasComponent {
   loadingData: boolean = false
 
   usuarios = signal<UsuarioMetaResponse[]>([])
-  sectorAuth: number = 0
-  entidadAuth: number = 0
+
 
   pagination: Pagination = {
     columnSort: 'nombresPersona',
     typeSort: 'ASC',
-    pageSize: 10,
+    pageSize: 16,
     currentPage: 1,
     total: 0
   }
@@ -46,7 +46,6 @@ export default class MetasComponent {
   getParams() {
     this.route.queryParams.subscribe(params => {
       if (Object.keys(params).length > 0) {
-
         let campo = params['campo'] ?? 'nombresPersona'
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
@@ -121,18 +120,33 @@ export default class MetasComponent {
           type: 'primary',
           onClick: (componentResp) => {
             const formNewmeta = componentResp!.formMeta
-            console.log('guardar formulario');
-            console.log(formNewmeta.value);
-
+            
             if (formNewmeta.invalid) {
               return formNewmeta.markAllAsTouched()
             }
             
+            const fecha = formNewmeta.get('fecha')?.value
+            const usuarios = formNewmeta.get('usuarios')?.value
+
+            const date = new Date(fecha)
+            date.setMonth(date.getMonth() + 1)
+            date.setDate(0)
+
+
+            const fechaMeta = dateZeroMonthDay(date)
+            for(let usuario of usuarios){
+              const metaUsuario: MetaUsuarioResponse = {
+                usuarioId: usuario.usuarioId,
+                fecha: fechaMeta,
+                cantidad: usuario.meta  
+              }              
+              this.usuarioMetasService.registarMetaUsuario(metaUsuario)
+                .subscribe( resp => {
+                  // console.log(resp);
+                })
+            }
+            this.obtenerServiceUsuariosMeta()
             this.modal.closeAll()
-            // return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
-            //   this.traerAcuerdos({});
-            //   this.modal.closeAll();
-            // });
           }
         }
       ]
