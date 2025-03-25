@@ -10,18 +10,18 @@ import { Pagination, UsuariosResponses } from '@core/interfaces';
 })
 export class UsuariosService {
   private urlUsuario: string = `${environment.api}/Usuario`
-    private http = inject(HttpClient)
-    private helpersServices = inject(HelpersService);
-  
-    listarUsuario(pagination: Pagination, perfiles: number[] | null = null): Observable<UsuariosResponses> {
-      let params = this.helpersServices.setParams(pagination)
-        if(perfiles){
-          for(let perfil of perfiles){
-            params = params.append('perfil[]', `${perfil}`);
-          }
-        }
-        
-      const headers = this.helpersServices.getAutorizationToken()
-      return this.http.get<UsuariosResponses>(`${this.urlUsuario}/ListarUsuarios`, { headers, params })
+  private http = inject(HttpClient)
+  private helpersServices = inject(HelpersService);
+
+  listarUsuario(pagination: Pagination, perfiles: number[] | null = null): Observable<UsuariosResponses> {
+    let params = this.helpersServices.setParams(pagination)
+    if(perfiles){
+      for(let perfil of perfiles){
+        params = params.append('perfil[]', `${perfil}`);
+      }
     }
+      
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<UsuariosResponses>(`${this.urlUsuario}/ListarUsuarios`, { headers, params })
+  }
 }

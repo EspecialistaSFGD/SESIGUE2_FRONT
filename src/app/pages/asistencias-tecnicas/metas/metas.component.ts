@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { Pagination, UsuarioResponse } from '@core/interfaces';
-import { UsuariosService } from '@core/services/usuarios.service';
+import { Pagination, UsuarioMetaResponse } from '@core/interfaces';
+import { UsuarioMetasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { MetasDetallesComponent } from './metas-detalles/metas-detalles.component';
 import { FormularioMetaComponent } from './formulario-meta/formulario-meta.component';
+import { MetasDetallesComponent } from './metas-detalles/metas-detalles.component';
 
 @Component({
   selector: 'app-metas',
@@ -21,37 +20,30 @@ export default class MetasComponent {
 
   loadingData: boolean = false
 
-  usuarios = signal<UsuarioResponse[]>([])
+  usuarios = signal<UsuarioMetaResponse[]>([])
   sectorAuth: number = 0
   entidadAuth: number = 0
 
   pagination: Pagination = {
     columnSort: 'nombresPersona',
-    typeSort: 'acs',
-    pageSize: 10,
+    typeSort: 'ASC',
+    pageSize: 15,
     currentPage: 1,
     total: 0
   }
 
-  private authStore = inject(AuthService)
-  private usuariosService = inject(UsuariosService)
+  private usuarioMetasService = inject(UsuarioMetasService)
   private modal = inject(NzModalService);
 
   ngOnInit(): void {
-    this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value)    
-    this.entidadAuth = Number(localStorage.getItem('entidad'))
     this.obtenerServiceUsuariosPorSector()
   }
 
   obtenerServiceUsuariosPorSector(){
-    this.pagination.sectorId = this.sectorAuth
-    this.pagination.entidadId = this.entidadAuth
-    this.usuariosService.listarUsuario(this.pagination, [11,12])
-      .subscribe( resp => {        
+    this.usuarioMetasService.listarUsuario(this.pagination)
+      .subscribe( resp => {
         this.usuarios.set(resp.data)
-        if(resp.data.length > 0){
-          this.pagination.total = resp.data[0].total
-        }
+        this.pagination.total = resp.info?.total ?? 0
       })
   }
 

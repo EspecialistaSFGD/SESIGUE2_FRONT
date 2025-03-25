@@ -17,8 +17,8 @@
       <tr>
         <td nzAlign="center">{{$index + 1}}</td>
         <td >{{usuario.nombresPersona}}</td>
-        <td nzAlign="center">03/2025</td>
-        <td nzAlign="center">32</td>
+        <td nzAlign="center">{{usuario.fecha | date: 'mm/yy'}}</td>
+        <td nzAlign="center">{{usuario.meta}}</td>
         <td nzAlign="center">
           <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles" (click)="modalMetaDetalle(usuario.codigoUsuario!, usuario.nombresPersona)">
             <span nz-icon nzType="eye" nzTheme="outline"></span>
