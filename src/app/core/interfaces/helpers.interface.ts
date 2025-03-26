@@ -34,6 +34,7 @@ export interface ButtonsActions {
   upload?: boolean,
   report?: boolean
   validate?: boolean
+  approve?:boolean
 }
 
 export interface Filters {

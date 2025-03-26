@@ -27,3 +27,13 @@ export interface AcuerdoPanelTotales {
   cumplidos: number,
   total?: number
 }
+
+export interface AcuerdoDesestimacionResponse {
+  acuerdoId?: number,
+  comentario: string,
+  usuarioId: number
+}
+
+export interface AcuerdoDesestimacionResponses extends DataResponses{
+  data: number,
+}
