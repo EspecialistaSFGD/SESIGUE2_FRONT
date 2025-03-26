@@ -9,11 +9,14 @@
         <th nzLeft nzWidth="42px" nzAlign="center" nzColumnKey="validado"></th>
       }
       <th nzLeft nzWidth="160px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código </th>
+      <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
       @if(permisosPCM){
         <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención </th>
         <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
+      } @else {
+        <th nzLeft nzWidth="100px" nzAlign="center">Evento</th>
+        <th nzLeft nzWidth="200px" nzAlign="center">Unidad Organica</th>
       }
-      <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="tipoEntidad" [nzSortFn]="true">Tipo de entidad</th>
       <th nzWidth="150px" nzColumnKey="entidad">Entidad</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="autoridad" [nzSortFn]="true">Autoridad</th>
@@ -31,26 +34,31 @@
         <td nzAlign="center"><nz-avatar [nzSize]="24" [ngClass]="{ 'bg-green-400' : atencion.validado && geDocumentAtencion(atencion), 'bg-gray-300' : !atencion.validado && geDocumentAtencion(atencion), 'bg-blue-400' : !geDocumentAtencion(atencion) }" nz-tooltip="{{ !geDocumentAtencion(atencion) ? '' :  atencion.validado ? 'Validado' : 'Sin Validar' }}" nzIcon="check"></nz-avatar></td>
       }
       <td nzAlign="center"> <p class="font-bold">{{atencion.codigo}}</p></td>
-      @if(permisosPCM){
-        <td nzAlign="center">{{getTextEnum(atencion.tipo, 'tipo') | titlecase}}</td>
-        <td nzAlign="center">{{getTextEnum(atencion.modalidad, 'modalidad') | titlecase }}</td>
-      }
       <td nzAlign="center">{{atencion.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
-      <td nzAlign="center">{{atencion.nombreTipoEntidad}}</td>
-      <td>{{atencion.nombreEntidad}}</td>
-      <td nzAlign="center">{{atencion.autoridad ? 'Si' : 'No' }}</td>
-      <td nzAlign="center">{{atencion.nombreEspacio | titlecase }}</td>
-      <td nzAlign="center">{{getTextEnum(atencion.clasificacion, 'clasificacion') | titlecase}}</td>
+      @if(permisosPCM){
+        <td nzAlign="center">{{atencion.tipo | titlecase}}</td>
+        <td nzAlign="center">{{atencion.modalidad | titlecase }}</td>
+      } @else {
+        <td nzAlign="center">
+          <p [nz-tooltip]="atencion.evento">{{ atencion.evento_slug }}</p>
+        </td>
+        <td nzAlign="center">{{atencion.unidad_organica }}</td>
+      }
+      <td nzAlign="center">{{atencion.nivel_gobierno}}</td>
+      <td>{{atencion.entidad}}</td>
+      <td nzAlign="center">{{atencion.participa_autoridad }}</td>
+      <td nzAlign="center">{{atencion.espacio| titlecase }}</td>
+      <td nzAlign="center">{{atencion.clasificacion | titlecase}}</td>
       @if(atencionActions.edit || atencionActions.delete || atencionActions.validate){
         <td nzAlign="center">
           <nz-space>
             @if(atencionActions.edit){
-            <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !geDocumentAtencion(atencion) ? 'Actualizar Atención' : '' }}" [disabled]="geDocumentAtencion(atencion) && atencion.validado"><span nz-icon
+            <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !disabledActions(atencion) ? 'Actualizar Atención' : '' }}" [disabled]="disabledActions(atencion)"><span nz-icon
                 nzType="edit" nzTheme="outline"></span></button>
             }
             @if(atencionActions.delete){
-            <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip="{{ !geDocumentAtencion(atencion) ? 'Eliminar Atención' : '' }}"
-              (click)="eliminarAsistencia(atencion.asistenciaId!)" [disabled]="geDocumentAtencion(atencion) && atencion.validado"><span nz-icon nzType="delete"
+            <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip="{{ !disabledActions(atencion) ? 'Eliminar Atención' : '' }}"
+              (click)="eliminarAsistencia(atencion.asistenciaId!)" [disabled]="disabledActions(atencion)"><span nz-icon nzType="delete"
                 nzTheme="outline"></span></button>
             }
             @if(atencionActions.validate){

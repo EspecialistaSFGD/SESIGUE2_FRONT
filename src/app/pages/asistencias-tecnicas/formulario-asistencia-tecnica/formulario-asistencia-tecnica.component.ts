@@ -240,7 +240,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     let tipo = this.create ? '' : this.asistenciaTecnica.tipo
     let modalidad = this.create ? '' : this.asistenciaTecnica.modalidad
     const autoridad = this.create ? '' : this.asistenciaTecnica.autoridad
-    const ubigeo = this.create ? '' : this.asistenciaTecnica.ubigeoEntidad
+    const ubigeo = this.create ? '' : this.asistenciaTecnica.ubigeo!
     const departamento = this.create ? '' : ubigeo.slice(0, 2)
     const provincia = this.create ? '' : ubigeo.slice(0, 4)
     const distrito = this.create ? '' : ubigeo

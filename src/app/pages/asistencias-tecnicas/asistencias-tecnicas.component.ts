@@ -186,6 +186,14 @@ export default class AsistenciasTecnicasComponent {
     return type == 'documento' ? true : false
   }
 
+  disabledActions(atencion: AsistenciaTecnicaResponse): boolean {
+    let validado = this.geDocumentAtencion(atencion) && atencion.validado!
+    if(!this.permisosPCM){
+      validado = this.evento() ? atencion.eventoId != this.evento()!.eventoId : true
+    }
+    return validado;
+  }
+
   getTextEnum(value: string, kind: string): string {
     let text = value
     if (kind == 'tipo') {
@@ -219,6 +227,8 @@ export default class AsistenciasTecnicasComponent {
 
   updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {
     this.asistenciaTecnica = asistencia
+    console.log(this.asistenciaTecnica);
+    
     this.create = false
     this.showNzModal = true
   }

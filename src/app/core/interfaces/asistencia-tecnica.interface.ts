@@ -60,9 +60,24 @@ export interface AsistenciaTecnicaResponse {
   evidenciaAsistencia: string,
   estado?: boolean,
   validado?: boolean,
-  // fechaRegistro?: Date
+  sector?: string,
+  unidad_organica?: string,
+  nivel_gobierno?: string,
+  nivel_gobierno_slug?: string,
+  departamento?: string,
+  provincia?: string,
+  distrito?: string,
+  ubigeo?: string,
+  entidad?: string,
+  tipo_entidad_slug?: string,
+  entidad_slug?: string,
+  participa_autoridad?: string,
+  evento?: string,
+  evento_slug?: string,
+  espacio?: string,
   code?: number,
 }
+
 
 export interface AtencionesCargasMasivasResponses extends DataResponses {
   data: AtencionCargaMasivaResponse[],
