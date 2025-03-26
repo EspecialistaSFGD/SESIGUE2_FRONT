@@ -37,6 +37,7 @@ import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { DesestimacionComponent } from '../../../libs/shared/components/desestimacion/desestimacion.component';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { AprobarDesestimacionComponent } from './aprobar-desestimacion/aprobar-desestimacion.component';
 
 const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
@@ -554,6 +555,35 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     // Return a result when closed
     avanceModal.afterClose.subscribe(result => {
       instance.avanceForm.reset();
+    });
+  }
+
+  aprobarDesestimacion(acuerdo: AcuerdoPedidoModel){
+    const title = 'Aprobar desestimación'
+    const modal = this.modal.create<AprobarDesestimacionComponent>({
+      nzTitle: title,
+      nzContent: AprobarDesestimacionComponent,
+      nzData: {
+        acuerdoId: acuerdo.acuerdoId,        
+      },
+      nzFooter: [
+      {
+        label: 'Cancelar',
+        type: 'default',
+        onClick: () => this.modal.closeAll(),
+      },
+      {
+        label: title,
+        type: 'primary',
+        onClick: (componentInstance) => {
+          const form = componentInstance?.formAprobarDesestimacion
+          if (form!.invalid) {
+            return form!.markAllAsTouched()
+          } 
+          console.log(form?.value);
+        },
+      }
+      ]
     });
   }
 
