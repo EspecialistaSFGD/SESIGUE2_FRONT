@@ -31,7 +31,8 @@ export interface ButtonsActions {
   edit?: boolean,
   delete?: boolean,
   view?: boolean,
-  upload?: boolean
+  upload?: boolean,
+  approve?:boolean
 }
 
 export interface Filters {

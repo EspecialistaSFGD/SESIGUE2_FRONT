@@ -14,8 +14,10 @@
 
         @if(acuerdosService.estadoEvento() === 'SEGUIMIENTO'){
         <nz-page-header-extra>
-            <nz-space class="flex gap-4">
-                <button [disabled]="!this.acuerdosService.acuerdoSeleccionado()?.evidenciaDesestimacion" nz-button (click)="aprobarDesestimacion(acuerdosService.acuerdoSeleccionado()!)" nzType="primary">Aprobar Desestimación</button>
+            <nz-space class="flex gap-2">
+                @if(authPermission.approve){
+                    <button [disabled]="!this.acuerdosService.acuerdoSeleccionado()?.evidenciaDesestimacion" nz-button (click)="aprobarDesestimacion(acuerdosService.acuerdoSeleccionado()!)" nzType="default">Aprobar Desestimación</button>
+                }
                 <button
                     [disabled]="!authService.permisos()?.puede_solicitar_desestimacion || acuerdosService.isDesestimating()"
                     *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
