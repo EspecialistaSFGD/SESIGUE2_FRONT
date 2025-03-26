@@ -580,6 +580,7 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
           if (form!.invalid) {
             return form!.markAllAsTouched()
           } 
+          
           console.log(form?.value);
         },
       }

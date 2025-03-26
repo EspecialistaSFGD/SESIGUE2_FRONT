@@ -2,11 +2,12 @@
 <!-- {{acuerdosService.isDesestimated()|json}} -->
  <!-- <p>
      {{this.acuerdosService.acuerdoSeleccionado() | json }}
- </p>
- <p>{{acuerdosService.acuerdoSeleccionado()?.estado}}</p>
+ </p> -->
+ <!-- <p>{{acuerdosService.acuerdoSeleccionado()?.estado}}</p>
  <p>Motivo: {{acuerdosService.acuerdoSeleccionado()?.motivoDesestimacion}}</p>
  <p>{{acuerdosService.isDesestimated()}}</p>
- <p>Desestimado: {{acuerdosService.isDesestimating()}}</p> -->
+ <p>Desestimado: {{acuerdosService.isDesestimating()}}</p>
+ <p>{{this.acuerdosService.acuerdoSeleccionado()?.evidenciaDesestimacion}}</p> -->
 <div class="site-page-header-ghost-wrapper">
     <nz-page-header nzBackIcon (nzBack)="onBack('acuerdos')" [nzGhost]="false">
         <nz-page-header-title>Detalle de acuerdo</nz-page-header-title>
@@ -14,12 +15,9 @@
         @if(acuerdosService.estadoEvento() === 'SEGUIMIENTO'){
         <nz-page-header-extra>
             <nz-space class="flex gap-4">
-                <button [disabled]="acuerdosService.isDesestimating()" nz-button (click)="aprobarDesestimacion(acuerdosService.acuerdoSeleccionado()!)" nzType="primary">Aprobar Desestimación</button>
-                <!-- <button
+                <button [disabled]="!this.acuerdosService.acuerdoSeleccionado()?.evidenciaDesestimacion" nz-button (click)="aprobarDesestimacion(acuerdosService.acuerdoSeleccionado()!)" nzType="primary">Aprobar Desestimación</button>
+                <button
                     [disabled]="!authService.permisos()?.puede_solicitar_desestimacion || acuerdosService.isDesestimating()"
-                    *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
-                    nzDanger>Solicitar desestimación</button> -->
-                <button                    
                     *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
                     nzDanger>Solicitar desestimación</button>
                 <!-- <button
