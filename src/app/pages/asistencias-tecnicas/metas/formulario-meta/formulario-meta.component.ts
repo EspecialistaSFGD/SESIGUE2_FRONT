@@ -32,11 +32,6 @@ export class FormularioMetaComponent {
 
   ngOnInit(): void {
     this.agregarUsuariosFormArray()
-    // const currentDate = new Date();
-    // const currentYear = currentDate.getFullYear();
-    // const currentMonth = currentDate.getMonth();
-    // const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    // console.log(`El mes actual tiene ${daysInMonth} días.`);
   }
 
   agregarUsuariosFormArray(){    

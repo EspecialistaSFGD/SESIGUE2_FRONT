@@ -1,1 +1,95 @@
-<p>formulario-atencion works!</p>
+<form [formGroup]="formAtencion" nz-form nzLayout="vertical" autocomplete="off">
+	@if (perfilPOIAtencion() && !esDocumento) {
+		<div nz-row [nzGutter]="16">
+			<div nz-col nzSpan="12">
+				<nz-form-item>
+					<nz-form-label [nzSpan]="null">Tipo de atención</nz-form-label>
+					<nz-radio-group class="radio-form-control" formControlName="tipo">
+						@for (tipo of tipos; track $index){
+							@if (tipo.text != 'documento') {
+								<label nz-radio [nzValue]="tipo.value">{{tipo.text| titlecase }}</label>
+							}
+						}
+					</nz-radio-group>
+					<div class="text-danger" *ngIf="alertMessageError('tipo')">{{msgErrorControl('tipo','Tipo de atención')}}
+					</div>
+				</nz-form-item>
+			</div>
+		</div>
+	}
+	<div nz-row [nzGutter]="16">
+		<div nz-col nzSpan="6">
+			<nz-form-item>
+				<nz-form-label [nzSpan]="null" nzFor="fechaAtencion">Fecha de atención</nz-form-label>
+				<nz-form-control nzSpan="null">
+					<nz-date-picker id="fechaAtencion" class="datepicker-form-control" formControlName="fechaAtencion"
+						nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy" [nzDisabled]="esDocumento || !permisosPCM"
+						[nzDisabledDate]="disableDates"></nz-date-picker>
+				</nz-form-control>
+				<div class="text-danger" *ngIf="alertMessageError('fechaAtencion')">
+					{{msgErrorControl('fechaAtencion','Fecha de atención')}}</div>
+			</nz-form-item>
+		</div>
+		<div nz-col nzSpan="6">
+			@if (perfilPOIAtencion()) {
+			<nz-form-item>
+				<nz-form-label [nzSpan]="null">Modalidad</nz-form-label>
+				<nz-radio-group class="radio-form-control" formControlName="modalidad" (ngModelChange)="obtenerModalidad()" [nzDisabled]="esDocumento">
+					@for (modalidad of modalidades; track $index){
+					<label nz-radio [nzValue]="modalidad.value">{{modalidad.text | titlecase }}</label>
+					}
+				</nz-radio-group>
+				<div class="text-danger" *ngIf="alertMessageError('modalidad')">{{msgErrorControl('modalidad','Modalidad')}}
+				</div>
+			</nz-form-item>
+			} @else if (!permisosPCM) {
+				<ng-container *ngTemplateOutlet="controlSector"></ng-container>
+			}
+		</div>
+		<div nz-col nzSpan="6">
+			<nz-form-item>
+				<nz-form-label [nzSpan]="null" nzFor="lugarId">Lugar</nz-form-label>
+				<nz-form-control nzSpan="null">
+					<nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" class="select-form-control" nzDisabled="{{ !permisosPCM || esDocumento ? true : false }}"
+						formControlName="lugarId" nzAllowClear nzShowSearch>
+						@for (lugar of lugares(); track $index) {
+						<nz-option [nzValue]="lugar.lugarId" nzLabel="{{lugar.nombre}}"></nz-option>
+						}
+					</nz-select>
+					<div class="text-danger" *ngIf="alertMessageError('lugarId')">{{msgErrorControl('lugarId','Lugar')}}</div>
+				</nz-form-control>
+			</nz-form-item>
+		</div>
+		<div nz-col nzSpan="6">
+			<nz-form-item>
+				<nz-form-label [nzSpan]="null" nzFor="tipoEntidadId">Tipo de entidad</nz-form-label>
+				<nz-form-control nzSpan="null">
+					<nz-select nzPlaceHolder="Seleccionat tipo de entidad" id="tipoEntidadId" class="select-form-control"
+						(ngModelChange)="changeTipoEntidad()" formControlName="tipoEntidadId" nzAllowClear nzShowSearch>
+						@for (entidades of tipoEntidades(); track $index) {
+						<nz-option [nzValue]="entidades.tipoId" nzLabel="{{entidades.nombre}}"></nz-option>
+						}
+					</nz-select>
+					<div class="text-danger" *ngIf="alertMessageError('tipoEntidadId')">
+						{{msgErrorControl('tipoEntidadId','Tipo de entidad')}}</div>
+				</nz-form-control>
+			</nz-form-item>
+		</div>
+	</div>
+
+	<ng-template #controlSector>
+		<nz-form-item>
+			<nz-form-label [nzSpan]="null" nzFor="sectorId">Sector</nz-form-label>
+			<nz-form-control nzSpan="null">
+				<nz-select nzPlaceHolder="Seleccionat sector" id="sectorId" class="select-form-control"
+					formControlName="sectorId" nzAllowClear nzShowSearch [nzDisabled]="!permisosPCM">
+					@for (sector of sectoresStore.sectores(); track $index) {
+					<nz-option [nzValue]="sector.value" nzLabel="{{sector.label}}"></nz-option>
+					}
+				</nz-select>
+				<div class="text-danger" *ngIf="alertMessageError('sectorId')">{{msgErrorControl('sectorId','Sector')}}
+				</div>
+			</nz-form-control>
+		</nz-form-item>
+	</ng-template>
+</form>

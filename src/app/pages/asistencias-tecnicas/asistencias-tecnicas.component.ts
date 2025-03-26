@@ -16,7 +16,7 @@ import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.co
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
-import { obtenerPermisosBotones } from '@core/helpers';
+import { convertEnumToObject, obtenerPermisosBotones } from '@core/helpers';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -64,9 +64,9 @@ export default class AsistenciasTecnicasComponent {
   showNzModal: boolean = false
 
   confirmModal?: NzModalRef;
-  tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value: value.toLowerCase(), text }))
-  modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value: value.toLowerCase(), text }))
-  clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }))
+  tipos: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasTipos)
+  modalidaades: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasModalidad)
+  clasificaciones: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasClasificacion)
   public orientaciones: ItemEnum[] = [
     { value: '1', text: 'Actividad' },
     { value: '2', text: 'Proyecto' },
@@ -225,14 +225,6 @@ export default class AsistenciasTecnicasComponent {
     );
   }
 
-  updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {
-    this.asistenciaTecnica = asistencia
-    console.log(this.asistenciaTecnica);
-    
-    this.create = false
-    this.showNzModal = true
-  }
-
   validarAtencion(asistenciaId: string){
     this.asistenciaTecnicaService.validarAsistenciaTecnica(asistenciaId)
       .subscribe( resp => {
@@ -297,43 +289,19 @@ export default class AsistenciasTecnicasComponent {
     saveAs(blob, nombreArchivo);
   }
 
+  updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {
+    this.asistenciaTecnica = asistencia    
+    // this.create = false
+    // this.showNzModal = true
+    this.generateComponentModal(false)
+  }
+
   crearAsistenciaTecnica() {
-    this.create = true
-    const fechaAtencion = new Date();
-    this.asistenciaTecnica = {
-      tipoPerfil: '',
-      tipo: '',
-      modalidad: '',
-      fechaAtencion,
-      lugarId: '',
-      sectorId: '',
-      nombreLugar: '',
-      tipoEntidadId: '',
-      nombreTipoEntidad: '',
-      entidadId: '',
-      ubigeoEntidad: '',
-      nombreEntidad: '',
-      autoridad: false,
-      dniAutoridad: '',
-      nombreAutoridad: '',
-      cargoAutoridad: '',
-      contactoAutoridad: '',
-      congresista: false,
-      dniCongresista: '',
-      nombreCongresista: '',
-      clasificacion: '',
-      espacioId: '',
-      unidadId: '',
-      orientacionId: '',
-      eventoId: '',
-      nombreEspacio: '',
-      tema: '',
-      comentarios: '',
-      evidenciaReunion: '',
-      evidenciaAsistencia: ''
-    }
-    this.showNzModal = true
-    // this.generateComponentModal(true)
+    // this.create = true
+    // const fechaAtencion = new Date();
+    this.asistenciaTecnica = {} as AsistenciaTecnicaResponse
+    // this.showNzModal = true
+    this.generateComponentModal(true)
   }
 
   generateComponentModal(create: boolean): void{
@@ -343,12 +311,13 @@ export default class AsistenciasTecnicasComponent {
       nzWidth: '75%',
       nzContent: FormularioAtencionComponent,
       nzData: {
-        asistenciaTecnica: this.asistenciaTecnica,
+        atencion: this.asistenciaTecnica,
         tipos: this.tipos,
         modalidades: this.modalidaades,
         clasificaciones: this.clasificaciones,
         orientaciones: this.orientaciones,
-        departamentos: this.departamentos
+        departamentos: this.departamentos,
+        authUser: this.authStore.usuarioAuth()
       },
       nzFooter: [
         {

@@ -1,4 +1,5 @@
-import { DataResponses } from "./helpers.interface"
+import { DataResponses, ItemEnum } from "./helpers.interface"
+import { UbigeoDepartmentResponse } from "./ubigeo.interface"
 
 export interface AsistenciasTecnicasResponse extends DataResponses {
   data: AsistenciaTecnicaResponse[],
@@ -99,4 +100,14 @@ export interface AtencionCargaMasivaResponse {
 	provincia: string,
 	distrito: string,
 	validado: string
+}
+
+export interface DataModalAtencion {
+  atencion: AsistenciaTecnicaResponse
+  clasificaciones: ItemEnum[]
+  departamentos: UbigeoDepartmentResponse[]
+  modalidades: ItemEnum[]
+  orientaciones: ItemEnum[]
+  tipos: ItemEnum[]
+  authUser: any
 }
