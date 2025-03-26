@@ -211,8 +211,8 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
 
   getPermissions() {
     const navigation = this.authService.navigationAuth()!;
-    const atenciones = navigation.find(nav => nav.descripcionItem == 'Atenciones')
-    atenciones?.botones?.map(btn => {
+    const acuerdos = navigation.find(nav => nav.descripcionItem == 'Acuerdos')
+    acuerdos?.botones?.map(btn => {      
       this.authPermission.approve = btn.descripcionBoton === 'Aprobar' ? true : this.authPermission.approve
     })
   }
