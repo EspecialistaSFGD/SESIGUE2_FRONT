@@ -16,6 +16,7 @@ import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.co
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { convertEnumToObject, obtenerPermisosBotones } from '@core/helpers';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -50,12 +51,7 @@ export default class AsistenciasTecnicasComponent {
 
   paginationFilter: Pagination = {}
 
-  atencionActions: ButtonsActions = {
-    new: false,
-    edit: false,
-    delete: false,
-    report: false
-  }
+  atencionActions: ButtonsActions = {}
 
   perfilAuth: number = 0
   sectorAuth: number = 0
@@ -68,9 +64,9 @@ export default class AsistenciasTecnicasComponent {
   showNzModal: boolean = false
 
   confirmModal?: NzModalRef;
-  tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value: value.toLowerCase(), text }))
-  modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value: value.toLowerCase(), text }))
-  clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }))
+  tipos: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasTipos)
+  modalidaades: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasModalidad)
+  clasificaciones: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasClasificacion)
   public orientaciones: ItemEnum[] = [
     { value: '1', text: 'Actividad' },
     { value: '2', text: 'Proyecto' },
@@ -105,16 +101,16 @@ export default class AsistenciasTecnicasComponent {
   }
 
   setPermisosPCM(){
-    const profilePCM = [11,12]
+    const profilePCM = [11,12,23]
     return profilePCM.includes(this.perfilAuth)
   }
   
 
   obtenerEventos() {
-    const vigenteId = this.permisosPCM ? 2 : 4
+    const vigenteId = this.permisosPCM ? 4 : 2
     const tipoEvento = this.permisosPCM ? [9] : [8]
     this.eventosService.getAllEventos(tipoEvento, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
-      .subscribe(resp => {
+      .subscribe(resp => {        
         if(resp.data.length > 0){          
           this.evento.set(resp.data[0])
         }        
@@ -154,13 +150,7 @@ export default class AsistenciasTecnicasComponent {
   getPermissions() {
     const navigation = this.authStore.navigationAuth()!
     const atenciones = navigation.find(nav => nav.descripcionItem == 'Atenciones')
-    atenciones?.botones?.map(btn => {
-      this.atencionActions.new = btn.descripcionBoton === 'Agregar' ? true : this.atencionActions.new
-      this.atencionActions.edit = btn.descripcionBoton === 'Editar' ? true : this.atencionActions.edit
-      this.atencionActions.delete = btn.descripcionBoton === 'Eliminar' ? true : this.atencionActions.delete
-      this.atencionActions.validate = btn.descripcionBoton === 'Validar' ? true : this.atencionActions.validate
-      this.atencionActions.report = btn.descripcionBoton === 'Reporte' ? true : this.atencionActions.report
-    })
+    this.atencionActions = obtenerPermisosBotones(atenciones!.botones!)    
   }
 
   obtenerAsistenciasTecnicas() {
@@ -196,6 +186,14 @@ export default class AsistenciasTecnicasComponent {
     return type == 'documento' ? true : false
   }
 
+  disabledActions(atencion: AsistenciaTecnicaResponse): boolean {
+    let validado = this.geDocumentAtencion(atencion) && atencion.validado!
+    if(!this.permisosPCM){
+      validado = this.evento() ? atencion.eventoId != this.evento()!.eventoId : true
+    }
+    return validado;
+  }
+
   getTextEnum(value: string, kind: string): string {
     let text = value
     if (kind == 'tipo') {
@@ -225,12 +223,6 @@ export default class AsistenciasTecnicasComponent {
         queryParams: { pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar }
       }
     );
-  }
-
-  updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {
-    this.asistenciaTecnica = asistencia
-    this.create = false
-    this.showNzModal = true
   }
 
   validarAtencion(asistenciaId: string){
@@ -292,63 +284,42 @@ export default class AsistenciasTecnicasComponent {
   }
 
   generarExcel(archivo: any, nombreArchivo: string): void {
-      const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
-      const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      saveAs(blob, nombreArchivo);
-    }
-
-  crearAsistenciaTecnica() {
-    this.create = true
-    const fechaAtencion = new Date();
-    this.asistenciaTecnica = {
-      tipoPerfil: '',
-      tipo: '',
-      modalidad: '',
-      fechaAtencion,
-      lugarId: '',
-      sectorId: '',
-      nombreLugar: '',
-      tipoEntidadId: '',
-      nombreTipoEntidad: '',
-      entidadId: '',
-      ubigeoEntidad: '',
-      nombreEntidad: '',
-      autoridad: false,
-      dniAutoridad: '',
-      nombreAutoridad: '',
-      cargoAutoridad: '',
-      contactoAutoridad: '',
-      congresista: false,
-      dniCongresista: '',
-      nombreCongresista: '',
-      clasificacion: '',
-      espacioId: '',
-      unidadId: '',
-      orientacionId: '',
-      eventoId: '',
-      nombreEspacio: '',
-      tema: '',
-      comentarios: '',
-      evidenciaReunion: '',
-      evidenciaAsistencia: ''
-    }
-    this.showNzModal = true
-    // this.generateComponentModal(true)
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
   }
 
-  generateComponentModal(create: boolean): void{
+  updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {
+    this.asistenciaTecnica = asistencia    
+    // this.create = false
+    // this.showNzModal = true
+    this.generateComponentModal(false)
+  }
+
+  crearAsistenciaTecnica() {
+    // this.create = true
+    // const fechaAtencion = new Date();
+    this.asistenciaTecnica = {} as AsistenciaTecnicaResponse
+    // this.showNzModal = true
+    this.generateComponentModal(true)
+  }
+
+  generateComponentModal(create: boolean): void{       
+    const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
     const modal = this.modal.create<FormularioAtencionComponent>({
-      nzTitle: action,
+      nzTitle: `${action.toUpperCase()}${evento}`,
       nzWidth: '75%',
       nzContent: FormularioAtencionComponent,
       nzData: {
-        asistenciaTecnica: this.asistenciaTecnica,
+        atencion: this.asistenciaTecnica,
         tipos: this.tipos,
         modalidades: this.modalidaades,
         clasificaciones: this.clasificaciones,
         orientaciones: this.orientaciones,
-        departamentos: this.departamentos
+        departamentos: this.departamentos(),
+        evento: this.evento(),
+        authUser: this.authStore.usuarioAuth()
       },
       nzFooter: [
         {

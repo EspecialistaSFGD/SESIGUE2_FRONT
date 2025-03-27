@@ -34,6 +34,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   @Input() evento!: EventoResponse
   @Input() asistenciaTecnica!: AsistenciaTecnicaResponse
   @Input() create: boolean = true
+  @Input() permisosPCM: boolean = false
   @Output() setCloseShow = new EventEmitter()
   @Output() addFormDate = new EventEmitter()
 
@@ -175,7 +176,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
 
   getSectorAuth() {
     this.perfil = this.authStore.usuarioAuth().codigoPerfil!
-    if (!this.permisosPCM()) {
+    if (!this.permisosPCM) {
       // this.addAgendadRow()
       this.columnUbigeo = '4'
       this.columnaSpace = '12'
@@ -216,6 +217,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.getAllSectores()
     this.getSectorAuth()
     this.getAllKinds()
+    this.getAllModalidades()
     this.getAllPlaces()
     this.getAllTipoEntidades()
     this.getAllEspacios()
@@ -238,7 +240,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     let tipo = this.create ? '' : this.asistenciaTecnica.tipo
     let modalidad = this.create ? '' : this.asistenciaTecnica.modalidad
     const autoridad = this.create ? '' : this.asistenciaTecnica.autoridad
-    const ubigeo = this.create ? '' : this.asistenciaTecnica.ubigeoEntidad
+    const ubigeo = this.create ? '' : this.asistenciaTecnica.ubigeo!
     const departamento = this.create ? '' : ubigeo.slice(0, 2)
     const provincia = this.create ? '' : ubigeo.slice(0, 4)
     const distrito = this.create ? '' : ubigeo
@@ -261,7 +263,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.getAllTipoEntidades()
     } else {
       this.esDocumento = false
-      if (!this.permisosPCM()) {
+      if (!this.permisosPCM) {
         tipoPerfil = 1
         tipo = 'atencion'
         clasificacion = 'inversion'
@@ -353,23 +355,31 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
   }
 
   getAllKinds(){   
-    const tiposExternos:string[] = ['atencion','sgd']
-    const tipos:ItemEnum[] =  []
-    this.tipos.find( item => {
-      if(this.perfil === 12 && !tiposExternos.includes(item.value)){
+    const tiposExternos:string[] = ['atencion','documento']
+    const tipos:ItemEnum[] =  []    
+    this.tipos.map( item => {
+      if(this.perfilPOIAtencion() && !tiposExternos.includes(item.value)){
         tipos.push(item)
-      }else if(!this.permisosPCM() && item.value === 'atencion'){
+      } else if(!this.permisosPCM && item.value === AsistenciasTecnicasTipos.ATENCION){
         tipos.push(item)
       }
     })
     this.tipos = tipos
   }
 
+  getAllModalidades(){
+    this.modalidades = this.modalidades.filter( item => item.value != AsistenciasTecnicasModalidad.DOCUMENTO )    
+  }
+
+  perfilPOIAtencion(){
+    return this.perfil === 12 || this.perfil === 23
+  }
+
   getAllPlaces() {
     this.lugarService.getAllLugares(this.pagination)
       .subscribe(resp => {
         if (resp.success = true) {
-          const estado = this.perfil === 12 ? true : false
+          const estado = this.perfilPOIAtencion() ? true : false
           const lugares: LugarResponse[] = []
           resp.data.find(item => {
             if (item.estado == estado) {
@@ -410,7 +420,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.espacioService.getAllEspacios(this.pagination)
       .subscribe(resp => {
         if (resp.success = true) {
-          const estado = this.perfil === 12 ? true : false
+          const estado = this.perfilPOIAtencion() ? true : false
           const espacios: EspacioResponse[] = []
           resp.data.find(item => {
             if (item.estado == estado) {
@@ -440,7 +450,7 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     this.clasificacionService.getAllClasificaciones(this.pagination)
       .subscribe(resp => {
         if (resp.success = true) {
-          const estado = this.perfil === 12 ? true : false
+          const estado = this.perfilPOIAtencion() ? true : false
           const clasificaciones: ClasificacionResponse[] = []
           resp.data.find(item => {
             if (item.estado == estado) {
@@ -940,11 +950,6 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     } else {
       this.comentariosCount = qty - value.length;
     }
-  }
-
-  permisosPCM(){
-    const profilePCM = [11,12]
-    return profilePCM.includes(this.perfil)
   }
 
   saveOrEdit() {

@@ -31,8 +31,6 @@ export class EventosService {
       }
     }
 
-    // if (codigoTipoEvento != null) params = params.append('codigoTipoEvento', `${codigoTipoEvento}`);
-
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<EventosResponses>(`${this.urlEvento}/ListarEvento`, { params, headers })
   }
