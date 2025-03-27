@@ -31,7 +31,8 @@ export interface ButtonsActions {
   edit?: boolean,
   delete?: boolean,
   view?: boolean,
-  upload?: boolean
+  upload?: boolean,
+  approve?:boolean
 }
 
 export interface Filters {
@@ -93,4 +94,9 @@ export interface ExportResponses extends DataResponses {
 export interface FileResponse {
  archivo: any,
   nombreArchivo: string
+}
+
+export interface ColorEstados {
+	color: string,
+	icon: string
 }

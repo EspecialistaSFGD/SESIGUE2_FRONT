@@ -9,6 +9,9 @@ import { UtilesService } from '../../shared/services/utiles.service';
 import { AuthService } from '../auth/auth.service';
 import { AcuerdoPedidoExpressModel, DesestimacionModel } from '../../models/pedido/acuerdo.model';
 import { EstadoEventoType } from '../../shared/types/estado.type';
+import { AcuerdoDesestimacionResponse, AcuerdoDesestimacionResponses } from '@core/interfaces';
+import { catchError, map, of, tap } from 'rxjs';
+import { HelpersService } from '@core/services';
 
 interface State {
     acuerdos: AcuerdoPedidoModel[];
@@ -29,10 +32,13 @@ interface State {
 })
 export class AcuerdosService {
 
+    private urlAcuerdo: string = `${environment.api}/Acuerdo`
+
     private msg = inject(NzMessageService);
     private http = inject(HttpClient);
     private utilesService = inject(UtilesService);
     private authService = inject(AuthService);
+    private helpersServices = inject(HelpersService);
 
     #acuerdosResult = signal<State>({
         acuerdos: [],
@@ -58,8 +64,21 @@ export class AcuerdosService {
     public isLoading = computed(() => this.#acuerdosResult().isLoading);
     public isEditing = computed(() => this.#acuerdosResult().isEditing);
     public total = computed(() => this.#acuerdosResult().total);
+    // helpersServices: any;
 
     constructor() { }
+
+    aprobarDesestimacion(desestimacion: AcuerdoDesestimacionResponse ) {
+        const headers = this.helpersServices.getAutorizationToken()
+        return this.http.put<AcuerdoDesestimacionResponses>(`${this.urlAcuerdo}/AprobarDesestimacion/${desestimacion.acuerdoId}`, desestimacion, { headers })
+        .pipe(
+            tap(resp => {
+            return resp
+            }),
+            map(valid => valid.success),
+            catchError(err => of(err))
+        )
+    }
 
     listarAcuerdos(cui: string | null = null, clasificacion: SelectModel[] | null = null, tipo: SelectModel | null = null, estadoAcuerdo: SelectModel[] | null = null, tipoEspacio: string | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, dis: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
         // debugger;
