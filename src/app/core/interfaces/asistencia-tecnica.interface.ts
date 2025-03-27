@@ -113,4 +113,5 @@ export interface DataModalAtencion {
   tipos: ItemEnum[]
   evento: EventoResponse
   authUser: any
+  create: boolean
 }

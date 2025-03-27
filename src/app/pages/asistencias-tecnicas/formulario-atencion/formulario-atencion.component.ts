@@ -25,6 +25,7 @@ export class FormularioAtencionComponent {
   modalidades: ItemEnum[] = this.dataAtention.modalidades
   orientaciones: ItemEnum[] = this.dataAtention.orientaciones
   tipos: ItemEnum[] = this.dataAtention.tipos
+  create: boolean = this.dataAtention.create
   authUser = this.dataAtention.authUser
 
   permisosPCM: boolean = false
@@ -490,6 +491,94 @@ export class FormularioAtencionComponent {
 
   changeClasificacion(){
 
+  }
+
+  changeCongresista(index: number) {
+    const congresistas = this.formAtencion.get('congresistas') as FormArray
+    const congresista = congresistas.at(index).get('congresista')?.value
+    const descripcion = congresistas.at(index).get('descripcion')
+    descripcion?.setValue(congresista ? 'Congresista' : 'Representante')
+    congresista ? descripcion?.disable() : descripcion?.enable()
+  }
+
+  addItemFormArray(event: MouseEvent, formGroup: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (formGroup == 'congresistas') {
+      const congresistaRow = this.fb.group({
+        congresistaId: [''],
+        congresista: ['', Validators.required],
+        dni: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
+        nombre: ['', Validators.required],
+        descripcion: ['', Validators.required],
+      })
+      this.congresistas.push(congresistaRow)
+    }
+    if (formGroup == 'participantes') {
+      const participanteRow = this.fb.group({
+        participanteId: [''],
+        nivelId: ['', Validators.required],
+        cantidad: ['', [Validators.required, Validators.pattern(this.validatorService.NumberPattern)]],
+      })
+      this.participantes.push(participanteRow)
+    }
+    if (formGroup == 'agendas') {
+      this.addAgendadRow()
+    }
+  }
+
+  addAgendadRow() {
+    const agendaRow = this.fb.group({
+      agendaId: [''],
+      clasificacionId: ['', Validators.required],
+      cui: [''],
+      inversion: ['']
+    })
+    this.agendas.push(agendaRow)
+  }
+
+  removeItemFormArray(i: number, formGroup: string) {
+    if (formGroup == 'congresistas') {
+      if (!this.create) {
+        const congresistas = this.formAtencion.get('congresistas') as FormArray
+        const congresistaId = congresistas.at(i).get('congresistaId')?.value
+        this.asistenciaTecnicaCongresistaService.eliminarCongresista(congresistaId)
+          .subscribe(resp => {
+            if (resp.success == true) {
+              this.congresistas.removeAt(i)
+            }
+          })
+      } else {
+        this.congresistas.removeAt(i)
+      }
+
+    } else if (formGroup == 'participantes') {
+      if (!this.create) {
+        const participantes = this.formAtencion.get('participantes') as FormArray
+        const participanteId = participantes.at(i).get('participanteId')?.value
+        this.asistenciaTecnicaParticipanteService.eliminarParticipante(participanteId)
+          .subscribe(resp => {
+            if (resp.success == true) {
+              this.participantes.removeAt(i)
+            }
+          })
+      } else {
+        this.participantes.removeAt(i)
+      }
+    } else if (formGroup == 'agendas') {
+      if (!this.create) {
+        const agendas = this.formAtencion.get('agendas') as FormArray
+        const agendaId = agendas.at(i).get('agendaId')?.value
+        this.asistenciaTecnicaAgendaService.eliminarAgenda(agendaId)
+          .subscribe(resp => {
+            if (resp.success == true) {
+              this.agendas.removeAt(i)
+            }
+          })
+      } else {
+        this.agendas.removeAt(i)
+      }
+    }
   }
 
   caracteresContador(control: string, qty: number) {

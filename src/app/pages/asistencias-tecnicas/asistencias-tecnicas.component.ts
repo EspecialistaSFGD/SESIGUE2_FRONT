@@ -319,6 +319,7 @@ export default class AsistenciasTecnicasComponent {
         orientaciones: this.orientaciones,
         departamentos: this.departamentos(),
         evento: this.evento(),
+        create,
         authUser: this.authStore.usuarioAuth()
       },
       nzFooter: [

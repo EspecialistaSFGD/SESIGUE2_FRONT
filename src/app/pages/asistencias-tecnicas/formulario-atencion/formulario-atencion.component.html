@@ -268,6 +268,82 @@
         </div>
       }
 
+	  @if(perfilPOIAtencion() && !esDocumento){
+		<div nz-row [nzGutter]="16">
+		  <div nz-col nzSpan="24">
+			<div class="border border-solid border-grey-800 dark:border-gray-600">
+			  <div class="flex justify-between items-center bg-gray-100 dark:bg-gray-900 px-4 py-2">
+				<h5 class=" text-sm">Congresistas</h5>
+				<div
+				  class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 rounded hover:bg-punche-blue-500 hover:text-white"
+				  (click)="addItemFormArray($event,'congresistas')">
+				  <span nz-icon nzType="plus" nzTheme="outline"></span>
+				  Nuevo congresista
+				</div>
+			  </div>
+			  <div class=" px-4 py-2">
+				<div formArrayName="congresistas">
+				  <div *ngFor="let congresista of congresistas.controls; let i = index" [formGroupName]="i">
+					<div nz-row [nzGutter]="16">
+  
+					  <div nz-col nzSpan="4">
+						<nz-form-item>
+						  <nz-form-label nzRequired [nzSpan]="null">Participa Congresista</nz-form-label>
+						  <nz-radio-group class="radio-form-control" formControlName="congresista"
+							(ngModelChange)="changeCongresista(i)">
+							@for (participa of participar; track $index){
+							<label nz-radio [nzValue]="participa == 'si' ? true : false">{{participa | titlecase
+							  }}</label>
+							}
+						  </nz-radio-group>
+						  <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'congresista')">
+							{{msgErrorControlTwoNivel('congresistas',i,'congresista','Congresista')}}</div>
+						</nz-form-item>
+					  </div>
+					  <div nz-col nzSpan="6">
+						<nz-form-item>
+						  <nz-form-label [nzSpan]="null" nzFor="dni{{i}}">DNI</nz-form-label>
+						  <nz-form-control nzSpan="null">
+							<input type="text" class="form-control" id="dni{{i}}" placeholder="Ingresa el DNI aquí"
+							  formControlName="dni">
+						  </nz-form-control>
+						  <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'dni')">
+							{{msgErrorControlTwoNivel('congresistas',i,'dni','DNI')}}</div>
+						</nz-form-item>
+					  </div>
+					  <div nz-col nzSpan="6">
+						<nz-form-item>
+						  <nz-form-label [nzSpan]="null" nzFor="nombre{{i}}">Nombre</nz-form-label>
+						  <nz-form-control nzSpan="null">
+							<input type="text" class="form-control" id="nombre{{i}}" placeholder="Ingresa el nombre aquí"
+							  formControlName="nombre">
+						  </nz-form-control>
+						  <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'nombre')">
+							{{msgErrorControlTwoNivel('congresistas',i,'nombre','Nombre')}}</div>
+						</nz-form-item>
+					  </div>
+					  <div nz-col nzSpan="6">
+						<nz-form-item>
+						  <nz-form-label [nzSpan]="null" nzFor="descripcion{{i}}">Descripción</nz-form-label>
+						  <nz-form-control nzSpan="null">
+							<input type="text" class="form-control" id="descripcion{{i}}" formControlName="descripcion">
+						  </nz-form-control>
+						</nz-form-item>
+					  </div>
+					  <div nz-col nzSpan="2" class="flex flex-col items-center">
+						<nz-form-label [nzSpan]="null"> Eliminar </nz-form-label>
+						<span nz-icon nzType="minus-circle-o" class="dynamic-delete-button cursor-pointer"
+						  style="font-size: 24px;" (click)="removeItemFormArray(i,'congresistas')"></span>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		}
+
 	  <ng-template #controlParticipante>
         <nz-form-item>
           <nz-form-label [nzSpan]="null" nzFor="nombreAutoridad">{{ esDocumento ? 'Participante' : 'Nombre'}}</nz-form-label>
@@ -298,20 +374,4 @@
             {{msgErrorControl('clasificacion','Clasificacion')}}</div>
         </nz-form-item>
       </ng-template>
-
-	<!-- <ng-template #controlSector>
-		<nz-form-item>
-			<nz-form-label [nzSpan]="null" nzFor="sectorId">Sector</nz-form-label>
-			<nz-form-control nzSpan="null">
-				<nz-select nzPlaceHolder="Seleccionat sector" id="sectorId" class="select-form-control"
-					formControlName="sectorId" nzAllowClear nzShowSearch [nzDisabled]="!permisosPCM">
-					@for (sector of sectoresStore.sectores(); track $index) {
-					<nz-option [nzValue]="sector.value" nzLabel="{{sector.label}}"></nz-option>
-					}
-				</nz-select>
-				<div class="text-danger" *ngIf="alertMessageError('sectorId')">{{msgErrorControl('sectorId','Sector')}}
-				</div>
-			</nz-form-control>
-		</nz-form-item>
-	</ng-template> -->
 </form>
