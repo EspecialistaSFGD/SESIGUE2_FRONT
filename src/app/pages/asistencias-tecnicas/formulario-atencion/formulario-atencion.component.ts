@@ -29,7 +29,10 @@ export class FormularioAtencionComponent {
 
   permisosPCM: boolean = false
   esDocumento: boolean = this.atencion.tipo === AsistenciasTecnicasTipos.DOCUMENTO
+  participar: string[] = ['si', 'no']
   mancomunidadSlug:string[] = ['MM','MR']
+  temaCount = 1500
+  comentariosCount = 900
   esMancomunidad: boolean = false
   esRegional: boolean = false
   
@@ -91,6 +94,7 @@ export class FormularioAtencionComponent {
     modalidad: ['', Validators.required],
     fechaAtencion: ['', Validators.required],
     eventoId: ['', Validators.required],
+    sector: [{ value: '', disabled: true }],
     sectorId: ['', Validators.required],
     lugarId: ['', Validators.required],
     tipoEntidadId: ['', Validators.required],
@@ -144,9 +148,10 @@ export class FormularioAtencionComponent {
     const modalidadPresencial = findEnumToText(AsistenciasTecnicasModalidad,AsistenciasTecnicasModalidad.PRESENCIAL)
     const modalidad = !this.permisosPCM && !this.atencion.modalidad ? modalidadPresencial.value.toLowerCase() : this.atencion.modalidad
     
+    const sector = this.authUser.sector.label    
     const sectorId = !this.permisosPCM && !this.atencion.sectorId ? this.authUser.sector.value : this.atencion.sectorId
     const eventoId = this.atencion.eventoId ?? this.evento().eventoId
-    this.formAtencion.reset({...this.atencion, tipoPerfil: this.permisosPCM, fechaAtencion, tipo, sectorId, eventoId, modalidad})
+    this.formAtencion.reset({...this.atencion, tipoPerfil: this.permisosPCM, fechaAtencion, tipo, sectorId, sector, eventoId, modalidad})
   
     // console.log(this.atencion);
     // console.log(this.formAtencion.value); 
@@ -477,6 +482,28 @@ export class FormularioAtencionComponent {
 
   changeMancomunidad(){
 
+  }
+
+  changeAutoridad(){
+
+  }
+
+  changeClasificacion(){
+
+  }
+
+  caracteresContador(control: string, qty: number) {
+    const element = this.formAtencion.get(control)
+    const value = element?.value
+    if (value.length > qty) {
+      const newValue = value.substring(0, qty);
+      element?.setValue(newValue)
+    }
+    if (control == 'tema') {
+      this.temaCount = qty - value.length;
+    } else {
+      this.comentariosCount = qty - value.length;
+    }
   }
 
 }
