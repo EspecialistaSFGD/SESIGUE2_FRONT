@@ -304,10 +304,11 @@ export default class AsistenciasTecnicasComponent {
     this.generateComponentModal(true)
   }
 
-  generateComponentModal(create: boolean): void{
+  generateComponentModal(create: boolean): void{       
+    const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
     const modal = this.modal.create<FormularioAtencionComponent>({
-      nzTitle: action,
+      nzTitle: `${action.toUpperCase()}${evento}`,
       nzWidth: '75%',
       nzContent: FormularioAtencionComponent,
       nzData: {
@@ -316,7 +317,8 @@ export default class AsistenciasTecnicasComponent {
         modalidades: this.modalidaades,
         clasificaciones: this.clasificaciones,
         orientaciones: this.orientaciones,
-        departamentos: this.departamentos,
+        departamentos: this.departamentos(),
+        evento: this.evento(),
         authUser: this.authStore.usuarioAuth()
       },
       nzFooter: [

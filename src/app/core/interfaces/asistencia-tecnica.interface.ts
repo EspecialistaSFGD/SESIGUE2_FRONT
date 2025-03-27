@@ -1,3 +1,4 @@
+import { EventoResponse } from "./evento.interface"
 import { DataResponses, ItemEnum } from "./helpers.interface"
 import { UbigeoDepartmentResponse } from "./ubigeo.interface"
 
@@ -33,6 +34,7 @@ export interface AsistenciaTecnicaResponse {
   fechaAtencion: Date,
   sectorId: string,
   lugarId: string,
+  lugar?: string,
   nombreLugar: string,
   tipoEntidadId: string,
   nombreTipoEntidad: string,
@@ -51,7 +53,6 @@ export interface AsistenciaTecnicaResponse {
   nombreCongresista: string,
   clasificacion: string,
   espacioId: string,
-  eventoId: string,
   unidadId: string,
   orientacionId: string,
   nombreEspacio: string,
@@ -73,6 +74,7 @@ export interface AsistenciaTecnicaResponse {
   tipo_entidad_slug?: string,
   entidad_slug?: string,
   participa_autoridad?: string,
+  eventoId: string,
   evento?: string,
   evento_slug?: string,
   espacio?: string,
@@ -109,5 +111,6 @@ export interface DataModalAtencion {
   modalidades: ItemEnum[]
   orientaciones: ItemEnum[]
   tipos: ItemEnum[]
+  evento: EventoResponse
   authUser: any
 }
