@@ -351,6 +351,19 @@ export class FormularioAtencionComponent {
   obtenerModalidad() {
     const modalidadControl = this.formAtencion.get('modalidad')
     const lugarControl = this.formAtencion.get('lugarId')
+    const modalidad = findEnumToText(AsistenciasTecnicasModalidad,modalidadControl?.value)        
+    const lugarModalidad = modalidad.text == AsistenciasTecnicasModalidad.PRESENCIAL ? 'pcm - schell' : 'virtual'
+    const lugar = this.lugares().find( item => item.nombre.toLowerCase() == lugarModalidad )    
+    lugarControl?.setValue(lugar)
+  }
+
+  obtenerLugar(){
+    const lugar = this.formAtencion.get('lugarId')?.value
+    const modalidadControl = this.formAtencion.get('modalidad')
+    if(lugar){
+      const modalidad = lugar.nombre.toLowerCase() == AsistenciasTecnicasModalidad.VIRTUAL ? AsistenciasTecnicasModalidad.VIRTUAL : AsistenciasTecnicasModalidad.PRESENCIAL
+      modalidadControl?.setValue(modalidad)
+    }
   }
 
   changeTipoEntidad() {
@@ -362,11 +375,13 @@ export class FormularioAtencionComponent {
     const distritoControl = this.formAtencion.get('distrito')
     this.esMancomunidad ? departamentoControl?.disable() : departamentoControl?.enable()
     if(this.esMancomunidad){
+      this.formAtencion.get('entidad')?.reset()
       departamentoControl?.reset()
       provinciaControl?.disable()
       provinciaControl?.reset()
       this.obtenerMancomunidadesService(tipo.abreviatura)
     } else {
+      this.formAtencion.get('entidadId')?.reset()
       !this.esRegional && departamentoControl?.value ? provinciaControl?.enable() : provinciaControl?.disable()
       provinciaControl?.reset()
       if(departamentoControl?.value){
@@ -443,7 +458,6 @@ export class FormularioAtencionComponent {
     const paginationMancomunidad = {...this.pagination, columnSort: 'entidad', pageSize: 300 }
     this.entidadService.getMancomunidades(mancomunidad, paginationMancomunidad)
       .subscribe(resp => {
-        console.log(resp);
         this.mancomunidades.set(resp.data)
       })
   }

@@ -56,7 +56,8 @@
 					formControlName="lugarId"
 					optionLabel="nombre"
 					[showClear]="true" 
-					placeholder="Seleccionar lugar"/>
+					placeholder="Seleccionar lugar"
+					(onChange)="obtenerLugar()"/>
 					<!-- <nz-select nzPlaceHolder="Seleccionat lugar" id="lugarId" class="select-form-control" nzDisabled="{{ !permisosPCM || esDocumento ? true : false }}"
 						formControlName="lugarId" nzAllowClear nzShowSearch>
 						@for (lugar of lugares(); track $index) {
