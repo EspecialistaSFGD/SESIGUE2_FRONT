@@ -11,6 +11,7 @@ import { AcuerdoPedidoExpressModel, DesestimacionModel } from '../../models/pedi
 import { EstadoEventoType } from '../../shared/types/estado.type';
 import { AcuerdoDesestimacionResponse, AcuerdoDesestimacionResponses } from '@core/interfaces';
 import { catchError, map, of, tap } from 'rxjs';
+import { HelpersService } from '@core/services';
 
 interface State {
     acuerdos: AcuerdoPedidoModel[];
@@ -37,6 +38,7 @@ export class AcuerdosService {
     private http = inject(HttpClient);
     private utilesService = inject(UtilesService);
     private authService = inject(AuthService);
+    private helpersService = inject(HelpersService);
 
     #acuerdosResult = signal<State>({
         acuerdos: [],
@@ -67,7 +69,7 @@ export class AcuerdosService {
     constructor() { }
 
     aprobarDesestimacion(desestimacion: AcuerdoDesestimacionResponse ) {
-        const headers = this.helpersServices.getAutorizationToken()
+        const headers = this.helpersService.getAutorizationToken()
         return this.http.put<AcuerdoDesestimacionResponses>(`${this.urlAcuerdo}/AprobarDesestimacion/${desestimacion.acuerdoId}`, desestimacion, { headers })
         .pipe(
             tap(resp => {
