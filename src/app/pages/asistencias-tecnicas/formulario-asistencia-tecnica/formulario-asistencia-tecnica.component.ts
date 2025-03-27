@@ -805,10 +805,10 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
         .subscribe(resp => {
           if (resp.success) {
             const entidad = resp.data;
-            departamento?.setValue(entidad.departamento)
-            provincia?.setValue(entidad.provincia)
-            distrito?.setValue(entidad.distrito)
-            ubigeo?.setValue(entidad.ubigeo)
+            // departamento?.setValue(entidad.departamento)
+            // provincia?.setValue(entidad.provincia)
+            // distrito?.setValue(entidad.distrito)
+            // ubigeo?.setValue(entidad.ubigeo)
           } else {
             departamento?.setValue('')
             provincia?.setValue('')

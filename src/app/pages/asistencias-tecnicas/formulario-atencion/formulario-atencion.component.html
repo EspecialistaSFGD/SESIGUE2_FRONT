@@ -175,7 +175,7 @@
 		<div nz-col nzSpan="6">
 			<nz-form-item>
 				@if(esMancomunidad){
-				<nz-form-label nzFor="entidad">Mancomunidad</nz-form-label>
+				<nz-form-label>Mancomunidad</nz-form-label>
 				<!-- <nz-select nzPlaceHolder="Seleccionar mancomunidad" id="entidadId" class="w-full select-form-control"
 					(ngModelChange)="changeMancomunidad()" formControlName="entidadId" nzAllowClear nzShowSearch>
 					@for (mancomunidad of mancomunidades(); track $index) {
@@ -186,7 +186,7 @@
 					[options]="mancomunidades()"
 					formControlName="entidadId"
 					optionLabel="entidad"
-					[showClear]="true" 
+					[showClear]="true"
 					placeholder="Seleccionar mancomunidad"
 					(onChange)="changeMancomunidad()"/>
 				<div class="text-danger" *ngIf="alertMessageError('entidadId')">

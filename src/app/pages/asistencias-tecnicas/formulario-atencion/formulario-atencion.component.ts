@@ -365,6 +365,7 @@ export class FormularioAtencionComponent {
       departamentoControl?.reset()
       provinciaControl?.disable()
       provinciaControl?.reset()
+      this.obtenerMancomunidadesService(tipo.abreviatura)
     } else {
       !this.esRegional && departamentoControl?.value ? provinciaControl?.enable() : provinciaControl?.disable()
       provinciaControl?.reset()
@@ -436,6 +437,15 @@ export class FormularioAtencionComponent {
       ubigeo = distrito.distritoId
     }
     this.obtenerEntidadPorUbigeoService(ubigeo) 
+  }
+
+  obtenerMancomunidadesService(mancomunidad: string) {
+    const paginationMancomunidad = {...this.pagination, columnSort: 'entidad', pageSize: 300 }
+    this.entidadService.getMancomunidades(mancomunidad, paginationMancomunidad)
+      .subscribe(resp => {
+        console.log(resp);
+        this.mancomunidades.set(resp.data)
+      })
   }
 
   obtenerEntidadPorUbigeoService(ubigeo: string) {
