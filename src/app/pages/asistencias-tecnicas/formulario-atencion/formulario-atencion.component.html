@@ -192,7 +192,7 @@
               <nz-form-label [nzSpan]="null" nzFor="dniAutoridad">DNI</nz-form-label>
               <nz-form-control nzSpan="null">
                 <input type="text" id="dniAutoridad" class="form-control" placeholder="Ingresa el DNI aquí"
-                  formControlName="dniAutoridad">
+                  formControlName="dniAutoridad" (keyup)="changeDocumentoAutoridad()">
               </nz-form-control>
               <div class="text-danger" *ngIf="alertMessageError('dniAutoridad')">{{msgErrorControl('dniAutoridad','DNI')}}
               </div>
@@ -344,6 +344,259 @@
 		</div>
 		}
 
+		<div nz-row [nzGutter]="16" [ngClass]="{ 'mt-3' : perfilPOIAtencion() }">
+			@if(!esDocumento) {
+			  <div nz-col [nzSpan]="permisosPCM ? 6 : 12">
+				<nz-form-item>
+				  <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacios</nz-form-label>
+				  <nz-form-control nzSpan="null">
+					<nz-select class="select-form-control" nzPlaceHolder="Seleccionar espacio" id="espacioId" [nzDisabled]="!permisosPCM || esDocumento ? true : false"
+					  formControlName="espacioId" nzAllowClear nzShowSearch>
+					  @for (espacio of espacios(); track $index){
+					  <nz-option [nzValue]="espacio.espacioId" nzLabel="{{espacio.nombre}}"></nz-option>
+					  }
+					</nz-select>
+					<div class="text-danger" *ngIf="alertMessageError('espacioId')">{{msgErrorControl('espacioId','Espacio')}}
+					</div>
+				  </nz-form-control>
+				</nz-form-item>
+			  </div>
+			  <div nz-col [nzSpan]="permisosPCM ? 6 : 12">
+				<ng-container *ngTemplateOutlet="controlClasificacion"></ng-container>
+			  </div>
+			}
+			@if(perfilPOIAtencion()){
+			  <div nz-col nzSpan="12">            
+				<ng-container *ngTemplateOutlet="controlTema"></ng-container>
+			  </div>
+			  @if(esDocumento){
+				<div nz-col nzSpan="12">
+				  <ng-container *ngTemplateOutlet="controlParticipante"></ng-container>
+				</div>
+			  }
+			}
+		</div>
+
+		@if(!permisosPCM){
+			<div nz-row [nzGutter]="16">
+			  <div nz-col nzSpan="8">
+				<nz-form-item>
+				  <nz-form-label [nzSpan]="null" nzFor="unidadId">Unidad orgánica</nz-form-label>
+				  <nz-form-control nzSpan="null">
+					  <nz-select class="select-form-control" id="unidadId" formControlName="unidadId" nzPlaceHolder="Seleccione Unidad"
+						  nzShowSearch nzAllowClear>
+						  <nz-option *ngFor="let unidad of this.entidadesStore.entidades()" [nzValue]="unidad.value"
+							  [nzLabel]="unidad.label!">
+						  </nz-option>
+					  </nz-select>
+				  </nz-form-control>
+				</nz-form-item>
+			  </div>
+			  <div nz-col nzSpan="8">
+				<nz-form-item>
+				  <nz-form-label [nzSpan]="null" nzFor="orientacionId">Tipo de inversión</nz-form-label>
+				  <nz-form-control nzSpan="null">
+					<nz-select class="select-form-control" nzPlaceHolder="Seleccionar espacio" id="orientacionId" (ngModelChange)="changeOrientacion()"
+					  formControlName="orientacionId">
+					  @for (orientacion of orientaciones; track $index){
+					  <nz-option [nzValue]="orientacion.value" nzLabel="{{orientacion.text}}"></nz-option>
+					  }
+					</nz-select>
+					<div class="text-danger" *ngIf="alertMessageError('orientacionId')">{{msgErrorControl('orientacionId','orientacion')}}
+					</div>
+				  </nz-form-control>
+				</nz-form-item>
+			  </div>
+			  <!-- controlCui -->
+			  @if(true){
+				<div nz-col nzSpan="8"  formArrayName="agendas">
+				  <nz-form-item *ngFor="let agenda of agendas.controls; let i = index" [formGroupName]="i">
+					<nz-form-label [nzSpan]="null" nzFor="cuiAgenda">CUI</nz-form-label>
+					<nz-form-control nzSpan="null" (keyup)="obtenerIndexParaSsi(i)">
+					  <input type="text" class="form-control" id="cuiAgenda" formControlName="cui">
+					</nz-form-control>
+					<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'cui')">
+					  {{msgErrorControlTwoNivel('agendas',i,'cui','CUI')}}</div>
+					<div class="text-xs text-slate-400">{{ obtenerSSIMef(i) }}</div>
+				  </nz-form-item>
+				</div>
+			  }
+			</div>
+		  }
+
+		  @if (perfilPOIAtencion() && !esDocumento) {
+			<div nz-row [nzGutter]="16" class="mt-2">
+			  <div nz-col nzSpan="12">
+				<div class="border border-solid border-grey-800 dark:border-gray-600">
+				  <div class="flex justify-between items-center bg-gray-100 dark:bg-gray-900 px-4 py-2">
+					<h5 class=" text-sm">Participantes</h5>
+					<div
+					  class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 rounded hover:bg-punche-blue-500 hover:text-white"
+					  (click)="addItemFormArray($event,'participantes')">
+					  <span nz-icon nzType="plus" nzTheme="outline"></span>
+					  Nuevo participante
+					</div>
+				  </div>
+				  <div class=" px-4 py-2">
+					<div formArrayName="participantes">
+					  <div *ngFor="let participante of participantes.controls; let i = index" [formGroupName]="i">
+						<div nz-row [nzGutter]="16">
+						  <div nz-col nzSpan="12">
+							<nz-form-item>
+							  <nz-form-label nzRequired [nzSpan]="null">Tipo de participante</nz-form-label>
+							  <nz-form-control nzSpan="null">
+								<nz-select class="select-form-control" nzPlaceHolder="Seleccionat tipo de participante"
+								  formControlName="nivelId" nzAllowClear nzShowSearch>
+								  @for (participante of gobiernoParticipantes(); track $index) {
+								  <nz-option [nzValue]="participante.nivelId" nzLabel="{{participante.nombre}}"></nz-option>
+								  }
+								</nz-select>
+								<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('participantes',i,'nivelId')">
+								  {{msgErrorControlTwoNivel('participantes',i,'nivelId','Participante')}}</div>
+							  </nz-form-control>
+							</nz-form-item>
+						  </div>
+						  <div nz-col nzSpan="8">
+							<nz-form-item>
+							  <nz-form-label [nzSpan]="null" nzFor="cantidadParticipante">Cantidad</nz-form-label>
+							  <nz-form-control nzSpan="null">
+								<input type="text" class="form-control" id="cantidadParticipante" formControlName="cantidad">
+							  </nz-form-control>
+							  <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('participantes',i,'cantidad')">
+								{{msgErrorControlTwoNivel('participantes',i,'cantidad','Cantidad')}}</div>
+							</nz-form-item>
+						  </div>
+						  <div nz-col nzSpan="4" class="flex flex-col items-center">
+							<nz-form-label [nzSpan]="null"> Eliminar </nz-form-label>
+							<span nz-icon nzType="minus-circle-o" class="dynamic-delete-button cursor-pointer"
+							  style="font-size: 24px;" (click)="removeItemFormArray(i,'participantes')"></span>
+						  </div>
+						</div>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			  <div nz-col nzSpan="12">
+				<div class="border border-solid border-grey-800 dark:border-gray-600">
+				  <div class="flex justify-between items-center bg-gray-100 dark:bg-gray-900 px-4 py-2">
+					<h5 class=" text-sm">Agendas</h5>
+					<div
+					  class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 rounded hover:bg-punche-blue-500 hover:text-white"
+					  (click)="addItemFormArray($event,'agendas')">
+					  <span nz-icon nzType="plus" nzTheme="outline"></span>
+					  Nueva Agenda
+					</div>
+				  </div>
+				  <div class=" px-4 py-2">
+					<div formArrayName="agendas">
+					  <div nz-row [nzGutter]="16" *ngFor="let agenda of agendas.controls; let i = index" [formGroupName]="i">
+						<div nz-col nzSpan="12">
+						  <nz-form-item>
+							<nz-form-label [nzSpan]="null">Clasificación</nz-form-label>
+							<nz-form-control nzSpan="null">
+							  <nz-select class="select-form-control" nzPlaceHolder="Seleccionar clasificación"
+								formControlName="clasificacionId" nzAllowClear nzShowSearch>
+								@for (clasificacion of agendaClasificaciones(); track $index) {
+								<nz-option [nzValue]="clasificacion.clasificacionId"
+								  nzLabel="{{clasificacion.nombre}}"></nz-option>
+								}
+							  </nz-select>
+							  <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'clasificacionId')">
+								{{msgErrorControlTwoNivel('agendas',i,'clasificacionId','Clasificación')}}</div>
+							</nz-form-control>
+						  </nz-form-item>
+						</div>
+						<div nz-col nzSpan="8">
+						  <nz-form-item>
+							<nz-form-label [nzSpan]="null" nzFor="cuiAgenda">CUI</nz-form-label>
+							<nz-form-control nzSpan="null" (keyup)="obtenerIndexParaSsi(i)">
+							  <input type="text" class="form-control" id="cuiAgenda" formControlName="cui">
+							</nz-form-control>
+							<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'cui')">
+							  {{msgErrorControlTwoNivel('agendas',i,'cui','CUI')}}</div>
+							<div class="text-xs text-slate-400">{{ obtenerSSIMef(i) }}</div>
+						  </nz-form-item>
+						</div>
+						<div nz-col nzSpan="4" class="flex flex-col items-center">
+						  <nz-form-label [nzSpan]="null"> Eliminar </nz-form-label>
+						  <span nz-icon nzType="minus-circle-o" class="dynamic-delete-button cursor-pointer"
+							style="font-size: 24px;" (click)="removeItemFormArray(i,'agendas')"></span>
+						</div>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			</div>
+		  }
+
+		  <div nz-row [nzGutter]="16" [ngClass]="{ 'mt-4' : perfilPOIAtencion() }">
+			<!-- perfil === 1 -->
+			@if(!permisosPCM){
+			  <div nz-col nzSpan="12">
+				<ng-container *ngTemplateOutlet="controlTema"></ng-container>
+				<!-- <nz-form-item>
+				  <nz-form-label [nzSpan]="null" nzFor="tema">Consulta</nz-form-label>
+				  <textarea class="form-control" id="tema" formControlName="tema"
+					(keyup)="caracteresContador('tema',900)" placeholder="Ingrese la consulta aquí"
+					rows="2"></textarea>
+				  <div class="flex justify-between">
+					<div class="w-full text-danger" *ngIf="alertMessageError('tema')">
+					  {{msgErrorControl('tema','Consulta')}}</div>
+					<div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : comentariosCount < 20 }">
+					  {{comentariosCount}}</div>
+				  </div>
+				</nz-form-item> -->
+			  </div>
+			}
+			@if(!esDocumento){
+			  <div nz-col [nzSpan]="permisosPCM ? 24 : 12">
+				<nz-form-item>
+				  <nz-form-label [nzSpan]="null" nzFor="comentarios">@if(!permisosPCM){ Orientación } @else { Comentarios }</nz-form-label>
+				  <textarea class="form-control" id="comentarios" formControlName="comentarios"
+					(keyup)="caracteresContador('comentarios',900)" placeholder="Ingrese el comentario aquí"
+					rows="2"></textarea>
+				  <div class="flex justify-between">
+					<div class="w-full text-danger" *ngIf="alertMessageError('comentarios')">
+					  {{msgErrorControl('comentarios','Comentarios')}}</div>
+					<div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : comentariosCount < 20 }">
+					  {{comentariosCount}}</div>
+				  </div>
+				</nz-form-item>
+			  </div>
+			}
+		  </div>
+
+		  @if (perfilPOIAtencion() && !esDocumento) {
+			<div nz-row [nzGutter]="16">
+			  <div nz-col nzSpan="12">
+				<nz-form-item>
+				  <nz-form-label [nzSpan]="null" nzFor="evidenciaReunion">Evidencia de reunion</nz-form-label>
+				  <nz-upload [(nzFileList)]="fileListMeet" [nzBeforeUpload]="beforeUploadMeet">
+					<div
+					  class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 hover:bg-punche-blue-500 hover:text-white">
+					  <span nz-icon nzType="upload"></span>
+					  Selecionar evidencia
+					</div>
+				  </nz-upload>
+				</nz-form-item>
+			  </div>
+			  <div nz-col nzSpan="12">
+				<nz-form-item>
+				  <nz-form-label [nzSpan]="null" nzFor="evidenciaAsistencia">Acta de asistencia</nz-form-label>
+				  <nz-upload [(nzFileList)]="fileListAttendance" [nzBeforeUpload]="beforeUploadAttendance">
+					<div
+					  class="border border-punche-blue-500 bg-transparent cursor-pointer text-punche-blue-500 px-3 py-1 hover:bg-punche-blue-500 hover:text-white">
+					  <span nz-icon nzType="upload"></span>
+					  Selecionar evidencia
+					</div>
+				  </nz-upload>
+				</nz-form-item>
+			  </div>
+			</div>
+		  }
+
 	  <ng-template #controlParticipante>
         <nz-form-item>
           <nz-form-label [nzSpan]="null" nzFor="nombreAutoridad">{{ esDocumento ? 'Participante' : 'Nombre'}}</nz-form-label>
@@ -372,6 +625,27 @@
           </nz-radio-group>
           <div class="text-danger" *ngIf="alertMessageError('clasificacion')">
             {{msgErrorControl('clasificacion','Clasificacion')}}</div>
+        </nz-form-item>
+      </ng-template>
+
+	  <ng-template #controlTema>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="tema"> {{ perfilPOIAtencion() ? esDocumento ? 'Asunto' : 'Tema' : 'Consulta' }} </nz-form-label>
+          <nz-form-control nzSpan="null">
+            @if (esDocumento || !permisosPCM) {
+                <textarea nz-input class="form-control" id="tema" formControlName="tema"
+                  (keyup)="caracteresContador('tema', !permisosPCM ? 900 : 1500 )" placeholder="Ingrese el asunto aquí" rows="2"></textarea>
+            } @else {
+              <input type="text" class="form-control" id="tema" placeholder="Ingrese el tema aquí"
+                (keyup)="caracteresContador('tema',1500)" formControlName="tema">
+            }
+          </nz-form-control>
+          <div class="flex justify-between">
+            <div class="w-full text-danger" *ngIf="alertMessageError('tema')">
+              {{msgErrorControl('tema','Tema')}}</div>
+            <div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : temaCount < 20 }">{{temaCount}}
+            </div>
+          </div>
         </nz-form-item>
       </ng-template>
 </form>

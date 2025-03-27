@@ -10,6 +10,7 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { EntidadesStore } from '@libs/shared/stores/entidades.store';
 import { SectoresStore } from '@libs/shared/stores/sectores.store';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 @Component({
   selector: 'app-formulario-atencion',
@@ -36,6 +37,8 @@ export class FormularioAtencionComponent {
   comentariosCount = 900
   esMancomunidad: boolean = false
   esRegional: boolean = false
+  fileListMeet: NzUploadFile[] = [];
+  fileListAttendance: NzUploadFile[] = [];
   
   evento = signal<EventoResponse>(this.dataAtention.evento)
   departamentos = signal<UbigeoDepartmentResponse[]>(this.dataAtention.departamentos)
@@ -489,6 +492,12 @@ export class FormularioAtencionComponent {
 
   }
 
+  changeDocumentoAutoridad(){
+    const dniControl = this.formAtencion.get('dniAutoridad')?.value
+    console.log(dniControl);
+    
+  }
+
   changeClasificacion(){
 
   }
@@ -580,6 +589,54 @@ export class FormularioAtencionComponent {
       }
     }
   }
+
+  changeOrientacion(){
+
+  }
+
+  obtenerIndexParaSsi(index: number) {
+    const agendas = this.formAtencion.get('agendas') as FormArray
+    const cui = agendas.at(index).get('cui')
+    let value = cui?.value
+    if (value.length > 7) {
+      const newValue = value.substring(0, 7);
+      cui?.setValue(newValue)
+    }
+    if (value.length == 7) {
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId)
+      }
+      // this.timeoutId = setTimeout(() => {
+      //   this.ssiService.obtenerSSIMef(value)
+      //     .subscribe(resp => {
+      //       console.log('VERIFIANDFO NOMBRE DE INVERSION');            
+      //       console.log(resp);            
+      //     })
+      // }, 1000);
+    }
+  }
+
+  obtenerSSIMef(index: number) {
+    const agendas = this.formAtencion.get('agendas') as FormArray
+    const inversion = agendas.at(index).get('inversion')?.value
+    return inversion
+  }
+
+  beforeUploadMeet = (file: NzUploadFile): boolean => {
+    const evidenciaReunion = this.formAtencion.get('evidenciaReunion')
+    evidenciaReunion?.setValue(file)
+    this.fileListMeet = []
+    this.fileListMeet = this.fileListMeet.concat(file);
+    return false;
+  };
+
+  beforeUploadAttendance = (file: NzUploadFile): boolean => {
+    const evidenciaAsistencia = this.formAtencion.get('evidenciaAsistencia')
+    evidenciaAsistencia?.setValue(file)
+    this.fileListAttendance = []
+    this.fileListAttendance = this.fileListAttendance.concat(file);
+    return false;
+  };
 
   caracteresContador(control: string, qty: number) {
     const element = this.formAtencion.get(control)
