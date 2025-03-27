@@ -133,12 +133,8 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
     }
 }
 .form-control {
-    @apply outline-none border border-solid border-gray-400 w-full px-3 text-sm hover:border-blue-800 focus:border-blue-800 rounded;
-    padding-top: 0.315rem;
-    /* 2px */
-    padding-bottom: 0.315rem;
+    @apply outline-none border border-solid border-gray-600 w-full px-3 py-2 text-sm hover:border-blue-800 focus:border-blue-800 rounded-md;
 
-    /* 2px */
     &.ng-invalid.ng-touched {
         @apply border-rose-500 hover:border-rose-500;
     }
@@ -176,13 +172,13 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
 
 .datepicker-form-control {
     &.ant-picker {
-        @apply w-full h-auto border-gray-400 hover:border-blue-800 focus:border-blue-800 rounded;
+        @apply w-full h-auto border-gray-400 hover:border-blue-800 focus:border-blue-800 rounded-md p-2;
 
         input {
-            @apply px-1 text-sm;
-            padding-top: 0.125rem;
-            /* 2px */
-            padding-bottom: 0.125rem;
+            @apply px-1 text-sm px-2;
+            // padding-top: 0.125rem;
+            // /* 2px */
+            // padding-bottom: 0.125rem;
             /* 2px */
         }
     }
@@ -229,13 +225,12 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
     @apply text-rose-500;
 }
 p-dropdown {
-    @apply w-full border border-gray-400 rounded-md bg-white text-gray-700;
+    @apply block w-full border border-gray-400 hover:border-gray-500 rounded-md bg-white text-gray-700;
     .p-dropdown-clearable, .p-dropdown{
-        @apply rounded-md;
+        @apply rounded-md w-full px-4 py-2;
         &.p-disabled{
-            @apply bg-gray-100;
+            @apply bg-gray-100 hover:border-gray-400;
         }
-        @apply w-full px-4 py-2;
         .p-placeholder{
             @apply text-gray-400 text-sm;
         }

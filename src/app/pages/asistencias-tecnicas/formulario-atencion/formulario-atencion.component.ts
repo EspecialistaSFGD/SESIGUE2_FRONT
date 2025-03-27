@@ -3,9 +3,10 @@ import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
 import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService, LugaresService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
+import { AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService, EntidadesService, LugaresService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { EntidadesStore } from '@libs/shared/stores/entidades.store';
 import { SectoresStore } from '@libs/shared/stores/sectores.store';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
@@ -13,7 +14,7 @@ import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 @Component({
   selector: 'app-formulario-atencion',
   standalone: true,
-  imports: [ CommonModule, ReactiveFormsModule, NgZorroModule],
+  imports: [ CommonModule, ReactiveFormsModule, NgZorroModule, PrimeNgModule],
   templateUrl: './formulario-atencion.component.html',
   styles: ``
 })
@@ -54,6 +55,7 @@ export class FormularioAtencionComponent {
   private lugarService = inject(LugaresService)
   private tipoEntidadService = inject(TipoEntidadesService)
   private ubigeoService = inject(UbigeosService)
+  private entidadService = inject(EntidadesService)
 
   public sectoresStore = inject(SectoresStore)
   public entidadesStore = inject(EntidadesStore)
@@ -352,7 +354,7 @@ export class FormularioAtencionComponent {
   }
 
   changeTipoEntidad() {
-    const tipo = this.obtenerValueTipoEntidad()
+    const tipo = this.formAtencion.get('tipoEntidadId')?.value    
     this.esMancomunidad = this.mancomunidadSlug.includes(tipo!.abreviatura)
     this.esRegional = tipo!.abreviatura == 'GR'
     const departamentoControl = this.formAtencion.get('departamento')
@@ -360,47 +362,29 @@ export class FormularioAtencionComponent {
     const distritoControl = this.formAtencion.get('distrito')
     this.esMancomunidad ? departamentoControl?.disable() : departamentoControl?.enable()
     if(this.esMancomunidad){
-      provinciaControl?.disable()
-      distritoControl?.disable()
       departamentoControl?.reset()
-      provinciaControl?.reset()
-      distritoControl?.reset()
     } else {
-      // this.esRegional && !departamentoControl?.value ? provinciaControl?.disable : provinciaControl?.enable()
-      // this.esRegional && !departamentoControl?.value ? distritoControl?.disable : provinciaControl?.enable()
-      if(this.esRegional){
-        console.log('ES REGIONLA');
-        
-        provinciaControl?.disable
-        distritoControl?.disable
-        provinciaControl?.reset()
-        distritoControl?.reset()
-      }
-    }
-  }
-
-  obtenerValueTipoEntidad() {
-    const tipoId = this.formAtencion.get('tipoEntidadId')?.value
-    return this.tipoEntidades().find(item => item.tipoId == tipoId ? item : null)
+      !this.esRegional && departamentoControl?.value ? provinciaControl?.enable() : provinciaControl?.disable()
+      provinciaControl?.reset()
+    }    
+    distritoControl?.disable()
+    distritoControl?.reset()
   }
 
   changeDepartamento(){
-    console.log('ES DEPARTAMENTO');
-    
-    const departamentoControl = this.formAtencion.get('departamento')
-    const ubigeoDepartamento = departamentoControl?.value
+    const departamento = this.formAtencion.get('departamento')?.value
     const provinciaControl = this.formAtencion.get('provincia')
     const distritoControl = this.formAtencion.get('distrito')
-    if(ubigeoDepartamento && !this.esRegional){
-      this.obtenerProvinciasService(ubigeoDepartamento)
+    if(departamento && !this.esRegional){
+      const ubigeoDepartamento = departamento.departamentoId
       provinciaControl?.enable()
-      // distritoControl?.enable()
-    } else  {
+      this.obtenerProvinciasService(ubigeoDepartamento)
+    } else {
       provinciaControl?.disable()
       provinciaControl?.reset()
-      distritoControl?.disable()
-      distritoControl?.reset()
     }
+    distritoControl?.disable()
+    distritoControl?.reset()
   }
 
   obtenerProvinciasService(departamento: string) {
@@ -411,15 +395,32 @@ export class FormularioAtencionComponent {
   }
 
   changeProvincia(){
-    console.log('EN PROVINCIA');
-    
+    const provincia = this.formAtencion.get('provincia')?.value
+    const distritoControl = this.formAtencion.get('distrito')    
+    if(provincia && !this.esRegional){
+      const ubigeoprovincia = provincia.provinciaId.slice(0, 4)
+      distritoControl?.enable()
+      this.obtenerDistritosService(ubigeoprovincia)
+    } else {
+      distritoControl?.disable()
+    }    
   }
 
-  obtenerUbigeoDistritos(provincia: string) {
+  obtenerDistritosService(provincia: string) {
     this.ubigeoService.getDistricts(provincia)
       .subscribe(resp => {
         this.distritos.set(resp.data)
       })
+  }
+
+  obtenerEntidadPorUbigeo(ubigeo: string) {
+    this.formAtencion.get('ubigeo')?.setValue(ubigeo)
+    if (ubigeo) {    
+      this.entidadService.getEntidadPorUbigeo(ubigeo)
+        .subscribe(resp => {
+          console.log(resp.data);          
+        })
+    }
   }
 
   changeDistrito(){
