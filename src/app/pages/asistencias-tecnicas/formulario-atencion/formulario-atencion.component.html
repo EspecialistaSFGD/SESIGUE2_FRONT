@@ -192,7 +192,14 @@
 				<div class="text-danger" *ngIf="alertMessageError('entidadId')">
 					{{msgErrorControl('entidadId','Mancomunidad')}}</div>
 				} @else {
-				<nz-form-label nzFor="entidad">Entidad</nz-form-label>
+				<nz-form-label 
+					nzFor="entidad" 
+					[nzSm]="6" 
+					[nzXs]="24" 
+					[nzTooltipTitle]="formAtencion.get('entidad')?.value ? formAtencion.get('entidad')?.value : ''" 
+					[nzTooltipIcon]="{ type: 'info-circle', theme: 'twotone' }" >
+					Entidad
+				</nz-form-label>
 				<nz-form-control nzSpan="null">
 					<input type="text" class="form-control" id="entidad" placeholder="Entidad" formControlName="entidad">
 				</nz-form-control>

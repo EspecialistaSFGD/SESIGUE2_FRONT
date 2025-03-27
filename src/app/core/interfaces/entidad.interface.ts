@@ -1,7 +1,7 @@
 import { DataResponses } from "./helpers.interface";
 
 export interface EntidadesResponses extends DataResponses {
-  data: EntidadResponse[],
+  data: EntidadResponse,
 }
 
 export interface EntidadResponse {
@@ -11,8 +11,4 @@ export interface EntidadResponse {
   distrito: string,
   ubigeo: string,
   entidad: string,
-  // dniAlcalde: String,
-  // nombreAlcalde: String,
-  // cargoAlcalde: String,
-  // sexoAlcalde: String,
 }
