@@ -11,6 +11,7 @@ import { AcuerdoPedidoExpressModel, DesestimacionModel } from '../../models/pedi
 import { EstadoEventoType } from '../../shared/types/estado.type';
 import { AcuerdoDesestimacionResponse, AcuerdoDesestimacionResponses } from '@core/interfaces';
 import { catchError, map, of, tap } from 'rxjs';
+import { HelpersService } from '@core/services';
 
 interface State {
     acuerdos: AcuerdoPedidoModel[];
@@ -37,6 +38,7 @@ export class AcuerdosService {
     private http = inject(HttpClient);
     private utilesService = inject(UtilesService);
     private authService = inject(AuthService);
+    private helpersServices = inject(HelpersService);
 
     #acuerdosResult = signal<State>({
         acuerdos: [],
@@ -62,7 +64,7 @@ export class AcuerdosService {
     public isLoading = computed(() => this.#acuerdosResult().isLoading);
     public isEditing = computed(() => this.#acuerdosResult().isEditing);
     public total = computed(() => this.#acuerdosResult().total);
-    helpersServices: any;
+    // helpersServices: any;
 
     constructor() { }
 

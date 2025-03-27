@@ -603,9 +603,12 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
             usuarioId
           }
 
+          console.log(aprobarDesestimacion);
+          
+
           this.acuerdosService.aprobarDesestimacion(aprobarDesestimacion)
-            .subscribe( resp => {
-              if(resp.success == true){
+            .subscribe( resp => {              
+              if(resp == true){
                 this.acuerdosService.listarAcuerdo(usuarioId);
                 this.modal.closeAll();
               }
