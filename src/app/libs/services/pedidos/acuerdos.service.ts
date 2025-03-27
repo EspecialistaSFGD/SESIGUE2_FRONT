@@ -38,7 +38,7 @@ export class AcuerdosService {
     private http = inject(HttpClient);
     private utilesService = inject(UtilesService);
     private authService = inject(AuthService);
-    private helpersService = inject(HelpersService);
+    private helpersServices = inject(HelpersService);
 
     #acuerdosResult = signal<State>({
         acuerdos: [],
@@ -64,12 +64,12 @@ export class AcuerdosService {
     public isLoading = computed(() => this.#acuerdosResult().isLoading);
     public isEditing = computed(() => this.#acuerdosResult().isEditing);
     public total = computed(() => this.#acuerdosResult().total);
-    helpersServices: any;
+    // helpersServices: any;
 
     constructor() { }
 
     aprobarDesestimacion(desestimacion: AcuerdoDesestimacionResponse ) {
-        const headers = this.helpersService.getAutorizationToken()
+        const headers = this.helpersServices.getAutorizationToken()
         return this.http.put<AcuerdoDesestimacionResponses>(`${this.urlAcuerdo}/AprobarDesestimacion/${desestimacion.acuerdoId}`, desestimacion, { headers })
         .pipe(
             tap(resp => {
