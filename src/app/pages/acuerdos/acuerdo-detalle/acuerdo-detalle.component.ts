@@ -37,6 +37,8 @@ import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { DesestimacionComponent } from '../../../libs/shared/components/desestimacion/desestimacion.component';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { AprobarDesestimacionComponent } from './aprobar-desestimacion/aprobar-desestimacion.component';
+import { AcuerdoDesestimacionResponse, ButtonsActions } from '@core/interfaces';
 
 const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
@@ -95,6 +97,9 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
   queryParamsChangeEventCnt = 0;
   evidenciaBaseUrl = 'https://sesigue.com/SESIGUE/SD/evidencia/';
 
+  authPermission: ButtonsActions = {
+    approve: false
+  }
 
   private updateParamsSubject: Subject<void> = new Subject<void>();
   private updatingParams: boolean = false;
@@ -159,6 +164,7 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.getPermissions()
   }
 
   onBack(url: string | null): void {
@@ -201,6 +207,14 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     sortOrder = this.sortOrderAvance
   }: TraerAvancesInterface): void {
     this.avancesService.listarAvances(hitoId, pageIndex, pageSize, sortField, sortOrder);
+  }
+
+  getPermissions() {
+    const navigation = this.authService.navigationAuth()!;
+    const acuerdos = navigation.find(nav => nav.descripcionItem == 'Acuerdos')
+    acuerdos?.botones?.map(btn => {      
+      this.authPermission.approve = btn.descripcionBoton === 'Aprobar' ? true : this.authPermission.approve
+    })
   }
 
   onHitoSelected(hito: HitoAcuerdoModel): void {
@@ -554,6 +568,55 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     // Return a result when closed
     avanceModal.afterClose.subscribe(result => {
       instance.avanceForm.reset();
+    });
+  }
+
+  aprobarDesestimacion(acuerdo: AcuerdoPedidoModel){
+    const title = 'Aprobar desestimación'
+    const modal = this.modal.create<AprobarDesestimacionComponent>({
+      nzTitle: title,
+      nzContent: AprobarDesestimacionComponent,
+      nzData: {
+        acuerdoId: acuerdo.acuerdoId,        
+      },
+      nzFooter: [
+      {
+        label: 'Cancelar',
+        type: 'default',
+        onClick: () => this.modal.closeAll(),
+      },
+      {
+        label: title,
+        type: 'primary',
+        onClick: (componentInstance) => {
+          const form = componentInstance?.formAprobarDesestimacion
+          if (form!.invalid) {
+            return form!.markAllAsTouched()
+          }
+
+          const comentario = form?.get('comentario')!.value!
+          const usuarioId = this.authService.getCodigoUsuario()
+
+          const aprobarDesestimacion: AcuerdoDesestimacionResponse = {
+            acuerdoId: Number(acuerdo.acuerdoId),
+            comentario,
+            usuarioId
+          }
+
+          console.log(aprobarDesestimacion);
+          
+
+          this.acuerdosService.aprobarDesestimacion(aprobarDesestimacion)
+            .subscribe( resp => {              
+              if(resp == true){
+                this.acuerdosService.listarAcuerdo(usuarioId);
+                this.modal.closeAll();
+              }
+            })
+          
+        },
+      }
+      ]
     });
   }
 

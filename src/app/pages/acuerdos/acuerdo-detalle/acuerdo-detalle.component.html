@@ -1,12 +1,14 @@
 <!-- <app-page-header title="Detalle de acuerdo" [content]="acuerdoContent" backUrl="acuerdos"></app-page-header> -->
-<!-- {{acuerdosService.isDesestimated()|json}} -->
 <div class="site-page-header-ghost-wrapper">
     <nz-page-header nzBackIcon (nzBack)="onBack('acuerdos')" [nzGhost]="false">
         <nz-page-header-title>Detalle de acuerdo</nz-page-header-title>
 
         @if(acuerdosService.estadoEvento() === 'SEGUIMIENTO'){
         <nz-page-header-extra>
-            <nz-space>
+            <nz-space class="flex gap-2">
+                @if(authPermission.approve){
+                    <button [disabled]="acuerdosService.isDesestimated() ? true : this.acuerdosService.acuerdoSeleccionado()?.evidenciaDesestimacion == null" nz-button (click)="aprobarDesestimacion(acuerdosService.acuerdoSeleccionado()!)" nzType="default">Aprobar Desestimación</button>
+                }
                 <button
                     [disabled]="!authService.permisos()?.puede_solicitar_desestimacion || acuerdosService.isDesestimating()"
                     *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"

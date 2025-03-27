@@ -35,6 +35,7 @@ export interface ButtonsActions {
   report?: boolean
   validate?: boolean
   goals?:boolean
+  approve?:boolean
 }
 
 export interface Filters {
