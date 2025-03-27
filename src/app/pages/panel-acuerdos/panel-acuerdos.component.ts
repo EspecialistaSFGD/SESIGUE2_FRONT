@@ -342,6 +342,13 @@ export default class PanelAcuerdosComponent {
 
   selectTipoEspacio() {
     const tipoEspacioValue = this.formPanel.get('tipoEspacio')?.value
+    if(tipoEspacioValue){
+      this.obtenerServicioEventos(tipoEspacioValue)
+      this.paginationPanel.tipoEspacio = tipoEspacioValue
+    } else {
+      delete this.paginationPanel.tipoEspacio
+    }
+    this.obtenerServicios()
   }
 
   selectEspacio() {
