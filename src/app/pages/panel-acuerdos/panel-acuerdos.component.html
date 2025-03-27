@@ -35,8 +35,7 @@
                   </nz-form-label>
                   <nz-form-control nzSpan="null">
                     <nz-select nzPlaceHolder="Seleccione tipo de espacio" id="tipoEspacio" class="select-form-control"
-                      formControlName="tipoEspacio" nzAllowClear (ngModelChange)="selectTipoEspacio()"
-                      (ngModelChange)="obtenerServicioEventos(formPanel.get('tipoEspacio')?.value)">
+                      formControlName="tipoEspacio" nzAllowClear (ngModelChange)="selectTipoEspacio()">
                       @for (tipo of tipoEventos(); track $index) {
                       <nz-option [nzValue]="tipo.codigoTipoEvento" [nzLabel]="tipo.descripcionTipoEvento" />
                       }
