@@ -156,6 +156,7 @@
 					[options]="mancomunidades()"
 					formControlName="entidadId"
 					optionLabel="entidad"
+					optionValue="entidadId"
 					[showClear]="true"
 					placeholder="Seleccionar mancomunidad"
 					(onChange)="changeMancomunidad()"/>
@@ -256,16 +257,7 @@
             </nz-form-item>
           </div>
           <div nz-col [nzSpan]="6">
-            <nz-form-item>
-              <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacios</nz-form-label>
-			  <p-dropdown 
-					[options]="espacios()"
-					formControlName="espacioId"
-					optionLabel="nombre"
-					[showClear]="true"
-					placeholder="Seleccionar espacio"/>
-				<div class="text-danger" *ngIf="alertMessageError('espacioId')">{{msgErrorControl('espacioId','Espacio')}}</div>
-            </nz-form-item>
+			<ng-container *ngTemplateOutlet="controlEspacios"></ng-container>
           </div>
           <div nz-col [nzSpan]="6">
             <ng-container *ngTemplateOutlet="controlClasificacion"></ng-container>
@@ -352,19 +344,7 @@
 		<div nz-row [nzGutter]="16" [ngClass]="{ 'mt-3' : perfilPOIAtencion() }">
 			@if(!esDocumento) {
 			  <div nz-col [nzSpan]="permisosPCM ? 6 : 12">
-				<nz-form-item>
-				  <nz-form-label [nzSpan]="null" nzFor="espacioId">Espacios</nz-form-label>
-				  <nz-form-control nzSpan="null">
-					<nz-select class="select-form-control" nzPlaceHolder="Seleccionar espacio" id="espacioId" [nzDisabled]="!permisosPCM || esDocumento ? true : false"
-					  formControlName="espacioId" nzAllowClear nzShowSearch>
-					  @for (espacio of espacios(); track $index){
-					  <nz-option [nzValue]="espacio.espacioId" nzLabel="{{espacio.nombre}}"></nz-option>
-					  }
-					</nz-select>
-					<div class="text-danger" *ngIf="alertMessageError('espacioId')">{{msgErrorControl('espacioId','Espacio')}}
-					</div>
-				  </nz-form-control>
-				</nz-form-item>
+				<ng-container *ngTemplateOutlet="controlEspacios"></ng-container>
 			  </div>
 			  <div nz-col [nzSpan]="permisosPCM ? 6 : 12">
 				<ng-container *ngTemplateOutlet="controlClasificacion"></ng-container>
@@ -450,12 +430,13 @@
 							<nz-form-item>
 							  <nz-form-label nzRequired [nzSpan]="null">Tipo de participante</nz-form-label>
 							  <nz-form-control nzSpan="null">
-								<nz-select class="select-form-control" nzPlaceHolder="Seleccionat tipo de participante"
-								  formControlName="nivelId" nzAllowClear nzShowSearch>
-								  @for (participante of gobiernoParticipantes(); track $index) {
-								  <nz-option [nzValue]="participante.nivelId" nzLabel="{{participante.nombre}}"></nz-option>
-								  }
-								</nz-select>
+								<p-dropdown 
+								[options]="gobiernoParticipantes()"
+								formControlName="nivelId"
+								optionLabel="nombre"
+								optionValue="nivelId"
+								[showClear]="true"
+								placeholder="Seleccionar tipo de participante"/>
 								<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('participantes',i,'nivelId')">
 								  {{msgErrorControlTwoNivel('participantes',i,'nivelId','Participante')}}</div>
 							  </nz-form-control>
@@ -500,13 +481,20 @@
 						  <nz-form-item>
 							<nz-form-label [nzSpan]="null">Clasificación</nz-form-label>
 							<nz-form-control nzSpan="null">
-							  <nz-select class="select-form-control" nzPlaceHolder="Seleccionar clasificación"
+							  <!-- <nz-select class="select-form-control" nzPlaceHolder="Seleccionar clasificación"
 								formControlName="clasificacionId" nzAllowClear nzShowSearch>
 								@for (clasificacion of agendaClasificaciones(); track $index) {
 								<nz-option [nzValue]="clasificacion.clasificacionId"
 								  nzLabel="{{clasificacion.nombre}}"></nz-option>
 								}
-							  </nz-select>
+							  </nz-select> -->
+							  <p-dropdown 
+								[options]="agendaClasificaciones()"
+								formControlName="clasificacionId"
+								optionLabel="nombre"
+								optionValue="clasificacionId"
+								[showClear]="true"
+								placeholder="Seleccionar clasificación"/>
 							  <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'clasificacionId')">
 								{{msgErrorControlTwoNivel('agendas',i,'clasificacionId','Clasificación')}}</div>
 							</nz-form-control>
@@ -615,7 +603,7 @@
                 formControlName="nombreAutoridad">
             }
             </nz-form-control>
-          <div class="text-danger" *ngIf="alertMessageError('autoridad')">{{msgErrorControl('autoridad','participante')}}
+          <div class="text-danger" *ngIf="alertMessageError('nombreAutoridad')">{{msgErrorControl('nombreAutoridad', esDocumento ? 'participante' : 'nombre')}}
           </div>
         </nz-form-item>
       </ng-template>
@@ -623,15 +611,29 @@
 	  <ng-template #controlClasificacion>
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Clasificación</nz-form-label>
-          <nz-radio-group class="radio-form-control" formControlName="clasificacion" (ngModelChange)="changeClasificacion()">
+          <nz-radio-group class="radio-form-control" formControlName="clasificacion">
             @for (clasificacion of clasificaciones; track $index){
-            <label nz-radio [nzValue]="clasificacion.value">{{clasificacion.text| titlecase }}</label>
+            <label nz-radio [nzValue]="clasificacion.value.toLowerCase()">{{ clasificacion.text| titlecase }}</label>
             }
           </nz-radio-group>
           <div class="text-danger" *ngIf="alertMessageError('clasificacion')">
             {{msgErrorControl('clasificacion','Clasificacion')}}</div>
         </nz-form-item>
       </ng-template>
+
+	  <ng-template #controlEspacios>
+		<nz-form-item>
+			<label for="espacioId">Espacios</label>
+			<p-dropdown 
+				  [options]="espacios()"
+				  formControlName="espacioId"
+				  optionLabel="nombre"
+				  optionValue="espacioId"
+				  [showClear]="true"
+				  placeholder="Seleccionar espacio"/>
+			  <div class="text-danger" *ngIf="alertMessageError('espacioId')">{{msgErrorControl('espacioId','Espacio')}}</div>
+		  </nz-form-item>
+	  </ng-template>
 
 	  <ng-template #controlTema>
         <nz-form-item>
@@ -646,8 +648,7 @@
             }
           </nz-form-control>
           <div class="flex justify-between">
-            <div class="w-full text-danger" *ngIf="alertMessageError('tema')">
-              {{msgErrorControl('tema','Tema')}}</div>
+            <div class="w-full text-danger" *ngIf="alertMessageError('tema')">{{msgErrorControl('tema',perfilPOIAtencion() ? esDocumento ? 'Asunto' : 'Tema' : 'Consulta')}}</div>
             <div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : temaCount < 20 }">{{temaCount}}
             </div>
           </div>
