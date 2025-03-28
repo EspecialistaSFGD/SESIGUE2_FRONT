@@ -146,19 +146,41 @@ export class FormularioAtencionComponent {
 
   setFormValue(){
     //TODO: ATENCION SOLO ES CUANDO ES SECTOR
-    const tipoAtencion = findEnumToText(AsistenciasTecnicasTipos,AsistenciasTecnicasTipos.ATENCION)
-    const tipo = !this.permisosPCM && !this.atencion.tipo ? tipoAtencion.value.toLowerCase() : this.atencion.tipo
-    const fechaAtencion = this.atencion.fechaAtencion ?? new Date()
-    const modalidadPresencial = findEnumToText(AsistenciasTecnicasModalidad,AsistenciasTecnicasModalidad.PRESENCIAL)
-    const modalidad = !this.permisosPCM && !this.atencion.modalidad ? modalidadPresencial.value.toLowerCase() : this.atencion.modalidad
+    // const tipoAtencion = findEnumToText(AsistenciasTecnicasTipos,AsistenciasTecnicasTipos.ATENCION)
+    // const tipo = !this.permisosPCM && !this.atencion.tipo ? tipoAtencion.value.toLowerCase() : this.atencion.tipo
+    // const fechaAtencion = this.atencion.fechaAtencion ?? new Date()
+    // const modalidadPresencial = findEnumToText(AsistenciasTecnicasModalidad,AsistenciasTecnicasModalidad.PRESENCIAL)
+    // const modalidad = !this.permisosPCM && !this.atencion.modalidad ? modalidadPresencial.value.toLowerCase() : this.atencion.modalidad
     
-    const sector = this.authUser.sector.label    
-    const sectorId = !this.permisosPCM && !this.atencion.sectorId ? this.authUser.sector.value : this.atencion.sectorId
-    const eventoId = this.atencion.eventoId ?? this.evento().eventoId
-    this.formAtencion.reset({...this.atencion, tipoPerfil: this.permisosPCM, fechaAtencion, tipo, sectorId, sector, eventoId, modalidad})
-  
+    // const sector = this.authUser.sector.label    
+    // const sectorId = !this.permisosPCM && !this.atencion.sectorId ? this.authUser.sector.value : this.atencion.sectorId
+    // const eventoId = this.atencion.eventoId ?? this.evento().eventoId
+    // this.formAtencion.reset({...this.atencion, tipoPerfil: this.permisosPCM, fechaAtencion, tipo, sectorId, sector, eventoId, modalidad })
+    this.formAtencion.reset(this.atencion)
     // console.log(this.atencion);
-    // console.log(this.formAtencion.value); 
+    // console.log(this.formAtencion.value);
+    this.setFormubigeo()
+  }
+
+  setFormubigeo(){
+    if(!this.create){
+      const departamento = this.atencion.ubigeo?.slice(0,2)
+      this.formAtencion.get('departamento')?.setValue(departamento)
+      if(this.atencion.tipoEntidadSlug == 'GL'){
+        const controlProvincia = this.formAtencion.get('provincia')
+        const controlDistrito = this.formAtencion.get('distrito')
+        const provinciaUbigeo = this.atencion.ubigeo?.slice(0,4)
+        controlProvincia?.setValue(`${provinciaUbigeo}01`)
+        controlProvincia?.enable()
+        this.obtenerProvinciasService(departamento!)
+        const lastUbigeo = this.atencion.ubigeo?.slice(-2);
+        if(lastUbigeo != '01'){         
+          controlDistrito?.setValue(this.atencion.ubigeo!)
+          this.obtenerDistritosService(this.atencion.ubigeo!)
+        }  
+        controlDistrito?.enable()
+      }
+    }
   }
 
   setTipoAtencion(){        
@@ -179,6 +201,7 @@ export class FormularioAtencionComponent {
   }
 
   obtenerLugaresService() {
+    const lugarControl = this.formAtencion.get('lugarId')
     this.lugarService.getAllLugares(this.pagination)
       .subscribe(resp => {        
         if (resp.success = true) {
@@ -189,14 +212,14 @@ export class FormularioAtencionComponent {
               lugares.push(item)
             }
             if(!item.estado){
-              const lugarControl = this.formAtencion.get('lugarId')
               if(!this.permisosPCM && !lugarControl?.value){
                 lugarControl?.setValue(item.lugarId)
               }
             }
+            // if(!this.create && item.lugarId == this.atencion.lugarId){
+            //   lugarControl?.setValue(item)              
+            // }
           })
-          // this.lugarId = Number(resp.data.find(item => !item.estado)!.lugarId)
-
           this.lugares.set(lugares)
         }
       })
@@ -437,7 +460,6 @@ export class FormularioAtencionComponent {
     const distritoControl = this.formAtencion.get('distrito')    
     if(provincia && !this.esRegional){
       ubigeo = provincia.provinciaId
-      const ubigeoprovincia = provincia.provinciaId.slice(0, 4)
       distritoControl?.enable()
       this.obtenerDistritosService(ubigeo)
     } else {

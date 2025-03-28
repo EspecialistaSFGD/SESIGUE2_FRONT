@@ -86,9 +86,9 @@ export default class AsistenciasTecnicasComponent {
 
   public navigationAuth = computed(() => this.authStore.navigationAuth())
 
-  constructor() {
-    this.getParams()
-  }
+  // constructor() {
+  //   this.getParams()
+  // }
 
   ngOnInit() {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
@@ -98,6 +98,7 @@ export default class AsistenciasTecnicasComponent {
     this.getPermissions()
     this.obtenerAsistenciasTecnicas()
     this.obtenerDepartamentos()
+    this.getParams()
   }
 
   setPermisosPCM(){
@@ -123,17 +124,17 @@ export default class AsistenciasTecnicasComponent {
       if (Object.keys(params).length > 0) {
         // this.paramsExist = true
         this.loadingData = false
-        const relations = [
-          { param: 'entidad', field: 'entidadId' },
-          { param: 'tipoEntidad', field: 'tipoEntidadId' },
-          { param: 'espacio', field: 'espacioId' },
-        ]
+        // const relations = [
+        //   { param: 'entidad', field: 'entidadId' },
+        //   { param: 'tipoEntidad', field: 'tipoEntidadId' },
+        //   { param: 'espacio', field: 'espacioId' },
+        // ]
 
         let campo = params['campo'] ?? 'fechaAtencion'
-        const finded = relations.find(item => item.param == campo)
-        if (finded) {
-          campo = finded.field
-        }
+        // const finded = relations.find(item => item.param == campo)
+        // if (finded) {
+        //   campo = finded.field
+        // }
 
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
@@ -289,7 +290,7 @@ export default class AsistenciasTecnicasComponent {
     saveAs(blob, nombreArchivo);
   }
 
-  updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {
+  updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {    
     this.asistenciaTecnica = asistencia    
     // this.create = false
     // this.showNzModal = true
@@ -307,6 +308,7 @@ export default class AsistenciasTecnicasComponent {
   generateComponentModal(create: boolean): void{       
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
+    
     const modal = this.modal.create<FormularioAtencionComponent>({
       nzTitle: `${action.toUpperCase()}${evento}`,
       nzWidth: '75%',

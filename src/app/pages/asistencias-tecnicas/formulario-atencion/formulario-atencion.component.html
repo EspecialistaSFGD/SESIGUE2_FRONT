@@ -56,6 +56,7 @@
 					[options]="lugares()"
 					formControlName="lugarId"
 					optionLabel="nombre"
+					optionValue="lugarId"
 					[showClear]="true" 
 					placeholder="Seleccionar lugar"
 					(onChange)="obtenerLugar()"/>
@@ -72,6 +73,7 @@
 					[options]="tipoEntidades()"
 					formControlName="tipoEntidadId"
 					optionLabel="nombre"
+					optionValue="tipoId"
 					[showClear]="true" 
 					placeholder="Seleccionar tipo de entidad"
 					(onChange)="changeTipoEntidad()"/>
@@ -93,6 +95,7 @@
 					[options]="departamentos()"
 					formControlName="departamento"
 					optionLabel="departamento"
+					optionValue="departamentoId"
 					[showClear]="true" 
 					placeholder="Seleccionar departamento"
 					(onChange)="changeDepartamento()"/>
@@ -114,6 +117,7 @@
 					[options]="provincias()"
 					formControlName="provincia"
 					optionLabel="provincia"
+					optionValue="provinciaId"
 					[showClear]="true" 
 					placeholder="Seleccionar provincia"
 					(onChange)="changeProvincia()"/>
@@ -134,6 +138,7 @@
 					[options]="distritos()"
 					formControlName="distrito"
 					optionLabel="distrito"
+					optionValue="distritoId"
 					[showClear]="true" 
 					placeholder="Seleccionar distrito"
 					(onChange)="changeDistrito()"/>
