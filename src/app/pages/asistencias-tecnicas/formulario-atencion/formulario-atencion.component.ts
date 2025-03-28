@@ -167,7 +167,12 @@ export class FormularioAtencionComponent {
     const especiosControl = this.formAtencion.get('espacioId')
     this.permisosPCM ? especiosControl?.enable() : especiosControl?.disable()
 
-    this.setFormubigeo()    
+    this.setFormubigeo()
+    if(!this.create){
+      this.setCongresistasParams()
+      this.setParticipantesParams()
+      this.setAgendasParams()
+    }   
   }
 
   setFormubigeo(){
@@ -329,8 +334,7 @@ export class FormularioAtencionComponent {
   }
 
   setCongresistasParams() {
-    this.pagination.columnSort = 'congresistaId'
-    this.asistenciaTecnicaCongresistaService.getAllCongresistas(this.atencion.asistenciaId!, this.pagination)
+    this.asistenciaTecnicaCongresistaService.getAllCongresistas(this.atencion.asistenciaId!, {...this.pagination, columnSort: 'congresistaId' })
       .subscribe(resp => {
         if (resp.success == true) {
           this.congresistas.clear()
@@ -349,9 +353,8 @@ export class FormularioAtencionComponent {
   }
 
   setParticipantesParams() {
-    this.pagination.columnSort = 'participanteId'
-    this.asistenciaTecnicaParticipanteService.getAllParticipantes(this.atencion.asistenciaId!, this.pagination)
-      .subscribe(resp => {
+    this.asistenciaTecnicaParticipanteService.getAllParticipantes(this.atencion.asistenciaId!, {...this.pagination, columnSort: 'participanteId'})
+      .subscribe(resp => {        
         if (resp.success == true) {
           this.participantes.clear()
           for (let data of resp.data) {
@@ -367,8 +370,7 @@ export class FormularioAtencionComponent {
   }
 
   setAgendasParams() {
-    this.pagination.columnSort = 'agendaId'
-    this.asistenciaTecnicaAgendaService.getAllAgendas(this.atencion.asistenciaId!, this.pagination)
+    this.asistenciaTecnicaAgendaService.getAllAgendas(this.atencion.asistenciaId!, {...this.pagination, columnSort: 'agendaId'})
       .subscribe(resp => {
         if (resp.success == true) {
           this.agendas.clear()

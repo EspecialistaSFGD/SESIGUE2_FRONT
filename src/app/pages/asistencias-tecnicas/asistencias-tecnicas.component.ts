@@ -45,7 +45,7 @@ export default class AsistenciasTecnicasComponent {
   pagination: Pagination = {
     code: 0,
     columnSort: 'fechaAtencion',
-    typeSort: 'DESC',
+    typeSort: 'ASC',
     pageSize: 10,
     currentPage: 1,
     total: 0
@@ -301,7 +301,7 @@ export default class AsistenciasTecnicasComponent {
     this.asistenciaTecnica = asistencia    
     // this.create = false
     // this.showNzModal = true
-    this.generateComponentModal(false)
+    this.atencionFormModal(false)
   }
 
   crearAsistenciaTecnica() {
@@ -309,10 +309,10 @@ export default class AsistenciasTecnicasComponent {
     // const fechaAtencion = new Date();
     this.asistenciaTecnica = {} as AsistenciaTecnicaResponse
     // this.showNzModal = true
-    this.generateComponentModal(true)
+    this.atencionFormModal(true)
   }
 
-  generateComponentModal(create: boolean): void{       
+  atencionFormModal(create: boolean): void{       
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
     
@@ -436,6 +436,83 @@ export default class AsistenciasTecnicasComponent {
   }
 
   actualizarAtencion(atencion: FormGroup){
+    const asistenciaId = this.asistenciaTecnica.asistenciaId
+    const formValues = atencion!.getRawValue()
+    let congresistas = formValues.congresistas
+    let participantes = formValues.participantes
+    let agendas = formValues.agendas
+      this.asistenciaTecnicaService.actualizarAsistenciaTecnica({ ...formValues, asistenciaId })
+        .subscribe(resp => {
+          if (resp == true) { 
+            if (congresistas.length > 0) {
+              for (let data of congresistas) {
+                if (data.congresista) {
+                  data.descripcion = 'Congresista'
+                }
+                const congresista: CongresistaResponse = { ...data }                
+                if(data.congresistaId){
+                  this.congresistaService.actualizarCongresista(congresista)
+                    .subscribe(respCongresista => {                      
+                      if (respCongresista == true) {
+                      }
+                    })                  
+                } else {                
+                  this.congresistaService.registrarCongresista(congresista)
+                    .subscribe(respCongresista => {                      
+                      if (respCongresista.success == true) {
+                        const congresistaId = respCongresista.data
+                        const asistenciaCongresista: AsistenciaTecnicaCongresistaResponse = { ...data, asistenciaId, congresistaId }
+                        this.asistenciaTecnicaCongresistaService.registrarCongresista(asistenciaCongresista)
+                          .subscribe(response => {
+                            if (response == true) {
+                            }
+                          })
+                      }
+                    })
+                }
 
+              }
+            }
+            if (participantes.length > 0) {
+              for (let data of participantes) {
+                if(data.participanteId){
+                  this.asistenciaTecnicaParticipanteService.actualizarParticipante(data)
+                    .subscribe(resp => {
+                      if (resp == true) {
+                      }
+                    })
+                } else {
+                  const participante: AsistenciaTecnicaParticipanteResponse = { ...data, asistenciaId }
+                  this.asistenciaTecnicaParticipanteService.registrarParticipante(participante)
+                    .subscribe(resp => {
+                      if (resp == true) {
+                      }
+                    })
+                }
+              }
+            }
+            if (agendas.length > 0) {
+              for (let data of agendas) {
+                if(data.agendaId){
+                this.asistenciaTecnicaAgendaService.actualizarAgenda(data)
+                  .subscribe(response => {
+                    if (response == true) {
+                    }
+                  })
+                } else {
+                  const agenda: AsistenciaTecnicaAgendaResponse = { ...data, asistenciaId }
+                  this.asistenciaTecnicaAgendaService.registrarAgenda(agenda)
+                    .subscribe(response => {
+                      if (response == true) {
+                      }
+                    })
+                }
+              }
+            }
+            this.modal.closeAll()
+              this.messageService.create('success', 'Se ha actualizado con exito');
+              this.obtenerAsistenciasTecnicas()
+          }
+        })
   }
 }
