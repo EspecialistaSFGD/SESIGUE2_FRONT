@@ -63,20 +63,20 @@ export interface AsistenciaTecnicaResponse {
   estado?: boolean,
   validado?: boolean,
   sector?: string,
-  unidad_organica?: string,
-  nivel_gobierno?: string,
-  nivel_gobierno_slug?: string,
+  unidadOrganica?: string,
+  tipoEntidad?: string,
+  tipoEntidadSlug?: string,
   departamento?: string,
   provincia?: string,
   distrito?: string,
   ubigeo?: string,
   entidad?: string,
-  tipo_entidad_slug?: string,
-  entidad_slug?: string,
-  participa_autoridad?: string,
+  entidadTipo?: string,
+  entidadSlug?: string,
+  participaAutoridad?: string,
   eventoId: string,
   evento?: string,
-  evento_slug?: string,
+  eventoSlug?: string,
   espacio?: string,
   code?: number,
 }
@@ -113,4 +113,5 @@ export interface DataModalAtencion {
   tipos: ItemEnum[]
   evento: EventoResponse
   authUser: any
+  create: boolean
 }

@@ -18,10 +18,10 @@
         <th nzLeft nzWidth="200px" nzAlign="center">Unidad Organica</th>
       }
       <th nzWidth="150px" nzAlign="center" nzColumnKey="tipoEntidad" [nzSortFn]="true">Tipo de entidad</th>
-      <th nzWidth="150px" nzColumnKey="entidad">Entidad</th>
-      <th nzWidth="150px" nzAlign="center" nzColumnKey="autoridad" [nzSortFn]="true">Autoridad</th>
+      <th nzWidth="200px" nzColumnKey="entidad">Entidad</th>
+      <th nzWidth="100px" nzAlign="center" nzColumnKey="autoridad" [nzSortFn]="true">Autoridad</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
-      <th nzWidth="150px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
+      <th nzWidth="100px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
       @if(atencionActions.edit || atencionActions.delete || atencionActions.validate){
         <th nzWidth="150px" nzAlign="center">Acciones</th>
       }
@@ -40,18 +40,18 @@
         <td nzAlign="center">{{atencion.modalidad | titlecase }}</td>
       } @else {
         <td nzAlign="center">
-          <p [nz-tooltip]="atencion.evento">{{ atencion.evento_slug }}</p>
+          <p [nz-tooltip]="atencion.evento">{{ atencion.eventoSlug }}</p>
         </td>
-        <td nzAlign="center">{{atencion.unidad_organica }}</td>
+        <td nzAlign="center">{{atencion.unidadOrganica }}</td>
       }
-      <td nzAlign="center">{{atencion.nivel_gobierno}}</td>
-      <td>{{atencion.entidad}}</td>
-      <td nzAlign="center">{{atencion.participa_autoridad }}</td>
+      <td nzAlign="center"><p nz-tooltip="{{atencion.tipoEntidad }}">{{atencion.tipoEntidadSlug}}</p></td>
+      <td><p nz-tooltip="{{atencion.entidad}}">{{atencion.entidadTipo}} {{atencion.entidadSlug}}</p></td>
+      <td nzAlign="center">{{atencion.participaAutoridad }}</td>
       <td nzAlign="center">{{atencion.espacio| titlecase }}</td>
       <td nzAlign="center">{{atencion.clasificacion | titlecase}}</td>
       @if(atencionActions.edit || atencionActions.delete || atencionActions.validate){
         <td nzAlign="center">
-          <!-- <nz-space>
+          <nz-space>
             @if(atencionActions.edit){
             <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !disabledActions(atencion) ? 'Actualizar Atención' : '' }}" [disabled]="disabledActions(atencion)"><span nz-icon
                 nzType="edit" nzTheme="outline"></span></button>
@@ -66,7 +66,7 @@
                 [disabled]="!geDocumentAtencion(atencion) || atencion.validado"><span nz-icon nzType="check"
                   nzTheme="outline"></span></button>
             }
-          </nz-space> -->
+          </nz-space>
         </td>
       }
     </tr>
@@ -95,10 +95,10 @@
         </button>
       }
       @if(atencionActions.new){
-        <!-- <button nz-button nzType="primary" (click)="crearAsistenciaTecnica()" [disabled]="!this.permisosPCM && !this.evento()">
+        <button nz-button nzType="primary" (click)="crearAsistenciaTecnica()" [disabled]="!this.permisosPCM && !this.evento()">
           <span nz-icon nzType="plus" nzTheme="outline"></span>
           <span class="button-text">Nueva Atención</span>
-        </button> -->
+        </button>
       }
     </div>
   </div>

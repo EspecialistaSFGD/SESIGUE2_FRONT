@@ -782,8 +782,8 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     if (ubigeo) {    
       this.entidadService.getEntidadPorUbigeo(ubigeo)
         .subscribe(resp => {          
-          if (resp.success && resp.data.length > 0) {
-            const entidad: EntidadResponse = resp.data[0];
+          if (resp.success && resp.data ) {
+            const entidad: EntidadResponse = resp.data;
             this.formAsistencia.get('entidad')?.setValue(entidad.entidad)
             this.formAsistencia.get('entidadId')?.setValue(entidad.entidadId)
           } else {
@@ -804,11 +804,11 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.entidadService.getEntidadPorId(entidadId)
         .subscribe(resp => {
           if (resp.success) {
-            const entidad = resp.data[0];
-            departamento?.setValue(entidad.departamento)
-            provincia?.setValue(entidad.provincia)
-            distrito?.setValue(entidad.distrito)
-            ubigeo?.setValue(entidad.ubigeo)
+            const entidad = resp.data;
+            // departamento?.setValue(entidad.departamento)
+            // provincia?.setValue(entidad.provincia)
+            // distrito?.setValue(entidad.distrito)
+            // ubigeo?.setValue(entidad.ubigeo)
           } else {
             departamento?.setValue('')
             provincia?.setValue('')
@@ -827,9 +827,9 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
       this.entidadService.getMancomunidades(this.tipoEntidadSlug, this.pagination)
         .subscribe(resp => {
           if (resp.success == true) {
-            if (resp.data.length > 0) {
-              this.mancomunidades.set(resp.data)
-            }
+            // if (resp.data.length > 0) {
+            //   this.mancomunidades.set(resp.data)
+            // }
           }
         })
     }
