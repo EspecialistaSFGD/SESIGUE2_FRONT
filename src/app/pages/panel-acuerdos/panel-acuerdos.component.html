@@ -35,8 +35,7 @@
                   </nz-form-label>
                   <nz-form-control nzSpan="null">
                     <nz-select nzPlaceHolder="Seleccione tipo de espacio" id="tipoEspacio" class="select-form-control"
-                      formControlName="tipoEspacio" nzAllowClear (ngModelChange)="selectTipoEspacio()"
-                      (ngModelChange)="obtenerServicioEventos(formPanel.get('tipoEspacio')?.value)">
+                      formControlName="tipoEspacio" nzAllowClear (ngModelChange)="selectTipoEspacio()">
                       @for (tipo of tipoEventos(); track $index) {
                       <nz-option [nzValue]="tipo.codigoTipoEvento" [nzLabel]="tipo.descripcionTipoEvento" />
                       }
@@ -226,11 +225,11 @@
       </div>
       <div class="bg-white rounded-b-3xl">
         @if(card.tipo == 'mapa'){
-        <!-- <app-geo-chart [dataset]="panelDepartamentos()" [geoTopoJson]="topoJson" /> -->
+        <app-geo-chart [dataset]="panelDepartamentos()" [geoTopoJson]="topoJson" />
         }
         @if(card.tipo == 'tabla'){
         <nz-card class="card-no-padding bg-transparent">
-          <app-table-card [scrollY]="580">
+          <app-table-card [scrollY]="550">
             <ng-template #header>
               <tr>
                 <th>{{card.nombre | titlecase }}</th>

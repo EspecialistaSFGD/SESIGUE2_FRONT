@@ -1,13 +1,14 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="atenciones" />
 <nz-table [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-  [nzData]="usuarios()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
-  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
+  [nzData]="usuarios()" [nzFrontPagination]="false" [nzShowPagination]="this.pagination.total! > 10" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParams($event)">
   <thead>
     <tr>
       <th nzWidth="12px" nzAlign="center">N°</th>
-      <th nzWidth="200px"nzColumnKey="nombreArchivo" [nzSortFn]="true">Nombre</th>
+      <th nzWidth="200px"nzColumnKey="nombresPersona" [nzSortFn]="true">Nombre</th>
       <th nzWidth="20px" nzAlign="center">Mes</th>
       <th nzWidth="20px" nzAlign="center">Meta</th>
+      <th nzWidth="20px" nzAlign="center">Atenciones</th>
       <th nzWidth="16px" nzAlign="center"></th>
     </tr>
   </thead>
@@ -17,8 +18,9 @@
       <tr>
         <td nzAlign="center">{{$index + 1}}</td>
         <td >{{usuario.nombresPersona}}</td>
-        <td nzAlign="center">03/2025</td>
-        <td nzAlign="center">32</td>
+        <td nzAlign="center">{{usuario.fecha | date: 'MM/yyyy'}}</td>
+        <td nzAlign="center">{{usuario.meta}}</td>
+        <td nzAlign="center">{{usuario.atenciones}}</td>
         <td nzAlign="center">
           <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalles" (click)="modalMetaDetalle(usuario.codigoUsuario!, usuario.nombresPersona)">
             <span nz-icon nzType="eye" nzTheme="outline"></span>

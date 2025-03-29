@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ButtonsActions, EventoResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
-import { AsistenciasTecnicasService, UbigeosService } from '@core/services';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
+import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 // import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
 import { EventosService } from '@core/services/eventos.service';
@@ -15,6 +15,10 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
 import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { convertEnumToObject, obtenerPermisosBotones } from '@core/helpers';
+import { FormGroup } from '@angular/forms';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -27,7 +31,8 @@ import { FormularioAtencionComponent } from './formulario-atencion/formulario-at
     NgZorroModule,
     RouterModule,
     FormularioAsistenciaTecnicaComponent,
-    FiltrosAtencionComponent
+    FiltrosAtencionComponent,
+    PrimeNgModule
   ]
 })
 
@@ -40,7 +45,7 @@ export default class AsistenciasTecnicasComponent {
   pagination: Pagination = {
     code: 0,
     columnSort: 'fechaAtencion',
-    typeSort: 'DESC',
+    typeSort: 'ASC',
     pageSize: 10,
     currentPage: 1,
     total: 0
@@ -48,24 +53,22 @@ export default class AsistenciasTecnicasComponent {
 
   paginationFilter: Pagination = {}
 
-  atencionActions: ButtonsActions = {
-    new: false,
-    edit: false,
-    delete: false
-  }
+  atencionActions: ButtonsActions = {}
 
   perfilAuth: number = 0
+  sectorAuth: number = 0
   filtrosVisible: boolean = false
   loadingExport: boolean = false
   loadingData: boolean = false
+  permisosPCM: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
   showNzModal: boolean = false
 
   confirmModal?: NzModalRef;
-  tipos: ItemEnum[] = Object.entries(AsistenciasTecnicasTipos).map(([value, text]) => ({ value: value.toLowerCase(), text }))
-  modalidaades: ItemEnum[] = Object.entries(AsistenciasTecnicasModalidad).map(([value, text]) => ({ value: value.toLowerCase(), text }))
-  clasificaciones: ItemEnum[] = Object.entries(AsistenciasTecnicasClasificacion).map(([value, text]) => ({ value: value.toLowerCase(), text }))
+  tipos: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasTipos)
+  modalidaades: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasModalidad)
+  clasificaciones: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasClasificacion)
   public orientaciones: ItemEnum[] = [
     { value: '1', text: 'Actividad' },
     { value: '2', text: 'Proyecto' },
@@ -81,32 +84,41 @@ export default class AsistenciasTecnicasComponent {
   private authStore = inject(AuthService)
   public eventosService = inject(EventosService)
   private utilesService = inject(UtilesService);
+  private congresistaService = inject(CongresistasService)
+  private asistenciaTecnicaCongresistaService = inject(AsistenciaTecnicaCongresistasService)
+  private asistenciaTecnicaParticipanteService = inject(AsistenciaTecnicaParticipantesService)
+  private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
+  private messageService = inject(NzMessageService)
 
 
   public navigationAuth = computed(() => this.authStore.navigationAuth())
 
-  constructor() {
-    this.getParams()
-  }
+  // constructor() {
+  //   this.getParams()
+  // }
 
   ngOnInit() {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.sectorAuth = this.authStore.sector() ? Number(this.authStore.sector()?.value) : this.sectorAuth
+    this.permisosPCM = this.setPermisosPCM()
     this.obtenerEventos()
     this.getPermissions()
     this.obtenerAsistenciasTecnicas()
     this.obtenerDepartamentos()
+    this.getParams()
   }
 
-  permisosPCM(){
-    const profilePCM = [11,12]
+  setPermisosPCM(){
+    const profilePCM = [11,12,23]
     return profilePCM.includes(this.perfilAuth)
   }
   
 
   obtenerEventos() {
-    const vigenteId = !this.permisosPCM() ? 2 : 4
-    this.eventosService.getAllEventos(null, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
-      .subscribe(resp => {
+    const vigenteId = this.permisosPCM ? 4 : 2
+    const tipoEvento = this.permisosPCM ? [9] : [8]
+    this.eventosService.getAllEventos(tipoEvento, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
+      .subscribe(resp => {        
         if(resp.data.length > 0){          
           this.evento.set(resp.data[0])
         }        
@@ -119,17 +131,17 @@ export default class AsistenciasTecnicasComponent {
       if (Object.keys(params).length > 0) {
         // this.paramsExist = true
         this.loadingData = false
-        const relations = [
-          { param: 'entidad', field: 'entidadId' },
-          { param: 'tipoEntidad', field: 'tipoEntidadId' },
-          { param: 'espacio', field: 'espacioId' },
-        ]
+        // const relations = [
+        //   { param: 'entidad', field: 'entidadId' },
+        //   { param: 'tipoEntidad', field: 'tipoEntidadId' },
+        //   { param: 'espacio', field: 'espacioId' },
+        // ]
 
         let campo = params['campo'] ?? 'fechaAtencion'
-        const finded = relations.find(item => item.param == campo)
-        if (finded) {
-          campo = finded.field
-        }
+        // const finded = relations.find(item => item.param == campo)
+        // if (finded) {
+        //   campo = finded.field
+        // }
 
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
@@ -146,11 +158,7 @@ export default class AsistenciasTecnicasComponent {
   getPermissions() {
     const navigation = this.authStore.navigationAuth()!
     const atenciones = navigation.find(nav => nav.descripcionItem == 'Atenciones')
-    atenciones?.botones?.map(btn => {
-      this.atencionActions.new = btn.descripcionBoton === 'Agregar' ? true : this.atencionActions.new
-      this.atencionActions.edit = btn.descripcionBoton === 'Editar' ? true : this.atencionActions.edit
-      this.atencionActions.delete = btn.descripcionBoton === 'Eliminar' ? true : this.atencionActions.delete
-    })
+    this.atencionActions = obtenerPermisosBotones(atenciones!.botones!)    
   }
 
   obtenerAsistenciasTecnicas() {
@@ -186,6 +194,14 @@ export default class AsistenciasTecnicasComponent {
     return type == 'documento' ? true : false
   }
 
+  disabledActions(atencion: AsistenciaTecnicaResponse): boolean {
+    let validado = this.geDocumentAtencion(atencion) && atencion.validado!
+    if(!this.permisosPCM){
+      validado = this.evento() ? atencion.eventoId != this.evento()!.eventoId : true
+    }
+    return validado;
+  }
+
   getTextEnum(value: string, kind: string): string {
     let text = value
     if (kind == 'tipo') {
@@ -215,12 +231,6 @@ export default class AsistenciasTecnicasComponent {
         queryParams: { pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar }
       }
     );
-  }
-
-  updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {
-    this.asistenciaTecnica = asistencia
-    this.create = false
-    this.showNzModal = true
   }
 
   validarAtencion(asistenciaId: string){
@@ -262,6 +272,10 @@ export default class AsistenciasTecnicasComponent {
   }
 
   filtersToDrawer(paginationFilters: Pagination){
+    paginationFilters.perfil = this.perfilAuth;
+    if(!this.permisosPCM){
+      paginationFilters.sectorId = this.sectorAuth
+    }
     this.paginationFilter = paginationFilters
   }
 
@@ -278,63 +292,44 @@ export default class AsistenciasTecnicasComponent {
   }
 
   generarExcel(archivo: any, nombreArchivo: string): void {
-      const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
-      const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      saveAs(blob, nombreArchivo);
-    }
-
-  crearAsistenciaTecnica() {
-    this.create = true
-    const fechaAtencion = new Date();
-    this.asistenciaTecnica = {
-      tipoPerfil: '',
-      tipo: '',
-      modalidad: '',
-      fechaAtencion,
-      lugarId: '',
-      sectorId: '',
-      nombreLugar: '',
-      tipoEntidadId: '',
-      nombreTipoEntidad: '',
-      entidadId: '',
-      ubigeoEntidad: '',
-      nombreEntidad: '',
-      autoridad: false,
-      dniAutoridad: '',
-      nombreAutoridad: '',
-      cargoAutoridad: '',
-      contactoAutoridad: '',
-      congresista: false,
-      dniCongresista: '',
-      nombreCongresista: '',
-      clasificacion: '',
-      espacioId: '',
-      unidadId: '',
-      orientacionId: '',
-      eventoId: '',
-      nombreEspacio: '',
-      tema: '',
-      comentarios: '',
-      evidenciaReunion: '',
-      evidenciaAsistencia: ''
-    }
-    this.showNzModal = true
-    // this.generateComponentModal(true)
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
   }
 
-  generateComponentModal(create: boolean): void{
+  updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {    
+    this.asistenciaTecnica = asistencia    
+    // this.create = false
+    // this.showNzModal = true
+    this.atencionFormModal(false)
+  }
+
+  crearAsistenciaTecnica() {
+    // this.create = true
+    // const fechaAtencion = new Date();
+    this.asistenciaTecnica = {} as AsistenciaTecnicaResponse
+    // this.showNzModal = true
+    this.atencionFormModal(true)
+  }
+
+  atencionFormModal(create: boolean): void{       
+    const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
+    
     const modal = this.modal.create<FormularioAtencionComponent>({
-      nzTitle: action,
+      nzTitle: `${action.toUpperCase()}${evento}`,
       nzWidth: '75%',
       nzContent: FormularioAtencionComponent,
       nzData: {
-        asistenciaTecnica: this.asistenciaTecnica,
+        atencion: this.asistenciaTecnica,
         tipos: this.tipos,
         modalidades: this.modalidaades,
         clasificaciones: this.clasificaciones,
         orientaciones: this.orientaciones,
-        departamentos: this.departamentos
+        departamentos: this.departamentos(),
+        evento: this.evento(),
+        create,
+        authUser: this.authStore.usuarioAuth()
       },
       nzFooter: [
         {
@@ -346,7 +341,31 @@ export default class AsistenciasTecnicasComponent {
           label: action,
           type: 'primary',
           onClick: (componentResponse) => {
-            console.log('actualizar o guardar formulario');
+            const formAtencion = componentResponse!.formAtencion
+            if (formAtencion.invalid) {
+              // const invalidFields = Object.keys(formAtencion.controls).filter(field => formAtencion.controls[field].invalid);
+              // console.error('Invalid fields:', invalidFields);
+              return formAtencion.markAllAsTouched();
+            }
+
+            const dateForm = new Date(formAtencion.get('fechaAtencion')?.value)
+            const getMonth = dateForm.getMonth() + 1
+            const getDay = dateForm.getDate()
+            const month = getMonth > 9 ? getMonth : `0${getMonth}`
+            const day = getDay > 9 ? getDay : `0${getDay}`
+            const fechaAtencion = `${month}/${day}/${dateForm.getFullYear()}`
+            formAtencion.get('fechaAtencion')?.setValue(fechaAtencion)
+
+            const tipoPerfil = formAtencion.get('tipoPerfil')?.value
+            formAtencion.get('tipoPerfil')?.setValue(`${tipoPerfil ? 0 : 1}`)
+            // console.log(fechaAtencion);
+            // console.log(formAtencion.value);
+            
+            if(create){
+              this.crearAtencion(formAtencion)
+            } else  {
+              this.actualizarAtencion(formAtencion)
+            }
             
             // return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
             //   this.traerAcuerdos({});
@@ -356,5 +375,144 @@ export default class AsistenciasTecnicasComponent {
         }
       ]
     })
+  }
+
+  crearAtencion(atencion: FormGroup){
+    const formValues = atencion!.getRawValue()
+    let congresistas = formValues.congresistas
+    let participantes = formValues.participantes
+    let agendas = formValues.agendas
+    this.asistenciaTecnicaService.registrarAsistenciaTecnica(formValues)
+            .subscribe(resp => {
+              if (resp.success == true) {
+                const asistencia = resp.data
+                if (congresistas.length > 0) {
+                  for (let data of congresistas) {
+                    if (data.congresista) {
+                      data.descripcion = 'Congresista'
+                    }
+                    const congresista: CongresistaResponse = { ...data }
+                    this.congresistaService.registrarCongresista(congresista)
+                      .subscribe(respCongresista => {
+                        if (respCongresista.success == true) {
+                          const congresistaId = respCongresista.data
+                          const asistenciaCongresista: AsistenciaTecnicaCongresistaResponse = { ...data, asistenciaId: asistencia, congresistaId }
+                          this.asistenciaTecnicaCongresistaService.registrarCongresista(asistenciaCongresista)
+                            .subscribe(response => {
+                              if (response == true) {
+                              }
+                            })
+                        }
+                      })
+    
+                  }
+                }
+                if (participantes.length > 0) {
+                  for (let data of participantes) {
+                    const participante: AsistenciaTecnicaParticipanteResponse = { ...data, asistenciaId: asistencia }
+                    this.asistenciaTecnicaParticipanteService.registrarParticipante(participante)
+                      .subscribe(response => {
+                        if (response == true) {
+                        }
+                      })
+                  }
+                }
+                if (agendas.length > 0) {
+                  for (let data of agendas) {
+                    const agenda: AsistenciaTecnicaAgendaResponse = { ...data, asistenciaId: asistencia }
+                    this.asistenciaTecnicaAgendaService.registrarAgenda(agenda)
+                      .subscribe(response => {
+                        if (response == true) {
+                        }
+                      })
+                  }
+                }
+                this.modal.closeAll()
+                this.messageService.create('success', 'Se ha registrado con exito');
+                this.obtenerAsistenciasTecnicas()
+              }
+            })
+    
+  }
+
+  actualizarAtencion(atencion: FormGroup){
+    const asistenciaId = this.asistenciaTecnica.asistenciaId
+    const formValues = atencion!.getRawValue()
+    let congresistas = formValues.congresistas
+    let participantes = formValues.participantes
+    let agendas = formValues.agendas
+      this.asistenciaTecnicaService.actualizarAsistenciaTecnica({ ...formValues, asistenciaId })
+        .subscribe(resp => {
+          if (resp == true) { 
+            if (congresistas.length > 0) {
+              for (let data of congresistas) {
+                if (data.congresista) {
+                  data.descripcion = 'Congresista'
+                }
+                const congresista: CongresistaResponse = { ...data }                
+                if(data.congresistaId){
+                  this.congresistaService.actualizarCongresista(congresista)
+                    .subscribe(respCongresista => {                      
+                      if (respCongresista == true) {
+                      }
+                    })                  
+                } else {                
+                  this.congresistaService.registrarCongresista(congresista)
+                    .subscribe(respCongresista => {                      
+                      if (respCongresista.success == true) {
+                        const congresistaId = respCongresista.data
+                        const asistenciaCongresista: AsistenciaTecnicaCongresistaResponse = { ...data, asistenciaId, congresistaId }
+                        this.asistenciaTecnicaCongresistaService.registrarCongresista(asistenciaCongresista)
+                          .subscribe(response => {
+                            if (response == true) {
+                            }
+                          })
+                      }
+                    })
+                }
+
+              }
+            }
+            if (participantes.length > 0) {
+              for (let data of participantes) {
+                if(data.participanteId){
+                  this.asistenciaTecnicaParticipanteService.actualizarParticipante(data)
+                    .subscribe(resp => {
+                      if (resp == true) {
+                      }
+                    })
+                } else {
+                  const participante: AsistenciaTecnicaParticipanteResponse = { ...data, asistenciaId }
+                  this.asistenciaTecnicaParticipanteService.registrarParticipante(participante)
+                    .subscribe(resp => {
+                      if (resp == true) {
+                      }
+                    })
+                }
+              }
+            }
+            if (agendas.length > 0) {
+              for (let data of agendas) {
+                if(data.agendaId){
+                this.asistenciaTecnicaAgendaService.actualizarAgenda(data)
+                  .subscribe(response => {
+                    if (response == true) {
+                    }
+                  })
+                } else {
+                  const agenda: AsistenciaTecnicaAgendaResponse = { ...data, asistenciaId }
+                  this.asistenciaTecnicaAgendaService.registrarAgenda(agenda)
+                    .subscribe(response => {
+                      if (response == true) {
+                      }
+                    })
+                }
+              }
+            }
+            this.modal.closeAll()
+              this.messageService.create('success', 'Se ha actualizado con exito');
+              this.obtenerAsistenciasTecnicas()
+          }
+        })
   }
 }

@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { Pagination, UsuarioResponse } from '@core/interfaces';
-import { UsuariosService } from '@core/services/usuarios.service';
+import { MetaUsuarioResponse, Pagination, UsuarioMetaResponse } from '@core/interfaces';
+import { UsuarioMetasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { MetasDetallesComponent } from './metas-detalles/metas-detalles.component';
 import { FormularioMetaComponent } from './formulario-meta/formulario-meta.component';
+import { MetasDetallesComponent } from './metas-detalles/metas-detalles.component';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { dateZeroMonthDay } from '@core/helpers';
 
 @Component({
   selector: 'app-metas',
@@ -21,38 +23,63 @@ export default class MetasComponent {
 
   loadingData: boolean = false
 
-  usuarios = signal<UsuarioResponse[]>([])
-  sectorAuth: number = 0
-  entidadAuth: number = 0
+  usuarios = signal<UsuarioMetaResponse[]>([])
+
 
   pagination: Pagination = {
     columnSort: 'nombresPersona',
-    typeSort: 'acs',
-    pageSize: 10,
+    typeSort: 'ASC',
+    pageSize: 16,
     currentPage: 1,
     total: 0
   }
 
-  private authStore = inject(AuthService)
-  private usuariosService = inject(UsuariosService)
+  private usuarioMetasService = inject(UsuarioMetasService)
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
   private modal = inject(NzModalService);
 
   ngOnInit(): void {
-    this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value)    
-    this.entidadAuth = Number(localStorage.getItem('entidad'))
-    this.obtenerServiceUsuariosPorSector()
+    this.getParams()
   }
 
-  obtenerServiceUsuariosPorSector(){
-    this.pagination.sectorId = this.sectorAuth
-    this.pagination.entidadId = this.entidadAuth
-    this.usuariosService.listarUsuario(this.pagination, [11,12])
-      .subscribe( resp => {        
+  getParams() {
+    this.route.queryParams.subscribe(params => {
+      if (Object.keys(params).length > 0) {
+        let campo = params['campo'] ?? 'nombresPersona'
+        this.pagination.columnSort = campo
+        this.pagination.currentPage = params['pagina']
+        this.pagination.pageSize = params['cantidad']
+        this.pagination.typeSort = params['ordenar'] ?? 'ASC'
+        this.obtenerServiceUsuariosMeta()        
+      }
+    })
+  }
+
+  obtenerServiceUsuariosMeta(){
+    this.loadingData = true
+    this.usuarioMetasService.listarUsuario(this.pagination)
+      .subscribe( resp => {
+        this.loadingData = false
         this.usuarios.set(resp.data)
-        if(resp.data.length > 0){
-          this.pagination.total = resp.data[0].total
-        }
+        this.pagination.total = resp.info?.total ?? 0
       })
+  }
+
+  onQueryParams(params: NzTableQueryParams): void {
+    const sortsNames = ['ascend', 'descend']
+    const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+    const qtySorts = params.sort.reduce((total, item) => {
+      return sortsNames.includes(item.value!) ? total + 1 : total
+    }, 0)
+    const ordenar = sorts?.value!.slice(0, -3)   
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams: { pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar }
+      }
+    );
   }
 
   modalMetaDetalle(usuarioId: string, nombre: string): void{
@@ -68,7 +95,10 @@ export default class MetasComponent {
         {
           label: 'Cancelar',
           type: 'default',
-          onClick: () => this.modal.closeAll(),
+          onClick: () => {
+            this.modal.closeAll(),
+            this.obtenerServiceUsuariosMeta()
+          }
         }
       ]
     })
@@ -93,18 +123,33 @@ export default class MetasComponent {
           type: 'primary',
           onClick: (componentResp) => {
             const formNewmeta = componentResp!.formMeta
-            console.log('guardar formulario');
-            console.log(formNewmeta.value);
-
+            
             if (formNewmeta.invalid) {
               return formNewmeta.markAllAsTouched()
             }
             
+            const fecha = formNewmeta.get('fecha')?.value
+            const usuarios = formNewmeta.get('usuarios')?.value
+
+            const date = new Date(fecha)
+            date.setMonth(date.getMonth() + 1)
+            date.setDate(0)
+
+
+            const fechaMeta = dateZeroMonthDay(date)
+            for(let usuario of usuarios){
+              const metaUsuario: MetaUsuarioResponse = {
+                usuarioId: usuario.usuarioId,
+                fecha: fechaMeta,
+                meta: usuario.meta  
+              }              
+              this.usuarioMetasService.registarMetaUsuario(metaUsuario)
+                .subscribe( resp => {
+                  // console.log(resp);
+                })
+            }
+            this.obtenerServiceUsuariosMeta()
             this.modal.closeAll()
-            // return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
-            //   this.traerAcuerdos({});
-            //   this.modal.closeAll();
-            // });
           }
         }
       ]

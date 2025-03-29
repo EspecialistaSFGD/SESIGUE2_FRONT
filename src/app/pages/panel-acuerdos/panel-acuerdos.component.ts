@@ -154,7 +154,8 @@ export default class PanelAcuerdosComponent {
         currentPage: 1,
         total: 0
       }
-      this.eventosServices.getAllEventos(Number(eventoId), 1, [1, 2, 3], pagination)
+      const tipoEvento = [Number(eventoId)]
+      this.eventosServices.getAllEventos(tipoEvento, 1, [1, 2, 3], pagination)
         .subscribe(resp => {
           this.eventos.set(resp.data)
         })
@@ -341,6 +342,13 @@ export default class PanelAcuerdosComponent {
 
   selectTipoEspacio() {
     const tipoEspacioValue = this.formPanel.get('tipoEspacio')?.value
+    if(tipoEspacioValue){
+      this.obtenerServicioEventos(tipoEspacioValue)
+      this.paginationPanel.tipoEspacio = tipoEspacioValue
+    } else {
+      delete this.paginationPanel.tipoEspacio
+    }
+    this.obtenerServicios()
   }
 
   selectEspacio() {

@@ -1,4 +1,6 @@
-import { DataResponses } from "./helpers.interface"
+import { EventoResponse } from "./evento.interface"
+import { DataResponses, ItemEnum } from "./helpers.interface"
+import { UbigeoDepartmentResponse } from "./ubigeo.interface"
 
 export interface AsistenciasTecnicasResponse extends DataResponses {
   data: AsistenciaTecnicaResponse[],
@@ -32,6 +34,7 @@ export interface AsistenciaTecnicaResponse {
   fechaAtencion: Date,
   sectorId: string,
   lugarId: string,
+  lugar?: string,
   nombreLugar: string,
   tipoEntidadId: string,
   nombreTipoEntidad: string,
@@ -50,7 +53,6 @@ export interface AsistenciaTecnicaResponse {
   nombreCongresista: string,
   clasificacion: string,
   espacioId: string,
-  eventoId: string,
   unidadId: string,
   orientacionId: string,
   nombreEspacio: string,
@@ -60,9 +62,25 @@ export interface AsistenciaTecnicaResponse {
   evidenciaAsistencia: string,
   estado?: boolean,
   validado?: boolean,
-  // fechaRegistro?: Date
+  sector?: string,
+  unidadOrganica?: string,
+  tipoEntidad?: string,
+  tipoEntidadSlug?: string,
+  departamento?: string,
+  provincia?: string,
+  distrito?: string,
+  ubigeo?: string,
+  entidad?: string,
+  entidadTipo?: string,
+  entidadSlug?: string,
+  participaAutoridad?: string,
+  eventoId: string,
+  evento?: string,
+  eventoSlug?: string,
+  espacio?: string,
   code?: number,
 }
+
 
 export interface AtencionesCargasMasivasResponses extends DataResponses {
   data: AtencionCargaMasivaResponse[],
@@ -84,4 +102,16 @@ export interface AtencionCargaMasivaResponse {
 	provincia: string,
 	distrito: string,
 	validado: string
+}
+
+export interface DataModalAtencion {
+  atencion: AsistenciaTecnicaResponse
+  clasificaciones: ItemEnum[]
+  departamentos: UbigeoDepartmentResponse[]
+  modalidades: ItemEnum[]
+  orientaciones: ItemEnum[]
+  tipos: ItemEnum[]
+  evento: EventoResponse
+  authUser: any
+  create: boolean
 }

@@ -14,7 +14,7 @@ export class TipoEntidadesService {
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  getAllTipoEntidades(pagination: Pagination): Observable<TipoEntidadesResponses> {
+  getAllTipoEntidades(pagination: Pagination): Observable<TipoEntidadesResponses> {    
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<TipoEntidadesResponses>(`${this.urlTipoEntidad}/ListarTipoEntidades`, { headers, params })

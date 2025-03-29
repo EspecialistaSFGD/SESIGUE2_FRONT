@@ -5,54 +5,70 @@
   (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
-      @if (this.permisosPCM()){
+      @if (permisosPCM){
         <th nzLeft nzWidth="42px" nzAlign="center" nzColumnKey="validado"></th>
       }
-      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código </th>
-      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención </th>
-      <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
+      <th nzLeft nzWidth="160px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código </th>
       <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
+      @if(permisosPCM){
+        <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención </th>
+        <th nzLeft nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
+      } @else {
+        <th nzLeft nzWidth="100px" nzAlign="center">Evento</th>
+        <th nzLeft nzWidth="200px" nzAlign="center">Unidad Organica</th>
+      }
       <th nzWidth="150px" nzAlign="center" nzColumnKey="tipoEntidad" [nzSortFn]="true">Tipo de entidad</th>
-      <th nzWidth="150px" nzColumnKey="entidad">Entidad</th>
-      <th nzWidth="150px" nzAlign="center" nzColumnKey="autoridad" [nzSortFn]="true">Autoridad</th>
+      <th nzWidth="200px" nzColumnKey="entidad">Entidad</th>
+      <th nzWidth="100px" nzAlign="center" nzColumnKey="autoridad" [nzSortFn]="true">Autoridad</th>
       <th nzWidth="150px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
-      <th nzWidth="150px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
-      <th nzWidth="150px" nzAlign="center">Acciones</th>
+      <th nzWidth="100px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
+      @if(atencionActions.edit || atencionActions.delete || atencionActions.validate){
+        <th nzWidth="150px" nzAlign="center">Acciones</th>
+      }
     </tr>
   </thead>
   <tbody>
     @for(atencion of asistenciasTecnicas(); track $index){
     <tr>
-      @if (this.permisosPCM()){
+      @if (permisosPCM){
         <td nzAlign="center"><nz-avatar [nzSize]="24" [ngClass]="{ 'bg-green-400' : atencion.validado && geDocumentAtencion(atencion), 'bg-gray-300' : !atencion.validado && geDocumentAtencion(atencion), 'bg-blue-400' : !geDocumentAtencion(atencion) }" nz-tooltip="{{ !geDocumentAtencion(atencion) ? '' :  atencion.validado ? 'Validado' : 'Sin Validar' }}" nzIcon="check"></nz-avatar></td>
       }
-      <td nzAlign="center">{{atencion.codigo}}</td>
-      <td nzAlign="center">{{getTextEnum(atencion.tipo, 'tipo') | titlecase}}</td>
-      <td nzAlign="center">{{getTextEnum(atencion.modalidad, 'modalidad') | titlecase }}</td>
+      <td nzAlign="center"> <p class="font-bold">{{atencion.codigo}}</p></td>
       <td nzAlign="center">{{atencion.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
-      <td nzAlign="center">{{atencion.nombreTipoEntidad}}</td>
-      <td>{{atencion.nombreEntidad}}</td>
-      <td nzAlign="center">{{atencion.autoridad ? 'Si' : 'No' }}</td>
-      <td nzAlign="center">{{atencion.nombreEspacio | titlecase }}</td>
-      <td nzAlign="center">{{getTextEnum(atencion.clasificacion, 'clasificacion') | titlecase}}</td>
-      <td nzAlign="center">
-        <nz-space>
-          @if(atencionActions.edit){
-          <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !geDocumentAtencion(atencion) ? 'Actualizar Atención' : '' }}" [disabled]="geDocumentAtencion(atencion) && atencion.validado"><span nz-icon
-              nzType="edit" nzTheme="outline"></span></button>
-          }
-          @if(atencionActions.delete){
-          <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip="{{ !geDocumentAtencion(atencion) ? 'Eliminar Atención' : '' }}"
-            (click)="eliminarAsistencia(atencion.asistenciaId!)" [disabled]="geDocumentAtencion(atencion) && atencion.validado"><span nz-icon nzType="delete"
-              nzTheme="outline"></span></button>
-          }
-          @if(perfilAuth === 12){
-            <button *nzSpaceItem nz-button nzInfo nzType="link" nz-tooltip="{{ geDocumentAtencion(atencion) && !atencion.validado ? 'Validar Atención' : '' }}" (click)="validarAtencion(atencion.asistenciaId!)"
-              [disabled]="!geDocumentAtencion(atencion) || atencion.validado"><span nz-icon nzType="check"
+      @if(permisosPCM){
+        <td nzAlign="center">{{atencion.tipo | titlecase}}</td>
+        <td nzAlign="center">{{atencion.modalidad | titlecase }}</td>
+      } @else {
+        <td nzAlign="center">
+          <p [nz-tooltip]="atencion.evento">{{ atencion.eventoSlug }}</p>
+        </td>
+        <td nzAlign="center">{{atencion.unidadOrganica }}</td>
+      }
+      <td nzAlign="center"><p nz-tooltip="{{atencion.tipoEntidad }}">{{atencion.tipoEntidadSlug}}</p></td>
+      <td><p nz-tooltip="{{atencion.entidad}}">{{atencion.entidadTipo}} {{atencion.entidadSlug}}</p></td>
+      <td nzAlign="center">{{atencion.participaAutoridad }}</td>
+      <td nzAlign="center">{{atencion.espacio| titlecase }}</td>
+      <td nzAlign="center">{{atencion.clasificacion | titlecase}}</td>
+      @if(atencionActions.edit || atencionActions.delete || atencionActions.validate){
+        <td nzAlign="center">
+          <nz-space>
+            @if(atencionActions.edit){
+            <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !disabledActions(atencion) ? 'Actualizar Atención' : '' }}" [disabled]="disabledActions(atencion)"><span nz-icon
+                nzType="edit" nzTheme="outline"></span></button>
+            }
+            @if(atencionActions.delete){
+            <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip="{{ !disabledActions(atencion) ? 'Eliminar Atención' : '' }}"
+              (click)="eliminarAsistencia(atencion.asistenciaId!)" [disabled]="disabledActions(atencion)"><span nz-icon nzType="delete"
                 nzTheme="outline"></span></button>
-          }
-        </nz-space>
-      </td>
+            }
+            @if(atencionActions.validate){
+              <button *nzSpaceItem nz-button nzInfo nzType="link" nz-tooltip="{{ geDocumentAtencion(atencion) && !atencion.validado ? 'Validar Atención' : '' }}" (click)="validarAtencion(atencion.asistenciaId!)"
+                [disabled]="!geDocumentAtencion(atencion) || atencion.validado"><span nz-icon nzType="check"
+                  nzTheme="outline"></span></button>
+            }
+          </nz-space>
+        </td>
+      }
     </tr>
     }
   </tbody>
@@ -62,11 +78,13 @@
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
     <p class="mb-2 sm:mb-0">Resultados ({{pagination.total}})</p>
     <div class="flex gap-2">
-      @if(perfilAuth == 11 || perfilAuth == 12){
+      @if(atencionActions.goals){
         <a [routerLink]="['/atenciones/metas']" nz-button nzType="default">
           <span nz-icon nzType="rise"></span>
           <span class="button-text">Metas</span>
         </a>
+      }
+      @if (atencionActions.report) {
         <button nz-button nzType="default" (click)="changeDrawerFilters(true)">
           <span nz-icon nzType="filter"></span>
           <span class="button-text">Filtros</span>
@@ -76,19 +94,19 @@
           <span class="button-text">Exportar</span>
         </button>
       }
-        @if(atencionActions.new){
-        <button nz-button nzType="primary" (click)="crearAsistenciaTecnica()">
+      @if(atencionActions.new){
+        <button nz-button nzType="primary" (click)="crearAsistenciaTecnica()" [disabled]="!this.permisosPCM && !this.evento()">
           <span nz-icon nzType="plus" nzTheme="outline"></span>
           <span class="button-text">Nueva Atención</span>
         </button>
-        }
+      }
     </div>
   </div>
 </ng-template>
 
-<app-filtros-atencion [visible]="filtrosVisible" (visibleDrawer)="changeDrawerFilters(false)" (filters)="filtersToDrawer($event)" (export)="reporteExcelAtenciones()" [tipos]="tipos"/>
+<app-filtros-atencion [visible]="filtrosVisible" [permisosPCM]="permisosPCM" (visibleDrawer)="changeDrawerFilters(false)" (filters)="filtersToDrawer($event)" (export)="reporteExcelAtenciones()" [tipos]="tipos"/>
 
-<app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos"
+<!-- <app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos" [permisosPCM]="permisosPCM"
   [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica" [departamentos]="departamentos()"
   [clasificaciones]="clasificaciones" [orientaciones]="orientaciones" (addFormDate)="getAddFormAdded($event)"
-  (setCloseShow)="showNzModal = false" [evento]="evento()!" />
+  (setCloseShow)="showNzModal = false" [evento]="evento()!" /> -->

@@ -81,7 +81,7 @@
 		<nz-tab nzTitle="TRANSFERENCIAS RESUMIDO">
 			<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderResumen" nzShowSizeChanger nzSize="small"
 				[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="paginationResumen.total!"
-				[nzPageSize]="paginationResumen.pageSize!" [nzPageIndex]="paginationResumen.currentPage!">
+				[nzPageSize]="paginationResumen.pageSize!" [nzPageIndex]="paginationResumen.currentPage!" (nzQueryParams)="paramsDetailChange($event)">
 				<thead>
 					<tr>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo</th>

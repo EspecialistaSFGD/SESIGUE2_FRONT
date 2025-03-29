@@ -477,7 +477,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
     if (value != null) {
       // this.espaciosStore.limpiarEspacios();
-      this.espaciosStore.listarEventos(Number(value.value));
+      this.espaciosStore.listarEventos([Number(value.value)]);
 
 
       if (this.espaciosSeleccionados != null) {
