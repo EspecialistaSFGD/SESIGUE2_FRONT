@@ -4,6 +4,8 @@ import { CalendarModule } from "primeng/calendar";
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 
 @NgModule({
@@ -13,14 +15,18 @@ import { MultiSelectModule } from 'primeng/multiselect';
     CalendarModule,
     TableModule,
     TooltipModule,
-    MultiSelectModule
+    MultiSelectModule,
+    RadioButtonModule,
+    InputNumberModule
   ],
   exports: [
     DropdownModule,
     CalendarModule,
     TableModule,
     TooltipModule,
-    MultiSelectModule
+    MultiSelectModule,
+    RadioButtonModule,
+    InputNumberModule
   ]
 })
 export class PrimeNgModule { }
