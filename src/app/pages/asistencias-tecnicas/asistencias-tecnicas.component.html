@@ -104,7 +104,7 @@
   </div>
 </ng-template>
 
-<app-filtros-atencion [visible]="filtrosVisible" [permisosPCM]="permisosPCM" (visibleDrawer)="changeDrawerFilters(false)" (filters)="filtersToDrawer($event)" (export)="reporteExcelAtenciones()" [tipos]="tipos"/>
+<app-filtros-atencion [visible]="filtrosVisible" [paginationFilters]="paginationFilter" [permisosPCM]="permisosPCM" (visibleDrawer)="changeDrawerFilters(false)" (filters)="filtersToDrawer($event)" (export)="reporteExcelAtenciones()" [tipos]="tipos"/>
 
 <!-- <app-formulario-asistencia-tecnica [create]="create" [showModal]="showNzModal" [tipos]="tipos" [permisosPCM]="permisosPCM"
   [modalidades]="modalidaades" [asistenciaTecnica]="asistenciaTecnica" [departamentos]="departamentos()"

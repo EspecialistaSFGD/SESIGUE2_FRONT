@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -103,7 +103,7 @@ export default class AsistenciasTecnicasComponent {
     this.permisosPCM = this.setPermisosPCM()
     this.obtenerEventos()
     this.getPermissions()
-    this.obtenerAsistenciasTecnicas()
+    // this.obtenerAsistenciasTecnicas()
     this.obtenerDepartamentos()
     this.getParams()
   }
@@ -147,11 +147,29 @@ export default class AsistenciasTecnicasComponent {
         this.pagination.currentPage = params['pagina']
         this.pagination.pageSize = params['cantidad']
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+        if(params['eventoId']){
+          this.pagination.eventoId = params['eventoId']
+          this.paginationFilter.eventoId = params['eventoId']
+        } else {
+          delete this.pagination.eventoId
+          delete this.paginationFilter.eventoId
+        }
+        if(params['fechaInicio']){
+          this.pagination.fechaInicio = params['fechaInicio']
+          this.paginationFilter.fechaInicio = params['fechaInicio']
+        } else {
+          delete this.pagination.fechaInicio
+          delete this.paginationFilter.fechaInicio
+        }
+        if(params['fechaFin']){
+          this.pagination.fechaFin = params['fechaFin']
+          this.paginationFilter.fechaFin = params['fechaFin']
+        } else {
+          delete this.pagination.fechaFin
+          delete this.paginationFilter.fechaFin
+        }        
         this.obtenerAsistenciasTecnicas()
-      } else {
-        this.pagination.columnSort = 'fechaAtencion'
       }
-
     });
   }
 
@@ -163,7 +181,7 @@ export default class AsistenciasTecnicasComponent {
 
   obtenerAsistenciasTecnicas() {
     this.loadingData = true
-    this.asistenciaTecnicaService.getAllAsistenciasTecnicas({...this.pagination, pageSize: 10})
+    this.asistenciaTecnicaService.getAllAsistenciasTecnicas({...this.pagination })
       .subscribe(resp => {
         this.loadingData = false
         if (resp.success == true) {
@@ -224,13 +242,14 @@ export default class AsistenciasTecnicasComponent {
       return sortsNames.includes(item.value!) ? total + 1 : total
     }, 0)
     const ordenar = sorts?.value!.slice(0, -3)
-    this.router.navigate(
-      [],
-      {
-        relativeTo: this.route,
-        queryParams: { pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar }
-      }
-    );
+    this.paramsNavigate({ pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar })
+    // this.router.navigate(
+    //   [],
+    //   {
+    //     relativeTo: this.route,
+    //     queryParams: { pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar }
+    //   }
+    // );
   }
 
   validarAtencion(asistenciaId: string){
@@ -277,6 +296,25 @@ export default class AsistenciasTecnicasComponent {
       paginationFilters.sectorId = this.sectorAuth
     }
     this.paginationFilter = paginationFilters
+    
+    const eventoId = paginationFilters.eventoId ? paginationFilters.eventoId : null
+    const fechaInicio = paginationFilters.fechaInicio ? paginationFilters.fechaInicio : null
+    const fechaFin = paginationFilters.fechaFin ? paginationFilters.fechaFin : null
+    const sectorId = paginationFilters.sectorId ? paginationFilters.sectorId : null
+
+    
+    this.paramsNavigate({ eventoId, fechaInicio, fechaFin })
+  }
+
+  paramsNavigate(queryParams: Params){
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: 'merge',
+      }
+    );
   }
 
   reporteExcelAtenciones(){
@@ -298,17 +336,12 @@ export default class AsistenciasTecnicasComponent {
   }
 
   updatedAsistencia(asistencia: AsistenciaTecnicaResponse) {    
-    this.asistenciaTecnica = asistencia    
-    // this.create = false
-    // this.showNzModal = true
+    this.asistenciaTecnica = asistencia  
     this.atencionFormModal(false)
   }
 
   crearAsistenciaTecnica() {
-    // this.create = true
-    // const fechaAtencion = new Date();
     this.asistenciaTecnica = {} as AsistenciaTecnicaResponse
-    // this.showNzModal = true
     this.atencionFormModal(true)
   }
 

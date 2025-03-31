@@ -16,6 +16,7 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 export class FiltrosAtencionComponent {
   @Input() visible: boolean = false
   @Input() tipos!: ItemEnum[]
+  @Input() paginationFilters: Pagination = {}
   @Input() permisosPCM: boolean = false
   @Output() visibleDrawer = new EventEmitter()
   @Output() filters = new EventEmitter<Pagination>()
@@ -38,8 +39,6 @@ export class FiltrosAtencionComponent {
     currentPage: 1,
     total: 0
   }
-
-  paginationFilters: Pagination = {}
 
   formFilters: FormGroup = this.fb.group({
     fechaInicio: [''],
