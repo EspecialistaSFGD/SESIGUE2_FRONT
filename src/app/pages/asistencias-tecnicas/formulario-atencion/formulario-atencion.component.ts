@@ -163,15 +163,34 @@ export class FormularioAtencionComponent {
     const contactoAutoridad = this.permisosPCM && !this.atencion.contactoAutoridad  ? '' : this.atencion.contactoAutoridad
     this.formAtencion.reset({...this.atencion, sector, sectorId, eventoId, tipoPerfil: this.permisosPCM, fechaAtencion, validado: false, unidadId, orientacionId, contactoAutoridad})
 
-    if(!this.permisosPCM){
-      this.formAtencion.get('fechaAtencion')?.disable()
-      this.entidadesStore.listarEntidades(0, 1, Number(sectorId));
-    }
     const lugarControl = this.formAtencion.get('lugarId')
     this.permisosPCM ? lugarControl?.enable() : lugarControl?.disable()
     const especiosControl = this.formAtencion.get('espacioId')
     this.permisosPCM ? especiosControl?.enable() : especiosControl?.disable()
 
+    if(!this.permisosPCM){
+      this.formAtencion.get('fechaAtencion')?.disable()
+      this.entidadesStore.listarEntidades(0, 1, Number(sectorId));
+    } else {
+      if(this.esDocumento){
+        this.formAtencion.get('fechaAtencion')?.disable()
+        this.formAtencion.get('lugarId')?.disable()
+        this.formAtencion.get('documentoTitulo')?.disable()
+        this.formAtencion.get('numeroExpediente')?.disable()
+        this.formAtencion.get('lugarId')?.disable()
+        this.formAtencion.get('espacioId')?.disable()
+        this.formAtencion.get('clasificacion')?.disable()
+        this.formAtencion.get('tema')?.disable()
+        this.formAtencion.get('nombreAutoridad')?.disable()
+      } else {
+        const autoridad = this.formAtencion.get('autoridad')
+        if(autoridad && !this.create){
+          this.formAtencion.get('dniAutoridad')?.disable()
+          this.formAtencion.get('nombreAutoridad')?.disable()
+          this.formAtencion.get('cargoAutoridad')?.disable()
+        }
+      }
+    }
 
     this.setFormubigeo()
     if(!this.create){
@@ -379,6 +398,7 @@ export class FormularioAtencionComponent {
     this.asistenciaTecnicaAgendaService.getAllAgendas(this.atencion.asistenciaId!, {...this.pagination, columnSort: 'agendaId'})
       .subscribe(resp => {
         if (resp.success == true) {
+          console.log(resp.data)
           this.agendas.clear()
           for (let data of resp.data) {
             const agendaRow = this.fb.group({
@@ -778,7 +798,7 @@ export class FormularioAtencionComponent {
 
   changeTipoInversion(){
     const inversion = this.formAtencion.get('orientacionId')?.value
-    this.cuiClasificacion = inversion == 1 || inversion == 2 ? true : false
+    this.cuiClasificacion = inversion == 2|| inversion == 3 ? true : false
   }
 
   caracteresContador(control: string, qty: number) {
