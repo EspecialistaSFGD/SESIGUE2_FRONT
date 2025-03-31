@@ -39,6 +39,7 @@ export class FormularioAtencionComponent {
   esRegional: boolean = false
   fileListMeet: NzUploadFile[] = [];
   fileListAttendance: NzUploadFile[] = [];
+  cuiClasificacion: boolean = false
   
   evento = signal<EventoResponse>(this.dataAtention.evento)
   departamentos = signal<UbigeoDepartmentResponse[]>(this.dataAtention.departamentos)
@@ -152,7 +153,7 @@ export class FormularioAtencionComponent {
   }
 
   setFormValue(){
-    const fechaAtencion = this.atencion.fechaAtencion ?? new Date()
+    const fechaAtencion = !this.create ? new Date(this.atencion.fechaAtencion) : new Date()
 
     const sector = !this.permisosPCM || !this.atencion.sectorId ? this.authUser.sector.label : this.atencion.sector
     const sectorId = !this.permisosPCM || !this.atencion.sectorId ? this.authUser.sector.value : this.atencion.sectorId
@@ -162,10 +163,15 @@ export class FormularioAtencionComponent {
     const contactoAutoridad = this.permisosPCM && !this.atencion.contactoAutoridad  ? '' : this.atencion.contactoAutoridad
     this.formAtencion.reset({...this.atencion, sector, sectorId, eventoId, tipoPerfil: this.permisosPCM, fechaAtencion, validado: false, unidadId, orientacionId, contactoAutoridad})
 
+    if(!this.permisosPCM){
+      this.formAtencion.get('fechaAtencion')?.disable()
+      this.entidadesStore.listarEntidades(0, 1, Number(sectorId));
+    }
     const lugarControl = this.formAtencion.get('lugarId')
     this.permisosPCM ? lugarControl?.enable() : lugarControl?.disable()
     const especiosControl = this.formAtencion.get('espacioId')
     this.permisosPCM ? especiosControl?.enable() : especiosControl?.disable()
+
 
     this.setFormubigeo()
     if(!this.create){
@@ -465,14 +471,14 @@ export class FormularioAtencionComponent {
     const provinciaControl = this.formAtencion.get('provincia')
     const distritoControl = this.formAtencion.get('distrito')
     this.esMancomunidad ? departamentoControl?.disable() : departamentoControl?.enable()
+    this.formAtencion.get('entidadId')?.reset()
+    this.formAtencion.get('entidad')?.reset()
     if(this.esMancomunidad){
-      this.formAtencion.get('entidad')?.reset()
       departamentoControl?.reset()
       provinciaControl?.disable()
       provinciaControl?.reset()
       this.obtenerMancomunidadesService(tipo!.abreviatura)
     } else {
-      this.formAtencion.get('entidadId')?.reset()
       !this.esRegional && departamentoControl?.value ? provinciaControl?.enable() : provinciaControl?.disable()
       provinciaControl?.reset()
       if(departamentoControl?.value){
@@ -570,7 +576,14 @@ export class FormularioAtencionComponent {
   }
 
   changeMancomunidad(){
-
+    const mancomunidad = this.formAtencion.get('entidadId')?.value
+    const entidadControl = this.formAtencion.get('entidad')
+    if(mancomunidad){
+      const entidad = this.mancomunidades().find(item => item.entidadId == mancomunidad)
+      entidadControl?.setValue(entidad!.entidad)
+    } else {
+      entidadControl?.reset()
+    }
   }
 
   changeAutoridad(){
@@ -661,8 +674,8 @@ export class FormularioAtencionComponent {
   
   addAgendadRow() {
     const agendaRow = this.fb.group({
-      agendaId: [''],
-      clasificacionId: ['', Validators.required],
+      agendaId: [],
+      clasificacionId: [null, Validators.required],
       cui: [''],
       inversion: ['']
     })
@@ -725,10 +738,12 @@ export class FormularioAtencionComponent {
       const newValue = value.substring(0, 7);
       cui?.setValue(newValue)
     }
+
     if (value.length == 7) {
       if (this.timeoutId) {
         clearTimeout(this.timeoutId)
       }
+
       // this.timeoutId = setTimeout(() => {
       //   this.ssiService.obtenerSSIMef(value)
       //     .subscribe(resp => {
@@ -760,6 +775,11 @@ export class FormularioAtencionComponent {
     this.fileListAttendance = this.fileListAttendance.concat(file);
     return false;
   };
+
+  changeTipoInversion(){
+    const inversion = this.formAtencion.get('orientacionId')?.value
+    this.cuiClasificacion = inversion == 1 || inversion == 2 ? true : false
+  }
 
   caracteresContador(control: string, qty: number) {
     const element = this.formAtencion.get(control)

@@ -5,9 +5,9 @@
 // @import "../node_modules/ng-zorro-antd/ng-zorro-antd.dark.less";
 // Override less variables to here
 // View all variables: https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/style/themes/default.less
-// @import "../node_modules/primeng/resources/themes/lara-light-blue/theme.css";
-// @import "../node_modules/primeng/resources/primeng.min.css";
-// @import "../node_modules/primeicons/primeicons.css";
+@import "../node_modules/primeng/resources/themes/lara-light-blue/theme.css";
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeicons/primeicons.css";
 
 @primary-color: #0866ae;
 @info-color: #1890ff;
@@ -30,7 +30,7 @@
 @btn-success-active-bg: #128e43; // Color de fondo cuando se hace clic
 @btn-success-focus-shadow: 0 0 0 4px rgba(28, 160, 90, 0.5); // Sombra en el foco
 
-
+@colorBase: #334155;
 // dark theme
 @menu-dark-item-active-bg: #111;
 // @menu-dark-item-active-danger-bg: @error-color;
@@ -225,20 +225,19 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
     @apply text-rose-500;
 }
 p-dropdown {
-    @apply block border border-gray-400 hover:border-gray-500 rounded-md bg-white text-gray-700;
-    width: auto !important;
-    min-width: 150px;
-    max-width: 100%;
+    @apply block border border-gray-400 hover:border-gray-500 rounded-md bg-white text-gray-700 hover:shadow-none focus:shadow-none;
     .p-dropdown-clearable, .p-dropdown{
-        @apply rounded-md w-full px-4 py-2;
-        &.p-disabled{
-            @apply bg-gray-100 hover:border-gray-400;
+        @apply rounded-md w-full hover:shadow-none focus:shadow-none;
+        .p-inputtext{
+            @apply text-[@colorBase] text-sm py-2;
         }
         .p-placeholder{
-            @apply text-gray-400 text-sm;
+            @apply text-gray-400 text-sm py-2;
+        }
+        &.p-disabled{
+            @apply bg-gray-100 hover:border-gray-400 text-gray-200;
         }
         timesicon{
-            @apply mr-5;
             .p-dropdown-clear-icon {
                 @apply stroke-gray-200;
             }
@@ -249,26 +248,24 @@ p-dropdown {
             left: 0 !important;
         }
         .p-dropdown-panel{
-            @apply bg-white border border-solid border-gray-400 rounded-md shadow-lg;
-            
-            .p-dropdown-empty-message{
-                @apply px-2 py-1 hover:bg-gray-200;
-            }
+            @apply border border-solid border-gray-400 rounded-md;
             .p-dropdown-items{
                 @apply p-0 m-0;
                 .p-dropdown-item {
-                    @apply px-2 py-1 hover:bg-gray-200;
+                    @apply px-2 py-1 hover:bg-gray-200 text-[@colorBase] text-sm;
+                    &.p-highlight{
+                        @apply bg-[@primary-color] text-white;
+                    }
+                }
+                .p-dropdown-empty-message{
+                    @apply px-2 py-1 text-gray-400;
                 }
             }
         }
     }
-    // .p-dropdown-panel {
-    // width: auto !important; /* Ajusta el ancho del menú desplegable */
-    // min-width: 150px;
-    // }
-  }
+}
 
-  .p-datatable-table{
+.p-datatable-table{
     .p-datatable-thead > tr > th{
         border-width: 1px 0 1px 0;
         @apply bg-gray-50 text-gray-700 px-2 py-2 border-gray-200;
@@ -277,8 +274,116 @@ p-dropdown {
         border-width: 0 0 1px 0;
         @apply bg-white px-2 py-2 border-gray-200;
     }
-  }
+}
+.p-calendar{
+    @apply w-full border border-gray-400 hover:border-gray-500 rounded-md bg-white text-gray-700 outline-none hover:shadow-none focus:shadow-none;
+    &.p-calendar-disabled{
+        @apply bg-gray-200;
+    }
+    .p-inputtext{
+        @apply px-2 py-2 border-white hover:border-white focus:border-white outline-none text-sm hover:shadow-none focus:shadow-none;
+    }
+    .p-icon-wrapper{
+        @apply px-2 flex items-center;
+    }
 
+    .p-datepicker{
+        @apply border border-gray-400 shadow-lg;
+        left: 0 !important;
+    }
+    .p-datepicker-group-container{
+        .p-datepicker-group{
+            @apply flex flex-col;
+            .p-datepicker-header{
+                @apply py-1 border-b border-gray-200;
+                .p-datepicker-title{
+                    @apply flex;
+                    .p-datepicker-month, .p-datepicker-year{
+                        @apply px-1 text-sm font-normal hover:font-medium;
+                    }
+                }
+                .p-datepicker-prev, .p-datepicker-next{
+                    @apply hover:bg-gray-200 py-2 rounded-full;
+                }
+            }
+            .p-datepicker-calendar{
+                thead tr th {
+                    @apply p-0;
+                    span{
+                        @apply font-medium text-sm text-[@colorBase];
+                    }
+                }
+                tbody tr td {
+                    @apply p-0;
+                    span{
+                        @apply w-8 h-8 text-sm text-[@colorBase] hover:bg-gray-200 rounded-full hover:shadow-none focus:shadow-none;
+                    }
+                    &.p-datepicker-other-month{
+                        span{
+                            @apply text-gray-400 hover:bg-white cursor-default;
+                        }
+                    }
+                    &.p-datepicker-today{
+                        span{
+                            @apply bg-gray-200;
+                        }
+                        .p-hidden-accessible{
+                            @apply hidden;
+                        }
+                    }
+                   span.p-highlight{
+                        @apply bg-[@primary-color] text-white;
+                    }
+                }
+            }
+        }
+    }
+    .p-monthpicker{
+        .p-monthpicker-month {
+            @apply text-sm text-[@colorBase] py-1 hover:bg-gray-200 rounded-md;
+        }
+    }
+    .p-yearpicker{
+        .p-yearpicker-year{
+            @apply relative text-sm text-[@colorBase] py-1 hover:bg-gray-200 rounded-md hover:shadow-none focus:shadow-none;
+            .p-hidden-accessible{
+                @apply absolute w-full h-full text-white bg-[@primary-color];
+                z-index: 1;
+            }
+        }
+    }
+    .p-datepicker-buttonbar{
+        @apply p-0;
+        button {
+            @apply text-xs text-[@colorBase] py-2 px-3 hover:bg-gray-200;
+        }
+    }
+}
+
+.p-radiobutton{
+    .p-hidden-accessible{
+        @apply leading-none;
+        input{
+            @apply w-6 h-6;
+            accent-color: @primary-color;
+        }
+    }
+}
+.accent-pink-500{
+    accent-color: @colorBase;
+}
+.p-inputnumber{
+    @apply w-full border border-solid border-gray-400 rounded-md;
+    .p-inputtext {
+        @apply outline-none border-l border-r border-solid border-gray-400 text-center w-full px-3 py-2 text-sm hover:border-gray-500 focus:border-gray-500 hover:shadow-none focus:shadow-none;
+    }
+    .p-inputnumber-button-down, .p-inputnumber-button-up{
+        @apply w-8 hover:bg-gray-200 hover:shadow-none focus:shadow-none;
+        span {
+            @apply text-sm text-[@colorBase];
+        }
+    }
+}
 @media (min-width: 576px) {
     .container {
         max-width: 540px;
