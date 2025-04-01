@@ -30,6 +30,7 @@
 	<thead>
 		<tr>
 			<th nzWidth="40px" nzAlign="center" nzColumnKey="validado" [nzSortFn]="true"></th>
+			<th nzWidth="100px" nzAlign="center">Codigo</th>
 			<th nzWidth="100px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
 			<th nzLeft nzWidth="150px" nzColumnKey="numeroExpediente" [nzSortFn]="true">Expediente</th>
 			<th nzLeft nzWidth="200px" nzColumnKey="documentoTitulo" [nzSortFn]="true">Documento</th>
@@ -47,6 +48,7 @@
 			<td nzAlign="center" >
 				<nz-avatar [nzSize]="24" [ngClass]="{ 'bg-green-500' : detail.validado, 'bg-gray-300' : !detail.validado }" nzIcon="check" [nz-tooltip]=" detail.validado ? 'Validado' : 'Sin validar'"></nz-avatar>
 			</td>
+			<td nzAlign="center"> <p class="font-bold">{{detail.codigo}}</p></td>
 			<td nzAlign="center" >{{detail.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
 			<td>{{detail.numeroExpediente}}</td>
 			<td>{{detail.documentoTitulo}}</td>

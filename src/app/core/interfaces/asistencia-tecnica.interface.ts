@@ -88,6 +88,7 @@ export interface AtencionesCargasMasivasResponses extends DataResponses {
 
 export interface AtencionCargaMasivaResponse {
   id?: string,
+	codigo: string,
 	fechaRegistro: Date,
 	fechaAtencion: Date,
 	numeroExpediente: string,
