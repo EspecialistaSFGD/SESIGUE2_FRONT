@@ -5,8 +5,8 @@
         @if(acuerdosService.estadoEvento() === 'SEGUIMIENTO'){
             <nz-page-header-extra>
                 <nz-space class="flex gap-2">
-                    <button nz-button nzType="default" (click)="noCumplidoAcuerdo(false)">No Cumplido</button>
-                    <button nz-button nzType="default" (click)="noCumplidoAcuerdo(true)">No Cumplido R</button>
+                    <!-- <button nz-button nzType="default" (click)="noCumplidoAcuerdo(false)">No Cumplido</button>
+                    <button nz-button nzType="default" (click)="noCumplidoAcuerdo(true)">No Cumplido R</button> -->
                     @if(authPermission.approve){
                         <button [disabled]="acuerdosService.isDesestimated() ? true : this.acuerdosService.acuerdoSeleccionado()?.evidenciaDesestimacion == null" nz-button (click)="aprobarDesestimacion(acuerdosService.acuerdoSeleccionado()!)" nzType="default">Aprobar Desestimación</button>
                     }
