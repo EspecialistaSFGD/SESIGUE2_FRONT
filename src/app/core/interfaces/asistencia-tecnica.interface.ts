@@ -104,6 +104,29 @@ export interface AtencionCargaMasivaResponse {
 	validado: string
 }
 
+export interface OrientacionAtencion {
+  orientacionId: number
+  nombre: string,
+}
+
+export interface AsistentesAtencionResponse{
+  data: AsistenteAtencionResponse,
+}
+
+export interface AsistenteAtencionResponse {
+  asistenciaId: number,
+  asistenteId: number,
+  entidadId: number,
+  entidad: string,
+  entidadTipo: string,
+  ubigeo: string,
+  dni: string,
+  nombres: string,
+  cargo: string,
+  telefono: string,
+  email: string,
+}
+
 export interface DataModalAtencion {
   atencion: AsistenciaTecnicaResponse
   clasificaciones: ItemEnum[]

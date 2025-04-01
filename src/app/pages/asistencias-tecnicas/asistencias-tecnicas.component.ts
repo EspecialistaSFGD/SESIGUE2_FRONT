@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, OrientacionAtencion, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 // import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
@@ -69,11 +69,11 @@ export default class AsistenciasTecnicasComponent {
   tipos: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasTipos)
   modalidaades: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasModalidad)
   clasificaciones: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasClasificacion)
-  public orientaciones: ItemEnum[] = [
-    { value: '1', text: 'Actividad' },
-    { value: '2', text: 'Proyecto' },
-    { value: '3', text: 'Idea' },
-    { value: '4', text: 'Programa' }
+  public orientaciones: OrientacionAtencion[] = [
+    { orientacionId: 1, nombre: 'Actividad' },
+    { orientacionId: 2, nombre: 'Proyecto' },
+    { orientacionId: 3, nombre: 'Idea' },
+    { orientacionId: 4, nombre: 'Programa' }
   ]
 
   private modal = inject(NzModalService);
@@ -179,10 +179,10 @@ export default class AsistenciasTecnicasComponent {
     this.atencionActions = obtenerPermisosBotones(atenciones!.botones!)    
   }
 
-  obtenerAsistenciasTecnicas() {
+  obtenerAsistenciasTecnicas() {  
     this.loadingData = true
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas({...this.pagination })
-      .subscribe(resp => {
+      .subscribe(resp => {                
         this.loadingData = false
         if (resp.success == true) {
           this.asistenciasTecnicas.set(resp.data)
@@ -290,7 +290,7 @@ export default class AsistenciasTecnicasComponent {
     this.filtrosVisible = visible
   }
 
-  filtersToDrawer(paginationFilters: Pagination){
+  filtersToDrawer(paginationFilters: Pagination){    
     paginationFilters.perfil = this.perfilAuth;
     if(!this.permisosPCM){
       paginationFilters.sectorId = this.sectorAuth
@@ -374,10 +374,12 @@ export default class AsistenciasTecnicasComponent {
           label: action,
           type: 'primary',
           onClick: (componentResponse) => {
-            const formAtencion = componentResponse!.formAtencion
+            const formAtencion = componentResponse!.formAtencion  
+            // console.log(formAtencion.value);
+                      
             if (formAtencion.invalid) {
-              // const invalidFields = Object.keys(formAtencion.controls).filter(field => formAtencion.controls[field].invalid);
-              // console.error('Invalid fields:', invalidFields);
+              const invalidFields = Object.keys(formAtencion.controls).filter(field => formAtencion.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
               return formAtencion.markAllAsTouched();
             }
 
@@ -391,8 +393,6 @@ export default class AsistenciasTecnicasComponent {
 
             const tipoPerfil = formAtencion.get('tipoPerfil')?.value
             formAtencion.get('tipoPerfil')?.setValue(`${tipoPerfil ? 0 : 1}`)
-            // console.log(fechaAtencion);
-            // console.log(formAtencion.value);
             
             if(create){
               this.crearAtencion(formAtencion)
