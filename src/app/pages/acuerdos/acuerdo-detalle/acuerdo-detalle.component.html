@@ -2,24 +2,25 @@
 <div class="site-page-header-ghost-wrapper">
     <nz-page-header nzBackIcon (nzBack)="onBack('acuerdos')" [nzGhost]="false">
         <nz-page-header-title>Detalle de acuerdo</nz-page-header-title>
-
         @if(acuerdosService.estadoEvento() === 'SEGUIMIENTO'){
-        <nz-page-header-extra>
-            <nz-space class="flex gap-2">
-                @if(authPermission.approve){
-                    <button [disabled]="acuerdosService.isDesestimated() ? true : this.acuerdosService.acuerdoSeleccionado()?.evidenciaDesestimacion == null" nz-button (click)="aprobarDesestimacion(acuerdosService.acuerdoSeleccionado()!)" nzType="default">Aprobar Desestimación</button>
-                }
-                <button
-                    [disabled]="!authService.permisos()?.puede_solicitar_desestimacion || acuerdosService.isDesestimating()"
-                    *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
-                    nzDanger>Solicitar desestimación</button>
-                <!-- <button
-                    [disabled]="(acuerdosService.acuerdoSeleccionado()?.plazo!.toString() | dueTo)||acuerdosService.isDesestimating()"
-                    *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
-                    nzDanger>Solicitar
-                    desestimación</button> -->
-            </nz-space>
-        </nz-page-header-extra>
+            <nz-page-header-extra>
+                <nz-space class="flex gap-2">
+                    <button nz-button nzType="default" (click)="noCumplidoAcuerdo(false)">No Cumplido</button>
+                    <button nz-button nzType="default" (click)="noCumplidoAcuerdo(true)">No Cumplido R</button>
+                    @if(authPermission.approve){
+                        <button [disabled]="acuerdosService.isDesestimated() ? true : this.acuerdosService.acuerdoSeleccionado()?.evidenciaDesestimacion == null" nz-button (click)="aprobarDesestimacion(acuerdosService.acuerdoSeleccionado()!)" nzType="default">Aprobar Desestimación</button>
+                    }
+                    <button
+                        [disabled]="!authService.permisos()?.puede_solicitar_desestimacion || acuerdosService.isDesestimating()"
+                        *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
+                        nzDanger>Solicitar desestimación</button>
+                    <!-- <button
+                        [disabled]="(acuerdosService.acuerdoSeleccionado()?.plazo!.toString() | dueTo)||acuerdosService.isDesestimating()"
+                        *nzSpaceItem nz-button (click)="onSolicitarDesestimacion(acuerdosService.acuerdoSeleccionado()!)"
+                        nzDanger>Solicitar
+                        desestimación</button> -->
+                </nz-space>
+            </nz-page-header-extra>
         }
         <nz-page-header-content>
             <nz-descriptions nzSize="small" [nzColumn]="{ xxl: 4, xl: 4, lg: 2, md: 2, sm: 2, xs: 1 }" nzBordered>
