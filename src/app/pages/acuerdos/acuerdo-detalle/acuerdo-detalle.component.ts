@@ -39,6 +39,7 @@ import { DesestimacionComponent } from '../../../libs/shared/components/desestim
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { AprobarDesestimacionComponent } from './aprobar-desestimacion/aprobar-desestimacion.component';
 import { AcuerdoDesestimacionResponse, ButtonsActions } from '@core/interfaces';
+import { AcuerdoNoCumplidoComponent } from './acuerdo-no-cumplido/acuerdo-no-cumplido.component';
 
 const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
@@ -569,6 +570,39 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     avanceModal.afterClose.subscribe(result => {
       instance.avanceForm.reset();
     });
+  }
+
+  noCumplidoAcuerdo(reasignado: boolean){
+    const title = `No Cumpliedo ${reasignado ? 'Reasignado' : ''}`
+    const acuerdo = this.acuerdosService.acuerdoSeleccionado()!
+    const modal = this.modal.create<AcuerdoNoCumplidoComponent>({
+      nzTitle: title,
+      nzContent: AcuerdoNoCumplidoComponent,
+      nzData: {
+        acuerdo: acuerdo.acuerdoId,
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Guardar',
+          type: 'primary',
+          onClick: (componentInstance) => {
+            // const form = componentInstance?.formAprobarDesestimacion
+            // if (form!.invalid) {
+            //   return form!.markAllAsTouched()
+            // }
+            console.log(componentInstance);
+            const usuarioId = this.authService.getCodigoUsuario()
+            console.log(usuarioId);
+            
+          }
+        }
+      ]
+    })
   }
 
   aprobarDesestimacion(acuerdo: AcuerdoPedidoModel){

@@ -1,0 +1,16 @@
+<form [formGroup]="formCumplimiento" nz-form nzLayout="vertical">
+	<div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+			<div nz-col class="gutter-row" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+					<nz-form-item>
+							<nz-form-label nzRequired [nzSpan]="null" nzFor="comentario">Comentario</nz-form-label>
+							<nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
+									<textarea nz-input id="comentario" formControlName="comentario"
+											placeholder="Ingrese el comentario" [nzAutosize]="{ minRows: 3 }"></textarea>
+							</nz-form-control>
+							<div class="text-danger" *ngIf="alertMessageError('comentario')">
+								{{msgErrorControl('comentario','Comentario')}}</div>
+					</nz-form-item>
+			</div>
+	</div>
+</form>
+
