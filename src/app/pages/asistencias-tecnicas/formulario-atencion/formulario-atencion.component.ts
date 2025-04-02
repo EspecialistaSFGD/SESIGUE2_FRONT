@@ -529,6 +529,7 @@ export class FormularioAtencionComponent {
     const departamentoControl = this.formAtencion.get('departamento')
     const provinciaControl = this.formAtencion.get('provincia')
     const distritoControl = this.formAtencion.get('distrito')
+    const autoridadControl = this.formAtencion.get('autoridad')
     this.esMancomunidad ? departamentoControl?.disable() : departamentoControl?.enable()
     this.formAtencion.get('entidadId')?.reset()
     this.formAtencion.get('entidad')?.reset()
@@ -547,6 +548,7 @@ export class FormularioAtencionComponent {
     }
     distritoControl?.disable()
     distritoControl?.reset()
+    autoridadControl?.reset()
   }
 
   obtenerTipoEntidad(tipoId: number){
@@ -636,10 +638,16 @@ export class FormularioAtencionComponent {
 
   changeMancomunidad(){
     const mancomunidad = this.formAtencion.get('entidadId')?.value
+    const ubigeoControl = this.formAtencion.get('ubigeo')
     const entidadControl = this.formAtencion.get('entidad')
     if(mancomunidad){
       const entidad = this.mancomunidades().find(item => item.entidadId == mancomunidad)
       entidadControl?.setValue(entidad!.entidad)
+      const ubigeo = entidad!.ubigeo
+      ubigeoControl?.setValue(ubigeo)
+      this.formAtencion.get('departamento')?.setValue(entidad?.departamento)
+      this.formAtencion.get('provincia')?.setValue(entidad?.provincia)
+      this.formAtencion.get('distrito')?.setValue(entidad?.distrito)
     } else {
       entidadControl?.reset()
     }
@@ -673,6 +681,9 @@ export class FormularioAtencionComponent {
       if(this.permisosPCM){
         nombreControl?.enable()
         cargoControl?.enable()
+        dniControl?.reset()
+        nombreControl?.reset()
+        cargoControl?.reset()
       } else {        
         nombreControl?.disable()
         cargoControl?.disable()
