@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { AcuerdoDesestimacionResponse, AcuerdoDesestimacionResponses, AcuerdosPanelResponses, PaginationPanel } from '@core/interfaces';
+import { AcuerdoDesestimacionResponse, AcuerdoDesestimacionResponses, AcuerdosPanelResponses, AcuerdosResponses, Pagination, PaginationPanel } from '@core/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -30,5 +30,11 @@ export class AcuerdosService {
           map(valid => valid.success),
           catchError(err => of(err))
         )
+    }
+
+    listarAcuerdos(pagination: Pagination){
+      const params = this.helpersServices.setParams(pagination)
+      const headers = this.helpersServices.getAutorizationToken()
+      return this.http.get<AcuerdosResponses>(`${this.urlAcuerdo}/ListarAcuerdos`, { headers, params })
     }
 }

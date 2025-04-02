@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -19,6 +19,10 @@ import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { PedidoType } from '../../../libs/shared/types/pedido.type';
 import { AuthService } from '../../../libs/services/auth/auth.service';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
+import { AcuerdosService } from '@core/services';
+import { AcuerdoResponse, Pagination } from '@core/interfaces';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'app-pedido',
@@ -26,14 +30,15 @@ import { differenceInCalendarDays, parseISO } from 'date-fns';
   imports: [
     CommonModule,
     FormsModule,
-    NzFormModule,
+    // NzFormModule,
     ReactiveFormsModule,
-    NzInputModule,
-    NzGridModule,
-    NzDatePickerModule,
-    NzSelectModule,
-    NzCheckboxModule,
+    // NzInputModule,
+    // NzGridModule,
+    // NzDatePickerModule,
+    // NzSelectModule,
+    // NzCheckboxModule,
     OnlyNumbersDirective,
+    NgZorroModule
   ],
   templateUrl: './pedido.component.html',
   styles: ``
@@ -53,11 +58,23 @@ export class PedidoComponent {
   authService = inject(AuthService);
   private fb = inject(UntypedFormBuilder);
 
+  acuerdos = signal<AcuerdoResponse[]>([])
+
+  loadingAcuerdos: boolean = false
+  paginationAcuerdos: Pagination = {
+    columnSort: 'eventoId',
+    typeSort: 'DESC',
+    pageSize: 5,
+    currentPage: 1
+  }
+  private acuerdosService = inject(AcuerdosService)
+
   pedidoSeleccionado: PedidoModel | null = this.pedidoService.pedidoSeleccionado();
 
   public fechaEvento = (this.pedidoSeleccionado?.fechaEvento != null) ? parseISO(this.pedidoSeleccionado?.fechaEvento.toString()) : null;
 
   constructor() {
+    this.sectoresStore.listarSectores(0, 2, 1)
     this.crearPedidoForm();
 
     if (this.nzModalData == 'SECTOR') {
@@ -124,7 +141,6 @@ export class PedidoComponent {
 
   onCodigoChange(codigo: any) {
     if (codigo == null) return;
-    console.log(codigo);
 
     const cuisControl = this.pedidoForm.get('cuis');
     cuisControl?.reset();
@@ -141,9 +157,32 @@ export class PedidoComponent {
         break;
       default:
         break;
-    }
-
+    }    
     cuisControl?.updateValueAndValidity();
+  }
+
+  changeCui(){
+    const cui = this.pedidoForm.get('cuis')?.value
+    if(cui.length >= 6 && cui.length  <= 7){
+      this.obtenerAcuerdosService()
+    }
+  }
+
+  obtenerAcuerdosService(){
+    const cui = this.pedidoForm.get('cuis')?.value
+    this.paginationAcuerdos.cui = cui
+    this.loadingAcuerdos = true
+    this.acuerdosService.listarAcuerdos(this.paginationAcuerdos)
+      .subscribe( resp => {
+        this.loadingAcuerdos = false
+        this.acuerdos.set(resp.data)
+        this.paginationAcuerdos.total = resp.info?.total
+      })
+  }
+
+  onQueryParamsChange(params: NzTableQueryParams): void {
+    this.paginationAcuerdos.currentPage = params.pageIndex
+    this.obtenerAcuerdosService()
   }
 
   disabledDate = (current: Date): boolean => {

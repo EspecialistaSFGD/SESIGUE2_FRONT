@@ -574,7 +574,7 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
   }
 
   noCumplidoAcuerdo(reasignado: boolean){
-    const title = `No Cumpliedo ${reasignado ? 'Reasignado' : ''}`
+    const title = `No Cumplido ${reasignado ? 'Reasignado' : ''}`
     const acuerdo = this.acuerdosService.acuerdoSeleccionado()!
     const modal = this.modal.create<AcuerdoNoCumplidoComponent>({
       nzTitle: title,
