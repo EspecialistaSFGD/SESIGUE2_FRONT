@@ -105,6 +105,14 @@
                     </div>
                 </nz-descriptions-item>
 
+                @if( this.acuerdosService.acuerdoSeleccionado()?.nomEstadoRegistro === 'EN PROCESO' && this.acuerdosService.acuerdoSeleccionado()?.responsableCumplimiento){
+                    <nz-descriptions-item nzTitle="Responsable cumplimiento">
+                          <nz-tag nzColor="error">
+                            <span>{{this.acuerdosService.acuerdoSeleccionado()?.responsableCumplimiento!}}</span>
+                        </nz-tag>
+                    </nz-descriptions-item>
+                }
+
                 <nz-descriptions-item nzTitle="Espacio">
                     {{this.acuerdosService.acuerdoSeleccionado()?.espacio}}
                     &CenterDot;
