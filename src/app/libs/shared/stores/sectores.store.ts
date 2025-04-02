@@ -65,10 +65,11 @@ export class SectoresStore {
     );
   }
 
-  listarSectores(id: number = 0, tipo: number = 2): void {
+  listarSectores(id: number = 0, tipo: number = 2, slug: number = 0): void {
     let params = new HttpParams()
       .append('grupoId', `${id}`)
-      .append('tipo', `${tipo}`);
+      .append('tipo', `${tipo}`)
+      .append('slug', slug);
 
     this.http.get<ResponseModel>(`${environment.api}/Sector`, { params }).subscribe(
       {

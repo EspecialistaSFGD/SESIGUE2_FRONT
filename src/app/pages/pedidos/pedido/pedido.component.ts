@@ -58,6 +58,7 @@ export class PedidoComponent {
   public fechaEvento = (this.pedidoSeleccionado?.fechaEvento != null) ? parseISO(this.pedidoSeleccionado?.fechaEvento.toString()) : null;
 
   constructor() {
+    this.sectoresStore.listarSectores(0, 2, 1)
     this.crearPedidoForm();
 
     if (this.nzModalData == 'SECTOR') {
