@@ -37,3 +37,16 @@ export interface AcuerdoDesestimacionResponse {
 export interface AcuerdoDesestimacionResponses extends DataResponses{
   data: number,
 }
+
+export interface AcuerdosResponses extends DataResponses {
+  data: AcuerdoResponse[],
+}
+
+export interface AcuerdoResponse {
+  acuerdoId?: string,
+  estadoRegistroNombre: string,
+  codigo: string,
+  acuerdo: string,
+  cuis: string,
+  clasificacion: string
+}

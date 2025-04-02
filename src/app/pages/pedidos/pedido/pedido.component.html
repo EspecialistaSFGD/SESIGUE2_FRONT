@@ -115,7 +115,7 @@
                     : 'Código de idea' }}</nz-form-label>
                 <nz-form-control nzSpan="null" [nzErrorTip]="cuiLengthTpl">
 
-                    <input #cuis id="cuis" onlyNumbers type="text" nz-input formControlName="cuis">
+                    <input #cuis id="cuis" onlyNumbers type="text" nz-input formControlName="cuis" autocomplete="off" (keyup)="changeCui()">
 
                     <ng-template #cuiLengthTpl let-control>
                         @if (control.errors?.['required']) {
@@ -180,11 +180,38 @@
                 <nz-form-label nzRequired [nzSpan]="null" nzFor="aspectoCriticoResolver">Pedido</nz-form-label>
                 <nz-form-control nzSpan="null" nzHasFeedback nzErrorTip="Campo requerido">
                     <textarea nz-input id="aspectoCriticoResolver" formControlName="aspectoCriticoResolver"
-                        placeholder="Ingrese el pedido" [nzAutosize]="{ minRows: 4 }"></textarea>
+                        placeholder="Ingrese el pedido" [nzAutosize]="{ minRows: 3 }"></textarea>
                 </nz-form-control>
             </nz-form-item>
         </div>
     </div>
+
+    @if (acuerdos().length > 0) {
+        <div class="px-1">
+            <nz-table nzTableLayout="fixed"
+            [nzData]="acuerdos()" [nzFrontPagination]="false" [nzShowPagination]="acuerdos().length > 5" [nzLoading]="loadingAcuerdos" [nzTotal]="paginationAcuerdos.total!"
+            [nzPageSize]="paginationAcuerdos.pageSize!" [nzPageIndex]="paginationAcuerdos.currentPage!"
+            (nzQueryParams)="onQueryParamsChange($event)">
+            <thead>
+                <tr>
+                    <th nzWidth="100px" nzAlign="center" >Código</th>
+                    <th nzAlign="center" >Acuerdo</th>
+                    <th nzWidth="100px" nzAlign="center" >Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(acuerdo of acuerdos(); track $index){
+                <tr>
+                    <td nzAlign="center"><p class="font-bold">{{acuerdo.codigo}}</p></td>
+                    <td>{{acuerdo.acuerdo}}</td>
+                    <td nzAlign="center"><p class="font-bold">{{acuerdo.estadoRegistroNombre}}</p></td>
+                </tr>
+                }
+                </tbody>
+            </nz-table>
+        </div>
+    }
+
 
 
     <!-- {{this.pedidoForm.value|json}} -->

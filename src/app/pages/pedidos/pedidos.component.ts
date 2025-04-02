@@ -376,6 +376,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       nzContent: PedidoComponent,
       nzViewContainerRef: this.viewContainerRef,
       nzData: this.authService.subTipo(),
+      nzWidth: '50%',
       nzClosable: false,
       nzMaskClosable: false,
       nzFooter: [
