@@ -390,7 +390,9 @@ export class PedidosComponent implements OnInit, AfterViewInit {
           onClick: (componentInstance) => {
             return this.pedidosService.agregarPedido(componentInstance!.pedidoForm.value).then((res) => {
               this.traerPedidos({});
-              this.modal.closeAll();
+              if(res.success == true){
+                this.modal.closeAll();
+              }
             });
           },
           loading: this.pedidosService.isEditing(),
