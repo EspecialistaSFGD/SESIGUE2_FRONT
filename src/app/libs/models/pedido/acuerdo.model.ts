@@ -9,6 +9,7 @@ export class AcuerdoPedidoModel extends SeguridadModel {
         public acuerdo?: string,
         public clasificacion?: string,
         public responsable?: string,
+        public responsableCumplimiento?: string,
         public responsableSelect?: SelectModel,
         public plazo?: Date | null,
         public espacio?: string,

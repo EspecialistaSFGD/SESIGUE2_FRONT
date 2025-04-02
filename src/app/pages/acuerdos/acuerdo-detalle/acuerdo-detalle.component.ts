@@ -40,6 +40,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { AprobarDesestimacionComponent } from './aprobar-desestimacion/aprobar-desestimacion.component';
 import { AcuerdoDesestimacionResponse, ButtonsActions } from '@core/interfaces';
 import { AcuerdoNoCumplidoComponent } from './acuerdo-no-cumplido/acuerdo-no-cumplido.component';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
@@ -67,7 +68,7 @@ const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
     NzBadgeModule,
     NzAlertModule,
     EstadoComponent,
-    // NzTagModule,
+    NzTagModule,
     NzAvatarModule,
     NzPageHeaderModule,
     DueToPipe,
