@@ -1,0 +1,50 @@
+<app-page-header [title]="title.toUpperCase()" backUrl="panel" />
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderUser" nzShowSizeChanger nzSize="small"
+  [nzData]="usuarios()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
+  <thead>
+    <tr>
+      <th nzWidth="20px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">DNI</th>
+      <th nzWidth="40px" nzAlign="center">Correo</th>
+      <th nzWidth="50px" nzAlign="center">Nombre</th>
+      <th nzWidth="60px" nzAlign="center">Entidad</th>
+      <th nzWidth="32px" nzAlign="center">Departamento</th>
+      <th nzWidth="32px" nzAlign="center">Provincia</th>
+      <th nzWidth="32px" nzAlign="center">Distrito</th>
+      <th nzWidth="32px" nzAlign="center">Perfil</th>
+      <th nzWidth="32px" nzAlign="center">Telefono</th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    @for(usuario of usuarios(); track $index){
+			<tr>
+				<td nzAlign="center">{{usuario.numeroDocumento}}</td>
+				<td nzAlign="center">{{usuario.correoNotificacion}}</td>
+				<td nzAlign="center">{{usuario.nombresPersona}}</td>
+				<td nzAlign="center">{{usuario.entidadNombre}}</td>
+				<td nzAlign="center">{{usuario.departamento}}</td>
+				<td nzAlign="center">{{usuario.provincia}}</td>
+				<td nzAlign="center">{{usuario.distrito}}</td>
+				<td nzAlign="center">{{usuario.perfil}}</td>
+				<td nzAlign="center">{{usuario.telefono}}</td>
+			</tr>
+		}
+		</tbody>
+	</nz-table>
+
+	<ng-template #HeaderUser>
+		<div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+			<p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+			<div>
+				<nz-space>
+					<button nz-button nzType="default" (click)="openFilter = true">
+						<span nz-icon nzType="filter"></span>
+						<span class="button-text">Filtros</span>
+					</button>
+				</nz-space>
+			</div>
+		</div>
+	</ng-template>
+
+	<app-filtros-usuario [visible]="openFilter"></app-filtros-usuario>

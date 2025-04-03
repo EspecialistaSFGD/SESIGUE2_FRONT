@@ -1,0 +1,12 @@
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="'400px'" [nzClosable]="true" [nzVisible]="visible"
+	nzTitle="Filtrar los resultados" [nzFooter]="footerFilter" (nzOnClose)="visible = false">
+</nz-drawer>
+
+<ng-template #footerFilter>
+	<div class="flex justify-end gap-2">
+		<button nz-button nzType="primary" (click)="changeExport()">
+			<span nz-icon nzType="file-excel"></span>
+			<span class="button-text">Exportar</span>
+			</button>
+	</div>
+</ng-template>
