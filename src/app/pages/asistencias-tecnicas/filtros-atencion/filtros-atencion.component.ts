@@ -102,7 +102,7 @@ export class FiltrosAtencionComponent {
       clearTimeout(this.timeout);
       var $this = this;
       this.timeout = setTimeout(function () {
-        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete') {
+        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {          
           $this.paginationFilters.codigo = codigoValue          
           $this.generateFilters()
         }
@@ -138,7 +138,7 @@ export class FiltrosAtencionComponent {
 
     if(eventoValue){
       const evento = this.eventos().find(e => e.eventoId === eventoValue)
-      
+
       const fechaInicioControl = this.formFilters.get('fechaInicio')
       const fechaFinControl = this.formFilters.get('fechaFin')
       evento?.abreviatura.toLowerCase() == 'poi' ? fechaInicioControl?.enable() : fechaInicioControl?.disable()

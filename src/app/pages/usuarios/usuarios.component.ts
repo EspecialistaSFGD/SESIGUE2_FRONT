@@ -16,7 +16,7 @@ import { UtilesService } from '@libs/shared/services/utiles.service';
   styles: ``
 })
 export default class UsuariosComponent {
-  title: string = `Lista de Usuarios`;
+  title: string = `Lista de Puntos focales`;
     
   loadingData: boolean = false
   loadingExport: boolean = false
