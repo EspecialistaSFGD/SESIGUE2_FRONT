@@ -5,6 +5,8 @@ import { UsuariosService } from '@core/services/usuarios.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { FiltrosUsuarioComponent } from './filtros-usuario/filtros-usuario.component';
+import saveAs from 'file-saver';
+import { UtilesService } from '@libs/shared/services/utiles.service';
 
 @Component({
   selector: 'app-usuarios',
@@ -17,9 +19,11 @@ export default class UsuariosComponent {
   title: string = `Lista de Usuarios`;
     
   loadingData: boolean = false
+  loadingExport: boolean = false
   openFilter:boolean = false
 
   usuarios = signal<UsuarioResponse[]>([])
+    private utilesService = inject(UtilesService);
 
   pagination: Pagination = {
     columnSort: 'nombresPersona',
@@ -44,5 +48,25 @@ export default class UsuariosComponent {
         this.usuarios.set(resp.data)
         this.pagination.total = resp.info?.total
       })
+  }
+
+  reporteUsuarios(tipo: string){
+    this.pagination.tipo = tipo
+    this.loadingExport = true
+    this.usuariosService.reporteUsuarios(this.pagination)
+      .subscribe( resp => {
+        this.loadingExport = false
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+          this.loadingExport = false
+        }
+      })
+  }
+
+  generarExcel(archivo: any, nombreArchivo: string): void {
+      const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+      const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, nombreArchivo);
   }
 }

@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Observable } from 'rxjs';
-import { Pagination, UsuariosResponses } from '@core/interfaces';
+import { ExportResponses, Pagination, UsuariosResponses } from '@core/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -23,5 +23,19 @@ export class UsuariosService {
       
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<UsuariosResponses>(`${this.urlUsuario}/ListarUsuarios`, { headers, params })
+  }
+
+  reporteUsuarios(pagination: Pagination, perfiles: number[] | null = null) {
+    console.log(pagination);
+    
+    let params = this.helpersServices.setParams(pagination)
+    if(perfiles){
+      for(let perfil of perfiles){
+        params = params.append('perfil[]', `${perfil}`);
+      }
+    }
+    
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<ExportResponses>(`${this.urlUsuario}/ReporteUsuarios`, { headers, params })
   }
 }

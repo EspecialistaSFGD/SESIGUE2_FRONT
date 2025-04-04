@@ -24,6 +24,7 @@ import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzAvatarComponent } from 'ng-zorro-antd/avatar';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     NzBadgeModule,
     NzDescriptionsModule,
     NzAvatarComponent,
-    NzTagModule
+    NzTagModule,
+    NzDropDownModule
   ],
   exports: [
     NzFormModule,
@@ -79,7 +81,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     NzBadgeModule,
     NzDescriptionsModule,
     NzAvatarComponent,
-    NzTagModule
+    NzTagModule,
+    NzDropDownModule
   ]
 })
 export class NgZorroModule { }
