@@ -2,12 +2,19 @@
 	nzTitle="Filtrar los resultados" [nzFooter]="footerFilter" (nzOnClose)="changeVisibleDrawer(false)">
 	<form *nzDrawerContent [formGroup]="formFilters" nz-form nzLayout="vertical" autocomplete="off">
 		<div class="flex flex-col w-full gap-4">
+
+      <div class="flex flex-col">
+        <label for="codigo">Código de atención</label>
+        <input type="text" class="form-control" id="codigo" placeholder="Codigo de atención" formControlName="codigo" (keyup)="changeCodigo($event)" />
+      </div>
+
       <div class="flex flex-col">
         <label>Eventos</label>
         <p-dropdown 
           [options]="eventos()"
           formControlName="eventoId"
-          optionLabel="abreviatura"
+          optionLabel="nombre"
+          optionValue="eventoId"
           [showClear]="true" 
           placeholder="Seleccionar evento"
           (onChange)="changeEvento()"/>
@@ -16,19 +23,36 @@
       @if(permisosPCM){
         <div class="flex flex-col">
           <label>Fecha inicio</label>
-          <nz-form-control nzSpan="null">
+          <p-calendar 
+            formControlName="fechaInicio"
+            [iconDisplay]="'input'" 
+            [showIcon]="true"
+            [showButtonBar]="true"
+            dateFormat="dd/mm/yy"
+            inputId="icondisplay"
+            (ngModelChange)="changefechaInicio()"/>
+          <!-- <nz-form-control nzSpan="null">
             <nz-date-picker id="fechaInicio" class="datepicker-form-control" formControlName="fechaInicio" (ngModelChange)="changefechaInicio()"
               nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy">
             </nz-date-picker>
-          </nz-form-control>
+          </nz-form-control> -->
         </div>
+
         <div class="flex flex-col">
           <label>Fecha fin</label>
-          <nz-form-control nzSpan="null">
+          <p-calendar 
+            formControlName="fechaFin"
+            [iconDisplay]="'input'" 
+            [showIcon]="true"
+            [showButtonBar]="true"
+            dateFormat="dd/mm/yy"
+            inputId="icondisplay"
+            (ngModelChange)="changeFechaFin()"/>
+          <!-- <nz-form-control nzSpan="null">
             <nz-date-picker id="fechaFin" class="datepicker-form-control" formControlName="fechaFin" (ngModelChange)="changeFechaFin()"
               nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy">
             </nz-date-picker>
-          </nz-form-control>
+          </nz-form-control> -->
         </div>
 
         <div class="flex flex-col">
@@ -37,6 +61,7 @@
             [options]="sectores()"
             formControlName="sectorId"
             optionLabel="nombre"
+            optionValue="sectorId"
             [showClear]="true" 
             placeholder="Seleccionar sector"
             (onChange)="changeSector()"/>

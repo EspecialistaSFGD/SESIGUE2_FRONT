@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { getDateFormat } from '@core/helpers';
 import { EventoResponse, ItemEnum, Pagination, SectorResponse, TipoEntidadResponse } from '@core/interfaces';
 import { EventosService, SectoresService, TipoEntidadesService } from '@core/services';
+import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
@@ -30,7 +32,9 @@ export class FiltrosAtencionComponent {
   private tipoEntidadService = inject(TipoEntidadesService)
   private eventosService = inject(EventosService)
   private sectoresService = inject(SectoresService)
+  private validatorsService = inject(ValidatorService)
 
+  private timeout: any;
   pagination: Pagination = {
     code: 0,
     columnSort: 'fechaRegistro',
@@ -41,6 +45,7 @@ export class FiltrosAtencionComponent {
   }
 
   formFilters: FormGroup = this.fb.group({
+    codigo: [''],
     fechaInicio: [''],
     fechaFin: [''],
     tipoEntidad: [''],
@@ -89,10 +94,29 @@ export class FiltrosAtencionComponent {
       })
   }
 
+  changeCodigo(event: any){
+    const codigoControl = this.formFilters.get('codigo')
+    const codigoValue = codigoControl?.value
+
+    if(codigoValue){
+      clearTimeout(this.timeout);
+      var $this = this;
+      this.timeout = setTimeout(function () {
+        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete') {
+          $this.paginationFilters.codigo = codigoValue          
+          $this.generateFilters()
+        }
+      }, 500);
+    } else {      
+      delete this.paginationFilters.codigo
+      this.generateFilters()
+    }
+  }
+
   changefechaInicio(){
-    const fechaInicioValue = this.formFilters.get('fechaInicio')?.value
-    if(fechaInicioValue){
-      this.paginationFilters.fechaInicio = this.getFormatDate(fechaInicioValue)
+    const fechaInicioValue = this.formFilters.get('fechaInicio')?.value    
+    if(fechaInicioValue){      
+      this.paginationFilters.fechaInicio = getDateFormat(fechaInicioValue)
     } else {
       delete this.paginationFilters.fechaInicio
     }
@@ -102,7 +126,7 @@ export class FiltrosAtencionComponent {
   changeFechaFin(){
     const fechaFinValue = this.formFilters.get('fechaFin')?.value
     if(fechaFinValue){
-      this.paginationFilters.fechaFin = this.getFormatDate(fechaFinValue)
+      this.paginationFilters.fechaFin = getDateFormat(fechaFinValue)
     } else {
       delete this.paginationFilters.fechaFin
     }      
@@ -110,10 +134,23 @@ export class FiltrosAtencionComponent {
   }
 
   changeEvento(){
-    const evento = this.formFilters.get('eventoId')?.value
-    if(evento){
-      this.paginationFilters.eventoId = evento.eventoId
-      // this.paginationFilters.eventoId = evento
+    const eventoValue = this.formFilters.get('eventoId')?.value
+
+    if(eventoValue){
+      const evento = this.eventos().find(e => e.eventoId === eventoValue)
+      
+      const fechaInicioControl = this.formFilters.get('fechaInicio')
+      const fechaFinControl = this.formFilters.get('fechaFin')
+      evento?.abreviatura.toLowerCase() == 'poi' ? fechaInicioControl?.enable() : fechaInicioControl?.disable()
+      evento?.abreviatura.toLowerCase() == 'poi' ? fechaFinControl?.enable() : fechaFinControl?.disable()
+      evento?.abreviatura.toLowerCase() == 'poi' ? fechaInicioControl?.setValue(fechaInicioControl?.value) : fechaInicioControl?.setValue(null)
+      evento?.abreviatura.toLowerCase() == 'poi' ? fechaFinControl?.setValue(fechaFinControl?.value) : fechaFinControl?.setValue(null)
+      if(evento?.abreviatura.toLowerCase() != 'poi'){
+        delete this.paginationFilters.fechaInicio
+        delete this.paginationFilters.fechaFin
+      }
+
+      this.paginationFilters.eventoId = eventoValue
     } else {
       delete this.paginationFilters.eventoId
     }
@@ -122,21 +159,14 @@ export class FiltrosAtencionComponent {
   }
 
   changeSector(){
-    const sector = this.formFilters.get('sectorId')?.value
-    if(sector){
-      this.paginationFilters.sectorId = sector.grupoID
+    const sectorValue = this.formFilters.get('sectorId')?.value
+    if(sectorValue){
+      this.paginationFilters.sectorId = sectorValue
     } else {
       delete this.paginationFilters.sectorId
     }
     
     this.generateFilters()
-  }
-
-  getFormatDate(fecha: string){
-    const date = new Date(fecha)
-    const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`
-    const day = date.getDate() > 9 ? date.getDate() : `0${date.getDate()}`
-    return `${day}/${month}/${date.getFullYear()}`
   }
 
   generateFilters(){
@@ -145,7 +175,7 @@ export class FiltrosAtencionComponent {
     } else {
       this.paginationFilters.tipoPerfil = '1'
     }
-    
+     
     this.filters.emit(this.paginationFilters)
   }
 

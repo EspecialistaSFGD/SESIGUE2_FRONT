@@ -10,6 +10,7 @@ export interface Pagination {
   typeSort?: string,
   pageSize?: number,
   currentPage?: number,
+  codigo?: string,
   fechaInicio?: string,
   fechaFin?: string,
   perfil?: number,

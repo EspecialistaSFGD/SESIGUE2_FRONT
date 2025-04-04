@@ -1,7 +1,7 @@
-export const dateZeroMonthDay = (date: Date): string => {
+export const getDateFormat = (date: Date): string => {
 	const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
 	const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
-	return `${date.getDate()}/${month}/${date.getFullYear()}`
+	return `${day}/${month}/${date.getFullYear()}`
 }
 
 export const getBusinessDays = (fecha: Date, dias: number): Date => {
