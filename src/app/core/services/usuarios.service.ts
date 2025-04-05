@@ -15,32 +15,21 @@ export class UsuariosService {
 
   listarUsuario(pagination: Pagination, perfiles: number[] | null = null): Observable<UsuariosResponses> {
     let params = this.helpersServices.setParams(pagination)
-    params = this.perfilesAddParams(perfiles)
-    // if(perfiles){
-    //   for(let perfil of perfiles){
-    //     params = params.append('perfil[]', `${perfil}`);
-    //   }
-    // }
-      
+    params = this.perfilesAddParams(params, perfiles)
+    
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<UsuariosResponses>(`${this.urlUsuario}/ListarUsuarios`, { headers, params })
   }
 
   reporteUsuarios(pagination: Pagination, perfiles: number[] | null = null) {
     let params = this.helpersServices.setParams(pagination)
-    params = this.perfilesAddParams(perfiles)
-    // if(perfiles){
-    //   for(let perfil of perfiles){
-    //     params = params.append('perfil[]', `${perfil}`);
-    //   }
-    // }
+    params = this.perfilesAddParams(params, perfiles)
     
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<ExportResponses>(`${this.urlUsuario}/ReporteUsuarios`, { headers, params })
   }
 
-  perfilesAddParams(perfiles: number[] | null = null): HttpParams {
-    let params = new HttpParams()
+  perfilesAddParams(params: HttpParams, perfiles: number[] | null = null): HttpParams {
     if(perfiles){
       for(let perfil of perfiles){
         params = params.append('perfil[]', `${perfil}`);

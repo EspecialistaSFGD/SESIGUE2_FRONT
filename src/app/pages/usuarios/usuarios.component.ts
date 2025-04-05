@@ -7,6 +7,8 @@ import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header
 import { FiltrosUsuarioComponent } from './filtros-usuario/filtros-usuario.component';
 import saveAs from 'file-saver';
 import { UtilesService } from '@libs/shared/services/utiles.service';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
   selector: 'app-usuarios',
@@ -23,7 +25,6 @@ export default class UsuariosComponent {
   openFilter:boolean = false
 
   usuarios = signal<UsuarioResponse[]>([])
-    private utilesService = inject(UtilesService);
 
   pagination: Pagination = {
     columnSort: 'nombresPersona',
@@ -33,14 +34,31 @@ export default class UsuariosComponent {
     total: 0
   }
 
+  private router = inject(Router);
+  private route = inject(ActivatedRoute)
   private usuariosService = inject(UsuariosService)
+  private utilesService = inject(UtilesService);
 
   ngOnInit(): void {
-    this.obtenerUsuariosService()
-    
+    // this.obtenerUsuariosService()
+    this.getParams()
   }
 
-  obtenerUsuariosService(){
+  getParams() {
+    this.route.queryParams.subscribe((params: Params) => {
+      if (Object.keys(params).length > 0) {
+        let columnSort = params['campo'] ?? 'nombresPersona'
+        this.pagination.columnSort = columnSort
+        this.pagination.currentPage = Number(params['pagina'])
+        this.pagination.pageSize = Number(params['cantidad'])
+        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+        
+        this.obtenerUsuariosService()
+      }
+    });
+  }
+
+  obtenerUsuariosService(){    
     this.loadingData = true
     this.usuariosService.listarUsuario(this.pagination)
       .subscribe( resp => {
@@ -68,5 +86,21 @@ export default class UsuariosComponent {
       const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
       const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       saveAs(blob, nombreArchivo);
+  }
+
+  onQueryParamsChange(params: NzTableQueryParams): void {
+    const { pageSize, pageIndex } = params;
+    this.paramsNavigate({ pagina: pageIndex, cantidad: pageSize });
+  }
+
+  paramsNavigate(queryParams: Params){
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: 'merge',
+      }
+    );
   }
 }

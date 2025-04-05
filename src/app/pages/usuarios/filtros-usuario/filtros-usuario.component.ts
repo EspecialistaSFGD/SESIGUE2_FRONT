@@ -13,6 +13,7 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 export class FiltrosUsuarioComponent {
 
   @Input() visible: boolean = false
+  @Output() visibleDrawer = new EventEmitter<boolean>()
 
   fb = inject(FormBuilder)
 
@@ -28,5 +29,10 @@ export class FiltrosUsuarioComponent {
 
     changeExport(){
       this.visible = false
+    }
+
+    closeDrawer(){
+      this.visible = false
+      this.visibleDrawer.emit(this.visible)
     }
 }

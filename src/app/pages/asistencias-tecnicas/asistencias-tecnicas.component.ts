@@ -30,7 +30,6 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     PageHeaderComponent,
     NgZorroModule,
     RouterModule,
-    FormularioAsistenciaTecnicaComponent,
     FiltrosAtencionComponent,
     PrimeNgModule
   ]
