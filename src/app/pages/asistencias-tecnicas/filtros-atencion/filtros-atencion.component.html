@@ -31,11 +31,6 @@
             dateFormat="dd/mm/yy"
             inputId="icondisplay"
             (ngModelChange)="changefechaInicio()"/>
-          <!-- <nz-form-control nzSpan="null">
-            <nz-date-picker id="fechaInicio" class="datepicker-form-control" formControlName="fechaInicio" (ngModelChange)="changefechaInicio()"
-              nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy">
-            </nz-date-picker>
-          </nz-form-control> -->
         </div>
 
         <div class="flex flex-col">
@@ -48,11 +43,6 @@
             dateFormat="dd/mm/yy"
             inputId="icondisplay"
             (ngModelChange)="changeFechaFin()"/>
-          <!-- <nz-form-control nzSpan="null">
-            <nz-date-picker id="fechaFin" class="datepicker-form-control" formControlName="fechaFin" (ngModelChange)="changeFechaFin()"
-              nzPlaceHolder="Seleccionar fecha" nzFormat="dd/MM/yyyy">
-            </nz-date-picker>
-          </nz-form-control> -->
         </div>
 
         <div class="flex flex-col">
@@ -61,7 +51,7 @@
             [options]="sectores()"
             formControlName="sectorId"
             optionLabel="nombre"
-            optionValue="sectorId"
+            optionValue="grupoID"
             [showClear]="true" 
             placeholder="Seleccionar sector"
             (onChange)="changeSector()"/>

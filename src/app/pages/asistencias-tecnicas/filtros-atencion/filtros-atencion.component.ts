@@ -141,13 +141,18 @@ export class FiltrosAtencionComponent {
 
       const fechaInicioControl = this.formFilters.get('fechaInicio')
       const fechaFinControl = this.formFilters.get('fechaFin')
+      const sectorControl = this.formFilters.get('sectorId')
       evento?.abreviatura.toLowerCase() == 'poi' ? fechaInicioControl?.enable() : fechaInicioControl?.disable()
       evento?.abreviatura.toLowerCase() == 'poi' ? fechaFinControl?.enable() : fechaFinControl?.disable()
       evento?.abreviatura.toLowerCase() == 'poi' ? fechaInicioControl?.setValue(fechaInicioControl?.value) : fechaInicioControl?.setValue(null)
       evento?.abreviatura.toLowerCase() == 'poi' ? fechaFinControl?.setValue(fechaFinControl?.value) : fechaFinControl?.setValue(null)
+      evento?.abreviatura.toLowerCase() == 'poi' ? sectorControl?.disable() : sectorControl?.enable()
+      evento?.abreviatura.toLowerCase() == 'poi' ? sectorControl?.setValue(null) : sectorControl?.setValue(sectorControl?.value)
       if(evento?.abreviatura.toLowerCase() != 'poi'){
         delete this.paginationFilters.fechaInicio
         delete this.paginationFilters.fechaFin
+      } else {
+        delete this.paginationFilters.sectorId
       }
 
       this.paginationFilters.eventoId = eventoValue

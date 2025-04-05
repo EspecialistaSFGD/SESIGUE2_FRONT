@@ -8,7 +8,7 @@
         </div>
         <nz-form-control [nzErrorTip]="requiredDniTpl">
           <input id="usuario" (ngModelChange)="onUsuarioChange($event)" type="text" nz-input formControlName="usuario"
-            placeholder="Ingrese su Documento de Identidad" #usr class="" (keypress)="onEnter($event)" onlyNumbers />
+            placeholder="Ingrese su Documento de Identidad" #usr class="" (keypress)="onEnter($event)" />
 
           <ng-template #requiredDniTpl let-control>
             @if (control.errors?.['required']) {
