@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { Pagination, UsuarioResponse } from '@core/interfaces';
+import { Pagination, SectorResponse, UbigeoDepartmentResponse, UsuarioResponse } from '@core/interfaces';
 import { UsuariosService } from '@core/services/usuarios.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -9,6 +9,7 @@ import saveAs from 'file-saver';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { SectoresService, UbigeosService } from '@core/services';
 
 @Component({
   selector: 'app-usuarios',
@@ -25,6 +26,8 @@ export default class UsuariosComponent {
   openFilter:boolean = false
 
   usuarios = signal<UsuarioResponse[]>([])
+  sectores = signal<SectorResponse[]>([])
+  departamentos = signal<UbigeoDepartmentResponse[]>([])
 
   pagination: Pagination = {
     columnSort: 'nombresPersona',
@@ -38,9 +41,12 @@ export default class UsuariosComponent {
   private route = inject(ActivatedRoute)
   private usuariosService = inject(UsuariosService)
   private utilesService = inject(UtilesService);
+  private sectoresService = inject(SectoresService)
+  private ubigeoService = inject(UbigeosService)
 
   ngOnInit(): void {
-    // this.obtenerUsuariosService()
+    this.obtenerSectoresService()
+    this.obtenerDepartamentosService()
     this.getParams()
   }
 
@@ -56,6 +62,22 @@ export default class UsuariosComponent {
         this.obtenerUsuariosService()
       }
     });
+  }
+
+  obtenerDepartamentosService(){
+    this.ubigeoService.getDepartments()
+      .subscribe(resp => {
+        this.departamentos.set(resp.data) 
+      })
+  }
+
+  obtenerSectoresService(){
+    this.sectoresService.getAllSectors(0, 2)
+      .subscribe( resp => {
+        this.sectores.set(resp.data)
+        this.pagination.total = resp.info?.total
+      }
+    )
   }
 
   obtenerUsuariosService(){    

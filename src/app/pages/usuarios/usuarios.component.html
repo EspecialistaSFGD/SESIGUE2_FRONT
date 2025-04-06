@@ -63,4 +63,4 @@
 		</div>
 	</ng-template>
 
-	<app-filtros-usuario [visible]="openFilter" (visibleDrawer)="openFilter = false"></app-filtros-usuario>
+	<app-filtros-usuario [visible]="openFilter" [sectores]="sectores()" [departamentos]="departamentos()" (visibleDrawer)="openFilter = false"></app-filtros-usuario>

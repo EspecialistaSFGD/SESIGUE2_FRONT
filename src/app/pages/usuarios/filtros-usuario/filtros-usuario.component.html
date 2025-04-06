@@ -1,5 +1,71 @@
 <nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="'400px'" [nzClosable]="true" [nzVisible]="visible"
 	nzTitle="Filtrar los resultados" [nzFooter]="footerFilter" (nzOnClose)="closeDrawer()">
+	<form *nzDrawerContent [formGroup]="formFilters" class="flex flex-col gap-4" autocomplete="off">
+		<div class="flex flex-col">
+			<label for="coddocumentoNumeroigo">Numero de documento</label>
+			<input type="text" class="form-control" id="documentoNumero" formControlName="documentoNumero" (keyup)="changeCodigo($event)" />
+		  </div>
+
+		<div class="flex flex-col">
+			<label>Tipo</label>
+			<nz-radio-group class="radio-form-control" formControlName="tipo"
+				(ngModelChange)="changeTipo()">
+				@for (tipo of tipos; track $index){
+				<label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
+				}
+			</nz-radio-group>
+		</div>
+
+		<div class="flex flex-col">
+			<label>Sectores</label>
+			<p-dropdown 
+			[options]="sectores"
+			formControlName="sectorId"
+			optionLabel="nombre"
+			optionValue="grupoID"
+			[showClear]="true"
+			[editable]="true" 
+			placeholder="Seleccionar sector"
+			(onChange)="changeSector()"/>
+		  </div>
+
+		  <div class="flex flex-col">
+			<label for="departamento">Departamentos</label>
+			<p-dropdown 
+			[options]="departamentos" 
+			formControlName="departamento"
+			optionLabel="departamento"
+			optionValue="departamentoId"
+			[showClear]="true" 
+			[editable]="true"
+			placeholder="Seleccionar departamento"
+			(onChange)="changeDepartamento()"/>
+		  </div>
+
+		  <div class="flex flex-col">
+			<label for="departamento">Provincias</label>
+			<p-dropdown 
+			[options]="provincias()" 
+			formControlName="provincia"
+			optionLabel="provincia"
+			optionValue="provinciaId"
+			[showClear]="true"
+			placeholder="Seleccionar provincia"
+			(onChange)="changeProvincia()"/>
+		  </div>
+
+		  <div class="flex flex-col">
+			<label for="departamento">Distritos</label>
+			<p-dropdown 
+			[options]="distritos()" 
+			formControlName="distrito"
+			optionLabel="distrito"
+			optionValue="distritoId"
+			[showClear]="true"
+			placeholder="Seleccionar distrito"
+			(onChange)="changeDistrito()"/>
+		  </div>
+	</form>
 </nz-drawer>
 
 <ng-template #footerFilter>

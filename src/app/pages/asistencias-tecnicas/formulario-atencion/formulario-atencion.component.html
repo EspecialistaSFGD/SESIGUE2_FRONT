@@ -133,6 +133,7 @@
 			optionLabel="entidad"
 			optionValue="entidadId"
 			[showClear]="true"
+			[editable]="true"
 			placeholder="Seleccionar mancomunidad"
 			(onChange)="changeMancomunidad()"/>
 			<div class="text-danger" *ngIf="alertMessageError('entidadId')">{{msgErrorControl('entidadId','Mancomunidad')}}</div>
