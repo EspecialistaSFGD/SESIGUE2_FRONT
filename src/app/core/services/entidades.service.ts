@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Observable } from 'rxjs';
-import { EntidadeResponses, EntidadesResponses } from '@core/interfaces/entidad.interface';
+import { EntidadResponses, EntidadesResponses, ParamsEntidad } from '@core/interfaces/entidad.interface';
 import { Pagination } from '@core/interfaces';
 
 @Injectable({
@@ -15,9 +15,16 @@ export class EntidadesService {
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  getEntidadPorUbigeo(ubigeo: string): Observable<EntidadeResponses> {
+
+  obtenerEntidad(paramsEntidad: ParamsEntidad): Observable<EntidadResponses> {
+    const params = this.helpersServices.setParams(paramsEntidad)
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<EntidadeResponses>(`${this.urlEntidad}/ListarPorUbigeo/${ubigeo}`, { headers })
+    return this.http.get<EntidadResponses>(`${this.urlEntidad}/ObtenerEntidad`, { headers, params })
+  }
+
+  getEntidadPorUbigeo(ubigeo: string): Observable<EntidadResponses> {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<EntidadResponses>(`${this.urlEntidad}/ListarPorUbigeo/${ubigeo}`, { headers })
   }
 
   getEntidadPorId(id: string): Observable<EntidadesResponses> {

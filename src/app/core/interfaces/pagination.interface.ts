@@ -21,6 +21,7 @@ export interface Pagination {
   unidadId?: string,
   tipoEspacioId?: string,
   espacioId?: string,
+  documentoNumero?: string,
   tipoEntidadId?: string,
   usuarioId?: string,
   eventoId?: string,

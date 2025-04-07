@@ -3,7 +3,8 @@
 	<form *nzDrawerContent [formGroup]="formFilters" class="flex flex-col gap-4" autocomplete="off">
 		<div class="flex flex-col">
 			<label for="coddocumentoNumeroigo">Numero de documento</label>
-			<input type="text" class="form-control" id="documentoNumero" formControlName="documentoNumero" (keyup)="changeCodigo($event)" />
+			<input type="text" class="form-control" id="documentoNumero" formControlName="documentoNumero" (keyup)="changeNumeroDocumento($event)" />
+			<div class="text-danger" *ngIf="alertMessageError('documentoNumero')">{{msgErrorControl('documentoNumero','numero de documento')}}</div>
 		  </div>
 
 		<div class="flex flex-col">
