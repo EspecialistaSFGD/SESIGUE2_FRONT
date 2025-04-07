@@ -30,6 +30,7 @@ export default class UsuariosComponent {
   departamentos = signal<UbigeoDepartmentResponse[]>([])
 
   pagination: Pagination = {
+    code: 0,
     columnSort: 'nombresPersona',
     typeSort: 'DESC',
     pageSize: 10,

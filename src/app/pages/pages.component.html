@@ -19,12 +19,12 @@
       <div class="p-2">
         <ul class="mt-8 border-r-0 bg-transparent" nz-menu [nzTheme]="(selectedTheme == 'dark' ? 'dark' : 'light' )"
           nzMode="inline" [nzInlineCollapsed]="this.isSiderCollapsed">
-          <li nz-menu-item routerLinkActive="ant-menu-item-selected" nzMatchRouterExact>
+          <!-- <li nz-menu-item routerLinkActive="ant-menu-item-selected" nzMatchRouterExact>
             <a class="flex items-center" routerLink="/usuarios">
               <span nz-icon nzType="file" nzTheme="outline"></span>
               <span>Usuarios</span>
             </a>
-          </li>
+          </li> -->
 
           @for (item of menuItems; track item.codigoMenu) {
           @if(item.children != null && item.children != undefined && item.children.length > 0) {

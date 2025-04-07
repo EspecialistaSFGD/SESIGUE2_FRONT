@@ -37,10 +37,10 @@
 		<div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
 			<p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
 			<div class="flex gap-2">
-				<button nz-button nzType="default" (click)="openFilter = true">
+				<!-- <button nz-button nzType="default" (click)="openFilter = true">
 					<span nz-icon nzType="filter"></span>
 					<span class="button-text">Filtros</span>
-				</button>
+				</button> -->
 
 				<button nz-button nz-dropdown [nzDropdownMenu]="selectExport" nzType="default" [nzLoading]="loadingExport">
 					<span nz-icon nzType="file-excel"></span>
