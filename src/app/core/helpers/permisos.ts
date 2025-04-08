@@ -1,8 +1,6 @@
 import { ButtonsActions, UsuarioPermisos } from "@core/interfaces";
 
-export const obtenerPermisosBotones = (botones: UsuarioPermisos[]) => {
-	console.log(botones);
-	
+export const obtenerPermisosBotones = (botones: UsuarioPermisos[]) => {	
 	let permisos: ButtonsActions = {}
 	botones.find(action => {     
 		switch (action.descripcionBoton) {
