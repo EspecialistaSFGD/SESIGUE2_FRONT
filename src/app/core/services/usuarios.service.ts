@@ -29,12 +29,14 @@ export class UsuariosService {
     return this.http.get<ExportResponses>(`${this.urlUsuario}/ReporteUsuarios`, { headers, params })
   }
 
+
   perfilesAddParams(params: HttpParams, perfiles: number[] | null = null): HttpParams {
     if(perfiles){
       for(let perfil of perfiles){
         params = params.append('perfil[]', `${perfil}`);
       }
     }
+    
     return params
   }
 }
