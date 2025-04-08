@@ -19,63 +19,70 @@
 			(onChange)="changePerfil()"/>
 		  </div>
 
-		<div class="flex flex-col">
-			<label>Tipo</label>
-			<nz-radio-group class="radio-form-control" formControlName="tipo"
-				(ngModelChange)="changeTipo()">
-				@for (tipo of tipos; track $index){
-				<label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
-				}
-			</nz-radio-group>
-		</div>
+		@if (permisosPCM) {
+			<div class="flex flex-col">
+				<label>Tipo</label>
+				<nz-radio-group class="radio-form-control" formControlName="tipo"
+					(ngModelChange)="changeTipo()">
+					@for (tipo of tipos; track $index){
+					<label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
+					}
+				</nz-radio-group>
+			</div>
+		}
 
-		<div class="flex flex-col">
-			<label>Sectores</label>
-			<p-dropdown 
-			[options]="sectores"
-			formControlName="sectorId"
-			optionLabel="nombre"
-			optionValue="grupoID"
-			[showClear]="true"
-			placeholder="Seleccionar sector"
-			(onChange)="changeSector()"/>
-		  </div>
+		@if((!permisosPCM && !nivelAuth) || permisosPCM){
+			<div class="flex flex-col">
+				<label>Sectores</label>
+				<p-dropdown 
+				[options]="sectores"
+				formControlName="sectorId"
+				optionLabel="nombre"
+				optionValue="grupoID"
+				[showClear]="true"
+				placeholder="Seleccionar sector"
+				(onChange)="changeSector()"/>
+			  </div>
+		}
 
-		  <div class="flex flex-col">
-			<label for="departamento">Departamentos</label>
-			<p-dropdown 
-			[options]="departamentos" 
-			formControlName="departamento"
-			optionLabel="departamento"
-			optionValue="departamentoId"
-			[showClear]="true" 
-			placeholder="Seleccionar departamento"
-			(onChange)="changeDepartamento()"/>
-		  </div>
+		@if ((!permisosPCM && nivelAuth) || permisosPCM) {
+			<div class="flex flex-col">
+			  <label for="departamento">Departamentos</label>
+			  <p-dropdown 
+			  [options]="departamentos" 
+			  formControlName="departamento"
+			  optionLabel="departamento"
+			  optionValue="departamentoId"
+			  [showClear]="true" 
+			  placeholder="Seleccionar departamento"
+			  (onChange)="changeDepartamento()"/>
+			</div>
+	
+			<div class="flex flex-col">
+			  <label for="departamento">Provincias</label>
+			  <p-dropdown 
+			  [options]="provincias()" 
+			  formControlName="provincia"
+			  optionLabel="provincia"
+			  optionValue="provinciaId"
+			  [showClear]="true"
+			  placeholder="Seleccionar provincia"
+			  (onChange)="changeProvincia()"/>
+			</div>
+	
+			<div class="flex flex-col">
+			  <label for="departamento">Distritos</label>
+			  <p-dropdown 
+			  [options]="distritos()" 
+			  formControlName="distrito"
+			  optionLabel="distrito"
+			  optionValue="distritoId"
+			  [showClear]="true"
+			  placeholder="Seleccionar distrito"
+			  (onChange)="changeDistrito()"/>
+			</div>
+		}
 
-		  <div class="flex flex-col">
-			<label for="departamento">Provincias</label>
-			<p-dropdown 
-			[options]="provincias()" 
-			formControlName="provincia"
-			optionLabel="provincia"
-			optionValue="provinciaId"
-			[showClear]="true"
-			placeholder="Seleccionar provincia"
-			(onChange)="changeProvincia()"/>
-		  </div>
-
-		  <div class="flex flex-col">
-			<label for="departamento">Distritos</label>
-			<p-dropdown 
-			[options]="distritos()" 
-			formControlName="distrito"
-			optionLabel="distrito"
-			optionValue="distritoId"
-			[showClear]="true"
-			placeholder="Seleccionar distrito"
-			(onChange)="changeDistrito()"/>
-		  </div>
 	</form>
 </nz-drawer>
 
@@ -84,6 +91,6 @@
 		<button nz-button nzType="primary" (click)="changeExport()">
 			<span nz-icon nzType="file-excel"></span>
 			<span class="button-text">Exportar</span>
-			</button>
+		</button>
 	</div>
 </ng-template>

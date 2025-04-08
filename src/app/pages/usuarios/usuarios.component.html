@@ -33,8 +33,6 @@
 		</tbody>
 	</nz-table>
 
-	<p>{{usuarioPermisos | json }}<p>
-
 	<ng-template #HeaderUser>
 		<div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
 			<p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
@@ -50,19 +48,25 @@
 				</button>
 				<nz-dropdown-menu #selectExport="nzDropdownMenu">
 					<ul nz-menu>
-						<li nz-menu-item>
-							<button nz-button nzType="text" (click)="reporteUsuarios('sector')" type="button">Sectores</button>
-						</li>
-						<li nz-menu-item>
-							<button nz-button nzType="text" (click)="reporteUsuarios('gore')" type="button">Gores</button>
-						</li>
-						<li nz-menu-item>
-							<button nz-button nzType="text" (click)="reporteUsuarios('todos')" type="button">Todos</button>
-						</li>
+						@if ((!permisosPCM && !nivelAuth) || permisosPCM) {
+							<li nz-menu-item>
+								<button nz-button nzType="text" (click)="reporteUsuarios('sector')" type="button">Sectores</button>
+							</li>
+						}
+						@if ((!permisosPCM && nivelAuth) || permisosPCM) {
+							<li nz-menu-item>
+								<button nz-button nzType="text" (click)="reporteUsuarios('gore')" type="button">Gores</button>
+							</li>
+						}
+						@if (permisosPCM) {
+							<li nz-menu-item>
+								<button nz-button nzType="text" (click)="reporteUsuarios('todos')" type="button">Todos</button>
+							</li>
+						}
 					</ul>
 			</nz-dropdown-menu>
 			</div>
 		</div>
 	</ng-template>
 
-	<app-filtros-usuario [visible]="openFilter" [sectores]="sectores()" [departamentos]="departamentos()" [perfiles]="perfiles()" (visibleDrawer)="openFilter = false" (filters)="getFilterDrawer($event)"></app-filtros-usuario>
+	<app-filtros-usuario [visible]="openFilter" [sectores]="sectores()" [departamentos]="departamentos()" [perfiles]="perfiles()" [permisosPCM]="permisosPCM" [nivelAuth]="nivelAuth" (visibleDrawer)="openFilter = false" (filters)="getFilterDrawer($event)" (export)="exportToFilters()"></app-filtros-usuario>

@@ -21,6 +21,8 @@ export class FiltrosUsuarioComponent {
   @Input() sectores: SectorResponse[] = []
   @Input() departamentos: UbigeoDepartmentResponse[] = []
   @Input() perfiles: PerfilResponse[] = []
+  @Input() permisosPCM: boolean = false
+  @Input() nivelAuth: boolean = false
 
   @Output() visibleDrawer = new EventEmitter<boolean>()
   @Output() filters = new EventEmitter<Pagination>()
@@ -95,6 +97,8 @@ export class FiltrosUsuarioComponent {
       const tipoValue = tipoControl?.value
       if(tipoValue){
         this.setTipoToSectorUbigeo()
+      } else {
+        // delete this.paginationFilters.tipo
       }
     }
 
@@ -124,6 +128,7 @@ export class FiltrosUsuarioComponent {
           delete this.paginationFilters.sectorId
         break;
       }
+      this.generateFilters()
     }
 
     changeSector(){
@@ -178,6 +183,7 @@ export class FiltrosUsuarioComponent {
         distritoControl?.setValue(null)
         distritoControl?.reset()
         distritoControl?.disable()
+        // this.generateFilters()
       }
       this.obtenerEntidadesService()
     }
@@ -201,6 +207,7 @@ export class FiltrosUsuarioComponent {
         this.paginationFilters.ubigeo = provinciaValue
       }
       this.obtenerEntidadesService()
+      // this.generateFilters()
     }
 
     obtenerEntidadesService(){
@@ -221,7 +228,10 @@ export class FiltrosUsuarioComponent {
     }
 
     changeExport(){
-      this.visible = false
+      // this.visible = false
+      this.generateFilters()
+      this.closeDrawer()
+      this.export.emit(true)
     }
 
     closeDrawer(){

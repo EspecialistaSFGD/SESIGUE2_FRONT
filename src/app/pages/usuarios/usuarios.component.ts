@@ -28,6 +28,7 @@ export default class UsuariosComponent {
   openFilter:boolean = false
   permisosPCM: boolean = false
   perfilAuth: number = 0
+  nivelAuth: boolean = false
 
   pagination: Pagination = {
     code: 0,
@@ -37,7 +38,7 @@ export default class UsuariosComponent {
     currentPage: 1,
     total: 0
   }
-
+  paginationFilter: Pagination = {}
   usuarioPermisos: ButtonsActions = {}
 
   usuarios = signal<UsuarioResponse[]>([])
@@ -57,6 +58,8 @@ export default class UsuariosComponent {
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    const tipoStorage = localStorage.getItem('descripcionTipo') || ''
+    this.nivelAuth = tipoStorage == 'GN'
     this.permisosPCM = permisosPCM(this.perfilAuth)
     this.getPermissions()
     this.obtenerSectoresService()
@@ -81,11 +84,27 @@ export default class UsuariosComponent {
         this.pagination.currentPage = Number(params['pagina'])
         this.pagination.pageSize = Number(params['cantidad'])
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+
+        this.setPaginationValueToParams(params, 'documentoNumero')
+        this.setPaginationValueToParams(params, 'sectorId')
+        this.setPaginationValueToParams(params, 'entidadId')
+        this.setPaginationValueToParams(params, 'perfil')
         
         this.obtenerUsuariosService()
       }
     });
   }
+
+  setPaginationValueToParams(params: Params, param: string){
+      const keyParam = param as keyof Pagination;
+      if(params[param]){
+        this.pagination[keyParam] = params[param];
+        this.paginationFilter[keyParam] = params[param];
+      } else {
+        delete this.pagination[keyParam]
+        delete this.paginationFilter[keyParam]
+      }
+    }
 
 
   obtenePerfilesService(){
@@ -153,8 +172,20 @@ export default class UsuariosComponent {
   }
 
   getFilterDrawer(pagination: Pagination){
-    console.log(pagination);
-    
+    const documentoNumero = pagination.documentoNumero ? pagination.documentoNumero : null
+    const sectorId = pagination.sectorId ? pagination.sectorId : null
+    const ubigeo = pagination.ubigeo ? pagination.ubigeo : null
+    const entidadId = pagination.entidadId ? pagination.entidadId : null
+    const perfil = pagination.perfil ? pagination.perfil : null
+    this.paramsNavigate({documentoNumero, sectorId, ubigeo, entidadId, perfil})
+  }
+
+  exportToFilters(){
+    let report = 'todos'
+    if(!permisosPCM){
+      report = this.nivelAuth ? 'gore' : 'sector'
+    }
+    this.reporteUsuarios(report)
   }
 
   paramsNavigate(queryParams: Params){
