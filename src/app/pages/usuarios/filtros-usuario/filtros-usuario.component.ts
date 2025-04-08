@@ -41,24 +41,39 @@ export class FiltrosUsuarioComponent {
   private entidadesService = inject(EntidadesService)
 
   formFilters: FormGroup = this.fb.group({
-      tipo: [this.tipos[0]],
-      documentoNumero: [''],
-      perfilId: [null],
-      sectorId: [null],
-      departamento: [{ value: null, disabled: true }],
-      provincia: [{ value: null, disabled: true }],
-      distrito: [{ value: null, disabled: true }]
-    })
+    tipo: [this.tipos[0]],
+    documentoNumero: [''],
+    perfilId: [null],
+    sectorId: [null],
+    departamento: [{ value: null, disabled: true }],
+    provincia: [{ value: null, disabled: true }],
+    distrito: [{ value: null, disabled: true }]
+  })
 
-    alertMessageError(control: string) {
-      return this.formFilters.get(control)?.errors && this.formFilters.get(control)?.touched
-    }
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    this.setTipo()
+  }
 
-    msgErrorControl(control: string, label?: string): string {
-      const text = label ? label : control
-      const errors = this.formFilters.get(control)?.errors;
-      return typeErrorControl(text, errors)
+  setTipo(){
+    if(!this.permisosPCM && this.nivelAuth){
+      const tipoControl = this.formFilters.get('tipo')
+      // log
+      const departamentoControl = this.formFilters.get('departamento')
+      departamentoControl?.enable()
     }
+  }
+
+  alertMessageError(control: string) {
+    return this.formFilters.get(control)?.errors && this.formFilters.get(control)?.touched
+  }
+
+  msgErrorControl(control: string, label?: string): string {
+    const text = label ? label : control
+    const errors = this.formFilters.get(control)?.errors;
+    return typeErrorControl(text, errors)
+  }
 
     changeNumeroDocumento(event: any){
       const numeroDocumentoControl = this.formFilters.get('documentoNumero')
@@ -207,7 +222,6 @@ export class FiltrosUsuarioComponent {
         this.paginationFilters.ubigeo = provinciaValue
       }
       this.obtenerEntidadesService()
-      // this.generateFilters()
     }
 
     obtenerEntidadesService(){

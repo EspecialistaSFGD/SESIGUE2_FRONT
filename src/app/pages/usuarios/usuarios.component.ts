@@ -180,9 +180,9 @@ export default class UsuariosComponent {
 
   exportToFilters(){
     let report = 'todos'
-    if(!permisosPCM){
+    if(!this.permisosPCM){
       report = this.nivelAuth ? 'gore' : 'sector'
-    }
+    }    
     this.reporteUsuarios(report)
   }
 
