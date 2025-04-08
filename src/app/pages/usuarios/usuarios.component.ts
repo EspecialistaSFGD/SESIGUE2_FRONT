@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { Pagination, SectorResponse, UbigeoDepartmentResponse, UsuarioResponse } from '@core/interfaces';
+import { ButtonsActions, Pagination, PerfilResponse, SectorResponse, UbigeoDepartmentResponse, UsuarioResponse } from '@core/interfaces';
 import { UsuariosService } from '@core/services/usuarios.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -9,7 +9,9 @@ import saveAs from 'file-saver';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { SectoresService, UbigeosService } from '@core/services';
+import { PerfilesService, SectoresService, UbigeosService } from '@core/services';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { obtenerPermisosBotones, permisosPCM } from '@core/helpers';
 
 @Component({
   selector: 'app-usuarios',
@@ -24,10 +26,8 @@ export default class UsuariosComponent {
   loadingData: boolean = false
   loadingExport: boolean = false
   openFilter:boolean = false
-
-  usuarios = signal<UsuarioResponse[]>([])
-  sectores = signal<SectorResponse[]>([])
-  departamentos = signal<UbigeoDepartmentResponse[]>([])
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
 
   pagination: Pagination = {
     code: 0,
@@ -38,18 +38,40 @@ export default class UsuariosComponent {
     total: 0
   }
 
+  usuarioPermisos: ButtonsActions = {}
+
+  usuarios = signal<UsuarioResponse[]>([])
+  sectores = signal<SectorResponse[]>([])
+  departamentos = signal<UbigeoDepartmentResponse[]>([])
+  perfiles = signal<PerfilResponse[]>([])
+
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private usuariosService = inject(UsuariosService)
   private utilesService = inject(UtilesService);
   private sectoresService = inject(SectoresService)
   private ubigeoService = inject(UbigeosService)
+  private perfilesService = inject(PerfilesService)
+  
+    private authStore = inject(AuthService)
 
   ngOnInit(): void {
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = permisosPCM(this.perfilAuth)
+    this.getPermissions()
     this.obtenerSectoresService()
     this.obtenerDepartamentosService()
+    this.obtenePerfilesService()
     this.getParams()
   }
+
+  getPermissions() {
+      const navigation = this.authStore.navigationAuth()!
+      const usuariosNav = navigation.find(nav => nav.descripcionItem == 'usuarios')
+      if(usuariosNav){
+        this.usuarioPermisos = obtenerPermisosBotones(usuariosNav!.botones!)    
+      }
+    }
 
   getParams() {
     this.route.queryParams.subscribe((params: Params) => {
@@ -63,6 +85,20 @@ export default class UsuariosComponent {
         this.obtenerUsuariosService()
       }
     });
+  }
+
+
+  obtenePerfilesService(){
+    const paginationPerfil: Pagination = {
+      columnSort: 'descripcionPerfil',
+      typeSort: 'ASC',
+      pageSize: 50,
+      currentPage: 1
+    }
+    this.perfilesService.listarPerfiles(paginationPerfil)
+      .subscribe( resp => {
+        this.perfiles.set(resp.data)
+      })
   }
 
   obtenerDepartamentosService(){
@@ -114,6 +150,11 @@ export default class UsuariosComponent {
   onQueryParamsChange(params: NzTableQueryParams): void {
     const { pageSize, pageIndex } = params;
     this.paramsNavigate({ pagina: pageIndex, cantidad: pageSize });
+  }
+
+  getFilterDrawer(pagination: Pagination){
+    console.log(pagination);
+    
   }
 
   paramsNavigate(queryParams: Params){

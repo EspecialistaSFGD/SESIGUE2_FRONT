@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { Pagination, ParamsEntidad, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { Pagination, ParamsEntidad, PerfilResponse, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -20,6 +20,7 @@ export class FiltrosUsuarioComponent {
   @Input() visible: boolean = false
   @Input() sectores: SectorResponse[] = []
   @Input() departamentos: UbigeoDepartmentResponse[] = []
+  @Input() perfiles: PerfilResponse[] = []
 
   @Output() visibleDrawer = new EventEmitter<boolean>()
   @Output() filters = new EventEmitter<Pagination>()
@@ -40,9 +41,9 @@ export class FiltrosUsuarioComponent {
   formFilters: FormGroup = this.fb.group({
       tipo: [this.tipos[0]],
       documentoNumero: [''],
-      perfil: [''],
+      perfilId: [null],
       sectorId: [null],
-      departamento: [null],
+      departamento: [{ value: null, disabled: true }],
       provincia: [{ value: null, disabled: true }],
       distrito: [{ value: null, disabled: true }]
     })
@@ -65,8 +66,8 @@ export class FiltrosUsuarioComponent {
         numeroDocumentoControl?.setValidators([ Validators.pattern(this.validatorsService.DNIPattern)])
         clearTimeout(this.timeout);
         var $this = this;
-        this.timeout = setTimeout(function () {
-          if (event.key === 'Backspace' || event.key === 'Delete') {          
+        this.timeout = setTimeout(function () { 
+          if ($this.validatorsService.DNIPattern.test(numeroDocumentoValue) ||  event.key === 'Backspace' || event.key === 'Delete') {          
             $this.paginationFilters.documentoNumero = numeroDocumentoValue          
             $this.generateFilters()
           }
@@ -78,15 +79,51 @@ export class FiltrosUsuarioComponent {
       }
     }
 
+    changePerfil(){
+      const perfilControl = this.formFilters.get('perfilId')
+      const perfilvalue = perfilControl?.value
+      if(perfilvalue){
+        this.paginationFilters.perfil = perfilvalue
+      } else {
+        delete this.paginationFilters.perfil
+      }
+      this.generateFilters()
+    }
+
     changeTipo(){
       const tipoControl = this.formFilters.get('tipo')
       const tipoValue = tipoControl?.value
       if(tipoValue){
-        this.paginationFilters.tipo = tipoValue
-      } else {
-        delete this.paginationFilters.tipo
+        this.setTipoToSectorUbigeo()
       }
-      this.generateFilters()
+    }
+
+    setTipoToSectorUbigeo(){
+      const tipoControl = this.formFilters.get('tipo')
+      const sectorIdControl = this.formFilters.get('sectorId')
+      const departamentoControl = this.formFilters.get('departamento')
+      const provinciaControl = this.formFilters.get('provincia')
+      const distritoControl = this.formFilters.get('distrito')
+      const tipovalue = tipoControl?.value
+      switch (tipovalue) {
+        case 'sector':
+          sectorIdControl?.enable()
+          departamentoControl?.disable()
+          departamentoControl?.reset()
+          provinciaControl?.disable()
+          provinciaControl?.reset()
+          distritoControl?.disable()
+          distritoControl?.reset()
+          delete this.paginationFilters.ubigeo
+          delete this.paginationFilters.entidadId
+        break;
+        case 'ubigeo':
+          sectorIdControl?.disable()
+          sectorIdControl?.reset()
+          departamentoControl?.enable()
+          delete this.paginationFilters.sectorId
+        break;
+      }
     }
 
     changeSector(){
@@ -136,14 +173,13 @@ export class FiltrosUsuarioComponent {
         this.paginationFilters.ubigeo = provinciaValue
         distritoControl?.enable()
         this.obtenerDistritosService()
-        this.obtenerEntidadesService()
       } else {
         this.paginationFilters.ubigeo = `${departamentoValue}0000`
         distritoControl?.setValue(null)
         distritoControl?.reset()
         distritoControl?.disable()
-        this.generateFilters()
       }
+      this.obtenerEntidadesService()
     }
 
     obtenerDistritosService(){
@@ -165,28 +201,22 @@ export class FiltrosUsuarioComponent {
         this.paginationFilters.ubigeo = provinciaValue
       }
       this.obtenerEntidadesService()
-      // this.generateFilters()
     }
 
     obtenerEntidadesService(){
       const ubigeo = this.paginationFilters.ubigeo
-      const params: ParamsEntidad = { ubigeo }
-      // console.log(params);
-      
+      const params: ParamsEntidad = { ubigeo }      
       this.entidadesService.obtenerEntidad(params)
         .subscribe( resp => {
           if(resp.data){
             const entidad = resp.data
             this.paginationFilters.entidadId = Number(entidad.entidadId)
-            console.log(this.paginationFilters);
-
-            // this.obtenerEntidadesService()
+            this.generateFilters()
           }        
         })
     }
 
     generateFilters(){
-      console.log(this.paginationFilters);
       this.filters.emit(this.paginationFilters)
     }
 
