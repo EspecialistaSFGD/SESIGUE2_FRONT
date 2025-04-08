@@ -30,7 +30,6 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     PageHeaderComponent,
     NgZorroModule,
     RouterModule,
-    FormularioAsistenciaTecnicaComponent,
     FiltrosAtencionComponent,
     PrimeNgModule
   ]
@@ -147,30 +146,26 @@ export default class AsistenciasTecnicasComponent {
         this.pagination.currentPage = params['pagina']
         this.pagination.pageSize = params['cantidad']
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
-        if(params['eventoId']){
-          this.pagination.eventoId = params['eventoId']
-          this.paginationFilter.eventoId = params['eventoId']
-        } else {
-          delete this.pagination.eventoId
-          delete this.paginationFilter.eventoId
-        }
-        if(params['fechaInicio']){
-          this.pagination.fechaInicio = params['fechaInicio']
-          this.paginationFilter.fechaInicio = params['fechaInicio']
-        } else {
-          delete this.pagination.fechaInicio
-          delete this.paginationFilter.fechaInicio
-        }
-        if(params['fechaFin']){
-          this.pagination.fechaFin = params['fechaFin']
-          this.paginationFilter.fechaFin = params['fechaFin']
-        } else {
-          delete this.pagination.fechaFin
-          delete this.paginationFilter.fechaFin
-        }        
+
+        this.setPaginationValueToParams(params, 'codigo')
+        this.setPaginationValueToParams(params, 'eventoId')
+        this.setPaginationValueToParams(params, 'fechaInicio')
+        this.setPaginationValueToParams(params, 'fechaFin')
+     
         this.obtenerAsistenciasTecnicas()
       }
     });
+  }
+
+  setPaginationValueToParams(params: Params, param: string){
+    const keyParam = param as keyof Pagination;
+    if(params[param]){
+      this.pagination[keyParam] = params[param];
+      this.paginationFilter[keyParam] = params[param];
+    } else {
+      delete this.pagination[keyParam]
+      delete this.paginationFilter[keyParam]
+    }
   }
 
   getPermissions() {
@@ -301,9 +296,9 @@ export default class AsistenciasTecnicasComponent {
     const fechaInicio = paginationFilters.fechaInicio ? paginationFilters.fechaInicio : null
     const fechaFin = paginationFilters.fechaFin ? paginationFilters.fechaFin : null
     const sectorId = paginationFilters.sectorId ? paginationFilters.sectorId : null
-
+    const codigo = paginationFilters.codigo ? paginationFilters.codigo : null
     
-    this.paramsNavigate({ eventoId, fechaInicio, fechaFin })
+    this.paramsNavigate({ eventoId, fechaInicio, fechaFin, codigo })
   }
 
   paramsNavigate(queryParams: Params){

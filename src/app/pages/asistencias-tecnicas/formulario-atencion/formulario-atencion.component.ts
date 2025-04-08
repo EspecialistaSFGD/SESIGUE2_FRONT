@@ -504,19 +504,42 @@ export class FormularioAtencionComponent {
   obtenerModalidad() {
     const modalidadControl = this.formAtencion.get('modalidad')
     const lugarControl = this.formAtencion.get('lugarId')
-    const modalidad = findEnumToText(AsistenciasTecnicasModalidad,modalidadControl?.value)        
-    const lugarModalidad = modalidad.text == AsistenciasTecnicasModalidad.PRESENCIAL ? 'pcm - schell' : 'virtual'
+    const lugarValue = lugarControl?.value
+    const modalidad = findEnumToText(AsistenciasTecnicasModalidad,modalidadControl?.value)      
+    
+    if(modalidad.text == AsistenciasTecnicasModalidad.PRESENCIAL){
+      if(!lugarValue){
+        this.setLugarToModalidad('pcm - schell')
+      } else {
+        const lugar = this.lugares().find( item => item.lugarId == lugarValue )!
+        if(lugar.nombre.toLowerCase() == 'virtual'){
+          this.setLugarToModalidad('pcm - schell')
+        }
+      }
+    } else {
+      this.setLugarToModalidad('virtual')
+    }
+  }
+
+  setLugarToModalidad(lugarModalidad: string){
+    const lugarControl = this.formAtencion.get('lugarId')
     const lugar = this.lugares().find( item => item.nombre.toLowerCase() == lugarModalidad )
     lugarControl?.setValue(lugar!.lugarId)
+    
   }
 
   obtenerLugar(){
-    const lugar = this.formAtencion.get('lugarId')?.value
     const modalidadControl = this.formAtencion.get('modalidad')
-    if(lugar){
-      const lugarModalidad = this.lugares().find( item => item.lugarId == lugar )!
-      const modalidad = lugarModalidad.nombre.toLowerCase() == AsistenciasTecnicasModalidad.VIRTUAL ? AsistenciasTecnicasModalidad.VIRTUAL : AsistenciasTecnicasModalidad.PRESENCIAL
-      modalidadControl?.setValue(modalidad)
+    const lugarControl = this.formAtencion.get('lugarId')
+    const lugarValue = lugarControl?.value
+
+    if(lugarValue){
+      const lugar = this.lugares().find( item => item.lugarId == lugarValue )!
+      if(lugar.nombre.toLowerCase() == AsistenciasTecnicasModalidad.VIRTUAL ){
+        modalidadControl?.setValue(AsistenciasTecnicasModalidad.VIRTUAL)
+      } else {
+        modalidadControl?.setValue(AsistenciasTecnicasModalidad.PRESENCIAL)
+      }
     }
   }
 

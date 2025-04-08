@@ -4,7 +4,7 @@ export interface EntidadesResponses extends DataResponses {
   data: EntidadResponse[],
 }
 
-export interface EntidadeResponses extends DataResponses {
+export interface EntidadResponses extends DataResponses {
   data: EntidadResponse,
 }
 
@@ -15,4 +15,9 @@ export interface EntidadResponse {
   distrito: string,
   ubigeo: string,
   entidad: string,
+}
+
+export interface ParamsEntidad {
+  entidadId?: string,
+  ubigeo?: string,
 }

@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Observable } from 'rxjs';
-import { Pagination, UsuariosResponses } from '@core/interfaces';
+import { ExportResponses, Pagination, UsuariosResponses } from '@core/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +15,6 @@ export class UsuariosService {
 
   listarUsuario(pagination: Pagination, perfiles: number[] | null = null): Observable<UsuariosResponses> {
     let params = this.helpersServices.setParams(pagination)
-<<<<<<< HEAD
-=======
     params = this.perfilesAddParams(params, perfiles)
     
     const headers = this.helpersServices.getAutorizationToken()
@@ -33,19 +31,12 @@ export class UsuariosService {
 
 
   perfilesAddParams(params: HttpParams, perfiles: number[] | null = null): HttpParams {
->>>>>>> issue-61-crear-reporte-depuntos-focales-de-sectores-y-gores
     if(perfiles){
       for(let perfil of perfiles){
         params = params.append('perfil[]', `${perfil}`);
       }
     }
-<<<<<<< HEAD
-      
-    const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<UsuariosResponses>(`${this.urlUsuario}/ListarUsuarios`, { headers, params })
-=======
     
     return params
->>>>>>> issue-61-crear-reporte-depuntos-focales-de-sectores-y-gores
   }
 }

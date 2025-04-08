@@ -11,4 +11,7 @@ export class ValidatorService {
   public NumberPattern: RegExp = /^[1-9]\d*$/
   public userPattern: RegExp = /^\d{8}$/
   public passwordPattern: RegExp = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\~-]{6,}$/
+
+  // letras numero y guion al medio
+  public codigoPattern: RegExp = /^[a-zA-Z0-9-]$/
 }
