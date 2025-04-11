@@ -9,7 +9,7 @@ import { FormularioMetaComponent } from './formulario-meta/formulario-meta.compo
 import { MetasDetallesComponent } from './metas-detalles/metas-detalles.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { dateZeroMonthDay } from '@core/helpers';
+import { getDateFormat } from '@core/helpers';
 
 @Component({
   selector: 'app-metas',
@@ -136,7 +136,7 @@ export default class MetasComponent {
             date.setDate(0)
 
 
-            const fechaMeta = dateZeroMonthDay(date)
+            const fechaMeta = getDateFormat(date)
             for(let usuario of usuarios){
               const metaUsuario: MetaUsuarioResponse = {
                 usuarioId: usuario.usuarioId,

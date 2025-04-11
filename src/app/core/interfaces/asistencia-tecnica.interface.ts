@@ -88,6 +88,7 @@ export interface AtencionesCargasMasivasResponses extends DataResponses {
 
 export interface AtencionCargaMasivaResponse {
   id?: string,
+	codigo: string,
 	fechaRegistro: Date,
 	fechaAtencion: Date,
 	numeroExpediente: string,
@@ -102,6 +103,29 @@ export interface AtencionCargaMasivaResponse {
 	provincia: string,
 	distrito: string,
 	validado: string
+}
+
+export interface OrientacionAtencion {
+  orientacionId: number
+  nombre: string,
+}
+
+export interface AsistentesAtencionResponse{
+  data: AsistenteAtencionResponse,
+}
+
+export interface AsistenteAtencionResponse {
+  asistenciaId: number,
+  asistenteId: number,
+  entidadId: number,
+  entidad: string,
+  entidadTipo: string,
+  ubigeo: string,
+  dni: string,
+  nombres: string,
+  cargo: string,
+  telefono: string,
+  email: string,
 }
 
 export interface DataModalAtencion {

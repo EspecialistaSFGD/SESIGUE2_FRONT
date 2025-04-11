@@ -13,12 +13,16 @@ export class HelpersService {
   }
 
   setParams(pagination: Pagination | PaginationPanel) {
-    pagination.code = Number(localStorage.getItem('codigoUsuario')) ?? 0
     let httpParams = new HttpParams();
     const params = Object.entries(pagination).map(([key, value]) => { return { key, value } })
     for (let param of params) {
       httpParams = httpParams.append(param.key, param.value);
     }
+    if (httpParams.has('code')) {
+      const userCode = Number(localStorage.getItem('codigoUsuario')) ?? 0
+      httpParams = httpParams.set('code', userCode);
+    }
+
     return httpParams
   }
 }

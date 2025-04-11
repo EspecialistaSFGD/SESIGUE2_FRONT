@@ -1,6 +1,6 @@
 import { ButtonsActions, UsuarioPermisos } from "@core/interfaces";
 
-export const obtenerPermisosBotones = (botones: UsuarioPermisos[]) => {
+export const obtenerPermisosBotones = (botones: UsuarioPermisos[]) => {	
 	let permisos: ButtonsActions = {}
 	botones.find(action => {     
 		switch (action.descripcionBoton) {
@@ -13,4 +13,9 @@ export const obtenerPermisosBotones = (botones: UsuarioPermisos[]) => {
 		}
 	})
 	return permisos;
+}
+
+export const permisosPCM = (perfilAuth: number) => {
+	const profilePCM = [11,12,23]
+    return profilePCM.includes(perfilAuth)
 }
