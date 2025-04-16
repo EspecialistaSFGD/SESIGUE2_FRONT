@@ -1,6 +1,6 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
-  [nzData]="mesas" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+  [nzData]="mesas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
   [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
   <thead>
     <tr>
@@ -14,12 +14,12 @@
   </thead>
   
   <tbody>
-    @for(mesa of mesas; track $index){
+    @for(mesa of mesas(); track $index){
       <tr>
         <td nzAlign="center">
-          <nz-tag [nzColor]="colorEstado(mesa.estado).color" nz-tooltip nzTooltipTitle="{{mesa.estado | titlecase }}">
-              <span nz-icon [nzType]="colorEstado(mesa.estado).icon"></span>
-              <span>{{mesa.estado | titlecase }}</span>
+          <nz-tag [nzColor]="colorEstado(mesa.estadoInterno).color" nz-tooltip nzTooltipTitle="{{mesa.estadoInterno | titlecase }}">
+              <span nz-icon [nzType]="colorEstado(mesa.estadoInterno).icon"></span>
+              <span>{{mesa.estadoInterno | titlecase }}</span>
           </nz-tag>
         </td>
         <td nzAlign="center">

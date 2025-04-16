@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ColorEstados, MesaResponse, Pagination } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -31,15 +31,17 @@ export default class MesasComponent {
     total: 0
   }
 
+  mesas = signal<MesaResponse[]>([])
+
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
   
-  mesas:MesaResponse[] = [
-    { nombre: 'Mesa Técnica para el Desarrollo de la Provinicia de Condorcanqui - Amazonas', estado: 'seguimiento' },
-    { nombre: 'Mesa Técnica para el Desarrollo Integral de la provincia de Vilcas Huamán del departamento de Ayacucho', estado: 'proceso' },
-    { nombre: 'Mesa Técnica para el Desarrollo   Territorial de la provincia de Urubamba del   departamento de Cusco', estado: 'cerrado' },
-    { nombre: 'Subgrupo de Trabajo 3: Plan de Desarrollo del “Espacio de diálogo para el desarrollo de la provincia de Cotabambas y distrito de Progreso de la provincia de Grau del departamento de Apurímac', estado: 'seguimiento' },
-  ]
+  // mesas:MesaResponse[] = [
+  //   { nombre: 'Mesa Técnica para el Desarrollo de la Provinicia de Condorcanqui - Amazonas', estadoInternoNombre: 'seguimiento' },
+  //   { nombre: 'Mesa Técnica para el Desarrollo Integral de la provincia de Vilcas Huamán del departamento de Ayacucho', estado: 'proceso' },
+  //   { nombre: 'Mesa Técnica para el Desarrollo   Territorial de la provincia de Urubamba del   departamento de Cusco', estado: 'cerrado' },
+  //   { nombre: 'Subgrupo de Trabajo 3: Plan de Desarrollo del “Espacio de diálogo para el desarrollo de la provincia de Cotabambas y distrito de Progreso de la provincia de Grau del departamento de Apurímac', estado: 'seguimiento' },
+  // ]
 
   colorEstado(estado: string): ColorEstados{
     let theme: ColorEstados = {
