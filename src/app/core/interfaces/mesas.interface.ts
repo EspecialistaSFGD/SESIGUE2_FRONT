@@ -10,6 +10,8 @@ export interface MesaResponse {
   nombre: string,
   estadoInternoNombre: string,
   estadoInterno: string,
+  sesion?: string,
+  am?:string,
   fechaRegistro: Date,
 }
 

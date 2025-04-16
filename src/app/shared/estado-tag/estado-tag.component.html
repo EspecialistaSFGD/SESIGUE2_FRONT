@@ -1,0 +1,4 @@
+<span class="inline-flex items-center justify-center gap-1 py-1 px-2 rounded border" [ngClass]="'' + getThemeState().color ">
+    <i class="pi text-sm" [ngClass]="'pi-' + getThemeState().icono"></i>
+    {{ estado | uppercase }}
+</span>

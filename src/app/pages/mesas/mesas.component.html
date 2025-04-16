@@ -17,26 +17,27 @@
     @for(mesa of mesas(); track $index){
       <tr>
         <td nzAlign="center">
-          <nz-tag [nzColor]="colorEstado(mesa.estadoInterno).color" nz-tooltip nzTooltipTitle="{{mesa.estadoInterno | titlecase }}">
-              <span nz-icon [nzType]="colorEstado(mesa.estadoInterno).icon"></span>
-              <span>{{mesa.estadoInterno | titlecase }}</span>
-          </nz-tag>
+          <app-estado-tag [estado]="mesa.estadoInternoNombre"></app-estado-tag>
         </td>
         <td nzAlign="center">
           <a [routerLink]="['/mesas', 1]" class="font-bold"  nz-tooltip nzTooltipTitle="Ver Detalle">
-            MS25-00{{$index + 1}}
+            {{mesa.codigo}}
           </a>
         </td>
         <td>{{mesa.nombre}}</td>
         <td nzAlign="center">
-          <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar sesión">
-              <span nz-icon nzType="file-excel" nzTheme="outline"></span>
-          </button>
+          @if(mesa.sesion){
+            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar sesión">
+                <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+            </button>
+          }
         </td>
         <td nzAlign="center">
-          <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar ayuda memoria">
-              <span nz-icon nzType="file-excel" nzTheme="outline"></span>
-          </button>
+          @if(mesa.am){
+            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar ayuda memoria">
+                <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+            </button>
+          }
         </td>
         <td nzAlign="center">
             <a [routerLink]="['/mesas', 1]">
@@ -52,7 +53,7 @@
 
 <ng-template #HeaderMesas>
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
-    <p class="mb-2 sm:mb-0">Resultados {{mesas.length}}</p>
+    <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
     <div>
       <nz-space>
             <button nz-button nzType="primary" (click)="crearMesa()">

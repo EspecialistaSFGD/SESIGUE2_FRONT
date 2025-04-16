@@ -7,11 +7,14 @@ import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from './formulario-mesa/formulario-mesa.component';
+import { MesasService } from '@core/services/mesas.service';
+import { EstadoTagComponent } from "../../shared/estado-tag/estado-tag.component";
+import { SharedModule } from '@shared/shared.module';
 
 @Component({
   selector: 'app-mesas',
   standalone: true,
-  imports: [CommonModule, RouterModule , NgZorroModule, PageHeaderComponent],
+  imports: [CommonModule, RouterModule, NgZorroModule, PageHeaderComponent, SharedModule],
   templateUrl: './mesas.component.html',
   styles: ``
 })
@@ -24,7 +27,7 @@ export default class MesasComponent {
 
   pagination: Pagination = {
     code: 0,
-    columnSort: 'fechaRegistro',
+    columnSort: 'nombre',
     typeSort: 'DESC',
     pageSize: 10,
     currentPage: 1,
@@ -35,40 +38,25 @@ export default class MesasComponent {
 
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
-  
-  // mesas:MesaResponse[] = [
-  //   { nombre: 'Mesa Técnica para el Desarrollo de la Provinicia de Condorcanqui - Amazonas', estadoInternoNombre: 'seguimiento' },
-  //   { nombre: 'Mesa Técnica para el Desarrollo Integral de la provincia de Vilcas Huamán del departamento de Ayacucho', estado: 'proceso' },
-  //   { nombre: 'Mesa Técnica para el Desarrollo   Territorial de la provincia de Urubamba del   departamento de Cusco', estado: 'cerrado' },
-  //   { nombre: 'Subgrupo de Trabajo 3: Plan de Desarrollo del “Espacio de diálogo para el desarrollo de la provincia de Cotabambas y distrito de Progreso de la provincia de Grau del departamento de Apurímac', estado: 'seguimiento' },
-  // ]
-
-  colorEstado(estado: string): ColorEstados{
-    let theme: ColorEstados = {
-    color: 'warning',
-    icon: 'sync'
-    };
-    switch (estado) {
-    case 'cerrado':
-      theme.color = 'success'
-      theme.icon = 'check-circle'
-      break;
-    case 'seguimiento':
-      theme.color = 'processing'
-      theme.icon = 'like'
-      break;
-    }
-    return theme
-  }
+  private mesasService = inject(MesasService)
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     this.permisosPCM = this.setPermisosPCM()
+    this.obtenerMesasService()
   }
 
   setPermisosPCM(){
     const profilePCM = [11,12,23]
     return profilePCM.includes(this.perfilAuth)
+  }
+
+  obtenerMesasService(){
+    this.mesasService.ListarMesas(this.pagination)
+      .subscribe( resp => {
+        this.mesas.set(resp.data)
+        this.pagination.total = resp.info?.total
+      })
   }
 
   crearMesa(){
@@ -95,7 +83,25 @@ export default class MesasComponent {
           label: action,
           type: 'primary',
           onClick: (componentResponse) => {
-            console.log(componentResponse);                
+            const formMesa = componentResponse!.formMesa
+            
+            if (formMesa.invalid) {
+              const invalidFields = Object.keys(formMesa.controls).filter(field => formMesa.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formMesa.markAllAsTouched();
+            }
+            
+            const nombre = formMesa.get('nombre')?.value
+
+            this.loadingData = true
+            this.mesasService.registarMesa(nombre)
+              .subscribe( resp => {
+                this.loadingData = false
+                if(resp.success == true){
+                  this.obtenerMesasService()
+                  this.modal.closeAll()
+                }
+              })            
           }
         }
       ]
