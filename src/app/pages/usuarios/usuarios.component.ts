@@ -70,7 +70,7 @@ export default class UsuariosComponent {
 
   getPermissions() {
       const navigation = this.authStore.navigationAuth()!
-      const usuariosNav = navigation.find(nav => nav.descripcionItem == 'Usuarios' && nav.parentMenu == 0)  
+      const usuariosNav = navigation.find(nav => nav.descripcionItem == 'Puntos Focales' && nav.parentMenu == 0)  
       this.usuarioPermisos = usuariosNav ? obtenerPermisosBotones(usuariosNav!.botones!) : {}
     }
 

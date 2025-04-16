@@ -1,5 +1,5 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
-<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
   [nzData]="mesas" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
   [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
   <thead>
@@ -50,15 +50,15 @@
   </tbody>
 </nz-table>
 
-<ng-template #Header>
+<ng-template #HeaderMesas>
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
     <p class="mb-2 sm:mb-0">Resultados {{mesas.length}}</p>
     <div>
       <nz-space>
-            <!-- <button nz-button nzType="primary">
+            <button nz-button nzType="primary" (click)="crearMesa()">
             <span nz-icon nzType="plus" nzTheme="outline"></span>
             <span class="button-text">Nueva mesa</span>
-          </button> -->
+          </button>
       </nz-space>
     </div>
   </div>
