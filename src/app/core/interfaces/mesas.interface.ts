@@ -4,6 +4,10 @@ export interface MesasResponses extends DataResponses {
   data: MesaResponse[]
 }
 
+export interface MesaResponses extends DataResponses {
+  data: MesaResponse
+}
+
 export interface MesaResponse {
   mesaId?: string,
   codigo: string,

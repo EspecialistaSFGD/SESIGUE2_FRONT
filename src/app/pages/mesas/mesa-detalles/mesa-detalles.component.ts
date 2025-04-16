@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { MesaFilesResponse, Pagination } from '@core/interfaces';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { MesaFilesResponse, MesaResponse, Pagination } from '@core/interfaces';
+import { MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { SharedModule } from '@shared/shared.module';
 
 @Component({
   selector: 'app-mesa-detalles',
   standalone: true,
-  imports: [CommonModule, RouterModule , NgZorroModule, PageHeaderComponent],
+  imports: [CommonModule, RouterModule , NgZorroModule, SharedModule],
   templateUrl: './mesa-detalles.component.html',
   styles: ``
 })
@@ -23,6 +24,8 @@ export default class MesaDetallesComponent {
     {id: '5', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Veronica', fecha: '12/11/2023' },
   ]
 
+  mesa!:MesaResponse
+
   loadingData: boolean = false
 
   pagination: Pagination = {
@@ -32,5 +35,31 @@ export default class MesaDetallesComponent {
     pageSize: 10,
     currentPage: 1,
     total: 0
+  }
+
+  private mesaServices = inject(MesasService)
+  private route = inject(ActivatedRoute)
+  private router = inject(Router)
+
+  ngOnInit(): void {
+    this.verificarMesa()
+  }
+
+  verificarMesa(){
+    const mesaId = this.route.snapshot.params['id'];
+    const mesaIdNumber = Number(mesaId);
+    if (isNaN(mesaIdNumber)) {
+      this.router.navigate(['/mesas']);
+      return;
+    }
+    
+    this.mesaServices.obtenerMesa(mesaId)
+      .subscribe( resp => {
+        if(resp.success){
+          this.mesa = resp.data
+        } else {
+          this.router.navigate(['/mesas']);
+        }
+      })
   }
 }

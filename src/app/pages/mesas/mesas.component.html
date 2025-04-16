@@ -20,7 +20,7 @@
           <app-estado-tag [estado]="mesa.estadoInternoNombre"></app-estado-tag>
         </td>
         <td nzAlign="center">
-          <a [routerLink]="['/mesas', 1]" class="font-bold"  nz-tooltip nzTooltipTitle="Ver Detalle">
+          <a [routerLink]="['/mesas', mesa.mesaId]" class="font-bold"  nz-tooltip nzTooltipTitle="Ver Detalle">
             {{mesa.codigo}}
           </a>
         </td>
@@ -40,7 +40,7 @@
           }
         </td>
         <td nzAlign="center">
-            <a [routerLink]="['/mesas', 1]">
+            <a [routerLink]="['/mesas', mesa.mesaId]">
               <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalle">
                 <span nz-icon nzType="eye" nzTheme="outline"></span>
               </button>
