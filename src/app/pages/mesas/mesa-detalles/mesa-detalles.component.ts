@@ -87,16 +87,22 @@ export default class MesaDetallesComponent {
       })
   }
 
-  obtenerDetalleMesa(tipo: number){ 
+  obtenerDetalleMesa(tipo: number){     
     tipo == 1 ? this.loadingDataAm = true : this.loadingDataSesion = true
     const pagination = tipo == 1 ? this.paginationAm : this.paginationSesion
-    this.mesaDetalleServices.ListarMesas(this.mesaId, pagination)
+    this.mesaDetalleServices.ListarMesas(this.mesaId, tipo, pagination)
       .subscribe( resp => {
         tipo == 1 ? this.mesasAm.set(resp.data) : this.mesasSesion.set(resp.data)
         tipo == 1 ? this.paginationAm.total = resp.info!.total : this.paginationSesion.total = resp.info!.total
 
         tipo == 1 ? this.loadingDataAm = false : this.loadingDataSesion = false
       })
+  }
+
+  setNameFile(archivo: string): string {
+    const dataFile = archivo.split('/')
+    const fileName = dataFile[dataFile.length - 1]
+    return fileName
   }
 
 
@@ -143,6 +149,25 @@ export default class MesaDetallesComponent {
           }
         }
       ],
+    });
+  }
+
+  deleteMesaDetalle(detalle: MesaDetalleResponse, tipo: number) {
+    const title = tipo == 1 ? 'AM' : 'SESIÓN'
+    this.modal.confirm({
+      nzTitle: `Eliminar ${title}`,
+      nzContent: `¿Está seguro de que desea eliminar el archivo ${this.setNameFile(detalle.archivo)}?`,
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.mesaDetalleServices.eliminarMesaDetalle(detalle.detalleId!)
+          .subscribe( resp => {
+            if(resp.success){
+              this.obtenerDetalleMesa(tipo)
+            }
+          })
+      },
+      nzCancelText: 'Cancelar'
     });
   }
 }

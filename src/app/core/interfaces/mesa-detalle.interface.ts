@@ -11,5 +11,6 @@ export interface MesaDetalleResponse {
     tipo : string,
     mesaId: string,
     usuarioId : string,
-    fechaRegistro: Date,
+    responsable? : string,
+    fechaRegistro?: string,
   }

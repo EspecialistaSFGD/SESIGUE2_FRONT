@@ -13,9 +13,10 @@ export class MesaDetallesService {
     private http = inject(HttpClient)
     private helpersServices = inject(HelpersService);
   
-    ListarMesas(mesaId: number, pagination: Pagination): Observable<MesaDetallesResponses> {
+    ListarMesas(mesaId: number, tipo: number, pagination: Pagination): Observable<MesaDetallesResponses> {
       let params = this.helpersServices.setParams(pagination)
       params = params.append('mesaId', mesaId)
+      params = params.append('tipo', tipo)
       const headers = this.helpersServices.getAutorizationToken()
       return this.http.get<MesaDetallesResponses>(`${this.urlMesaDetalle}/ListarMesaDetalles`, { headers, params })
     }
@@ -32,6 +33,18 @@ export class MesaDetallesService {
           catchError(err => of(err))
         )
     }
+
+    eliminarMesaDetalle(detalleId: string) {
+        const headers = this.helpersServices.getAutorizationToken()
+        return this.http.delete<MesaDetallesResponses>(`${this.urlMesaDetalle}/EliminarMesaDetalle/${detalleId}`, { headers })
+          .pipe(
+            tap(resp => {
+              return resp
+            }),
+            map(valid => valid),
+            catchError(err => of(err))
+          )
+      }
 
     private generateFormData(mesaDetalle: MesaDetalleResponse): FormData {
         const formData = new FormData()
