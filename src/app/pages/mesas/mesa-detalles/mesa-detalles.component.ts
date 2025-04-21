@@ -5,6 +5,8 @@ import { MesaDetalleResponse, MesaFilesResponse, MesaResponse, Pagination } from
 import { MesaDetallesService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formulario-mesa-detalle.component';
 
 @Component({
   selector: 'app-mesa-detalles',
@@ -58,6 +60,7 @@ export default class MesaDetallesComponent {
   private mesaDetalleServices = inject(MesaDetallesService)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
+  private modal = inject(NzModalService);
 
   ngOnInit(): void {
     this.verificarMesa()
@@ -84,15 +87,62 @@ export default class MesaDetallesComponent {
       })
   }
 
-  obtenerDetalleMesa(tipo: number){    
-    this.loadingDataSesion = true
+  obtenerDetalleMesa(tipo: number){ 
+    tipo == 1 ? this.loadingDataAm = true : this.loadingDataSesion = true
     const pagination = tipo == 1 ? this.paginationAm : this.paginationSesion
     this.mesaDetalleServices.ListarMesas(this.mesaId, pagination)
       .subscribe( resp => {
         tipo == 1 ? this.mesasAm.set(resp.data) : this.mesasSesion.set(resp.data)
         tipo == 1 ? this.paginationAm.total = resp.info!.total : this.paginationSesion.total = resp.info!.total
-        
+
         tipo == 1 ? this.loadingDataAm = false : this.loadingDataSesion = false
       })
+  }
+
+
+  modalCreateFile(tipo: number) {
+    const action = tipo == 1 ? 'AM' : 'SESIÓN'
+    const modal = this.modal.create<FormularioMesaDetalleComponent>({
+      nzTitle: `AGREGAR ${action.toUpperCase()}`,
+      nzContent: FormularioMesaDetalleComponent,
+      nzData: {
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: `Guardar ${action.toLowerCase()}`,
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formMesaDetalle = componentResponse!.formMesaDetalle
+
+            if (formMesaDetalle.invalid) {
+              const invalidFields = Object.keys(formMesaDetalle.controls).filter(field => formMesaDetalle.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formMesaDetalle.markAllAsTouched();
+            }
+
+            const usuarioId = localStorage.getItem('codigoUsuario')
+            const mesaDetalle = {
+              ...formMesaDetalle.value,
+              usuarioId,
+              tipo,
+              mesaId: this.mesaId
+            }
+
+            this.mesaDetalleServices.registarMesaDetalle(mesaDetalle)
+              .subscribe( resp => {
+                if(resp.success){
+                  this.modal.closeAll()
+                  this.obtenerDetalleMesa(tipo)
+                }
+              })
+          }
+        }
+      ],
+    });
   }
 }

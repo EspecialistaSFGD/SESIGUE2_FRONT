@@ -25,7 +25,7 @@
 		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">Sesiones</h5>
 			@if (mesa().estadoInternoNombre != 'cerrado') {
-				<button nz-button nzType="default">
+				<button nz-button nzType="default"  (click)="modalCreateFile(0)">
 					<span nz-icon nzType="plus" nzTheme="outline"></span>
 					<span class="button-text">Nueva</span>
 				</button>
@@ -68,7 +68,7 @@
 		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">AM</h5>
 			@if (mesa().estadoInternoNombre != 'cerrado') {
-				<button nz-button nzType="default">
+				<button nz-button nzType="default" (click)="modalCreateFile(1)">
 					<span nz-icon nzType="plus" nzTheme="outline"></span>
 					<span class="button-text">Nueva</span>
 				</button>
