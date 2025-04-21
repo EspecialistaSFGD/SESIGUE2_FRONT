@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, Signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { MesaFilesResponse, MesaResponse, Pagination } from '@core/interfaces';
-import { MesasService } from '@core/services';
+import { MesaDetalleResponse, MesaFilesResponse, MesaResponse, Pagination } from '@core/interfaces';
+import { MesaDetallesService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 
@@ -25,11 +25,20 @@ export default class MesaDetallesComponent {
   ]
 
   mesa!:MesaResponse
+  mesasSesion = signal<MesaDetalleResponse[]>([])
+  mesasAm = signal<MesaDetalleResponse[]>([])
 
   loadingData: boolean = false
 
-  pagination: Pagination = {
-    code: 0,
+  paginationSesion: Pagination = {
+    columnSort: 'fechaRegistro',
+    typeSort: 'DESC',
+    pageSize: 10,
+    currentPage: 1,
+    total: 0
+  }
+
+  paginationAm: Pagination = {
     columnSort: 'fechaRegistro',
     typeSort: 'DESC',
     pageSize: 10,
@@ -38,11 +47,14 @@ export default class MesaDetallesComponent {
   }
 
   private mesaServices = inject(MesasService)
+  private mesaDetalleServices = inject(MesaDetallesService)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
 
   ngOnInit(): void {
     this.verificarMesa()
+    this.obtenerDetalleMesa(0)
+    this.obtenerDetalleMesa(1)
   }
 
   verificarMesa(){
@@ -60,6 +72,18 @@ export default class MesaDetallesComponent {
         } else {
           this.router.navigate(['/mesas']);
         }
+      })
+  }
+
+  obtenerDetalleMesa(tipo: number){
+    this.loadingData = true
+    const pagination = tipo == 1 ? this.paginationAm : this.paginationSesion
+    this.mesaDetalleServices.ListarMesas(this.mesa.mesaId!, pagination)
+      .subscribe( resp => {
+        tipo == 1 ? this.mesasAm.set(resp.data) : this.mesasSesion.set(resp.data)
+        tipo == 1 ? this.paginationAm.total = resp.info!.total : this.paginationSesion.total = resp.info!.total
+
+        this.loadingData = false
       })
   }
 }

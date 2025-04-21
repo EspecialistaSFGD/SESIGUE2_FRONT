@@ -43,12 +43,12 @@
 					</tr>
 				</thead>
 				<tbody>
-					@for(file of files; track $index){
+					@for(mesa of mesasSesion(); track $index){
 					<tr>
-						<td nzAlign="center">{{file.id}}</td>
-						<td nzAlign="center">{{file.nombreArchivo}}</td>
-						<td nzAlign="center">{{file.usuario}}</td>
-						<td nzAlign="center">{{file.fecha}}</td>
+						<td nzAlign="center">{{mesa.mesaId}}</td>
+						<td nzAlign="center">{{mesa.archivo}}</td>
+						<td nzAlign="center">{{mesa.usuarioId}}</td>
+						<td nzAlign="center">{{mesa.fechaRegistro | date : 'dd/MM/yyyy' }}</td>
 						<td nzAlign="center">
 							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar">
 								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
@@ -86,12 +86,12 @@
 					</tr>
 				</thead>
 				<tbody>
-					@for(file of files; track $index){
+					@for(mesa of mesasAm(); track $index){
 					<tr>
-						<td nzAlign="center">{{file.id}}</td>
-						<td nzAlign="center">{{file.nombreArchivo}}</td>
-						<td nzAlign="center">{{file.usuario}}</td>
-						<td nzAlign="center">{{file.fecha}}</td>
+						<td nzAlign="center">{{mesa.mesaId}}</td>
+						<td nzAlign="center">{{mesa.archivo}}</td>
+						<td nzAlign="center">{{mesa.usuarioId}}</td>
+						<td nzAlign="center">{{mesa.fechaRegistro | date : 'dd/MM/yyyy' }}</td>
 						<td nzAlign="center">
 							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar">
 								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
