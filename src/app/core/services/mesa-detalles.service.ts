@@ -13,7 +13,7 @@ export class MesaDetallesService {
     private http = inject(HttpClient)
     private helpersServices = inject(HelpersService);
   
-    ListarMesas(mesaId: string, pagination: Pagination): Observable<MesaDetallesResponses> {
+    ListarMesas(mesaId: number, pagination: Pagination): Observable<MesaDetallesResponses> {
       let params = this.helpersServices.setParams(pagination)
       params = params.append('mesaId', mesaId)
       const headers = this.helpersServices.getAutorizationToken()

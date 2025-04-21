@@ -6,16 +6,16 @@
 <div class="grid grid-cols-1 md:grid-cols-6 bg-white p-4">
 	<div class="flex">
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Codigo</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa.codigo}}</div>
+		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().codigo}}</div>
 	</div>
 	<div class="flex col-span-4">
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Nombre</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa.nombre}}</div>
+		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().nombre}}</div>
 	</div>
 	<div class="flex">
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Estado</div>
 		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
-			<app-estado-tag [estado]="mesa.estadoInternoNombre"></app-estado-tag>
+			<app-estado-tag [estado]="mesa().estadoInternoNombre"></app-estado-tag>
 		</div>
 	</div>
 </div>
@@ -24,7 +24,7 @@
 	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
 		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">Sesiones</h5>
-			@if (mesa.estadoInternoNombre != 'cerrado') {
+			@if (mesa().estadoInternoNombre != 'cerrado') {
 				<button nz-button nzType="default">
 					<span nz-icon nzType="plus" nzTheme="outline"></span>
 					<span class="button-text">Nueva</span>
@@ -67,7 +67,7 @@
 	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
 		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">AM</h5>
-			@if (mesa.estadoInternoNombre != 'cerrado') {
+			@if (mesa().estadoInternoNombre != 'cerrado') {
 				<button nz-button nzType="default">
 					<span nz-icon nzType="plus" nzTheme="outline"></span>
 					<span class="button-text">Nueva</span>

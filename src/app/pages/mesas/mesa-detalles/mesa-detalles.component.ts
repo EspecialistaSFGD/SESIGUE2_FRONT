@@ -24,11 +24,19 @@ export default class MesaDetallesComponent {
     {id: '5', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Veronica', fecha: '12/11/2023' },
   ]
 
-  mesa!:MesaResponse
+  mesaId!: number
+  mesa = signal<MesaResponse>({
+    codigo: '',
+    nombre: '',
+    estadoInternoNombre: '',
+    estadoInterno: '',
+    fechaRegistro: new Date()
+  })
   mesasSesion = signal<MesaDetalleResponse[]>([])
   mesasAm = signal<MesaDetalleResponse[]>([])
 
-  loadingData: boolean = false
+  loadingDataSesion: boolean = false
+  loadingDataAm: boolean = false
 
   paginationSesion: Pagination = {
     columnSort: 'fechaRegistro',
@@ -64,26 +72,27 @@ export default class MesaDetallesComponent {
       this.router.navigate(['/mesas']);
       return;
     }
-    
+
+    this.mesaId = mesaIdNumber    
     this.mesaServices.obtenerMesa(mesaId)
       .subscribe( resp => {
         if(resp.success){
-          this.mesa = resp.data
+          this.mesa.set(resp.data)
         } else {
           this.router.navigate(['/mesas']);
         }
       })
   }
 
-  obtenerDetalleMesa(tipo: number){
-    this.loadingData = true
+  obtenerDetalleMesa(tipo: number){    
+    this.loadingDataSesion = true
     const pagination = tipo == 1 ? this.paginationAm : this.paginationSesion
-    this.mesaDetalleServices.ListarMesas(this.mesa.mesaId!, pagination)
+    this.mesaDetalleServices.ListarMesas(this.mesaId, pagination)
       .subscribe( resp => {
         tipo == 1 ? this.mesasAm.set(resp.data) : this.mesasSesion.set(resp.data)
         tipo == 1 ? this.paginationAm.total = resp.info!.total : this.paginationSesion.total = resp.info!.total
-
-        this.loadingData = false
+        
+        tipo == 1 ? this.loadingDataAm = false : this.loadingDataSesion = false
       })
   }
 }
