@@ -135,7 +135,7 @@ export default class MesaDetallesComponent {
             const mesaDetalle = {
               ...formMesaDetalle.value,
               usuarioId,
-              tipo,
+              tipo: tipo == 1 ? 'am' : 'sesion',
               mesaId: this.mesaId
             }
 

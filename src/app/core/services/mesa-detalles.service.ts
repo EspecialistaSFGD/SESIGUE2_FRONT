@@ -21,7 +21,7 @@ export class MesaDetallesService {
       return this.http.get<MesaDetallesResponses>(`${this.urlMesaDetalle}/ListarMesaDetalles`, { headers, params })
     }
 
-    registarMesaDetalle(mesaDetalle: MesaDetalleResponse) {
+    registarMesaDetalle(mesaDetalle: MesaDetalleResponse) {      
       const formData = this.generateFormData(mesaDetalle)
       const headers = this.helpersServices.getAutorizationToken()        
       return this.http.post<MesaDetallesResponses>(`${this.urlMesaDetalle}/CrearMesaDetalle`, formData, { headers })
