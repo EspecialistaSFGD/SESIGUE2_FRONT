@@ -80,7 +80,7 @@ export class AcuerdosService {
         )
     }
 
-    listarAcuerdos(cui: string | null = null, clasificacion: SelectModel[] | null = null, tipo: SelectModel | null = null, estadoAcuerdo: SelectModel[] | null = null, tipoEspacio: string | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, dis: SelectModel | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
+    listarAcuerdos(cui: string | null = null, clasificacion: SelectModel[] | null = null, tipo: SelectModel | null = null, estadoAcuerdo: SelectModel[] | null = null, tipoEspacio: string | null = null, espacio: SelectModel[] | null = null, sector: SelectModel[] | null = null, dep: SelectModel | null = null, prov: SelectModel | null = null, dis: SelectModel | null = null, entidadId: number | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = null, sortOrder: string | null = null): void {
         // debugger;
         let params = new HttpParams();
 
@@ -129,6 +129,7 @@ export class AcuerdosService {
         params = (pageSize !== null) ? params.append('piPageSize', `${pageSize}`) : params;
         params = (sortField !== null) ? params.append('columnSort', `${sortField}`) : params;
         params = (sortOrder !== null) ? params.append('typeSort', `${sortOrder}`) : params;
+        params = (entidadId !== null) ? params.append('entidadId', `${entidadId}`) : params;
 
 
 
