@@ -4,7 +4,9 @@
   [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
-      <th nzWidth="20px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">DNI</th>
+		@if (perfilAuth == 11) {
+			<th nzWidth="20px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">DNI</th>
+		}
       <th nzWidth="40px" nzAlign="center">Correo</th>
       <th nzWidth="50px" nzAlign="center">Nombre</th>
       <th nzWidth="60px" nzAlign="center">Entidad</th>
@@ -19,7 +21,9 @@
   <tbody>
     @for(usuario of usuarios(); track $index){
 			<tr>
-				<td nzAlign="center">{{usuario.numeroDocumento}}</td>
+				@if (perfilAuth == 11) {
+					<td nzAlign="center">{{usuario.numeroDocumento}}</td>
+				}
 				<td nzAlign="center">{{usuario.correoNotificacion}}</td>
 				<td nzAlign="center">{{usuario.nombresPersona}}</td>
 				<td nzAlign="center">{{usuario.entidadNombre}}</td>

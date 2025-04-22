@@ -10,6 +10,10 @@ import { FormularioMesaComponent } from './formulario-mesa/formulario-mesa.compo
 import { MesasService } from '@core/services/mesas.service';
 import { EstadoTagComponent } from "../../shared/estado-tag/estado-tag.component";
 import { SharedModule } from '@shared/shared.module';
+import { DescargarService } from '@core/services';
+import { UtilesService } from '@libs/shared/services/utiles.service';
+import saveAs from 'file-saver';
+import { generateBase64ToArrayBuffer } from '@core/helpers';
 
 @Component({
   selector: 'app-mesas',
@@ -39,6 +43,7 @@ export default class MesasComponent {
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
   private mesasService = inject(MesasService)
+  private descargarService = inject(DescargarService)
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
@@ -56,6 +61,17 @@ export default class MesasComponent {
       .subscribe( resp => {
         this.mesas.set(resp.data)
         this.pagination.total = resp.info?.total
+      })
+  }
+
+  descargarPdf(archivo: string){
+    this.descargarService.descargarPdf(archivo)
+      .subscribe((resp) => {        
+        if (resp.success == true) {
+          var binary_string = generateBase64ToArrayBuffer(resp.data.binario);
+          var blob = new Blob([binary_string], { type: `application/${resp.data.tipo}` });
+          saveAs(blob, resp.data.nombre);
+        }
       })
   }
 

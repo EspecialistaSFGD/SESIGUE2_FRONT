@@ -27,14 +27,14 @@
         <td>{{mesa.nombre}}</td>
         <td nzAlign="center">
           @if(mesa.sesion){
-            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar sesión">
+            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar sesión"  (click)="descargarPdf(mesa.sesion)">
                 <span nz-icon nzType="file-excel" nzTheme="outline"></span>
             </button>
           }
         </td>
         <td nzAlign="center">
           @if(mesa.am){
-            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar ayuda memoria">
+            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar ayuda memoria" (click)="descargarPdf(mesa.am)">
                 <span nz-icon nzType="file-excel" nzTheme="outline"></span>
             </button>
           }

@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, Signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { MesaDetalleResponse, MesaFilesResponse, MesaResponse, Pagination } from '@core/interfaces';
-import { MesaDetallesService, MesasService } from '@core/services';
+import { MesaDetalleResponse, MesaResponse, Pagination } from '@core/interfaces';
+import { DescargarService, MesaDetallesService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formulario-mesa-detalle.component';
+import { generateBase64ToArrayBuffer } from '@core/helpers';
+import saveAs from 'file-saver';
 
 @Component({
   selector: 'app-mesa-detalles',
@@ -18,14 +20,6 @@ import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formul
 export default class MesaDetallesComponent {
   title: string = `Mesas`;
 
-  files: MesaFilesResponse[] = [
-    {id: '1', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Dario', fecha: '07/03/2024' },
-    {id: '2', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Denisse', fecha: '22/02/2024' },
-    {id: '3', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Cecilia', fecha: '15/01/2024' },
-    {id: '4', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Pamela', fecha: '28/12/2023' },
-    {id: '5', archivo: '', nombreArchivo: 'archivo-1.pdf', usuario: 'Veronica', fecha: '12/11/2023' },
-  ]
-
   mesaId!: number
   mesa = signal<MesaResponse>({
     codigo: '',
@@ -34,6 +28,7 @@ export default class MesaDetallesComponent {
     estadoInterno: '',
     fechaRegistro: new Date()
   })
+
   mesasSesion = signal<MesaDetalleResponse[]>([])
   mesasAm = signal<MesaDetalleResponse[]>([])
 
@@ -43,7 +38,7 @@ export default class MesaDetallesComponent {
   paginationSesion: Pagination = {
     columnSort: 'fechaRegistro',
     typeSort: 'DESC',
-    pageSize: 10,
+    pageSize: 5,
     currentPage: 1,
     total: 0
   }
@@ -51,7 +46,7 @@ export default class MesaDetallesComponent {
   paginationAm: Pagination = {
     columnSort: 'fechaRegistro',
     typeSort: 'DESC',
-    pageSize: 10,
+    pageSize: 5,
     currentPage: 1,
     total: 0
   }
@@ -61,6 +56,7 @@ export default class MesaDetallesComponent {
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private modal = inject(NzModalService);
+    private descargarService = inject(DescargarService)
 
   ngOnInit(): void {
     this.verificarMesa()
@@ -105,6 +101,16 @@ export default class MesaDetallesComponent {
     return fileName
   }
 
+  descargarPdf(archivo: string){
+    this.descargarService.descargarPdf(archivo)
+      .subscribe((resp) => {        
+        if (resp.success == true) {
+          var binary_string = generateBase64ToArrayBuffer(resp.data.binario);
+          var blob = new Blob([binary_string], { type: `application/${resp.data.tipo}` });
+          saveAs(blob, resp.data.nombre);
+        }
+      })
+  }
 
   modalCreateFile(tipo: number) {
     const action = tipo == 1 ? 'AM' : 'SESIÓN'

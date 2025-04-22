@@ -32,7 +32,7 @@
 			}
 		</div>
 		<div class="flex border-solid ">
-			<nz-table [nzData]="files" class="w-full" [nzFrontPagination]="false" [nzShowPagination]="false" >
+			<nz-table [nzData]="mesasSesion()" class="w-full" [nzFrontPagination]="false" [nzShowPagination]="false" >
 				<thead>
 					<tr>
 						<th nzWidth="10px" nzAlign="center">Nro</th>
@@ -50,7 +50,7 @@
 						<td nzAlign="center">{{detalle.responsable}}</td>
 						<td nzAlign="center">{{detalle.fechaRegistro}}</td>
 						<td nzAlign="center">
-							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar">
+							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar" (click)="descargarPdf(detalle.archivo)">
 								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
 							</button>
 							<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteMesaDetalle(detalle,0)">
@@ -75,7 +75,7 @@
 			}
 		</div>
 		<div class="flex border-solid ">
-			<nz-table [nzData]="files" class="w-full" [nzFrontPagination]="false" [nzShowPagination]="false" >
+			<nz-table [nzData]="mesasAm()" class="w-full" [nzFrontPagination]="false" [nzShowPagination]="false" >
 				<thead>
 					<tr>
 						<th nzWidth="10px" nzAlign="center">Nro</th>
@@ -93,7 +93,7 @@
 						<td nzAlign="center">{{detalle.responsable}}</td>
 						<td nzAlign="center">{{detalle.fechaRegistro}}</td>
 						<td nzAlign="center">
-							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar">
+							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar" (click)="descargarPdf(detalle.archivo)">
 								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
 							</button>
 							<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteMesaDetalle(detalle,1)">
