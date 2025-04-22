@@ -30,7 +30,7 @@
 				<td nzAlign="center">{{usuario.departamento}}</td>
 				<td nzAlign="center">{{usuario.provincia}}</td>
 				<td nzAlign="center">{{usuario.distrito}}</td>
-				<td nzAlign="center">{{usuario.perfil}}</td>
+				<td nzAlign="center"><p [nz-tooltip]="usuario.descripcionPerfil">{{usuario.perfil}}</p></td>
 				<td nzAlign="center">{{usuario.telefono}}</td>
 			</tr>
 		}

@@ -33,6 +33,7 @@ export interface UsuarioResponse {
 	telefono: string,
 	correoNotificacion: string,
 	perfil: string,
+	descripcionPerfil: string,
 	codigoPerfil: string,
 	esActivo: string,
 	tipo: string,
