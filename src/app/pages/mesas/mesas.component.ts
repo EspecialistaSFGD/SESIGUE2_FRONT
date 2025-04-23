@@ -83,7 +83,7 @@ export default class MesasComponent {
     const action = `${create ? 'Crear' : 'Actualizar' } mesa`
     const modal = this.modal.create<FormularioMesaComponent>({
       nzTitle: `${action.toUpperCase()}`,
-      // nzWidth: '75%',
+      nzWidth: '40%',
       nzContent: FormularioMesaComponent,
       nzData: {
         create,
