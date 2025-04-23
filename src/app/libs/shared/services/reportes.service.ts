@@ -386,7 +386,7 @@ export class ReportesService extends BaseHttpService {
     }
   }
 
-  descargarReporteAcuerdos(tipoReporte: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend', grupos: number[] | null = null, tipoEspacio: string | null = null, espacios: number[] | null = null, ubigeo: string | null = null, cui: string | null = null, estados: number[] | null = null, clasificaciones: number[] | null = null, tipo: number | null = null): Promise<ResponseModel> {
+  descargarReporteAcuerdos(tipoReporte: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend', grupos: number[] | null = null, tipoEspacio: string | null = null, espacios: number[] | null = null, ubigeo: string | null = null, cui: string | null = null, estados: number[] | null = null, clasificaciones: number[] | null = null, tipo: number | null = null, preAcuerdo: number | null = null): Promise<ResponseModel> {
     let params = new HttpParams()
       .append('piCurrentPage', pageIndex)
       .append('piPageSize', pageSize)
@@ -421,11 +421,7 @@ export class ReportesService extends BaseHttpService {
     params = ubigeo ? params.append('ubigeo', `${ubigeo}`) : params
     params = cui ? params.append('codigo', `${cui}`) : params
     params = tipo ? params.append('tipoId', `${tipo}`) : params
-
-    console.log("UBIGEOS");
-    console.log(ubigeo);
-    console.log(params);
-    
+    params = preAcuerdo ? params.append('preAcuerdo', preAcuerdo) : params
 
     this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
 

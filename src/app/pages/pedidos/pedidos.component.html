@@ -162,12 +162,17 @@
                 <nz-dropdown-menu #menu="nzDropdownMenu">
                     <ul nz-menu>
                         <li nz-menu-item>
-                            <button (click)="onDescargarReporte('PEDIDO')" nz-button nzType="text"
+                            <button (click)="onDescargarReporte('PEDIDO',false)" nz-button nzType="text"
                                 type="button">Exportar
                                 pedidos</button>
                         </li>
                         <li nz-menu-item>
-                            <button (click)="onDescargarReporte('ACUERDO')" nz-button nzType="text"
+                            <button (click)="onDescargarReporte('ACUERDO', false)" nz-button nzType="text"
+                                type="button">Exportar
+                                pre acuerdos</button>
+                        </li>
+                        <li nz-menu-item>
+                            <button (click)="onDescargarReporte('ACUERDO',true)" nz-button nzType="text"
                                 type="button">Exportar
                                 acuerdos</button>
                         </li>
