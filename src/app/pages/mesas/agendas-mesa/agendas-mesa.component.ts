@@ -2,20 +2,21 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MesaResponse } from '@core/interfaces';
+import { PipesModule } from '@core/pipes/pipes.module';
 import { MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 
 @Component({
-  selector: 'app-mesa-inversiones',
+  selector: 'app-agendas-mesa',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, SharedModule],
-  templateUrl: './mesa-inversiones.component.html',
+  imports: [CommonModule, NgZorroModule, SharedModule, PipesModule],
+  templateUrl: './agendas-mesa.component.html',
   styles: ``
 })
-export default class MesaInversionesComponent {
-  title: string = `Inversiones`;
-  
+export default class AgendasMesaComponent {
+  title: string = `Agenda de la mesa`;
+    
   authUserId = localStorage.getItem('codigoUsuario')
   mesaId!: number
   mesa = signal<MesaResponse>({

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrimeraLetraPipe } from './primera-letra.pipe';
 import { NumeroPipe } from './numero.pipe';
+import { SafeUrlPipe } from './safe-url.pipe';
 
 
 
@@ -10,11 +11,13 @@ import { NumeroPipe } from './numero.pipe';
   imports: [
     CommonModule,
     PrimeraLetraPipe,
-    NumeroPipe
+    NumeroPipe,
+    SafeUrlPipe
   ],
   exports: [
     PrimeraLetraPipe,
-    NumeroPipe
+    NumeroPipe,
+    SafeUrlPipe
   ]
 })
 export class PipesModule { }
