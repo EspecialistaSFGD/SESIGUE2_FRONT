@@ -925,7 +925,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     saveAs(blob, nombreArchivo);
   }
 
-  onDescargarReporte(tipo: ReporteType): void {
+  onDescargarReporte(tipo: ReporteType, preAcuerdo: boolean): void {
     const cui: string | null = this.cui ? this.cui : null
     const sectores: number[] | null = this.sectoresSeleccionados ? this.sectoresSeleccionados!.map(item => Number(item.value)) : null
     const espacios: number[] | null = this.espaciosSeleccionados ? this.espaciosSeleccionados!.map(item => Number(item.value)) : null
@@ -938,13 +938,14 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     }
 
     this.loading = true
+    const esPreacuerdo = tipo === 'ACUERDO' && preAcuerdo ? 1 : 0
 
     let sortField = 'prioridadID'
     switch (tipo) {
       case 'ACUERDO': sortField = 'acuerdoId'; break;
       case 'HITO': sortField = 'hitoId'; break;
     }
-    this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, 0, sortField, this.sortOrder, sectores, tipoEspacio, espacios, ubigeo, cui)
+    this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, 0, sortField, this.sortOrder, sectores, tipoEspacio, espacios, ubigeo, cui, null, null, null, esPreacuerdo)
       .then((res) => {
         if (res.success == true) {
           this.generarExcel(res.data.archivo, res.data.nombreArchivo);

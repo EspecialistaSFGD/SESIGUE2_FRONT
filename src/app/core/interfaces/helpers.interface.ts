@@ -101,5 +101,5 @@ export interface FileResponse {
 
 export interface ColorEstados {
 	color: string,
-	icon: string
+	icono: string
 }

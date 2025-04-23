@@ -1,6 +1,6 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
-<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
-  [nzData]="mesas" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
+  [nzData]="mesas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
   [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
   <thead>
     <tr>
@@ -14,32 +14,33 @@
   </thead>
   
   <tbody>
-    @for(mesa of mesas; track $index){
+    @for(mesa of mesas(); track $index){
       <tr>
         <td nzAlign="center">
-          <nz-tag [nzColor]="colorEstado(mesa.estado).color" nz-tooltip nzTooltipTitle="{{mesa.estado | titlecase }}">
-              <span nz-icon [nzType]="colorEstado(mesa.estado).icon"></span>
-              <span>{{mesa.estado | titlecase }}</span>
-          </nz-tag>
+          <app-estado-tag [estado]="mesa.estadoInternoNombre"></app-estado-tag>
         </td>
         <td nzAlign="center">
-          <a [routerLink]="['/mesas', 1]" class="font-bold"  nz-tooltip nzTooltipTitle="Ver Detalle">
-            MS25-00{{$index + 1}}
+          <a [routerLink]="['/mesas', mesa.mesaId]" class="font-bold"  nz-tooltip nzTooltipTitle="Ver Detalle">
+            {{mesa.codigo}}
           </a>
         </td>
         <td>{{mesa.nombre}}</td>
         <td nzAlign="center">
-          <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar sesión">
-              <span nz-icon nzType="file-excel" nzTheme="outline"></span>
-          </button>
+          @if(mesa.sesion){
+            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar sesión"  (click)="descargarPdf(mesa.sesion)">
+                <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+            </button>
+          }
         </td>
         <td nzAlign="center">
-          <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar ayuda memoria">
-              <span nz-icon nzType="file-excel" nzTheme="outline"></span>
-          </button>
+          @if(mesa.am){
+            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar ayuda memoria" (click)="descargarPdf(mesa.am)">
+                <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+            </button>
+          }
         </td>
         <td nzAlign="center">
-            <a [routerLink]="['/mesas', 1]">
+            <a [routerLink]="['/mesas', mesa.mesaId]">
               <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalle">
                 <span nz-icon nzType="eye" nzTheme="outline"></span>
               </button>
@@ -50,15 +51,15 @@
   </tbody>
 </nz-table>
 
-<ng-template #Header>
+<ng-template #HeaderMesas>
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
-    <p class="mb-2 sm:mb-0">Resultados {{mesas.length}}</p>
+    <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
     <div>
       <nz-space>
-            <!-- <button nz-button nzType="primary">
+            <button nz-button nzType="primary" (click)="crearMesa()">
             <span nz-icon nzType="plus" nzTheme="outline"></span>
             <span class="button-text">Nueva mesa</span>
-          </button> -->
+          </button>
       </nz-space>
     </div>
   </div>

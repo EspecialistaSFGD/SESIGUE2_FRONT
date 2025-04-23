@@ -1,0 +1,7 @@
+<form [formGroup]="formMesa" class="flex flex-col gap-4" autocomplete="off">
+	<div class="flex flex-col">
+		<label for="nombre">Nombre de la Mesa</label>
+		<textarea class="form-control" id="nombre" formControlName="nombre" placeholder="Ingrese el nombre aquí"rows="4"></textarea>
+		<div class="w-full text-danger" *ngIf="alertMessageError('nombre')">{{msgErrorControl('nombre','nombre')}}</div>
+	</div>
+</form>
