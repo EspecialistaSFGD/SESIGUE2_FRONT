@@ -60,7 +60,7 @@
 				<div class="w-full flex flex-col">
 					<label for="nombre">Provincia</label>
 					<p-dropdown 
-					[options]="provincias()"
+					[options]="provincias()[i]"
 					formControlName="provincia"
 					optionLabel="provincia"
 					optionValue="provinciaId"
@@ -73,7 +73,7 @@
 				<div class="w-full flex flex-col">
 					<label for="nombre">Distrito</label>
 					<p-dropdown 
-					[options]="distritos()"
+					[options]="distritos()[i]"
 					formControlName="distrito"
 					optionLabel="distrito"
 					optionValue="distritoId"

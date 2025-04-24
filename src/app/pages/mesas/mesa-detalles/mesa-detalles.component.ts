@@ -56,7 +56,7 @@ export default class MesaDetallesComponent {
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private modal = inject(NzModalService);
-    private descargarService = inject(DescargarService)
+  private descargarService = inject(DescargarService)
 
   ngOnInit(): void {
     this.verificarMesa()

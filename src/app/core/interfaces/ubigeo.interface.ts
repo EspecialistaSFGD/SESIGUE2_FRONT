@@ -38,3 +38,8 @@ export interface UbigeoDistritoResponse {
   distritoId: string,
   distrito: string,
 }
+
+export interface ListUbigeoResponse {
+  provincias: UbigeoProvinciaResponse[],
+  distritos: UbigeoDistritoResponse[],
+}
