@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
 import { EntidadResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, SectoresService, UbigeosService } from '@core/services';
@@ -30,17 +30,18 @@ export class FormularioMesaComponent {
   private entidadesService = inject(EntidadesService)
   private ubigeosService = inject(UbigeosService)
 
+  get ubigeos(): FormArray {
+    return this.formMesa.get('ubigeos') as FormArray;
+  }
+
   formMesa: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
     resolucion: ['', Validators.required],
     sectorId: [null, Validators.required],
     secretariaTecnicaId: [{ value: null, disabled: true }, Validators.required],
-    departamento: [null, Validators.required],
-    provincia: [{ value: null, disabled: true }],
-    distrito: [{ value: null, disabled: true }],
-    ubigeo: ['', Validators.required],
     fechaCreacion: ['', Validators.required],
     fechaVigencia: ['', Validators.required],
+    ubigeos: this.fb.array([]),
   })
 
   ngOnInit(): void {
@@ -71,6 +72,33 @@ export class FormularioMesaComponent {
     const errors = this.formMesa.get(control)?.errors;
 
     return typeErrorControl(text, errors)
+  }
+
+  alertMessageErrorTwoNivel(control: string, index: number, subcontrol: string) {
+    const getControl = this.formMesa.get(control) as FormArray
+    const levelControl = getControl.at(index).get(subcontrol)
+    return levelControl?.errors && levelControl?.touched
+  }
+
+  msgErrorControlTwoNivel(control: string, index: number, subcontrol: string, label?: string): string {
+    const getControl = this.formMesa.get(control) as FormArray
+    const levelControl = getControl.at(index).get(subcontrol)
+    const text = label ? label : subcontrol
+    const errors = levelControl?.errors;
+
+    return typeErrorControl(text, errors)
+  }
+
+  addItemFormArray(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    const ubigeo = this.fb.group({
+      departamento: [null, Validators.required],
+      provincia: [{ value: null, disabled: true }],
+      distrito: [{ value: null, disabled: true }],
+      ubigeo: ['', Validators.required],
+    })
+    this.ubigeos.push(ubigeo)
   }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {
@@ -105,21 +133,28 @@ export class FormularioMesaComponent {
       })
   }
 
-  changeDepartamento(){
-    const departamento = this.formMesa.get('departamento')?.value
-    const provinciaControl = this.formMesa.get('provincia')
-    const distritoControl = this.formMesa.get('distrito')
+  changeDepartamento(index: number){
+    const getControl = this.formMesa.get('ubigeos') as FormArray
+    const departamentoControl = getControl.at(index).get('departamento')
+    const departamentoValue = departamentoControl?.value
+    const provinciaControl = getControl.at(index).get('provincia')
+    const distritoControl = getControl.at(index).get('distrito')
+
+
+    // const departamento = this.formMesa.get('departamento')?.value
+    // const provinciaControl = this.formMesa.get('provincia')
+    // const distritoControl = this.formMesa.get('distrito')
     let ubigeo = null 
-    if(departamento){
-      ubigeo = `${departamento}0000`
-      this.obtenerProvinciaService(departamento)
+    if(departamentoValue){
+      ubigeo = `${departamentoValue}0000`
+      this.obtenerProvinciaService(departamentoValue)
       provinciaControl?.enable()
     } else {
       provinciaControl?.disable()
       provinciaControl?.reset()
     }
     
-    this.formMesa.get('ubigeo')?.setValue(ubigeo)
+    getControl.at(index).get('ubigeo')?.setValue(ubigeo)
     distritoControl?.disable()
     distritoControl?.reset()
   }
@@ -131,20 +166,27 @@ export class FormularioMesaComponent {
       })
   }
 
-  changeProvincia(){
-    const departamento = this.formMesa.get('departamento')?.value
-    let ubigeo = `${departamento.departamentoId}0000`
-    const provincia = this.formMesa.get('provincia')?.value
-    const distritoControl = this.formMesa.get('distrito')    
-    if(provincia){
-      ubigeo = provincia
+  changeProvincia(index: number){
+    const getControl = this.formMesa.get('ubigeos') as FormArray
+    const departamentoControl = getControl.at(index).get('departamento')
+    const departamentoValue = departamentoControl?.value
+    const provinciaControl = getControl.at(index).get('provincia')
+    const provinciaValue = provinciaControl?.value
+    const distritoControl = getControl.at(index).get('distrito')
+
+    // const departamento = this.formMesa.get('departamento')?.value
+    // const provincia = this.formMesa.get('provincia')?.value
+    // const distritoControl = this.formMesa.get('distrito')    
+    let ubigeo = `${departamentoValue}0000`
+    if(provinciaValue){
+      ubigeo = provinciaValue
       distritoControl?.enable()
       this.obtenerDistritosService(ubigeo)
     } else {
       distritoControl?.disable()
       distritoControl?.reset()
     }    
-    this.formMesa.get('ubigeo')?.setValue(ubigeo)
+    getControl.at(index).get('ubigeo')?.setValue(ubigeo)
   }
 
   obtenerDistritosService(provincia: string){
@@ -154,10 +196,20 @@ export class FormularioMesaComponent {
       })
   }
 
-  changeDistrito(){
-    const provincia = this.formMesa.get('provincia')?.value
-    const distrito = this.formMesa.get('distrito')?.value   
-    const ubigeo = distrito ? distrito : provincia
-    this.formMesa.get('ubigeo')?.setValue(ubigeo)
+  changeDistrito(index: number){
+    const getControl = this.formMesa.get('ubigeos') as FormArray
+    const departamentoControl = getControl.at(index).get('departamento')
+    const departamentoValue = departamentoControl?.value
+    const provinciaControl = getControl.at(index).get('provincia')
+    const provinciaValue = provinciaControl?.value
+    const distritoControl = getControl.at(index).get('distrito')
+    const distritoValue = distritoControl?.value
+
+
+
+    // const provincia = this.formMesa.get('provincia')?.value
+    // const distrito = this.formMesa.get('distrito')?.value   
+    const ubigeo = distritoValue ? distritoValue : provinciaValue
+    getControl.at(index).get('ubigeo')?.setValue(ubigeo)
   }
 }
