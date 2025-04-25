@@ -58,7 +58,7 @@
 
 <ng-template #headerUbigeos>
     <div class="flex flex-col sm:flex-row justify-between items-center">
-        <p class="mb-2 ml-2 sm:mb-0 font-semibold text-base">
+        <p class="mb-2 ml-3 sm:mb-0 font-semibold text-base">
             Ubigeos
         </p>
 
@@ -94,9 +94,9 @@
 					@for(detalle of mesasSesion(); track $index){
 					<tr>
 						<td nzAlign="center">{{$index + 1}}</td>
-						<td nzAlign="center">{{setNameFile(detalle.archivo)}}</td>
+						<td nzAlign="center">{{detalle.nombre}}</td>
 						<td nzAlign="center">{{detalle.responsable}}</td>
-						<td nzAlign="center">{{detalle.fechaRegistro}}</td>
+						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
 						<td nzAlign="center">
 							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar" (click)="descargarPdf(detalle.archivo)">
 								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
@@ -137,9 +137,9 @@
 					@for(detalle of mesasAm(); track $index){
 					<tr>
 						<td nzAlign="center">{{$index + 1}}</td>
-						<td nzAlign="center">{{setNameFile(detalle.archivo)}}</td>
+						<td nzAlign="center">{{detalle.nombre}}</td>
 						<td nzAlign="center">{{detalle.responsable}}</td>
-						<td nzAlign="center">{{detalle.fechaRegistro}}</td>
+						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
 						<td nzAlign="center">
 							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar" (click)="descargarPdf(detalle.archivo)">
 								<span nz-icon nzType="file-excel" nzTheme="outline"></span>

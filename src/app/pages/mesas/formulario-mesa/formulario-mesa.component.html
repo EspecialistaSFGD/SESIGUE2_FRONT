@@ -86,47 +86,6 @@
 		</div>
 	</div>
 
-	<!-- <div class="flex gap-2">
-		<div class="w-full flex flex-col">
-			<label for="nombre">Departamento</label>
-			<p-dropdown 
-				[options]="departamentos()"
-				formControlName="departamento"
-				optionLabel="departamento"
-				optionValue="departamentoId"
-				[showClear]="true" 
-				placeholder="Seleccionar departamento"
-				(onChange)="changeDepartamento()"/>
-			<div class="text-danger" *ngIf="alertMessageError('departamento')">{{msgErrorControl('departamento','Departamento')}}</div>
-		</div>
-
-		<div class="w-full flex flex-col">
-			<label for="nombre">Provincia</label>
-			<p-dropdown 
-			[options]="provincias()"
-			formControlName="provincia"
-			optionLabel="provincia"
-			optionValue="provinciaId"
-			[showClear]="true" 
-			placeholder="Seleccionar provincia"
-			(onChange)="changeProvincia()"/>
-		<div class="text-danger" *ngIf="alertMessageError('provincia')">{{msgErrorControl('provincia','Provincia')}}</div>
-		</div>
-
-		<div class="w-full flex flex-col">
-			<label for="nombre">Distrito</label>
-			<p-dropdown 
-			[options]="distritos()"
-			formControlName="distrito"
-			optionLabel="distrito"
-			optionValue="distritoId"
-			[showClear]="true" 
-			placeholder="Seleccionar distrito"
-			(onChange)="changeDistrito()"/>
-		<div class="text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}</div>
-		</div>
-	</div> -->
-
 	<div class="flex gap-4">
 		<div class="w-full flex flex-col">
 			<label for="nombre">Fecha de creación</label>
@@ -155,8 +114,7 @@
 		<div class="w-full flex flex-col">
 			<label for="resolucion">Resolución</label>
 			<nz-upload [(nzFileList)]="filesList" [nzBeforeUpload]="beforeUploadMeet">
-				<div
-					class="rounded border border-sky-700 bg-transparent cursor-pointer text-sky-700 px-3 py-1 hover:bg-sky-700 hover:text-white">
+				<div class="form-control-file">
 					<span nz-icon nzType="upload"></span>
 					Selecionar archivo
 				</div>

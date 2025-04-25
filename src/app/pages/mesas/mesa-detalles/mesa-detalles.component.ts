@@ -7,7 +7,7 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formulario-mesa-detalle.component';
-import { generateBase64ToArrayBuffer } from '@core/helpers';
+import { generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
 import saveAs from 'file-saver';
 
 @Component({
@@ -164,8 +164,10 @@ export default class MesaDetallesComponent {
             }
 
             const usuarioId = localStorage.getItem('codigoUsuario')
+            const fechaCreacion = getDateFormat(formMesaDetalle.get('fechaCreacion')?.value, 'month')
             const mesaDetalle = {
               ...formMesaDetalle.value,
+              fechaCreacion,
               usuarioId,
               tipo: tipo == 1 ? 'am' : 'sesion',
               mesaId: this.mesaId
@@ -188,7 +190,7 @@ export default class MesaDetallesComponent {
     const title = tipo == 1 ? 'AM' : 'SESIÓN'
     this.modal.confirm({
       nzTitle: `Eliminar ${title}`,
-      nzContent: `¿Está seguro de que desea eliminar el archivo ${this.setNameFile(detalle.archivo)}?`,
+      nzContent: `¿Está seguro de que desea eliminar el archivo ${detalle.nombre}?`,
       nzOkText: 'Eliminar',
       nzOkDanger: true,
       nzOnOk: () => {
