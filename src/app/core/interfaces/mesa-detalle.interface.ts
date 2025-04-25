@@ -7,6 +7,8 @@ export interface MesaDetallesResponses extends DataResponses {
 export interface MesaDetalleResponse {
     detalleId?: string,
     archivo: string,
+    nombre: string,
+    fechaCreacion: string,
     tipoNombre : string,
     tipo : string,
     mesaId: string,

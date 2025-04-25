@@ -3,12 +3,13 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 @Component({
   selector: 'app-formulario-mesa-detalle',
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule, NgZorroModule],
+  imports: [CommonModule,ReactiveFormsModule, NgZorroModule, PrimeNgModule],
   templateUrl: './formulario-mesa-detalle.component.html',
   styles: ``
 })
@@ -19,7 +20,9 @@ export class FormularioMesaDetalleComponent {
   private fb = inject(FormBuilder)
   
   formMesaDetalle: FormGroup = this.fb.group({
-    archivo: ['', Validators.required]
+    nombre: ['', Validators.required],
+    archivo: ['', Validators.required],
+    fechaCreacion: ['', Validators.required]
   })
 
   alertMessageError(control: string) {

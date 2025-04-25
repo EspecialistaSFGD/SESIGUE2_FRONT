@@ -10,6 +10,7 @@ export interface EntidadResponses extends DataResponses {
 
 export interface EntidadResponse {
   entidadId?: string,
+  nombre: string,
   departamento: string,
   provincia: string,
   distrito: string,

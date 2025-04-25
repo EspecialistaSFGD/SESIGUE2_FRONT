@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { MesaDetalleResponse, MesaResponse, Pagination } from '@core/interfaces';
-import { DescargarService, MesaDetallesService, MesasService } from '@core/services';
+import { MesaDetalleResponse, MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
+import { DescargarService, MesaDetallesService, MesasService, MesaUbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formulario-mesa-detalle.component';
-import { generateBase64ToArrayBuffer } from '@core/helpers';
+import { generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
 import saveAs from 'file-saver';
 
 @Component({
@@ -22,18 +22,31 @@ export default class MesaDetallesComponent {
 
   mesaId!: number
   mesa = signal<MesaResponse>({
-    codigo: '',
     nombre: '',
-    estadoInternoNombre: '',
-    estadoInterno: '',
-    fechaRegistro: new Date()
+    sectorId: '',
+    secretariaTecnicaId: '',
+    fechaCreacion: '',
+    fechaVigencia: '',
+    resolucion: '',
+    estadoRegistroNombre: '',
+    estadoRegistro: ''
   })
 
+  ubigeos = signal<MesaUbigeoResponse[]>([])
   mesasSesion = signal<MesaDetalleResponse[]>([])
   mesasAm = signal<MesaDetalleResponse[]>([])
 
+  loadingUbigeos: boolean = false
   loadingDataSesion: boolean = false
   loadingDataAm: boolean = false
+
+  paginationUbigeos: Pagination = {
+    columnSort: 'fechaRegistro',
+    typeSort: 'DESC',
+    pageSize: 5,
+    currentPage: 1,
+    total: 0
+  }
 
   paginationSesion: Pagination = {
     columnSort: 'fechaRegistro',
@@ -51,15 +64,18 @@ export default class MesaDetallesComponent {
     total: 0
   }
 
+
   private mesaServices = inject(MesasService)
   private mesaDetalleServices = inject(MesaDetallesService)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private modal = inject(NzModalService);
-    private descargarService = inject(DescargarService)
+  private descargarService = inject(DescargarService)
+  private mesaUbigeosService = inject(MesaUbigeosService)
 
   ngOnInit(): void {
     this.verificarMesa()
+    this.obtenerUbigeosService()
     this.obtenerDetalleMesa(0)
     this.obtenerDetalleMesa(1)
   }
@@ -83,10 +99,20 @@ export default class MesaDetallesComponent {
       })
   }
 
+  obtenerUbigeosService(){
+    this.loadingUbigeos = true
+    this.mesaUbigeosService.ListarMesaUbigeos(this.mesaId, this.paginationUbigeos)
+      .subscribe( resp => {
+        this.loadingUbigeos = false
+        this.ubigeos.set(resp.data)
+        this.paginationUbigeos.total = resp.info!.total
+      })
+  }
+
   obtenerDetalleMesa(tipo: number){     
     tipo == 1 ? this.loadingDataAm = true : this.loadingDataSesion = true
     const pagination = tipo == 1 ? this.paginationAm : this.paginationSesion
-    this.mesaDetalleServices.ListarMesas(this.mesaId, tipo, pagination)
+    this.mesaDetalleServices.ListarMesaDetalle(this.mesaId, tipo, pagination)
       .subscribe( resp => {
         tipo == 1 ? this.mesasAm.set(resp.data) : this.mesasSesion.set(resp.data)
         tipo == 1 ? this.paginationAm.total = resp.info!.total : this.paginationSesion.total = resp.info!.total
@@ -138,8 +164,10 @@ export default class MesaDetallesComponent {
             }
 
             const usuarioId = localStorage.getItem('codigoUsuario')
+            const fechaCreacion = getDateFormat(formMesaDetalle.get('fechaCreacion')?.value, 'month')
             const mesaDetalle = {
               ...formMesaDetalle.value,
+              fechaCreacion,
               usuarioId,
               tipo: tipo == 1 ? 'am' : 'sesion',
               mesaId: this.mesaId
@@ -162,7 +190,7 @@ export default class MesaDetallesComponent {
     const title = tipo == 1 ? 'AM' : 'SESIÓN'
     this.modal.confirm({
       nzTitle: `Eliminar ${title}`,
-      nzContent: `¿Está seguro de que desea eliminar el archivo ${this.setNameFile(detalle.archivo)}?`,
+      nzContent: `¿Está seguro de que desea eliminar el archivo ${detalle.nombre}?`,
       nzOkText: 'Eliminar',
       nzOkDanger: true,
       nzOnOk: () => {

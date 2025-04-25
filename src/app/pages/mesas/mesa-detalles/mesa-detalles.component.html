@@ -3,37 +3,76 @@
 </nz-page-header>
 
 <!-- col-span-2 -->
-<div class="grid grid-cols-1 md:grid-cols-4 bg-white p-4">
+<div class="grid grid-cols-1 md:grid-cols-6 bg-white p-4">
 	<div class="flex">
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Codigo</div>
 		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().codigo}}</div>
 	</div>
-	<div class="flex">
+	<div class="flex col-span-3">
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Nombre</div>
 		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().nombre}}</div>
 	</div>
 	<div class="flex">
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Estado</div>
 		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
-			<app-estado-tag [estado]="mesa().estadoInternoNombre"></app-estado-tag>
+			<app-estado-tag [estado]="mesa().estadoRegistroNombre!"></app-estado-tag>
 		</div>
 	</div>
 	<div class="flex">
-		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Inversiones</div>
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Agenda</div>
 		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
-			<a [routerLink]="['/mesas', mesa().mesaId, 'inversiones']" class="px-3 py-1 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white">
-				<!-- <i class="pi pi-dollar text-sm"></i> -->
-				 Ver inversiones
+			<a [routerLink]="['/mesas', mesa().mesaId, 'agenda']" class="px-3 py-1 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white">
+				 Ver agenda
 			</a>
 		</div>
 	</div>
 </div>
 
+<nz-table nzSize="small" [nzTitle]="headerUbigeos" nzShowSizeChanger [nzData]="ubigeos()"
+[nzFrontPagination]="false" [nzShowPagination]="paginationUbigeos.pageSize! > 5"
+[nzLoading]="loadingUbigeos" [nzTotal]="paginationUbigeos.total!" [nzPageSize]="paginationUbigeos.pageSize!"
+[nzPageIndex]="paginationUbigeos.currentPage!">
+    <thead>
+        <tr>
+            <th nzAlign="center"></th>
+            <th nzAlign="center">Ubigeo</th>
+            <th nzAlign="center">Entidad</th>
+            <th nzAlign="center">Departamento</th>
+            <th nzAlign="center">Provincia</th>
+            <th nzAlign="center">Distrito</th>
+        </tr>
+    </thead>
+    <tbody>
+		@for(ubigeo of ubigeos(); track $index){
+			<tr>
+			  <td nzAlign="center">{{$index + 1}}</td>
+			  <td nzAlign="center">{{ubigeo.ubigeo}}</td>
+			  <td nzAlign="center">{{ubigeo.entidad}}</td>
+			  <td nzAlign="center">{{ubigeo.departamento}}</td>
+			  <td nzAlign="center">{{ubigeo.provincia}}</td>
+			  <td nzAlign="center">{{ubigeo.distrito}}</td>
+			<tr>
+		}
+	</tbody>
+</nz-table>
+
+<ng-template #headerUbigeos>
+    <div class="flex flex-col sm:flex-row justify-between items-center">
+        <p class="mb-2 ml-3 sm:mb-0 font-semibold text-base">
+            Ubigeos
+        </p>
+
+        <div>
+            
+        </div>
+    </div>
+</ng-template>
+
 <div class="grid grid-cols-2 gap-4 mt-4">
 	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
 		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">Sesiones</h5>
-			@if (mesa().estadoInternoNombre != 'cerrado') {
+			@if (mesa().estadoRegistroNombre != 'cerrado') {
 				<button nz-button nzType="default"  (click)="modalCreateFile(0)">
 					<span nz-icon nzType="plus" nzTheme="outline"></span>
 					<span class="button-text">Nueva</span>
@@ -55,9 +94,9 @@
 					@for(detalle of mesasSesion(); track $index){
 					<tr>
 						<td nzAlign="center">{{$index + 1}}</td>
-						<td nzAlign="center">{{setNameFile(detalle.archivo)}}</td>
+						<td nzAlign="center">{{detalle.nombre}}</td>
 						<td nzAlign="center">{{detalle.responsable}}</td>
-						<td nzAlign="center">{{detalle.fechaRegistro}}</td>
+						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
 						<td nzAlign="center">
 							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar" (click)="descargarPdf(detalle.archivo)">
 								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
@@ -76,7 +115,7 @@
 	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
 		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">AM</h5>
-			@if (mesa().estadoInternoNombre != 'cerrado') {
+			@if (mesa().estadoRegistroNombre != 'cerrado') {
 				<button nz-button nzType="default" (click)="modalCreateFile(1)">
 					<span nz-icon nzType="plus" nzTheme="outline"></span>
 					<span class="button-text">Nueva</span>
@@ -98,9 +137,9 @@
 					@for(detalle of mesasAm(); track $index){
 					<tr>
 						<td nzAlign="center">{{$index + 1}}</td>
-						<td nzAlign="center">{{setNameFile(detalle.archivo)}}</td>
+						<td nzAlign="center">{{detalle.nombre}}</td>
 						<td nzAlign="center">{{detalle.responsable}}</td>
-						<td nzAlign="center">{{detalle.fechaRegistro}}</td>
+						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
 						<td nzAlign="center">
 							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar" (click)="descargarPdf(detalle.archivo)">
 								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
