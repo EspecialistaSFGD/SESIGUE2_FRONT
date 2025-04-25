@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
 import { MesaResponse, Pagination } from '@core/interfaces';
-import { DescargarService } from '@core/services';
+import { DescargarService, MesaUbigeosService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -41,6 +41,7 @@ export default class MesasComponent {
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
   private mesasService = inject(MesasService)
+  private mesaUbigeosService = inject(MesaUbigeosService)
   private descargarService = inject(DescargarService)
 
   ngOnInit(): void {
@@ -109,18 +110,22 @@ export default class MesasComponent {
             const fechaVigencia = getDateFormat(formMesa.get('fechaVigencia')?.value, 'month')
 
             const bodyMesa = {...formMesa.value, fechaCreacion, fechaVigencia}
-            const ubigeos = bodyMesa.ubigeos
-            console.log(bodyMesa);
-            console.log(ubigeos);
-            
+
             this.loadingData = true
             this.mesasService.registarMesa(bodyMesa)
               .subscribe( resp => {
                 this.loadingData = false
                 if(resp.success == true){
+                  const mesaId = resp.data
                   const ubigeos = bodyMesa.ubigeos
-                  this.obtenerMesasService()
-                  this.modal.closeAll()
+                  for (let ubigeo of ubigeos) {
+                    const bodyUbigeo = { mesaId, ubigeo: ubigeo.ubigeo }
+                    this.mesaUbigeosService.registarMesaUbigeo(bodyUbigeo)
+                      .subscribe( resp => {
+                        this.obtenerMesasService()
+                        this.modal.closeAll()
+                      })
+                  }
                 }
               })            
           }
