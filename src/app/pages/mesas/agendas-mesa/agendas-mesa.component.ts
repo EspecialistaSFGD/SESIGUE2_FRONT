@@ -26,8 +26,8 @@ export default class AgendasMesaComponent {
     fechaCreacion: '',
     fechaVigencia: '',
     resolucion: '',
-    estadoInternoNombre: '',
-    estadoInterno: ''
+    estadoRegistroNombre: '',
+    estadoRegistro: ''
   })
 
   private mesaServices = inject(MesasService)

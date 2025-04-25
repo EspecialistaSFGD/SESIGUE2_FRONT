@@ -28,8 +28,8 @@ export default class MesaDetallesComponent {
     fechaCreacion: '',
     fechaVigencia: '',
     resolucion: '',
-    estadoInternoNombre: '',
-    estadoInterno: ''
+    estadoRegistroNombre: '',
+    estadoRegistro: ''
   })
 
   mesasSesion = signal<MesaDetalleResponse[]>([])
