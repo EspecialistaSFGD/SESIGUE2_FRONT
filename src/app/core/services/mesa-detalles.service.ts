@@ -13,7 +13,7 @@ export class MesaDetallesService {
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  ListarMesas(mesaId: number, tipo: number, pagination: Pagination): Observable<MesaDetallesResponses> {
+  ListarMesaDetalle(mesaId: number, tipo: number, pagination: Pagination): Observable<MesaDetallesResponses> {
     let params = this.helpersServices.setParams(pagination)
     params = params.append('mesaId', mesaId)
     params = params.append('tipo', tipo)
