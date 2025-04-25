@@ -393,7 +393,9 @@ export class AcuerdosComponent implements OnInit {
       if (tipoEspacioSeleccionado) {
         tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == tipoEspacioSeleccionado.value)?.label!;
       }
-      this.acuerdosService.listarAcuerdos(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, tipoEspacio, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, pageIndex, pageSize, sortField, sortOrder);
+      const entidadId = Number(localStorage.getItem('entidad'));
+      
+      this.acuerdosService.listarAcuerdos(cui, clasificacionesSeleccionadas, tipoSeleccionado, estadosSelecionados, tipoEspacio, espaciosSeleccionados, sectoresSeleccionados, depSeleccionado, provSeleccionada, disSeleccionado, entidadId, pageIndex, pageSize, sortField, sortOrder);
     }
   }
 

@@ -16,6 +16,12 @@ export class EntidadesService {
   private helpersServices = inject(HelpersService);
 
 
+  listarEntidades(pagination: Pagination): Observable<EntidadesResponses> {
+    const params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<EntidadesResponses>(`${this.urlEntidad}/Listar`, { headers, params })
+  }
+
   obtenerEntidad(paramsEntidad: ParamsEntidad): Observable<EntidadResponses> {
     const params = this.helpersServices.setParams(paramsEntidad)
     const headers = this.helpersServices.getAutorizationToken()

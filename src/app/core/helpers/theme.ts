@@ -1,4 +1,4 @@
-import { ThemeProgressBar } from '@core/interfaces';
+import { ColorEstados, ThemeProgressBar } from '@core/interfaces';
 
 export const themeProgressBarPercente = (value: number): string => {
   const themes: ThemeProgressBar[] = [
@@ -9,4 +9,23 @@ export const themeProgressBarPercente = (value: number): string => {
   ]
   const theme = themes.find(theme => theme.percent >= value)
   return theme!.theme ?? '#D6D4D3'
+}
+
+
+export const themeState = (state: string) => {
+  let theme: ColorEstados = {
+    color: 'bg-amber-200 border-amber-400 text-amber-600',
+    icono: 'sync'
+  }
+  switch (state) {
+    case 'cerrado':
+      theme.color = 'bg-green-200 border-green-400 text-green-600',
+      theme.icono = 'check-circle';
+      break;
+    case 'seguimiento':
+      theme.color = 'bg-blue-200 border-blue-400 text-blue-600'
+      theme.icono = 'thumbs-up'
+      break;
+  }
+  return theme
 }

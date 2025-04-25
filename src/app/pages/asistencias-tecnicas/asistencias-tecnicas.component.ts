@@ -128,19 +128,9 @@ export default class AsistenciasTecnicasComponent {
     this.loadingData = true
     this.route.queryParams.subscribe(params => {
       if (Object.keys(params).length > 0) {
-        // this.paramsExist = true
         this.loadingData = false
-        // const relations = [
-        //   { param: 'entidad', field: 'entidadId' },
-        //   { param: 'tipoEntidad', field: 'tipoEntidadId' },
-        //   { param: 'espacio', field: 'espacioId' },
-        // ]
 
         let campo = params['campo'] ?? 'fechaAtencion'
-        // const finded = relations.find(item => item.param == campo)
-        // if (finded) {
-        //   campo = finded.field
-        // }
 
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
@@ -238,13 +228,6 @@ export default class AsistenciasTecnicasComponent {
     }, 0)
     const ordenar = sorts?.value!.slice(0, -3)
     this.paramsNavigate({ pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar })
-    // this.router.navigate(
-    //   [],
-    //   {
-    //     relativeTo: this.route,
-    //     queryParams: { pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar }
-    //   }
-    // );
   }
 
   validarAtencion(asistenciaId: string){
@@ -289,7 +272,15 @@ export default class AsistenciasTecnicasComponent {
     paginationFilters.perfil = this.perfilAuth;
     if(!this.permisosPCM){
       paginationFilters.sectorId = this.sectorAuth
+    } else {
+      if(this.perfilAuth == 12){
+        const usuarioId = localStorage.getItem('codigoUsuario')!
+        this.paginationFilter.usuarioId = usuarioId        
+      } else {
+        delete paginationFilters.usuarioId
+      }
     }
+    
     this.paginationFilter = paginationFilters
     
     const eventoId = paginationFilters.eventoId ? paginationFilters.eventoId : null
@@ -394,11 +385,6 @@ export default class AsistenciasTecnicasComponent {
             } else  {
               this.actualizarAtencion(formAtencion)
             }
-            
-            // return this.acuerdosService.solicitarDesestimacionAcuerdo(componentInstance!.desestimacionForm.value).then((res) => {
-            //   this.traerAcuerdos({});
-            //   this.modal.closeAll();
-            // });
           }
         }
       ]
