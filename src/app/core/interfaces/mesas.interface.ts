@@ -10,13 +10,20 @@ export interface MesaResponses extends DataResponses {
 
 export interface MesaResponse {
   mesaId?: string,
-  codigo: string,
+  codigo?: string,
   nombre: string,
-  estadoInternoNombre: string,
-  estadoInterno: string,
+  sectorId: string,
+  sector?: string,
+  secretariaTecnicaId: string,
+  secretariaTecnica?: string,
+  fechaCreacion: string,
+  fechaVigencia: string,
+  resolucion: string,
+  estadoInterno?: string,
+  estadoInternoNombre?: string,
   sesion?: string,
   am?:string,
-  fechaRegistro: Date,
+  fechaRegistro?: Date,
 }
 
 export interface MesaFilesResponse {

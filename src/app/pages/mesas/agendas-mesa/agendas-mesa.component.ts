@@ -20,11 +20,14 @@ export default class AgendasMesaComponent {
   authUserId = localStorage.getItem('codigoUsuario')
   mesaId!: number
   mesa = signal<MesaResponse>({
-    codigo: '',
     nombre: '',
+    sectorId: '',
+    secretariaTecnicaId: '',
+    fechaCreacion: '',
+    fechaVigencia: '',
+    resolucion: '',
     estadoInternoNombre: '',
-    estadoInterno: '',
-    fechaRegistro: new Date()
+    estadoInterno: ''
   })
 
   private mesaServices = inject(MesasService)

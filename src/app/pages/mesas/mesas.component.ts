@@ -1,19 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ColorEstados, MesaResponse, Pagination } from '@core/interfaces';
+import { generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
+import { MesaResponse, Pagination } from '@core/interfaces';
+import { DescargarService } from '@core/services';
+import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { SharedModule } from '@shared/shared.module';
+import saveAs from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from './formulario-mesa/formulario-mesa.component';
-import { MesasService } from '@core/services/mesas.service';
-import { EstadoTagComponent } from "../../shared/estado-tag/estado-tag.component";
-import { SharedModule } from '@shared/shared.module';
-import { DescargarService } from '@core/services';
-import { UtilesService } from '@libs/shared/services/utiles.service';
-import saveAs from 'file-saver';
-import { generateBase64ToArrayBuffer } from '@core/helpers';
 
 @Component({
   selector: 'app-mesas',
@@ -106,14 +104,21 @@ export default class MesasComponent {
               console.error('Invalid fields:', invalidFields);
               return formMesa.markAllAsTouched();
             }
-            
-            const nombre = formMesa.get('nombre')?.value
 
+            const fechaCreacion = getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
+            const fechaVigencia = getDateFormat(formMesa.get('fechaVigencia')?.value, 'month')
+
+            const bodyMesa = {...formMesa.value, fechaCreacion, fechaVigencia}
+            const ubigeos = bodyMesa.ubigeos
+            console.log(bodyMesa);
+            console.log(ubigeos);
+            
             this.loadingData = true
-            this.mesasService.registarMesa(nombre)
+            this.mesasService.registarMesa(bodyMesa)
               .subscribe( resp => {
                 this.loadingData = false
                 if(resp.success == true){
+                  const ubigeos = bodyMesa.ubigeos
                   this.obtenerMesasService()
                   this.modal.closeAll()
                 }

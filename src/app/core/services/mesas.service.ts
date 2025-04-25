@@ -24,16 +24,27 @@ export class MesasService {
     return this.http.get<MesaResponses>(`${this.urlMesas}/ObtenerMesa/${mesaId}`, { headers })
   }
 
-  registarMesa(nombre: string) {
-      const headers = this.helpersServices.getAutorizationToken()  
-      const body = { nombre }          
-      return this.http.post<MesaResponse>(`${this.urlMesas}/RegistrarMesa`, body, { headers })
-        .pipe(
-          tap(resp => {
-            return resp
-          }),
-          map(valid => valid),
-          catchError(err => of(err))
-        )
-    }
+  registarMesa(mesa: MesaResponse) {
+    const headers = this.helpersServices.getAutorizationToken()          
+    const formData = this.generateFormData(mesa)
+    return this.http.post<MesaResponse>(`${this.urlMesas}/RegistrarMesa`, formData, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
+  }
+
+  private generateFormData(mesa: MesaResponse): FormData {
+    const formData = new FormData()
+    formData.append('nombre', mesa.nombre)
+    formData.append('sectorId', mesa.sectorId)
+    formData.append('secretariaTecnicaId', mesa.secretariaTecnicaId)
+    formData.append('fechaCreacion', mesa.fechaCreacion)
+    formData.append('fechaVigencia', mesa.fechaVigencia)
+    formData.append('resolucion', mesa.resolucion)
+    return formData
+  }
 }

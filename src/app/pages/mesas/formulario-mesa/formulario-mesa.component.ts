@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { EntidadResponse, ListUbigeoResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { EntidadResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, SectoresService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -47,6 +47,7 @@ export class FormularioMesaComponent {
   ngOnInit(): void {
     this.obtenerSectoresService()
     this.obtenerDepartamentoService()
+    this.addUbigeo()
   }
 
   obtenerSectoresService(){
@@ -92,6 +93,10 @@ export class FormularioMesaComponent {
   addItemFormArray(event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
+    this.addUbigeo()
+  }
+
+  addUbigeo(){
     const ubigeo = this.fb.group({
       departamento: [null, Validators.required],
       provincia: [{ value: null, disabled: true }],
