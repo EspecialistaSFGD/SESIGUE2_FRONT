@@ -743,7 +743,7 @@ export class FormularioAtencionComponent {
           const telefono = asistente.telefono ? `${asistente.telefono} / ` : ''
           entidad?.setValue(asistente.entidad)
           ubigeoControl?.setValue(asistente.ubigeo)
-          const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde')
+          const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
           autoridad?.setValue(esAutoridad)          
           nombre?.setValue(asistente.nombres)
           cargo?.setValue(asistente.cargo)
