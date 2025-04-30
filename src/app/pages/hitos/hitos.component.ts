@@ -811,7 +811,7 @@ export class HitosComponent {
     // Restablecer paginación, orden y otros parámetros globales
     this.pageIndex = 1;
     this.pageSize = 10;
-    this.sortField = 'acuerdoID';
+    this.sortField = 'hitoId'; //acuerdoID
     this.sortOrder = 'descend';
 
     // Actualizar los valores en el formulario de búsqueda
