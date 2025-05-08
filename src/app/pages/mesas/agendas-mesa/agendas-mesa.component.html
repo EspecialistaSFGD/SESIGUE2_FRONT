@@ -7,18 +7,40 @@
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Codigo</div>
 		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().codigo}}</div>
 	</div>
-	<div class="flex col-span-4">
-		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Nombre</div>
+	<div class="flex col-span-3">
+		<div class="flex items-center min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Nombre</div>
 		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().nombre}}</div>
 	</div>
 	<div class="flex">
-		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Estado</div>
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Estado</div>
 		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
 			<app-estado-tag [estado]="mesa().estadoRegistroNombre!"></app-estado-tag>
 		</div>
 	</div>
+	<div class="flex">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Resolución</div>
+		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
+			<app-boton-descargar [rutaArchivo]="mesa().resolucion"></app-boton-descargar>
+		</div>
+	</div>
+	<div class="flex">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Sector</div>
+		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().sector}}</div>
+	</div>
+	<div class="flex col-span-3">
+		<div class="flex items-center min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Secretaria Tecnica</div>
+		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().secretariaTecnica}}</div>
+	</div>
+	<div class="flex">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Fecha de creación</div>
+		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().fechaCreacion}}</div>
+	</div>
+	<div class="flex">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Fecha de vigencia</div>
+		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().fechaVigencia}}</div>
+	</div>
 </div>
 
-<div class="w-full">
+<!-- <div class="w-full">
     <iframe [src]="getIframeInversiones() | safeUrl" width="100%" height="720px" [frameBorder]="0" allowfullscreen></iframe>
-</div>
+</div> -->

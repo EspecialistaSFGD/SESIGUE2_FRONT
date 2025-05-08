@@ -21,9 +21,7 @@
 	<div class="flex">
 		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Resolución</div>
 		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
-			<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar" (click)="descargarPdf(mesa().resolucion)">
-				<span nz-icon nzType="file-excel" nzTheme="outline"></span>
-			</button>
+			<app-boton-descargar [rutaArchivo]="mesa().resolucion"></app-boton-descargar>
 		</div>
 	</div>
 	<div class="flex">
@@ -113,9 +111,8 @@
 						<td nzAlign="center">{{detalle.responsable}}</td>
 						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
 						<td nzAlign="center">
-							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar" (click)="descargarPdf(detalle.archivo)">
-								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
-							</button>
+							<app-boton-descargar [rutaArchivo]="detalle.archivo"></app-boton-descargar>
+
 							<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteMesaDetalle(detalle,0)">
 								<span nz-icon nzType="delete" nzTheme="outline"></span>
 							  </button>
@@ -156,9 +153,8 @@
 						<td nzAlign="center">{{detalle.responsable}}</td>
 						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
 						<td nzAlign="center">
-							<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar" (click)="descargarPdf(detalle.archivo)">
-								<span nz-icon nzType="file-excel" nzTheme="outline"></span>
-							</button>
+							<app-boton-descargar [rutaArchivo]="detalle.archivo"></app-boton-descargar>
+
 							<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteMesaDetalle(detalle,1)">
 								<span nz-icon nzType="delete" nzTheme="outline"></span>
 							  </button>
