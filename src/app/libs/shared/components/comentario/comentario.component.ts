@@ -29,6 +29,8 @@ export class ComentarioComponent {
   private fb = inject(UntypedFormBuilder);
   public hitosService = inject(HitosService);
 
+  cantidadCaracteresComentario = 500
+
   constructor() {
     this.crearComentarioForm();
   }
@@ -40,5 +42,18 @@ export class ComentarioComponent {
       tipoComentario: [this.nzModalData.tipoComentario, [Validators.required]],
       comentario: [null, [Validators.required]],
     });
+  }
+
+  caracteresContador(qty: number) {
+    const element = this.comentarioForm.get('comentario')
+    const value = element?.value    
+    if(value){
+      if (value.length > qty) {
+        const newValue = value.substring(0, qty);
+        element?.setValue(newValue)
+      }
+      this.cantidadCaracteresComentario = qty - value.length;
+    }
+    
   }
 }
