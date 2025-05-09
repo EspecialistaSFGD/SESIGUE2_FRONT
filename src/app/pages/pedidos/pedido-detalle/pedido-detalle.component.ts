@@ -120,7 +120,7 @@ export class PedidoDetalleComponent {
     sortField = this.sortField,
     sortOrder = this.sortOrder
   }: TraerAcuerdosPorPedidoInterface): void {
-    this.acuerdosService.listarAcuerdosPorPedido(prioridadID, pageIndex, pageSize, sortField, sortOrder);
+    this.acuerdosService.listarAcuerdosPorPedido(prioridadID, pageIndex, pageSize, sortField, sortOrder, 'pedidos');
   }
 
   // onAddEdits(value: AcuerdoPedidoModel | null, isCreatigPreAcuerdo: boolean | null = null, isConverting: boolean | null = null): void {

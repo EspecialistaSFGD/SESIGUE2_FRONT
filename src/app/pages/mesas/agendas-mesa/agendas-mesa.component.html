@@ -7,18 +7,107 @@
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Codigo</div>
 		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().codigo}}</div>
 	</div>
-	<div class="flex col-span-4">
-		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Nombre</div>
+	<div class="flex col-span-3">
+		<div class="flex items-center min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Nombre</div>
 		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().nombre}}</div>
 	</div>
 	<div class="flex">
-		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Estado</div>
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Estado</div>
 		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
 			<app-estado-tag [estado]="mesa().estadoRegistroNombre!"></app-estado-tag>
 		</div>
 	</div>
+	<div class="flex">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Resolución</div>
+		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
+			<app-boton-descargar [rutaArchivo]="mesa().resolucion"></app-boton-descargar>
+		</div>
+	</div>
+	<div class="flex">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Sector</div>
+		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().sector}}</div>
+	</div>
+	<div class="flex col-span-3">
+		<div class="flex items-center min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Secretaria Tecnica</div>
+		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().secretariaTecnica}}</div>
+	</div>
+	<div class="flex">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Fecha de creación</div>
+		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().fechaCreacion}}</div>
+	</div>
+	<div class="flex">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Fecha de vigencia</div>
+		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().fechaVigencia}}</div>
+	</div>
 </div>
 
-<div class="w-full">
-    <iframe [src]="getIframeInversiones() | safeUrl" width="100%" height="720px" [frameBorder]="0" allowfullscreen></iframe>
-</div>
+<nz-table nzSize="small" [nzTitle]="headerUbigeos" nzShowSizeChanger [nzData]="inversionesEspacios()"
+[nzFrontPagination]="false" [nzShowPagination]="pagination.pageSize! > 10"
+[nzLoading]="loadingInversionEspacio" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
+[nzPageIndex]="pagination.currentPage!">
+    <thead>
+        <tr>
+            <th nzAlign="center">Sector</th>
+            <th nzAlign="center">Ubica</th>
+            <th nzAlign="center">Entidad</th>
+            <th nzAlign="center">Tipo</th>
+            <th nzAlign="center">Subtipo</th>
+            <th nzAlign="center">Codigo</th>
+            <th nzAlign="center">Nombre</th>
+            <th nzAlign="center">Costo Act.</th>
+            <th nzAlign="center">Dev Acum</th>
+            <th nzAlign="center">PIA</th>
+            <th nzAlign="center">PIM</th>
+            <th nzAlign="center">DEV</th>
+            <th nzAlign="center">Trans 2025</th>
+            <th nzAlign="center">Fecha</th>
+            <th nzAlign="center">Situación</th>
+            <th nzAlign="center">Fase</th>
+            <th nzAlign="center">Etapa</th>
+            <th nzAlign="center">Hito</th>
+            <th nzAlign="center">Situación</th>
+            <th nzAlign="center"></th>
+        </tr>
+    </thead>
+    <tbody>
+		@for(inversion of inversionesEspacios(); track $index){
+			<tr>
+			  <td nzAlign="center">{{inversion.sector}}</td>
+			  <td nzAlign="center">{{inversion.departamento}} / {{inversion.provincia}} / {{inversion.distrito}}</td>
+			  <td nzAlign="center">{{inversion.entidad}}</td>
+			  <td nzAlign="center">{{inversion.tipo}}</td>
+			  <td nzAlign="center">{{inversion.subtipo}}</td>
+			  <td nzAlign="center">{{inversion.codigo}}</td>
+			  <td nzAlign="center">{{inversion.nombre}}</td>
+			  <td nzAlign="center">{{inversion.costo}}</td>
+			  <td nzAlign="center">{{inversion.devAcum}}</td>
+			  <td nzAlign="center">{{inversion.pia}}</td>
+			  <td nzAlign="center">{{inversion.pim}}</td>
+			  <td nzAlign="center">{{inversion.dev}}</td>
+			  <td nzAlign="center">{{inversion.transferencia}}</td>
+			  <td nzAlign="center">{{inversion.fecha}}</td>
+			  <td nzAlign="center">{{inversion.situacion}}</td>
+			  <td nzAlign="center">{{inversion.fase}}</td>
+			  <td nzAlign="center">{{inversion.etapa}}</td>
+			  <td nzAlign="center">{{inversion.hito}}</td>
+			  <td nzAlign="center">
+				ed
+			  </td>
+			<tr>
+		}
+	</tbody>
+</nz-table>
+
+<ng-template #headerUbigeos>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+		<p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+		<div>
+		  <nz-space>
+				<button nz-button nzType="primary">
+				<span nz-icon nzType="plus" nzTheme="outline"></span>
+				<span class="button-text">Nueva inversion</span>
+			  </button>
+		  </nz-space>
+		</div>
+	  </div>
+</ng-template>

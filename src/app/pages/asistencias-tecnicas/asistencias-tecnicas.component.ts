@@ -444,6 +444,8 @@ export default class AsistenciasTecnicasComponent {
                 this.modal.closeAll()
                 this.messageService.create('success', 'Se ha registrado con exito');
                 this.obtenerAsistenciasTecnicas()
+              } else {
+                this.messageService.create('error', resp.message);
               }
             })
     

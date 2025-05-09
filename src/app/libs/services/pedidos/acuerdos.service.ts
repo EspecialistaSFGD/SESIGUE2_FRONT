@@ -155,13 +155,14 @@ export class AcuerdosService {
         });
     }
 
-    listarAcuerdosPorPedido(prioridadID: number | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = 'acuerdoID', sortOrder: string | null = 'descend'): void {
+    listarAcuerdosPorPedido(prioridadID: number | null = null, pageIndex: number | null = 1, pageSize: number | null = 10, sortField: string | null = 'acuerdoID', sortOrder: string | null = 'descend', tipoEspacio: string | null = null): void {
         let params = new HttpParams();
         if (prioridadID) params = params.append('prioridadID', `${prioridadID}`);
         params = params.append('piCurrentPage', `${pageIndex}`);
         params = params.append('piPageSize', `${pageSize}`);
         params = params.append('columnSort', `${sortField}`);
         params = params.append('typeSort', `${sortOrder}`);
+        params = tipoEspacio ? params.append('tipoEspacio', tipoEspacio) : params;
         // params = params.append('estadoId[]', 1);
 
         this.#acuerdosResult.update((state) => ({
