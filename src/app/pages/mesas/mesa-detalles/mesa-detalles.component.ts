@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { getDateFormat } from '@core/helpers';
 import { MesaDetalleResponse, MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
-import { DescargarService, MesaDetallesService, MesasService, MesaUbigeosService } from '@core/services';
+import { MesaDetallesService, MesasService, MesaUbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formulario-mesa-detalle.component';
-import { generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
-import saveAs from 'file-saver';
 
 @Component({
   selector: 'app-mesa-detalles',
@@ -70,7 +69,6 @@ export default class MesaDetallesComponent {
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private modal = inject(NzModalService);
-  private descargarService = inject(DescargarService)
   private mesaUbigeosService = inject(MesaUbigeosService)
 
   ngOnInit(): void {
@@ -125,17 +123,6 @@ export default class MesaDetallesComponent {
     const dataFile = archivo.split('/')
     const fileName = dataFile[dataFile.length - 1]
     return fileName
-  }
-
-  descargarPdf(archivo: string){
-    this.descargarService.descargarPdf(archivo)
-      .subscribe((resp) => {        
-        if (resp.success == true) {
-          var binary_string = generateBase64ToArrayBuffer(resp.data.binario);
-          var blob = new Blob([binary_string], { type: `application/${resp.data.tipo}` });
-          saveAs(blob, resp.data.nombre);
-        }
-      })
   }
 
   modalCreateFile(tipo: number) {
