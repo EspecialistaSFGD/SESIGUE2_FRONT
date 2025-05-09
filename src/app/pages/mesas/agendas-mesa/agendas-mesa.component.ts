@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { InversionEspacioResponse, MesaResponse, Pagination } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { InversionesEspacioService, MesasService } from '@core/services';
@@ -10,7 +10,7 @@ import { SharedModule } from '@shared/shared.module';
 @Component({
   selector: 'app-agendas-mesa',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, SharedModule, PipesModule],
+  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule],
   templateUrl: './agendas-mesa.component.html',
   styles: ``
 })

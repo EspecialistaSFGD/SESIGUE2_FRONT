@@ -91,7 +91,11 @@
 			  <td nzAlign="center">{{inversion.etapa}}</td>
 			  <td nzAlign="center">{{inversion.hito}}</td>
 			  <td nzAlign="center">
-				ed
+				<a [routerLink]="['../inversion']">
+					<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención">
+					  <span nz-icon nzType="eye" nzTheme="outline"></span>
+					</button>
+				  </a>
 			  </td>
 			<tr>
 		}
