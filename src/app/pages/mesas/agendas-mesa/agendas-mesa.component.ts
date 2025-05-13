@@ -77,4 +77,13 @@ export default class AgendasMesaComponent {
         this.inversionesEspacios.set(resp.data)
       })
   }
+
+  inversionDetalle(inversionId: string){
+    this.router.navigate(['inversiones', inversionId], {
+      queryParams: {
+        modelo: 'mesas',
+        modeloId: this.mesa().mesaId
+      }
+    });
+  }
 }

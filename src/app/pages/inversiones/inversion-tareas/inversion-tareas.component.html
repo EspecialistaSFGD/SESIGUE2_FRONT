@@ -1,0 +1,80 @@
+<!-- <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
+  [nzData]="mesas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
+  <thead>
+    <tr>
+      <th nzWidth="42px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">Estado</th>
+      <th nzWidth="32px" nzAlign="center">Codigo</th>
+      <th nzLeft nzWidth="100px" nzColumnKey="nombreArchivo" [nzSortFn]="true">Mesa</th>
+      <th nzWidth="32px" nzAlign="center">Sector</th>
+      <th nzWidth="64px" nzAlign="center">Secretaría Técnica</th>
+      <th nzWidth="32px" nzAlign="center">Fecha de Creación</th>
+      <th nzWidth="32px" nzAlign="center">Fecha de Vigencia</th>
+      <th nzWidth="24px" nzAlign="center">Resolución</th>
+      <th nzWidth="24px" nzAlign="center">Sesión</th>
+      <th nzWidth="24px" nzAlign="center">AM</th>
+      <th nzWidth="24px" nzAlign="center"></th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    @for(mesa of mesas(); track $index){
+      <tr>
+        <td nzAlign="center">
+          <app-estado-tag [estado]="mesa.estadoRegistroNombre!"></app-estado-tag>
+        </td>
+        <td nzAlign="center">
+          <a [routerLink]="['/mesas', mesa.mesaId]" class="font-bold"  nz-tooltip nzTooltipTitle="Ver Detalle">
+            {{mesa.codigo}}
+          </a>
+        </td>
+        <td>{{mesa.nombre}}</td>
+        <td nzAlign="center">{{mesa.sector}}</td>
+        <td nzAlign="center">{{mesa.secretariaTecnica}}</td>
+        <td nzAlign="center">{{mesa.fechaCreacion}}</td>
+        <td nzAlign="center">{{mesa.fechaVigencia}}</td>
+        <td nzAlign="center">
+          <span class="px-3 py-1 cursor-pointer text-sky-700 hover:text-sky-800" (click)="descargarPdf(mesa.resolucion)">
+            <i class="pi pi-file-pdf text-sm"></i>
+          </span>
+        </td>
+        <td nzAlign="center">
+          @if(mesa.sesion){
+            <span class="px-3 py-1 cursor-pointer text-sky-700 hover:text-sky-800" (click)="descargarPdf(mesa.sesion)">
+              <i class="pi pi-file-pdf text-sm"></i>
+            </span>
+          }
+        </td>
+        <td nzAlign="center">
+          @if(mesa.am){
+            <span class="px-3 py-1 cursor-pointer text-sky-700 hover:text-sky-800" (click)="descargarPdf(mesa.am)">
+              <i class="pi pi-file-pdf text-sm"></i>
+            </span>
+          }
+        </td>
+        <td nzAlign="center">
+            <a [routerLink]="['/mesas', mesa.mesaId]">
+              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver Detalle">
+                <span nz-icon nzType="eye" nzTheme="outline"></span>
+              </button>
+            </a>
+        </td>
+      </tr>
+      }
+  </tbody>
+</nz-table>
+
+<ng-template #HeaderMesas>
+  <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+    <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+    <div>
+      <nz-space>
+            <button nz-button nzType="primary" (click)="crearMesa()">
+            <span nz-icon nzType="plus" nzTheme="outline"></span>
+            <span class="button-text">Nueva mesa</span>
+          </button>
+      </nz-space>
+    </div>
+  </div>
+</ng-template> -->
