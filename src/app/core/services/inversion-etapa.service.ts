@@ -2,9 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { Pagination } from '@core/interfaces';
+import { InversionEtapasResponses, Pagination } from '@core/interfaces';
 import { Observable } from 'rxjs';
-import { InversionEtapasResponses } from '@core/interfaces/inversion-etapa.interface';
 
 @Injectable({
   providedIn: 'root'
