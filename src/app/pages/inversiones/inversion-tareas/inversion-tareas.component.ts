@@ -4,6 +4,8 @@ import { InversionTareaResponse, Pagination } from '@core/interfaces';
 import { InversionTareaService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { FormularioInversionTareaComponent } from './formulario-inversion-tarea/formulario-inversion-tarea.component';
 
 @Component({
   selector: 'app-inversion-tareas',
@@ -25,10 +27,19 @@ export default class InversionTareasComponent {
     currentPage: 1,
     total: 0
   }
+
+  inversionTarea: InversionTareaResponse = {
+    plazo: '',
+    entidadId: '',
+    hitoId: '',
+    inversionId: '',
+    responsableId: ''
+  }
   
   inversionTareas = signal<InversionTareaResponse[]>([])
 
   private inversionTareasServices = inject(InversionTareaService)
+    private modal = inject(NzModalService);
 
   ngOnInit(): void {
     this.obtenerInversionTareasService()
@@ -43,4 +54,42 @@ export default class InversionTareasComponent {
         this.paginationTareas.total = resp.info?.total
       })
   }
+
+  agregarTarea(){
+    this.inversionTarea.inversionId = this.inversionId
+    this.inversionTareaFormModal(true)
+  }
+
+  actualizarTarea(inversionTarea: InversionTareaResponse){
+    this.inversionTarea = inversionTarea
+    this.inversionTareaFormModal(false)
+  }
+
+  inversionTareaFormModal(create: boolean){
+    const action = `${create ? 'Crear' : 'Actualizar' } tarea`
+    const modal = this.modal.create<FormularioInversionTareaComponent>({
+      nzTitle: `${action.toUpperCase()}`,
+      nzWidth: '50%',
+      nzContent: FormularioInversionTareaComponent,
+      nzData: {
+        create,
+        inversionTarea: this.inversionTarea
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: action,
+          type: 'primary',
+          onClick: (componentResponse) => {
+
+          }
+        }
+      ]
+    })
+  }
+
 }
