@@ -2,19 +2,21 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { InversionesEspaciosResponses, Pagination } from '@core/interfaces';
+import { Pagination } from '@core/interfaces';
 import { Observable } from 'rxjs';
+import { InversionHitosResponses } from '@core/interfaces/inversion-hito.interface';
+
 @Injectable({
   providedIn: 'root'
 })
-export class InversionesEspacioService {
-  private urlInversionEspacio: string = `${environment.api}/InversionEspacio`
+export class InversionHitoService {
+  private urlInversionHito: string = `${environment.api}/InversionEtapa`
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
   
-  ListarInversionesEspacio(pagination: Pagination): Observable<InversionesEspaciosResponses> {
+  ListarInversionHitos(pagination: Pagination): Observable<InversionHitosResponses> {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<InversionesEspaciosResponses>(`${this.urlInversionEspacio}/ListarInversionesEspacio`, { headers, params })
+    return this.http.get<InversionHitosResponses>(`${this.urlInversionHito}/ListarInversionesHitos`, { headers, params })
   }
 }

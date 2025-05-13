@@ -1,6 +1,6 @@
 import { DataResponses } from "./helpers.interface"
 
-export interface InversionesEspacioResponsesResponses extends DataResponses {
+export interface InversionesEspaciosResponses extends DataResponses {
   data: InversionEspacioResponse[]
 }
 
