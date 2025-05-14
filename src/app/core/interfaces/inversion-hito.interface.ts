@@ -5,7 +5,7 @@ export interface InversionHitosResponses extends DataResponses {
 }
 
 export interface InversionHitoResponse {
-    hitoID?: string,
-    etapaID: string,
-    nombre: string,
+  inversionHitoId?: string,
+  inversionEtapaId: string,
+  nombre: string,
 }

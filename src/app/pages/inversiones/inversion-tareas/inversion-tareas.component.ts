@@ -31,7 +31,7 @@ export default class InversionTareasComponent {
   inversionTarea: InversionTareaResponse = {
     plazo: '',
     entidadId: '',
-    hitoId: '',
+    inversionHitoId: '',
     inversionId: '',
     responsableId: ''
   }
@@ -69,7 +69,7 @@ export default class InversionTareasComponent {
     const action = `${create ? 'Crear' : 'Actualizar' } tarea`
     const modal = this.modal.create<FormularioInversionTareaComponent>({
       nzTitle: `${action.toUpperCase()}`,
-      nzWidth: '50%',
+      // nzWidth: '50%',
       nzContent: FormularioInversionTareaComponent,
       nzData: {
         create,

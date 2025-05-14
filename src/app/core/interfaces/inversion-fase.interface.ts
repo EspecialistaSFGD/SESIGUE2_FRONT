@@ -5,7 +5,7 @@ export interface InversionFasesResponses extends DataResponses {
 }
 
 export interface InversionFaseResponse {
-    faseID?: string,
-    tipoInversion: string,
-    nombre: string,
+  inversionFaseId?: string,
+  tipoInversion: string,
+  nombre: string,
 }

@@ -16,7 +16,7 @@ export interface InversionTareaResponse {
 	accesoId?: string,
 	accesoIdMod?: string,
 	entidadId: string,
-	hitoId: string,
+	inversionHitoId: string,
 	inversionId: string,
 	responsableId: string,
 	fechaRegistro?: string,
