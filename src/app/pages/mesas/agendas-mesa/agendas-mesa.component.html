@@ -72,24 +72,24 @@
     <tbody>
 		@for(inversion of inversionesEspacios(); track $index){
 			<tr>
-			  <td nzAlign="center">{{inversion.sector}} - {{inversion.inversionEspacioId}}</td>
+			  <td nzAlign="center">{{inversion.sector}}</td>
 			  <td nzAlign="center">{{inversion.departamento}} / {{inversion.provincia}} / {{inversion.distrito}}</td>
 			  <td nzAlign="center">{{inversion.entidad}}</td>
-			  <td nzAlign="center">{{inversion.tipo}}</td>
-			  <td nzAlign="center">{{inversion.subtipo}}</td>
-			  <td nzAlign="center">{{inversion.codigo}}</td>
-			  <td nzAlign="center">{{inversion.nombre}}</td>
-			  <td nzAlign="center">{{inversion.costo}}</td>
-			  <td nzAlign="center">{{inversion.devAcum}}</td>
+			  <td nzAlign="center">{{inversion.tipo | uppercase }}</td>
+			  <td nzAlign="center">{{inversion.subTipo | uppercase }}</td>
+			  <td nzAlign="center">{{inversion.codigoInversion}}</td>
+			  <td nzAlign="center">{{inversion.nombreInversion}}</td>
+			  <td nzAlign="center">{{inversion.costoActualizado}}</td>
+			  <td nzAlign="center">{{inversion.devAcumulado}}</td>
 			  <td nzAlign="center">{{inversion.pia}}</td>
 			  <td nzAlign="center">{{inversion.pim}}</td>
-			  <td nzAlign="center">{{inversion.dev}}</td>
-			  <td nzAlign="center">{{inversion.transferencia}}</td>
-			  <td nzAlign="center">{{inversion.fecha}}</td>
-			  <td nzAlign="center">{{inversion.situacion}}</td>
-			  <td nzAlign="center">{{inversion.fase}}</td>
-			  <td nzAlign="center">{{inversion.etapa}}</td>
-			  <td nzAlign="center">{{inversion.hito}}</td>
+			  <td nzAlign="center">{{inversion.devengado}}</td>
+			  <td nzAlign="center">0.0</td>
+			  <td nzAlign="center">{{inversion.fechaRegistro}}</td>
+			  <td nzAlign="center"></td>
+			  <td nzAlign="center">{{inversion.inicioInversionFase}}</td>
+			  <td nzAlign="center">{{inversion.inicioInversionEtapa}}</td>
+			  <td nzAlign="center">{{inversion.inicioInversionHito}}</td>
 			  <td nzAlign="center">
 				  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención"  (click)="inversionDetalle(inversion.inversionEspacioId!)">
 					<span nz-icon nzType="eye" nzTheme="outline"></span>

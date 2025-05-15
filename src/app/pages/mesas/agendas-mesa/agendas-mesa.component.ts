@@ -71,7 +71,7 @@ export default class AgendasMesaComponent {
 
   obtenerInversionEspacioServicio(){
     this.loadingInversionEspacio = true
-    this.inversionEspacioServices.ListarInversionesEspacio(this.pagination)
+    this.inversionEspacioServices.ListarInversionEspacios(this.pagination)
       .subscribe( resp => {        
         this.loadingInversionEspacio = false
         this.inversionesEspacios.set(resp.data)

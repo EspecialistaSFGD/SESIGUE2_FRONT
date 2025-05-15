@@ -4,84 +4,99 @@
 
 <div class="grid grid-cols-1 md:grid-cols-4 bg-white p-4">
 	<div class="flex border border-gray-200">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Sector</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">MEF</div>
+		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Sector</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().sector}}</div>
 	</div>
 	<div class="flex border border-gray-200">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Departamento</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">LIMA METROPOLITANA</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().departamento}}</div>
 	</div>
 	<div class="flex border border-gray-200">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Provincia</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l"></div>
+		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Provincia</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().provincia}}</div>
 	</div>
 	<div class="flex border border-gray-200">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Distrito</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l"></div>
+		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Distrito</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().distrito}}</div>
 	</div>
 
 
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Codigo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">123456</div>
+		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Codigo</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().codigoInversion}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Tipo de intervencion</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">tipo</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().tipo | titlecase}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Entidad</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l"></div>
+		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Entidad</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().entidad}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Subtipo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l"></div>
+		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Subtipo</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().subTipo | uppercase}}</div>
 	</div>
 
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Espacio</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l"></div>
+		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Espacio</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().evento}}</div>
 	</div>
     <div class="flex col-span-3 border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Intervención</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">
-			Nombre
-		</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().nombreInversion}}</div>
 	</div>
 
 
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Inicio</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l"></div>
+		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Beneficiarios</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().beneficiarios}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Fase</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">tipo</div>
+		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Fase Inicial</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioInversionFase}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Etapa</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">etapa</div>
+		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Etapa Inicial</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioInversionEtapa}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Hito</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">hito</div>
+		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Hito Inicial</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioInversionHito}}</div>
 	</div>
 
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Objetivo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l"></div>
+		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Costo Actualizado</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().costoActualizado}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Fase</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">tipo</div>
+		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Fase Objetivo</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoInversionFase}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Etapa</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">etapa</div>
+		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Etapa Objetivo</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoInversionEtapa}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center md:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Hito</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">hito</div>
+		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Hito Objetivo</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoInversionHito}}</div>
+	</div>
+
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Dev. Acumulado</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().devAcumulado}}</div>
+	</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">PIA</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().pia}}</div>
+	</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">PIM</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().pim}}</div>
+	</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Devengado</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().devengado}}</div>
 	</div>
 </div>
 
