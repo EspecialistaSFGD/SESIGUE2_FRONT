@@ -2,15 +2,16 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { DataModalInversionTarea, EntidadResponse, InversionEspacioResponse, InversionTareaResponse, Pagination, SectorResponse } from '@core/interfaces';
-import { EntidadesService, SectoresService } from '@core/services';
+import { DataModalInversionTarea, EntidadResponse, InversionEspacioResponse, InversionEtapaResponse, InversionFaseResponse, InversionHitoResponse, InversionTareaResponse, Pagination, SectorResponse } from '@core/interfaces';
+import { EntidadesService, InversionEtapaService, InversionFaseService, InversionHitoService, SectoresService } from '@core/services';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-formulario-inversion-tarea',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule],
+  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule, NgZorroModule],
   templateUrl: './formulario-inversion-tarea.component.html',
   styles: ``
 })
@@ -21,23 +22,38 @@ export class FormularioInversionTareaComponent {
   sectorEntidad: boolean = false
   cantidadCaracteresTarea = 1500
 
+  paginationInversionData: Pagination = {
+    columnSort: 'nombre',
+    typeSort: 'ASC',
+    pageSize: 100,
+    currentPage: 1
+  }
+
   inversionEspacio = signal<InversionEspacioResponse>(this.dataInversionTarea.inversionEspacio)
   inversionTarea = signal<InversionTareaResponse>(this.dataInversionTarea.inversionTarea)
   responsables = signal<SectorResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   sectorEntidades = signal<EntidadResponse[]>([])
+  inversionFases = signal<InversionFaseResponse[]>([])
+  inversionEtapas = signal<InversionEtapaResponse[]>([])
+  inversionHitos = signal<InversionHitoResponse[]>([])
 
   private fb = inject(FormBuilder)
   private sectoresServices = inject(SectoresService)
   private entidadServices = inject(EntidadesService)
+  private inversionFaseService = inject(InversionFaseService)
+  private inversionEtapaService = inject(InversionEtapaService)
+  private inversionHitoService = inject(InversionHitoService)
 
   formInversionTarea: FormGroup = this.fb.group({
     tarea: [ '', Validators.required ],
     plazo: [ '', Validators.required ],
     entidadId: [{ value: '', disabled: true }, Validators.required],
     entidad: [{ value: '', disabled: true }],
-    inversionHitoId: [ '', Validators.required ],
-    responsableId: [ '', Validators.required ]
+    responsableId: [ '', Validators.required ],
+    inversionFaseId: [ '', Validators.required ],
+    inversionEtapaId: [{ value: '', disabled: true }, Validators.required],
+    inversionHitoId: [{ value: '', disabled: true }, Validators.required]
   })
 
   ngOnInit(): void {
@@ -45,10 +61,26 @@ export class FormularioInversionTareaComponent {
     this.formInversionTarea.reset({...this.inversionTarea, entidad })
     this.obtenerResponsables()
     this.obtenerEntidadSector()
+    this.obtenerInversionFaseService()
   }
 
   obtenerResponsables(){
-    this.sectoresServices.getAllSectors(0,4).subscribe( resp => this.responsables.set(resp.data))
+    this.sectoresServices.getAllSectors(0,4)
+      .subscribe( resp => {
+        let responsable = resp.data.length == 0 ? [] : resp.data.filter(item => item.grupoID != '0')      
+        this.responsables.set(responsable)
+    })
+  }
+
+  obtenerEntidadSector(){
+    const sectorId = Number(this.inversionEspacio().sectorId)
+    const paginationEntidadSector: Pagination = { entidadId: 0, tipo: '1', sectorId }
+    this.entidadServices.listarEntidades(paginationEntidadSector).subscribe( resp => this.sectorEntidades.set(resp.data) )
+  }
+
+  obtenerInversionFaseService(){
+    this.inversionFaseService.ListarInversionFase(this.paginationInversionData)
+      .subscribe( resp => this.inversionFases.set(resp.data))
   }
 
   alertMessageError(control: string) {
@@ -81,25 +113,52 @@ export class FormularioInversionTareaComponent {
     const responsable = this.responsables().find( item => item.grupoID == responsableValue )
     this.sectorEntidad = responsable!.nombre == 'GN'
 
-    responsableValue > 0 && this.sectorEntidad ? entidadIdControl?.enable() :entidadIdControl?.disable()
+    responsableValue && this.sectorEntidad ? entidadIdControl?.enable() :entidadIdControl?.disable()
 
     if(this.create && !this.sectorEntidad){
       entidadControl?.setValue(this.inversionEspacio().entidad)
       entidadIdControl?.setValue(this.inversionEspacio().entidadUbigeoId)
     }
-    if(responsableValue == 0){
+    if(this.sectorEntidad){
       entidadControl?.reset()
       entidadIdControl?.reset()
     }
   }
 
-  obtenerEntidadSector(){
-    const sectorId = Number(this.inversionEspacio().sectorId)
-    const paginationEntidadSector: Pagination = {
-      entidadId: 0,
-      tipo: '1',
-      sectorId
+  obtenerInversionEtapa(){
+    const inversionFaseId = this.formInversionTarea.get('inversionFaseId')?.value
+    const inversionEtapaControl = this.formInversionTarea.get('inversionEtapaId')
+    const inversionHitoControl = this.formInversionTarea.get('inversionHitoId')
+    if(inversionFaseId){
+      inversionEtapaControl?.enable()
+      inversionEtapaControl?.reset()
+      this.obtenerInversionEtapaService()
+    } else {
+      inversionEtapaControl?.disable()
     }
-    this.entidadServices.listarEntidades(paginationEntidadSector).subscribe( resp => this.sectorEntidades.set(resp.data) )
+    inversionHitoControl?.disable()
+    inversionHitoControl?.reset()
+  }
+
+  obtenerInversionEtapaService(){
+    const faseId = this.formInversionTarea.get('inversionFaseId')?.value
+    this.inversionEtapaService.ListarInversionEtapas({...this.paginationInversionData, faseId}).subscribe( resp => this.inversionEtapas.set(resp.data))
+  }
+
+  obtenerInversionHito(){
+    const inversionEtapaId = this.formInversionTarea.get('inversionEtapaId')?.value
+    const inversionHitoControl = this.formInversionTarea.get('inversionHitoId')
+      inversionHitoControl?.reset()
+    if(inversionEtapaId){
+      inversionHitoControl?.enable()
+      this.obtenerInversionHitoService()
+    } else {
+      inversionHitoControl?.disable()
+    }
+  }
+
+  obtenerInversionHitoService(){
+    const etapaId = this.formInversionTarea.get('inversionEtapaId')?.value    
+    this.inversionHitoService.ListarInversionHitos({...this.paginationInversionData, etapaId }).subscribe( resp => this.inversionHitos.set(resp.data))
   }
 }

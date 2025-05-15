@@ -10,6 +10,18 @@
 
 	<div class="flex gap-4">
 		<div class="w-full flex flex-col">
+			<label nzFor="plazo">Fecha de atención</label>
+			<p-calendar 
+				formControlName="plazo"
+				[iconDisplay]="'input'" 
+				[showIcon]="true"
+				[showButtonBar]="true"
+				dateFormat="dd/mm/yy"
+				inputId="icondisplay" />
+			<div class="text-danger" *ngIf="alertMessageError('plazo')">{{msgErrorControl('plazo','Plazo')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
 			<label nzFor="fplazo">Responsable</label>
 			<p-dropdown 
 				[options]="responsables()"
@@ -23,32 +35,65 @@
 		</div>
 
 		<div class="w-full flex flex-col">
-			<label nzFor="plazo">Fecha de atención</label>
-			<p-calendar 
-				formControlName="plazo"
-				[iconDisplay]="'input'" 
-				[showIcon]="true"
-				[showButtonBar]="true"
-				dateFormat="dd/mm/yy"
-				inputId="icondisplay" />
-			<div class="text-danger" *ngIf="alertMessageError('plazo')">{{msgErrorControl('plazo','Plazo')}}</div>
+			<label nzFor="entidadId">
+				Entidad
+				@if (formInversionTarea.get('entidadId')?.value) {
+					<span nz-icon nzType="info-circle" [nz-tooltip]="formInversionTarea.get('entidad')?.value"></span>
+				}
+			</label>
+			@if(sectorEntidad){
+				<p-dropdown 
+				[options]="sectorEntidades()"
+				formControlName="entidadId"
+				optionLabel="nombre"
+				optionValue="entidadId"
+				[showClear]="true" 
+				placeholder="Seleccionar entidad"/>
+			} @else {
+				<input type="text" class="form-control" id="entidad" formControlName="entidad">
+			}
+			<div class="text-danger" *ngIf="alertMessageError('entidadId')">{{msgErrorControl('entidadId','Entidad')}}</div>
 		</div>
 	</div>
 
-	<div class="w-full flex flex-col">
-		<label nzFor="entidadId">Entidad</label>
-		@if(sectorEntidad){
+	<div class="flex gap-4">
+		<div class="w-full flex flex-col">
+			<label nzFor="inversionFaseId">Fase</label>
 			<p-dropdown 
-			[options]="sectorEntidades()"
-			formControlName="entidadId"
+			[options]="inversionFases()"
+			formControlName="inversionFaseId"
 			optionLabel="nombre"
-			optionValue="entidadId"
+			optionValue="inversionFaseId"
 			[showClear]="true" 
-			placeholder="Seleccionar entidad"/>
-		} @else {
-			<input type="text" class="form-control" id="entidad" formControlName="entidad">
-		}
-		<div class="text-danger" *ngIf="alertMessageError('entidadId')">{{msgErrorControl('entidadId','Entidad')}}</div>
+			placeholder="Seleccionar fase"
+			(onChange)="obtenerInversionEtapa()"/>
+			<div class="text-danger" *ngIf="alertMessageError('inversionFaseId')">{{msgErrorControl('inversionFaseId','Fase')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
+			<label nzFor="inversionEtapaId">Etapa</label>
+			<p-dropdown 
+			[options]="inversionEtapas()"
+			formControlName="inversionEtapaId"
+			optionLabel="nombre"
+			optionValue="inversionEtapaId"
+			[showClear]="true" 
+			placeholder="Seleccionar etapa"
+			(onChange)="obtenerInversionHito()"/>
+			<div class="text-danger" *ngIf="alertMessageError('inversionEtapaId')">{{msgErrorControl('inversionEtapaId','Etapa')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
+			<label nzFor="inversionHitoId">Hito</label>
+			<p-dropdown 
+			[options]="inversionHitos()"
+			formControlName="inversionHitoId"
+			optionLabel="nombre"
+			optionValue="inversionHitoId"
+			[showClear]="true" 
+			placeholder="Seleccionar hito"/>
+			<div class="text-danger" *ngIf="alertMessageError('inversionHitoId')">{{msgErrorControl('inversionHitoId','Hito')}}</div>
+		</div>
 	</div>
 
 </form>

@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class InversionHitoService {
-  private urlInversionHito: string = `${environment.api}/InversionEtapa`
+  private urlInversionHito: string = `${environment.api}/InversionHito`
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
   

@@ -69,8 +69,9 @@ export default class InversionTareasComponent {
 
   inversionTareaFormModal(create: boolean){
     const action = `${create ? 'Crear' : 'Actualizar' } tarea`
-    const modal = this.modal.create<FormularioInversionTareaComponent>({
+    this.modal.create<FormularioInversionTareaComponent>({
       nzTitle: `${action.toUpperCase()}`,
+      nzWidth: '50%',
       nzContent: FormularioInversionTareaComponent,
       nzData: {
         inversionEspacio: this.inversionEspacio,
