@@ -39,14 +39,19 @@ export default class InversionDetalleComponent {
     const inversionEspacioId = this.route.snapshot.params['inversionEspacioId'];
     const inversionEspacioIdNumber = Number(inversionEspacioId);
     if (isNaN(inversionEspacioIdNumber)) {
-      this.router.navigate(['/mesas']);
+      this.router.navigate(['/panel']);
       return;
     }
 
     this.inversionEspacioId = inversionEspacioIdNumber    
     this.inversionEspacioService.obtenerInversionEspacio(inversionEspacioId)
-      .subscribe( resp => {
+      .subscribe( resp => {        
         resp.success ? this.inversionEspacio.set(resp.data) : this.router.navigate(['/panel'])
+        // if(resp.success){
+        //   this.inversionEspacio.set(resp.data)
+        // } else {
+        //   this.router.navigate(['/panel'])
+        // }
       })
   }
 }

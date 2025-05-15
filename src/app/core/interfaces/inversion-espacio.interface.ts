@@ -26,6 +26,7 @@ export interface InversionEspacioResponse {
 	entidadSectorId?: string,
 	sectorId?: string,
 	sector?: string,
+	entidadUbigeoId?: string,
 	departamento?: string,
 	provincia?: string,
 	distrito?: string,

@@ -78,8 +78,8 @@ export default class AgendasMesaComponent {
       })
   }
 
-  inversionDetalle(inversionId: string){
-    this.router.navigate(['inversiones', inversionId], {
+  inversionDetalle(inversionEspacioId: string){
+    this.router.navigate(['inversiones', inversionEspacioId], {
       queryParams: {
         modelo: 'mesas',
         modeloId: this.mesa().mesaId

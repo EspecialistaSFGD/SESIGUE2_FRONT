@@ -37,14 +37,17 @@
 
 	<div class="w-full flex flex-col">
 		<label nzFor="entidadId">Entidad</label>
-		<p-dropdown 
+		@if(sectorEntidad){
+			<p-dropdown 
 			[options]="sectorEntidades()"
 			formControlName="entidadId"
 			optionLabel="nombre"
 			optionValue="entidadId"
 			[showClear]="true" 
-			placeholder="Seleccionar entidad"
-			(onChange)="obtenerSector()"/>
+			placeholder="Seleccionar entidad"/>
+		} @else {
+			<input type="text" class="form-control" id="entidad" formControlName="entidad">
+		}
 		<div class="text-danger" *ngIf="alertMessageError('entidadId')">{{msgErrorControl('entidadId','Entidad')}}</div>
 	</div>
 

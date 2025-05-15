@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { DataModalInversionTarea, EntidadResponse, InversionTareaResponse, Pagination, SectorResponse } from '@core/interfaces';
+import { DataModalInversionTarea, EntidadResponse, InversionEspacioResponse, InversionTareaResponse, Pagination, SectorResponse } from '@core/interfaces';
 import { EntidadesService, SectoresService } from '@core/services';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
@@ -17,9 +17,11 @@ import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 export class FormularioInversionTareaComponent {
   readonly dataInversionTarea: DataModalInversionTarea = inject(NZ_MODAL_DATA);
 
+  create: boolean = this.dataInversionTarea.create
   sectorEntidad: boolean = false
   cantidadCaracteresTarea = 1500
 
+  inversionEspacio = signal<InversionEspacioResponse>(this.dataInversionTarea.inversionEspacio)
   inversionTarea = signal<InversionTareaResponse>(this.dataInversionTarea.inversionTarea)
   responsables = signal<SectorResponse[]>([])
   sectores = signal<SectorResponse[]>([])
@@ -32,22 +34,21 @@ export class FormularioInversionTareaComponent {
   formInversionTarea: FormGroup = this.fb.group({
     tarea: [ '', Validators.required ],
     plazo: [ '', Validators.required ],
-    entidadId: [{ value: '', disabled: false }, Validators.required],
+    entidadId: [{ value: '', disabled: true }, Validators.required],
+    entidad: [{ value: '', disabled: true }],
     inversionHitoId: [ '', Validators.required ],
     responsableId: [ '', Validators.required ]
   })
 
   ngOnInit(): void {
+    const entidad = this.create ? null : this.inversionEspacio().entidad
+    this.formInversionTarea.reset({...this.inversionTarea, entidad })
     this.obtenerResponsables()
-    this.obtenerSectoresService()
+    this.obtenerEntidadSector()
   }
 
   obtenerResponsables(){
     this.sectoresServices.getAllSectors(0,4).subscribe( resp => this.responsables.set(resp.data))
-  }
-
-  obtenerSectoresService(){
-    this.sectoresServices.getAllSectors().subscribe( resp => this.sectores.set(resp.data))
   }
 
   alertMessageError(control: string) {
@@ -75,45 +76,30 @@ export class FormularioInversionTareaComponent {
 
   obtenerResponsable(){
     const responsableValue = this.formInversionTarea.get('responsableId')?.value
+    const entidadIdControl = this.formInversionTarea.get('entidadId')
+    const entidadControl = this.formInversionTarea.get('entidad')
     const responsable = this.responsables().find( item => item.grupoID == responsableValue )
-    if(responsable?.nombre == 'GN'){
-      console.log('SECTORES');
-      // const sectorId = this.inversionTarea().se
-    } else {
-      console.log('UBIGEO');
+    this.sectorEntidad = responsable!.nombre == 'GN'
+
+    responsableValue > 0 && this.sectorEntidad ? entidadIdControl?.enable() :entidadIdControl?.disable()
+
+    if(this.create && !this.sectorEntidad){
+      entidadControl?.setValue(this.inversionEspacio().entidad)
+      entidadIdControl?.setValue(this.inversionEspacio().entidadUbigeoId)
     }
-    console.log(this.responsables());
-    console.log(responsable);
-    console.log();
-    
-
-    
-  }
-
-  obtenerSector(){
-    const sectorId = this.formInversionTarea.get('sectorId')?.value
-    const entidadControl = this.formInversionTarea.get('entidadId')
-    if(sectorId){
-      entidadControl?.enable()
-      this.obtenerEntidadSector()
-    } else {
+    if(responsableValue == 0){
       entidadControl?.reset()
-      this.sectorEntidades.set([])
-      entidadControl?.disable()
+      entidadIdControl?.reset()
     }
   }
 
   obtenerEntidadSector(){
-    const sectorId = this.formInversionTarea.get('sectorId')?.value    
+    const sectorId = Number(this.inversionEspacio().sectorId)
     const paginationEntidadSector: Pagination = {
       entidadId: 0,
       tipo: '1',
       sectorId
     }
-    this.entidadServices.listarEntidades(paginationEntidadSector)
-      .subscribe( resp => {
-        console.log(resp);
-        this.sectorEntidades.set(resp.data)
-      })
+    this.entidadServices.listarEntidades(paginationEntidadSector).subscribe( resp => this.sectorEntidades.set(resp.data) )
   }
 }

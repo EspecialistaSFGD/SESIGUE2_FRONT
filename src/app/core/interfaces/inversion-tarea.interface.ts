@@ -1,4 +1,5 @@
 import { DataResponses } from "./helpers.interface"
+import { InversionEspacioResponse } from "./inversion-espacio.interface"
 
 export interface InversionTareasResponses extends DataResponses {
   data: InversionTareaResponse[]
@@ -25,6 +26,7 @@ export interface InversionTareaResponse {
 }
 
 export interface DataModalInversionTarea {
+	inversionEspacio: InversionEspacioResponse,
   create: boolean,
 	inversionTarea: InversionTareaResponse
 }
