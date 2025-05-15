@@ -34,6 +34,7 @@ export interface Pagination {
   ubigeo?: string,
   cui?: string,
   tipoEntidad?: string,
+  inversionId?: string
 }
 
 export interface PaginationPanel {

@@ -1,24 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MesaResponse } from '@core/interfaces';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { InversionEspacioResponse, MesaResponse, Pagination } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
-import { MesasService } from '@core/services';
+import { InversionesEspacioService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 
 @Component({
   selector: 'app-agendas-mesa',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, SharedModule, PipesModule],
+  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule],
   templateUrl: './agendas-mesa.component.html',
   styles: ``
 })
 export default class AgendasMesaComponent {
   title: string = `Agenda de la mesa`;
-    
+
   authUserId = localStorage.getItem('codigoUsuario')
   mesaId!: number
+  loadingInversionEspacio: boolean = false
+
   mesa = signal<MesaResponse>({
     nombre: '',
     sectorId: '',
@@ -29,13 +31,23 @@ export default class AgendasMesaComponent {
     estadoRegistroNombre: '',
     estadoRegistro: ''
   })
+  inversionesEspacios = signal<InversionEspacioResponse[]>([])
+
+  pagination: Pagination = {
+    columnSort: 'fechaRegistro',
+    typeSort: 'ASC',
+    pageSize: 10,
+    currentPage: 1
+  }
 
   private mesaServices = inject(MesasService)
-    private route = inject(ActivatedRoute)
-    private router = inject(Router)
+  private route = inject(ActivatedRoute)
+  private router = inject(Router)
+  private inversionEspacioServices = inject(InversionesEspacioService)
 
   ngOnInit(): void {
     this.verificarMesa()
+    this.obtenerInversionEspacioServicio()
   }
 
   verificarMesa(){
@@ -57,7 +69,21 @@ export default class AgendasMesaComponent {
       })
   }
 
-  getIframeInversiones() {
-    return `http://52.168.137.104:300/SESIGUEOLDTEST/SD/Form_registrosInversion.aspx?au=0&7B611A09B990B80849DBE7AF822D63E466D552839D9EC6E0=2B6AC8BbF4ADF440005AFC42EF337555FB0008BF9770791Z&gjXtIkEroS=SD_SSFD&iacp=1314&imo=${this.mesaId}`
+  obtenerInversionEspacioServicio(){
+    this.loadingInversionEspacio = true
+    this.inversionEspacioServices.ListarInversionesEspacio(this.pagination)
+      .subscribe( resp => {        
+        this.loadingInversionEspacio = false
+        this.inversionesEspacios.set(resp.data)
+      })
+  }
+
+  inversionDetalle(inversionId: string){
+    this.router.navigate(['inversiones', inversionId], {
+      queryParams: {
+        modelo: 'mesas',
+        modeloId: this.mesa().mesaId
+      }
+    });
   }
 }
