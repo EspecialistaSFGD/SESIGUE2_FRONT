@@ -22,9 +22,9 @@ export default class IntervencionTareasComponent {
   loadingTareas: boolean =  false
   
   paginationTareas: Pagination = {
-    columnSort: 'fechaRegistro',
-    typeSort: 'ASC',
-    pageSize: 10,
+    columnSort: 'intervencionTareaId',
+    typeSort: 'DESC',
+    pageSize: 5,
     currentPage: 1,
     total: 0
   }
