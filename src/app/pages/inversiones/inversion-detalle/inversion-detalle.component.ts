@@ -3,8 +3,8 @@ import { Component, inject, signal } from '@angular/core';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import InversionTareasComponent from '../inversion-tareas/inversion-tareas.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { InversionesEspacioService } from '@core/services';
-import { InversionEspacioResponse } from '@core/interfaces';
+import { IntervencionEspacioService } from '@core/services';
+import { IntervencionEspacioResponse } from '@core/interfaces';
 
 @Component({
   selector: 'app-inversion-detalle',
@@ -17,19 +17,19 @@ export default class InversionDetalleComponent {
   title: string = `Intervención de la mesa`;
 
   inversionEspacioId!: number
-  inversionEspacio = signal<InversionEspacioResponse>({
-    inversionId: '',
+  inversionEspacio = signal<IntervencionEspacioResponse>({
+    intervencionId: '',
     eventoId: '',
     origenId: '',
     interaccionId : '',
     acuerdoId: '',
-    inicioInversionHitoId: '',
-    objetivoInversionHitoId: ''
+    inicioIntervencionHitoId: '',
+    objetivoIntervencionHitoId: ''
   })
 
   private route = inject(ActivatedRoute)
   private router = inject(Router)
-  private inversionEspacioService = inject(InversionesEspacioService)
+  private inversionEspacioService = inject(IntervencionEspacioService)
 
   ngOnInit(): void {
     this.verificarInversion()
@@ -44,14 +44,9 @@ export default class InversionDetalleComponent {
     }
 
     this.inversionEspacioId = inversionEspacioIdNumber    
-    this.inversionEspacioService.obtenerInversionEspacio(inversionEspacioId)
+    this.inversionEspacioService.obtenerIntervencionEspacio(inversionEspacioId)
       .subscribe( resp => {        
         resp.success ? this.inversionEspacio.set(resp.data) : this.router.navigate(['/panel'])
-        // if(resp.success){
-        //   this.inversionEspacio.set(resp.data)
-        // } else {
-        //   this.router.navigate(['/panel'])
-        // }
       })
   }
 }

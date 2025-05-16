@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, Signal, signal } from '@angular/core';
-import { InversionEspacioResponse, InversionTareaResponse, Pagination } from '@core/interfaces';
-import { InversionTareaService } from '@core/services';
+import { IntervencionEspacioResponse, IntervencionTareaResponse, Pagination } from '@core/interfaces';
+import { IntervencionTareaService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioInversionTareaComponent } from './formulario-inversion-tarea/formulario-inversion-tarea.component';
@@ -16,7 +16,7 @@ import { FormularioInversionTareaComponent } from './formulario-inversion-tarea/
 export default class InversionTareasComponent {
 
   title: string = `Tareas`;
-  @Input() inversionEspacio!: InversionEspacioResponse
+  @Input() inversionEspacio!: IntervencionEspacioResponse
 
   loadingTareas: boolean =  false
   
@@ -28,17 +28,17 @@ export default class InversionTareasComponent {
     total: 0
   }
 
-  inversionTarea: InversionTareaResponse = {
+  inversionTarea: IntervencionTareaResponse = {
     plazo: '',
     entidadId: '',
-    inversionHitoId: '',
-    inversionId: '',
+    intervencionHitoId: '',
+    intervencionId: '',
     responsableId: ''
   }
   
-  inversionTareas = signal<InversionTareaResponse[]>([])
+  inversionTareas = signal<IntervencionTareaResponse[]>([])
 
-  private inversionTareasServices = inject(InversionTareaService)
+  private inversionTareasServices = inject(IntervencionTareaService)
   private modal = inject(NzModalService);
 
   ngOnInit(): void {    
@@ -47,9 +47,9 @@ export default class InversionTareasComponent {
 
   obtenerInversionTareasService(){
     this.loadingTareas = true
-    const inversionId = this.inversionEspacio.inversionId
+    const inversionId = this.inversionEspacio.intervencionId
 
-    this.inversionTareasServices.ListarInversionFase({...this.paginationTareas, inversionId})
+    this.inversionTareasServices.ListarIntervencionFase({...this.paginationTareas, inversionId})
       .subscribe( resp => {
         this.loadingTareas = false
         this.inversionTareas.set(resp.data)
@@ -58,11 +58,11 @@ export default class InversionTareasComponent {
   }
 
   agregarTarea(){
-    this.inversionTarea.inversionId = this.inversionEspacio.inversionId
+    this.inversionTarea.intervencionId = this.inversionEspacio.intervencionId
     this.inversionTareaFormModal(true)
   }
 
-  actualizarTarea(inversionTarea: InversionTareaResponse){
+  actualizarTarea(inversionTarea: IntervencionTareaResponse){
     this.inversionTarea = inversionTarea
     this.inversionTareaFormModal(false)
   }

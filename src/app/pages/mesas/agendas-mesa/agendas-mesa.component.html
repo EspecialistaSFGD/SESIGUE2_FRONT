@@ -70,28 +70,28 @@
         </tr>
     </thead>
     <tbody>
-		@for(inversion of inversionesEspacios(); track $index){
+		@for(inversionEspacio of inversionesEspacios(); track $index){
 			<tr>
-			  <td nzAlign="center">{{inversion.sector}}</td>
-			  <td nzAlign="center">{{inversion.departamento}} / {{inversion.provincia}} / {{inversion.distrito}}</td>
-			  <td nzAlign="center">{{inversion.entidad}}</td>
-			  <td nzAlign="center">{{inversion.tipo | uppercase }}</td>
-			  <td nzAlign="center">{{inversion.subTipo | uppercase }}</td>
-			  <td nzAlign="center">{{inversion.codigoInversion}}</td>
-			  <td nzAlign="center">{{inversion.nombreInversion}}</td>
-			  <td nzAlign="center">{{inversion.costoActualizado}}</td>
-			  <td nzAlign="center">{{inversion.devAcumulado}}</td>
-			  <td nzAlign="center">{{inversion.pia}}</td>
-			  <td nzAlign="center">{{inversion.pim}}</td>
-			  <td nzAlign="center">{{inversion.devengado}}</td>
+			  <td nzAlign="center">{{inversionEspacio.sector}}</td>
+			  <td nzAlign="center">{{inversionEspacio.departamento}} / {{inversionEspacio.provincia}} / {{inversionEspacio.distrito}}</td>
+			  <td nzAlign="center">{{inversionEspacio.entidad}}</td>
+			  <td nzAlign="center">{{inversionEspacio.tipo | uppercase }}</td>
+			  <td nzAlign="center">{{inversionEspacio.subTipo | uppercase }}</td>
+			  <td nzAlign="center">{{inversionEspacio.codigoIntervencion}}</td>
+			  <td nzAlign="center">{{inversionEspacio.nombreIntervencion}}</td>
+			  <td nzAlign="center">{{inversionEspacio.costoActualizado}}</td>
+			  <td nzAlign="center">{{inversionEspacio.devAcumulado}}</td>
+			  <td nzAlign="center">{{inversionEspacio.pia}}</td>
+			  <td nzAlign="center">{{inversionEspacio.pim}}</td>
+			  <td nzAlign="center">{{inversionEspacio.devengado}}</td>
 			  <td nzAlign="center">0.0</td>
-			  <td nzAlign="center">{{inversion.fechaRegistro}}</td>
+			  <td nzAlign="center">{{inversionEspacio.fechaRegistro}}</td>
 			  <td nzAlign="center"></td>
-			  <td nzAlign="center">{{inversion.inicioInversionFase}}</td>
-			  <td nzAlign="center">{{inversion.inicioInversionEtapa}}</td>
-			  <td nzAlign="center">{{inversion.inicioInversionHito}}</td>
+			  <td nzAlign="center">{{inversionEspacio.inicioIntervencionFase}}</td>
+			  <td nzAlign="center">{{inversionEspacio.inicioIntervencionEtapa}}</td>
+			  <td nzAlign="center">{{inversionEspacio.inicioIntervencionHito}}</td>
 			  <td nzAlign="center">
-				  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención"  (click)="inversionDetalle(inversion.inversionEspacioId!)">
+				  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención"  (click)="inversionDetalle(inversionEspacio.intervencionEspacioId!)">
 					<span nz-icon nzType="eye" nzTheme="outline"></span>
 				  </button>
 			  </td>

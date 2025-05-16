@@ -22,7 +22,7 @@
 
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Codigo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().codigoInversion}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().codigoIntervencion}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Tipo de intervencion</div>
@@ -43,7 +43,7 @@
 	</div>
     <div class="flex col-span-3 border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Intervención</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().nombreInversion}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().nombreIntervencion}}</div>
 	</div>
 
 
@@ -53,15 +53,15 @@
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Fase Inicial</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioInversionFase}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioIntervencionFase}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Etapa Inicial</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioInversionEtapa}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioIntervencionEtapa}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Hito Inicial</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioInversionHito}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioIntervencionHito}}</div>
 	</div>
 
 	<div class="flex border border-gray-200 border-t-0">
@@ -70,15 +70,15 @@
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Fase Objetivo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoInversionFase}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoIntervencionFase}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Etapa Objetivo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoInversionEtapa}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoIntervencionEtapa}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Hito Objetivo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoInversionHito}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoIntervencionHito}}</div>
 	</div>
 
 	<div class="flex border border-gray-200 border-t-0">
@@ -99,6 +99,6 @@
 	</div>
 </div>
 
-@if(inversionEspacio().inversionEspacioId){
+@if(inversionEspacio().intervencionEspacioId){
 	<app-inversion-tareas [inversionEspacio]="inversionEspacio()"/>
 }

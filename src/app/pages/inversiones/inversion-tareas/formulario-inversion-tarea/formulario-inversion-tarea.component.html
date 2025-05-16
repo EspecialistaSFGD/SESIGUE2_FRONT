@@ -58,41 +58,41 @@
 
 	<div class="flex gap-4">
 		<div class="w-full flex flex-col">
-			<label nzFor="inversionFaseId">Fase</label>
+			<label nzFor="intervencionFaseId">Fase</label>
 			<p-dropdown 
 			[options]="inversionFases()"
-			formControlName="inversionFaseId"
+			formControlName="intervencionFaseId"
 			optionLabel="nombre"
-			optionValue="inversionFaseId"
+			optionValue="intervencionFaseId"
 			[showClear]="true" 
 			placeholder="Seleccionar fase"
 			(onChange)="obtenerInversionEtapa()"/>
-			<div class="text-danger" *ngIf="alertMessageError('inversionFaseId')">{{msgErrorControl('inversionFaseId','Fase')}}</div>
+			<div class="text-danger" *ngIf="alertMessageError('intervencionFaseId')">{{msgErrorControl('intervencionFaseId','Fase')}}</div>
 		</div>
 
 		<div class="w-full flex flex-col">
-			<label nzFor="inversionEtapaId">Etapa</label>
+			<label nzFor="intervencionEtapaId">Etapa</label>
 			<p-dropdown 
 			[options]="inversionEtapas()"
-			formControlName="inversionEtapaId"
+			formControlName="intervencionEtapaId"
 			optionLabel="nombre"
-			optionValue="inversionEtapaId"
+			optionValue="intervencionEtapaId"
 			[showClear]="true" 
 			placeholder="Seleccionar etapa"
 			(onChange)="obtenerInversionHito()"/>
-			<div class="text-danger" *ngIf="alertMessageError('inversionEtapaId')">{{msgErrorControl('inversionEtapaId','Etapa')}}</div>
+			<div class="text-danger" *ngIf="alertMessageError('intervencionEtapaId')">{{msgErrorControl('intervencionEtapaId','Etapa')}}</div>
 		</div>
 
 		<div class="w-full flex flex-col">
-			<label nzFor="inversionHitoId">Hito</label>
+			<label nzFor="intervencionHitoId">Hito</label>
 			<p-dropdown 
 			[options]="inversionHitos()"
-			formControlName="inversionHitoId"
+			formControlName="intervencionHitoId"
 			optionLabel="nombre"
-			optionValue="inversionHitoId"
+			optionValue="intervencionHitoId"
 			[showClear]="true" 
 			placeholder="Seleccionar hito"/>
-			<div class="text-danger" *ngIf="alertMessageError('inversionHitoId')">{{msgErrorControl('inversionHitoId','Hito')}}</div>
+			<div class="text-danger" *ngIf="alertMessageError('intervencionHitoId')">{{msgErrorControl('intervencionHitoId','Hito')}}</div>
 		</div>
 	</div>
 

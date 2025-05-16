@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { DataModalInversionTarea, EntidadResponse, InversionEspacioResponse, InversionEtapaResponse, InversionFaseResponse, InversionHitoResponse, InversionTareaResponse, Pagination, SectorResponse } from '@core/interfaces';
-import { EntidadesService, InversionEtapaService, InversionFaseService, InversionHitoService, SectoresService } from '@core/services';
+import { DataModalIntervencionTarea, EntidadResponse, IntervencionEspacioResponse, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, IntervencionTareaResponse, Pagination, SectorResponse } from '@core/interfaces';
+import { EntidadesService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
@@ -16,7 +16,7 @@ import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
   styles: ``
 })
 export class FormularioInversionTareaComponent {
-  readonly dataInversionTarea: DataModalInversionTarea = inject(NZ_MODAL_DATA);
+  readonly dataInversionTarea: DataModalIntervencionTarea = inject(NZ_MODAL_DATA);
 
   create: boolean = this.dataInversionTarea.create
   sectorEntidad: boolean = false
@@ -29,21 +29,21 @@ export class FormularioInversionTareaComponent {
     currentPage: 1
   }
 
-  inversionEspacio = signal<InversionEspacioResponse>(this.dataInversionTarea.inversionEspacio)
-  inversionTarea = signal<InversionTareaResponse>(this.dataInversionTarea.inversionTarea)
+  inversionEspacio = signal<IntervencionEspacioResponse>(this.dataInversionTarea.intervencionEspacio)
+  inversionTarea = signal<IntervencionTareaResponse>(this.dataInversionTarea.intervencionTarea)
   responsables = signal<SectorResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   sectorEntidades = signal<EntidadResponse[]>([])
-  inversionFases = signal<InversionFaseResponse[]>([])
-  inversionEtapas = signal<InversionEtapaResponse[]>([])
-  inversionHitos = signal<InversionHitoResponse[]>([])
+  inversionFases = signal<IntervencionFaseResponse[]>([])
+  inversionEtapas = signal<IntervencionEtapaResponse[]>([])
+  inversionHitos = signal<IntervencionHitoResponse[]>([])
 
   private fb = inject(FormBuilder)
   private sectoresServices = inject(SectoresService)
   private entidadServices = inject(EntidadesService)
-  private inversionFaseService = inject(InversionFaseService)
-  private inversionEtapaService = inject(InversionEtapaService)
-  private inversionHitoService = inject(InversionHitoService)
+  private inversionFaseService = inject(IntervencionFaseService)
+  private inversionEtapaService = inject(IntervencionEtapaService)
+  private inversionHitoService = inject(IntervencionHitoService)
 
   formInversionTarea: FormGroup = this.fb.group({
     tarea: [ '', Validators.required ],
@@ -51,9 +51,9 @@ export class FormularioInversionTareaComponent {
     entidadId: [{ value: '', disabled: true }, Validators.required],
     entidad: [{ value: '', disabled: true }],
     responsableId: [ '', Validators.required ],
-    inversionFaseId: [ '', Validators.required ],
-    inversionEtapaId: [{ value: '', disabled: true }, Validators.required],
-    inversionHitoId: [{ value: '', disabled: true }, Validators.required]
+    intervencionFaseId: [ '', Validators.required ],
+    intervencionEtapaId: [{ value: '', disabled: true }, Validators.required],
+    intervencionHitoId: [{ value: '', disabled: true }, Validators.required]
   })
 
   ngOnInit(): void {
@@ -79,7 +79,7 @@ export class FormularioInversionTareaComponent {
   }
 
   obtenerInversionFaseService(){
-    this.inversionFaseService.ListarInversionFase(this.paginationInversionData)
+    this.inversionFaseService.ListarIntervencionFases(this.paginationInversionData)
       .subscribe( resp => this.inversionFases.set(resp.data))
   }
 
@@ -126,10 +126,10 @@ export class FormularioInversionTareaComponent {
   }
 
   obtenerInversionEtapa(){
-    const inversionFaseId = this.formInversionTarea.get('inversionFaseId')?.value
-    const inversionEtapaControl = this.formInversionTarea.get('inversionEtapaId')
-    const inversionHitoControl = this.formInversionTarea.get('inversionHitoId')
-    if(inversionFaseId){
+    const intervencionFaseId = this.formInversionTarea.get('intervencionFaseId')?.value
+    const inversionEtapaControl = this.formInversionTarea.get('intervencionEtapaId')
+    const inversionHitoControl = this.formInversionTarea.get('intervencionHitoId')
+    if(intervencionFaseId){
       inversionEtapaControl?.enable()
       inversionEtapaControl?.reset()
       this.obtenerInversionEtapaService()
@@ -141,15 +141,15 @@ export class FormularioInversionTareaComponent {
   }
 
   obtenerInversionEtapaService(){
-    const faseId = this.formInversionTarea.get('inversionFaseId')?.value
-    this.inversionEtapaService.ListarInversionEtapas({...this.paginationInversionData, faseId}).subscribe( resp => this.inversionEtapas.set(resp.data))
+    const faseId = this.formInversionTarea.get('intervencionFaseId')?.value
+    this.inversionEtapaService.ListarIntervencionEtapas({...this.paginationInversionData, faseId}).subscribe( resp => this.inversionEtapas.set(resp.data))
   }
 
   obtenerInversionHito(){
-    const inversionEtapaId = this.formInversionTarea.get('inversionEtapaId')?.value
-    const inversionHitoControl = this.formInversionTarea.get('inversionHitoId')
+    const intervencionEtapaId = this.formInversionTarea.get('intervencionEtapaId')?.value
+    const inversionHitoControl = this.formInversionTarea.get('intervencionHitoId')
       inversionHitoControl?.reset()
-    if(inversionEtapaId){
+    if(intervencionEtapaId){
       inversionHitoControl?.enable()
       this.obtenerInversionHitoService()
     } else {
@@ -158,7 +158,7 @@ export class FormularioInversionTareaComponent {
   }
 
   obtenerInversionHitoService(){
-    const etapaId = this.formInversionTarea.get('inversionEtapaId')?.value    
-    this.inversionHitoService.ListarInversionHitos({...this.paginationInversionData, etapaId }).subscribe( resp => this.inversionHitos.set(resp.data))
+    const etapaId = this.formInversionTarea.get('intervencionEtapaId')?.value    
+    this.inversionHitoService.ListarIntervencionHitos({...this.paginationInversionData, etapaId }).subscribe( resp => this.inversionHitos.set(resp.data))
   }
 }

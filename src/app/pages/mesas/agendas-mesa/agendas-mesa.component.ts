@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { InversionEspacioResponse, MesaResponse, Pagination } from '@core/interfaces';
+import { IntervencionEspacioResponse, MesaResponse, Pagination } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
-import { InversionesEspacioService, MesasService } from '@core/services';
+import { IntervencionEspacioService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 
@@ -31,7 +31,7 @@ export default class AgendasMesaComponent {
     estadoRegistroNombre: '',
     estadoRegistro: ''
   })
-  inversionesEspacios = signal<InversionEspacioResponse[]>([])
+  inversionesEspacios = signal<IntervencionEspacioResponse[]>([])
 
   pagination: Pagination = {
     columnSort: 'fechaRegistro',
@@ -43,7 +43,7 @@ export default class AgendasMesaComponent {
   private mesaServices = inject(MesasService)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
-  private inversionEspacioServices = inject(InversionesEspacioService)
+  private inversionEspacioServices = inject(IntervencionEspacioService)
 
   ngOnInit(): void {
     this.verificarMesa()
@@ -71,7 +71,7 @@ export default class AgendasMesaComponent {
 
   obtenerInversionEspacioServicio(){
     this.loadingInversionEspacio = true
-    this.inversionEspacioServices.ListarInversionEspacios(this.pagination)
+    this.inversionEspacioServices.ListarIntervencionEspacios(this.pagination)
       .subscribe( resp => {        
         this.loadingInversionEspacio = false
         this.inversionesEspacios.set(resp.data)
