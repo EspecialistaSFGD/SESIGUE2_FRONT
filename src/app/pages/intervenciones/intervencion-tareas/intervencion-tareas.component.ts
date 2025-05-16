@@ -5,6 +5,7 @@ import { IntervencionTareaService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaComponent } from './formulario-Intervencion-tarea/formulario-intervencion-tarea.component';
+import { getDateFormat } from '@core/helpers';
 
 @Component({
   selector: 'app-intervencion-tareas',
@@ -29,10 +30,11 @@ export default class IntervencionTareasComponent {
   }
 
   intervencionTarea: IntervencionTareaResponse = {
+    tarea: '',
     plazo: '',
     entidadId: '',
     intervencionHitoId: '',
-    intervencionId: '',
+    intervencionEspacioId: '',
     responsableId: ''
   }
   
@@ -47,9 +49,9 @@ export default class IntervencionTareasComponent {
 
   obtenerIntervencionTareasService(){
     this.loadingTareas = true
-    const intervencionId = this.intervencionEspacio.intervencionId
+    const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId
 
-    this.intervencionTareasServices.ListarIntervencionFase({...this.paginationTareas, intervencionId})
+    this.intervencionTareasServices.ListarIntervencionTareas({...this.paginationTareas, intervencionEspacioId})
       .subscribe( resp => {
         this.loadingTareas = false
         this.intervencionTareas.set(resp.data)
@@ -58,7 +60,7 @@ export default class IntervencionTareasComponent {
   }
 
   agregarTarea(){
-    this.intervencionTarea.intervencionId = this.intervencionEspacio.intervencionId
+    this.intervencionTarea.intervencionEspacioId = this.intervencionEspacio.intervencionId
     this.intervencionTareaFormModal(true)
   }
 
@@ -89,21 +91,37 @@ export default class IntervencionTareasComponent {
           type: 'primary',
           onClick: (componentResponse) => {
             const formIntervencionTarea = componentResponse!.formIntervencionTarea
-
-            console.log(formIntervencionTarea.getRawValue());
             if (formIntervencionTarea.invalid) {
               const invalidFields = Object.keys(formIntervencionTarea.controls).filter(field => formIntervencionTarea.controls[field].invalid);
               console.error('Invalid fields:', invalidFields);
               return formIntervencionTarea.markAllAsTouched();
             }
 
-            console.log(formIntervencionTarea.getRawValue());
-            
+            const datePlazo =  new Date(formIntervencionTarea.get('plazo')?.value)
 
+            const plazoDateFormat =  getDateFormat(datePlazo,'month')
+            formIntervencionTarea.get('plazo')?.setValue(plazoDateFormat)
+            const accesoId = localStorage.getItem('codigoUsuario')!
+
+            let intervencionTarea: IntervencionTareaResponse = { ...formIntervencionTarea.getRawValue() }
+
+            if(create){ 
+              intervencionTarea.accesoId = accesoId
+              this.crearIntervencionTarea(intervencionTarea)         
+            }
           }
         }
       ]
     })
+  }
+
+  crearIntervencionTarea(intervencionTarea: IntervencionTareaResponse){    
+    const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId! 
+    this.intervencionTareasServices.registarIntervencionTarea({...intervencionTarea, intervencionEspacioId})
+      .subscribe( resp => {
+        this.obtenerIntervencionTareasService()
+        this.modal.closeAll()
+      })
   }
 
 }

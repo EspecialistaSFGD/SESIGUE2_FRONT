@@ -17,8 +17,14 @@
   <tbody>
     @for(tarea of intervencionTareas(); track $index){
       <tr>
-        <!-- <td>{{tarea.nombre}}</td>
-        <td nzAlign="center">{{tarea.sector}}</td> -->
+        <td nzAlign="center">{{tarea.codigo}}</td>
+        <td>{{tarea.tarea}}</td>
+        <td nzAlign="center">{{tarea.responsable}}</td>
+        <td nzAlign="center">{{tarea.entidad}}</td>
+        <td nzAlign="center">{{tarea.plazo}}</td>
+        <td nzAlign="center">{{tarea.estadoRegistroNombre}}</td>
+        <td nzAlign="center">{{tarea.comentario}}</td>
+        <td nzAlign="center"></td>
       </tr>
       }
   </tbody>

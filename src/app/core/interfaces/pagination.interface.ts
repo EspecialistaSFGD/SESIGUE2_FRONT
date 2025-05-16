@@ -34,7 +34,7 @@ export interface Pagination {
   ubigeo?: string,
   cui?: string,
   tipoEntidad?: string,
-  intervencionId?: string
+  intervencionEspacioId?: string
   faseId?: string,
   etapaId?: string
 }
