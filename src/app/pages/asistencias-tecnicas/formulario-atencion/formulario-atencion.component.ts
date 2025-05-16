@@ -661,12 +661,17 @@ export class FormularioAtencionComponent {
 
   changeMancomunidad(){
     const mancomunidad = this.formAtencion.get('entidadId')?.value
+    const autoridadControl = this.formAtencion.get('autoridad')
+    const dniControl = this.formAtencion.get('dniAutoridad')
+    const nombreControl = this.formAtencion.get('nombreAutoridad')
+    const cargoControl = this.formAtencion.get('cargoAutoridad') 
+
     const ubigeoControl = this.formAtencion.get('ubigeo')
     const entidadControl = this.formAtencion.get('entidad')
     if(mancomunidad){
       const entidad = this.mancomunidades().find(item => item.entidadId == mancomunidad)
       entidadControl?.setValue(entidad!.entidad)
-      const ubigeo = entidad!.ubigeo
+      const ubigeo = entidad!.ubigeo_oficial
       ubigeoControl?.setValue(ubigeo)
       this.formAtencion.get('departamento')?.setValue(entidad?.departamento)
       this.formAtencion.get('provincia')?.setValue(entidad?.provincia)
@@ -674,6 +679,10 @@ export class FormularioAtencionComponent {
     } else {
       entidadControl?.reset()
     }
+    autoridadControl?.reset()
+    dniControl?.reset()
+    nombreControl?.reset()
+    cargoControl?.reset()
   }
 
   changeAutoridad(){

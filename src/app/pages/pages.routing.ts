@@ -9,6 +9,7 @@ export const PAGES_ROUTES: Routes = [
   { path: 'transferencias_financieras', loadComponent: () => import('./transferencias-financieras/transferencias-financieras.component').then(m => m.TransferenciasFinancierasComponent) },
   { path: 'sgd', loadChildren: () => import('./sgd/sgd.routes').then(r => r.SGD_ROUTES) },
   { path: 'mesas', loadChildren: () => import('./mesas/mesas.routes').then( r => r.MESAS_ROUTES) },
+  { path: 'intervenciones', loadChildren: () => import('./intervenciones/intervenciones.routes').then( r => r.INTERVENCIONES_ROUTES ) },
   { path: 'usuarios', loadComponent: () => import('./usuarios/usuarios.component') },
   { path: 'configuraciones', loadChildren: () => import('./configuraciones/configuraciones.routes').then(m => m.CONFIG_ROUTES) },
   { path: 'hitos', loadChildren: () => import('./hitos/hitos.routes').then(r => r.HITOS_ROUTES) },
