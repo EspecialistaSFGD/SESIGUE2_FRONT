@@ -19,7 +19,7 @@ export default class AgendasMesaComponent {
 
   authUserId = localStorage.getItem('codigoUsuario')
   mesaId!: number
-  loadingInversionEspacio: boolean = false
+  loadingIntervencionEspacio: boolean = false
 
   mesa = signal<MesaResponse>({
     nombre: '',
@@ -31,7 +31,7 @@ export default class AgendasMesaComponent {
     estadoRegistroNombre: '',
     estadoRegistro: ''
   })
-  inversionesEspacios = signal<IntervencionEspacioResponse[]>([])
+  intervencionesEspacios = signal<IntervencionEspacioResponse[]>([])
 
   pagination: Pagination = {
     columnSort: 'fechaRegistro',
@@ -43,11 +43,11 @@ export default class AgendasMesaComponent {
   private mesaServices = inject(MesasService)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
-  private inversionEspacioServices = inject(IntervencionEspacioService)
+  private intervencionEspacioServices = inject(IntervencionEspacioService)
 
   ngOnInit(): void {
     this.verificarMesa()
-    this.obtenerInversionEspacioServicio()
+    this.obtenerIntervencionEspacioServicio()
   }
 
   verificarMesa(){
@@ -69,17 +69,17 @@ export default class AgendasMesaComponent {
       })
   }
 
-  obtenerInversionEspacioServicio(){
-    this.loadingInversionEspacio = true
-    this.inversionEspacioServices.ListarIntervencionEspacios(this.pagination)
+  obtenerIntervencionEspacioServicio(){
+    this.loadingIntervencionEspacio = true
+    this.intervencionEspacioServices.ListarIntervencionEspacios(this.pagination)
       .subscribe( resp => {        
-        this.loadingInversionEspacio = false
-        this.inversionesEspacios.set(resp.data)
+        this.loadingIntervencionEspacio = false
+        this.intervencionesEspacios.set(resp.data)
       })
   }
 
-  inversionDetalle(inversionEspacioId: string){
-    this.router.navigate(['inversiones', inversionEspacioId], {
+  intervencionDetalle(intervencionEspacioId: string){
+    this.router.navigate(['intervenciones', intervencionEspacioId], {
       queryParams: {
         modelo: 'mesas',
         modeloId: this.mesa().mesaId

@@ -5,100 +5,100 @@
 <div class="grid grid-cols-1 md:grid-cols-4 bg-white p-4">
 	<div class="flex border border-gray-200">
 		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Sector</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().sector}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().sector}}</div>
 	</div>
 	<div class="flex border border-gray-200">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Departamento</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().departamento}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().departamento}}</div>
 	</div>
 	<div class="flex border border-gray-200">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Provincia</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().provincia}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().provincia}}</div>
 	</div>
 	<div class="flex border border-gray-200">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Distrito</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().distrito}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().distrito}}</div>
 	</div>
 
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Codigo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().codigoIntervencion}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().codigoIntervencion}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Tipo de intervencion</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().tipo | titlecase}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().tipo | titlecase}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Entidad</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().entidad}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().entidad}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Subtipo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().subTipo | uppercase}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().subTipo | uppercase}}</div>
 	</div>
 
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Espacio</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().evento}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().evento}}</div>
 	</div>
     <div class="flex col-span-3 border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Intervención</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().nombreIntervencion}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().nombreIntervencion}}</div>
 	</div>
 
 
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Beneficiarios</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().beneficiarios}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().beneficiarios}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Fase Inicial</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioIntervencionFase}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().inicioIntervencionFase}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Etapa Inicial</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioIntervencionEtapa}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().inicioIntervencionEtapa}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Hito Inicial</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().inicioIntervencionHito}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().inicioIntervencionHito}}</div>
 	</div>
 
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Costo Actualizado</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().costoActualizado}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().costoActualizado}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Fase Objetivo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoIntervencionFase}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().objetivoIntervencionFase}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Etapa Objetivo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoIntervencionEtapa}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().objetivoIntervencionEtapa}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Hito Objetivo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().objetivoIntervencionHito}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().objetivoIntervencionHito}}</div>
 	</div>
 
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Dev. Acumulado</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().devAcumulado}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().devAcumulado}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">PIA</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().pia}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().pia}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">PIM</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().pim}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().pim}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center md:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Devengado</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{inversionEspacio().devengado}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().devengado}}</div>
 	</div>
 </div>
 
-@if(inversionEspacio().intervencionEspacioId){
-	<app-inversion-tareas [inversionEspacio]="inversionEspacio()"/>
+@if(intervencionEspacio().intervencionEspacioId){
+	<app-intervencion-tareas [intervencionEspacio]="intervencionEspacio()"/>
 }

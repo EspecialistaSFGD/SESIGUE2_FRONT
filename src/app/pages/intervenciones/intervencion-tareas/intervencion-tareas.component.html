@@ -1,5 +1,5 @@
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
-  [nzData]="inversionTareas()" [nzFrontPagination]="false" [nzLoading]="loadingTareas" [nzTotal]="paginationTareas.total!"
+  [nzData]="intervencionTareas()" [nzFrontPagination]="false" [nzLoading]="loadingTareas" [nzTotal]="paginationTareas.total!"
   [nzPageSize]="paginationTareas.pageSize!" [nzPageIndex]="paginationTareas.currentPage!">
   <thead>
     <tr>
@@ -15,7 +15,7 @@
   </thead>
   
   <tbody>
-    @for(tarea of inversionTareas(); track $index){
+    @for(tarea of intervencionTareas(); track $index){
       <tr>
         <!-- <td>{{tarea.nombre}}</td>
         <td nzAlign="center">{{tarea.sector}}</td> -->

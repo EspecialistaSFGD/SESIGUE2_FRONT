@@ -41,9 +41,9 @@
 	</div>
 </div>
 
-<nz-table nzSize="small" [nzTitle]="headerUbigeos" nzShowSizeChanger [nzData]="inversionesEspacios()"
+<nz-table nzSize="small" [nzTitle]="headerUbigeos" nzShowSizeChanger [nzData]="intervencionesEspacios()"
 [nzFrontPagination]="false" [nzShowPagination]="pagination.pageSize! > 10"
-[nzLoading]="loadingInversionEspacio" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
+[nzLoading]="loadingIntervencionEspacio" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
 [nzPageIndex]="pagination.currentPage!">
     <thead>
         <tr>
@@ -70,28 +70,28 @@
         </tr>
     </thead>
     <tbody>
-		@for(inversionEspacio of inversionesEspacios(); track $index){
+		@for(intervencionEspacio of intervencionesEspacios(); track $index){
 			<tr>
-			  <td nzAlign="center">{{inversionEspacio.sector}}</td>
-			  <td nzAlign="center">{{inversionEspacio.departamento}} / {{inversionEspacio.provincia}} / {{inversionEspacio.distrito}}</td>
-			  <td nzAlign="center">{{inversionEspacio.entidad}}</td>
-			  <td nzAlign="center">{{inversionEspacio.tipo | uppercase }}</td>
-			  <td nzAlign="center">{{inversionEspacio.subTipo | uppercase }}</td>
-			  <td nzAlign="center">{{inversionEspacio.codigoIntervencion}}</td>
-			  <td nzAlign="center">{{inversionEspacio.nombreIntervencion}}</td>
-			  <td nzAlign="center">{{inversionEspacio.costoActualizado}}</td>
-			  <td nzAlign="center">{{inversionEspacio.devAcumulado}}</td>
-			  <td nzAlign="center">{{inversionEspacio.pia}}</td>
-			  <td nzAlign="center">{{inversionEspacio.pim}}</td>
-			  <td nzAlign="center">{{inversionEspacio.devengado}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.sector}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.departamento}} / {{intervencionEspacio.provincia}} / {{intervencionEspacio.distrito}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.entidad}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.tipo | uppercase }}</td>
+			  <td nzAlign="center">{{intervencionEspacio.subTipo | uppercase }}</td>
+			  <td nzAlign="center">{{intervencionEspacio.codigoIntervencion}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.nombreIntervencion}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.costoActualizado}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.devAcumulado}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.pia}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.pim}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.devengado}}</td>
 			  <td nzAlign="center">0.0</td>
-			  <td nzAlign="center">{{inversionEspacio.fechaRegistro}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.fechaRegistro}}</td>
 			  <td nzAlign="center"></td>
-			  <td nzAlign="center">{{inversionEspacio.inicioIntervencionFase}}</td>
-			  <td nzAlign="center">{{inversionEspacio.inicioIntervencionEtapa}}</td>
-			  <td nzAlign="center">{{inversionEspacio.inicioIntervencionHito}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionFase}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionEtapa}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionHito}}</td>
 			  <td nzAlign="center">
-				  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención"  (click)="inversionDetalle(inversionEspacio.intervencionEspacioId!)">
+				  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención"  (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)">
 					<span nz-icon nzType="eye" nzTheme="outline"></span>
 				  </button>
 			  </td>
@@ -107,7 +107,7 @@
 		  <nz-space>
 				<button nz-button nzType="primary">
 				<span nz-icon nzType="plus" nzTheme="outline"></span>
-				<span class="button-text">Nueva inversion</span>
+				<span class="button-text">Nueva intervencion</span>
 			  </button>
 		  </nz-space>
 		</div>
