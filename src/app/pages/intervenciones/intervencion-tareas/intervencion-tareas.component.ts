@@ -20,6 +20,7 @@ export default class IntervencionTareasComponent {
   title: string = `Tareas`;
   @Input() intervencionEspacio!: IntervencionEspacioResponse
 
+  listarAvances: boolean = false
   loadingTareas: boolean =  false
   
   paginationTareas: Pagination = {
@@ -125,8 +126,9 @@ export default class IntervencionTareasComponent {
       })
   }
 
-  // obtenerTareaAvances(intervencionTarea: IntervencionTareaResponse){
-  //   console.log(intervencionTarea);
-  // }
+  obtenerTareaAvances(intervencionTarea: IntervencionTareaResponse){
+    this.listarAvances = true
+    this.intervencionTarea = intervencionTarea
+  }
 
 }

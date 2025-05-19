@@ -17,7 +17,7 @@
     
     <tbody>
       @for(tarea of intervencionTareas(); track $index){
-        <tr (click)="intervencionTarea = tarea" class="cursor-pointer">
+        <tr (click)="obtenerTareaAvances(tarea)" class="cursor-pointer">
           <td nzAlign="center"><p class="font-bold">{{tarea.codigo}}</p></td>
           <td>{{tarea.tarea}}</td>
           <td nzAlign="center">{{tarea.responsable}}</td>
@@ -45,5 +45,7 @@
       </div>
   </ng-template>
   
-  <app-intervencion-tarea-avances [intervencionTarea]="intervencionTarea"/>
+  @if (listarAvances) {
+    <app-intervencion-tarea-avances [intervencionTarea]="intervencionTarea"/>
+  }
 </div>

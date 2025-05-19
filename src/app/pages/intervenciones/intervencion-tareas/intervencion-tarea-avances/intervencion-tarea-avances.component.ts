@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, inject, Input, signal, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IntervencionTareaAvanceResponse, IntervencionTareaResponse, Pagination } from '@core/interfaces';
 import { IntervencionTareaAvanceService } from '@core/services';
@@ -28,15 +28,12 @@ export default class IntervencionTareaAvancesComponent {
     currentPage: 1,
     total: 0
   }
-
-  ngOnInit(): void {    
-    if(this.intervencionTarea!.intervencionTareaId){
-      this.paginationAvance.intervencionTareaId = this.intervencionTarea!.intervencionTareaId
-      this.obtenerInversionTareaAvanceService()
-    }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.obtenerInversionTareaAvanceService()
   }
 
   obtenerInversionTareaAvanceService(){
+    this.paginationAvance.intervencionTareaId = this.intervencionTarea!.intervencionTareaId
     this.loadindAvances = true
     this.intervencionTareaAvanceServices.ListarIntervencionTareas(this.paginationAvance)
       .subscribe( resp => {
@@ -47,6 +44,6 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   agregarAvance(){
-    
+
   }
 }
