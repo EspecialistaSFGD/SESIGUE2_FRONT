@@ -50,3 +50,18 @@ export interface IntervencionEspacioResponse {
 	objetivoIntervencionFaseId?: string,
 	objetivoIntervencionFase?: string,
 }
+
+export interface IntervencionEspacioTipo {
+	tipoId: string,
+	tipo: string,
+}
+
+export interface IntervencionEspacioSubTipo {
+	subTipoId: string,
+	subTipo: string,
+	tipoId: string,
+}
+
+export interface DataModalIntervencion {
+	create: boolean
+}

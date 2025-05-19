@@ -6,6 +6,8 @@ import { PipesModule } from '@core/pipes/pipes.module';
 import { IntervencionEspacioService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 
 @Component({
   selector: 'app-agendas-mesa',
@@ -44,6 +46,7 @@ export default class AgendasMesaComponent {
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private intervencionEspacioServices = inject(IntervencionEspacioService)
+  private modal = inject(NzModalService);
 
   ngOnInit(): void {
     this.verificarMesa()
@@ -85,5 +88,44 @@ export default class AgendasMesaComponent {
         modeloId: this.mesa().mesaId
       }
     });
+  }
+
+  crearIntervencion(){
+    this.intervencionEspacioForm(true)
+  }
+
+  intervencionEspacioForm(create: boolean){
+    const action = `${create ? 'Crear' : 'Actualizar' } Intervencion`
+    this.modal.create<FormularioIntervencionComponent>({
+      nzTitle: `${action.toUpperCase()}`,
+      nzWidth: '50%',
+      nzContent: FormularioIntervencionComponent,
+      nzData: { create },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: action,
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formIntervencionEspacio = componentResponse!.formIntervencionEspacio
+
+            if (formIntervencionEspacio.invalid) {
+              const invalidFields = Object.keys(formIntervencionEspacio.controls).filter(field => formIntervencionEspacio.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formIntervencionEspacio.markAllAsTouched();
+            }
+
+            console.log('FORM VALUE');
+            console.log(formIntervencionEspacio.value);
+            
+
+          }
+        }
+      ]
+    })
   }
 }

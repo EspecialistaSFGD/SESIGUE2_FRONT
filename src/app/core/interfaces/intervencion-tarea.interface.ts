@@ -31,6 +31,6 @@ export interface IntervencionTareaResponse {
 
 export interface DataModalIntervencionTarea {
 	intervencionEspacio: IntervencionEspacioResponse,
-  create: boolean,
+  	create: boolean,
 	intervencionTarea: IntervencionTareaResponse
 }
