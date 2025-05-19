@@ -1,0 +1,51 @@
+@if(intervencionTarea!.intervencionTareaId){
+	<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
+		[nzData]="intervencionTareasAvances()" [nzFrontPagination]="false" [nzLoading]="loadindAvances" [nzTotal]="paginationAvance.total!" [nzShowPagination]="paginationAvance.total! > 5"
+		[nzPageSize]="paginationAvance.pageSize!" [nzPageIndex]="paginationAvance.currentPage!">
+		<thead>
+			<tr>
+				<th nzWidth="12px" nzAlign="center">Fecha</th>
+				<th nzWidth="32px" nzAlign="center">Avance</th>
+				<th nzWidth="64px" nzAlign="center">Evidencia</th>
+				<th nzWidth="32px" nzAlign="center">Comentario Sector</th>
+				<th nzWidth="32px" nzAlign="center">Comentario UE/GL</th>
+				<th nzWidth="24px" nzAlign="center">Comentario PCM</th>
+				<th nzWidth="24px" nzAlign="center">Comentario Ejecutora</th>
+				<th nzWidth="24px" nzAlign="center"></th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			@for(avance of intervencionTareasAvances(); track $index){
+				<tr>
+					<td nzAlign="center">{{avance.fecha}}</td>
+					<td nzAlign="center">{{avance.avance}}</td>
+					<td nzAlign="center">
+						<span *ngIf="avance.evidencia" class="px-3 py-1 cursor-pointer text-sky-700 hover:text-sky-800" (click)="descargarPdf(avance.evidencia)">
+							<i class="pi pi-file-pdf text-sm"></i>
+						</span>
+					</td>
+					<td nzAlign="center">{{avance.comentarioSector}}</td>
+					<td nzAlign="center">{{avance.comentarioGl}}</td>
+					<td nzAlign="center">{{avance.comentarioSd}}</td>
+					<td nzAlign="center">{{avance.comentarioEntidad}}</td>
+					<td nzAlign="center"></td>
+				</tr>
+				}
+		</tbody>
+	</nz-table>
+
+	<ng-template #HeaderMesas>
+			<div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+					<div class="flex flex-col ">
+							<p class="font-semibold text-base">Gestión de avances de tarea: {{intervencionTarea?.codigo}}</p>
+							<p class="text-sm">Resultados {{paginationAvance.total}}</p>
+					</div>
+
+					<button nz-button nzType="primary" (click)="agregarAvance()">
+							<span nz-icon nzType="plus" nzTheme="outline"></span>
+							<span class="button-text">Nuevo Avance</span>
+					</button>
+			</div>
+	</ng-template>
+}

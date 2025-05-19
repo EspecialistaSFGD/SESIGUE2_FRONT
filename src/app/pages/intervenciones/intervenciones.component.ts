@@ -3,12 +3,12 @@ import { Component, Input } from '@angular/core';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 
 @Component({
-  selector: 'app-inversiones',
+  selector: 'app-intervenciones',
   standalone: true,
   imports: [CommonModule, NgZorroModule],
-  templateUrl: './inversiones.component.html',
+  templateUrl: './intervenciones.component.html',
   styles: ``
 })
-export default class InversionesComponent {
-  title: string = `Inversiones`;
+export default class IntervencionesComponent {
+  title: string = `Intervenciones`;
 }
