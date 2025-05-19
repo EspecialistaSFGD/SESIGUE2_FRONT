@@ -20,6 +20,7 @@ export default class IntervencionTareasComponent {
   title: string = `Tareas`;
   @Input() intervencionEspacio!: IntervencionEspacioResponse
 
+  botonNuevoActivo: boolean = true
   listarAvances: boolean = false
   loadingTareas: boolean =  false
   
@@ -58,6 +59,15 @@ export default class IntervencionTareasComponent {
         this.loadingTareas = false
         this.intervencionTareas.set(resp.data)
         this.paginationTareas.total = resp.info?.total
+        // if(resp.data.length > 0){
+          
+        // }
+        resp.data.map( item => {
+          if(item.estadoRegistroNombre != 'culminado'){
+            this.botonNuevoActivo = false
+            return
+          }
+        })
       })
   }
 

@@ -20,7 +20,11 @@
 				<tr>
 					<td nzAlign="center">{{avance.fecha}}</td>
 					<td nzAlign="center">{{avance.avance}}</td>
-					<td nzAlign="center">{{avance.evidencia}}</td>
+					<td nzAlign="center">
+						<span *ngIf="avance.evidencia" class="px-3 py-1 cursor-pointer text-sky-700 hover:text-sky-800" (click)="descargarPdf(avance.evidencia)">
+							<i class="pi pi-file-pdf text-sm"></i>
+						</span>
+					</td>
 					<td nzAlign="center">{{avance.comentarioSector}}</td>
 					<td nzAlign="center">{{avance.comentarioGl}}</td>
 					<td nzAlign="center">{{avance.comentarioSd}}</td>
