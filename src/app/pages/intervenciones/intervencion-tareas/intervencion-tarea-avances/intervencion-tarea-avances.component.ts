@@ -114,7 +114,6 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   crearIntervencionTareaAvance(intervencionTareaAvance: IntervencionTareaAvanceResponse){
-      console.log(intervencionTareaAvance)
       this.intervencionTareaAvanceServices.registarIntervencionTareaAvance(intervencionTareaAvance)
         .subscribe( resp => {          
           this.obtenerInversionTareaAvanceService()
