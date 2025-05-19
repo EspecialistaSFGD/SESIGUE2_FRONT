@@ -6,11 +6,12 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaComponent } from './formulario-Intervencion-tarea/formulario-intervencion-tarea.component';
 import { getDateFormat } from '@core/helpers';
+import IntervencionTareaAvancesComponent from './intervencion-tarea-avances/intervencion-tarea-avances.component';
 
 @Component({
   selector: 'app-intervencion-tareas',
   standalone: true,
-  imports: [CommonModule, NgZorroModule ],
+  imports: [CommonModule, NgZorroModule, IntervencionTareaAvancesComponent ],
   templateUrl: './intervencion-tareas.component.html',
   styles: ``
 })
@@ -123,5 +124,9 @@ export default class IntervencionTareasComponent {
         this.modal.closeAll()
       })
   }
+
+  // obtenerTareaAvances(intervencionTarea: IntervencionTareaResponse){
+  //   console.log(intervencionTarea);
+  // }
 
 }
