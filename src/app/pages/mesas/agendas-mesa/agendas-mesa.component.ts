@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { InversionEspacioResponse, MesaResponse, Pagination } from '@core/interfaces';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { IntervencionEspacioResponse, MesaResponse, Pagination } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
-import { InversionesEspacioService, MesasService } from '@core/services';
+import { IntervencionEspacioService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 
 @Component({
   selector: 'app-agendas-mesa',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, SharedModule, PipesModule],
+  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule],
   templateUrl: './agendas-mesa.component.html',
   styles: ``
 })
@@ -19,7 +21,7 @@ export default class AgendasMesaComponent {
 
   authUserId = localStorage.getItem('codigoUsuario')
   mesaId!: number
-  loadingInversionEspacio: boolean = false
+  loadingIntervencionEspacio: boolean = false
 
   mesa = signal<MesaResponse>({
     nombre: '',
@@ -31,7 +33,7 @@ export default class AgendasMesaComponent {
     estadoRegistroNombre: '',
     estadoRegistro: ''
   })
-  inversionesEspacios = signal<InversionEspacioResponse[]>([])
+  intervencionesEspacios = signal<IntervencionEspacioResponse[]>([])
 
   pagination: Pagination = {
     columnSort: 'fechaRegistro',
@@ -43,11 +45,12 @@ export default class AgendasMesaComponent {
   private mesaServices = inject(MesasService)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
-  private inversionEspacioServices = inject(InversionesEspacioService)
+  private intervencionEspacioServices = inject(IntervencionEspacioService)
+  private modal = inject(NzModalService);
 
   ngOnInit(): void {
     this.verificarMesa()
-    this.obtenerInversionEspacioServicio()
+    this.obtenerIntervencionEspacioServicio()
   }
 
   verificarMesa(){
@@ -69,12 +72,60 @@ export default class AgendasMesaComponent {
       })
   }
 
-  obtenerInversionEspacioServicio(){
-    this.loadingInversionEspacio = true
-    this.inversionEspacioServices.ListarInversionesEspacio(this.pagination)
+  obtenerIntervencionEspacioServicio(){
+    this.loadingIntervencionEspacio = true
+    this.intervencionEspacioServices.ListarIntervencionEspacios(this.pagination)
       .subscribe( resp => {        
-        this.loadingInversionEspacio = false
-        this.inversionesEspacios.set(resp.data)
+        this.loadingIntervencionEspacio = false
+        this.intervencionesEspacios.set(resp.data)
       })
+  }
+
+  intervencionDetalle(intervencionEspacioId: string){
+    this.router.navigate(['intervenciones', intervencionEspacioId], {
+      queryParams: {
+        modelo: 'mesas',
+        modeloId: this.mesa().mesaId
+      }
+    });
+  }
+
+  crearIntervencion(){
+    this.intervencionEspacioForm(true)
+  }
+
+  intervencionEspacioForm(create: boolean){
+    const action = `${create ? 'Crear' : 'Actualizar' } Intervencion`
+    this.modal.create<FormularioIntervencionComponent>({
+      nzTitle: `${action.toUpperCase()}`,
+      nzWidth: '50%',
+      nzContent: FormularioIntervencionComponent,
+      nzData: { create },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: action,
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formIntervencionEspacio = componentResponse!.formIntervencionEspacio
+
+            if (formIntervencionEspacio.invalid) {
+              const invalidFields = Object.keys(formIntervencionEspacio.controls).filter(field => formIntervencionEspacio.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formIntervencionEspacio.markAllAsTouched();
+            }
+
+            console.log('FORM VALUE');
+            console.log(formIntervencionEspacio.value);
+            
+
+          }
+        }
+      ]
+    })
   }
 }

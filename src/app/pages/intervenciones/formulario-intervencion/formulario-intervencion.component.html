@@ -1,0 +1,184 @@
+<form [formGroup]="formIntervencionEspacio" class="flex flex-col gap-3" autocomplete="off">
+    <div class="grid grid-cols-1 md:grid-cols-3 bg-white gap-4">
+        <div class="flex flex-col">
+            <label class="w-full" for="tipoIntervencion">Tipo intervención</label>
+            <p-dropdown 
+            [options]="intervencionTipos"
+            formControlName="tipoIntervencion"
+            optionLabel="tipo"
+            optionValue="tipoId"
+            [showClear]="true" 
+            placeholder="Seleccionar tipo"
+            (onChange)="obtenerTipo()"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('tipoIntervencion')">{{msgErrorControl('tipoIntervencion','Tipo')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label class="w-full" for="subTipoIntervencion">Sub tipo de intervención</label>
+            <p-dropdown 
+            [options]="intervencionSubTipos()"
+            formControlName="subTipoIntervencion"
+            optionLabel="subTipo"
+            optionValue="subTipoId"
+            [showClear]="true" 
+            placeholder="Seleccionar sub tipo"
+            (onChange)="obtenerSubTipo()"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('subTipoIntervencion')">{{msgErrorControl('subTipoIntervencion','Sub tipo')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label class="w-full" for="codigoIntervencion">Código de intervención</label>
+            <input type="text" class="form-control" id="codigoIntervencion" formControlName="codigoIntervencion">
+            <div class="w-full text-danger" *ngIf="alertMessageError('codigoIntervencion')">{{msgErrorControl('codigoIntervencion','Código')}}</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 bg-white gap-4">
+        <div class="flex flex-col">
+            <label class="w-full" for="sector">Sector</label>
+            <p-dropdown 
+            [options]="sectores()"
+            formControlName="sectorId"
+            optionLabel="nombre"
+            optionValue="grupoID"
+            [showClear]="true" 
+            placeholder="Seleccionar sector"
+            (onChange)="obtenerSector()"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('sectorId')">{{msgErrorControl('sectorId','Sector')}}</div>
+        </div>
+
+        <div class="flex flex-col col-span-2">
+            <label class="w-full" for="entidadSectorId">Entidad de sector</label>
+            <p-dropdown 
+            [options]="sectorEntidades()"
+            formControlName="entidadSectorId"
+            optionLabel="nombre"
+            optionValue="entidadId"
+            [showClear]="true" 
+            placeholder="Seleccionar entidad de sector"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('entidadSectorId')">{{msgErrorControl('entidadSectorId','Entidad sector')}}</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 bg-white gap-4">
+        <div class="flex flex-col">
+            <label class="w-full" for="departamento">Departamento</label>
+            <p-dropdown 
+			[options]="departamentos()"
+			formControlName="departamento"
+			optionLabel="departamento"
+			optionValue="departamentoId"
+			[showClear]="true" 
+			placeholder="Seleccionar departamento"
+			(onChange)="obtenerDepartamento()"/>
+			<div class="text-danger" *ngIf="alertMessageError('departamento')">{{msgErrorControl('departamento','Departamento')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label class="w-full" for="provincia">Provincia</label>
+            <p-dropdown 
+			[options]="provincias()"
+			formControlName="provincia"
+			optionLabel="provincia"
+			optionValue="provinciaId"
+			[showClear]="true" 
+			placeholder="Seleccionar provincia"
+			(onChange)="obtenerProvincia()"/>
+			<div class="text-danger" *ngIf="alertMessageError('provincia')">{{msgErrorControl('provincia','Provincia')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label class="w-full" for="distrito">Distrito</label>
+            <p-dropdown 
+			[options]="distritos()"
+			formControlName="distrito"
+			optionLabel="distrito"
+			optionValue="distritoId"
+			[showClear]="true" 
+			placeholder="Seleccionar distrito"
+			(onChange)="obtenerDistrito()"/>
+			<div class="text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 bg-white gap-4">
+		<div class="w-full flex flex-col">
+			<label nzFor="inicioIntervencionFaseId">Fase inicial</label>
+			<p-dropdown 
+			[options]="fasesInicial()"
+			formControlName="inicioIntervencionFaseId"
+			optionLabel="nombre"
+			optionValue="intervencionFaseId"
+			[showClear]="true" 
+			placeholder="Seleccionar fase"
+			(onChange)="obtenerFase()"/>
+			<div class="text-danger" *ngIf="alertMessageError('inicioIntervencionFaseId')">{{msgErrorControl('inicioIntervencionFaseId','Fase inicial')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
+			<label nzFor="inicioIntervencionEtapaId">Etapa inicial</label>
+			<p-dropdown 
+			[options]="etapasInicial()"
+			formControlName="inicioIntervencionEtapaId"
+			optionLabel="nombre"
+			optionValue="intervencionEtapaId"
+			[showClear]="true" 
+			placeholder="Seleccionar etapa"
+			(onChange)="obtenerEtapa()"/>
+			<div class="text-danger" *ngIf="alertMessageError('inicioIntervencionEtapaId')">{{msgErrorControl('inicioIntervencionEtapaId','Etapa inicial')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
+			<label nzFor="inicioIntervencionHitoId">Hito inicial</label>
+			<p-dropdown 
+			[options]="hitosInicial()"
+			formControlName="inicioIntervencionHitoId"
+			optionLabel="nombre"
+			optionValue="intervencionHitoId"
+			[showClear]="true" 
+			placeholder="Seleccionar hito"/>
+			<div class="text-danger" *ngIf="alertMessageError('inicioIntervencionHitoId')">{{msgErrorControl('inicioIntervencionHitoId','Hito inicial')}}</div>
+		</div>
+	</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 bg-white gap-4">
+		<div class="w-full flex flex-col">
+			<label nzFor="objetivoIntervencionFaseId">Fase objetivo</label>
+			<p-dropdown 
+			[options]="fasesObjetivo()"
+			formControlName="objetivoIntervencionFaseId"
+			optionLabel="nombre"
+			optionValue="intervencionFaseId"
+			[showClear]="true" 
+			placeholder="Seleccionar fase"
+			(onChange)="obtenerFase(false)"/>
+			<div class="text-danger" *ngIf="alertMessageError('objetivoIntervencionFaseId')">{{msgErrorControl('objetivoIntervencionFaseId','Fase objetivo')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
+			<label nzFor="objetivoIntervencionEtapaId">Etapa objetivo</label>
+			<p-dropdown 
+			[options]="etapasObjetivo()"
+			formControlName="objetivoIntervencionEtapaId"
+			optionLabel="nombre"
+			optionValue="intervencionEtapaId"
+			[showClear]="true" 
+			placeholder="Seleccionar etapa"
+			(onChange)="obtenerEtapa(false)"/>
+			<div class="text-danger" *ngIf="alertMessageError('objetivoIntervencionEtapaId')">{{msgErrorControl('objetivoIntervencionEtapaId','Etapa objetivo')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
+			<label nzFor="objetivoIntervencionHitoId">Hito objetivo</label>
+			<p-dropdown 
+			[options]="hitosObjetivo()"
+			formControlName="objetivoIntervencionHitoId"
+			optionLabel="nombre"
+			optionValue="intervencionHitoId"
+			[showClear]="true" 
+			placeholder="Seleccionar hito"/>
+			<div class="text-danger" *ngIf="alertMessageError('objetivoIntervencionHitoId')">{{msgErrorControl('objetivoIntervencionHitoId','Hito objetivo')}}</div>
+		</div>
+	</div>
+
+</form>

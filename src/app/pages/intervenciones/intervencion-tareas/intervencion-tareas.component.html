@@ -1,0 +1,51 @@
+<div class="flex flex-col gap-5">
+  <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
+    [nzData]="intervencionTareas()" [nzFrontPagination]="false" [nzLoading]="loadingTareas" [nzTotal]="paginationTareas.total!" [nzShowPagination]="paginationTareas.total! > 5"
+    [nzPageSize]="paginationTareas.pageSize!" [nzPageIndex]="paginationTareas.currentPage!">
+    <thead>
+      <tr>
+        <th nzWidth="32px" nzAlign="center"nzColumnKey="codigoIntervencion" [nzSortFn]="true">Codigo</th>
+        <th nzLeft nzWidth="100px" nzColumnKey="tarea" [nzSortFn]="true">Tarea</th>
+        <th nzWidth="32px" nzAlign="center" nzColumnKey="responsableId" [nzSortFn]="true">Responsable</th>
+        <th nzWidth="64px" nzAlign="center">Entidad</th>
+        <th nzWidth="32px" nzAlign="center">Plazo</th>
+        <th nzWidth="32px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
+        <th nzWidth="24px" nzAlign="center">Comentario</th>
+        <th nzWidth="24px" nzAlign="center"></th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      @for(tarea of intervencionTareas(); track $index){
+        <tr (click)="obtenerTareaAvances(tarea)" class="cursor-pointer">
+          <td nzAlign="center"><p class="font-bold">{{tarea.codigo}}</p></td>
+          <td>{{tarea.tarea}}</td>
+          <td nzAlign="center">{{tarea.responsable}}</td>
+          <td nzAlign="center">{{tarea.entidad}}</td>
+          <td nzAlign="center">{{tarea.plazo}}</td>
+          <td nzAlign="center">{{tarea.estadoRegistroNombre | uppercase}}</td>
+          <td nzAlign="center">{{tarea.comentario}}</td>
+          <td nzAlign="center"></td>
+        </tr>
+        }
+    </tbody>
+  </nz-table>
+  
+  <ng-template #HeaderMesas>
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+          <div class="flex flex-col ">
+              <p class="font-semibold text-base">Gestión de tareas</p>
+              <p class="text-sm">Resultados {{paginationTareas.total}}</p>
+          </div>
+  
+          <button nz-button nzType="primary" (click)="agregarTarea()" [disabled]="!botonNuevoActivo">
+              <span nz-icon nzType="plus" nzTheme="outline"></span>
+              <span class="button-text">Nueva Tarea</span>
+          </button>
+      </div>
+  </ng-template>
+  
+  @if (listarAvances) {
+    <app-intervencion-tarea-avances [intervencionTarea]="intervencionTarea"/>
+  }
+</div>

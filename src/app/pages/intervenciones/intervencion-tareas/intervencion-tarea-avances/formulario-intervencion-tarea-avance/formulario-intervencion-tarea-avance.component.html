@@ -1,0 +1,44 @@
+<form [formGroup]="formTareaAvance" class="flex flex-col gap-3" autocomplete="off">
+	<div class="flex flex-col">
+        <label class="w-full" for="avance">Descripción del avance</label>
+		<textarea class="form-control" id="avance" formControlName="avance" placeholder="Ingrese el avance aquí" rows="2"></textarea>
+		<div class="w-full text-danger" *ngIf="alertMessageError('avance')">{{msgErrorControl('avance','Avance')}}</div>
+	</div>
+
+    <div class="flex gap-4">
+        <div class="w-full flex flex-col">
+			<label nzFor="fecha">Fecha</label>
+			<p-calendar 
+				formControlName="fecha"
+				[iconDisplay]="'input'" 
+				[showIcon]="true"
+				[showButtonBar]="true"
+				dateFormat="dd/mm/yy"
+				inputId="icondisplay" />
+			<div class="text-danger" *ngIf="alertMessageError('fecha')">{{msgErrorControl('fecha','Fecha')}}</div>
+		</div>
+
+        <div class="w-full flex flex-col">
+			<label nzFor="estadoRegistro">Estado</label>
+			<p-dropdown 
+				[options]="estados"
+				formControlName="estadoRegistro"
+				optionLabel="value"
+				optionValue="text"
+				[showClear]="true" 
+				placeholder="Seleccionar estado"/>
+			<div class="text-danger" *ngIf="alertMessageError('estadoRegistro')">{{msgErrorControl('estadoRegistro','Estado')}}</div>
+		</div>
+    </div>
+
+    <div class="w-full flex flex-col">
+        <label for="evidencia">Evidencia</label>
+        <nz-upload [(nzFileList)]="filesList" [nzBeforeUpload]="beforeUploadMeet">
+            <div class="form-control-file">
+                <span nz-icon nzType="upload"></span>
+                Selecionar evidencia
+            </div>
+        </nz-upload>
+        <div class="w-full text-danger" *ngIf="alertMessageError('evidencia')">{{msgErrorControl('evidencia','evidencia')}}</div>
+    </div>
+</form>

@@ -1,0 +1,99 @@
+<form [formGroup]="formIntervencionTarea" class="flex flex-col gap-3" autocomplete="off">
+	<div class="flex flex-col">
+		<div class="flex justify-between">
+			<label class="w-full" for="fechaAtencion">Tarea</label>
+			<div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : cantidadCaracteresTarea < 20 }">{{cantidadCaracteresTarea}}</div>
+		</div>
+		<textarea class="form-control" id="tarea" formControlName="tarea" (keyup)="caracteresContador(1500)" placeholder="Ingrese la tarea aquí" rows="2"></textarea>
+		<div class="w-full text-danger" *ngIf="alertMessageError('tarea')">{{msgErrorControl('tarea','Tarea')}}</div>
+	</div>
+
+	<div class="flex gap-4">
+		<div class="w-full flex flex-col">
+			<label nzFor="plazo">Fecha de atención</label>
+			<p-calendar 
+				formControlName="plazo"
+				[iconDisplay]="'input'" 
+				[showIcon]="true"
+				[showButtonBar]="true"
+				dateFormat="dd/mm/yy"
+				inputId="icondisplay" />
+			<div class="text-danger" *ngIf="alertMessageError('plazo')">{{msgErrorControl('plazo','Plazo')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
+			<label nzFor="fplazo">Responsable</label>
+			<p-dropdown 
+				[options]="responsables()"
+				formControlName="responsableId"
+				optionLabel="nombre"
+				optionValue="grupoID"
+				[showClear]="true" 
+				placeholder="Seleccionar responsable"
+				(onChange)="obtenerResponsable()"/>
+			<div class="text-danger" *ngIf="alertMessageError('responsableId')">{{msgErrorControl('responsableId','Responsable')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
+			<label nzFor="entidadId">
+				Entidad
+				@if (formIntervencionTarea.get('entidadId')?.value) {
+					<span nz-icon nzType="info-circle" [nz-tooltip]="formIntervencionTarea.get('entidad')?.value"></span>
+				}
+			</label>
+			@if(sectorEntidad){
+				<p-dropdown 
+				[options]="sectorEntidades()"
+				formControlName="entidadId"
+				optionLabel="nombre"
+				optionValue="entidadId"
+				[showClear]="true" 
+				placeholder="Seleccionar entidad"/>
+			} @else {
+				<input type="text" class="form-control" id="entidad" formControlName="entidad">
+			}
+			<div class="text-danger" *ngIf="alertMessageError('entidadId')">{{msgErrorControl('entidadId','Entidad')}}</div>
+		</div>
+	</div>
+
+	<div class="flex gap-4">
+		<div class="w-full flex flex-col">
+			<label nzFor="intervencionFaseId">Fase</label>
+			<p-dropdown 
+			[options]="intervencionFases()"
+			formControlName="intervencionFaseId"
+			optionLabel="nombre"
+			optionValue="intervencionFaseId"
+			[showClear]="true" 
+			placeholder="Seleccionar fase"
+			(onChange)="obtenerIntervencionEtapa()"/>
+			<div class="text-danger" *ngIf="alertMessageError('intervencionFaseId')">{{msgErrorControl('intervencionFaseId','Fase')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
+			<label nzFor="intervencionEtapaId">Etapa</label>
+			<p-dropdown 
+			[options]="intervencionEtapas()"
+			formControlName="intervencionEtapaId"
+			optionLabel="nombre"
+			optionValue="intervencionEtapaId"
+			[showClear]="true" 
+			placeholder="Seleccionar etapa"
+			(onChange)="obtenerIntervencionHito()"/>
+			<div class="text-danger" *ngIf="alertMessageError('intervencionEtapaId')">{{msgErrorControl('intervencionEtapaId','Etapa')}}</div>
+		</div>
+
+		<div class="w-full flex flex-col">
+			<label nzFor="intervencionHitoId">Hito</label>
+			<p-dropdown 
+			[options]="intervencionHitos()"
+			formControlName="intervencionHitoId"
+			optionLabel="nombre"
+			optionValue="intervencionHitoId"
+			[showClear]="true" 
+			placeholder="Seleccionar hito"/>
+			<div class="text-danger" *ngIf="alertMessageError('intervencionHitoId')">{{msgErrorControl('intervencionHitoId','Hito')}}</div>
+		</div>
+	</div>
+
+</form>
