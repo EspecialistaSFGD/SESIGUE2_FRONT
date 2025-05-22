@@ -169,7 +169,7 @@ export class FormularioAtencionComponent {
 
     if(!this.create){
       const orientacionId = this.formAtencion.get('orientacionId')?.value
-      this.cuiClasificacion = orientacionId == 2|| orientacionId == 3 ? true : false
+      this.cuiClasificacion = orientacionId == 2 || orientacionId == 3 ? true : false
     }
     
     const lugarControl = this.formAtencion.get('lugarId')
@@ -184,10 +184,13 @@ export class FormularioAtencionComponent {
       this.formAtencion.get('provincia')?.disable()
       this.formAtencion.get('distrito')?.disable()
       this.formAtencion.get('autoridad')?.disable()
-      this.formAtencion.get('dniAutoridad')?.setValidators([ Validators.pattern(this.validatorService.DNIPattern)])
+      this.formAtencion.get('dniAutoridad')?.setValidators([ Validators.required, Validators.pattern(this.validatorService.DNIPattern)])
+      this.formAtencion.get('orientacionId')?.setValidators([ Validators.required])
+      this.formAtencion.get('unidadId')?.setValidators([ Validators.required])
       this.entidadesStore.listarEntidades(0, 1, Number(sectorId));
       this.formAtencion.get('nombreAutoridad')?.disable()
       this.formAtencion.get('cargoAutoridad')?.disable()
+      this.formAtencion.get('comentarios')?.setValidators([ Validators.required])
     } else {
       if(this.esDocumento){
         this.formAtencion.get('fechaAtencion')?.disable()
@@ -372,7 +375,7 @@ export class FormularioAtencionComponent {
     return this.authUser.codigoPerfil === 12 || this.authUser.codigoPerfil === 23
   }
 
-  alertMessageError(control: string) {
+  alertMessageError(control: string) {    
     return this.formAtencion.get(control)?.errors && this.formAtencion.get(control)?.touched
   }
 
@@ -738,6 +741,11 @@ export class FormularioAtencionComponent {
   obtenerAsistenteService(dni: string, evento: number){
     const autoridad = this.formAtencion.get('autoridad')
     const ubigeoControl = this.formAtencion.get('ubigeo')
+
+    const tipoEntidadId = this.formAtencion.get('tipoEntidadId')
+    const departamentoControl = this.formAtencion.get('departamento')
+    const provinciaControl = this.formAtencion.get('provincia')
+    const distritoControl = this.formAtencion.get('distrito')
     
     const entidad = this.formAtencion.get('entidad')
     const nombre = this.formAtencion.get('nombreAutoridad')
@@ -747,18 +755,41 @@ export class FormularioAtencionComponent {
     
     this.atencionService.obtenerAsistente(dni, evento)
       .subscribe( resp => {
-        if(resp.data){
-          const asistente = resp.data
-          const telefono = asistente.telefono ? `${asistente.telefono} / ` : ''
-          entidad?.setValue(asistente.entidad)
-          ubigeoControl?.setValue(asistente.ubigeo)
+        // if(resp.data){          
+        //   const asistente = resp.data
+        //   const telefono = asistente.telefono ? `${asistente.telefono} / ` : ''
+        //   entidad?.setValue(asistente.entidad)
+        //   ubigeoControl?.setValue(asistente.ubigeo)
+        //   const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
+        //   autoridad?.setValue(esAutoridad)          
+        //   nombre?.setValue(asistente.nombres)
+        //   cargo?.setValue(asistente.cargo)
+        //   contacto?.setValue(`${telefono}${asistente.email}`)
+        //   entidadId?.setValue(asistente.entidadId)
+        //   this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
+        // }
+
+        const asistente = resp.data
+        entidad?.setValue(asistente ? asistente.entidad : '' )
+        ubigeoControl?.setValue(asistente ? asistente.ubigeo : '')
+        nombre?.setValue(asistente ? asistente.nombres : '')
+        cargo?.setValue(asistente ? asistente.cargo : '')
+        entidadId?.setValue(asistente ? asistente.entidadId : '')
+        if(asistente){
           const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
-          autoridad?.setValue(esAutoridad)          
-          nombre?.setValue(asistente.nombres)
-          cargo?.setValue(asistente.cargo)
+          autoridad?.setValue(esAutoridad) 
+          const telefono = asistente.telefono ? `${asistente.telefono} / ` : ''
           contacto?.setValue(`${telefono}${asistente.email}`)
-          entidadId?.setValue(asistente.entidadId)
           this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
+        } else {
+          autoridad?.reset()
+          contacto?.reset()
+          tipoEntidadId?.reset()
+          departamentoControl?.reset()
+          provinciaControl?.reset()
+          distritoControl?.reset()
+          const dniControl = this.formAtencion.get('dniAutoridad');
+          dniControl?.setErrors({ msgBack: 'Aún no asiste al evento' });
         }
       })
   }
@@ -951,7 +982,14 @@ export class FormularioAtencionComponent {
 
   changeTipoInversion(){
     const inversion = this.formAtencion.get('orientacionId')?.value
-    this.cuiClasificacion = inversion == 2|| inversion == 3 ? true : false
+    this.cuiClasificacion = inversion == 2 || inversion == 3 ? true : false
+    console.log(inversion);
+    if(inversion){
+      // const getControl = this.formAtencion.get('agendas') as FormArray
+      // getControl.at(0).get('cui')?.setValidators([Validators.required])
+      // console.log(getControl.at(0).get('cui')?);
+
+    }
   }
 
   caracteresContador(control: string, qty: number) {
