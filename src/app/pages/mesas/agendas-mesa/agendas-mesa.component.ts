@@ -100,7 +100,10 @@ export default class AgendasMesaComponent {
       nzTitle: `${action.toUpperCase()}`,
       nzWidth: '50%',
       nzContent: FormularioIntervencionComponent,
-      nzData: { create },
+      nzData: {
+        origen: { origen: 'mesas', interaccionId: this.mesaId.toString() },
+        create
+      },
       nzFooter: [
         {
           label: 'Cancelar',

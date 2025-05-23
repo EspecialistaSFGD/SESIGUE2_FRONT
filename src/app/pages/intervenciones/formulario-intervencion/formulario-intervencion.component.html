@@ -1,6 +1,19 @@
 <form [formGroup]="formIntervencionEspacio" class="flex flex-col gap-3" autocomplete="off">
     <div class="grid grid-cols-1 md:grid-cols-3 bg-white gap-4">
         <div class="flex flex-col">
+            <label class="w-full" for="origenId">Origen</label>
+            <p-dropdown 
+            [options]="origenes"
+            formControlName="origenId"
+            optionLabel="value"
+            optionValue="text"
+            [showClear]="true" 
+            placeholder="Seleccionar origin"
+            (onChange)="obtenerTipo()"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('origenId')">{{msgErrorControl('origenId','Origin')}}</div>
+        </div>
+
+        <div class="flex flex-col">
             <label class="w-full" for="tipoIntervencion">Tipo intervención</label>
             <p-dropdown 
             [options]="intervencionTipos"

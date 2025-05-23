@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { typeErrorControl } from '@core/helpers';
-import { DataModalIntervencion, EntidadResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { IntervencionEspacioOriginEnum } from '@core/enums';
+import { convertEnumToObject, typeErrorControl } from '@core/helpers';
+import { DataModalIntervencion, EntidadResponse, IntervencionEspacioOriginResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService, UbigeosService } from '@core/services';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
@@ -17,12 +18,17 @@ import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 export class FormularioIntervencionComponent {
   readonly dataIntervencionTarea: DataModalIntervencion = inject(NZ_MODAL_DATA);
 
+  create: boolean = this.dataIntervencionTarea.create
+  origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
+
   paginationIntervencionData: Pagination = {
     columnSort: 'nombre',
     typeSort: 'ASC',
     pageSize: 100,
     currentPage: 1
   }
+
+  origenes: ItemEnum[] = convertEnumToObject(IntervencionEspacioOriginEnum)
 
   intervencionTipos: IntervencionEspacioTipo[] = [
     { tipoId: '1', tipo: 'PROYECTO' },
@@ -70,7 +76,8 @@ export class FormularioIntervencionComponent {
     entidadUbigeoId: [ '', Validators.required ],
     tipoEvento: [ '', Validators.required ],
     eventoId: [ '', Validators.required ],
-    originId: [ '', Validators.required ],
+    tipoEventoId: [ '', Validators.required ],
+    origenId: [ '', Validators.required ],
     interaccionId: [ '', Validators.required ],
     inicioIntervencionFaseId: [ '', Validators.required ],
     inicioIntervencionEtapaId: [ { value: '', disabled: true }, Validators.required ],
@@ -81,6 +88,10 @@ export class FormularioIntervencionComponent {
   })
 
   ngOnInit(): void {
+    const origenId = this.origenes.find( item => item.value.toLowerCase() == this.origen.origen.toLowerCase())?.text
+    this.formIntervencionEspacio.get('origenId')?.setValue(origenId)
+    this.formIntervencionEspacio.get('interaccionId')?.setValue(this.origen.interaccionId)
+
     this.obtenerSectoresServices()
     this.obtenerDepartamentoServices()
     this.obtenerIntervencionFaseService()
@@ -99,10 +110,7 @@ export class FormularioIntervencionComponent {
     }
 
   obtenerSectoresServices(){
-    this.sectorService.getAllSectors()
-      .subscribe( resp => {
-        this.sectores.set(resp.data)        
-      })
+    this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data))
   }
 
   obtenerDepartamentoServices(){

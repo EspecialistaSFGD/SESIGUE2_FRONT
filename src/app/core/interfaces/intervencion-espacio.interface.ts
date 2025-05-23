@@ -62,6 +62,12 @@ export interface IntervencionEspacioSubTipo {
 	tipoId: string,
 }
 
+export interface IntervencionEspacioOriginResponse {
+	origen: string,
+	interaccionId: string
+}
+
 export interface DataModalIntervencion {
 	create: boolean
+	origen: IntervencionEspacioOriginResponse
 }
