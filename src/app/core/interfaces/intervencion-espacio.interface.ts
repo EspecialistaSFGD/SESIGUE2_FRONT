@@ -37,6 +37,8 @@ export interface IntervencionEspacioResponse {
 	pia?: string,
 	pim?: string,
 	devengado?: string,
+	usuarioIdRegistro?: string,
+	usuarioIdModifica?: string,
 	inicioIntervencionHitoId: string,
 	inicioIntervencionHito?: string,
 	inicioIntervencionEtapaId?: string,

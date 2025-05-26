@@ -8,9 +8,33 @@
             optionLabel="value"
             optionValue="text"
             [showClear]="true" 
-            placeholder="Seleccionar origin"
+            placeholder="Seleccionar origen"
             (onChange)="obtenerTipo()"/>
-            <div class="w-full text-danger" *ngIf="alertMessageError('origenId')">{{msgErrorControl('origenId','Origin')}}</div>
+            <div class="w-full text-danger" *ngIf="alertMessageError('origenId')">{{msgErrorControl('origenId','Origen')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label class="w-full" for="tipoEventoId">Tipo Espacio</label>
+            <p-dropdown 
+            [options]="tiposEventos()"
+            formControlName="tipoEventoId"
+            optionLabel="descripcionTipoEvento"
+            optionValue="codigoTipoEvento"
+            [showClear]="true" 
+            placeholder="Seleccionar tipo evento"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('tipoEventoId')">{{msgErrorControl('tipoEventoId','tipo evento')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label class="w-full" for="interaccionId">Espacio</label>
+            <p-dropdown 
+            [options]="eventos()"
+            formControlName="eventoId"
+            optionLabel="nombre"
+            optionValue="eventoId"
+            [showClear]="true" 
+            placeholder="Seleccionar evento"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('eventoId')">{{msgErrorControl('eventoId','evento')}}</div>
         </div>
 
         <div class="flex flex-col">

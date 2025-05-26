@@ -37,7 +37,7 @@ export default class AgendasMesaComponent {
 
   pagination: Pagination = {
     columnSort: 'fechaRegistro',
-    typeSort: 'ASC',
+    typeSort: 'DESC',
     pageSize: 10,
     currentPage: 1
   }
@@ -45,7 +45,7 @@ export default class AgendasMesaComponent {
   private mesaServices = inject(MesasService)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
-  private intervencionEspacioServices = inject(IntervencionEspacioService)
+  private intervencionEspaciosServices = inject(IntervencionEspacioService)
   private modal = inject(NzModalService);
 
   ngOnInit(): void {
@@ -74,7 +74,7 @@ export default class AgendasMesaComponent {
 
   obtenerIntervencionEspacioServicio(){
     this.loadingIntervencionEspacio = true
-    this.intervencionEspacioServices.ListarIntervencionEspacios(this.pagination)
+    this.intervencionEspaciosServices.ListarIntervencionEspacios(this.pagination)
       .subscribe( resp => {        
         this.loadingIntervencionEspacio = false
         this.intervencionesEspacios.set(resp.data)
@@ -122,13 +122,25 @@ export default class AgendasMesaComponent {
               return formIntervencionEspacio.markAllAsTouched();
             }
 
-            console.log('FORM VALUE');
-            console.log(formIntervencionEspacio.value);
-            
-
+            const intervencionEspacio: IntervencionEspacioResponse = {...formIntervencionEspacio.getRawValue() }
+            const usuarioId = localStorage.getItem('codigoUsuario')!
+            if(create){
+              intervencionEspacio.usuarioIdRegistro = usuarioId
+              this.registrarIntervencionEspacio(intervencionEspacio)
+            }
           }
         }
       ]
     })
+  }
+
+  registrarIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse) {
+    this.intervencionEspaciosServices.registrarIntervencionEspacio(intervencionEspacio)
+      .subscribe(resp => {
+        if (resp.success) {
+          this.obtenerIntervencionEspacioServicio()
+          this.modal.closeAll()
+        }
+      });
   }
 }
