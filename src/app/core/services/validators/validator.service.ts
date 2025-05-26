@@ -14,4 +14,9 @@ export class ValidatorService {
 
   // letras numero y guion al medio
   public codigoPattern: RegExp = /^[a-zA-Z0-9-]$/
+
+  public sixNumberPattern: RegExp = /^\d{6}$/
+  public sevenNumberPattern: RegExp = /^\d{7}$/
+
+  public startFiveNumberPattern: RegExp = /^5\d{5,6}$/
 }
