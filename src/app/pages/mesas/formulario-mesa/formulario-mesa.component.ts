@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
 import { EntidadResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { EntidadesService, SectoresService, UbigeosService } from '@core/services';
+import { AlcaldesService, AsistentesService, EntidadesService, SectoresService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
@@ -33,6 +33,8 @@ export class FormularioMesaComponent {
   private sectoresService = inject(SectoresService)
   private entidadesService = inject(EntidadesService)
   private ubigeosService = inject(UbigeosService)
+  private alcaldesService = inject(AlcaldesService)
+  private asistentesService = inject(AsistentesService)
 
   get sectores(): FormArray {
     return this.formMesa.get('sectores') as FormArray;
@@ -108,8 +110,9 @@ export class FormularioMesaComponent {
   addSectores(){
     const sector = this.fb.group({
       sectorId: [null, Validators.required],
-      entidadId: [{ value: null, disabled: true }, Validators.required],
+      entidadId: [ '', Validators.required],
       autoridad: [false, Validators.required],
+      alcalAsistenteId: [ '', Validators.required],
       dni: ['', Validators.required],
       nombre: ['', Validators.required],
       telefono: ['', Validators.required],
@@ -124,6 +127,7 @@ export class FormularioMesaComponent {
     const ubigeo = this.fb.group({
       entidadId: ['', Validators.required],
       autoridad: ['', Validators.required],
+      alcalAsistenteId: [ '', Validators.required],
       departamento: [null, Validators.required],
       provincia: [{ value: null, disabled: true }],
       distrito: [{ value: null, disabled: true }],
@@ -145,6 +149,32 @@ export class FormularioMesaComponent {
     } else if(formGroup == 'ubigeos'){
       this.ubigeos.removeAt(index)
     }
+  }
+
+  validarDNI(index: number, formGroup: string) {
+    const controlArray = this.formMesa.get(formGroup) as FormArray;
+    const dniControl = controlArray.at(index).get('dni');
+    const nombreControl = controlArray.at(index).get('nombre');
+    const telefonoControl = controlArray.at(index).get('telefono');
+
+    const dniValue = dniControl?.value;
+    if(dniValue && dniValue.length === 8) {
+      this.obtenerAsistenteServicio(dniValue, index, controlArray)
+    } else {
+      nombreControl?.reset();
+      telefonoControl?.reset();
+    }
+  }
+
+  obtenerAsistenteServicio(dni: string, index: number, controlArray: FormArray) {
+    const nombreControl = controlArray.at(index).get('nombre');
+    const telefonoControl = controlArray.at(index).get('telefono');
+    const pagination: Pagination = { dni, columnSort: 'asistenteId', typeSort: 'ASC', pageSize: 10, currentPage: 1 }
+    this.asistentesService.ListarAsistentes(pagination)
+      .subscribe( resp => {
+        nombreControl?.setValue(resp.data[0]?.nombres || '');
+        telefonoControl?.setValue(resp.data[0]?.telefono || '');
+      })
   }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {

@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Observable } from 'rxjs';
-import { AlcaldesResponses } from '@core/interfaces';
+import { AlcaldesResponses, Pagination } from '@core/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +13,12 @@ export class AlcaldesService {
 
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
+
+  ListarAsistentes(pagination: Pagination): Observable<AlcaldesResponses> {
+    const params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<AlcaldesResponses>(`${this.urlAlcalde}/ListarAlcaldes`, { headers, params })
+  }
 
   getAlcaldePorUbigeo(ubigeo: string): Observable<AlcaldesResponses> {
     const headers = this.helpersServices.getAutorizationToken()
