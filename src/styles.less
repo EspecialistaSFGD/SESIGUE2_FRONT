@@ -217,6 +217,31 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
     }
 }
 
+.p-stepper{
+    .p-stepper-nav{
+        @apply m-0 p-0 overflow-hidden;
+        .p-stepper-header{
+            .p-stepper-action{
+                .p-stepper-number{
+                    @apply w-2 h-6 text-center text-white bg-[@primary-color] rounded-full text-sm;
+                }
+                .p-stepper-title{
+                    @apply text-sm;
+                }
+            }
+        }
+    }
+    .p-stepper-content{
+         @apply text-sm;
+    }
+    .p-button{
+        @apply border border-sky-700 px-3 py-2 text-sky-700 hover:bg-sky-700 hover:text-white;
+        .p-button-label{
+            @apply font-normal text-sm;
+        }
+    }
+}
+
 .dark {
     .form-control{
         background-color: transparent;

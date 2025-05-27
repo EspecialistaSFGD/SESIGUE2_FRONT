@@ -27,6 +27,7 @@ export class FormularioMesaComponent {
   distritos = signal<UbigeoDistritoResponse[][]>([])
 
   participar: string[] = ['si', 'no']
+  activeStep: number = 0;
 
   private fb = inject(FormBuilder)
   private sectoresService = inject(SectoresService)
@@ -112,6 +113,7 @@ export class FormularioMesaComponent {
       nombre: ['', Validators.required],
       telefono: ['', Validators.required],
       entidad: ['', Validators.required],
+      esSector: [true, Validators.required],
     })
     this.sectores.push(sector)
     this.listaEntidadesSector.update(entidad => [...entidad, []])
@@ -129,10 +131,15 @@ export class FormularioMesaComponent {
       nombre: ['', Validators.required],
       telefono: ['', Validators.required],
       entidad: ['', Validators.required],
+      esSector: [false, Validators.required],
     })
     this.ubigeos.push(ubigeo)
     this.provincias.update(provincia => [...provincia, []])
     this.distritos.update(distrito => [...distrito, []])
+  }
+
+  removeItemFormArray(index: number, control: string){
+
   }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {
