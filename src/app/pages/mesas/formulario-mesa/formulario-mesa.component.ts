@@ -109,6 +109,7 @@ export class FormularioMesaComponent {
     const sector = this.fb.group({
       sectorId: [null, Validators.required],
       entidadId: [{ value: null, disabled: true }, Validators.required],
+      autoridad: [false, Validators.required],
       dni: ['', Validators.required],
       nombre: ['', Validators.required],
       telefono: ['', Validators.required],
@@ -121,12 +122,12 @@ export class FormularioMesaComponent {
 
   addUbigeo(){
     const ubigeo = this.fb.group({
+      entidadId: ['', Validators.required],
+      autoridad: ['', Validators.required],
       departamento: [null, Validators.required],
       provincia: [{ value: null, disabled: true }],
       distrito: [{ value: null, disabled: true }],
       ubigeo: ['', Validators.required],
-      entidadId: ['', Validators.required],
-      autoridad: ['', Validators.required],
       dni: ['', Validators.required],
       nombre: ['', Validators.required],
       telefono: ['', Validators.required],
@@ -138,8 +139,12 @@ export class FormularioMesaComponent {
     this.distritos.update(distrito => [...distrito, []])
   }
 
-  removeItemFormArray(index: number, control: string){
-
+  removeItemFormArray(index: number, formGroup: string){
+    if (formGroup == 'sectores') {
+      this.sectores.removeAt(index)
+    } else if(formGroup == 'ubigeos'){
+      this.ubigeos.removeAt(index)
+    }
   }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {

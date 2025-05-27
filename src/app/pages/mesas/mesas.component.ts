@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
-import { MesaResponse, Pagination } from '@core/interfaces';
+import { MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
 import { DescargarService, MesaUbigeosService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -109,28 +109,46 @@ export default class MesasComponent {
             const fechaCreacion = getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
             const fechaVigencia = getDateFormat(formMesa.get('fechaVigencia')?.value, 'month')
 
-            const bodyMesa = {...formMesa.value, fechaCreacion, fechaVigencia}
+            const bodyMesa: MesaResponse = {...formMesa.value, fechaCreacion, fechaVigencia}
 
             this.loadingData = true
-            this.mesasService.registarMesa(bodyMesa)
-              .subscribe( resp => {
-                this.loadingData = false
-                if(resp.success == true){
-                  const mesaId = resp.data
-                  const ubigeos = bodyMesa.ubigeos
-                  for (let ubigeo of ubigeos) {
-                    const bodyUbigeo = { mesaId, ubigeo: ubigeo.ubigeo }
-                    this.mesaUbigeosService.registarMesaUbigeo(bodyUbigeo)
-                      .subscribe( resp => {
-                        this.obtenerMesasService()
-                        this.modal.closeAll()
-                      })
-                  }
-                }
-              })            
+            if(create){
+              this.registrarMesa(bodyMesa)
+            }
+                        
           }
         }
       ]
     })
+  }
+
+  registrarMesa(mesa: MesaResponse) {
+    this.mesasService.registarMesa(mesa)
+      .subscribe( resp => {
+        this.loadingData = false
+        if(resp.success == true){
+          const mesaId = resp.data
+          const ubigeos: MesaUbigeoResponse[] = mesa.ubigeos!
+          const sectores: MesaUbigeoResponse[] = mesa.sectores!          
+          const integrantes: MesaUbigeoResponse[] = [ ...ubigeos, ...sectores ];
+
+            for (let integrante of integrantes) {
+            this.mesaUbigeosService.registarMesaUbigeo(mesaId, integrante)
+              .subscribe(resp => {
+              this.obtenerMesasService();
+              this.modal.closeAll();
+              });
+            }
+            
+          // for (let ubigeo of ubigeos) {
+          //   const integrantes = { mesaId, ubigeo: ubigeo.ubigeo,  }
+          //   this.mesaUbigeosService.registarMesaUbigeo(integrantes)
+          //     .subscribe( resp => {
+          //       this.obtenerMesasService()
+          //       this.modal.closeAll()
+          //     })
+          // }
+        }
+      })
   }
 }
