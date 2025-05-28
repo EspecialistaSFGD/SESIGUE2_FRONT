@@ -112,7 +112,7 @@ export class FormularioMesaComponent {
       sectorId: [null, Validators.required],
       entidadId: [ '', Validators.required],
       autoridad: [false, Validators.required],
-      alcalAsistenteId: [ '', Validators.required],
+      alcaldeAsistenteId: [ '' ],
       dni: ['', Validators.required],
       nombre: ['', Validators.required],
       telefono: ['', Validators.required],
@@ -127,7 +127,7 @@ export class FormularioMesaComponent {
     const ubigeo = this.fb.group({
       entidadId: ['', Validators.required],
       autoridad: ['', Validators.required],
-      alcalAsistenteId: [ '', Validators.required],
+      alcaldeAsistenteId: [ '' ],
       departamento: [null, Validators.required],
       provincia: [{ value: null, disabled: true }],
       distrito: [{ value: null, disabled: true }],
@@ -159,7 +159,11 @@ export class FormularioMesaComponent {
 
     const dniValue = dniControl?.value;
     if(dniValue && dniValue.length === 8) {
-      this.obtenerAsistenteServicio(dniValue, index, controlArray)
+      if(formGroup === 'sectores') {
+        this.obtenerAsistenteServicio(dniValue, index, controlArray)
+      } else if(formGroup === 'ubigeos') {
+
+      }
     } else {
       nombreControl?.reset();
       telefonoControl?.reset();
@@ -169,12 +173,19 @@ export class FormularioMesaComponent {
   obtenerAsistenteServicio(dni: string, index: number, controlArray: FormArray) {
     const nombreControl = controlArray.at(index).get('nombre');
     const telefonoControl = controlArray.at(index).get('telefono');
+    const alcaldeAsistenteIdControl = controlArray.at(index).get('alcaldeAsistenteId');
     const pagination: Pagination = { dni, columnSort: 'asistenteId', typeSort: 'ASC', pageSize: 10, currentPage: 1 }
     this.asistentesService.ListarAsistentes(pagination)
       .subscribe( resp => {
-        nombreControl?.setValue(resp.data[0]?.nombres || '');
-        telefonoControl?.setValue(resp.data[0]?.telefono || '');
+        const asistente = resp.data[0];
+        nombreControl?.setValue(asistente?.nombres || '');
+        telefonoControl?.setValue(asistente?.telefono || '');
+        alcaldeAsistenteIdControl?.setValue(asistente?.asistenteId || '');
       })
+  }
+
+  obtenerAlcaldeServicio(index: number, controlArray: FormArray) {
+
   }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {
