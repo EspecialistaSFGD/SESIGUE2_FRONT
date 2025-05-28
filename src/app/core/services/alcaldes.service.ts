@@ -20,8 +20,8 @@ export class AlcaldesService {
     return this.http.get<AlcaldesResponses>(`${this.urlAlcalde}/ListarAlcaldes`, { headers, params })
   }
 
-  getAlcaldePorUbigeo(ubigeo: string): Observable<AlcaldesResponses> {
-    const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<AlcaldesResponses>(`${this.urlAlcalde}/ListarAlcaldePorUbigeo/${ubigeo}`, { headers })
-  }
+  // getAlcaldePorUbigeo(ubigeo: string): Observable<AlcaldesResponses> {
+  //   const headers = this.helpersServices.getAutorizationToken()
+  //   return this.http.get<AlcaldesResponses>(`${this.urlAlcalde}/ListarAlcaldePorUbigeo/${ubigeo}`, { headers })
+  // }
 }

@@ -22,7 +22,7 @@ export class FormularioIntervencionTareaComponent {
   sectorEntidad: boolean = false
   cantidadCaracteresTarea = 1500
 
-  paginationIntervencionData: Pagination = {
+  pagination: Pagination = {
     columnSort: 'nombre',
     typeSort: 'ASC',
     pageSize: 100,
@@ -74,12 +74,13 @@ export class FormularioIntervencionTareaComponent {
 
   obtenerEntidadSector(){
     const sectorId = Number(this.intervencionEspacio().sectorId)
-    const paginationEntidadSector: Pagination = { entidadId: 0, tipo: '1', sectorId }
-    this.entidadServices.listarEntidades(paginationEntidadSector).subscribe( resp => this.sectorEntidades.set(resp.data) )
+    // const paginationEntidadSector: Pagination = { entidadId: 0, tipo: '1', sectorId }
+    const pagination: Pagination = { ...this.pagination, sectorId, columnSort: 'entidadId' }
+    this.entidadServices.listarEntidades(pagination).subscribe( resp => this.sectorEntidades.set(resp.data) )
   }
 
   obtenerIntervencionFaseService(){
-    this.intervencionFaseService.ListarIntervencionFases(this.paginationIntervencionData)
+    this.intervencionFaseService.ListarIntervencionFases(this.pagination)
       .subscribe( resp => this.intervencionFases.set(resp.data))
   }
 
@@ -142,7 +143,7 @@ export class FormularioIntervencionTareaComponent {
 
   obtenerIntervencionEtapaService(){
     const faseId = this.formIntervencionTarea.get('intervencionFaseId')?.value
-    this.intervencionEtapaService.ListarIntervencionEtapas({...this.paginationIntervencionData, faseId}).subscribe( resp => this.intervencionEtapas.set(resp.data))
+    this.intervencionEtapaService.ListarIntervencionEtapas({...this.pagination, faseId}).subscribe( resp => this.intervencionEtapas.set(resp.data))
   }
 
   obtenerIntervencionHito(){
@@ -159,6 +160,6 @@ export class FormularioIntervencionTareaComponent {
 
   obtenerIntervencionHitoService(){
     const etapaId = this.formIntervencionTarea.get('intervencionEtapaId')?.value    
-    this.intervencionHitoService.ListarIntervencionHitos({...this.paginationIntervencionData, etapaId }).subscribe( resp => this.intervencionHitos.set(resp.data))
+    this.intervencionHitoService.ListarIntervencionHitos({...this.pagination, etapaId }).subscribe( resp => this.intervencionHitos.set(resp.data))
   }
 }
