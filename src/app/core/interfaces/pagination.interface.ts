@@ -38,6 +38,14 @@ export interface Pagination {
   intervencionTareaId?: string,
   faseId?: string,
   etapaId?: string
+  alcaldeId?: string,
+  asistenteId?: string,
+  dni?: string,
+  nombres?: string,
+  apellidos?: string,
+  telefono?: string,
+  sexo?: string,
+  nombre?: string,
 }
 
 export interface PaginationPanel {

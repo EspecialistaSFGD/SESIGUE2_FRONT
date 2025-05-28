@@ -37,6 +37,8 @@ export interface IntervencionEspacioResponse {
 	pia?: string,
 	pim?: string,
 	devengado?: string,
+	usuarioIdRegistro?: string,
+	usuarioIdModifica?: string,
 	inicioIntervencionHitoId: string,
 	inicioIntervencionHito?: string,
 	inicioIntervencionEtapaId?: string,
@@ -62,6 +64,12 @@ export interface IntervencionEspacioSubTipo {
 	tipoId: string,
 }
 
+export interface IntervencionEspacioOriginResponse {
+	origen: string,
+	interaccionId: string
+}
+
 export interface DataModalIntervencion {
 	create: boolean
+	origen: IntervencionEspacioOriginResponse
 }
