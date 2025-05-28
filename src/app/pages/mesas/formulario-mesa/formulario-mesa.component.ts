@@ -126,15 +126,14 @@ export class FormularioMesaComponent {
   addUbigeo(){
     const ubigeo = this.fb.group({
       entidadId: ['', Validators.required],
-      autoridad: ['', Validators.required],
       alcaldeAsistenteId: [ '' ],
       departamento: [null, Validators.required],
       provincia: [{ value: null, disabled: true }],
       distrito: [{ value: null, disabled: true }],
-      ubigeo: ['', Validators.required],
-      dni: ['', Validators.required],
-      nombre: ['', Validators.required],
-      telefono: ['', Validators.required],
+      autoridad: ['', Validators.required],
+      dni: [{ value: null, disabled: true }, Validators.required],
+      nombre: [{ value: null, disabled: true }, Validators.required],
+      telefono: [{ value: null, disabled: true }, Validators.required],
       entidad: ['', Validators.required],
       esSector: [false, Validators.required],
     })
@@ -151,22 +150,53 @@ export class FormularioMesaComponent {
     }
   }
 
+  validarAutoridad(index: number){
+    const controlArray = this.formMesa.get('ubigeos') as FormArray;
+    const autoridadControl = controlArray.at(index).get('autoridad');
+    const dniControl = controlArray.at(index).get('dni');
+    const nombreControl = controlArray.at(index).get('nombre');
+    const telefonoControl = controlArray.at(index).get('telefono');
+
+      const autoridadValue = autoridadControl?.value;
+    if(autoridadValue != null){
+      dniControl?.enable();
+      nombreControl?.enable();
+      telefonoControl?.enable();
+      this.validarDNI(index, 'ubigeos');      
+    } else {
+      dniControl?.disable();
+      nombreControl?.disable();
+      telefonoControl?.disable();
+    }
+  }
+
   validarDNI(index: number, formGroup: string) {
     const controlArray = this.formMesa.get(formGroup) as FormArray;
     const dniControl = controlArray.at(index).get('dni');
     const nombreControl = controlArray.at(index).get('nombre');
     const telefonoControl = controlArray.at(index).get('telefono');
+    const alcaldeAsistenteIdControl = controlArray.at(index).get('alcaldeAsistenteId');
 
+    
     const dniValue = dniControl?.value;
+
     if(dniValue && dniValue.length === 8) {
       if(formGroup === 'sectores') {
         this.obtenerAsistenteServicio(dniValue, index, controlArray)
       } else if(formGroup === 'ubigeos') {
+        const autoridadControl = controlArray.at(index).get('autoridad');
+        const autoridadValue = autoridadControl?.value;
 
+        if(autoridadValue != null && autoridadValue !== undefined) {
+          autoridadValue
+          ? this.obtenerAlcaldeServicio(dniValue, index, controlArray)
+          : this.obtenerAsistenteServicio(dniValue, index, controlArray);
+        }
       }
     } else {
       nombreControl?.reset();
       telefonoControl?.reset();
+      alcaldeAsistenteIdControl?.reset();
     }
   }
 
@@ -184,8 +214,19 @@ export class FormularioMesaComponent {
       })
   }
 
-  obtenerAlcaldeServicio(index: number, controlArray: FormArray) {
+  obtenerAlcaldeServicio(dni:string, index: number, controlArray: FormArray) {
+    const nombreControl = controlArray.at(index).get('nombre');
+    const telefonoControl = controlArray.at(index).get('telefono');
+    const alcaldeAsistenteIdControl = controlArray.at(index).get('alcaldeAsistenteId');
 
+    const pagination: Pagination = { dni, columnSort: 'alcaldeId', typeSort: 'ASC', pageSize: 10, currentPage: 1 }
+    this.alcaldesService.ListarAsistentes(pagination)
+      .subscribe( resp => {
+        const alcalde = resp.data[0];
+        nombreControl?.setValue(alcalde?.nombre || '');
+        telefonoControl?.setValue(alcalde?.telefono || '');
+        alcaldeAsistenteIdControl?.setValue(alcalde?.alcaldeId || '');
+      })
   }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {

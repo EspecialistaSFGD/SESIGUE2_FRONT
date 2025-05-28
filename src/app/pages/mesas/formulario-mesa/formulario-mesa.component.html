@@ -390,7 +390,7 @@
 				</div>
 				<div class="flex flex-col gap-3" formArrayName="ubigeos" [ngClass]="{ 'pt-2 pb-3' : ubigeos.length }">
 					<div class="flex gap-3" *ngFor="let ubigeo of ubigeos.controls; let i = index" [formGroupName]="i">
-						<div class="w-full grid grid-cols-1 md:grid-cols-3 gap-3"> <!-- w-full grid grid-cols-1 md:grid-cols-12 -->
+						<div class="w-full grid grid-cols-1 md:grid-cols-3 gap-3">
 							<div class="grid grid-cols-1 md:grid-cols-4 gap-3 col-span-2">
 								<div class="flex flex-col">
 									<label for="nombre">Departamento</label>
@@ -441,13 +441,13 @@
 								<div class="flex gap-3 col-span-2">
 									<div class="flex flex-col">
 										<label class="mb-1">Autoridad</label>
-										<p-inputSwitch formControlName="autoridad" />
+										<p-inputSwitch formControlName="autoridad" (onChange)="validarAutoridad(i)"/>
 										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'autoridad')">{{msgErrorControlTwoNivel('ubigeos',i,'autoridad','Autoridad')}}</div>
 									</div>
 		
 									<div class="w-full flex flex-col">
 										<label for="dni">DNI</label>
-										<input type="text" class="form-control" id="dni" placeholder="DNI aquí" formControlName="dni">
+										<input type="text" class="form-control" id="dni" placeholder="DNI aquí" formControlName="dni" (keyup)="validarDNI(i,'ubigeos')">
 										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'dni')">{{msgErrorControlTwoNivel('ubigeos',i,'dni','DNI')}}</div>
 									</div>
 								</div>
