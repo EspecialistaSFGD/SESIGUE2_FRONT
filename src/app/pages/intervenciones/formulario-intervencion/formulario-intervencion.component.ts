@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { typeErrorControl } from '@core/helpers';
-import { DataModalIntervencion, EntidadResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { EntidadesService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService, UbigeosService } from '@core/services';
+import { IntervencionEspacioOriginEnum } from '@core/enums';
+import { convertEnumToObject, typeErrorControl } from '@core/helpers';
+import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
+import { ValidatorService } from '@core/services/validators';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
@@ -17,12 +19,17 @@ import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 export class FormularioIntervencionComponent {
   readonly dataIntervencionTarea: DataModalIntervencion = inject(NZ_MODAL_DATA);
 
+  create: boolean = this.dataIntervencionTarea.create
+  origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
+
   paginationIntervencionData: Pagination = {
     columnSort: 'nombre',
     typeSort: 'ASC',
     pageSize: 100,
     currentPage: 1
   }
+
+  origenes: ItemEnum[] = convertEnumToObject(IntervencionEspacioOriginEnum)
 
   intervencionTipos: IntervencionEspacioTipo[] = [
     { tipoId: '1', tipo: 'PROYECTO' },
@@ -38,8 +45,10 @@ export class FormularioIntervencionComponent {
 
   intervencionSubTipos = signal<IntervencionEspacioSubTipo[]>([])
 
+  tiposEventos = signal<TipoEventoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   sectorEntidades = signal<EntidadResponse[]>([])
+  eventos = signal<EventoResponse[]>([])
   departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])
   distritos = signal<UbigeoDistritoResponse[]>([])
@@ -57,8 +66,14 @@ export class FormularioIntervencionComponent {
   private intervencionFaseService = inject(IntervencionFaseService)
   private intervencionEtapaService = inject(IntervencionEtapaService)
   private intervencionHitoService = inject(IntervencionHitoService)
+  private tiposEventosService = inject(TipoEventosService)
+  private eventosService = inject(EventosService)
+  private validatorsService = inject(ValidatorService)
 
   formIntervencionEspacio: FormGroup = this.fb.group({
+    origenId: [ { value: '', disabled: true }, Validators.required ],
+    tipoEventoId: [ { value: '', disabled: true }, Validators.required ],
+    eventoId: [ '', Validators.required ],
     tipoIntervencion: [ '', Validators.required ],
     subTipoIntervencion: [ { value: '', disabled: true }, Validators.required ],
     codigoIntervencion: [ { value: '', disabled: true }, Validators.required ],
@@ -68,9 +83,6 @@ export class FormularioIntervencionComponent {
     provincia: [{ value: '', disabled: true }],
     distrito: [{ value: '', disabled: true }],
     entidadUbigeoId: [ '', Validators.required ],
-    tipoEvento: [ '', Validators.required ],
-    eventoId: [ '', Validators.required ],
-    originId: [ '', Validators.required ],
     interaccionId: [ '', Validators.required ],
     inicioIntervencionFaseId: [ '', Validators.required ],
     inicioIntervencionEtapaId: [ { value: '', disabled: true }, Validators.required ],
@@ -81,28 +93,49 @@ export class FormularioIntervencionComponent {
   })
 
   ngOnInit(): void {
+    const origenId = this.origenes.find( item => item.value.toLowerCase() == this.origen.origen.toLowerCase())?.text
+    this.formIntervencionEspacio.get('origenId')?.setValue(origenId)
+    this.formIntervencionEspacio.get('interaccionId')?.setValue(this.origen.interaccionId)
+
+    this.obtenerTipoEventoServices()
     this.obtenerSectoresServices()
     this.obtenerDepartamentoServices()
     this.obtenerIntervencionFaseService()
     this.obtenerIntervencionFaseService(false)
+    // this.obtenerEventosServices() 
   }
 
   alertMessageError(control: string) {
-      return this.formIntervencionEspacio.get(control)?.errors && this.formIntervencionEspacio.get(control)?.touched
-    }
-  
-    msgErrorControl(control: string, label?: string): string {
-      const text = label ? label : control
-      const errors = this.formIntervencionEspacio.get(control)?.errors;
-  
-      return typeErrorControl(text, errors)
-    }
+    return this.formIntervencionEspacio.get(control)?.errors && this.formIntervencionEspacio.get(control)?.touched
+  }
+
+  msgErrorControl(control: string, label?: string): string {
+    const text = label ? label : control
+    const errors = this.formIntervencionEspacio.get(control)?.errors;
+
+    return typeErrorControl(text, errors)
+  }
+
+  obtenerTipoEventoServices(){
+    const paginationTipoEvento: Pagination = { columnSort: 'codigoTipoEvento', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
+    this.tiposEventosService.getAllTipoEvento(paginationTipoEvento)
+      .subscribe( resp => {
+        this.tiposEventos.set(resp.data)
+        const origen = this.origen.origen.slice(0, -1);
+        const tipoEvento = resp.data.find( item => item.descripcionTipoEvento.toLowerCase() == origen.toLowerCase())
+        this.formIntervencionEspacio.get('tipoEventoId')?.setValue(tipoEvento?.codigoTipoEvento)
+        this.obtenerEventosServices()
+      })
+  }
+
+  obtenerEventosServices(){
+    const tipoEventoId = this.formIntervencionEspacio.get('tipoEventoId')?.value
+    const paginationTipoEvento: Pagination = { columnSort: 'eventoId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
+    this.eventosService.getAllEventos([tipoEventoId], 1, [1, 2, 3], paginationTipoEvento).subscribe( resp => this.eventos.set(resp.data))
+  }
 
   obtenerSectoresServices(){
-    this.sectorService.getAllSectors()
-      .subscribe( resp => {
-        this.sectores.set(resp.data)        
-      })
+    this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data))
   }
 
   obtenerDepartamentoServices(){
@@ -134,10 +167,19 @@ export class FormularioIntervencionComponent {
   obtenerSubTipo(){
     const subTipoValue = this.formIntervencionEspacio.get('subTipoIntervencion')?.value
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
-    if(!subTipoValue){
-      codigoIntervencionControl?.reset()
+    if(subTipoValue){
+      const subTipo: IntervencionEspacioSubTipo = this.subTipos.find( item => item.subTipoId == subTipoValue)!
+      switch (subTipo.subTipo) {
+        case 'CUI': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)]); break;
+        case 'IDEA': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sixNumberPattern)]); break;
+        case 'RCC': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)]); break;
+        case 'ACTIVIDAD': codigoIntervencionControl?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(7), Validators.pattern(this.validatorsService.startFiveNumberPattern)]); break;
+      }
+    } else {
+      codigoIntervencionControl?.clearValidators();
     }
-    subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()
+    codigoIntervencionControl?.reset()
+    subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()    
   }
 
   obtenerSector(){
@@ -159,10 +201,11 @@ export class FormularioIntervencionComponent {
   }
 
   obtenerDepartamento(){
+    const entidadubigeoIdControl = this.formIntervencionEspacio.get('entidadUbigeoId')
     const departamento = this.formIntervencionEspacio.get('departamento')?.value
     const provinciaControl = this.formIntervencionEspacio.get('provincia')
     const distritoControl = this.formIntervencionEspacio.get('distrito')
-    let ubigeo = null 
+    let ubigeo = '' 
     if(departamento){
       ubigeo = `${departamento}0000`
       provinciaControl?.enable()
@@ -174,6 +217,7 @@ export class FormularioIntervencionComponent {
 
     distritoControl?.disable()
     distritoControl?.reset()    
+    this.obtenerEntidadService(ubigeo)
   }
 
   obtenerProvinciaServices(departamento: string){
@@ -190,8 +234,10 @@ export class FormularioIntervencionComponent {
       distritoControl?.enable()
       this.obtenerDistritoServices(ubigeo)
     } else {
+      ubigeo = `${departamento.departamentoId}0000`
       distritoControl?.disable()
-    }    
+    }
+    this.obtenerEntidadService(ubigeo)
   }
 
   obtenerDistritoServices(provincia: string){
@@ -199,7 +245,19 @@ export class FormularioIntervencionComponent {
   }
 
   obtenerDistrito(){
+    const provinciaValue = this.formIntervencionEspacio.get('provincia')?.value
+    const distritoValue = this.formIntervencionEspacio.get('distrito')?.value
+    const ubigeo = distritoValue ? distritoValue : provinciaValue
+    this.obtenerEntidadService(ubigeo)
+  }
 
+  obtenerEntidadService(ubigeo: string){
+    const entidadUbigeoIdControl = this.formIntervencionEspacio.get('entidadUbigeoId')
+    this.entidadService.getEntidadPorUbigeo(ubigeo)
+      .subscribe(resp => {
+        const entidad = resp.data
+        entidadUbigeoIdControl?.setValue(entidad ? entidad.entidadId : null)
+      })
   }
 
   obtenerFase(inicial: boolean = true){
