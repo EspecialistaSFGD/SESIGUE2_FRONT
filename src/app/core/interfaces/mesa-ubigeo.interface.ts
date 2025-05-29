@@ -14,7 +14,7 @@ export interface MesaUbigeoResponse {
     provincia?: string,
     distrito?: string,
     autoridad?: boolean,
-    alcaldesistenteId: string,
+    alcaldeAsistenteId: string,
     esSector: boolean,
     fechaRegistro?: string,
   }

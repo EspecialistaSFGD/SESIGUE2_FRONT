@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
 import { EntidadResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistentesService, EntidadesService, SectoresService, UbigeosService } from '@core/services';
@@ -119,7 +119,7 @@ export class FormularioMesaComponent {
       dni: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
       nombre: ['', Validators.required],
       telefono: ['', Validators.required],
-      entidad: ['', Validators.required],
+      entidad: ['' ],
       esSector: [true, Validators.required],
     })
     this.sectores.push(sector)
@@ -137,10 +137,10 @@ export class FormularioMesaComponent {
       dni: [{ value: null, disabled: true }, Validators.required],
       nombre: [{ value: null, disabled: true }, Validators.required],
       telefono: [{ value: null, disabled: true }, Validators.required],
-      cargo: [{ value: null, disabled: true }, Validators.required],
-      loading: [ false, Validators.required],
-      entidad: ['', Validators.required],
-      entidadSlug: [{ value: null, disabled: true }, Validators.required],
+      cargo: [{ value: null, disabled: true } ],
+      loading: [ false ],
+      entidad: [''],
+      entidadSlug: [ '' ],
       esSector: [false, Validators.required],
     })
     this.ubigeos.push(ubigeo)
@@ -161,12 +161,6 @@ export class FormularioMesaComponent {
     const getControl = controlArray.at(index).get(control);
     return getControl?.value
   }
-
-  // validarAutoridad(index: number){
-  //   const controlArray = this.formMesa.get('ubigeos') as FormArray;
-  //   const autoridadControl = controlArray.at(index).get('autoridad');
-  //   this.validarAutoridadInfo(index)
-  // }
 
   validarAutoridad(index:number){
     const controlArray = this.formMesa.get('ubigeos') as FormArray;
@@ -216,11 +210,6 @@ export class FormularioMesaComponent {
         const autoridadControl = controlArray.at(index).get('autoridad');
         const autoridadValue = autoridadControl?.value;
 
-        // if(autoridadValue != null && autoridadValue !== undefined) {
-        //   autoridadValue
-        //   ? this.obtenerAlcaldeServicio(index, controlArray)
-        //   : this.obtenerAsistenteServicio(dniValue, index, controlArray);
-        // }
         if(!autoridadValue){
           this.obtenerAsistenteServicio(dniValue, index, controlArray);
         }
@@ -346,9 +335,7 @@ export class FormularioMesaComponent {
       autoridadControl?.reset()
     }
     this.validarAutoridad(index)
-    // this.validarAutoridad(index)
-    
-    // getControl.at(index).get('ubigeo')?.setValue(ubigeo)
+
     distritoControl?.disable()
     distritoControl?.reset()
   }
@@ -390,7 +377,6 @@ export class FormularioMesaComponent {
     }
     this.obtenerEntidadUbigeoService(ubigeo, index)
     this.validarAutoridad(index)
-    // getControl.at(index).get('ubigeo')?.setValue(ubigeo)
   }
 
   obtenerDistritosService(provincia: string, index: number){
@@ -415,7 +401,6 @@ export class FormularioMesaComponent {
     const ubigeo = distritoValue ? distritoValue : provinciaValue
     this.obtenerEntidadUbigeoService(ubigeo, index)
     this.validarAutoridad(index)
-    // getControl.at(index).get('ubigeo')?.setValue(ubigeo)
   }
 
 
@@ -436,61 +421,41 @@ export class FormularioMesaComponent {
       })
   }
 
+  formControl(controlName: string){
+    return this.formMesa.get(controlName)
+  }
+
   generalValidate(){
-    // const nombreControl = this.formControlValidate('nombre')
-    // const sectorControl = this.formControlValidate('sectorId')
-    // const secreatriaTecnicaControl = this.formControlValidate('secretariaTecnicaId')
-    // const fechaCreacionControl = this.formControlValidate('fechaCreacion')
-    // const fechaVigenciaControl = this.formControlValidate('fechaVigencia')
-    // const resolucionControl = this.formControlValidate('resolucion')
-    // return nombreControl && sectorControl && secreatriaTecnicaControl && fechaCreacionControl && fechaVigenciaControl && resolucionControl;
-    return true
+    const nombreControl = this.formControlValidate(this.formControl('nombre')!)
+    const sectorControl = this.formControlValidate(this.formControl('sectorId')!)
+    const secreatriaTecnicaControl = this.formControlValidate(this.formControl('secretariaTecnicaId')!)
+    const fechaCreacionControl = this.formControlValidate(this.formControl('fechaCreacion')!)
+    const fechaVigenciaControl = this.formControlValidate(this.formControl('fechaVigencia')!)
+    const resolucionControl = this.formControlValidate(this.formControl('resolucion')!)
+    return nombreControl && sectorControl && secreatriaTecnicaControl && fechaCreacionControl && fechaVigenciaControl && resolucionControl;
   }
 
   sectorsValidate(){
-    // const sectoresControl = this.formControlValidate('sectores')
     const sectores = this.formMesa.get('sectores') as FormArray
-    // const levelControl = getControl.at(index).get(subcontrol)
-    let sectoresControl = true;
-    sectores.controls.forEach((grupo, index) => {
-      const sectorId = grupo.get('sectorId');
-      const entidadId = grupo.get('entidadId');
-      if (!sectorId?.valid) {
-        sectorId?.markAsTouched();
-        sectoresControl = false;
-      }
-      if (!entidadId?.valid) {
-        entidadId?.markAsTouched();
-        sectoresControl = false;
-      }
+    let sectoresValid = true;
+    sectores.controls.forEach((grupo) => {
+      const sectorValid = this.formControlValidate(grupo.get('sectorId')!)
+      const entidadIdValid = this.formControlValidate(grupo.get('entidadId')!)
+      const dniValid = this.formControlValidate(grupo.get('dni')!)
+      const nombreValid = this.formControlValidate(grupo.get('nombre')!)
+      const telefonoValid = this.formControlValidate(grupo.get('telefono')!)
+      
+      sectoresValid = sectorValid && entidadIdValid && dniValid && nombreValid && telefonoValid
     });
 
-    // sectorId: [null, Validators.required],
-    //   entidadId: [ '', Validators.required],
-    //   autoridad: [false, Validators.required],
-    //   alcaldeAsistenteId: [ '' ],
-    //   dni: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
-    //   nombre: ['', Validators.required],
-    //   telefono: ['', Validators.required],
-    //   entidad: ['', Validators.required],
-
-    return sectoresControl
+    return sectoresValid
   }
 
-  formControlValidate(controlName:string){
-    const control = this.formMesa.get(controlName);
+  formControlValidate(control:AbstractControl ){
     let valid = true
     if(!control?.valid){
       control?.markAsTouched()
       valid = false
-    }
-    return valid
-  }
-
-  formValidate(){
-    const valid = this.formMesa.valid
-    if (!valid) {
-      return this.formMesa.markAllAsTouched();
     }
     return valid
   }
