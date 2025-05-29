@@ -822,7 +822,7 @@ export class FormularioAtencionComponent {
     const cargoControl = this.formAtencion.get('cargoAutoridad')
 
     const pagination: Pagination = { ...this.pagination, ubigeo, columnSort: 'alcaldeId' }
-    this.alcaldeService.ListarAsistentes(pagination)
+    this.alcaldeService.ListarAlcaldes(pagination)
       .subscribe(resp => {        
         if (resp.success = true) {
           const autoridad = resp.data[0]
