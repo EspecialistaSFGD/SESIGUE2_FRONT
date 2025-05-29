@@ -4,6 +4,7 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { typeErrorControl } from '@core/helpers';
 import { EntidadResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistentesService, EntidadesService, SectoresService, UbigeosService } from '@core/services';
+import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
@@ -35,6 +36,7 @@ export class FormularioMesaComponent {
   private ubigeosService = inject(UbigeosService)
   private alcaldesService = inject(AlcaldesService)
   private asistentesService = inject(AsistentesService)
+  private validatorService = inject(ValidatorService)
 
   get sectores(): FormArray {
     return this.formMesa.get('sectores') as FormArray;
@@ -113,7 +115,7 @@ export class FormularioMesaComponent {
       entidadId: [ '', Validators.required],
       autoridad: [false, Validators.required],
       alcaldeAsistenteId: [ '' ],
-      dni: ['', Validators.required],
+      dni: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
       nombre: ['', Validators.required],
       telefono: ['', Validators.required],
       entidad: ['', Validators.required],
@@ -159,11 +161,15 @@ export class FormularioMesaComponent {
 
       const autoridadValue = autoridadControl?.value;
     if(autoridadValue != null){
+      console.log('AUTORIDAD');
+      
+      dniControl?.setValidators(Validators.pattern(this.validatorService.DNIPattern))
       dniControl?.enable();
       nombreControl?.enable();
       telefonoControl?.enable();
       this.validarDNI(index, 'ubigeos');      
     } else {
+      dniControl?.clearValidators()
       dniControl?.disable();
       nombreControl?.disable();
       telefonoControl?.disable();
@@ -177,7 +183,6 @@ export class FormularioMesaComponent {
     const telefonoControl = controlArray.at(index).get('telefono');
     const alcaldeAsistenteIdControl = controlArray.at(index).get('alcaldeAsistenteId');
 
-    
     const dniValue = dniControl?.value;
 
     if(dniValue && dniValue.length === 8) {
