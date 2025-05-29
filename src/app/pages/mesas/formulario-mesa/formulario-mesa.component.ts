@@ -3,7 +3,8 @@ import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
 import { EntidadResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { EntidadesService, SectoresService, UbigeosService } from '@core/services';
+import { AlcaldesService, AsistentesService, EntidadesService, SectoresService, UbigeosService } from '@core/services';
+import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
@@ -19,16 +20,27 @@ export class FormularioMesaComponent {
 
   filesList: NzUploadFile[] = [];
 
-  sectores = signal<SectorResponse[]>([])
+  listaSectores = signal<SectorResponse[]>([])
+  listaEntidadesSector = signal<EntidadResponse[][]>([])
   entidadesSector = signal<EntidadResponse[]>([])
   departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[][]>([])
   distritos = signal<UbigeoDistritoResponse[][]>([])
 
+  participar: string[] = ['si', 'no']
+  activeStep: number = 0;
+
   private fb = inject(FormBuilder)
   private sectoresService = inject(SectoresService)
   private entidadesService = inject(EntidadesService)
   private ubigeosService = inject(UbigeosService)
+  private alcaldesService = inject(AlcaldesService)
+  private asistentesService = inject(AsistentesService)
+  private validatorService = inject(ValidatorService)
+
+  get sectores(): FormArray {
+    return this.formMesa.get('sectores') as FormArray;
+  }
 
   get ubigeos(): FormArray {
     return this.formMesa.get('ubigeos') as FormArray;
@@ -38,30 +50,27 @@ export class FormularioMesaComponent {
     nombre: ['', Validators.required],
     resolucion: ['', Validators.required],
     sectorId: [null, Validators.required],
-    secretariaTecnicaId: [{ value: null, disabled: true }, Validators.required],
+    // secretariaTecnicaId: [{ value: null, disabled: true }, Validators.required],
+    secretariaTecnicaId: [ '', Validators.required],
     fechaCreacion: ['', Validators.required],
     fechaVigencia: ['', Validators.required],
+    sectores: this.fb.array([]),
     ubigeos: this.fb.array([]),
   })
 
   ngOnInit(): void {
     this.obtenerSectoresService()
     this.obtenerDepartamentoService()
+    this.addSectores()
     this.addUbigeo()
   }
 
   obtenerSectoresService(){
-    this.sectoresService.getAllSectors()
-      .subscribe( resp => {
-        this.sectores.set(resp.data)
-      })
+    this.sectoresService.getAllSectors().subscribe( resp => this.listaSectores.set(resp.data))
   }
 
   obtenerDepartamentoService(){
-    this.ubigeosService.getDepartments()
-      .subscribe( resp => {
-        this.departamentos.set(resp.data)
-      })
+    this.ubigeosService.getDepartments().subscribe( resp => this.departamentos.set(resp.data))
   }
 
   alertMessageError(control: string) {
@@ -90,22 +99,139 @@ export class FormularioMesaComponent {
     return typeErrorControl(text, errors)
   }
 
-  addItemFormArray(event: MouseEvent) {
+  addItemFormArray(control: string, event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
-    this.addUbigeo()
+    
+    switch (control) {
+      case 'sectores': this.addSectores(); break;
+      case 'ubigeos': this.addUbigeo(); break;
+    }
+  }
+
+  addSectores(){
+    const sector = this.fb.group({
+      sectorId: [null, Validators.required],
+      entidadId: [ '', Validators.required],
+      autoridad: [false, Validators.required],
+      alcaldeAsistenteId: [ '' ],
+      dni: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
+      nombre: ['', Validators.required],
+      telefono: ['', Validators.required],
+      entidad: ['', Validators.required],
+      esSector: [true, Validators.required],
+    })
+    this.sectores.push(sector)
+    this.listaEntidadesSector.update(entidad => [...entidad, []])
   }
 
   addUbigeo(){
     const ubigeo = this.fb.group({
+      entidadId: ['', Validators.required],
+      alcaldeAsistenteId: [ '' ],
       departamento: [null, Validators.required],
       provincia: [{ value: null, disabled: true }],
       distrito: [{ value: null, disabled: true }],
-      ubigeo: ['', Validators.required],
+      autoridad: ['', Validators.required],
+      dni: [{ value: null, disabled: true }, Validators.required],
+      nombre: [{ value: null, disabled: true }, Validators.required],
+      telefono: [{ value: null, disabled: true }, Validators.required],
+      entidad: ['', Validators.required],
+      esSector: [false, Validators.required],
     })
     this.ubigeos.push(ubigeo)
     this.provincias.update(provincia => [...provincia, []])
     this.distritos.update(distrito => [...distrito, []])
+  }
+
+  removeItemFormArray(index: number, formGroup: string){
+    if (formGroup == 'sectores') {
+      this.sectores.removeAt(index)
+    } else if(formGroup == 'ubigeos'){
+      this.ubigeos.removeAt(index)
+    }
+  }
+
+  validarAutoridad(index: number){
+    const controlArray = this.formMesa.get('ubigeos') as FormArray;
+    const autoridadControl = controlArray.at(index).get('autoridad');
+    const dniControl = controlArray.at(index).get('dni');
+    const nombreControl = controlArray.at(index).get('nombre');
+    const telefonoControl = controlArray.at(index).get('telefono');
+
+      const autoridadValue = autoridadControl?.value;
+    if(autoridadValue != null){
+      console.log('AUTORIDAD');
+      
+      dniControl?.setValidators(Validators.pattern(this.validatorService.DNIPattern))
+      dniControl?.enable();
+      nombreControl?.enable();
+      telefonoControl?.enable();
+      this.validarDNI(index, 'ubigeos');      
+    } else {
+      dniControl?.clearValidators()
+      dniControl?.disable();
+      nombreControl?.disable();
+      telefonoControl?.disable();
+    }
+  }
+
+  validarDNI(index: number, formGroup: string) {
+    const controlArray = this.formMesa.get(formGroup) as FormArray;
+    const dniControl = controlArray.at(index).get('dni');
+    const nombreControl = controlArray.at(index).get('nombre');
+    const telefonoControl = controlArray.at(index).get('telefono');
+    const alcaldeAsistenteIdControl = controlArray.at(index).get('alcaldeAsistenteId');
+
+    const dniValue = dniControl?.value;
+
+    if(dniValue && dniValue.length === 8) {
+      if(formGroup === 'sectores') {
+        this.obtenerAsistenteServicio(dniValue, index, controlArray)
+      } else if(formGroup === 'ubigeos') {
+        const autoridadControl = controlArray.at(index).get('autoridad');
+        const autoridadValue = autoridadControl?.value;
+
+        if(autoridadValue != null && autoridadValue !== undefined) {
+          autoridadValue
+          ? this.obtenerAlcaldeServicio(dniValue, index, controlArray)
+          : this.obtenerAsistenteServicio(dniValue, index, controlArray);
+        }
+      }
+    } else {
+      nombreControl?.reset();
+      telefonoControl?.reset();
+      alcaldeAsistenteIdControl?.reset();
+    }
+  }
+
+  obtenerAsistenteServicio(dni: string, index: number, controlArray: FormArray) {
+    const nombreControl = controlArray.at(index).get('nombre');
+    const telefonoControl = controlArray.at(index).get('telefono');
+    const alcaldeAsistenteIdControl = controlArray.at(index).get('alcaldeAsistenteId');
+    const pagination: Pagination = { dni, columnSort: 'asistenteId', typeSort: 'ASC', pageSize: 10, currentPage: 1 }
+    this.asistentesService.ListarAsistentes(pagination)
+      .subscribe( resp => {
+        const asistente = resp.data[0];
+        nombreControl?.setValue(asistente?.nombres || '');
+        telefonoControl?.setValue(asistente?.telefono || '');
+        alcaldeAsistenteIdControl?.setValue(asistente?.asistenteId || '');
+      })
+  }
+
+  obtenerAlcaldeServicio(dni:string, index: number, controlArray: FormArray) {
+    const nombreControl = controlArray.at(index).get('nombre');
+    const telefonoControl = controlArray.at(index).get('telefono');
+    const alcaldeAsistenteIdControl = controlArray.at(index).get('alcaldeAsistenteId');
+
+    const pagination: Pagination = { dni, columnSort: 'alcaldeId', typeSort: 'ASC', pageSize: 10, currentPage: 1 }
+    this.alcaldesService.ListarAsistentes(pagination)
+      .subscribe( resp => {
+        const alcalde = resp.data[0];
+        nombreControl?.setValue(alcalde?.nombre || '');
+        telefonoControl?.setValue(alcalde?.telefono || '');
+        alcaldeAsistenteIdControl?.setValue(alcalde?.alcaldeId || '');
+      })
   }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {
@@ -129,15 +255,35 @@ export class FormularioMesaComponent {
   }
 
   obtenerEntidadService(sectorId: number){
-    const params:Pagination = {
-      entidadId: 0,
-      tipo: '1',
-      sectorId
+    const params:Pagination = { entidadId: 0, tipo: '1', sectorId }
+    this.entidadesService.listarEntidades(params).subscribe( resp => this.entidadesSector.set(resp.data))
+  }
+
+  changeEntidadSector(index: number){
+    const getControl = this.formMesa.get('sectores') as FormArray
+    const sectorControl = getControl.at(index).get('sectorId')
+    const entidadIdControl = getControl.at(index).get('entidadId')
+    const sectorValue = sectorControl?.value
+
+    if(sectorValue){
+      entidadIdControl?.enable()
+      this.obtenerEntidadSectorService(sectorValue, index)
+    } else {
+      entidadIdControl?.disable()
     }
-    this.entidadesService.listarEntidades(params)
-      .subscribe( resp => {
-        this.entidadesSector.set(resp.data)
-      })
+  }
+
+  obtenerEntidadSectorService(sector: number, index: number){
+    const copyEntidades = [...this.listaEntidadesSector()]
+
+    const params:Pagination = { entidadId: 0, tipo: '1', sectorId: sector }
+    this.entidadesService.listarEntidades(params).subscribe( resp => {
+      if(resp.success){
+        copyEntidades[index] = resp.data
+        this.listaEntidadesSector.set(copyEntidades)
+      }
+    })
+
   }
 
   changeDepartamento(index: number){

@@ -618,23 +618,23 @@ export class FormularioAsistenciaTecnicaComponent implements OnChanges {
     const nombre = this.formAsistencia.get('nombreAutoridad')
     const cargo = this.formAsistencia.get('cargoAutoridad')
 
-    this.alcaldeService.getAlcaldePorUbigeo(setUbigeo)
-      .subscribe(resp => {
-        if (resp.success) {
-          if (resp.data.length > 0) {
-            const alcalde = resp.data[0]
-            if(!this.esDocumento){
-              dni?.setValue(alcalde.dni)
-              nombre?.setValue(alcalde.nombre)
-              cargo?.setValue(alcalde.cargo)
-            }
-          } else {
-            dni?.setValue('')
-            nombre?.setValue('')
-            cargo?.setValue('')
-          }
-        }
-      })
+    // this.alcaldeService.getAlcaldePorUbigeo(setUbigeo)
+    //   .subscribe(resp => {
+    //     if (resp.success) {
+    //       if (resp.data.length > 0) {
+    //         const alcalde = resp.data[0]
+    //         if(!this.esDocumento){
+    //           dni?.setValue(alcalde.dni)
+    //           nombre?.setValue(alcalde.nombre)
+    //           cargo?.setValue(alcalde.cargo)
+    //         }
+    //       } else {
+    //         dni?.setValue('')
+    //         nombre?.setValue('')
+    //         cargo?.setValue('')
+    //       }
+    //     }
+    //   })
   }
 
   changeCongresista(index: number) {
