@@ -8,7 +8,7 @@
 		<div class="w-full text-danger" *ngIf="alertMessageError('tarea')">{{msgErrorControl('tarea','Tarea')}}</div>
 	</div>
 
-	<div class="flex gap-4">
+	<div class="grid grid-cols-1 md:grid-cols-4 gap-3">
 		<div class="w-full flex flex-col">
 			<label nzFor="plazo">Fecha de atención</label>
 			<p-calendar 
@@ -34,7 +34,7 @@
 			<div class="text-danger" *ngIf="alertMessageError('responsableId')">{{msgErrorControl('responsableId','Responsable')}}</div>
 		</div>
 
-		<div class="w-full flex flex-col">
+		<div class="flex flex-col col-span-2">
 			<label nzFor="entidadId">
 				Entidad
 				@if (formIntervencionTarea.get('entidadId')?.value) {

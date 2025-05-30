@@ -7,7 +7,6 @@ export interface MesaUbigeosResponses extends DataResponses {
 export interface MesaUbigeoResponse {
     mesaUbigeoId?: string,
     mesaId: string,
-    ubigeo?: string,
     entidad? : string,
     entidadId: string,
     departamento?: string,
@@ -16,5 +15,11 @@ export interface MesaUbigeoResponse {
     autoridad?: boolean,
     alcaldeAsistenteId: string,
     esSector: boolean,
+    sector?: boolean,
+    ubigeo?: boolean,
+    dni?: boolean,
+    nombres?: boolean,
+    apellidos?: boolean,
+    telefono?: boolean,
     fechaRegistro?: string,
   }
