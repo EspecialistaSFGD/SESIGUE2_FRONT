@@ -50,8 +50,11 @@
 
 <div class="grid grid-cols-2 gap-4 mt-4">
 	<div class="flex flex-col bg-white border border-solid border-grey-200">
-		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
+		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">Integrantes GN</h5>
+			<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
+				Nuevo integrante
+			</div>
 		</div>
 		<div class="w-full flex border-solid ">
 			<nz-table nzSize="small" nzShowSizeChanger [nzData]="integranteSectores()"
@@ -63,11 +66,12 @@
 						<th nzAlign="center" nzWidth="64px">Nro</th>
 						<th nzAlign="center">Sector</th>
 						<th nzAlign="center">Titular</th>
+						<th nzAlign="center" nzWidth="80px"></th>
 					</tr>
 				</thead>
 				<tbody>
 					@for(integrante of integranteSectores(); track $index){
-						<tr>
+					<tr>
 						<td nzAlign="center">{{$index + 1}}</td>
 						<td nzAlign="center">
 							{{integrante.sector}}
@@ -77,7 +81,11 @@
 							{{integrante.dni}} <br>
 							{{integrante.nombres}} {{integrante.apellidos}}  @if(integrante.telefono){ - {{integrante.telefono}} }
 						</td>
-						<tr>
+						<td>
+							<button nz-button nzType="link" nz-tooltip="Actualizar Integrante"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+							<button nz-button nzDanger nzType="link" nz-tooltip="Eliminar Integrante" ><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+						</td>
+					<tr>
 					}
 				</tbody>
 			</nz-table>
@@ -85,8 +93,11 @@
 	</div>
 
 	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
-		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
+		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">Integrantes GR/GL</h5>
+			<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
+				Nuevo integrante
+			</div>
 		</div>
 		<div class="flex border-solid ">
 			<nz-table nzSize="small" nzShowSizeChanger [nzData]="integranteUbigeos()"
@@ -98,11 +109,12 @@
 						<th nzAlign="center" nzWidth="64px">Nro</th>
 						<th nzAlign="center">Gobierno</th>
 						<th nzAlign="center">Representante</th>
+						<th nzAlign="center" nzWidth="80px"></th>
 					</tr>
 				</thead>
 				<tbody>
 					@for(integrante of integranteUbigeos(); track $index){
-						<tr>
+					<tr>
 						<td nzAlign="center">{{$index + 1}}</td>
 						<td nzAlign="center">
 							{{integrante.departamento}}
@@ -115,7 +127,11 @@
 							- {{integrante.nombres}}
 							{{integrante.apellidos}}  @if(integrante.telefono){ - {{integrante.telefono}} }
 						</td>
-						<tr>
+						<td>
+							<button nz-button nzType="link" nz-tooltip="Actualizar Integrante"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+							<button nz-button nzDanger nzType="link" nz-tooltip="Eliminar Integrante" ><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+						</td>
+					<tr>
 					}
 				</tbody>
 			</nz-table>
@@ -125,13 +141,16 @@
 
 <div class="grid grid-cols-2 gap-4 mt-4">
 	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
-		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
+		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">Sesiones</h5>
 			@if (mesa().estadoRegistroNombre != 'cerrado') {
-				<button nz-button nzType="default"  (click)="modalCreateFile(0)">
+				<!-- <button nz-button nzType="default"  (click)="modalCreateFile(0)">
 					<span nz-icon nzType="plus" nzTheme="outline"></span>
-					<span class="button-text">Nueva</span>
-				</button>
+					<span class="button-text">Nuevo</span>
+				</button> -->
+				<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white" (click)="modalCreateFile(0)">
+					Nueva sesión
+				</div>
 			}
 		</div>
 		<div class="flex border-solid ">
@@ -167,13 +186,16 @@
 	</div>
 
 	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
-		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
+		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">AM</h5>
 			@if (mesa().estadoRegistroNombre != 'cerrado') {
-				<button nz-button nzType="default" (click)="modalCreateFile(1)">
+				<!-- <button nz-button nzType="default" (click)="modalCreateFile(1)">
 					<span nz-icon nzType="plus" nzTheme="outline"></span>
-					<span class="button-text">Nueva</span>
-				</button>
+					<span class="button-text">Nuevo</span>
+				</button> -->
+				<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white" (click)="modalCreateFile(1)">
+					Nueva am
+				</div>
 			}
 		</div>
 		<div class="flex border-solid ">
