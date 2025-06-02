@@ -29,7 +29,7 @@ export default class MesasComponent {
 
   pagination: Pagination = {
     code: 0,
-    columnSort: 'nombre',
+    columnSort: 'mesaId',
     typeSort: 'DESC',
     pageSize: 10,
     currentPage: 1,
@@ -99,7 +99,7 @@ export default class MesasComponent {
           type: 'primary',
           onClick: (componentResponse) => {
             const formMesa = componentResponse!.formMesa
-            
+           
             if (formMesa.invalid) {
               const invalidFields = Object.keys(formMesa.controls).filter(field => formMesa.controls[field].invalid);
               console.error('Invalid fields:', invalidFields);
@@ -109,7 +109,7 @@ export default class MesasComponent {
             const fechaCreacion = getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
             const fechaVigencia = getDateFormat(formMesa.get('fechaVigencia')?.value, 'month')
 
-            const bodyMesa: MesaResponse = {...formMesa.value, fechaCreacion, fechaVigencia}
+            const bodyMesa: MesaResponse = {...formMesa.getRawValue() , fechaCreacion, fechaVigencia}
 
             this.loadingData = true
             if(create){
@@ -133,21 +133,13 @@ export default class MesasComponent {
           const integrantes: MesaUbigeoResponse[] = [ ...ubigeos, ...sectores ];
 
             for (let integrante of integrantes) {
-            this.mesaUbigeosService.registarMesaUbigeo(mesaId, integrante)
-              .subscribe(resp => {
-              this.obtenerMesasService();
-              this.modal.closeAll();
-              });
+              integrante.alcaldeAsistenteId = `${integrante.alcaldeAsistenteId}`
+              this.mesaUbigeosService.registarMesaUbigeo(mesaId, integrante)
+                .subscribe(resp => {
+                this.obtenerMesasService();
+                this.modal.closeAll();
+                });
             }
-            
-          // for (let ubigeo of ubigeos) {
-          //   const integrantes = { mesaId, ubigeo: ubigeo.ubigeo,  }
-          //   this.mesaUbigeosService.registarMesaUbigeo(integrantes)
-          //     .subscribe( resp => {
-          //       this.obtenerMesasService()
-          //       this.modal.closeAll()
-          //     })
-          // }
         }
       })
   }

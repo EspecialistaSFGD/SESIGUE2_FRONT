@@ -46,6 +46,7 @@ export interface Pagination {
   telefono?: string,
   sexo?: string,
   nombre?: string,
+  esSector?: string
 }
 
 export interface PaginationPanel {

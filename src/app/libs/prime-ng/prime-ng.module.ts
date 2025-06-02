@@ -8,6 +8,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { StepperModule } from 'primeng/stepper';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     RadioButtonModule,
     InputNumberModule,
     StepperModule,
-    InputSwitchModule
+    InputSwitchModule,
+    ProgressSpinnerModule
   ],
   exports: [
     DropdownModule,
@@ -32,7 +34,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     RadioButtonModule,
     InputNumberModule,
     StepperModule,
-    InputSwitchModule
+    InputSwitchModule,
+    ProgressSpinnerModule
   ]
 })
 export class PrimeNgModule { }

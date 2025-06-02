@@ -17,6 +17,8 @@ export interface EntidadResponse {
   ubigeo: string,
   ubigeo_oficial: string,
   entidad: string,
+  entidadTipo?: string,
+  entidadSlug?: string,
 }
 
 export interface ParamsEntidad {
