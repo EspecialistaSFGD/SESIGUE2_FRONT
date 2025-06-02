@@ -14,14 +14,14 @@ export class AlcaldesService {
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  ListarAsistentes(pagination: Pagination): Observable<AlcaldesResponses> {
+  ListarAlcaldes(pagination: Pagination): Observable<AlcaldesResponses> {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<AlcaldesResponses>(`${this.urlAlcalde}/ListarAlcaldes`, { headers, params })
   }
 
-  getAlcaldePorUbigeo(ubigeo: string): Observable<AlcaldesResponses> {
-    const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<AlcaldesResponses>(`${this.urlAlcalde}/ListarAlcaldePorUbigeo/${ubigeo}`, { headers })
-  }
+  // getAlcaldePorUbigeo(ubigeo: string): Observable<AlcaldesResponses> {
+  //   const headers = this.helpersServices.getAutorizationToken()
+  //   return this.http.get<AlcaldesResponses>(`${this.urlAlcalde}/ListarAlcaldePorUbigeo/${ubigeo}`, { headers })
+  // }
 }

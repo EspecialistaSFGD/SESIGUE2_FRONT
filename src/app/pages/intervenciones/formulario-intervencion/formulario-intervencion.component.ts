@@ -22,7 +22,7 @@ export class FormularioIntervencionComponent {
   create: boolean = this.dataIntervencionTarea.create
   origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
 
-  paginationIntervencionData: Pagination = {
+  pagination: Pagination = {
     columnSort: 'nombre',
     typeSort: 'ASC',
     pageSize: 100,
@@ -143,7 +143,7 @@ export class FormularioIntervencionComponent {
   }
 
   obtenerIntervencionFaseService(inicial: boolean = true){
-    this.intervencionFaseService.ListarIntervencionFases(this.paginationIntervencionData)
+    this.intervencionFaseService.ListarIntervencionFases(this.pagination)
       .subscribe( resp => inicial ? this.fasesInicial.set(resp.data) : this.fasesObjetivo.set(resp.data) )
   }
 
@@ -196,8 +196,9 @@ export class FormularioIntervencionComponent {
 
   obtenerEntidadSector(){
     const sectorId = this.formIntervencionEspacio.get('sectorId')?.value
-    const paginationEntidadSector: Pagination = { entidadId: 0, tipo: '1', sectorId }
-    this.entidadService.listarEntidades(paginationEntidadSector).subscribe( resp => this.sectorEntidades.set(resp.data) )
+    // const paginationEntidadSector: Pagination = { entidadId: 0, tipo: '1', sectorId }
+    const pagination: Pagination = { ...this.pagination, sectorId, columnSort: 'entidadId' }
+    this.entidadService.listarEntidades(pagination).subscribe( resp => this.sectorEntidades.set(resp.data) )
   }
 
   obtenerDepartamento(){
@@ -281,7 +282,7 @@ export class FormularioIntervencionComponent {
   obtenerIntervencionEtapaService(inicial: boolean){
     const faseControl: string = inicial ? 'inicioIntervencionFaseId' : 'objetivoIntervencionFaseId'
     const faseId = this.formIntervencionEspacio.get(faseControl)?.value
-    this.intervencionEtapaService.ListarIntervencionEtapas({...this.paginationIntervencionData, faseId}).subscribe( resp => inicial ? this.etapasInicial.set(resp.data) : this.etapasObjetivo.set(resp.data))
+    this.intervencionEtapaService.ListarIntervencionEtapas({...this.pagination, faseId}).subscribe( resp => inicial ? this.etapasInicial.set(resp.data) : this.etapasObjetivo.set(resp.data))
   }
 
   obtenerEtapa(inicial: boolean = true){    
@@ -301,6 +302,6 @@ export class FormularioIntervencionComponent {
   obtenerIntervencionHitoService(inicial: boolean){
     const etapaControl: string = inicial ? 'inicioIntervencionEtapaId' : 'objetivoIntervencionEtapaId' 
     const etapaId = this.formIntervencionEspacio.get(etapaControl)?.value 
-    this.intervencionHitoService.ListarIntervencionHitos({...this.paginationIntervencionData, etapaId }).subscribe( resp => inicial ? this.hitosInicial.set(resp.data) : this.hitosObjetivo.set(resp.data) )
+    this.intervencionHitoService.ListarIntervencionHitos({...this.pagination, etapaId }).subscribe( resp => inicial ? this.hitosInicial.set(resp.data) : this.hitosObjetivo.set(resp.data) )
   }
 }
