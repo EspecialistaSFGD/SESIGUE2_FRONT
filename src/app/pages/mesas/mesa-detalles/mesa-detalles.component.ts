@@ -8,6 +8,7 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formulario-mesa-detalle.component';
+import { FormularioMesaComponent } from '../formulario-mesa/formulario-mesa.component';
 
 @Component({
   selector: 'app-mesa-detalles',
@@ -131,6 +132,46 @@ export default class MesaDetallesComponent {
     const dataFile = archivo.split('/')
     const fileName = dataFile[dataFile.length - 1]
     return fileName
+  }
+
+  actualizarMesa(){
+    this.modal.create<FormularioMesaComponent>({
+      nzTitle: `Actualizar Mesa`,
+      nzWidth: '75%',
+      nzContent: FormularioMesaComponent,
+      nzData: {
+        create: false,
+        mesa: this.mesa,
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Actualizar Mesa',
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formMesa = componentResponse!.formMesa
+           
+            if (formMesa.invalid) {
+              const invalidFields = Object.keys(formMesa.controls).filter(field => formMesa.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formMesa.markAllAsTouched();
+            }
+
+            const fechaCreacion = getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
+            const fechaVigencia = getDateFormat(formMesa.get('fechaVigencia')?.value, 'month')
+            const usuarioId =localStorage.getItem('codigoUsuario')
+
+            const bodyMesa: MesaResponse = {...formMesa.getRawValue() , fechaCreacion, fechaVigencia, usuarioId}
+            console.log(bodyMesa);
+                                    
+          }
+        }
+      ]
+    })
   }
 
   modalCreateFile(tipo: number) {

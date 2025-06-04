@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { EntidadResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { DataModalMesa, EntidadResponse, MesaResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistentesService, EntidadesService, SectoresService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { ProgressSpinerComponent } from '@shared/progress-spiner/progress-spiner.component';
+import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 @Component({
@@ -18,6 +19,11 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
   styles: ``
 })
 export class FormularioMesaComponent {
+
+  readonly dataMesa: DataModalMesa = inject(NZ_MODAL_DATA);
+
+  create: boolean = this.dataMesa.create
+  mesa = signal<MesaResponse>(this.dataMesa.mesa) 
 
   filesList: NzUploadFile[] = [];
 
@@ -60,6 +66,11 @@ export class FormularioMesaComponent {
   })
 
   ngOnInit(): void {
+    if(!this.create){
+      this.formMesa.reset({ ...this.mesa})
+    }
+    console.log(this.create);
+    
     this.obtenerSectoresService()
     this.obtenerDepartamentoService()
     this.addSectores()
@@ -254,7 +265,7 @@ export class FormularioMesaComponent {
     this.asistentesService.ListarAsistentes(pagination)
       .subscribe( resp => {
         const asistente = resp.data[0];
-        nombreControl?.setValue(asistente?.nombres || '');
+        nombreControl?.setValue(`${asistente.nombres} ${asistente.apellidos}` || '');
         telefonoControl?.setValue(asistente?.telefono || '');
         alcaldeAsistenteIdControl?.setValue(asistente?.asistenteId || '');
       })

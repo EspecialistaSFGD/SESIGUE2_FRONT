@@ -38,3 +38,8 @@ export interface MesaFilesResponse {
   usuario: string,
   fecha: string
 }
+
+export interface DataModalMesa{
+  create: boolean,
+  mesa: MesaResponse
+}

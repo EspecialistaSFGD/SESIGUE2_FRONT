@@ -196,7 +196,6 @@ export class FormularioIntervencionComponent {
 
   obtenerEntidadSector(){
     const sectorId = this.formIntervencionEspacio.get('sectorId')?.value
-    // const paginationEntidadSector: Pagination = { entidadId: 0, tipo: '1', sectorId }
     const pagination: Pagination = { ...this.pagination, sectorId, columnSort: 'entidadId' }
     this.entidadService.listarEntidades(pagination).subscribe( resp => this.sectorEntidades.set(resp.data) )
   }

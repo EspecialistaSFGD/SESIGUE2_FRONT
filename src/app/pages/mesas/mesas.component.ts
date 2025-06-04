@@ -36,6 +36,19 @@ export default class MesasComponent {
     total: 0
   }
 
+  mesa = signal<MesaResponse>({
+    nombre: '',
+    abreviatura: '',
+    sectorId: '',
+    secretariaTecnicaId: '',
+    fechaCreacion: '',
+    fechaVigencia: '',
+    resolucion: '',
+    estadoRegistroNombre: '',
+    estadoRegistro: '',
+    usuarioId: ''
+  })
+
   mesas = signal<MesaResponse[]>([])
 
   private authStore = inject(AuthService)
@@ -86,7 +99,7 @@ export default class MesasComponent {
       nzContent: FormularioMesaComponent,
       nzData: {
         create,
-        authUser: this.authStore.usuarioAuth()
+        mesa: this.mesa
       },
       nzFooter: [
         {
