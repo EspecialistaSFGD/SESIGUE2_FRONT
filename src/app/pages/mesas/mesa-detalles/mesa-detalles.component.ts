@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { getDateFormat } from '@core/helpers';
+import { convertDateStringToDate, getDateFormat } from '@core/helpers';
 import { MesaDetalleResponse, MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
 import { MesaDetallesService, MesasService, MesaUbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -94,8 +94,12 @@ export default class MesaDetallesComponent {
       return;
     }
 
-    this.mesaId = mesaIdNumber    
-    this.mesaServices.obtenerMesa(mesaId)
+    this.mesaId = mesaIdNumber
+    this.obtenerMesaService()
+  }
+
+  obtenerMesaService(){    
+    this.mesaServices.obtenerMesa(this.mesaId.toString())
       .subscribe( resp => {
         if(resp.success){
           this.mesa.set(resp.data)
@@ -141,7 +145,7 @@ export default class MesaDetallesComponent {
       nzContent: FormularioMesaComponent,
       nzData: {
         create: false,
-        mesa: this.mesa,
+        mesa: this.mesa(),
       },
       nzFooter: [
         {
@@ -161,17 +165,27 @@ export default class MesaDetallesComponent {
               return formMesa.markAllAsTouched();
             }
 
+            const mesaId = this.mesa().mesaId
             const fechaCreacion = getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
             const fechaVigencia = getDateFormat(formMesa.get('fechaVigencia')?.value, 'month')
             const usuarioId =localStorage.getItem('codigoUsuario')
 
-            const bodyMesa: MesaResponse = {...formMesa.getRawValue() , fechaCreacion, fechaVigencia, usuarioId}
-            console.log(bodyMesa);
-                                    
+            const bodyMesa: MesaResponse = {...formMesa.getRawValue() , fechaCreacion, fechaVigencia, usuarioId, mesaId}
+            this.actualizarMesaService(bodyMesa)
           }
         }
       ]
     })
+  }
+
+  actualizarMesaService(mesa: MesaResponse){
+    this.mesaServices.actualizarMesa(mesa)
+      .subscribe( resp => {
+        if(resp.success == true){
+          this.obtenerMesaService()
+          this.modal.closeAll();
+        }
+      })
   }
 
   modalCreateFile(tipo: number) {

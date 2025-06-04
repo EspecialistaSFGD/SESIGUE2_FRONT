@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { typeErrorControl } from '@core/helpers';
+import { convertDateStringToDate, typeErrorControl } from '@core/helpers';
 import { DataModalMesa, EntidadResponse, MesaResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistentesService, EntidadesService, SectoresService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
@@ -61,20 +61,26 @@ export class FormularioMesaComponent {
     secretariaTecnicaId: [ '', Validators.required],
     fechaCreacion: ['', Validators.required],
     fechaVigencia: ['', Validators.required],
+    estadoRegistro: ['', Validators.required],
     sectores: this.fb.array([]),
     ubigeos: this.fb.array([]),
   })
 
   ngOnInit(): void {
-    if(!this.create){
-      this.formMesa.reset({ ...this.mesa})
-    }
-    console.log(this.create);
-    
     this.obtenerSectoresService()
     this.obtenerDepartamentoService()
-    this.addSectores()
-    this.addUbigeo()
+    if(this.create){
+      this.addSectores()
+      this.addUbigeo()
+      this.formMesa.get('estadoRegistro')?.setValue(0)
+    } else {
+      const sectorId = Number(this.mesa().sectorId)
+      const fechaCreacion = convertDateStringToDate(this.mesa().fechaCreacion)
+      const fechaVigencia = convertDateStringToDate(this.mesa().fechaVigencia)
+
+      this.formMesa.reset({ ...this.mesa(), fechaCreacion, fechaVigencia })
+      this.obtenerEntidadService(sectorId)
+    }
   }
 
   obtenerSectoresService(){
@@ -310,10 +316,10 @@ export class FormularioMesaComponent {
   }
 
   changeSector(){
-    const sectorControl = this.formMesa.get('sectorId')?.value
+    const sectorId = this.formMesa.get('sectorId')?.value
     const secretariaControl = this.formMesa.get('secretariaTecnicaId')
-    if(sectorControl){
-      this.obtenerEntidadService(sectorControl)
+    if(sectorId){
+      this.obtenerEntidadService(sectorId)
       secretariaControl?.enable()
     } else {
       secretariaControl?.disable()

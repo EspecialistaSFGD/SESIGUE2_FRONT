@@ -127,7 +127,7 @@ export default class MesasComponent {
 
             this.loadingData = true
             if(create){
-              this.registrarMesa(bodyMesa)
+              this.registrarMesaService(bodyMesa)
             }
                         
           }
@@ -136,7 +136,7 @@ export default class MesasComponent {
     })
   }
 
-  registrarMesa(mesa: MesaResponse) {
+  registrarMesaService(mesa: MesaResponse) {
     this.mesasService.registarMesa(mesa)
       .subscribe( resp => {
         this.loadingData = false
