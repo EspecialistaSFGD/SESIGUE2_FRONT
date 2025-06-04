@@ -22,13 +22,15 @@ export default class MesaDetallesComponent {
   mesaId!: number
   mesa = signal<MesaResponse>({
     nombre: '',
+    abreviatura: '',
     sectorId: '',
     secretariaTecnicaId: '',
     fechaCreacion: '',
     fechaVigencia: '',
     resolucion: '',
     estadoRegistroNombre: '',
-    estadoRegistro: ''
+    estadoRegistro: '',
+    usuarioId: ''
   })
 
   integranteUbigeos = signal<MesaUbigeoResponse[]>([])

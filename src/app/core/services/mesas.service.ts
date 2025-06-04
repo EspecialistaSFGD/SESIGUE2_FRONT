@@ -40,6 +40,8 @@ export class MesasService {
   private generateFormData(mesa: MesaResponse): FormData {
     const formData = new FormData()
     formData.append('nombre', mesa.nombre)
+    formData.append('abreviatura', mesa.abreviatura)
+    formData.append('usuarioId', mesa.usuarioId)
     formData.append('sectorId', mesa.sectorId)
     formData.append('secretariaTecnicaId', mesa.secretariaTecnicaId)
     formData.append('fechaCreacion', mesa.fechaCreacion)

@@ -108,8 +108,9 @@ export default class MesasComponent {
 
             const fechaCreacion = getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
             const fechaVigencia = getDateFormat(formMesa.get('fechaVigencia')?.value, 'month')
+            const usuarioId =localStorage.getItem('codigoUsuario')
 
-            const bodyMesa: MesaResponse = {...formMesa.getRawValue() , fechaCreacion, fechaVigencia}
+            const bodyMesa: MesaResponse = {...formMesa.getRawValue() , fechaCreacion, fechaVigencia, usuarioId}
 
             this.loadingData = true
             if(create){

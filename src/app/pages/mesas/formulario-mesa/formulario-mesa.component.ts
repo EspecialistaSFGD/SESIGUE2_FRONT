@@ -49,9 +49,9 @@ export class FormularioMesaComponent {
 
   formMesa: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
+    abreviatura: ['MT_', [Validators.required, Validators.pattern(this.validatorService.slugMTPattern)]],
     resolucion: ['', Validators.required],
     sectorId: [null, Validators.required],
-    // secretariaTecnicaId: [{ value: null, disabled: true }, Validators.required],
     secretariaTecnicaId: [ '', Validators.required],
     fechaCreacion: ['', Validators.required],
     fechaVigencia: ['', Validators.required],
@@ -98,6 +98,31 @@ export class FormularioMesaComponent {
     const errors = levelControl?.errors;
 
     return typeErrorControl(text, errors)
+  }
+
+  validateDate(control: string){
+    const fechaCreacionControl = this.formMesa.get('fechaCreacion')
+    const fechaCreacionValue = fechaCreacionControl?.value
+    const fechaVigenciaControl = this.formMesa.get('fechaVigencia')
+    const fechaVigenciaValue = fechaVigenciaControl?.value
+
+    const fechaCreacion = new Date(fechaCreacionValue);
+    const fechaVigencia = new Date(fechaVigenciaValue);
+
+    if(control == 'creacion'){
+      if (fechaCreacionValue && fechaVigenciaValue && fechaCreacion >= fechaVigencia) {
+        fechaCreacionControl?.setErrors({ ...fechaCreacionControl.errors, msgBack: 'La fecha de creación debe ser menor que la fecha de vigencia.' });
+      } else {
+        fechaVigenciaControl?.setErrors(null)
+      }
+    } else if(control == 'vigencia'){
+      if (fechaCreacionValue && fechaVigenciaValue && fechaVigencia <= fechaCreacion) {
+        fechaVigenciaControl?.setErrors({ ...fechaVigenciaControl.errors, msgBack: 'La fecha de vigencia debe ser mayor que la fecha de creación.' });
+      } else {
+        fechaCreacionControl?.setErrors(null)
+      }
+    }
+
   }
 
   addItemFormArray(control: string, event: MouseEvent) {
@@ -264,6 +289,15 @@ export class FormularioMesaComponent {
     return false;
   };
 
+  setAbreviatura(){
+    const abreviaturaControl = this.formMesa.get('abreviatura')
+    const abreviaturaValue = abreviaturaControl?.value
+    let value = abreviaturaValue
+    value = value.toUpperCase()
+    value = value.replace(/\s+/g, '_');
+    abreviaturaControl?.setValue(value)
+  }
+
   changeSector(){
     const sectorControl = this.formMesa.get('sectorId')?.value
     const secretariaControl = this.formMesa.get('secretariaTecnicaId')
@@ -427,12 +461,13 @@ export class FormularioMesaComponent {
 
   generalValidate(){
     const nombreControl = this.formControlValidate(this.formControl('nombre')!)
+    const abreviaturaControl = this.formControlValidate(this.formControl('abreviatura')!)
     const sectorControl = this.formControlValidate(this.formControl('sectorId')!)
     const secreatriaTecnicaControl = this.formControlValidate(this.formControl('secretariaTecnicaId')!)
     const fechaCreacionControl = this.formControlValidate(this.formControl('fechaCreacion')!)
     const fechaVigenciaControl = this.formControlValidate(this.formControl('fechaVigencia')!)
     const resolucionControl = this.formControlValidate(this.formControl('resolucion')!)
-    return nombreControl && sectorControl && secreatriaTecnicaControl && fechaCreacionControl && fechaVigenciaControl && resolucionControl;
+    return nombreControl && abreviaturaControl && sectorControl && secreatriaTecnicaControl && fechaCreacionControl && fechaVigenciaControl && resolucionControl;
   }
 
   sectorsValidate(){
