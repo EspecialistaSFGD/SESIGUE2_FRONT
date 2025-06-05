@@ -35,22 +35,16 @@
         <td nzAlign="center">{{mesa.fechaCreacion}}</td>
         <td nzAlign="center">{{mesa.fechaVigencia}}</td>
         <td nzAlign="center">
-          <span class="px-3 py-1 cursor-pointer text-sky-700 hover:text-sky-800" (click)="descargarPdf(mesa.resolucion)">
-            <i class="pi pi-file-pdf text-sm"></i>
-          </span>
+          <app-boton-descargar [rutaArchivo]="mesa.resolucion" [titulo]="'Descargar resolución'"></app-boton-descargar>
         </td>
         <td nzAlign="center">
           @if(mesa.sesion){
-            <span class="px-3 py-1 cursor-pointer text-sky-700 hover:text-sky-800" (click)="descargarPdf(mesa.sesion)">
-              <i class="pi pi-file-pdf text-sm"></i>
-            </span>
+            <app-boton-descargar [rutaArchivo]="mesa.sesion" [titulo]="'Descargar ultima sesión'"></app-boton-descargar>
           }
         </td>
         <td nzAlign="center">
           @if(mesa.am){
-            <span class="px-3 py-1 cursor-pointer text-sky-700 hover:text-sky-800" (click)="descargarPdf(mesa.am)">
-              <i class="pi pi-file-pdf text-sm"></i>
-            </span>
+            <app-boton-descargar [rutaArchivo]="mesa.am" [titulo]="'Descargar Ultima AM'"></app-boton-descargar>
           }
         </td>
         <td nzAlign="center">

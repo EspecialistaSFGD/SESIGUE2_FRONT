@@ -1,11 +1,11 @@
 import { DataResponses } from "./helpers.interface"
 
-export interface MesaDetallesResponses extends DataResponses {
-  data: MesaDetalleResponse[]
+export interface MesaDocumentossResponses extends DataResponses {
+  data: MesaDocumentoResponse[]
 }
 
-export interface MesaDetalleResponse {
-    detalleId?: string,
+export interface MesaDocumentoResponse {
+    documentoId?: string,
     archivo: string,
     nombre: string,
     fechaCreacion: string,

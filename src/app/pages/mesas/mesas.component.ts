@@ -1,15 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
+import { getDateFormat } from '@core/helpers';
 import { MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
-import { DescargarService, MesaUbigeosService } from '@core/services';
+import { MesaUbigeosService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { SharedModule } from '@shared/shared.module';
-import saveAs from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from './formulario-mesa/formulario-mesa.component';
 
@@ -55,7 +54,6 @@ export default class MesasComponent {
   private modal = inject(NzModalService);
   private mesasService = inject(MesasService)
   private mesaUbigeosService = inject(MesaUbigeosService)
-  private descargarService = inject(DescargarService)
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
@@ -73,17 +71,6 @@ export default class MesasComponent {
       .subscribe( resp => {
         this.mesas.set(resp.data)
         this.pagination.total = resp.info?.total
-      })
-  }
-
-  descargarPdf(archivo: string){
-    this.descargarService.descargarPdf(archivo)
-      .subscribe((resp) => {        
-        if (resp.success == true) {
-          var binary_string = generateBase64ToArrayBuffer(resp.data.binario);
-          var blob = new Blob([binary_string], { type: `application/${resp.data.tipo}` });
-          saveAs(blob, resp.data.nombre);
-        }
       })
   }
 
