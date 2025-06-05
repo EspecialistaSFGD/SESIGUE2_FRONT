@@ -14,7 +14,7 @@ export class MesaUbigeosService {
     private http = inject(HttpClient)
     private helpersServices = inject(HelpersService);
   
-    ListarMesaUbigeos(mesaId: number, pagination: Pagination): Observable<MesaUbigeosResponses> {
+    ListarMesaUbigeos(mesaId: string, pagination: Pagination): Observable<MesaUbigeosResponses> {
       let params = this.helpersServices.setParams(pagination)
       params = params.append('mesaId', mesaId)
       const headers = this.helpersServices.getAutorizationToken()

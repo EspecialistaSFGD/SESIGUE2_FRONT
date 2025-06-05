@@ -10,11 +10,12 @@ import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from '../formulario-mesa/formulario-mesa.component';
 import { FormularioMesaDocumentoComponent } from './formulario-mesa-documento/formulario-mesa-documento.component';
+import { IntegrantesMesaComponent } from "./integrantes-mesa/integrantes-mesa.component";
 
 @Component({
   selector: 'app-mesa-detalles',
   standalone: true,
-  imports: [CommonModule, RouterModule , NgZorroModule, SharedModule],
+  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, IntegrantesMesaComponent],
   templateUrl: './mesa-detalles.component.html',
   styles: ``
 })
@@ -36,26 +37,12 @@ export default class MesaDetallesComponent {
     usuarioId: ''
   })
 
-  integranteUbigeos = signal<MesaUbigeoResponse[]>([])
-  integranteSectores = signal<MesaUbigeoResponse[]>([])
   mesasSesion = signal<MesaDocumentoResponse[]>([])
   mesasAm = signal<MesaDocumentoResponse[]>([])
   documentosResolucion = signal<MesaDocumentoResponse[]>([])
 
-  loadingUbigeos: boolean = false
-  loadingSectores: boolean = false
   loadingDataSesion: boolean = false
   loadingDataAm: boolean = false
-
-  paginationUbigeos: Pagination = {
-    columnSort: 'fechaRegistro',
-    typeSort: 'DESC',
-    pageSize: 5,
-    currentPage: 1,
-    total: 0
-  }
-
-  paginationSectores: Pagination = this.paginationUbigeos
 
   paginationSesion: Pagination = {
     columnSort: 'documentoId',
@@ -87,12 +74,9 @@ export default class MesaDetallesComponent {
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private modal = inject(NzModalService);
-  private mesaUbigeosService = inject(MesaUbigeosService)
 
   ngOnInit(): void {
     this.verificarMesa()
-    this.obtenerUbigeosService(0)
-    this.obtenerUbigeosService(1)
     this.obtenerDetalleMesa(0)
     this.obtenerDetalleMesa(1)
     this.obtenerDetalleMesa(2)
@@ -121,24 +105,11 @@ export default class MesaDetallesComponent {
       })
   }
 
-  obtenerUbigeosService(esSector: number){
-    esSector == 1 ? this.loadingSectores = true : this.loadingUbigeos = true
-    this.paginationUbigeos.esSector = esSector.toString()
-    this.mesaUbigeosService.ListarMesaUbigeos(this.mesaId, this.paginationUbigeos)
-      .subscribe( resp => {        
-        esSector == 1 ? this.loadingSectores = false : this.loadingUbigeos = false
-        esSector == 1 ? this.integranteSectores.set(resp.data) : this.integranteUbigeos.set(resp.data)
-        esSector == 1 ? this.paginationSectores.total = resp.info?.total : this.paginationUbigeos.total = resp.info!.total
-      })
-  }
-
   obtenerDetalleMesa(tipo: number){
     const documento = this.tipos.find( item => Number(item.text) == tipo )!
     this.loadingDataSesion = documento.text === MesaDocumentoTipoEnum.SESION ?  true : false
     this.loadingDataAm = documento.text === MesaDocumentoTipoEnum.AM ?  true : false
 
-    // tipo == 1 ? this.loadingDataAm = true : this.loadingDataSesion = true
-    // const pagination = tipo == 1 ? this.paginationAm : this.paginationSesion
     let pagination = this.paginationSesion
     if(documento.text == MesaDocumentoTipoEnum.AM ){
       pagination = this.paginationAm
@@ -148,10 +119,6 @@ export default class MesaDetallesComponent {
 
     this.mesaDetalleServices.ListarMesaDetalle(this.mesaId, tipo, pagination)
       .subscribe( resp => {
-        // tipo == 1 ? this.mesasAm.set(resp.data) : this.mesasSesion.set(resp.data)
-        // tipo == 1 ? this.paginationAm.total = resp.info!.total : this.paginationSesion.total = resp.info!.total
-        // tipo == 1 ? this.loadingDataAm = false : this.loadingDataSesion = false
-
         switch (documento.text) {
           case MesaDocumentoTipoEnum.SESION: this.mesasSesion.set(resp.data); this.loadingDataSesion = false; this.paginationSesion.total = resp.info!.total; break;
           case MesaDocumentoTipoEnum.AM: this.mesasAm.set(resp.data); this.loadingDataAm = false; this.paginationAm.total; break;

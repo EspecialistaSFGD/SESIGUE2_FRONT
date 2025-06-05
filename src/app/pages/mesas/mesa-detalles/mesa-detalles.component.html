@@ -36,7 +36,7 @@
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Resolución</div>
 		<div class="w-full flex items-center justify-between px-2 py-1 border-l border-gray-200 overflow-hidden">
 			<div class="flex w-full overflow-hidden">
-				<app-boton-descargar [rutaArchivo]="mesa().resolucion" [titulo]="'Descargar Resolucion'"></app-boton-descargar>
+				<app-boton-descargar [rutaArchivo]="mesa().resolucion" [titulo]="'Descargar Resolucion de creación'"></app-boton-descargar>
 				@for(resolucion of documentosResolucion(); track $index){
 					<app-boton-descargar [rutaArchivo]="resolucion.archivo" [titulo]="'Descargar ' + resolucion.nombre" [active]="false" />
 				}
@@ -69,94 +69,8 @@
 </div>
 
 <div class="grid grid-cols-2 gap-4 mt-4">
-	<div class="flex flex-col bg-white border border-solid border-grey-200">
-		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
-			<h5 class="m-0 text-base font-semibold">Integrantes GN</h5>
-			<!-- <div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
-				Nuevo integrante
-			</div> -->
-		</div>
-		<div class="w-full flex border-solid ">
-			<nz-table nzSize="small" nzShowSizeChanger [nzData]="integranteSectores()"
-				[nzFrontPagination]="false" [nzShowPagination]="paginationSectores.pageSize! > 5"
-				[nzLoading]="loadingSectores" [nzTotal]="paginationSectores.total!" [nzPageSize]="paginationSectores.pageSize!"
-				[nzPageIndex]="paginationSectores.currentPage!">
-				<thead>
-					<tr>
-						<th nzAlign="center" nzWidth="64px">Nro</th>
-						<th nzAlign="center">Sector</th>
-						<th nzAlign="center">Titular</th>
-						<th nzAlign="center" nzWidth="80px"></th>
-					</tr>
-				</thead>
-				<tbody>
-					@for(integrante of integranteSectores(); track $index){
-					<tr>
-						<td nzAlign="center">{{$index + 1}}</td>
-						<td nzAlign="center">
-							{{integrante.sector}}
-							<br>{{integrante.entidad}}
-						</td>
-						<td nzAlign="center">
-							{{integrante.dni}} <br>
-							{{integrante.nombres}} {{integrante.apellidos}}  @if(integrante.telefono){ - {{integrante.telefono}} }
-						</td>
-						<td>
-							<!-- <button nz-button nzType="link" nz-tooltip="Actualizar Integrante"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
-							<button nz-button nzDanger nzType="link" nz-tooltip="Eliminar Integrante" ><span nz-icon nzType="delete" nzTheme="outline"></span></button> -->
-						</td>
-					<tr>
-					}
-				</tbody>
-			</nz-table>
-		</div>
-	</div>
-
-	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
-		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
-			<h5 class="m-0 text-base font-semibold">Integrantes GR/GL</h5>
-			<!-- <div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
-				Nuevo integrante
-			</div> -->
-		</div>
-		<div class="flex border-solid ">
-			<nz-table nzSize="small" nzShowSizeChanger [nzData]="integranteUbigeos()"
-				[nzFrontPagination]="false" [nzShowPagination]="paginationUbigeos.pageSize! > 5"
-				[nzLoading]="loadingUbigeos" [nzTotal]="paginationUbigeos.total!" [nzPageSize]="paginationUbigeos.pageSize!"
-				[nzPageIndex]="paginationUbigeos.currentPage!">
-				<thead>
-					<tr>
-						<th nzAlign="center" nzWidth="64px">Nro</th>
-						<th nzAlign="center">Gobierno</th>
-						<th nzAlign="center">Representante</th>
-						<th nzAlign="center" nzWidth="80px"></th>
-					</tr>
-				</thead>
-				<tbody>
-					@for(integrante of integranteUbigeos(); track $index){
-					<tr>
-						<td nzAlign="center">{{$index + 1}}</td>
-						<td nzAlign="center">
-							{{integrante.departamento}}
-							@if(integrante.provincia){ - {{integrante.provincia}} }
-							@if(integrante.distrito){ - {{integrante.distrito}} }
-							<br>{{integrante.entidad}}</td>
-						<td nzAlign="center">
-							@if(integrante.autoridad){ AUTORIDAD } @else { REPRESENTANTE }<br>
-							{{integrante.dni}}
-							- {{integrante.nombres}}
-							{{integrante.apellidos}}  @if(integrante.telefono){ - {{integrante.telefono}} }
-						</td>
-						<td>
-							<!-- <button nz-button nzType="link" nz-tooltip="Actualizar Integrante"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
-							<button nz-button nzDanger nzType="link" nz-tooltip="Eliminar Integrante" ><span nz-icon nzType="delete" nzTheme="outline"></span></button> -->
-						</td>
-					<tr>
-					}
-				</tbody>
-			</nz-table>
-		</div>
-	</div>
+	<app-integrantes-mesa [mesaId]="mesaId!" />
+	<app-integrantes-mesa [mesaId]="mesaId!" [esSector]="false" />
 </div>
 
 <div class="grid grid-cols-2 gap-4 mt-4">
