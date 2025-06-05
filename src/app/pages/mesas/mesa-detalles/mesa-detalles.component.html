@@ -34,14 +34,14 @@
 	</div>
 	<div class="flex border order-gray-200">
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Resolución</div>
-		<div class="w-full flex items-center justify-between pl-2 py-1 border-l border-gray-200 overflow-hidden">
+		<div class="w-full flex items-center justify-between px-2 py-1 border-l border-gray-200 overflow-hidden">
 			<div class="flex w-full overflow-hidden">
-				<app-boton-descargar [rutaArchivo]="mesa().resolucion" [titulo]="'Descargar Ampliación'"></app-boton-descargar>
-				<app-boton-descargar [rutaArchivo]="mesa().resolucion" [titulo]="'Descargar Ampliación'" [active]="false"></app-boton-descargar>
-				<app-boton-descargar [rutaArchivo]="mesa().resolucion" [titulo]="'Descargar Ampliación'" [active]="false"></app-boton-descargar>
-				<app-boton-descargar [rutaArchivo]="mesa().resolucion" [titulo]="'Descargar Ampliación'" [active]="false"></app-boton-descargar>
+				<app-boton-descargar [rutaArchivo]="mesa().resolucion" [titulo]="'Descargar Resolucion'"></app-boton-descargar>
+				@for(resolucion of documentosResolucion(); track $index){
+					<app-boton-descargar [rutaArchivo]="resolucion.archivo" [titulo]="'Descargar ' + resolucion.nombre" [active]="false" />
+				}
 			</div>
-			<div class="py-1 px-2 text-sky-700 cursor-pointer" (click)="modalCreateFile(2)"><i class="pi pi-plus" style="font-size: 0.85rem;"></i></div>
+			<div class="py-1 px-2 text-sky-700 cursor-pointer border border-sky-700 rounded hover:bg-sky-700 hover:text-white" nz-tooltip nzTooltipTitle="Nueva Ampliación" (click)="modalCreateFile(2)"><span nz-icon nzType="plus" nzTheme="outline"></span></div>
 		</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
@@ -61,9 +61,9 @@
 		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa().fechaVigencia}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
-		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Actualizar</div>
-		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">
-			<div class="py-1 px-2 text-sky-700 cursor-pointer" (click)="actualizarMesa()"><i class="pi pi-pencil" style="font-size: 0.85rem;"></i></div>
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Acciones</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-grey-200">
+			<div class="py-1 px-2 text-sky-700 cursor-pointer border border-sky-700 rounded hover:bg-sky-700 hover:text-white" nz-tooltip nzTooltipTitle="Actualizar mesa" (click)="actualizarMesa()"><span nz-icon nzType="edit" nzTheme="outline"></span></div>
 		</div>
 	</div>
 </div>
@@ -72,9 +72,9 @@
 	<div class="flex flex-col bg-white border border-solid border-grey-200">
 		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">Integrantes GN</h5>
-			<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
+			<!-- <div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
 				Nuevo integrante
-			</div>
+			</div> -->
 		</div>
 		<div class="w-full flex border-solid ">
 			<nz-table nzSize="small" nzShowSizeChanger [nzData]="integranteSectores()"
@@ -102,8 +102,8 @@
 							{{integrante.nombres}} {{integrante.apellidos}}  @if(integrante.telefono){ - {{integrante.telefono}} }
 						</td>
 						<td>
-							<button nz-button nzType="link" nz-tooltip="Actualizar Integrante"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
-							<button nz-button nzDanger nzType="link" nz-tooltip="Eliminar Integrante" ><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+							<!-- <button nz-button nzType="link" nz-tooltip="Actualizar Integrante"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+							<button nz-button nzDanger nzType="link" nz-tooltip="Eliminar Integrante" ><span nz-icon nzType="delete" nzTheme="outline"></span></button> -->
 						</td>
 					<tr>
 					}
@@ -115,9 +115,9 @@
 	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
 		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">Integrantes GR/GL</h5>
-			<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
+			<!-- <div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
 				Nuevo integrante
-			</div>
+			</div> -->
 		</div>
 		<div class="flex border-solid ">
 			<nz-table nzSize="small" nzShowSizeChanger [nzData]="integranteUbigeos()"
@@ -148,8 +148,8 @@
 							{{integrante.apellidos}}  @if(integrante.telefono){ - {{integrante.telefono}} }
 						</td>
 						<td>
-							<button nz-button nzType="link" nz-tooltip="Actualizar Integrante"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
-							<button nz-button nzDanger nzType="link" nz-tooltip="Eliminar Integrante" ><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+							<!-- <button nz-button nzType="link" nz-tooltip="Actualizar Integrante"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+							<button nz-button nzDanger nzType="link" nz-tooltip="Eliminar Integrante" ><span nz-icon nzType="delete" nzTheme="outline"></span></button> -->
 						</td>
 					<tr>
 					}
@@ -173,11 +173,11 @@
 			<nz-table [nzData]="mesasSesion()" class="w-full" [nzFrontPagination]="false" [nzShowPagination]="false" >
 				<thead>
 					<tr>
-						<th nzWidth="10px" nzAlign="center">Nro</th>
-						<th nzWidth="56px" nzAlign="center">Nombre archivo</th>
-						<th nzWidth="40px" nzAlign="center">Usuario</th>
-						<th nzWidth="10px" nzAlign="center">Fecha</th>
-						<th nzWidth="10px"></th>
+						<th nzAlign="center" nzWidth="64px">Nro</th>
+						<th nzAlign="center">Nombre archivo</th>
+						<th nzAlign="center">Usuario</th>
+						<th nzAlign="center">Fecha</th>
+						<th nzAlign="center" nzWidth="80px"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -188,11 +188,12 @@
 						<td nzAlign="center">{{detalle.responsable}}</td>
 						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
 						<td nzAlign="center">
-							<app-boton-descargar [rutaArchivo]="detalle.archivo"></app-boton-descargar>
-
-							<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteMesaDetalle(detalle,0)">
-								<span nz-icon nzType="delete" nzTheme="outline"></span>
-							  </button>
+							<div class="flex justify-center gap-1">
+								<app-boton-descargar [rutaArchivo]="detalle.archivo"></app-boton-descargar>
+								<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteMesaDetalle(detalle,0)">
+									<span nz-icon nzType="delete" nzTheme="outline"></span>
+								</button>
+							</div>
 						</td>
 					</tr>
 					}
@@ -205,10 +206,6 @@
 		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">AM</h5>
 			@if (mesa().estadoRegistroNombre != 'cerrado') {
-				<!-- <button nz-button nzType="default" (click)="modalCreateFile(1)">
-					<span nz-icon nzType="plus" nzTheme="outline"></span>
-					<span class="button-text">Nuevo</span>
-				</button> -->
 				<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white" (click)="modalCreateFile(1)">
 					Nueva am
 				</div>
@@ -218,11 +215,11 @@
 			<nz-table [nzData]="mesasAm()" class="w-full" [nzFrontPagination]="false" [nzShowPagination]="false" >
 				<thead>
 					<tr>
-						<th nzWidth="10px" nzAlign="center">Nro</th>
-						<th nzWidth="56px" nzAlign="center">Nombre archivo</th>
-						<th nzWidth="40px" nzAlign="center">Usuario</th>
-						<th nzWidth="10px" nzAlign="center">Fecha</th>
-						<th nzWidth="10px"></th>
+						<th nzWidth="64px" nzAlign="center">Nro</th>
+						<th nzAlign="center">Nombre archivo</th>
+						<th nzAlign="center">Usuario</th>
+						<th nzAlign="center">Fecha</th>
+						<th nzWidth="80px"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -233,11 +230,12 @@
 						<td nzAlign="center">{{detalle.responsable}}</td>
 						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
 						<td nzAlign="center">
-							<app-boton-descargar [rutaArchivo]="detalle.archivo"></app-boton-descargar>
-
-							<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteMesaDetalle(detalle,1)">
-								<span nz-icon nzType="delete" nzTheme="outline"></span>
-							  </button>
+							<div class="flex justify-center gap-1">
+								<app-boton-descargar [rutaArchivo]="detalle.archivo"></app-boton-descargar>
+								<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteMesaDetalle(detalle,1)">
+									<span nz-icon nzType="delete" nzTheme="outline"></span>
+								</button>
+							</div>
 						</td>
 					</tr>
 					}

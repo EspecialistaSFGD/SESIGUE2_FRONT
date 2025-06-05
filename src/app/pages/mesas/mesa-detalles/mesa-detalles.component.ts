@@ -3,13 +3,13 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MesaDocumentoTipoEnum } from '@core/enums';
 import { convertEnumToObject, getDateFormat } from '@core/helpers';
-import { ItemEnum, MesaDetalleResponse, MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
-import { MesaDetallesService, MesasService, MesaUbigeosService } from '@core/services';
+import { ItemEnum, MesaDocumentoResponse, MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
+import { MesaDocumentosService, MesasService, MesaUbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from '../formulario-mesa/formulario-mesa.component';
-import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formulario-mesa-detalle.component';
+import { FormularioMesaDocumentoComponent } from './formulario-mesa-documento/formulario-mesa-documento.component';
 
 @Component({
   selector: 'app-mesa-detalles',
@@ -38,8 +38,9 @@ export default class MesaDetallesComponent {
 
   integranteUbigeos = signal<MesaUbigeoResponse[]>([])
   integranteSectores = signal<MesaUbigeoResponse[]>([])
-  mesasSesion = signal<MesaDetalleResponse[]>([])
-  mesasAm = signal<MesaDetalleResponse[]>([])
+  mesasSesion = signal<MesaDocumentoResponse[]>([])
+  mesasAm = signal<MesaDocumentoResponse[]>([])
+  documentosResolucion = signal<MesaDocumentoResponse[]>([])
 
   loadingUbigeos: boolean = false
   loadingSectores: boolean = false
@@ -57,7 +58,7 @@ export default class MesaDetallesComponent {
   paginationSectores: Pagination = this.paginationUbigeos
 
   paginationSesion: Pagination = {
-    columnSort: 'fechaRegistro',
+    columnSort: 'documentoId',
     typeSort: 'DESC',
     pageSize: 5,
     currentPage: 1,
@@ -65,7 +66,15 @@ export default class MesaDetallesComponent {
   }
 
   paginationAm: Pagination = {
-    columnSort: 'fechaRegistro',
+    columnSort: 'documentoId',
+    typeSort: 'DESC',
+    pageSize: 5,
+    currentPage: 1,
+    total: 0
+  }
+
+  paginationResolucion: Pagination = {
+    columnSort: 'documentoId',
     typeSort: 'DESC',
     pageSize: 5,
     currentPage: 1,
@@ -74,7 +83,7 @@ export default class MesaDetallesComponent {
 
 
   private mesaServices = inject(MesasService)
-  private mesaDetalleServices = inject(MesaDetallesService)
+  private mesaDetalleServices = inject(MesaDocumentosService)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private modal = inject(NzModalService);
@@ -86,6 +95,7 @@ export default class MesaDetallesComponent {
     this.obtenerUbigeosService(1)
     this.obtenerDetalleMesa(0)
     this.obtenerDetalleMesa(1)
+    this.obtenerDetalleMesa(2)
   }
 
   verificarMesa(){
@@ -122,15 +132,31 @@ export default class MesaDetallesComponent {
       })
   }
 
-  obtenerDetalleMesa(tipo: number){     
-    tipo == 1 ? this.loadingDataAm = true : this.loadingDataSesion = true
-    const pagination = tipo == 1 ? this.paginationAm : this.paginationSesion
+  obtenerDetalleMesa(tipo: number){
+    const documento = this.tipos.find( item => Number(item.text) == tipo )!
+    this.loadingDataSesion = documento.text === MesaDocumentoTipoEnum.SESION ?  true : false
+    this.loadingDataAm = documento.text === MesaDocumentoTipoEnum.AM ?  true : false
+
+    // tipo == 1 ? this.loadingDataAm = true : this.loadingDataSesion = true
+    // const pagination = tipo == 1 ? this.paginationAm : this.paginationSesion
+    let pagination = this.paginationSesion
+    if(documento.text == MesaDocumentoTipoEnum.AM ){
+      pagination = this.paginationAm
+    } else if(documento.text == MesaDocumentoTipoEnum.RESOLUCION){
+      pagination = this.paginationResolucion
+    }
+
     this.mesaDetalleServices.ListarMesaDetalle(this.mesaId, tipo, pagination)
       .subscribe( resp => {
-        tipo == 1 ? this.mesasAm.set(resp.data) : this.mesasSesion.set(resp.data)
-        tipo == 1 ? this.paginationAm.total = resp.info!.total : this.paginationSesion.total = resp.info!.total
+        // tipo == 1 ? this.mesasAm.set(resp.data) : this.mesasSesion.set(resp.data)
+        // tipo == 1 ? this.paginationAm.total = resp.info!.total : this.paginationSesion.total = resp.info!.total
+        // tipo == 1 ? this.loadingDataAm = false : this.loadingDataSesion = false
 
-        tipo == 1 ? this.loadingDataAm = false : this.loadingDataSesion = false
+        switch (documento.text) {
+          case MesaDocumentoTipoEnum.SESION: this.mesasSesion.set(resp.data); this.loadingDataSesion = false; this.paginationSesion.total = resp.info!.total; break;
+          case MesaDocumentoTipoEnum.AM: this.mesasAm.set(resp.data); this.loadingDataAm = false; this.paginationAm.total; break;
+          case MesaDocumentoTipoEnum.RESOLUCION: this.documentosResolucion.set(resp.data); this.paginationResolucion.total; break;
+        }
       })
   }
 
@@ -193,9 +219,9 @@ export default class MesaDetallesComponent {
   modalCreateFile(tipo: number) {
     const documento = this.tipos.find( item => Number(item.text) == tipo )!
     const titulo = documento.text === MesaDocumentoTipoEnum.RESOLUCION ? 'AMPLIACIÓN' : documento?.value
-    this.modal.create<FormularioMesaDetalleComponent>({
+    this.modal.create<FormularioMesaDocumentoComponent>({
       nzTitle: `AGREGAR ${titulo.toUpperCase()}`,
-      nzContent: FormularioMesaDetalleComponent,
+      nzContent: FormularioMesaDocumentoComponent,
       nzData: {
       },
       nzFooter: [
@@ -208,7 +234,7 @@ export default class MesaDetallesComponent {
           label: `Guardar`,
           type: 'primary',
           onClick: (componentResponse) => {
-            const formMesaDetalle = componentResponse!.formMesaDetalle
+            const formMesaDetalle = componentResponse!.formMesaDocumento
 
             if (formMesaDetalle.invalid) {
               const invalidFields = Object.keys(formMesaDetalle.controls).filter(field => formMesaDetalle.controls[field].invalid);
@@ -239,7 +265,7 @@ export default class MesaDetallesComponent {
     });
   }
 
-  deleteMesaDetalle(detalle: MesaDetalleResponse, tipo: number) {
+  deleteMesaDetalle(detalle: MesaDocumentoResponse, tipo: number) {
     const title = tipo == 1 ? 'AM' : 'SESIÓN'
     this.modal.confirm({
       nzTitle: `Eliminar ${title}`,
@@ -247,7 +273,7 @@ export default class MesaDetallesComponent {
       nzOkText: 'Eliminar',
       nzOkDanger: true,
       nzOnOk: () => {
-        this.mesaDetalleServices.eliminarMesaDetalle(detalle.detalleId!)
+        this.mesaDetalleServices.eliminarMesaDetalle(detalle.documentoId!)
           .subscribe( resp => {
             if(resp.success){
               this.obtenerDetalleMesa(tipo)
