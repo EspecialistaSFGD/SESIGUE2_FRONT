@@ -1,3 +1,6 @@
-<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar" (click)="descargarPdf(rutaArchivo)">
+<!-- <button nz-button nzType="link" nz-tooltip [nzTooltipTitle]="titulo" (click)="descargarPdf(rutaArchivo)">
     <span nz-icon nzType="file-excel" nzTheme="outline"></span>
-</button>
+</button> -->
+<div nz-tooltip [nzTooltipTitle]="titulo" (click)="descargarPdf(rutaArchivo)" class="p-1 cursor-pointer" [ngClass]="{ 'text-sky-700' : active, 'text-slate-400' : !active }">
+    <i class="pi pi-file-pdf"></i>
+</div>
