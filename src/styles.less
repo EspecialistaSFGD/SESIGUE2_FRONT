@@ -192,6 +192,9 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
         }
     }
 }
+.ant-table-wrapper{
+    @apply w-full;
+}
 
 .radio-form-control {
     &.ant-radio-group {
@@ -213,6 +216,31 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
                     @apply mt-1 text-sm;
                 }
             }
+        }
+    }
+}
+
+.p-stepper{
+    .p-stepper-nav{
+        @apply m-0 p-0 overflow-hidden;
+        .p-stepper-header{
+            .p-stepper-action{
+                .p-stepper-number{
+                    @apply w-2 h-6 text-center text-white bg-[@primary-color] rounded-full text-sm;
+                }
+                .p-stepper-title{
+                    @apply text-sm;
+                }
+            }
+        }
+    }
+    .p-stepper-content{
+         @apply text-sm;
+    }
+    .p-button{
+        @apply border border-green-700 px-3 py-2 text-green-700 hover:bg-green-700 hover:text-white;
+        .p-button-label{
+            @apply font-normal text-sm;
         }
     }
 }

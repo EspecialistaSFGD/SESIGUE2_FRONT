@@ -10,8 +10,6 @@ export interface Pagination {
   typeSort?: string,
   pageSize?: number,
   currentPage?: number,
-  // piPageSize?: number,
-  // piCurrentPage?: number,
   codigo?: string,
   fechaInicio?: string,
   fechaFin?: string,
@@ -40,6 +38,15 @@ export interface Pagination {
   intervencionTareaId?: string,
   faseId?: string,
   etapaId?: string
+  alcaldeId?: string,
+  asistenteId?: string,
+  dni?: string,
+  nombres?: string,
+  apellidos?: string,
+  telefono?: string,
+  sexo?: string,
+  nombre?: string,
+  esSector?: string
 }
 
 export interface PaginationPanel {

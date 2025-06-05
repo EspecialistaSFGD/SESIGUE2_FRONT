@@ -1,125 +1,376 @@
-<form [formGroup]="formMesa" class="flex flex-col gap-3" autocomplete="off">
-	<div class="flex flex-col">
-		<label for="nombre">Nombre de la Mesa</label>
-		<input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre aquí" formControlName="nombre">
-		<div class="w-full text-danger" *ngIf="alertMessageError('nombre')">{{msgErrorControl('nombre','nombre')}}</div>
-	</div>
+<form [formGroup]="formMesa" autocomplete="off">
+	@if (create) {
 
-	<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-		<div class="flex flex-col">
-			<label for="sector">Sector</label>
-			<p-dropdown 
-				[options]="sectores()"
-				formControlName="sectorId"
-				optionLabel="nombre"
-				optionValue="grupoID"
-				[showClear]="true" 
-				placeholder="Seleccionar sector"
-				(onChange)="changeSector()"/>
-			<div class="text-danger" *ngIf="alertMessageError('sectorId')">{{msgErrorControl('sectorId','sector')}}</div>
-		</div>
-
-		<div class="flex flex-col col-span-2">
-			<label for="sector">Secretaría Técnica</label>
-			<p-dropdown 
-				[options]="entidadesSector()"
-				formControlName="secretariaTecnicaId"
-				optionLabel="nombre"
-				optionValue="entidadId"
-				[showClear]="true" 
-				placeholder="Seleccionar secretaría"/>
-			<div class="text-danger" *ngIf="alertMessageError('secretariaTecnicaId')">{{msgErrorControl('secretariaTecnicaId','secretaría')}}</div>
-		</div>
-	</div>
-
-	<div class="max-h-max border border-solid border-grey-800 dark:border-gray-600">
-		<div class="flex justify-between items-center bg-gray-100 dark:bg-gray-900 px-4 py-2">
-		  <h5 class=" text-sm">Integrantes</h5>
-		  <div
-			class="border border-sky-700 bg-transparent cursor-pointer text-sky-700 px-3 py-1 rounded hover:bg-sky-700 hover:text-white"
-			(click)="addItemFormArray($event)">
-			<span nz-icon nzType="plus" nzTheme="outline"></span>
-			Nuevo ubigeo
-		  </div>
-		</div>
-		<div class="flex flex-col gap-4 px-4" formArrayName="ubigeos" [ngClass]="{ 'py-4' : ubigeos.length }">
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-4" *ngFor="let ubigeo of ubigeos.controls; let i = index" [formGroupName]="i">
-				<div class="w-full flex flex-col">
-					<label for="nombre">Departamento</label>
+		<p-stepper [linear]="true">
+			<p-stepperPanel header="Datos generales">
+				<ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+					<ng-container *ngTemplateOutlet="generales"></ng-container>
+					<!-- <div class="flex flex-col gap-3">
+						<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+							<div class="flex flex-col col-span-2">
+								<label for="nombre">Nombre de la Mesa</label>
+								<input type="text" class="form-control" id="nombre" placeholder="Nombre aquí" formControlName="nombre">
+								<div class="w-full text-danger" *ngIf="alertMessageError('nombre')">{{msgErrorControl('nombre','Nombre')}}</div>
+							</div>
+			
+							<div class="flex flex-col">
+								<label for="abreviatura">Abreviatura</label>
+								<input type="text" class="form-control" id="abreviatura" placeholder="abreviatura aquí: MT_" formControlName="abreviatura" (keyup)="setAbreviatura()">
+								<div class="w-full text-danger" *ngIf="alertMessageError('abreviatura')">{{msgErrorControl('abreviatura','Abreviatura')}}</div>
+							</div>
+						</div>
+		
+						<div class="grid grid-cols-1 sm:grid-cols-6 gap-4">
+							<div class="flex flex-col">
+								<label for="sector">Sector</label>
+								<p-dropdown 
+									[options]="listaSectores()"
+									formControlName="sectorId"
+									optionLabel="nombre"
+									optionValue="grupoID"
+									[showClear]="true" 
+									placeholder="Seleccionar sector"
+									(onChange)="changeSector()"/>
+								<div class="text-danger" *ngIf="alertMessageError('sectorId')">{{msgErrorControl('sectorId','Sector')}}</div>
+							</div>
+		
+							<div class="flex flex-col col-span-2">
+								<label for="sector">Secretaría Técnica</label>
+								<p-dropdown 
+									[options]="entidadesSector()"
+									formControlName="secretariaTecnicaId"
+									optionLabel="nombre"
+									optionValue="entidadId"
+									[showClear]="true" 
+									placeholder="Seleccionar secretaría"/>
+								<div class="text-danger" *ngIf="alertMessageError('secretariaTecnicaId')">{{msgErrorControl('secretariaTecnicaId','Secretaría')}}</div>
+							</div>
+		
+							<div class="flex flex-col">
+								<label for="nombre">Fecha de creación</label>
+								<p-calendar 
+								formControlName="fechaCreacion"
+								[iconDisplay]="'input'" 
+								[showIcon]="true"
+								[showButtonBar]="true"
+								dateFormat="dd/mm/yy"
+								inputId="icondisplay" 
+								(onSelect)="validateDate('creacion')"/>
+								<div class="w-full text-danger" *ngIf="alertMessageError('fechaCreacion')">{{msgErrorControl('fechaCreacion','Fecha de creación')}}</div>
+							</div>
+		
+							<div class="flex flex-col">
+								<label for="nombre">Fecha de vigencia</label>
+								<p-calendar 
+								formControlName="fechaVigencia"
+								[iconDisplay]="'input'" 
+								[showIcon]="true"
+								[showButtonBar]="true"
+								dateFormat="dd/mm/yy"
+								inputId="icondisplay"
+								(onSelect)="validateDate('vigencia')"/>
+								<div class="w-full text-danger" *ngIf="alertMessageError('fechaVigencia')">{{msgErrorControl('fechaVigencia','Fecha de vigencia')}}</div>
+							</div>
+		
+							<div class="flex flex-col">
+								<label for="resolucion">Resolución</label>
+								<nz-upload [(nzFileList)]="filesList" [nzBeforeUpload]="beforeUploadMeet">
+									<div class="form-control-file">
+										<span nz-icon nzType="upload"></span>
+										Selecionar archivo
+									</div>
+								</nz-upload>
+								<div class="w-full text-danger" *ngIf="alertMessageError('resolucion')">{{msgErrorControl('resolucion','Resolución')}}</div>
+							</div>
+						</div>
+					</div> -->
+					<div class="flex pt-4 justify-end">
+						<p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right" (onClick)="generalValidate() ? nextCallback.emit() : null" />
+					</div>
+				</ng-template>
+			</p-stepperPanel>
+		
+			<p-stepperPanel header="Sectores">
+				<ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
+					<div class="">
+						<div class="flex justify-between items-center bg-gray-100 dark:bg-gray-900 px-4 py-2">
+							<h5 class=" text-sm">Sectores</h5>
+							<div
+								class="border border-sky-700 bg-transparent cursor-pointer text-sky-700 px-3 py-2 rounded text-sm hover:bg-sky-700 hover:text-white"
+								(click)="addItemFormArray('sectores',$event)">
+								<span nz-icon nzType="plus" nzTheme="outline"></span>
+								Nuevo sector
+							</div>
+						</div>
+						<div class="flex flex-col gap-3" formArrayName="sectores" [ngClass]="{ 'pt-2 pb-3' : sectores.length }">
+							<div class="flex gap-3" *ngFor="let sector of sectores.controls; let i = index" [formGroupName]="i">
+								<div class="w-full grid grid-cols-1 md:grid-cols-6 gap-3">
+									<div class="w-full flex flex-col">
+										<label for="sector{{i}}">Sector</label>
+										<p-dropdown 
+											[options]="listaSectores()"
+											formControlName="sectorId"
+											optionLabel="nombre"
+											optionValue="grupoID"
+											[showClear]="true" 
+											placeholder="Seleccionar sector"
+											(onChange)="changeEntidadSector(i)"/>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('sectores',i,'sectorId')">{{msgErrorControlTwoNivel('sectores',i,'sectorId','sector')}}</div>
+									</div>
+			
+									<div class="w-full flex flex-col col-span-2">
+										<label for="entidadId">Unidad Organica</label>
+										<p-dropdown 
+										[options]="listaEntidadesSector()[i]"
+										formControlName="entidadId"
+										optionLabel="nombre"
+										optionValue="entidadId"
+										[showClear]="true" 
+										placeholder="Seleccionar unidad organica"/>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('sectores',i,'entidadId')">{{msgErrorControlTwoNivel('sectores',i,'entidadId','unidad')}}</div>
+									</div>
+			
+									<div class="flex flex-col">
+										<label for="dni">DNI titular</label>
+										<input type="text" class="form-control" id="dni" placeholder="Ingrese el documento aquí" formControlName="dni" (keyup)="validarDNI(i,'sectores')">
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('sectores',i,'dni')">{{msgErrorControlTwoNivel('sectores',i,'dni','DNI')}}</div>
+									</div>
+			
+									<div class="flex flex-col">
+										<label for="nombre">Nombre titular</label>
+										<input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre aquí" formControlName="nombre">
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('sectores',i,'nombre')">{{msgErrorControlTwoNivel('sectores',i,'nombre','Nombre')}}</div>
+									</div>
+			
+									<div class="flex flex-col">
+										<label for="telefono">Teléfono titular</label>
+										<input type="text" class="form-control" id="telefono" placeholder="Ingrese el telefono aquí" formControlName="telefono">
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('sectores',i,'telefono')">{{msgErrorControlTwoNivel('sectores',i,'telefono','Teléfono')}}</div>
+									</div>
+								</div>
+								<div class="flex flex-col">
+									<label class="text-center text-transparent"> Eliminar </label>
+									<div class="flex mt-1 justify-center">
+										<i class="text-3xl pi pi-minus-circle" [ngClass]="{'opacity-20' : i == 0, 'cursor-pointer' : i > 0}" (click)=" i > 0 ? removeItemFormArray(i,'sectores') : '' "></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="flex pt-4 justify-between">
+						<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+						<p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right" (onClick)="sectorsValidate() ? nextCallback.emit() : null" />
+					</div>
+				</ng-template>
+			</p-stepperPanel>
+			
+			<p-stepperPanel header="Gobiernos">
+				<ng-template pTemplate="content" let-prevCallback="prevCallback" let-index="index">
+					<div class="">
+						<div class="flex justify-between items-center bg-gray-100 dark:bg-gray-900 px-4 py-2">
+							<h5 class=" text-sm">Gobierno Regional / Local</h5>
+							<div
+								class="border border-sky-700 bg-transparent cursor-pointer text-sky-700 px-3 py-2 rounded text-sm hover:bg-sky-700 hover:text-white"
+								(click)="addItemFormArray('ubigeos',$event)">
+								<span nz-icon nzType="plus" nzTheme="outline"></span>
+								Nuevo gobierno
+							</div>
+						</div>
+						<div class="flex flex-col gap-3" formArrayName="ubigeos" [ngClass]="{ 'pt-2 pb-3' : ubigeos.length }">
+							<div class="flex gap-3" *ngFor="let ubigeo of ubigeos.controls; let i = index" [formGroupName]="i">
+								<div class="w-full grid grid-cols-1 md:grid-cols-3 gap-3">
+									<div class="grid grid-cols-1 md:grid-cols-4 gap-3 col-span-2">
+										<div class="flex flex-col">
+											<label for="nombre">Departamento</label>
+											<p-dropdown 
+												[options]="departamentos()"
+												formControlName="departamento"
+												optionLabel="departamento"
+												optionValue="departamentoId"
+												[showClear]="true" 
+												placeholder="Seleccionar departamento"
+												(onChange)="changeDepartamento(i)"/>
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'departamento')">{{msgErrorControlTwoNivel('ubigeos',i,'departamento','Departamento')}}</div>
+										</div>
+								
+										<div class="flex flex-col">
+											<label for="nombre">Provincia</label>
+											<p-dropdown 
+											[options]="provincias()[i]"
+											formControlName="provincia"
+											optionLabel="provincia"
+											optionValue="provinciaId"
+											[showClear]="true" 
+											placeholder="Seleccionar provincia"
+											(onChange)="changeProvincia(i)"/>
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'provincia')">{{msgErrorControlTwoNivel('ubigeos',i,'provincia','Provincia')}}</div>
+										</div>
+								
+										<div class="flex flex-col">
+											<label for="nombre">Distrito</label>
+											<p-dropdown 
+											[options]="distritos()[i]"
+											formControlName="distrito"
+											optionLabel="distrito"
+											optionValue="distritoId"
+											[showClear]="true" 
+											placeholder="Seleccionar distrito"
+											(onChange)="changeDistrito(i)"/>
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'distrito')">{{msgErrorControlTwoNivel('ubigeos',i,'distrito','Distrito')}}</div>
+										</div>
+			
+										<div class="flex flex-col">
+											<label for="entidadSlug">
+												Entidad
+												@if (obtenerControlValue(i,'ubigeos','entidadId')) {
+													<span nz-icon nzType="info-circle" [nz-tooltip]="obtenerControlValue(i,'ubigeos','entidad')"></span>
+												}
+											</label>
+											<input type="text" class="form-control" id="entidadSlug" formControlName="entidadSlug">
+										</div>
+									</div>
+									
+									<div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+										<div class="flex gap-3 col-span-2">
+											<div class="flex flex-col">
+												<label class="mb-1">Autoridad</label>
+												<p-inputSwitch formControlName="autoridad" (onChange)="validarAutoridad(i)"/>
+												<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'autoridad')">{{msgErrorControlTwoNivel('ubigeos',i,'autoridad','Autoridad')}}</div>
+											</div>
+				
+											<div class="w-full flex flex-col">
+												<label for="dni">DNI</label>
+												<div class="relative">
+													<input type="text" class="form-control" id="dni" placeholder="DNI aquí" formControlName="dni" (keyup)="validarDNI(i,'ubigeos')">
+													<app-progress-spiner [loading]="obtenerControlValue(i,'ubigeos','loading')" />
+												</div>
+												<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'dni')">{{msgErrorControlTwoNivel('ubigeos',i,'dni','DNI')}}</div>
+											</div>
+										</div>
+						
+										<div class="w-full flex flex-col col-span-2">
+											<label for="nombre">
+												Nombre
+												@if (obtenerControlValue(i,'ubigeos','nombre')) {
+													<span nz-icon nzType="info-circle" nz-tooltip="{{obtenerControlValue(i,'ubigeos','cargo')}} {{obtenerControlValue(i,'ubigeos','nombre')}}"></span>
+												}
+											</label>
+											<div class="relative">
+												<input type="text" class="form-control" id="nombre" placeholder="Nombre aquí" formControlName="nombre">
+												<app-progress-spiner [loading]="obtenerControlValue(i,'ubigeos','loading')" />
+											</div>
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'nombre')">{{msgErrorControlTwoNivel('ubigeos',i,'nombre','Nombre')}}</div>
+										</div>
+						
+										<div class="w-full flex flex-col">
+											<label for="telefono">Teléfono</label>
+											<div class="relative">
+												<input type="text" class="form-control" id="telefono" placeholder="Telefono aquí" formControlName="telefono">
+												<app-progress-spiner [loading]="obtenerControlValue(i,'ubigeos','loading')" />
+											</div>
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'telefono')">{{msgErrorControlTwoNivel('ubigeos',i,'telefono','Teléfono')}}</div>
+										</div>
+									</div>
+								</div>
+								<div class="flex flex-col">
+									<label class="text-center text-transparent"> Eliminar </label>
+									<div class="flex justify-center">
+										<i class="text-3xl pi pi-minus-circle" [ngClass]="{'opacity-20' : i == 0, 'cursor-pointer' : i > 0}" (click)=" i > 0 ? removeItemFormArray(i,'ubigeos') : '' "></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="flex pt-4 justify-start">
+						<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+					</div>
+				</ng-template>
+			</p-stepperPanel>
+		</p-stepper>
+	} @else {
+		<ng-container *ngTemplateOutlet="generales"></ng-container>
+	}
+		
+	<ng-template #generales>
+		<div class="flex flex-col gap-3">
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+				<div class="flex flex-col col-span-2">
+					<label for="nombre">Nombre de la Mesa</label>
+					<input type="text" class="form-control" id="nombre" placeholder="Nombre aquí" formControlName="nombre">
+					<div class="w-full text-danger" *ngIf="alertMessageError('nombre')">{{msgErrorControl('nombre','Nombre')}}</div>
+				</div>
+	
+				<div class="flex flex-col">
+					<label for="abreviatura">Abreviatura</label>
+					<input type="text" class="form-control" id="abreviatura" placeholder="abreviatura aquí: MT_" formControlName="abreviatura" (keyup)="setAbreviatura()">
+					<div class="w-full text-danger" *ngIf="alertMessageError('abreviatura')">{{msgErrorControl('abreviatura','Abreviatura')}}</div>
+				</div>
+			</div>
+	
+			<div class="grid grid-cols-1 sm:grid-cols-6 gap-4">
+				<div class="flex flex-col">
+					<label for="sector">Sector</label>
 					<p-dropdown 
-						[options]="departamentos()"
-						formControlName="departamento"
-						optionLabel="departamento"
-						optionValue="departamentoId"
+						[options]="listaSectores()"
+						formControlName="sectorId"
+						optionLabel="nombre"
+						optionValue="grupoID"
 						[showClear]="true" 
-						placeholder="Seleccionar departamento"
-						(onChange)="changeDepartamento(i)"/>
-					<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'departamento')">{{msgErrorControlTwoNivel('ubigeos',i,'departamento','Departamento')}}</div>
+						placeholder="Seleccionar sector"
+						(onChange)="changeSector()"/>
+					<div class="text-danger" *ngIf="alertMessageError('sectorId')">{{msgErrorControl('sectorId','Sector')}}</div>
 				</div>
-		
-				<div class="w-full flex flex-col">
-					<label for="nombre">Provincia</label>
+	
+				<div class="flex flex-col col-span-2">
+					<label for="sector">Secretaría Técnica</label>
 					<p-dropdown 
-					[options]="provincias()[i]"
-					formControlName="provincia"
-					optionLabel="provincia"
-					optionValue="provinciaId"
-					[showClear]="true" 
-					placeholder="Seleccionar provincia"
-					(onChange)="changeProvincia(i)"/>
-					<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'provincia')">{{msgErrorControlTwoNivel('ubigeos',i,'provincia','Provincia')}}</div>
+						[options]="entidadesSector()"
+						formControlName="secretariaTecnicaId"
+						optionLabel="nombre"
+						optionValue="entidadId"
+						[showClear]="true" 
+						placeholder="Seleccionar secretaría"/>
+					<div class="text-danger" *ngIf="alertMessageError('secretariaTecnicaId')">{{msgErrorControl('secretariaTecnicaId','Secretaría')}}</div>
 				</div>
-		
-				<div class="w-full flex flex-col">
-					<label for="nombre">Distrito</label>
-					<p-dropdown 
-					[options]="distritos()[i]"
-					formControlName="distrito"
-					optionLabel="distrito"
-					optionValue="distritoId"
-					[showClear]="true" 
-					placeholder="Seleccionar distrito"
-					(onChange)="changeDistrito(i)"/>
-					<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'distrito')">{{msgErrorControlTwoNivel('ubigeos',i,'distrito','Distrito')}}</div>
+	
+				<div class="flex flex-col">
+					<label for="nombre">Fecha de creación</label>
+					<p-calendar 
+					formControlName="fechaCreacion"
+					[iconDisplay]="'input'" 
+					[showIcon]="true"
+					[showButtonBar]="true"
+					dateFormat="dd/mm/yy"
+					inputId="icondisplay" 
+					(onSelect)="validateDate('creacion')"/>
+					<div class="w-full text-danger" *ngIf="alertMessageError('fechaCreacion')">{{msgErrorControl('fechaCreacion','Fecha de creación')}}</div>
+				</div>
+	
+				<div class="flex flex-col">
+					<label for="nombre">Fecha de vigencia</label>
+					<p-calendar 
+					formControlName="fechaVigencia"
+					[iconDisplay]="'input'" 
+					[showIcon]="true"
+					[showButtonBar]="true"
+					dateFormat="dd/mm/yy"
+					inputId="icondisplay"
+					(onSelect)="validateDate('vigencia')"/>
+					<div class="w-full text-danger" *ngIf="alertMessageError('fechaVigencia')">{{msgErrorControl('fechaVigencia','Fecha de vigencia')}}</div>
+				</div>
+	
+				<div class="flex flex-col">
+					<label for="resolucion">Resolución</label>
+					<nz-upload [(nzFileList)]="filesList" [nzBeforeUpload]="beforeUploadMeet">
+						<div class="form-control-file">
+							<span nz-icon nzType="upload"></span>
+							Selecionar archivo
+						</div>
+					</nz-upload>
+					<div class="w-full text-danger" *ngIf="alertMessageError('resolucion')">{{msgErrorControl('resolucion','Resolución')}}</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</ng-template>
 
-	<div class="flex gap-4">
-		<div class="w-full flex flex-col">
-			<label for="nombre">Fecha de creación</label>
-			<p-calendar 
-			formControlName="fechaCreacion"
-			[iconDisplay]="'input'" 
-			[showIcon]="true"
-			[showButtonBar]="true"
-			dateFormat="dd/mm/yy"
-			inputId="icondisplay" />
-			<div class="w-full text-danger" *ngIf="alertMessageError('fechaCreacion')">{{msgErrorControl('fechaCreacion','fecha de creación')}}</div>
-		</div>
-
-		<div class="w-full flex flex-col">
-			<label for="nombre">Fecha de vigencia</label>
-			<p-calendar 
-			formControlName="fechaVigencia"
-			[iconDisplay]="'input'" 
-			[showIcon]="true"
-			[showButtonBar]="true"
-			dateFormat="dd/mm/yy"
-			inputId="icondisplay" />
-			<div class="w-full text-danger" *ngIf="alertMessageError('fechaVigencia')">{{msgErrorControl('fechaVigencia','fecha de vigencia')}}</div>
-		</div>
-
-		<div class="w-full flex flex-col">
-			<label for="resolucion">Resolución</label>
-			<nz-upload [(nzFileList)]="filesList" [nzBeforeUpload]="beforeUploadMeet">
-				<div class="form-control-file">
-					<span nz-icon nzType="upload"></span>
-					Selecionar archivo
-				</div>
-			</nz-upload>
-			<div class="w-full text-danger" *ngIf="alertMessageError('resolucion')">{{msgErrorControl('resolucion','resolución')}}</div>
-		</div>
-	</div>
 </form>

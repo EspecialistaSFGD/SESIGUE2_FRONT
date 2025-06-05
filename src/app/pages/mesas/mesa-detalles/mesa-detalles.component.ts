@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { getDateFormat } from '@core/helpers';
+import { convertDateStringToDate, getDateFormat } from '@core/helpers';
 import { MesaDetalleResponse, MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
 import { MesaDetallesService, MesasService, MesaUbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formulario-mesa-detalle.component';
+import { FormularioMesaComponent } from '../formulario-mesa/formulario-mesa.component';
 
 @Component({
   selector: 'app-mesa-detalles',
@@ -22,20 +23,24 @@ export default class MesaDetallesComponent {
   mesaId!: number
   mesa = signal<MesaResponse>({
     nombre: '',
+    abreviatura: '',
     sectorId: '',
     secretariaTecnicaId: '',
     fechaCreacion: '',
     fechaVigencia: '',
     resolucion: '',
     estadoRegistroNombre: '',
-    estadoRegistro: ''
+    estadoRegistro: '',
+    usuarioId: ''
   })
 
-  ubigeos = signal<MesaUbigeoResponse[]>([])
+  integranteUbigeos = signal<MesaUbigeoResponse[]>([])
+  integranteSectores = signal<MesaUbigeoResponse[]>([])
   mesasSesion = signal<MesaDetalleResponse[]>([])
   mesasAm = signal<MesaDetalleResponse[]>([])
 
   loadingUbigeos: boolean = false
+  loadingSectores: boolean = false
   loadingDataSesion: boolean = false
   loadingDataAm: boolean = false
 
@@ -46,6 +51,8 @@ export default class MesaDetallesComponent {
     currentPage: 1,
     total: 0
   }
+
+  paginationSectores: Pagination = this.paginationUbigeos
 
   paginationSesion: Pagination = {
     columnSort: 'fechaRegistro',
@@ -73,7 +80,8 @@ export default class MesaDetallesComponent {
 
   ngOnInit(): void {
     this.verificarMesa()
-    this.obtenerUbigeosService()
+    this.obtenerUbigeosService(0)
+    this.obtenerUbigeosService(1)
     this.obtenerDetalleMesa(0)
     this.obtenerDetalleMesa(1)
   }
@@ -86,8 +94,12 @@ export default class MesaDetallesComponent {
       return;
     }
 
-    this.mesaId = mesaIdNumber    
-    this.mesaServices.obtenerMesa(mesaId)
+    this.mesaId = mesaIdNumber
+    this.obtenerMesaService()
+  }
+
+  obtenerMesaService(){    
+    this.mesaServices.obtenerMesa(this.mesaId.toString())
       .subscribe( resp => {
         if(resp.success){
           this.mesa.set(resp.data)
@@ -97,13 +109,14 @@ export default class MesaDetallesComponent {
       })
   }
 
-  obtenerUbigeosService(){
-    this.loadingUbigeos = true
+  obtenerUbigeosService(esSector: number){
+    esSector == 1 ? this.loadingSectores = true : this.loadingUbigeos = true
+    this.paginationUbigeos.esSector = esSector.toString()
     this.mesaUbigeosService.ListarMesaUbigeos(this.mesaId, this.paginationUbigeos)
-      .subscribe( resp => {
-        this.loadingUbigeos = false
-        this.ubigeos.set(resp.data)
-        this.paginationUbigeos.total = resp.info!.total
+      .subscribe( resp => {        
+        esSector == 1 ? this.loadingSectores = false : this.loadingUbigeos = false
+        esSector == 1 ? this.integranteSectores.set(resp.data) : this.integranteUbigeos.set(resp.data)
+        esSector == 1 ? this.paginationSectores.total = resp.info?.total : this.paginationUbigeos.total = resp.info!.total
       })
   }
 
@@ -123,6 +136,56 @@ export default class MesaDetallesComponent {
     const dataFile = archivo.split('/')
     const fileName = dataFile[dataFile.length - 1]
     return fileName
+  }
+
+  actualizarMesa(){
+    this.modal.create<FormularioMesaComponent>({
+      nzTitle: `Actualizar Mesa`,
+      nzWidth: '75%',
+      nzContent: FormularioMesaComponent,
+      nzData: {
+        create: false,
+        mesa: this.mesa(),
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Actualizar Mesa',
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formMesa = componentResponse!.formMesa
+           
+            if (formMesa.invalid) {
+              const invalidFields = Object.keys(formMesa.controls).filter(field => formMesa.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formMesa.markAllAsTouched();
+            }
+
+            const mesaId = this.mesa().mesaId
+            const fechaCreacion = getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
+            const fechaVigencia = getDateFormat(formMesa.get('fechaVigencia')?.value, 'month')
+            const usuarioId =localStorage.getItem('codigoUsuario')
+
+            const bodyMesa: MesaResponse = {...formMesa.getRawValue() , fechaCreacion, fechaVigencia, usuarioId, mesaId}
+            this.actualizarMesaService(bodyMesa)
+          }
+        }
+      ]
+    })
+  }
+
+  actualizarMesaService(mesa: MesaResponse){
+    this.mesaServices.actualizarMesa(mesa)
+      .subscribe( resp => {
+        if(resp.success == true){
+          this.obtenerMesaService()
+          this.modal.closeAll();
+        }
+      })
   }
 
   modalCreateFile(tipo: number) {

@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, Renderer2, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { generateBase64ToArrayBuffer } from '@core/helpers';
 import { AtencionCargaMasivaResponse, Pagination } from '@core/interfaces';
 import { CargaMasivaResponse } from '@core/interfaces/carga-masiva.interface';
 import { PipesModule } from '@core/pipes/pipes.module';
-import { CargasMasivasService } from '@core/services';
+import { CargasMasivasService, DescargarService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import saveAs from 'file-saver';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-carga-masiva-detalles',
@@ -50,6 +51,7 @@ export default class CargaMasivaDetallesComponent {
   private activatedRoute = inject(ActivatedRoute)
   private cargaMasivaService = inject(CargasMasivasService)
   private renderer = inject(Renderer2)
+  private descargarService = inject(DescargarService)
 
   constructor() {
     this.cargaMasivaId = this.activatedRoute.snapshot.paramMap.get('id')!;
@@ -98,32 +100,40 @@ export default class CargaMasivaDetallesComponent {
       })
   }
 
-  async downloadFile(url: string, fileName:string): Promise<void> {
+  downloadFile(archivo: string ) {
+    this.descargarService.descargarPdf(archivo)
+      .subscribe((resp) => {        
+        if (resp.success == true) {
+          var binary_string = generateBase64ToArrayBuffer(resp.data.binario);
+          var blob = new Blob([binary_string], { type: `application/${resp.data.tipo}` });
+          saveAs(blob, resp.data.nombre);
+        }
+      })
 
-    try {
-      const response = await firstValueFrom(
-        this.http.get(url, { responseType: 'blob' })
-      );
+    // try {
+    //   const response = await firstValueFrom(
+    //     this.http.get(url, { responseType: 'blob' })
+    //   );
 
-      const blob = new Blob([response], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });   
+    //   const blob = new Blob([response], {
+    //     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    //   });   
 
-      const link = this.renderer.createElement('a');
-      const objectURL = URL.createObjectURL(blob);
+    //   const link = this.renderer.createElement('a');
+    //   const objectURL = URL.createObjectURL(blob);
 
-      this.renderer.setAttribute(link, 'href', objectURL);
-      this.renderer.setAttribute(link, 'download', fileName);
+    //   this.renderer.setAttribute(link, 'href', objectURL);
+    //   this.renderer.setAttribute(link, 'download', fileName);
 
-      this.renderer.appendChild(document.body, link);
-      link.click();
-      this.renderer.removeChild(document.body, link);
+    //   this.renderer.appendChild(document.body, link);
+    //   link.click();
+    //   this.renderer.removeChild(document.body, link);
 
-      // Liberar la URL creada
-      URL.revokeObjectURL(objectURL);
-    } catch (error) {
-      console.error('Error al descargar el archivo:', error);
-    }
+    //   // Liberar la URL creada
+    //   URL.revokeObjectURL(objectURL);
+    // } catch (error) {
+    //   console.error('Error al descargar el archivo:', error);
+    // }
   }
 
   replaceToNewLine(text:string): string{

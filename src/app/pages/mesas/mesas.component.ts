@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
-import { MesaResponse, Pagination } from '@core/interfaces';
+import { MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
 import { DescargarService, MesaUbigeosService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -29,12 +29,25 @@ export default class MesasComponent {
 
   pagination: Pagination = {
     code: 0,
-    columnSort: 'nombre',
+    columnSort: 'mesaId',
     typeSort: 'DESC',
     pageSize: 10,
     currentPage: 1,
     total: 0
   }
+
+  mesa = signal<MesaResponse>({
+    nombre: '',
+    abreviatura: '',
+    sectorId: '',
+    secretariaTecnicaId: '',
+    fechaCreacion: '',
+    fechaVigencia: '',
+    resolucion: '',
+    estadoRegistroNombre: '',
+    estadoRegistro: '',
+    usuarioId: ''
+  })
 
   mesas = signal<MesaResponse[]>([])
 
@@ -80,13 +93,13 @@ export default class MesasComponent {
 
   mesasFormModal(create: boolean): void{
     const action = `${create ? 'Crear' : 'Actualizar' } mesa`
-    const modal = this.modal.create<FormularioMesaComponent>({
+    this.modal.create<FormularioMesaComponent>({
       nzTitle: `${action.toUpperCase()}`,
-      nzWidth: '50%',
+      nzWidth: '75%',
       nzContent: FormularioMesaComponent,
       nzData: {
         create,
-        authUser: this.authStore.usuarioAuth()
+        mesa: this.mesa
       },
       nzFooter: [
         {
@@ -99,7 +112,7 @@ export default class MesasComponent {
           type: 'primary',
           onClick: (componentResponse) => {
             const formMesa = componentResponse!.formMesa
-            
+           
             if (formMesa.invalid) {
               const invalidFields = Object.keys(formMesa.controls).filter(field => formMesa.controls[field].invalid);
               console.error('Invalid fields:', invalidFields);
@@ -108,29 +121,40 @@ export default class MesasComponent {
 
             const fechaCreacion = getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
             const fechaVigencia = getDateFormat(formMesa.get('fechaVigencia')?.value, 'month')
+            const usuarioId =localStorage.getItem('codigoUsuario')
 
-            const bodyMesa = {...formMesa.value, fechaCreacion, fechaVigencia}
+            const bodyMesa: MesaResponse = {...formMesa.getRawValue() , fechaCreacion, fechaVigencia, usuarioId}
 
             this.loadingData = true
-            this.mesasService.registarMesa(bodyMesa)
-              .subscribe( resp => {
-                this.loadingData = false
-                if(resp.success == true){
-                  const mesaId = resp.data
-                  const ubigeos = bodyMesa.ubigeos
-                  for (let ubigeo of ubigeos) {
-                    const bodyUbigeo = { mesaId, ubigeo: ubigeo.ubigeo }
-                    this.mesaUbigeosService.registarMesaUbigeo(bodyUbigeo)
-                      .subscribe( resp => {
-                        this.obtenerMesasService()
-                        this.modal.closeAll()
-                      })
-                  }
-                }
-              })            
+            if(create){
+              this.registrarMesaService(bodyMesa)
+            }
+                        
           }
         }
       ]
     })
+  }
+
+  registrarMesaService(mesa: MesaResponse) {
+    this.mesasService.registarMesa(mesa)
+      .subscribe( resp => {
+        this.loadingData = false
+        if(resp.success == true){
+          const mesaId = resp.data
+          const ubigeos: MesaUbigeoResponse[] = mesa.ubigeos!
+          const sectores: MesaUbigeoResponse[] = mesa.sectores!          
+          const integrantes: MesaUbigeoResponse[] = [ ...ubigeos, ...sectores ];
+
+            for (let integrante of integrantes) {
+              integrante.alcaldeAsistenteId = `${integrante.alcaldeAsistenteId}`
+              this.mesaUbigeosService.registarMesaUbigeo(mesaId, integrante)
+                .subscribe(resp => {
+                this.obtenerMesasService();
+                this.modal.closeAll();
+                });
+            }
+        }
+      })
   }
 }

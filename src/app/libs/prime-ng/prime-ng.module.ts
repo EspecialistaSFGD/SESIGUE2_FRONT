@@ -6,6 +6,9 @@ import { TooltipModule } from 'primeng/tooltip';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { StepperModule } from 'primeng/stepper';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 @NgModule({
@@ -17,7 +20,10 @@ import { InputNumberModule } from 'primeng/inputnumber';
     TooltipModule,
     MultiSelectModule,
     RadioButtonModule,
-    InputNumberModule
+    InputNumberModule,
+    StepperModule,
+    InputSwitchModule,
+    ProgressSpinnerModule
   ],
   exports: [
     DropdownModule,
@@ -26,7 +32,10 @@ import { InputNumberModule } from 'primeng/inputnumber';
     TooltipModule,
     MultiSelectModule,
     RadioButtonModule,
-    InputNumberModule
+    InputNumberModule,
+    StepperModule,
+    InputSwitchModule,
+    ProgressSpinnerModule
   ]
 })
 export class PrimeNgModule { }

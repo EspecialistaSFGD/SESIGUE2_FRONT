@@ -25,13 +25,15 @@ export default class AgendasMesaComponent {
 
   mesa = signal<MesaResponse>({
     nombre: '',
+    abreviatura: '',
     sectorId: '',
     secretariaTecnicaId: '',
     fechaCreacion: '',
     fechaVigencia: '',
     resolucion: '',
     estadoRegistroNombre: '',
-    estadoRegistro: ''
+    estadoRegistro: '',
+    usuarioId: this.authUserId!
   })
   intervencionesEspacios = signal<IntervencionEspacioResponse[]>([])
 

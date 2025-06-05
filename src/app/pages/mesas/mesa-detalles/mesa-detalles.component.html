@@ -1,95 +1,170 @@
 <nz-page-header nzBackIcon [nzGhost]="false">
-	<nz-page-header-title>Detalle de Mesa</nz-page-header-title>
+	<nz-page-header-title>
+		Detalle de Mesa
+	</nz-page-header-title>
+	<nz-page-header-extra>
+		<a [routerLink]="['/mesas', mesa().mesaId, 'agenda']" class="px-4 py-2 rounded border border-sky-700 bg-sky-700 text-white hover:border-sky-900 hover:bg-sky-900 hover:text-white">
+			VER AGENDA / CARTERA
+		</a>
+	</nz-page-header-extra>
 </nz-page-header>
 
-<!-- col-span-2 -->
 <div class="grid grid-cols-1 md:grid-cols-6 bg-white p-4">
-	<div class="flex">
-		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Codigo</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().codigo}}</div>
+	<div class="flex border border-gray-200">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Codigo</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-gray-200">{{mesa().codigo}}</div>
 	</div>
-	<div class="flex col-span-3">
-		<div class="flex items-center min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Nombre</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().nombre}}</div>
+	<div class="flex col-span-2 border border-gray-200">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Nombre</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-gray-200">
+			{{mesa().nombre}}
+		</div>
 	</div>
-	<div class="flex">
-		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Estado</div>
-		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
+	<div class="flex border border-gray-200">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Abreviatura</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-gray-200">
+			{{mesa().abreviatura}}
+		</div>
+	</div>
+	<div class="flex border border-gray-200">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Estado</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-gray-200">
 			<app-estado-tag [estado]="mesa().estadoRegistroNombre!"></app-estado-tag>
 		</div>
 	</div>
-	<div class="flex">
-		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Resolución</div>
-		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
+	<div class="flex border order-gray-200">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Resolución</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-gray-200">
 			<app-boton-descargar [rutaArchivo]="mesa().resolucion"></app-boton-descargar>
 		</div>
 	</div>
-	<div class="flex">
-		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Sector</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().sector}}</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Sector</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa().sector}}</div>
 	</div>
-	<div class="flex col-span-3">
-		<div class="flex items-center min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Secretaria Tecnica</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().secretariaTecnica}}</div>
+	<div class="flex col-span-2 border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Secretaria Tecnica</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa().secretariaTecnica}}</div>
 	</div>
-	<div class="flex">
-		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Fecha de creación</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().fechaCreacion}}</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Fecha de creación</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa().fechaCreacion}}</div>
 	</div>
-	<div class="flex">
-		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Fecha de vigencia</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().fechaVigencia}}</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Fecha de vigencia</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa().fechaVigencia}}</div>
+	</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Actualizar</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">
+			<div class="py-1 px-2 text-sky-700 cursor-pointer" (click)="actualizarMesa()"><i class="pi pi-pencil"></i></div>
+		</div>
 	</div>
 </div>
 
-<nz-table nzSize="small" [nzTitle]="headerUbigeos" nzShowSizeChanger [nzData]="ubigeos()"
-[nzFrontPagination]="false" [nzShowPagination]="paginationUbigeos.pageSize! > 5"
-[nzLoading]="loadingUbigeos" [nzTotal]="paginationUbigeos.total!" [nzPageSize]="paginationUbigeos.pageSize!"
-[nzPageIndex]="paginationUbigeos.currentPage!">
-    <thead>
-        <tr>
-            <th nzAlign="center"></th>
-            <th nzAlign="center">Ubigeo</th>
-            <th nzAlign="center">Entidad</th>
-            <th nzAlign="center">Departamento</th>
-            <th nzAlign="center">Provincia</th>
-            <th nzAlign="center">Distrito</th>
-        </tr>
-    </thead>
-    <tbody>
-		@for(ubigeo of ubigeos(); track $index){
-			<tr>
-			  <td nzAlign="center">{{$index + 1}}</td>
-			  <td nzAlign="center">{{ubigeo.ubigeo}}</td>
-			  <td nzAlign="center">{{ubigeo.entidad}}</td>
-			  <td nzAlign="center">{{ubigeo.departamento}}</td>
-			  <td nzAlign="center">{{ubigeo.provincia}}</td>
-			  <td nzAlign="center">{{ubigeo.distrito}}</td>
-			<tr>
-		}
-	</tbody>
-</nz-table>
+<div class="grid grid-cols-2 gap-4 mt-4">
+	<div class="flex flex-col bg-white border border-solid border-grey-200">
+		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
+			<h5 class="m-0 text-base font-semibold">Integrantes GN</h5>
+			<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
+				Nuevo integrante
+			</div>
+		</div>
+		<div class="w-full flex border-solid ">
+			<nz-table nzSize="small" nzShowSizeChanger [nzData]="integranteSectores()"
+				[nzFrontPagination]="false" [nzShowPagination]="paginationSectores.pageSize! > 5"
+				[nzLoading]="loadingSectores" [nzTotal]="paginationSectores.total!" [nzPageSize]="paginationSectores.pageSize!"
+				[nzPageIndex]="paginationSectores.currentPage!">
+				<thead>
+					<tr>
+						<th nzAlign="center" nzWidth="64px">Nro</th>
+						<th nzAlign="center">Sector</th>
+						<th nzAlign="center">Titular</th>
+						<th nzAlign="center" nzWidth="80px"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@for(integrante of integranteSectores(); track $index){
+					<tr>
+						<td nzAlign="center">{{$index + 1}}</td>
+						<td nzAlign="center">
+							{{integrante.sector}}
+							<br>{{integrante.entidad}}
+						</td>
+						<td nzAlign="center">
+							{{integrante.dni}} <br>
+							{{integrante.nombres}} {{integrante.apellidos}}  @if(integrante.telefono){ - {{integrante.telefono}} }
+						</td>
+						<td>
+							<button nz-button nzType="link" nz-tooltip="Actualizar Integrante"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+							<button nz-button nzDanger nzType="link" nz-tooltip="Eliminar Integrante" ><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+						</td>
+					<tr>
+					}
+				</tbody>
+			</nz-table>
+		</div>
+	</div>
 
-<ng-template #headerUbigeos>
-    <div class="flex flex-col sm:flex-row justify-between items-center">
-        <p class="mb-2 ml-3 sm:mb-0 font-semibold text-base">
-            Integrantes
-        </p>
-		<a [routerLink]="['/mesas', mesa().mesaId, 'agenda']" class="px-3 py-1 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white">
-			Ver agenda
-	   </a>
-    </div>
-</ng-template>
+	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
+		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
+			<h5 class="m-0 text-base font-semibold">Integrantes GR/GL</h5>
+			<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
+				Nuevo integrante
+			</div>
+		</div>
+		<div class="flex border-solid ">
+			<nz-table nzSize="small" nzShowSizeChanger [nzData]="integranteUbigeos()"
+				[nzFrontPagination]="false" [nzShowPagination]="paginationUbigeos.pageSize! > 5"
+				[nzLoading]="loadingUbigeos" [nzTotal]="paginationUbigeos.total!" [nzPageSize]="paginationUbigeos.pageSize!"
+				[nzPageIndex]="paginationUbigeos.currentPage!">
+				<thead>
+					<tr>
+						<th nzAlign="center" nzWidth="64px">Nro</th>
+						<th nzAlign="center">Gobierno</th>
+						<th nzAlign="center">Representante</th>
+						<th nzAlign="center" nzWidth="80px"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@for(integrante of integranteUbigeos(); track $index){
+					<tr>
+						<td nzAlign="center">{{$index + 1}}</td>
+						<td nzAlign="center">
+							{{integrante.departamento}}
+							@if(integrante.provincia){ - {{integrante.provincia}} }
+							@if(integrante.distrito){ - {{integrante.distrito}} }
+							<br>{{integrante.entidad}}</td>
+						<td nzAlign="center">
+							@if(integrante.autoridad){ AUTORIDAD } @else { REPRESENTANTE }<br>
+							{{integrante.dni}}
+							- {{integrante.nombres}}
+							{{integrante.apellidos}}  @if(integrante.telefono){ - {{integrante.telefono}} }
+						</td>
+						<td>
+							<button nz-button nzType="link" nz-tooltip="Actualizar Integrante"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+							<button nz-button nzDanger nzType="link" nz-tooltip="Eliminar Integrante" ><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+						</td>
+					<tr>
+					}
+				</tbody>
+			</nz-table>
+		</div>
+	</div>
+</div>
 
 <div class="grid grid-cols-2 gap-4 mt-4">
 	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
-		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
+		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">Sesiones</h5>
 			@if (mesa().estadoRegistroNombre != 'cerrado') {
-				<button nz-button nzType="default"  (click)="modalCreateFile(0)">
+				<!-- <button nz-button nzType="default"  (click)="modalCreateFile(0)">
 					<span nz-icon nzType="plus" nzTheme="outline"></span>
-					<span class="button-text">Nueva</span>
-				</button>
+					<span class="button-text">Nuevo</span>
+				</button> -->
+				<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white" (click)="modalCreateFile(0)">
+					Nueva sesión
+				</div>
 			}
 		</div>
 		<div class="flex border-solid ">
@@ -125,13 +200,16 @@
 	</div>
 
 	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
-		<div class="flex items-center justify-between p-4 border border-solid border-grey-200">
+		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">AM</h5>
 			@if (mesa().estadoRegistroNombre != 'cerrado') {
-				<button nz-button nzType="default" (click)="modalCreateFile(1)">
+				<!-- <button nz-button nzType="default" (click)="modalCreateFile(1)">
 					<span nz-icon nzType="plus" nzTheme="outline"></span>
-					<span class="button-text">Nueva</span>
-				</button>
+					<span class="button-text">Nuevo</span>
+				</button> -->
+				<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white" (click)="modalCreateFile(1)">
+					Nueva am
+				</div>
 			}
 		</div>
 		<div class="flex border-solid ">

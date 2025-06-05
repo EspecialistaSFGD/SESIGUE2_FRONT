@@ -21,9 +21,10 @@ export class MesaUbigeosService {
       return this.http.get<MesaUbigeosResponses>(`${this.urlMesaUbigeo}/ListarMesaUbigeo`, { headers, params })
     }
   
-    registarMesaUbigeo(mesaUbigeo: MesaUbigeoResponse) {      
+    registarMesaUbigeo(mesaId:string, mesaIntegrante: MesaUbigeoResponse) {
+      mesaIntegrante.mesaId = mesaId      
     const headers = this.helpersServices.getAutorizationToken()        
-    return this.http.post<MesaUbigeosResponses>(`${this.urlMesaUbigeo}/CrearMesaUbigeo`, mesaUbigeo, { headers })
+    return this.http.post<MesaUbigeosResponses>(`${this.urlMesaUbigeo}/CrearMesaUbigeo`, mesaIntegrante, { headers })
       .pipe(
         tap(resp => {
           return resp
