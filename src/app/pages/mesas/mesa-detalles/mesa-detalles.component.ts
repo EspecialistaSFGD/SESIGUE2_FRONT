@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { convertDateStringToDate, getDateFormat } from '@core/helpers';
-import { MesaDetalleResponse, MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
+import { MesaDocumentoTipoEnum } from '@core/enums';
+import { convertEnumToObject, getDateFormat } from '@core/helpers';
+import { ItemEnum, MesaDetalleResponse, MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
 import { MesaDetallesService, MesasService, MesaUbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formulario-mesa-detalle.component';
 import { FormularioMesaComponent } from '../formulario-mesa/formulario-mesa.component';
+import { FormularioMesaDetalleComponent } from './formulario-mesa-detalle/formulario-mesa-detalle.component';
 
 @Component({
   selector: 'app-mesa-detalles',
@@ -20,6 +21,7 @@ import { FormularioMesaComponent } from '../formulario-mesa/formulario-mesa.comp
 export default class MesaDetallesComponent {
   title: string = `Mesas`;
 
+  tipos: ItemEnum[] = convertEnumToObject(MesaDocumentoTipoEnum)
   mesaId!: number
   mesa = signal<MesaResponse>({
     nombre: '',
@@ -138,28 +140,6 @@ export default class MesaDetallesComponent {
     return fileName
   }
 
-  nuevaResolucion(){
-    this.modal.create<FormularioMesaDetalleComponent>({
-      nzTitle: 'AGREGAR AMPLIACIÓN',
-      nzContent: FormularioMesaDetalleComponent,
-      nzData: {
-      },
-      nzFooter: [
-        {
-          label: 'Cancelar',
-          type: 'default',
-          onClick: () => this.modal.closeAll(),
-        },
-        {
-          label: `Guardar`,
-          type: 'primary',
-          onClick: (componentResponse) => {
-          }
-        }
-      ]
-    })
-  }
-
   actualizarMesa(){
     this.modal.create<FormularioMesaComponent>({
       nzTitle: `Actualizar Mesa`,
@@ -211,9 +191,10 @@ export default class MesaDetallesComponent {
   }
 
   modalCreateFile(tipo: number) {
-    const action = tipo == 1 ? 'AM' : 'SESIÓN'
+    const documento = this.tipos.find( item => Number(item.text) == tipo )!
+    const titulo = documento.text === MesaDocumentoTipoEnum.RESOLUCION ? 'AMPLIACIÓN' : documento?.value
     this.modal.create<FormularioMesaDetalleComponent>({
-      nzTitle: `AGREGAR ${action.toUpperCase()}`,
+      nzTitle: `AGREGAR ${titulo.toUpperCase()}`,
       nzContent: FormularioMesaDetalleComponent,
       nzData: {
       },
@@ -224,7 +205,7 @@ export default class MesaDetallesComponent {
           onClick: () => this.modal.closeAll(),
         },
         {
-          label: `Guardar ${action.toLowerCase()}`,
+          label: `Guardar`,
           type: 'primary',
           onClick: (componentResponse) => {
             const formMesaDetalle = componentResponse!.formMesaDetalle
@@ -241,7 +222,7 @@ export default class MesaDetallesComponent {
               ...formMesaDetalle.value,
               fechaCreacion,
               usuarioId,
-              tipo: tipo == 1 ? 'am' : 'sesion',
+              tipo: documento?.text.toLowerCase(),
               mesaId: this.mesaId
             }
 
