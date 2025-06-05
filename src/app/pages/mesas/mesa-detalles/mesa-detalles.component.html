@@ -14,11 +14,16 @@
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Codigo</div>
 		<div class="w-full flex items-center  px-2 py-1 border-l border-gray-200">{{mesa().codigo}}</div>
 	</div>
-	<div class="flex col-span-3 border border-gray-200">
-		<div class="flex items-center min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Nombre</div>
-		<div class="w-full flex items-center justify-between px-2 py-1 border-l border-gray-200">
+	<div class="flex col-span-2 border border-gray-200">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Nombre</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-gray-200">
 			{{mesa().nombre}}
-			<div class="py-1 px-2 text-sky-700 cursor-pointer" (click)="actualizarMesa()"><i class="pi pi-pencil"></i></div>
+		</div>
+	</div>
+	<div class="flex border border-gray-200">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Abreviatura</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-gray-200">
+			{{mesa().abreviatura}}
 		</div>
 	</div>
 	<div class="flex border border-gray-200">
@@ -28,7 +33,7 @@
 		</div>
 	</div>
 	<div class="flex border order-gray-200">
-		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Resolución</div>
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Resolución</div>
 		<div class="w-full flex items-center px-2 py-1 border-l border-gray-200">
 			<app-boton-descargar [rutaArchivo]="mesa().resolucion"></app-boton-descargar>
 		</div>
@@ -37,8 +42,8 @@
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Sector</div>
 		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa().sector}}</div>
 	</div>
-	<div class="flex col-span-3 border border-gray-200 border-t-0">
-		<div class="flex items-center min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Secretaria Tecnica</div>
+	<div class="flex col-span-2 border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Secretaria Tecnica</div>
 		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa().secretariaTecnica}}</div>
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
@@ -48,6 +53,12 @@
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Fecha de vigencia</div>
 		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa().fechaVigencia}}</div>
+	</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Actualizar</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">
+			<div class="py-1 px-2 text-sky-700 cursor-pointer" (click)="actualizarMesa()"><i class="pi pi-pencil"></i></div>
+		</div>
 	</div>
 </div>
 
