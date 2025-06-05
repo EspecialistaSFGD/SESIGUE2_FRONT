@@ -36,7 +36,7 @@ export class FormularioMesaDetalleComponent {
     return typeErrorControl(text, errors)
   }
 
-  beforeUploadMeet = (file: NzUploadFile): boolean => {
+  beforeUploadFile = (file: NzUploadFile): boolean => {
     const archivo = this.formMesaDetalle.get('archivo')
     archivo?.setValue(file)
     this.filesList = []

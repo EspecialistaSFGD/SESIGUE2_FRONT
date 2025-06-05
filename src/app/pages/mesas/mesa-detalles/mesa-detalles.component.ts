@@ -138,6 +138,28 @@ export default class MesaDetallesComponent {
     return fileName
   }
 
+  nuevaResolucion(){
+    this.modal.create<FormularioMesaDetalleComponent>({
+      nzTitle: 'AGREGAR AMPLIACIÓN',
+      nzContent: FormularioMesaDetalleComponent,
+      nzData: {
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: `Guardar`,
+          type: 'primary',
+          onClick: (componentResponse) => {
+          }
+        }
+      ]
+    })
+  }
+
   actualizarMesa(){
     this.modal.create<FormularioMesaComponent>({
       nzTitle: `Actualizar Mesa`,
@@ -190,7 +212,7 @@ export default class MesaDetallesComponent {
 
   modalCreateFile(tipo: number) {
     const action = tipo == 1 ? 'AM' : 'SESIÓN'
-    const modal = this.modal.create<FormularioMesaDetalleComponent>({
+    this.modal.create<FormularioMesaDetalleComponent>({
       nzTitle: `AGREGAR ${action.toUpperCase()}`,
       nzContent: FormularioMesaDetalleComponent,
       nzData: {
