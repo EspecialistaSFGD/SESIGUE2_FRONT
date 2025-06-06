@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MesaDocumentoTipoEnum } from '@core/enums';
 import { convertEnumToObject, getDateFormat } from '@core/helpers';
-import { ItemEnum, MesaDocumentoResponse, MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
+import { ItemEnum, MesaDocumentoResponse, MesaResponse, MesaIntegranteResponse, Pagination } from '@core/interfaces';
 import { MesaDocumentosService, MesasService, MesaUbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
-import { MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
+import { MesaResponse, MesaIntegranteResponse, Pagination } from '@core/interfaces';
 import { MesaUbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -17,10 +17,10 @@ export class IntegrantesMesaComponent {
   @Input() mesaId!: number
   @Input() esSector:boolean = true
 
-  integrantes = signal<MesaUbigeoResponse[]>([])
+  integrantes = signal<MesaIntegranteResponse[]>([])
   modal = inject(NzModalService);
 
-  integrante: MesaUbigeoResponse = {
+  integrante: MesaIntegranteResponse = {
     mesaId: '',
     entidadId: '',
     alcaldeAsistenteId: '',
@@ -45,9 +45,8 @@ export class IntegrantesMesaComponent {
   obtenerIntegrantesService(){
     this.loading = true
     this.pagination.esSector = this.esSector ? '1' : '0'
-    this.integrantesService.ListarMesaUbigeos(this.mesaId.toString(), this.pagination)
-      .subscribe( resp => {
-        console.log(resp.data);                
+    this.integrantesService.ListarMesaIntegrantes(this.mesaId.toString(), this.pagination)
+      .subscribe( resp => {               
         this.loading = false
         this.integrantes.set(resp.data)
         this.pagination.total = resp.info!.total
@@ -55,19 +54,21 @@ export class IntegrantesMesaComponent {
   }
 
   nuevoIntegrante(){
+    this.integrante = { mesaId: '', entidadId: '', alcaldeAsistenteId: '', dni: '', nombres: '', apellidos: '', telefono: '', esSector: this.esSector }
     this.formularioIntegrante()
   }
 
-  actualizarIntegrante(integrante: MesaUbigeoResponse){
+  actualizarIntegrante(integrante: MesaIntegranteResponse){
     this.integrante = integrante
     this.formularioIntegrante(false)
   }
 
   formularioIntegrante(create: boolean = true){
-    const title = create ? 'AGREGAR' : 'ACTUALIZAR'
+    const tipo =  this.esSector ? 'GN' : 'GR/GL'
+    const title = create ? 'Agregar' : 'Actualizar'
     this.modal.create<FormularioIntegranteMesaComponent>({
-      nzTitle: `${title} INTEGRANTE`,
-      // nzWidth: '75%',
+      nzTitle: `${title.toUpperCase()} INTEGRANTE ${tipo}`,
+      nzWidth: '50%',
       nzContent: FormularioIntegranteMesaComponent,
       nzData: {
         create: create,
@@ -80,9 +81,21 @@ export class IntegrantesMesaComponent {
           onClick: () => this.modal.closeAll(),
         },
         {
-          label: 'Actualizar Mesa',
+          label: `${title} integrante`,
           type: 'primary',
           onClick: (componentResponse) => {
+            const formIntegrante = componentResponse!.formIntegrante         
+            console.log(formIntegrante.value);
+
+            if (formIntegrante.invalid) {
+              const invalidFields = Object.keys(formIntegrante.controls).filter(field => formIntegrante.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formIntegrante.markAllAsTouched();
+            }
+
+            console.log('FORMULARIO VALIDO');            
+            console.log(formIntegrante.value);
+            
           }
         }
       ]

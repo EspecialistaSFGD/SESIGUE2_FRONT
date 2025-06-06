@@ -355,7 +355,6 @@ export class FormularioMesaComponent {
         this.listaEntidadesSector.set(copyEntidades)
       }
     })
-
   }
 
   changeDepartamento(index: number){

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { getDateFormat } from '@core/helpers';
-import { MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
+import { MesaResponse, MesaIntegranteResponse, Pagination } from '@core/interfaces';
 import { MesaUbigeosService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -129,9 +129,9 @@ export default class MesasComponent {
         this.loadingData = false
         if(resp.success == true){
           const mesaId = resp.data
-          const ubigeos: MesaUbigeoResponse[] = mesa.ubigeos!
-          const sectores: MesaUbigeoResponse[] = mesa.sectores!          
-          const integrantes: MesaUbigeoResponse[] = [ ...ubigeos, ...sectores ];
+          const ubigeos: MesaIntegranteResponse[] = mesa.ubigeos!
+          const sectores: MesaIntegranteResponse[] = mesa.sectores!          
+          const integrantes: MesaIntegranteResponse[] = [ ...ubigeos, ...sectores ];
 
             for (let integrante of integrantes) {
               integrante.alcaldeAsistenteId = `${integrante.alcaldeAsistenteId}`
