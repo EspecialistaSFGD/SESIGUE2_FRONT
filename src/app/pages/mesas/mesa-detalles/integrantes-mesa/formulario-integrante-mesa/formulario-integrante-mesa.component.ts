@@ -25,6 +25,8 @@ export class FormularioIntegranteMesaComponent {
   integrante: MesaIntegranteResponse = this.dataMesaIntegrante.integrante
   loading: boolean = false
 
+  siNo:string[] = ['Si', 'No']
+
   sectores = signal<SectorResponse[]>([])
   entidadesSector = signal<EntidadResponse[]>([])
   departamentos = signal<UbigeoDepartmentResponse[]>([])
@@ -47,14 +49,14 @@ export class FormularioIntegranteMesaComponent {
     distrito: [{ value: '', disabled: true }],
     entidad: [{ value: '', disabled: true }],
     entidadSlug: [{ value: '', disabled: true }],
-    alcaldeAsistenteId: [ '', Validators.required ],
+    alcaldeAsistenteId: [ '' ],
     autoridad: [ { value: '', disabled: true }, Validators.required ],
     dni: [ '', Validators.required ],
     nombre: [ { value: '', disabled: true }, Validators.required ],
     telefono: [ { value: '', disabled: true }, Validators.required ]
   })
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
     const nombre = this.integrante.apellidos ? `${this.integrante.nombres} ${this.integrante.apellidos}` : this.integrante.nombres
     const entidadSlug = this.create ? '' : `${this.integrante.entidadTipo} ${this.integrante.entidadSlug}`
     
@@ -62,6 +64,7 @@ export class FormularioIntegranteMesaComponent {
 
     const entidadControl = this.formIntegrante.get('entidadId')
     const autoridadControl = this.formIntegrante.get('autoridad')
+    const dniControl = this.formIntegrante.get('dni')
     const departamentoControl = this.formIntegrante.get('departamento')
     const provinciaControl = this.formIntegrante.get('provincia')
     const distritoControl = this.formIntegrante.get('distrito')
@@ -90,6 +93,9 @@ export class FormularioIntegranteMesaComponent {
       departamentoControl?.setValidators([Validators.required])
       if(!this.integrante.esSector){
         autoridadControl?.enable()
+        if(this.integrante.autoridad){
+          dniControl?.disable()
+        }
       }
     }
 
@@ -142,37 +148,30 @@ export class FormularioIntegranteMesaComponent {
     const dniControl = this.formIntegrante.get('dni');
     const nombreControl = this.formIntegrante.get('nombre');
     const telefonoControl = this.formIntegrante.get('telefono');
-    const alcaldeAsistenteIdControl = this.formIntegrante.get('alcaldeAsistenteId');
 
     const dniValue = dniControl?.value;
-    this.loading = true
-    if(dniValue && dniValue.length === 8) {
+    if(entidadIdValue){
       if(autoridadValue){
-        console.log('ES AUTORIDAD');
-        
-        if(autoridadValue == true && entidadIdValue){  
-          console.log('HAY ENTIDADiD');
-          
-          setTimeout(() => {
-            this.loading = false
-            this.obtenerAlcaldeServicio()    
-          }, 1000);
-        } else {
-          console.log('NO HAY ENTIDAD');
-          
-        }
-      }
-      if(!autoridadValue){
+        this.loading = true
+        dniControl?.disable()
+        nombreControl?.disable()      
+        telefonoControl?.disable()
         setTimeout(() => {
           this.loading = false
-          this.obtenerAsistenteServicio()
+          this.obtenerAlcaldeServicio()    
         }, 1000);
+      } else {
+        dniControl?.enable()
+        nombreControl?.enable()      
+        telefonoControl?.enable()
+        if(dniValue && dniValue.length == 8){
+          this.loading = true
+          setTimeout(() => {
+            this.loading = false
+            this.obtenerAsistenteServicio()
+          }, 1000);
+        }
       }
-    } else {
-      this.loading = false
-      nombreControl?.reset();
-      telefonoControl?.reset();
-      alcaldeAsistenteIdControl?.reset();
     }
   }
 
@@ -236,7 +235,14 @@ export class FormularioIntegranteMesaComponent {
   }
 
   changeDistrito(){
+    const provinciaControl = this.formIntegrante.get('provincia')
+    const provinciaValue = provinciaControl?.value
+    const distritoControl = this.formIntegrante.get('distrito')
+    const distritoValue = distritoControl?.value
 
+    const ubigeo = distritoValue ? distritoValue : provinciaValue
+    this.obtenerEntidadUbigeoService(ubigeo)
+    this.validarAutoridad()
   }
 
   obtenerEntidadUbigeoService(ubigeo: string){
@@ -256,29 +262,16 @@ export class FormularioIntegranteMesaComponent {
   }
 
   validarAutoridad(){
-    const autoridadControl = this.formIntegrante.get('autoridad'); 
+    const dniControl = this.formIntegrante.get('dni');
+    const nombreControl = this.formIntegrante.get('nombre');
+    const telefonoControl = this.formIntegrante.get('telefono');
+    const alcaldeAsistenteIdControl = this.formIntegrante.get('alcaldeAsistenteId');
 
+    dniControl?.reset();
+    nombreControl?.reset();
+    telefonoControl?.reset();
+    alcaldeAsistenteIdControl?.reset();
     this.validarDNI()
-    // const autoridadControl = this.formIntegrante.get('autoridad'); 
-    // const entidadIdControl = this.formIntegrante.get('entidadId');
-    // const dniControl = this.formIntegrante.get('dni');
-    // const nombreControl = this.formIntegrante.get('nombre');
-    // const telefonoControl = this.formIntegrante.get('telefono');       
-    // const entidadValue = entidadIdControl?.value
-    // const autoridadValue = autoridadControl?.value;
-    
-    // dniControl?.reset()
-    // nombreControl?.reset()
-    // telefonoControl?.reset()
-    // if(autoridadValue == true && entidadValue){  
-    //   setTimeout(() => {
-    //     this.obtenerAlcaldeServicio()    
-    //   }, 1000);
-    // }
-
-    // autoridadValue == false ? dniControl?.enable() : dniControl?.disable()
-    // autoridadValue == false ? nombreControl?.enable() : nombreControl?.disable()
-    // autoridadValue == false ? telefonoControl?.enable() : telefonoControl?.disable()
   }
 
   obtenerAlcaldeServicio() {
@@ -297,14 +290,12 @@ export class FormularioIntegranteMesaComponent {
         nombreControl?.setValue(alcalde ? alcalde?.nombre : '');
         telefonoControl?.setValue(alcalde ? alcalde?.telefono : '');
         alcaldeAsistenteIdControl?.setValue(alcalde ? alcalde?.alcaldeId : '');
-        alcalde ? dniControl?.disable() : dniControl?.enable()
-        alcalde ? nombreControl?.disable() : nombreControl?.enable()
-        alcalde ? telefonoControl?.disable() : telefonoControl?.enable()
       })
   }
 
   obtenerAsistenteServicio() {
     const dniControl = this.formIntegrante.get('dni');
+    dniControl?.enable()
     const dni = dniControl?.value
     const nombreControl = this.formIntegrante.get('nombre');
     const telefonoControl = this.formIntegrante.get('telefono');
@@ -316,8 +307,10 @@ export class FormularioIntegranteMesaComponent {
         nombreControl?.setValue(asistente ? `${asistente.nombres} ${asistente.apellidos}` : '');
         telefonoControl?.setValue(asistente ? asistente?.telefono : '');
         alcaldeAsistenteIdControl?.setValue(asistente ? asistente?.asistenteId : '');
-        asistente ? nombreControl?.disable() : nombreControl?.enable()
-        asistente ? telefonoControl?.disable() : telefonoControl?.enable()
+        if(asistente){
+          nombreControl?.disable()
+          telefonoControl?.disable()
+        }
       })
   }
 }
