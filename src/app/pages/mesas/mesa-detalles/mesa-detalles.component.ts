@@ -3,19 +3,20 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MesaDocumentoTipoEnum } from '@core/enums';
 import { convertEnumToObject, getDateFormat } from '@core/helpers';
-import { ItemEnum, MesaDocumentoResponse, MesaResponse, MesaIntegranteResponse, Pagination } from '@core/interfaces';
-import { MesaDocumentosService, MesasService, MesaUbigeosService } from '@core/services';
+import { ItemEnum, MesaDocumentoResponse, MesaResponse, Pagination } from '@core/interfaces';
+import { MesaDocumentosService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from '../formulario-mesa/formulario-mesa.component';
 import { FormularioMesaDocumentoComponent } from './formulario-mesa-documento/formulario-mesa-documento.component';
 import { IntegrantesMesaComponent } from "./integrantes-mesa/integrantes-mesa.component";
+import { MesaDetalleComponent } from "./mesa-detalle/mesa-detalle.component";
 
 @Component({
   selector: 'app-mesa-detalles',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, IntegrantesMesaComponent],
+  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, IntegrantesMesaComponent, MesaDetalleComponent],
   templateUrl: './mesa-detalles.component.html',
   styles: ``
 })
