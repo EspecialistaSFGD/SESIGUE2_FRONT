@@ -11,6 +11,7 @@ import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from './formulario-mesa/formulario-mesa.component';
+import { FormularioMesaEstadoResumenComponent } from './formulario-mesa-estado-resumen/formulario-mesa-estado-resumen.component';
 
 @Component({
   selector: 'app-mesas',
@@ -143,5 +144,34 @@ export default class MesasComponent {
             }
         }
       })
+  }
+
+  crearEstadoResumen(mesaId: string){
+    this.modal.create<FormularioMesaEstadoResumenComponent>({
+      nzTitle: `AGREGAR ESTADO RESUMEN`,
+      // nzWidth: '75%',
+      nzContent: FormularioMesaEstadoResumenComponent,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Agregar',
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formEstado = componentResponse!.formEstado
+           
+            if (formEstado.invalid) {
+              const invalidFields = Object.keys(formEstado.controls).filter(field => formEstado.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formEstado.markAllAsTouched();
+            }
+                        
+          }
+        }
+      ]
+    })
   }
 }
