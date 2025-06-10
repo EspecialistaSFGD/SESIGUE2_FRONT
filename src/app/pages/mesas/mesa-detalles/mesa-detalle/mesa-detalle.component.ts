@@ -108,6 +108,8 @@ actualizarMesaService(mesa: MesaResponse){
       nzTitle: `AGREGAR ${titulo.toUpperCase()}`,
       nzContent: FormularioMesaDocumentoComponent,
       nzData: {
+        create: true,
+        mesa: this.mesa
       },
       nzFooter: [
         {
@@ -141,6 +143,7 @@ actualizarMesaService(mesa: MesaResponse){
               .subscribe( resp => {
                 if(resp.success){
                   this.modal.closeAll()
+                  this.updated.emit(true)
                   this.obtenerMesaDocumentos()
                 }
               })
