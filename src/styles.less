@@ -392,6 +392,18 @@ p-dropdown {
 }
 
 .p-radiobutton{
+    .p-radiobutton-box{
+        @apply border border-gray-400 bg-white ;
+        &:hover{
+            @apply border-gray-500;
+        }
+        &.p-highlight{
+            @apply border-sky-700;
+            .p-radiobutton-icon{
+                @apply bg-sky-700;
+            }
+        }
+    }
     .p-hidden-accessible{
         @apply leading-none;
         input{

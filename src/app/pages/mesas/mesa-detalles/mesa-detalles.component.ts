@@ -3,26 +3,28 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MesaDocumentoTipoEnum } from '@core/enums';
 import { convertEnumToObject, getDateFormat } from '@core/helpers';
-import { ItemEnum, MesaDocumentoResponse, MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
-import { MesaDocumentosService, MesasService, MesaUbigeosService } from '@core/services';
+import { ItemEnum, MesaDocumentoResponse, MesaResponse, Pagination } from '@core/interfaces';
+import { MesaDocumentosService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { FormularioMesaComponent } from '../formulario-mesa/formulario-mesa.component';
 import { FormularioMesaDocumentoComponent } from './formulario-mesa-documento/formulario-mesa-documento.component';
+import { IntegrantesMesaComponent } from "./integrantes-mesa/integrantes-mesa.component";
+import { MesaDetalleComponent } from "./mesa-detalle/mesa-detalle.component";
 
 @Component({
   selector: 'app-mesa-detalles',
   standalone: true,
-  imports: [CommonModule, RouterModule , NgZorroModule, SharedModule],
+  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, IntegrantesMesaComponent, MesaDetalleComponent],
   templateUrl: './mesa-detalles.component.html',
   styles: ``
 })
 export default class MesaDetallesComponent {
   title: string = `Mesas`;
 
-  tipos: ItemEnum[] = convertEnumToObject(MesaDocumentoTipoEnum)
   mesaId!: number
+  
+  tipos: ItemEnum[] = convertEnumToObject(MesaDocumentoTipoEnum)
   mesa = signal<MesaResponse>({
     nombre: '',
     abreviatura: '',
@@ -36,26 +38,11 @@ export default class MesaDetallesComponent {
     usuarioId: ''
   })
 
-  integranteUbigeos = signal<MesaUbigeoResponse[]>([])
-  integranteSectores = signal<MesaUbigeoResponse[]>([])
   mesasSesion = signal<MesaDocumentoResponse[]>([])
   mesasAm = signal<MesaDocumentoResponse[]>([])
-  documentosResolucion = signal<MesaDocumentoResponse[]>([])
-
-  loadingUbigeos: boolean = false
-  loadingSectores: boolean = false
+  
   loadingDataSesion: boolean = false
   loadingDataAm: boolean = false
-
-  paginationUbigeos: Pagination = {
-    columnSort: 'fechaRegistro',
-    typeSort: 'DESC',
-    pageSize: 5,
-    currentPage: 1,
-    total: 0
-  }
-
-  paginationSectores: Pagination = this.paginationUbigeos
 
   paginationSesion: Pagination = {
     columnSort: 'documentoId',
@@ -73,26 +60,14 @@ export default class MesaDetallesComponent {
     total: 0
   }
 
-  paginationResolucion: Pagination = {
-    columnSort: 'documentoId',
-    typeSort: 'DESC',
-    pageSize: 5,
-    currentPage: 1,
-    total: 0
-  }
-
-
   private mesaServices = inject(MesasService)
   private mesaDetalleServices = inject(MesaDocumentosService)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private modal = inject(NzModalService);
-  private mesaUbigeosService = inject(MesaUbigeosService)
 
   ngOnInit(): void {
     this.verificarMesa()
-    this.obtenerUbigeosService(0)
-    this.obtenerUbigeosService(1)
     this.obtenerDetalleMesa(0)
     this.obtenerDetalleMesa(1)
     this.obtenerDetalleMesa(2)
@@ -121,41 +96,21 @@ export default class MesaDetallesComponent {
       })
   }
 
-  obtenerUbigeosService(esSector: number){
-    esSector == 1 ? this.loadingSectores = true : this.loadingUbigeos = true
-    this.paginationUbigeos.esSector = esSector.toString()
-    this.mesaUbigeosService.ListarMesaUbigeos(this.mesaId, this.paginationUbigeos)
-      .subscribe( resp => {        
-        esSector == 1 ? this.loadingSectores = false : this.loadingUbigeos = false
-        esSector == 1 ? this.integranteSectores.set(resp.data) : this.integranteUbigeos.set(resp.data)
-        esSector == 1 ? this.paginationSectores.total = resp.info?.total : this.paginationUbigeos.total = resp.info!.total
-      })
-  }
-
   obtenerDetalleMesa(tipo: number){
     const documento = this.tipos.find( item => Number(item.text) == tipo )!
     this.loadingDataSesion = documento.text === MesaDocumentoTipoEnum.SESION ?  true : false
     this.loadingDataAm = documento.text === MesaDocumentoTipoEnum.AM ?  true : false
 
-    // tipo == 1 ? this.loadingDataAm = true : this.loadingDataSesion = true
-    // const pagination = tipo == 1 ? this.paginationAm : this.paginationSesion
     let pagination = this.paginationSesion
     if(documento.text == MesaDocumentoTipoEnum.AM ){
       pagination = this.paginationAm
-    } else if(documento.text == MesaDocumentoTipoEnum.RESOLUCION){
-      pagination = this.paginationResolucion
     }
 
     this.mesaDetalleServices.ListarMesaDetalle(this.mesaId, tipo, pagination)
       .subscribe( resp => {
-        // tipo == 1 ? this.mesasAm.set(resp.data) : this.mesasSesion.set(resp.data)
-        // tipo == 1 ? this.paginationAm.total = resp.info!.total : this.paginationSesion.total = resp.info!.total
-        // tipo == 1 ? this.loadingDataAm = false : this.loadingDataSesion = false
-
         switch (documento.text) {
           case MesaDocumentoTipoEnum.SESION: this.mesasSesion.set(resp.data); this.loadingDataSesion = false; this.paginationSesion.total = resp.info!.total; break;
           case MesaDocumentoTipoEnum.AM: this.mesasAm.set(resp.data); this.loadingDataAm = false; this.paginationAm.total; break;
-          case MesaDocumentoTipoEnum.RESOLUCION: this.documentosResolucion.set(resp.data); this.paginationResolucion.total; break;
         }
       })
   }
@@ -166,54 +121,10 @@ export default class MesaDetallesComponent {
     return fileName
   }
 
-  actualizarMesa(){
-    this.modal.create<FormularioMesaComponent>({
-      nzTitle: `Actualizar Mesa`,
-      nzWidth: '75%',
-      nzContent: FormularioMesaComponent,
-      nzData: {
-        create: false,
-        mesa: this.mesa(),
-      },
-      nzFooter: [
-        {
-          label: 'Cancelar',
-          type: 'default',
-          onClick: () => this.modal.closeAll(),
-        },
-        {
-          label: 'Actualizar Mesa',
-          type: 'primary',
-          onClick: (componentResponse) => {
-            const formMesa = componentResponse!.formMesa
-           
-            if (formMesa.invalid) {
-              const invalidFields = Object.keys(formMesa.controls).filter(field => formMesa.controls[field].invalid);
-              console.error('Invalid fields:', invalidFields);
-              return formMesa.markAllAsTouched();
-            }
-
-            const mesaId = this.mesa().mesaId
-            const fechaCreacion = getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
-            const fechaVigencia = getDateFormat(formMesa.get('fechaVigencia')?.value, 'month')
-            const usuarioId =localStorage.getItem('codigoUsuario')
-
-            const bodyMesa: MesaResponse = {...formMesa.getRawValue() , fechaCreacion, fechaVigencia, usuarioId, mesaId}
-            this.actualizarMesaService(bodyMesa)
-          }
-        }
-      ]
-    })
-  }
-
-  actualizarMesaService(mesa: MesaResponse){
-    this.mesaServices.actualizarMesa(mesa)
-      .subscribe( resp => {
-        if(resp.success == true){
-          this.obtenerMesaService()
-          this.modal.closeAll();
-        }
-      })
+  updateDetalle(actualizar: boolean){
+    if(actualizar){
+      this.obtenerMesaService()
+    }
   }
 
   modalCreateFile(tipo: number) {

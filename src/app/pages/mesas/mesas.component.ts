@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { getDateFormat } from '@core/helpers';
-import { MesaResponse, MesaUbigeoResponse, Pagination } from '@core/interfaces';
-import { MesaUbigeosService } from '@core/services';
+import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse } from '@core/interfaces';
+import { MesaEstadosService, MesaIntegrantesService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -11,6 +11,7 @@ import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from './formulario-mesa/formulario-mesa.component';
+import { FormularioMesaEstadoResumenComponent } from './formulario-mesa-estado-resumen/formulario-mesa-estado-resumen.component';
 
 @Component({
   selector: 'app-mesas',
@@ -53,7 +54,8 @@ export default class MesasComponent {
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
   private mesasService = inject(MesasService)
-  private mesaUbigeosService = inject(MesaUbigeosService)
+  private mesaUbigeosService = inject(MesaIntegrantesService)
+  private mesaEstadosService = inject(MesaEstadosService)
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
@@ -129,18 +131,60 @@ export default class MesasComponent {
         this.loadingData = false
         if(resp.success == true){
           const mesaId = resp.data
-          const ubigeos: MesaUbigeoResponse[] = mesa.ubigeos!
-          const sectores: MesaUbigeoResponse[] = mesa.sectores!          
-          const integrantes: MesaUbigeoResponse[] = [ ...ubigeos, ...sectores ];
+          const ubigeos: MesaIntegranteResponse[] = mesa.ubigeos!
+          const sectores: MesaIntegranteResponse[] = mesa.sectores!          
+          const integrantes: MesaIntegranteResponse[] = [ ...ubigeos, ...sectores ];
 
             for (let integrante of integrantes) {
               integrante.alcaldeAsistenteId = `${integrante.alcaldeAsistenteId}`
-              this.mesaUbigeosService.registarMesaUbigeo(mesaId, integrante)
+              this.mesaUbigeosService.registarMesaIntegrante(mesaId, integrante)
                 .subscribe(resp => {
                 this.obtenerMesasService();
                 this.modal.closeAll();
                 });
             }
+        }
+      })
+  }
+
+  crearEstadoResumen(mesaId: string){
+    this.modal.create<FormularioMesaEstadoResumenComponent>({
+      nzTitle: `AGREGAR ESTADO RESUMEN`,
+      nzContent: FormularioMesaEstadoResumenComponent,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Agregar',
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formEstado = componentResponse!.formEstado
+           
+            if (formEstado.invalid) {
+              const invalidFields = Object.keys(formEstado.controls).filter(field => formEstado.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formEstado.markAllAsTouched();
+            }
+
+            const fecha = getDateFormat(formEstado.get('fecha')?.value, 'month')
+            const usuarioId =localStorage.getItem('codigoUsuario')
+            const bodyEstado: MesaEstadoResponse = { ...formEstado.value, mesaId, fecha, usuarioId }
+            this.registrarMesaEstado(bodyEstado)
+          }
+        }
+      ]
+    })
+  }
+
+  registrarMesaEstado(mesaEstado: MesaEstadoResponse) {
+    this.mesaEstadosService.registarMesaDetalle(mesaEstado)
+      .subscribe( resp => {
+        if(resp.success == true){
+          this.obtenerMesasService()
+          this.modal.closeAll()
         }
       })
   }

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { MesaDocumentoResponse, MesaDocumentossResponses, Pagination } from '@core/interfaces';
+import { MesaDocumentoResponse, MesaDocumentosResponses, Pagination } from '@core/interfaces';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({
@@ -13,18 +13,18 @@ export class MesaDocumentosService {
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  ListarMesaDetalle(mesaId: number, tipo: number, pagination: Pagination): Observable<MesaDocumentossResponses> {
+  ListarMesaDetalle(mesaId: number, tipo: number, pagination: Pagination): Observable<MesaDocumentosResponses> {
     let params = this.helpersServices.setParams(pagination)
     params = params.append('mesaId', mesaId)
     params = params.append('tipo', tipo)
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<MesaDocumentossResponses>(`${this.urlMesaDocumento}/ListarMesaDocumentos`, { headers, params })
+    return this.http.get<MesaDocumentosResponses>(`${this.urlMesaDocumento}/ListarMesaDocumentos`, { headers, params })
   }
 
   registarMesaDetalle(mesaDetalle: MesaDocumentoResponse) {      
   const formData = this.generateFormData(mesaDetalle)
   const headers = this.helpersServices.getAutorizationToken()        
-  return this.http.post<MesaDocumentossResponses>(`${this.urlMesaDocumento}/CrearMesaDocumento`, formData, { headers })
+  return this.http.post<MesaDocumentosResponses>(`${this.urlMesaDocumento}/CrearMesaDocumento`, formData, { headers })
     .pipe(
       tap(resp => {
         return resp
@@ -36,7 +36,7 @@ export class MesaDocumentosService {
 
   eliminarMesaDetalle(detalleId: string) {
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.delete<MesaDocumentossResponses>(`${this.urlMesaDocumento}/EliminarMesaDocumento/${detalleId}`, { headers })
+    return this.http.delete<MesaDocumentosResponses>(`${this.urlMesaDocumento}/EliminarMesaDocumento/${detalleId}`, { headers })
       .pipe(
         tap(resp => {
           return resp

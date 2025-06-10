@@ -1,6 +1,6 @@
 import { DataResponses } from "./helpers.interface"
 
-export interface MesaDocumentossResponses extends DataResponses {
+export interface MesaDocumentosResponses extends DataResponses {
   data: MesaDocumentoResponse[]
 }
 
