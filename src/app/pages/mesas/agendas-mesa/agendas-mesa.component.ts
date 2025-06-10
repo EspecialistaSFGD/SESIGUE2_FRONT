@@ -8,11 +8,12 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
+import { MesaDetalleComponent } from '../mesa-detalles/mesa-detalle/mesa-detalle.component';
 
 @Component({
   selector: 'app-agendas-mesa',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule],
+  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule, MesaDetalleComponent],
   templateUrl: './agendas-mesa.component.html',
   styles: ``
 })
