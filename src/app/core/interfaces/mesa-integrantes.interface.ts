@@ -5,7 +5,7 @@ export interface MesaIntegrantesResponses extends DataResponses {
 }
 
 export interface MesaIntegranteResponse {
-    mesaUbigeoId?: string,
+    mesaIntegranteId?: string,
     mesaId: string,
     entidadId: string,
     entidad? : string,

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { MesaResponse, MesaIntegranteResponse, Pagination } from '@core/interfaces';
-import { MesaUbigeosService } from '@core/services';
+import { MesaIntegrantesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntegranteMesaComponent } from './formulario-integrante-mesa/formulario-integrante-mesa.component';
@@ -36,7 +36,7 @@ export class IntegrantesMesaComponent {
     total: 0
   }
 
-  private integrantesService = inject(MesaUbigeosService)
+  private integrantesService = inject(MesaIntegrantesService)
 
   ngOnInit(): void {
     this.obtenerIntegrantesService()

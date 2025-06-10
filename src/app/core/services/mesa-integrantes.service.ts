@@ -9,8 +9,8 @@ import { MesaIntegranteResponse, MesaIntegrantesResponses } from '@core/interfac
 @Injectable({
   providedIn: 'root'
 })
-export class MesaUbigeosService {
-  private urlMesaUbigeo: string = `${environment.api}/MesaUbigeo`
+export class MesaIntegrantesService {
+  private urlMesaIntegrante: string = `${environment.api}/MesaIntegrante`
     private http = inject(HttpClient)
     private helpersServices = inject(HelpersService);
   
@@ -18,13 +18,13 @@ export class MesaUbigeosService {
       let params = this.helpersServices.setParams(pagination)
       params = params.append('mesaId', mesaId)
       const headers = this.helpersServices.getAutorizationToken()
-      return this.http.get<MesaIntegrantesResponses>(`${this.urlMesaUbigeo}/ListarMesaUbigeo`, { headers, params })
+      return this.http.get<MesaIntegrantesResponses>(`${this.urlMesaIntegrante}/ListarMesaIntegrantes`, { headers, params })
     }
   
-    registarMesaUbigeo(mesaId:string, mesaIntegrante: MesaIntegranteResponse) {
+    registarMesaIntegrante(mesaId:string, mesaIntegrante: MesaIntegranteResponse) {
       mesaIntegrante.mesaId = mesaId      
     const headers = this.helpersServices.getAutorizationToken()        
-    return this.http.post<MesaIntegrantesResponses>(`${this.urlMesaUbigeo}/CrearMesaUbigeo`, mesaIntegrante, { headers })
+    return this.http.post<MesaIntegrantesResponses>(`${this.urlMesaIntegrante}/CrearMesaIntegrante`, mesaIntegrante, { headers })
       .pipe(
         tap(resp => {
           return resp
@@ -34,9 +34,9 @@ export class MesaUbigeosService {
       )
     }
   
-    eliminarMesaUbigeo(mesaUbigeoId: string) {
+    eliminarMesaIntegrante(mesaUbigeoId: string) {
       const headers = this.helpersServices.getAutorizationToken()
-      return this.http.delete<MesaIntegrantesResponses>(`${this.urlMesaUbigeo}/EliminarMesaUbigeo/${mesaUbigeoId}`, { headers })
+      return this.http.delete<MesaIntegrantesResponses>(`${this.urlMesaIntegrante}/EliminarMesaIntegrante/${mesaUbigeoId}`, { headers })
         .pipe(
           tap(resp => {
             return resp

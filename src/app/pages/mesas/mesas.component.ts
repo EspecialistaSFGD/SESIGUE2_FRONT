@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { getDateFormat } from '@core/helpers';
 import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse } from '@core/interfaces';
-import { MesaEstadosService, MesaUbigeosService } from '@core/services';
+import { MesaEstadosService, MesaIntegrantesService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -54,7 +54,7 @@ export default class MesasComponent {
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
   private mesasService = inject(MesasService)
-  private mesaUbigeosService = inject(MesaUbigeosService)
+  private mesaUbigeosService = inject(MesaIntegrantesService)
   private mesaEstadosService = inject(MesaEstadosService)
 
   ngOnInit(): void {
@@ -137,7 +137,7 @@ export default class MesasComponent {
 
             for (let integrante of integrantes) {
               integrante.alcaldeAsistenteId = `${integrante.alcaldeAsistenteId}`
-              this.mesaUbigeosService.registarMesaUbigeo(mesaId, integrante)
+              this.mesaUbigeosService.registarMesaIntegrante(mesaId, integrante)
                 .subscribe(resp => {
                 this.obtenerMesasService();
                 this.modal.closeAll();
