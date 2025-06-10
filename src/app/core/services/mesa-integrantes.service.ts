@@ -33,10 +33,22 @@ export class MesaIntegrantesService {
         catchError(err => of(err))
       )
     }
+
+    actualizarMesaIntegrante(mesaIntegrante: MesaIntegranteResponse){
+        const headers = this.helpersServices.getAutorizationToken()  
+        return this.http.put<MesaIntegranteResponse>(`${this.urlMesaIntegrante}/ActualizarMesaIntegrante/${mesaIntegrante.mesaIntegranteId}`, mesaIntegrante, { headers })
+          .pipe(
+            tap(resp => {
+              return resp
+            }),
+            map(valid => valid),
+            catchError(err => of(err))
+          )
+      }
   
-    eliminarMesaIntegrante(mesaUbigeoId: string) {
+    eliminarMesaIntegrante(integranteId: string) {
       const headers = this.helpersServices.getAutorizationToken()
-      return this.http.delete<MesaIntegrantesResponses>(`${this.urlMesaIntegrante}/EliminarMesaIntegrante/${mesaUbigeoId}`, { headers })
+      return this.http.delete<MesaIntegrantesResponses>(`${this.urlMesaIntegrante}/EliminarMesaIntegrante/${integranteId}`, { headers })
         .pipe(
           tap(resp => {
             return resp

@@ -59,8 +59,11 @@ export class FormularioIntegranteMesaComponent {
   ngOnInit(): void {    
     const nombre = this.integrante.apellidos ? `${this.integrante.nombres} ${this.integrante.apellidos}` : this.integrante.nombres
     const entidadSlug = this.create ? '' : `${this.integrante.entidadTipo} ${this.integrante.entidadSlug}`
-    
-    this.formIntegrante.reset({ ...this.integrante, nombre, entidadSlug })
+    const autoridad = this.integrante.esSector ? false : this.integrante.autoridad
+    this.formIntegrante.reset({ ...this.integrante, nombre, entidadSlug, autoridad })
+
+    console.log(this.integrante);
+    console.log(this.formIntegrante.value);
 
     const entidadControl = this.formIntegrante.get('entidadId')
     const autoridadControl = this.formIntegrante.get('autoridad')
@@ -78,6 +81,7 @@ export class FormularioIntegranteMesaComponent {
       }
     } else {
       const ubigeo = this.integrante.ubigeo!
+      autoridadControl?.enable()
       autoridadControl?.setValidators([Validators.required])
       departamentoControl?.setValue(ubigeo?.slice(0,2))
       distritoControl?.setValue(ubigeo)
@@ -91,13 +95,15 @@ export class FormularioIntegranteMesaComponent {
       }
 
       departamentoControl?.setValidators([Validators.required])
-      if(!this.integrante.esSector){
-        autoridadControl?.enable()
+      // if(!this.integrante.esSector){
         if(this.integrante.autoridad){
           dniControl?.disable()
         }
-      }
+      // }
     }
+
+    console.log(this.integrante.esSector);
+    
 
     this.obtenerSectoresService()
     this.obtenerDepartamentoService()
@@ -153,7 +159,7 @@ export class FormularioIntegranteMesaComponent {
     if(entidadIdValue){
       if(autoridadValue){
         this.loading = true
-        dniControl?.disable()
+        // dniControl?.disable()
         nombreControl?.disable()      
         telefonoControl?.disable()
         setTimeout(() => {
