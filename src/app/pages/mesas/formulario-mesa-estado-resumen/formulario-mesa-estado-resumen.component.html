@@ -1,19 +1,19 @@
 <form [formGroup]="formEstado" class="flex flex-col gap-3" autocomplete="off">
     <div class="flex flex-col">
-        <label for="comentario">Fecha de creación</label>
+        <label for="fecha">Fecha de creación</label>
         <p-calendar 
-        formControlName="fechaRegistro"
+        formControlName="fecha"
         [iconDisplay]="'input'" 
         [showIcon]="true"
         [showButtonBar]="true"
         dateFormat="dd/mm/yy"
         inputId="icondisplay"/>
-        <div class="w-full text-danger" *ngIf="alertMessageError('fechaRegistro')">{{msgErrorControl('fechaRegistro','Fecha')}}</div>
+        <div class="w-full text-danger" *ngIf="alertMessageError('fecha')">{{msgErrorControl('fecha','Fecha')}}</div>
     </div>
 
     <div class="flex flex-col col-span-2">
-        <label for="comentario">Resumen</label>
-        <textarea  class="form-control" placeholder="Resumen aquí" formControlName="comentario" rows="2"> </textarea>
-        <div class="w-full text-danger" *ngIf="alertMessageError('comentario')">{{msgErrorControl('comentario','Resumen')}}</div>
+        <label for="resumen">Resumen</label>
+        <textarea  class="form-control" placeholder="Resumen aquí" formControlName="resumen" rows="2"> </textarea>
+        <div class="w-full text-danger" *ngIf="alertMessageError('resumen')">{{msgErrorControl('resumen','Resumen')}}</div>
     </div>
 </form>

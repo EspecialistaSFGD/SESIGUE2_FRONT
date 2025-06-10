@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { getDateFormat } from '@core/helpers';
-import { MesaResponse, MesaIntegranteResponse, Pagination } from '@core/interfaces';
-import { MesaUbigeosService } from '@core/services';
+import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse } from '@core/interfaces';
+import { MesaEstadosService, MesaUbigeosService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -55,6 +55,7 @@ export default class MesasComponent {
   private modal = inject(NzModalService);
   private mesasService = inject(MesasService)
   private mesaUbigeosService = inject(MesaUbigeosService)
+  private mesaEstadosService = inject(MesaEstadosService)
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
@@ -149,7 +150,6 @@ export default class MesasComponent {
   crearEstadoResumen(mesaId: string){
     this.modal.create<FormularioMesaEstadoResumenComponent>({
       nzTitle: `AGREGAR ESTADO RESUMEN`,
-      // nzWidth: '75%',
       nzContent: FormularioMesaEstadoResumenComponent,
       nzFooter: [
         {
@@ -168,10 +168,24 @@ export default class MesasComponent {
               console.error('Invalid fields:', invalidFields);
               return formEstado.markAllAsTouched();
             }
-                        
+
+            const fecha = getDateFormat(formEstado.get('fecha')?.value, 'month')
+            const usuarioId =localStorage.getItem('codigoUsuario')
+            const bodyEstado: MesaEstadoResponse = { ...formEstado.value, mesaId, fecha, usuarioId }
+            this.registrarMesaEstado(bodyEstado)
           }
         }
       ]
     })
+  }
+
+  registrarMesaEstado(mesaEstado: MesaEstadoResponse) {
+    this.mesaEstadosService.registarMesaDetalle(mesaEstado)
+      .subscribe( resp => {
+        if(resp.success == true){
+          this.obtenerMesasService()
+          this.modal.closeAll()
+        }
+      })
   }
 }

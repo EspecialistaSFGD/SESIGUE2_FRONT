@@ -15,8 +15,8 @@ export class FormularioMesaEstadoResumenComponent {
   private fb = inject(FormBuilder)
 
   formEstado: FormGroup = this.fb.group({
-    fechaRegistro: ['', Validators.required],
-    comentario: ['', Validators.required]
+    fecha: ['', Validators.required],
+    resumen: ['', Validators.required]
   })
 
   alertMessageError(control: string) {
