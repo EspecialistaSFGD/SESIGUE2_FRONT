@@ -92,8 +92,6 @@ export class IntegrantesMesaComponent {
               return formIntegrante.markAllAsTouched();
             }
 
-            console.log('FORMULARIO VALIDO');            
-            console.log(formIntegrante.value);
             const alcaldeAsistenteId = `${formIntegrante.get('alcaldeAsistenteId')?.value}`
             const esSector = this.esSector
             const mesaId = this.integrante.mesaId

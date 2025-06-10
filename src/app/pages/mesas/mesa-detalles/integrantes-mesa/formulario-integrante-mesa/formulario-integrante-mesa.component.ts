@@ -62,9 +62,6 @@ export class FormularioIntegranteMesaComponent {
     const autoridad = this.integrante.esSector ? false : this.integrante.autoridad
     this.formIntegrante.reset({ ...this.integrante, nombre, entidadSlug, autoridad })
 
-    console.log(this.integrante);
-    console.log(this.formIntegrante.value);
-
     const entidadControl = this.formIntegrante.get('entidadId')
     const autoridadControl = this.formIntegrante.get('autoridad')
     const dniControl = this.formIntegrante.get('dni')
@@ -95,15 +92,10 @@ export class FormularioIntegranteMesaComponent {
       }
 
       departamentoControl?.setValidators([Validators.required])
-      // if(!this.integrante.esSector){
-        if(this.integrante.autoridad){
-          dniControl?.disable()
-        }
-      // }
+      if(this.integrante.autoridad){
+        dniControl?.disable()
+      }
     }
-
-    console.log(this.integrante.esSector);
-    
 
     this.obtenerSectoresService()
     this.obtenerDepartamentoService()
