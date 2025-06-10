@@ -2,29 +2,29 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { MesaDetalleResponse, MesaDetallesResponses, Pagination } from '@core/interfaces';
+import { MesaDocumentoResponse, MesaDocumentosResponses, Pagination } from '@core/interfaces';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MesaDetallesService {
-  private urlMesaDetalle: string = `${environment.api}/MesaDetalle`
+export class MesaDocumentosService {
+  private urlMesaDocumento: string = `${environment.api}/MesaDocumento`
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  ListarMesaDetalle(mesaId: number, tipo: number, pagination: Pagination): Observable<MesaDetallesResponses> {
+  ListarMesaDetalle(mesaId: number, tipo: number, pagination: Pagination): Observable<MesaDocumentosResponses> {
     let params = this.helpersServices.setParams(pagination)
     params = params.append('mesaId', mesaId)
     params = params.append('tipo', tipo)
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<MesaDetallesResponses>(`${this.urlMesaDetalle}/ListarMesaDetalles`, { headers, params })
+    return this.http.get<MesaDocumentosResponses>(`${this.urlMesaDocumento}/ListarMesaDocumentos`, { headers, params })
   }
 
-  registarMesaDetalle(mesaDetalle: MesaDetalleResponse) {      
+  registarMesaDetalle(mesaDetalle: MesaDocumentoResponse) {      
   const formData = this.generateFormData(mesaDetalle)
   const headers = this.helpersServices.getAutorizationToken()        
-  return this.http.post<MesaDetallesResponses>(`${this.urlMesaDetalle}/CrearMesaDetalle`, formData, { headers })
+  return this.http.post<MesaDocumentosResponses>(`${this.urlMesaDocumento}/CrearMesaDocumento`, formData, { headers })
     .pipe(
       tap(resp => {
         return resp
@@ -36,7 +36,7 @@ export class MesaDetallesService {
 
   eliminarMesaDetalle(detalleId: string) {
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.delete<MesaDetallesResponses>(`${this.urlMesaDetalle}/EliminarMesaDetalle/${detalleId}`, { headers })
+    return this.http.delete<MesaDocumentosResponses>(`${this.urlMesaDocumento}/EliminarMesaDocumento/${detalleId}`, { headers })
       .pipe(
         tap(resp => {
           return resp
@@ -46,7 +46,7 @@ export class MesaDetallesService {
       )
   }
 
-  private generateFormData(mesaDetalle: MesaDetalleResponse): FormData {
+  private generateFormData(mesaDetalle: MesaDocumentoResponse): FormData {
     const formData = new FormData()
     formData.append('nombre', mesaDetalle.nombre)
     formData.append('fechaCreacion', mesaDetalle.fechaCreacion)

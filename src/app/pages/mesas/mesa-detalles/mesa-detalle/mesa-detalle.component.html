@@ -1,0 +1,58 @@
+<div class="grid grid-cols-1 md:grid-cols-6 bg-white p-4">
+	<div class="flex border border-gray-200">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Codigo</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-gray-200">{{mesa.codigo}}</div>
+	</div>
+	<div class="flex col-span-2 border border-gray-200">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Nombre</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-gray-200">
+			{{mesa.nombre}}
+		</div>
+	</div>
+	<div class="flex border border-gray-200">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Abreviatura</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-gray-200">
+			{{mesa.abreviatura}}
+		</div>
+	</div>
+	<div class="flex border border-gray-200">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Estado</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-gray-200">
+			<app-estado-tag [estado]="mesa.estadoRegistroNombre!"></app-estado-tag>
+		</div>
+	</div>
+	<div class="flex border order-gray-200">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Resolución</div>
+		<div class="w-full flex items-center justify-between px-2 py-1 border-l border-gray-200 overflow-hidden">
+			<div class="flex w-full overflow-hidden">
+				<app-boton-descargar [rutaArchivo]="mesa.resolucion" [titulo]="'Descargar Resolucion de creación'"></app-boton-descargar>
+				@for(resolucion of documentosResolucion(); track $index){
+					<app-boton-descargar [rutaArchivo]="resolucion.archivo" [titulo]="'Descargar ' + resolucion.nombre" [active]="false" />
+				}
+			</div>
+			<div class="py-1 px-2 border rounded" [ngClass]="{ 'cursor-pointer border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white' : action, 'border-slate-400 text-slate-400' : !action }" nz-tooltip [nzTooltipTitle]=" action ? 'Nueva Ampliación' : ''" (click)="action ? modalCreateFile(2) : null"><span nz-icon nzType="plus" nzTheme="outline"></span></div>
+		</div>
+	</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Sector</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa.sector}}</div>
+	</div>
+	<div class="flex col-span-2 border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Secretaria Tecnica</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa.secretariaTecnica}}</div>
+	</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Fecha de creación</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa.fechaCreacion}}</div>
+	</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Fecha de vigencia</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-grey-200">{{mesa.fechaVigencia}}</div>
+	</div>
+	<div class="flex border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Acciones</div>
+		<div class="w-full flex items-center px-2 py-1 border-l border-grey-200">
+			<div class="py-1 px-2 border rounded" [ngClass]="{ 'cursor-pointer border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white' : action, 'border-slate-400 text-slate-400' : !action }" nz-tooltip [nzTooltipTitle]="action ? 'Actualizar mesa' : ''" (click)=" action ? actualizarMesa() : null"><span nz-icon nzType="edit" nzTheme="outline"></span></div>
+		</div>
+	</div>
+</div>

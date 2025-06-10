@@ -19,4 +19,10 @@ export class ValidatorService {
   public sevenNumberPattern: RegExp = /^\d{7}$/
 
   public startFiveNumberPattern: RegExp = /^5\d{5,6}$/
+
+  // Nombre que inicia con 'MT_'
+  // public slugMTPattern: RegExp = /^MT_.+$/;
+
+  public slugMTPattern: RegExp = /^MT_.{3,}$/;
+  
 }

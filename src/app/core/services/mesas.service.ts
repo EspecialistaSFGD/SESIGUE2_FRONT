@@ -37,14 +37,30 @@ export class MesasService {
       )
   }
 
+  actualizarMesa(mesa: MesaResponse){
+    const headers = this.helpersServices.getAutorizationToken()          
+    const formData = this.generateFormData(mesa)
+    return this.http.put<MesaResponse>(`${this.urlMesas}/ActualizarMesa/${mesa.mesaId}`, formData, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
+  }
+
   private generateFormData(mesa: MesaResponse): FormData {
     const formData = new FormData()
     formData.append('nombre', mesa.nombre)
+    formData.append('abreviatura', mesa.abreviatura)
+    formData.append('usuarioId', mesa.usuarioId)
     formData.append('sectorId', mesa.sectorId)
     formData.append('secretariaTecnicaId', mesa.secretariaTecnicaId)
     formData.append('fechaCreacion', mesa.fechaCreacion)
     formData.append('fechaVigencia', mesa.fechaVigencia)
     formData.append('resolucion', mesa.resolucion)
+    formData.append('estadoRegistro', mesa.estadoRegistro!)
     return formData
   }
 }

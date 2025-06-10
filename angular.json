@@ -33,13 +33,19 @@
                 "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
                 "output": "/assets/"
               },
+              {
+                "glob": "**/*",
+                "input": "node_modules/primeicons/fonts",
+                "output": "assets/fonts"
+              },
               "src/web.config"
             ],
             "styles": [
               "src/styles.less",
               "src/tailwind.css",
               "src/tiny-slider.css",
-              "src/dark.css"
+              "src/dark.css",
+              "node_modules/primeicons/primeicons.css"
             ],
             "scripts": []
           },
@@ -121,7 +127,12 @@
             "inlineStyleLanguage": "less",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",              
+              {
+                "glob": "**/*",
+                "input": "node_modules/primeicons/fonts",
+                "output": "assets/fonts"
+              }
             ],
             "styles": [
               "src/styles.less"

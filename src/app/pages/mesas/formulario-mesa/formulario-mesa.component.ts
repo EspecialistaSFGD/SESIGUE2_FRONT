@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { typeErrorControl } from '@core/helpers';
-import { EntidadResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { convertDateStringToDate, typeErrorControl } from '@core/helpers';
+import { DataModalMesa, EntidadResponse, MesaResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistentesService, EntidadesService, SectoresService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { ProgressSpinerComponent } from '@shared/progress-spiner/progress-spiner.component';
+import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 @Component({
@@ -18,6 +19,11 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
   styles: ``
 })
 export class FormularioMesaComponent {
+
+  readonly dataMesa: DataModalMesa = inject(NZ_MODAL_DATA);
+
+  create: boolean = this.dataMesa.create
+  mesa = signal<MesaResponse>(this.dataMesa.mesa) 
 
   filesList: NzUploadFile[] = [];
 
@@ -49,12 +55,13 @@ export class FormularioMesaComponent {
 
   formMesa: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
+    abreviatura: ['MT_', [Validators.required, Validators.pattern(this.validatorService.slugMTPattern)]],
     resolucion: ['', Validators.required],
     sectorId: [null, Validators.required],
-    // secretariaTecnicaId: [{ value: null, disabled: true }, Validators.required],
     secretariaTecnicaId: [ '', Validators.required],
     fechaCreacion: ['', Validators.required],
     fechaVigencia: ['', Validators.required],
+    estadoRegistro: ['', Validators.required],
     sectores: this.fb.array([]),
     ubigeos: this.fb.array([]),
   })
@@ -62,8 +69,18 @@ export class FormularioMesaComponent {
   ngOnInit(): void {
     this.obtenerSectoresService()
     this.obtenerDepartamentoService()
-    this.addSectores()
-    this.addUbigeo()
+    if(this.create){
+      this.addSectores()
+      this.addUbigeo()
+      this.formMesa.get('estadoRegistro')?.setValue(0)
+    } else {
+      const sectorId = Number(this.mesa().sectorId)
+      const fechaCreacion = convertDateStringToDate(this.mesa().fechaCreacion)
+      const fechaVigencia = convertDateStringToDate(this.mesa().fechaVigencia)
+
+      this.formMesa.reset({ ...this.mesa(), fechaCreacion, fechaVigencia })
+      this.obtenerEntidadService(sectorId)
+    }
   }
 
   obtenerSectoresService(){
@@ -98,6 +115,31 @@ export class FormularioMesaComponent {
     const errors = levelControl?.errors;
 
     return typeErrorControl(text, errors)
+  }
+
+  validateDate(control: string){
+    const fechaCreacionControl = this.formMesa.get('fechaCreacion')
+    const fechaCreacionValue = fechaCreacionControl?.value
+    const fechaVigenciaControl = this.formMesa.get('fechaVigencia')
+    const fechaVigenciaValue = fechaVigenciaControl?.value
+
+    const fechaCreacion = new Date(fechaCreacionValue);
+    const fechaVigencia = new Date(fechaVigenciaValue);
+
+    if(control == 'creacion'){
+      if (fechaCreacionValue && fechaVigenciaValue && fechaCreacion >= fechaVigencia) {
+        fechaCreacionControl?.setErrors({ ...fechaCreacionControl.errors, msgBack: 'La fecha de creación debe ser menor que la fecha de vigencia.' });
+      } else {
+        fechaVigenciaControl?.setErrors(null)
+      }
+    } else if(control == 'vigencia'){
+      if (fechaCreacionValue && fechaVigenciaValue && fechaVigencia <= fechaCreacion) {
+        fechaVigenciaControl?.setErrors({ ...fechaVigenciaControl.errors, msgBack: 'La fecha de vigencia debe ser mayor que la fecha de creación.' });
+      } else {
+        fechaCreacionControl?.setErrors(null)
+      }
+    }
+
   }
 
   addItemFormArray(control: string, event: MouseEvent) {
@@ -229,7 +271,7 @@ export class FormularioMesaComponent {
     this.asistentesService.ListarAsistentes(pagination)
       .subscribe( resp => {
         const asistente = resp.data[0];
-        nombreControl?.setValue(asistente?.nombres || '');
+        nombreControl?.setValue(`${asistente.nombres} ${asistente.apellidos}` || '');
         telefonoControl?.setValue(asistente?.telefono || '');
         alcaldeAsistenteIdControl?.setValue(asistente?.asistenteId || '');
       })
@@ -264,11 +306,20 @@ export class FormularioMesaComponent {
     return false;
   };
 
+  setAbreviatura(){
+    const abreviaturaControl = this.formMesa.get('abreviatura')
+    const abreviaturaValue = abreviaturaControl?.value
+    let value = abreviaturaValue
+    value = value.toUpperCase()
+    value = value.replace(/\s+/g, '_');
+    abreviaturaControl?.setValue(value)
+  }
+
   changeSector(){
-    const sectorControl = this.formMesa.get('sectorId')?.value
+    const sectorId = this.formMesa.get('sectorId')?.value
     const secretariaControl = this.formMesa.get('secretariaTecnicaId')
-    if(sectorControl){
-      this.obtenerEntidadService(sectorControl)
+    if(sectorId){
+      this.obtenerEntidadService(sectorId)
       secretariaControl?.enable()
     } else {
       secretariaControl?.disable()
@@ -304,7 +355,6 @@ export class FormularioMesaComponent {
         this.listaEntidadesSector.set(copyEntidades)
       }
     })
-
   }
 
   changeDepartamento(index: number){
@@ -427,12 +477,13 @@ export class FormularioMesaComponent {
 
   generalValidate(){
     const nombreControl = this.formControlValidate(this.formControl('nombre')!)
+    const abreviaturaControl = this.formControlValidate(this.formControl('abreviatura')!)
     const sectorControl = this.formControlValidate(this.formControl('sectorId')!)
     const secreatriaTecnicaControl = this.formControlValidate(this.formControl('secretariaTecnicaId')!)
     const fechaCreacionControl = this.formControlValidate(this.formControl('fechaCreacion')!)
     const fechaVigenciaControl = this.formControlValidate(this.formControl('fechaVigencia')!)
     const resolucionControl = this.formControlValidate(this.formControl('resolucion')!)
-    return nombreControl && sectorControl && secreatriaTecnicaControl && fechaCreacionControl && fechaVigenciaControl && resolucionControl;
+    return nombreControl && abreviaturaControl && sectorControl && secreatriaTecnicaControl && fechaCreacionControl && fechaVigenciaControl && resolucionControl;
   }
 
   sectorsValidate(){

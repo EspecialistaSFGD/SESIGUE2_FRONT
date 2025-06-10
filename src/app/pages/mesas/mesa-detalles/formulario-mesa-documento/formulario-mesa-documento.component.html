@@ -1,26 +1,27 @@
-<form [formGroup]="formMesaDetalle" class="flex flex-col gap-3" autocomplete="off">
+<form [formGroup]="formMesaDocumento" class="flex flex-col gap-3" autocomplete="off">
     <div class="flex flex-col">
-		<label for="nombre">Nombre del archivo</label>
+		<label for="nombre">Nombre</label>
 		<input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre aquí" formControlName="nombre">
 		<div class="w-full text-danger" *ngIf="alertMessageError('nombre')">{{msgErrorControl('nombre','nombre')}}</div>
 	</div>
 
     <div class="flex gap-4">
         <div class="w-full flex flex-col">
-			<label for="nombre">Fecha de creación</label>
+			<label for="nombre">Fecha</label>
 			<p-calendar 
 			formControlName="fechaCreacion"
 			[iconDisplay]="'input'" 
 			[showIcon]="true"
 			[showButtonBar]="true"
 			dateFormat="dd/mm/yy"
-			inputId="icondisplay" />
+			inputId="icondisplay" 
+            (onSelect)="verificarFecha()"/>
 			<div class="w-full text-danger" *ngIf="alertMessageError('fechaCreacion')">{{msgErrorControl('fechaCreacion','fecha de creación')}}</div>
 		</div>
 
         <div class="w-full flex flex-col">
             <label for="nombre">Archivo</label>
-            <nz-upload [(nzFileList)]="filesList" [nzBeforeUpload]="beforeUploadMeet">
+            <nz-upload [(nzFileList)]="filesList" [nzBeforeUpload]="beforeUploadFile">
                 <div class="form-control-file">
                     <span nz-icon nzType="upload"></span>
                     Selecionar archivo

@@ -2,44 +2,9 @@
 	<nz-page-header-title>{{title}}</nz-page-header-title>
 </nz-page-header>
 
-<div class="grid grid-cols-1 md:grid-cols-6 bg-white p-4">
-	<div class="flex">
-		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Codigo</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().codigo}}</div>
-	</div>
-	<div class="flex col-span-3">
-		<div class="flex items-center min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Nombre</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().nombre}}</div>
-	</div>
-	<div class="flex">
-		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Estado</div>
-		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
-			<app-estado-tag [estado]="mesa().estadoRegistroNombre!"></app-estado-tag>
-		</div>
-	</div>
-	<div class="flex">
-		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Resolución</div>
-		<div class="w-full flex items-center px-2 py-1 border border-grey-200">
-			<app-boton-descargar [rutaArchivo]="mesa().resolucion"></app-boton-descargar>
-		</div>
-	</div>
-	<div class="flex">
-		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Sector</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().sector}}</div>
-	</div>
-	<div class="flex col-span-3">
-		<div class="flex items-center min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Secretaria Tecnica</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().secretariaTecnica}}</div>
-	</div>
-	<div class="flex">
-		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Fecha de creación</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().fechaCreacion}}</div>
-	</div>
-	<div class="flex">
-		<div class="flex items-center min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 border border-gray-200">Fecha de vigencia</div>
-		<div class="w-full flex items-center  px-2 py-1 border border-grey-200">{{mesa().fechaVigencia}}</div>
-	</div>
-</div>
+@if(mesa().mesaId){
+	<app-mesa-detalle [mesa]="mesa()" [action]="false"/>
+}
 
 <nz-table nzSize="small" [nzTitle]="headerUbigeos" nzShowSizeChanger [nzData]="intervencionesEspacios()"
 [nzFrontPagination]="false" [nzShowPagination]="pagination.pageSize! > 10"
@@ -54,12 +19,12 @@
             <th nzAlign="center">Subtipo</th>
             <th nzAlign="center">Codigo</th>
             <th nzAlign="center">Nombre</th>
-            <th nzAlign="center">Costo Act.</th>
+            <!-- <th nzAlign="center">Costo Act.</th>
             <th nzAlign="center">Dev Acum</th>
             <th nzAlign="center">PIA</th>
             <th nzAlign="center">PIM</th>
             <th nzAlign="center">DEV</th>
-            <th nzAlign="center">Trans 2025</th>
+            <th nzAlign="center">Trans 2025</th> -->
             <th nzAlign="center">Fecha</th>
             <th nzAlign="center">Situación</th>
             <th nzAlign="center">Fase</th>
@@ -79,12 +44,12 @@
 			  <td nzAlign="center">{{intervencionEspacio.subTipo | uppercase }}</td>
 			  <td nzAlign="center">{{intervencionEspacio.codigoIntervencion}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.nombreIntervencion}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.costoActualizado}}</td>
+			  <!-- <td nzAlign="center">{{intervencionEspacio.costoActualizado}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.devAcumulado}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.pia}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.pim}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.devengado}}</td>
-			  <td nzAlign="center">0.0</td>
+			  <td nzAlign="center">0.0</td> -->
 			  <td nzAlign="center">{{intervencionEspacio.fechaRegistro}}</td>
 			  <td nzAlign="center"></td>
 			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionFase}}</td>
@@ -101,15 +66,21 @@
 </nz-table>
 
 <ng-template #headerUbigeos>
-    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
-		<p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
-		<div>
-		  <nz-space>
-				<button nz-button nzType="primary" (click)="crearIntervencion()">
+    <div class="ant-table-header flex flex-col md:flex-row justify-between items-center">
+		<div class="flex gap-4">
+			<div class="mb-2 sm:mb-0">Resultados {{pagination.total}}</div>
+			<div>Fecha de sincronizacion: 10/06/2025 05:30</div>
+		</div>
+
+		<div class="flex flex-col md:flex-row gap-2">
+			<div class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-sky-700 border-sky-700 text-white hover:bg-sky-900">
+				<span nz-icon nzType="sync" nzTheme="outline"></span>
+				Procesar
+			</div>
+			<div class="flex gap-1 py-1 px-4 border rounded cursor-pointer bg-sky-700 border-sky-700 text-white hover:bg-sky-900"  (click)="crearIntervencion()">
 				<span nz-icon nzType="plus" nzTheme="outline"></span>
-				<span class="button-text">Nueva intervencion</span>
-			  </button>
-		  </nz-space>
+				Nueva intervencion
+			</div>
 		</div>
 	  </div>
 </ng-template>
