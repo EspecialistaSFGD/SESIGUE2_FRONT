@@ -8,3 +8,7 @@ export const findEnumToText = <E extends Record<string, string>>(enumType: E, ke
   const findEnum = convertEnumToObject(enumType)
 	return findEnum.find( item => item.text == key.toString() )!
 }
+
+export const arrayDeleteDuplicates = (array: string[]):string[] => {
+  return Array.from(new Set(array));
+}

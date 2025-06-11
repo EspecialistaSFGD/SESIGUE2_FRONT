@@ -16,6 +16,7 @@ export interface MesaResponse {
   abreviatura: string,
   sectorId: string,
   sector?: string,
+  eventoId?: string,
   secretariaTecnicaId: string,
   secretariaTecnica?: string,
   fechaCreacion: string,

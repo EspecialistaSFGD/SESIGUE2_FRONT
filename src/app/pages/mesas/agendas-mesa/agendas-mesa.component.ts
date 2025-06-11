@@ -3,12 +3,13 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IntervencionEspacioResponse, MesaResponse, Pagination } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
-import { IntervencionEspacioService, MesasService } from '@core/services';
+import { IntervencionEspacioService, MesaIntegrantesService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 import { MesaDetalleComponent } from '../mesa-detalles/mesa-detalle/mesa-detalle.component';
+import { arrayDeleteDuplicates } from '@core/helpers';
 
 @Component({
   selector: 'app-agendas-mesa',
@@ -23,6 +24,8 @@ export default class AgendasMesaComponent {
   authUserId = localStorage.getItem('codigoUsuario')
   mesaId!: number
   loadingIntervencionEspacio: boolean = false
+  sectores:number[] = []
+  ubigeos:string[] = []
 
   mesa = signal<MesaResponse>({
     nombre: '',
@@ -45,9 +48,10 @@ export default class AgendasMesaComponent {
     currentPage: 1
   }
 
-  private mesaServices = inject(MesasService)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
+  private mesaServices = inject(MesasService)
+  private mesaIntegranteServices = inject(MesaIntegrantesService)
   private intervencionEspaciosServices = inject(IntervencionEspacioService)
   private modal = inject(NzModalService);
 
@@ -55,7 +59,9 @@ export default class AgendasMesaComponent {
     this.verificarMesa()
     this.pagination.origenId = '1'
     this.pagination.interaccionId = `${this.mesaId}`
-    this.obtenerIntervencionEspacioServicio()
+    this.obtenerMesaIntegrantesService(true)
+    this.obtenerMesaIntegrantesService(false)
+    this.obtenerIntervencionEspacioService()
   }
 
   verificarMesa(){
@@ -77,12 +83,20 @@ export default class AgendasMesaComponent {
       })
   }
 
-  obtenerIntervencionEspacioServicio(){
+  obtenerMesaIntegrantesService(sector: boolean){
+    const esSector = sector ? '1' : '0'
+    this.mesaIntegranteServices.ListarMesaIntegrantes(this.mesaId.toString(), {...this.pagination, pageSize: 100, esSector})
+      .subscribe( resp => {
+        sector
+        ? this.sectores = Array.from(new Set(resp.data.map( item => Number(item.sectorId))))
+        : this.ubigeos = Array.from(new Set(resp.data.map( item => item.ubigeo!.slice(0,2))))
+      })
+  }
+
+  obtenerIntervencionEspacioService(){
     this.loadingIntervencionEspacio = true
     this.intervencionEspaciosServices.ListarIntervencionEspacios(this.pagination)
       .subscribe( resp => {        
-        console.log(resp.data);
-        
         this.loadingIntervencionEspacio = false
         this.intervencionesEspacios.set(resp.data)
       })
@@ -101,15 +115,17 @@ export default class AgendasMesaComponent {
     this.intervencionEspacioForm(true)
   }
 
-  intervencionEspacioForm(create: boolean){
+  intervencionEspacioForm(create: boolean){    
     const action = `${create ? 'Crear' : 'Actualizar' } Intervencion`
     this.modal.create<FormularioIntervencionComponent>({
       nzTitle: `${action.toUpperCase()}`,
       nzWidth: '50%',
       nzContent: FormularioIntervencionComponent,
       nzData: {
-        origen: { origen: 'mesas', interaccionId: this.mesaId.toString() },
-        create
+        create,
+        origen: { origen: 'mesas', interaccionId: this.mesaId.toString(), eventoId: this.mesa().eventoId },
+        sectores: this.sectores,
+        ubigeos: this.ubigeos
       },
       nzFooter: [
         {
@@ -145,7 +161,7 @@ export default class AgendasMesaComponent {
     this.intervencionEspaciosServices.registrarIntervencionEspacio(intervencionEspacio)
       .subscribe(resp => {
         if (resp.success) {
-          this.obtenerIntervencionEspacioServicio()
+          this.obtenerIntervencionEspacioService()
           this.modal.closeAll()
         }
       });

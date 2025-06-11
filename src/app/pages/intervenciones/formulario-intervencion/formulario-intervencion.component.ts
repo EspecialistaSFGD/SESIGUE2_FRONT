@@ -21,6 +21,8 @@ export class FormularioIntervencionComponent {
 
   create: boolean = this.dataIntervencionTarea.create
   origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
+  sectoresValidos: number[] = this.dataIntervencionTarea.sectores
+  ubigeosValidos: string[] = this.dataIntervencionTarea.ubigeos
 
   pagination: Pagination = {
     columnSort: 'nombre',
@@ -73,7 +75,7 @@ export class FormularioIntervencionComponent {
   formIntervencionEspacio: FormGroup = this.fb.group({
     origenId: [ { value: '', disabled: true }, Validators.required ],
     tipoEventoId: [ { value: '', disabled: true }, Validators.required ],
-    eventoId: [ '', Validators.required ],
+    eventoId: [ { value: '', disabled: true }, Validators.required],
     tipoIntervencion: [ '', Validators.required ],
     subTipoIntervencion: [ { value: '', disabled: true }, Validators.required ],
     codigoIntervencion: [ { value: '', disabled: true }, Validators.required ],
@@ -93,9 +95,10 @@ export class FormularioIntervencionComponent {
   })
 
   ngOnInit(): void {
-    const origenId = this.origenes.find( item => item.value.toLowerCase() == this.origen.origen.toLowerCase())?.text
-    this.formIntervencionEspacio.get('origenId')?.setValue(origenId)
+    const origen = this.origenes.find( item => item.value.toLowerCase() == this.origen.origen.toLowerCase())
+    this.formIntervencionEspacio.get('origenId')?.setValue(origen?.text)
     this.formIntervencionEspacio.get('interaccionId')?.setValue(this.origen.interaccionId)
+    this.formIntervencionEspacio.get('eventoId')?.setValue(this.origen.eventoId)
 
     this.obtenerTipoEventoServices()
     this.obtenerSectoresServices()
@@ -134,12 +137,16 @@ export class FormularioIntervencionComponent {
     this.eventosService.getAllEventos([tipoEventoId], 1, [1, 2, 3], paginationTipoEvento).subscribe( resp => this.eventos.set(resp.data))
   }
 
+  obtenerIntegrantesMesas(){
+
+  }
+
   obtenerSectoresServices(){
-    this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data))
+    this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID)))))
   }
 
   obtenerDepartamentoServices(){
-    this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(resp.data))
+    this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(resp.data.filter( item => this.ubigeosValidos.includes(item.departamentoId))))
   }
 
   obtenerIntervencionFaseService(inicial: boolean = true){
