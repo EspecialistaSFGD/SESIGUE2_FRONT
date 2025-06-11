@@ -57,8 +57,10 @@ export class FormularioIntervencionTareaComponent {
   })
 
   ngOnInit(): void {
+    console.log(this.intervencionTarea());
+    
     const entidad = this.create ? null : this.intervencionEspacio().entidad
-    this.formIntervencionTarea.reset({...this.intervencionTarea, entidad })
+    this.formIntervencionTarea.reset({...this.intervencionTarea(), entidad })
     this.obtenerResponsables()
     this.obtenerEntidadSector()
     this.obtenerIntervencionFaseService()

@@ -136,6 +136,10 @@ export default class IntervencionTareasComponent {
       })
   }
 
+  eliminarTarea(tareaId: string){
+
+  }
+
   obtenerTareaAvances(intervencionTarea: IntervencionTareaResponse){
     this.listarAvances = true
     this.intervencionTarea = intervencionTarea
