@@ -95,7 +95,7 @@ export default class AgendasMesaComponent {
 
   obtenerIntervencionEspacioService(){
     this.loadingIntervencionEspacio = true
-    this.intervencionEspaciosServices.ListarIntervencionEspacios(this.pagination)
+    this.intervencionEspaciosServices.ListarIntervencionEspacios({...this.pagination, columnSort: 'intervencionEspacioId'})
       .subscribe( resp => {        
         this.loadingIntervencionEspacio = false
         this.intervencionesEspacios.set(resp.data)

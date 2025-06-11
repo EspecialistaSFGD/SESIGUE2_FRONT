@@ -6,11 +6,6 @@
 	<app-mesa-detalle [mesa]="mesa()" [action]="false"/>
 }
 
-<div class="w-full">
-	{{sectores}}<br>
-	{{ubigeos}}
-</div>
-
 <nz-table nzSize="small" [nzTitle]="headerUbigeos" nzShowSizeChanger [nzData]="intervencionesEspacios()"
 [nzFrontPagination]="false" [nzShowPagination]="pagination.pageSize! > 10"
 [nzLoading]="loadingIntervencionEspacio" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"

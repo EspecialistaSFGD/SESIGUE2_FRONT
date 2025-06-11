@@ -17,7 +17,7 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
 })
 export class FormularioIntervencionTareaAvanceComponent {
 
-  estados: ItemEnum[] = convertEnumToObject(IntervencionTareaAvanceEstadoRegistroEnum)
+  estados: ItemEnum[] = convertEnumToObject(IntervencionTareaAvanceEstadoRegistroEnum, true)
 
   filesList: NzUploadFile[] = [];
 
