@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IntervencionEspacioOriginEnum } from '@core/enums';
+import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { convertEnumToObject, typeErrorControl } from '@core/helpers';
 import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
@@ -29,7 +29,7 @@ export class FormularioIntervencionComponent {
     currentPage: 1
   }
 
-  origenes: ItemEnum[] = convertEnumToObject(IntervencionEspacioOriginEnum)
+  origenes: ItemEnum[] = convertEnumToObject(IntervencionEspacioOrigenEnum)
 
   intervencionTipos: IntervencionEspacioTipo[] = [
     { tipoId: '1', tipo: 'PROYECTO' },
