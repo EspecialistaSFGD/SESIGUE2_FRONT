@@ -53,6 +53,8 @@ export default class AgendasMesaComponent {
 
   ngOnInit(): void {
     this.verificarMesa()
+    this.pagination.origenId = '1'
+    this.pagination.interaccionId = `${this.mesaId}`
     this.obtenerIntervencionEspacioServicio()
   }
 
@@ -79,6 +81,8 @@ export default class AgendasMesaComponent {
     this.loadingIntervencionEspacio = true
     this.intervencionEspaciosServices.ListarIntervencionEspacios(this.pagination)
       .subscribe( resp => {        
+        console.log(resp.data);
+        
         this.loadingIntervencionEspacio = false
         this.intervencionesEspacios.set(resp.data)
       })

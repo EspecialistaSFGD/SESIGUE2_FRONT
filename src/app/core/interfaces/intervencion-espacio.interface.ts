@@ -31,6 +31,8 @@ export interface IntervencionEspacioResponse {
 	provincia?: string,
 	distrito?: string,
 	entidad?: string,
+	entidadTipo?: string,
+	entidadSlug?: string,
 	beneficiarios?: string,
 	costoActualizado?: string,
 	devAcumulado?: string,
