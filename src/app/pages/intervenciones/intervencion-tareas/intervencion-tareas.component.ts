@@ -24,7 +24,7 @@ export default class IntervencionTareasComponent {
   listarAvances: boolean = false
   loadingTareas: boolean =  false
   
-  paginationTareas: Pagination = {
+  pagination: Pagination = {
     columnSort: 'intervencionTareaId',
     typeSort: 'DESC',
     pageSize: 5,
@@ -54,14 +54,12 @@ export default class IntervencionTareasComponent {
     this.loadingTareas = true
     const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId
 
-    this.intervencionTareasServices.ListarIntervencionTareas({...this.paginationTareas, intervencionEspacioId})
+    this.intervencionTareasServices.ListarIntervencionTareas({...this.pagination, intervencionEspacioId})
       .subscribe( resp => {
         this.loadingTareas = false
         this.intervencionTareas.set(resp.data)
-        this.paginationTareas.total = resp.info?.total
-        // if(resp.data.length > 0){
-          
-        // }
+        this.pagination.total = resp.info?.total
+
         resp.data.map( item => {
           if(item.estadoRegistroNombre != 'culminado'){
             this.botonNuevoActivo = false
@@ -71,17 +69,23 @@ export default class IntervencionTareasComponent {
       })
   }
 
+  obtenerIntervencionTareaService(tareaId: string){
+    this.intervencionTareasServices.obtenerIntervencionTareas(tareaId).subscribe( resp => this.intervencionTarea = resp.data)
+  }
+
   agregarTarea(){
     this.intervencionTarea.intervencionEspacioId = this.intervencionEspacio.intervencionId
     this.intervencionTareaFormModal(true)
   }
 
-  actualizarTarea(intervencionTarea: IntervencionTareaResponse){
-    this.intervencionTarea = intervencionTarea
-    this.intervencionTareaFormModal(false)
+  actualizarTarea(tareaId: string){
+    this.obtenerIntervencionTareaService(tareaId)
+    setTimeout(() => {
+      this.intervencionTareaFormModal(false)
+    }, 100);
   }
 
-  intervencionTareaFormModal(create: boolean){
+  intervencionTareaFormModal(create: boolean){    
     const action = `${create ? 'Crear' : 'Actualizar' } tarea`
     this.modal.create<FormularioIntervencionTareaComponent>({
       nzTitle: `${action.toUpperCase()}`,
@@ -115,11 +119,12 @@ export default class IntervencionTareasComponent {
             formIntervencionTarea.get('plazo')?.setValue(plazoDateFormat)
             const accesoId = localStorage.getItem('codigoUsuario')!
 
-            let intervencionTarea: IntervencionTareaResponse = { ...formIntervencionTarea.getRawValue() }
+            let intervencionTarea: IntervencionTareaResponse = { ...formIntervencionTarea.getRawValue(), accesoId }
 
             if(create){ 
-              intervencionTarea.accesoId = accesoId
-              this.crearIntervencionTarea(intervencionTarea)         
+              this.crearIntervencionTareaService(intervencionTarea)         
+            } else {
+              this.actualizarTareaServices(intervencionTarea)
             }
           }
         }
@@ -127,9 +132,17 @@ export default class IntervencionTareasComponent {
     })
   }
 
-  crearIntervencionTarea(intervencionTarea: IntervencionTareaResponse){    
+  crearIntervencionTareaService(intervencionTarea: IntervencionTareaResponse){    
     const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId! 
     this.intervencionTareasServices.registarIntervencionTarea({...intervencionTarea, intervencionEspacioId})
+      .subscribe( resp => {
+        this.obtenerIntervencionTareasService()
+        this.modal.closeAll()
+      })
+  }
+
+  actualizarTareaServices(intervencionTarea: IntervencionTareaResponse){
+    this.intervencionTareasServices.actualizarIntervencionTarea(intervencionTarea)
       .subscribe( resp => {
         this.obtenerIntervencionTareasService()
         this.modal.closeAll()

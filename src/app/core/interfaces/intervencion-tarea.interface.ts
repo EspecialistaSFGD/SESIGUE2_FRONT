@@ -5,6 +5,10 @@ export interface IntervencionTareasResponses extends DataResponses {
   data: IntervencionTareaResponse[]
 }
 
+export interface IntervencionTareaResponses extends DataResponses {
+  data: IntervencionTareaResponse
+}
+
 export interface IntervencionTareaResponse {
 	intervencionTareaId?: string,
 	tarea: string,

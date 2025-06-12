@@ -1,8 +1,8 @@
 <div class="flex flex-col gap-5">
   Lista
   <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderTareas" nzShowSizeChanger nzSize="small"
-    [nzData]="intervencionTareas()" [nzFrontPagination]="false" [nzLoading]="loadingTareas" [nzTotal]="paginationTareas.total!" [nzShowPagination]="paginationTareas.total! > 5"
-    [nzPageSize]="paginationTareas.pageSize!" [nzPageIndex]="paginationTareas.currentPage!">
+    [nzData]="intervencionTareas()" [nzFrontPagination]="false" [nzLoading]="loadingTareas" [nzTotal]="pagination.total!" [nzShowPagination]="pagination.total! > 5"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
     <thead>
       <tr>
         <th nzWidth="32px" nzAlign="center"nzColumnKey="codigoIntervencion" [nzSortFn]="true">Codigo</th>
@@ -31,7 +31,7 @@
           <td nzAlign="center">{{tarea.estadoRegistroNombre | uppercase}}</td>
           <td nzAlign="center">{{tarea.comentario}}</td>
           <td nzAlign="center">
-            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Actualizar" (click)="actualizarTarea(tarea)">
+            <button nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!tarea.validado ? 'Actualizar' : ''" [disabled]="tarea.validado" (click)="actualizarTarea(tarea.intervencionTareaId!)">
               <span nz-icon nzType="edit" nzTheme="outline"></span>
             </button>
             <button nz-button nzDanger nzType="link" nz-tooltip="Eliminar integrante" (click)="eliminarTarea(tarea.intervencionTareaId!)">
@@ -53,13 +53,17 @@
       <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
           <div class="flex flex-col ">
               <p class="font-semibold text-base">Gestión de tareas</p>
-              <p class="text-sm">Resultados {{paginationTareas.total}}</p>
+              <p class="text-sm">Resultados {{pagination.total}}</p>
           </div>
 
-          <button nz-button nzType="primary" (click)="agregarTarea()" [disabled]="!botonNuevoActivo">
+          <button nz-button nzType="primary" (click)="agregarTarea()">
               <span nz-icon nzType="plus" nzTheme="outline"></span>
               <span class="button-text">Nueva Tarea</span>
           </button>
+          <!-- <button nz-button nzType="primary" (click)="agregarTarea()" [disabled]="!botonNuevoActivo">
+              <span nz-icon nzType="plus" nzTheme="outline"></span>
+              <span class="button-text">Nueva Tarea</span>
+          </button> -->
       </div>
   </ng-template>
   

@@ -53,17 +53,37 @@ export class FormularioIntervencionTareaComponent {
     responsableId: [ '', Validators.required ],
     intervencionFaseId: [ '', Validators.required ],
     intervencionEtapaId: [{ value: '', disabled: true }, Validators.required],
-    intervencionHitoId: [{ value: '', disabled: true }, Validators.required]
+    intervencionHitoId: [{ value: '', disabled: true }, Validators.required],
+    comentario: [ '' ],
+    comentarioSd: [ '' ],
+    validado: [ false, Validators.required ],
   })
 
-  ngOnInit(): void {
-    console.log(this.intervencionTarea());
-    
-    const entidad = this.create ? null : this.intervencionEspacio().entidad
-    this.formIntervencionTarea.reset({...this.intervencionTarea(), entidad })
+  ngOnInit(): void {    
+    const entidad = this.create ? null : this.intervencionTarea().entidad
+    this.formIntervencionTarea.reset({...this.intervencionTarea() })
     this.obtenerResponsables()
     this.obtenerEntidadSector()
     this.obtenerIntervencionFaseService()
+    this.setForm()
+  }
+
+  setForm(){
+    if(!this.create){
+      const etapaIdControl = this.formIntervencionTarea.get('intervencionEtapaId')
+      const hitoIdControl = this.formIntervencionTarea.get('intervencionHitoId')
+      etapaIdControl?.enable()
+      hitoIdControl?.enable()
+
+      // etapaIdControl?.setValue(this.intervencionTarea().intervencionEtapaId)
+      // hitoIdControl?.setValue(this.intervencionTarea().intervencionHitoId)
+      console.log(this.formIntervencionTarea.getRawValue());
+      
+      
+      this.obtenerIntervencionEtapaService()
+      this.obtenerIntervencionHitoService()
+
+    }
   }
 
   obtenerResponsables(){
@@ -132,6 +152,8 @@ export class FormularioIntervencionTareaComponent {
     const intervencionFaseId = this.formIntervencionTarea.get('intervencionFaseId')?.value
     const intervencionEtapaControl = this.formIntervencionTarea.get('intervencionEtapaId')
     const intervencionHitoControl = this.formIntervencionTarea.get('intervencionHitoId')
+    console.log(intervencionFaseId);
+    
     if(intervencionFaseId){
       intervencionEtapaControl?.enable()
       intervencionEtapaControl?.reset()
