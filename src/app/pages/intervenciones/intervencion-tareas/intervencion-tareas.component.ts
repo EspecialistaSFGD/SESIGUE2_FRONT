@@ -74,7 +74,14 @@ export default class IntervencionTareasComponent {
   }
 
   agregarTarea(){
-    this.intervencionTarea.intervencionEspacioId = this.intervencionEspacio.intervencionId
+    this.intervencionTarea = {
+      tarea: '',
+      plazo: '',
+      entidadId: '',
+      intervencionHitoId: '',
+      intervencionEspacioId: this.intervencionEspacio.intervencionId,
+      responsableId: ''
+    } 
     this.intervencionTareaFormModal(true)
   }
 
@@ -124,6 +131,7 @@ export default class IntervencionTareasComponent {
             if(create){ 
               this.crearIntervencionTareaService(intervencionTarea)         
             } else {
+              intervencionTarea.intervencionTareaId = this.intervencionTarea.intervencionTareaId
               this.actualizarTareaServices(intervencionTarea)
             }
           }
