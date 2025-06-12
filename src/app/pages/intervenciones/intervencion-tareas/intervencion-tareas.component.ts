@@ -5,7 +5,7 @@ import { IntervencionTareaService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaComponent } from './formulario-Intervencion-tarea/formulario-intervencion-tarea.component';
-import { getDateFormat } from '@core/helpers';
+import { convertDateStringToDate, getDateFormat } from '@core/helpers';
 import IntervencionTareaAvancesComponent from './intervencion-tarea-avances/intervencion-tarea-avances.component';
 
 @Component({
@@ -38,7 +38,8 @@ export default class IntervencionTareasComponent {
     entidadId: '',
     intervencionHitoId: '',
     intervencionEspacioId: '',
-    responsableId: ''
+    responsableId: '',
+    validado: false
   }
   
   intervencionTareas = signal<IntervencionTareaResponse[]>([])
@@ -80,7 +81,8 @@ export default class IntervencionTareasComponent {
       entidadId: '',
       intervencionHitoId: '',
       intervencionEspacioId: this.intervencionEspacio.intervencionId,
-      responsableId: ''
+      responsableId: '',
+      validado: false
     } 
     this.intervencionTareaFormModal(true)
   }
@@ -157,8 +159,29 @@ export default class IntervencionTareasComponent {
       })
   }
 
-  eliminarTarea(tareaId: string){
+  eliminarTarea(intervencionTarea: IntervencionTareaResponse){        
+    this.modal.confirm({
+      nzTitle: `Eliminar tarea`,
+      nzContent: `¿Está seguro de que desea eliminar la tarea ${intervencionTarea.codigo}?`,
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.intervencionTareasServices.eliminarIntervencionTarea(intervencionTarea.intervencionTareaId!)
+          .subscribe( resp => {
+            if(resp.success){
+              this.obtenerIntervencionTareasService()
+            }
+          })
+      },
+      nzCancelText: 'Cancelar'
+    });
+  }
 
+  validarTarea(intervencionTarea: IntervencionTareaResponse){
+    const plazoDate = convertDateStringToDate(intervencionTarea.plazo)
+    intervencionTarea.validado = true
+    intervencionTarea.plazo = getDateFormat(plazoDate,'month')
+    this.actualizarTareaServices(intervencionTarea)
   }
 
   obtenerTareaAvances(intervencionTarea: IntervencionTareaResponse){

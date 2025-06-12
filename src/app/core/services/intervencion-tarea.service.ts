@@ -47,4 +47,16 @@ export class IntervencionTareaService {
           catchError(err => of(err))
         )
     }
+
+    eliminarIntervencionTarea(tareaId: string) {
+        const headers = this.helpersServices.getAutorizationToken()
+        return this.http.delete<IntervencionTareasResponses>(`${this.urlIntervencionTarea}/EliminarIntervencionTarea/${tareaId}`, { headers })
+          .pipe(
+            tap(resp => {
+              return resp
+            }),
+            map(valid => valid),
+            catchError(err => of(err))
+          )
+      }
 }

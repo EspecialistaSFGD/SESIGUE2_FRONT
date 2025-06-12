@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { typeErrorControl } from '@core/helpers';
+import { convertDateStringToDate, typeErrorControl } from '@core/helpers';
 import { DataModalIntervencionTarea, EntidadResponse, IntervencionEspacioResponse, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, IntervencionTareaResponse, Pagination, SectorResponse } from '@core/interfaces';
 import { EntidadesService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -60,7 +60,8 @@ export class FormularioIntervencionTareaComponent {
   })
 
   ngOnInit(): void {
-    this.formIntervencionTarea.reset({...this.intervencionTarea() })
+    const plazo = this.create ? '' :  convertDateStringToDate(this.intervencionTarea().plazo)
+    this.formIntervencionTarea.reset({...this.intervencionTarea(), plazo })
     this.obtenerResponsablesService()
     this.obtenerEntidadSector()
     this.obtenerIntervencionFaseService()
@@ -135,10 +136,6 @@ export class FormularioIntervencionTareaComponent {
 
     responsableValue && this.sectorEntidad ? entidadIdControl?.enable() :entidadIdControl?.disable()
 
-    // if(this.create && !this.sectorEntidad){
-    //   entidadControl?.setValue(this.intervencionEspacio().entidad)
-    //   entidadIdControl?.setValue(this.intervencionEspacio().entidadUbigeoId)
-    // }
     if(this.sectorEntidad){
       entidadControl?.reset()
       entidadIdControl?.reset()
