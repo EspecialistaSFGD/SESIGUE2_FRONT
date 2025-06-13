@@ -29,13 +29,17 @@
           <td nzAlign="center">{{tarea.entidad}}</td>
           <td nzAlign="center">{{tarea.plazo}}</td>
           <td nzAlign="center">{{tarea.estadoRegistroNombre | uppercase}}</td>
-          <td nzAlign="center">{{tarea.comentario}}</td>
+          <!-- <td nzAlign="center">{{permisosPCM ? tarea.comentario : tarea.comentarioSd }}</td> -->
+          <td nzAlign="center">{{tarea.comentarioSd}}</td>
           <td nzAlign="center">
             <button nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!tarea.validado ? 'Actualizar' : ''" [disabled]="tarea.validado" (click)="actualizarTarea(tarea.intervencionTareaId!)">
               <span nz-icon nzType="edit" nzTheme="outline"></span>
             </button>
             <button nz-button nzDanger nzType="link" [nz-tooltip]="!tarea.validado ? 'Eliminar integrante' : ''" [disabled]="tarea.validado" (click)="eliminarTarea(tarea)">
               <span nz-icon nzType="delete" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="link" [nz-tooltip]="!tarea.validado ? 'Comentar' : ''" [disabled]="tarea.validado" (click)="comentarTarea(tarea)">
+              <span nz-icon nzType="comment" nzTheme="outline"></span>
             </button>
             <button nz-button nzType="link" [nz-tooltip]="tarea.validado ? 'Ver Avances' : ''" [disabled]="!tarea.validado" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null">
               <span nz-icon nzType="eye" nzTheme="outline"></span>

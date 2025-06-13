@@ -7,6 +7,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaComponent } from './formulario-Intervencion-tarea/formulario-intervencion-tarea.component';
 import { convertDateStringToDate, getDateFormat } from '@core/helpers';
 import IntervencionTareaAvancesComponent from './intervencion-tarea-avances/intervencion-tarea-avances.component';
+import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-intervencion-tareas',
@@ -23,6 +25,9 @@ export default class IntervencionTareasComponent {
   botonNuevoActivo: boolean = true
   listarAvances: boolean = false
   loadingTareas: boolean =  false
+
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
   
   pagination: Pagination = {
     columnSort: 'intervencionTareaId',
@@ -45,10 +50,18 @@ export default class IntervencionTareasComponent {
   intervencionTareas = signal<IntervencionTareaResponse[]>([])
 
   private intervencionTareasServices = inject(IntervencionTareaService)
+  private authStore = inject(AuthService)
   private modal = inject(NzModalService);
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
+    this.permisosPCM = this.setPermisosPCM()
     this.obtenerIntervencionTareasService()
+  }
+
+  setPermisosPCM(){
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    const profilePCM = [11,12,23]
+    return profilePCM.includes(this.perfilAuth)
   }
 
   obtenerIntervencionTareasService(){
@@ -96,8 +109,9 @@ export default class IntervencionTareasComponent {
 
   intervencionTareaFormModal(create: boolean){    
     const action = `${create ? 'Crear' : 'Actualizar' } tarea`
+    const codigoTarea = create ? '' : this.intervencionTarea.codigo
     this.modal.create<FormularioIntervencionTareaComponent>({
-      nzTitle: `${action.toUpperCase()}`,
+      nzTitle: `${action.toUpperCase()} ${codigoTarea}`,
       nzWidth: '50%',
       nzContent: FormularioIntervencionTareaComponent,
       nzData: {
@@ -176,6 +190,43 @@ export default class IntervencionTareasComponent {
       nzCancelText: 'Cancelar'
     });
   }
+
+  comentarTarea(intervencionTarea: IntervencionTareaResponse){
+    this.modal.create<FormularioComentarComponent>({
+      nzTitle: `COMENTAR AVANCE ${intervencionTarea.codigo}`,
+      nzContent: FormularioComentarComponent,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Guardar',
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formComentario = componentResponse!.formComentario
+
+            if (formComentario.invalid) {
+              const invalidFields = Object.keys(formComentario.controls).filter(field => formComentario.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formComentario.markAllAsTouched();
+            }
+
+            const comentario = formComentario.get('comentario')?.value
+
+            switch (this.permisosPCM) {
+              case true: intervencionTarea.comentarioSd = comentario; break;
+              case false: intervencionTarea.comentario = comentario; break;
+            }
+            this.actualizarTareaServices(intervencionTarea)
+          }
+        }
+      ]
+    })
+  }
+
+
 
   validarTarea(intervencionTarea: IntervencionTareaResponse){
     const plazoDate = convertDateStringToDate(intervencionTarea.plazo)
