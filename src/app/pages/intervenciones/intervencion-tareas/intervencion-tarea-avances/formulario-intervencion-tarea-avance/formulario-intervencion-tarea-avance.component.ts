@@ -42,10 +42,23 @@ export class FormularioIntervencionTareaAvanceComponent {
   }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {
-    const archivo = this.formTareaAvance.get('evidencia')
-    archivo?.setValue(file)
+    const evidenciaControl = this.formTareaAvance.get('evidencia')
+    evidenciaControl?.setValue(file)
     this.filesList = []
     this.filesList = this.filesList.concat(file);
     return false;
   };
+
+  obtenerEstadoRegistro(){
+    const estadoValue = this.formTareaAvance.get('estadoRegistro')?.value
+    const evidenciaControl = this.formTareaAvance.get('evidencia')
+    
+    if(estadoValue == IntervencionTareaAvanceEstadoRegistroEnum.PROYECTO_CULMINADO){
+      evidenciaControl?.setValidators([Validators.required]);
+      evidenciaControl?.updateValueAndValidity();
+    } else {
+      evidenciaControl?.clearValidators()
+      evidenciaControl?.updateValueAndValidity();
+    }    
+  }
 }

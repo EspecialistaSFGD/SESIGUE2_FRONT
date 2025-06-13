@@ -136,7 +136,7 @@ export default class IntervencionTareaAvancesComponent {
   crearIntervencionTareaAvance(intervencionTareaAvance: IntervencionTareaAvanceResponse){
     this.intervencionTareaAvanceServices.registarIntervencionTareaAvance(intervencionTareaAvance)
       .subscribe( resp => {          
-        // this.obtenerInversionTareaAvanceService()
+        this.obtenerInversionTareaAvanceService()
         this.tareaUpdated.emit(true)
         this.modal.closeAll()
       })
@@ -198,7 +198,7 @@ export default class IntervencionTareaAvancesComponent {
           .subscribe( resp => {
             if(resp.success){
               this.tareaUpdated.emit(true)
-              // this.obtenerInversionTareaAvanceService()
+              this.obtenerInversionTareaAvanceService()
             }
           })
       },

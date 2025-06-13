@@ -26,14 +26,15 @@
 				optionLabel="value"
 				optionValue="text"
 				[showClear]="true" 
-				placeholder="Seleccionar estado"/>
+				placeholder="Seleccionar estado"
+				(onClick)="obtenerEstadoRegistro()"/>
 			<div class="text-danger" *ngIf="alertMessageError('estadoRegistro')">{{msgErrorControl('estadoRegistro','Estado')}}</div>
 		</div>
     </div>
 
     <div class="w-full flex flex-col">
         <label for="evidencia">Evidencia</label>
-        <nz-upload [(nzFileList)]="filesList" [nzBeforeUpload]="beforeUploadMeet">
+        <nz-upload [(nzFileList)]="filesList" [nzBeforeUpload]="beforeUploadMeet" id="evidencia">
             <div class="form-control-file">
                 <span nz-icon nzType="upload"></span>
                 Selecionar evidencia
