@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IntervencionTareaAvanceResponse, IntervencionTareaResponse, Pagination } from '@core/interfaces';
+import { IntervencionTareaAvanceResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
 import { DescargarService, IntervencionTareaAvanceService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaAvanceComponent } from './formulario-intervencion-tarea-avance/formulario-intervencion-tarea-avance.component';
-import { convertDateStringToDate, generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
+import { convertDateStringToDate, convertEnumToObject, generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
 import saveAs from 'file-saver';
 import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
 import { AuthService } from '@libs/services/auth/auth.service';
+import { IntervencionTareaAvanceEstadoRegistroEnum, IntervencionTareaEstadoRegistroEnum } from '@core/enums';
 
 @Component({
   selector: 'app-intervencion-tarea-avances',
@@ -26,7 +27,9 @@ export default class IntervencionTareaAvancesComponent {
   loading: boolean = false
   permisosPCM: boolean = false
   perfilAuth: number = 0
+  tareaProyectoCulminado: boolean = false
   tareaCulminado: boolean = false
+  estadosRegistros: ItemEnum[] = convertEnumToObject(IntervencionTareaAvanceEstadoRegistroEnum)
 
   intervencionTareasAvances = signal<IntervencionTareaAvanceResponse[]>([])
 
@@ -48,7 +51,8 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   ngOnInit(): void {    
-    this.tareaCulminado = this.intervencionTarea?.estadoRegistroNombre?.toLowerCase() == 'culminado'
+    this.tareaProyectoCulminado = this.intervencionTarea?.estadoRegistroNombre?.toLowerCase() == IntervencionTareaEstadoRegistroEnum.PROYECTO_CULMINADO
+    this.tareaCulminado = this.intervencionTarea?.estadoRegistroNombre?.toLowerCase() == IntervencionTareaEstadoRegistroEnum.CULMINADO
     this.permisosPCM = this.setPermisosPCM()    
   }
 
@@ -166,9 +170,12 @@ export default class IntervencionTareaAvancesComponent {
 
             const comentario = formComentario.get('comentario')?.value
 
-            if(this.permisosPCM){
-              intervencionTareaAvance.comentarioSd = comentario
-            }
+            // if(this.permisosPCM){
+            //   intervencionTareaAvance.comentarioSd = comentario
+            // }
+            this.permisosPCM
+            ? intervencionTareaAvance.comentarioSd = comentario
+            : intervencionTareaAvance.comentario = comentario
 
             const fechaDate = convertDateStringToDate(intervencionTareaAvance.fecha)
             intervencionTareaAvance.fecha = getDateFormat(fechaDate,'month')
@@ -180,9 +187,13 @@ export default class IntervencionTareaAvancesComponent {
     })
   }
 
-  validarTarea(intervencionTareaAvance: IntervencionTareaAvanceResponse){
+  verificarProyectoCulminadoAvance(estadoRegistroNombre: string): boolean{
+    return this.tareaProyectoCulminado && estadoRegistroNombre == IntervencionTareaAvanceEstadoRegistroEnum.PROYECTO_CULMINADO
+  }
+
+  validarAvance(intervencionTareaAvance: IntervencionTareaAvanceResponse){
     const fechaDate = convertDateStringToDate(intervencionTareaAvance.fecha)
-    intervencionTareaAvance.validado = true
+    this.permisosPCM ? intervencionTareaAvance.validaPcm = true : intervencionTareaAvance.validado = true
     intervencionTareaAvance.fecha = getDateFormat(fechaDate,'month')
     this.actualizartareaService(intervencionTareaAvance)
   }
