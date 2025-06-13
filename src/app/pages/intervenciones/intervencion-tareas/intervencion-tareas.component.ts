@@ -1,19 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, Signal, signal } from '@angular/core';
-import { IntervencionEspacioResponse, IntervencionTareaResponse, Pagination } from '@core/interfaces';
+import { Component, inject, Input, signal } from '@angular/core';
+import { IntervencionTareaEstadoRegistroEnum } from '@core/enums';
+import { convertDateStringToDate, convertEnumToObject, getDateFormat } from '@core/helpers';
+import { IntervencionEspacioResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
+import { PipesModule } from '@core/pipes/pipes.module';
 import { IntervencionTareaService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaComponent } from './formulario-Intervencion-tarea/formulario-intervencion-tarea.component';
-import { convertDateStringToDate, getDateFormat } from '@core/helpers';
 import IntervencionTareaAvancesComponent from './intervencion-tarea-avances/intervencion-tarea-avances.component';
-import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
-import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-intervencion-tareas',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, IntervencionTareaAvancesComponent ],
+  imports: [CommonModule, NgZorroModule, IntervencionTareaAvancesComponent, PipesModule ],
   templateUrl: './intervencion-tareas.component.html',
   styles: ``
 })
@@ -28,6 +30,8 @@ export default class IntervencionTareasComponent {
 
   permisosPCM: boolean = false
   perfilAuth: number = 0
+
+  estadosRegistros: ItemEnum[] = convertEnumToObject(IntervencionTareaEstadoRegistroEnum)
   
   pagination: Pagination = {
     columnSort: 'intervencionTareaId',
@@ -81,6 +85,11 @@ export default class IntervencionTareasComponent {
           }
         })
       })
+  }
+
+  obtenerEstadoRegistro(estadoRegistroNombre: string): string{
+    const estado = this.estadosRegistros.find( item => item.text == estadoRegistroNombre)
+    return estado!.value
   }
 
   obtenerIntervencionTareaService(tareaId: string){
@@ -239,9 +248,7 @@ export default class IntervencionTareasComponent {
   }
 
   actualizarListaTareas(actualiza: boolean){
-    if(actualiza){
-      this.obtenerIntervencionTareasService()
-    }
+    this.obtenerIntervencionTareasService()
   }
 
 }
