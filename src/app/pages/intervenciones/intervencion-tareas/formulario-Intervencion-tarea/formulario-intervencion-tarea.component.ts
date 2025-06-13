@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { typeErrorControl } from '@core/helpers';
+import { convertDateStringToDate, typeErrorControl } from '@core/helpers';
 import { DataModalIntervencionTarea, EntidadResponse, IntervencionEspacioResponse, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, IntervencionTareaResponse, Pagination, SectorResponse } from '@core/interfaces';
 import { EntidadesService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -53,20 +53,41 @@ export class FormularioIntervencionTareaComponent {
     responsableId: [ '', Validators.required ],
     intervencionFaseId: [ '', Validators.required ],
     intervencionEtapaId: [{ value: '', disabled: true }, Validators.required],
-    intervencionHitoId: [{ value: '', disabled: true }, Validators.required]
+    intervencionHitoId: [{ value: '', disabled: true }, Validators.required],
+    comentario: [ '' ],
+    comentarioSd: [ '' ],
+    validado: [ false, Validators.required ],
   })
 
   ngOnInit(): void {
-    const entidad = this.create ? null : this.intervencionEspacio().entidad
-    this.formIntervencionTarea.reset({...this.intervencionTarea, entidad })
-    this.obtenerResponsables()
+    const plazo = this.create ? '' :  convertDateStringToDate(this.intervencionTarea().plazo)
+    this.formIntervencionTarea.reset({...this.intervencionTarea(), plazo })
+    this.obtenerResponsablesService()
     this.obtenerEntidadSector()
     this.obtenerIntervencionFaseService()
+    this.setForm()
   }
 
-  obtenerResponsables(){
+  setForm(){
+    if(!this.create){
+      const etapaIdControl = this.formIntervencionTarea.get('intervencionEtapaId')
+      const hitoIdControl = this.formIntervencionTarea.get('intervencionHitoId')
+      etapaIdControl?.enable()
+      hitoIdControl?.enable()
+
+      this.sectorEntidad = this.intervencionTarea().responsable == 'GN'
+      if(this.sectorEntidad){
+        this.formIntervencionTarea.get('entidadId')?.enable()
+      }
+      
+      this.obtenerIntervencionEtapaService()
+      this.obtenerIntervencionHitoService()
+    }
+  }
+
+  obtenerResponsablesService(){
     this.sectoresServices.getAllSectors(0,4)
-      .subscribe( resp => {
+      .subscribe( resp => {        
         let responsable = resp.data.length == 0 ? [] : resp.data.filter(item => item.grupoID != '0')      
         this.responsables.set(responsable)
     })
@@ -74,7 +95,6 @@ export class FormularioIntervencionTareaComponent {
 
   obtenerEntidadSector(){
     const sectorId = Number(this.intervencionEspacio().sectorId)
-    // const paginationEntidadSector: Pagination = { entidadId: 0, tipo: '1', sectorId }
     const pagination: Pagination = { ...this.pagination, sectorId, columnSort: 'entidadId' }
     this.entidadServices.listarEntidades(pagination).subscribe( resp => this.sectorEntidades.set(resp.data) )
   }
@@ -112,17 +132,26 @@ export class FormularioIntervencionTareaComponent {
     const entidadIdControl = this.formIntervencionTarea.get('entidadId')
     const entidadControl = this.formIntervencionTarea.get('entidad')
     const responsable = this.responsables().find( item => item.grupoID == responsableValue )
-    this.sectorEntidad = responsable!.nombre == 'GN'
+    this.sectorEntidad = responsable!.nombre == 'GN'  
 
     responsableValue && this.sectorEntidad ? entidadIdControl?.enable() :entidadIdControl?.disable()
 
-    if(this.create && !this.sectorEntidad){
-      entidadControl?.setValue(this.intervencionEspacio().entidad)
-      entidadIdControl?.setValue(this.intervencionEspacio().entidadUbigeoId)
-    }
     if(this.sectorEntidad){
       entidadControl?.reset()
       entidadIdControl?.reset()
+    } else {
+      entidadControl?.setValue(this.intervencionEspacio().entidad)
+      entidadIdControl?.setValue(this.intervencionEspacio().entidadUbigeoId)
+    }
+  }
+
+  obtenerEntidadId(){
+    const entidadIdControl = this.formIntervencionTarea.get('entidadId')
+    const entidadControl = this.formIntervencionTarea.get('entidad')
+    const entidadIdValue = entidadIdControl?.value
+    if(entidadIdValue){
+      const entidad = this.sectorEntidades().find( item => item.entidadId == entidadIdValue)
+      entidadControl?.setValue(entidad?.nombre)
     }
   }
 
@@ -130,6 +159,7 @@ export class FormularioIntervencionTareaComponent {
     const intervencionFaseId = this.formIntervencionTarea.get('intervencionFaseId')?.value
     const intervencionEtapaControl = this.formIntervencionTarea.get('intervencionEtapaId')
     const intervencionHitoControl = this.formIntervencionTarea.get('intervencionHitoId')
+
     if(intervencionFaseId){
       intervencionEtapaControl?.enable()
       intervencionEtapaControl?.reset()

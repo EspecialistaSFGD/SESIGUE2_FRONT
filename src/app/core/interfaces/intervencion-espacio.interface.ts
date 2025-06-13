@@ -31,6 +31,8 @@ export interface IntervencionEspacioResponse {
 	provincia?: string,
 	distrito?: string,
 	entidad?: string,
+	entidadTipo?: string,
+	entidadSlug?: string,
 	beneficiarios?: string,
 	costoActualizado?: string,
 	devAcumulado?: string,
@@ -66,10 +68,13 @@ export interface IntervencionEspacioSubTipo {
 
 export interface IntervencionEspacioOriginResponse {
 	origen: string,
-	interaccionId: string
+	interaccionId: string,
+	eventoId: string
 }
 
 export interface DataModalIntervencion {
 	create: boolean
-	origen: IntervencionEspacioOriginResponse
+	origen: IntervencionEspacioOriginResponse,
+	sectores: number[],
+	ubigeos: string[]
 }

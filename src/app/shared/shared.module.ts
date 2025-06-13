@@ -6,6 +6,7 @@ import { SliderTinyComponent } from './slider-tiny/slider-tiny.component';
 import { EstadoTagComponent } from './estado-tag/estado-tag.component';
 import { BotonDescargarComponent } from './boton/boton-descargar/boton-descargar.component';
 import { ProgressSpinerComponent } from './progress-spiner/progress-spiner.component';
+import { FormularioComentarComponent } from './formulario-comentar/formulario-comentar.component';
 
 
 
@@ -19,7 +20,8 @@ import { ProgressSpinerComponent } from './progress-spiner/progress-spiner.compo
     SliderTinyComponent,
     EstadoTagComponent,
     BotonDescargarComponent,
-    ProgressSpinerComponent
+    ProgressSpinerComponent,
+    FormularioComentarComponent
   ],
   exports: [
     ChartComponent,
@@ -28,7 +30,8 @@ import { ProgressSpinerComponent } from './progress-spiner/progress-spiner.compo
     SliderTinyComponent,
     EstadoTagComponent,
     BotonDescargarComponent,
-    ProgressSpinerComponent
+    ProgressSpinerComponent,
+    FormularioComentarComponent
   ]
 })
 export class SharedModule { }

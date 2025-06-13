@@ -47,6 +47,9 @@ export interface Pagination {
   sexo?: string,
   nombre?: string,
   esSector?: string
+  origenId?: string,
+  interaccionId?: string,
+  tipoEventoId?: string
 }
 
 export interface PaginationPanel {

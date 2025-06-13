@@ -5,8 +5,10 @@ import { IntervencionTareaService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaComponent } from './formulario-Intervencion-tarea/formulario-intervencion-tarea.component';
-import { getDateFormat } from '@core/helpers';
+import { convertDateStringToDate, getDateFormat } from '@core/helpers';
 import IntervencionTareaAvancesComponent from './intervencion-tarea-avances/intervencion-tarea-avances.component';
+import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-intervencion-tareas',
@@ -23,8 +25,11 @@ export default class IntervencionTareasComponent {
   botonNuevoActivo: boolean = true
   listarAvances: boolean = false
   loadingTareas: boolean =  false
+
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
   
-  paginationTareas: Pagination = {
+  pagination: Pagination = {
     columnSort: 'intervencionTareaId',
     typeSort: 'DESC',
     pageSize: 5,
@@ -38,30 +43,37 @@ export default class IntervencionTareasComponent {
     entidadId: '',
     intervencionHitoId: '',
     intervencionEspacioId: '',
-    responsableId: ''
+    responsableId: '',
+    validado: false
   }
   
   intervencionTareas = signal<IntervencionTareaResponse[]>([])
 
   private intervencionTareasServices = inject(IntervencionTareaService)
+  private authStore = inject(AuthService)
   private modal = inject(NzModalService);
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
+    this.permisosPCM = this.setPermisosPCM()
     this.obtenerIntervencionTareasService()
+  }
+
+  setPermisosPCM(){
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    const profilePCM = [11,12,23]
+    return profilePCM.includes(this.perfilAuth)
   }
 
   obtenerIntervencionTareasService(){
     this.loadingTareas = true
     const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId
 
-    this.intervencionTareasServices.ListarIntervencionTareas({...this.paginationTareas, intervencionEspacioId})
+    this.intervencionTareasServices.ListarIntervencionTareas({...this.pagination, intervencionEspacioId})
       .subscribe( resp => {
         this.loadingTareas = false
         this.intervencionTareas.set(resp.data)
-        this.paginationTareas.total = resp.info?.total
-        // if(resp.data.length > 0){
-          
-        // }
+        this.pagination.total = resp.info?.total
+
         resp.data.map( item => {
           if(item.estadoRegistroNombre != 'culminado'){
             this.botonNuevoActivo = false
@@ -71,20 +83,35 @@ export default class IntervencionTareasComponent {
       })
   }
 
+  obtenerIntervencionTareaService(tareaId: string){
+    this.intervencionTareasServices.obtenerIntervencionTareas(tareaId).subscribe( resp => this.intervencionTarea = resp.data)
+  }
+
   agregarTarea(){
-    this.intervencionTarea.intervencionEspacioId = this.intervencionEspacio.intervencionId
+    this.intervencionTarea = {
+      tarea: '',
+      plazo: '',
+      entidadId: '',
+      intervencionHitoId: '',
+      intervencionEspacioId: this.intervencionEspacio.intervencionId,
+      responsableId: '',
+      validado: false
+    } 
     this.intervencionTareaFormModal(true)
   }
 
-  actualizarTarea(intervencionTarea: IntervencionTareaResponse){
-    this.intervencionTarea = intervencionTarea
-    this.intervencionTareaFormModal(false)
+  actualizarTarea(tareaId: string){
+    this.obtenerIntervencionTareaService(tareaId)
+    setTimeout(() => {
+      this.intervencionTareaFormModal(false)
+    }, 100);
   }
 
-  intervencionTareaFormModal(create: boolean){
+  intervencionTareaFormModal(create: boolean){    
     const action = `${create ? 'Crear' : 'Actualizar' } tarea`
+    const codigoTarea = create ? '' : this.intervencionTarea.codigo
     this.modal.create<FormularioIntervencionTareaComponent>({
-      nzTitle: `${action.toUpperCase()}`,
+      nzTitle: `${action.toUpperCase()} ${codigoTarea}`,
       nzWidth: '50%',
       nzContent: FormularioIntervencionTareaComponent,
       nzData: {
@@ -115,11 +142,13 @@ export default class IntervencionTareasComponent {
             formIntervencionTarea.get('plazo')?.setValue(plazoDateFormat)
             const accesoId = localStorage.getItem('codigoUsuario')!
 
-            let intervencionTarea: IntervencionTareaResponse = { ...formIntervencionTarea.getRawValue() }
+            let intervencionTarea: IntervencionTareaResponse = { ...formIntervencionTarea.getRawValue(), accesoId }
 
             if(create){ 
-              intervencionTarea.accesoId = accesoId
-              this.crearIntervencionTarea(intervencionTarea)         
+              this.crearIntervencionTareaService(intervencionTarea)         
+            } else {
+              intervencionTarea.intervencionTareaId = this.intervencionTarea.intervencionTareaId
+              this.actualizarTareaServices(intervencionTarea)
             }
           }
         }
@@ -127,7 +156,7 @@ export default class IntervencionTareasComponent {
     })
   }
 
-  crearIntervencionTarea(intervencionTarea: IntervencionTareaResponse){    
+  crearIntervencionTareaService(intervencionTarea: IntervencionTareaResponse){    
     const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId! 
     this.intervencionTareasServices.registarIntervencionTarea({...intervencionTarea, intervencionEspacioId})
       .subscribe( resp => {
@@ -136,9 +165,83 @@ export default class IntervencionTareasComponent {
       })
   }
 
+  actualizarTareaServices(intervencionTarea: IntervencionTareaResponse){
+    this.intervencionTareasServices.actualizarIntervencionTarea(intervencionTarea)
+      .subscribe( resp => {
+        this.obtenerIntervencionTareasService()
+        this.modal.closeAll()
+      })
+  }
+
+  eliminarTarea(intervencionTarea: IntervencionTareaResponse){        
+    this.modal.confirm({
+      nzTitle: `Eliminar tarea`,
+      nzContent: `¿Está seguro de que desea eliminar la tarea ${intervencionTarea.codigo}?`,
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.intervencionTareasServices.eliminarIntervencionTarea(intervencionTarea.intervencionTareaId!)
+          .subscribe( resp => {
+            if(resp.success){
+              this.obtenerIntervencionTareasService()
+            }
+          })
+      },
+      nzCancelText: 'Cancelar'
+    });
+  }
+
+  comentarTarea(intervencionTarea: IntervencionTareaResponse){
+    this.modal.create<FormularioComentarComponent>({
+      nzTitle: `COMENTAR TAREA ${intervencionTarea.codigo}`,
+      nzContent: FormularioComentarComponent,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Guardar',
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formComentario = componentResponse!.formComentario
+
+            if (formComentario.invalid) {
+              const invalidFields = Object.keys(formComentario.controls).filter(field => formComentario.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formComentario.markAllAsTouched();
+            }
+
+            const comentario = formComentario.get('comentario')?.value
+
+            switch (this.permisosPCM) {
+              case true: intervencionTarea.comentarioSd = comentario; break;
+              case false: intervencionTarea.comentario = comentario; break;
+            }
+            this.actualizarTareaServices(intervencionTarea)
+          }
+        }
+      ]
+    })
+  }
+
+  validarTarea(intervencionTarea: IntervencionTareaResponse){
+    const plazoDate = convertDateStringToDate(intervencionTarea.plazo)
+    intervencionTarea.validado = true
+    intervencionTarea.plazo = getDateFormat(plazoDate,'month')
+    this.actualizarTareaServices(intervencionTarea)
+  }
+
   obtenerTareaAvances(intervencionTarea: IntervencionTareaResponse){
     this.listarAvances = true
     this.intervencionTarea = intervencionTarea
+  }
+
+  actualizarListaTareas(actualiza: boolean){
+    if(actualiza){
+      this.obtenerIntervencionTareasService()
+    }
   }
 
 }

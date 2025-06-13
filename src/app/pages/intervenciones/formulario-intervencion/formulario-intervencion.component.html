@@ -30,7 +30,7 @@
             <p-dropdown 
             [options]="eventos()"
             formControlName="eventoId"
-            optionLabel="nombre"
+            optionLabel="abreviatura"
             optionValue="eventoId"
             [showClear]="true" 
             placeholder="Seleccionar evento"/>
@@ -138,47 +138,47 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 bg-white gap-4">
-		<div class="w-full flex flex-col">
-			<label nzFor="inicioIntervencionFaseId">Fase inicial</label>
-			<p-dropdown 
-			[options]="fasesInicial()"
-			formControlName="inicioIntervencionFaseId"
-			optionLabel="nombre"
-			optionValue="intervencionFaseId"
-			[showClear]="true" 
-			placeholder="Seleccionar fase"
-			(onChange)="obtenerFase()"/>
-			<div class="text-danger" *ngIf="alertMessageError('inicioIntervencionFaseId')">{{msgErrorControl('inicioIntervencionFaseId','Fase inicial')}}</div>
-		</div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border border-teal-100 bg-teal-100 rounded">
+        <div class="w-full flex flex-col">
+            <label nzFor="inicioIntervencionFaseId">Fase inicial</label>
+            <p-dropdown 
+            [options]="fasesInicial()"
+            formControlName="inicioIntervencionFaseId"
+            optionLabel="nombre"
+            optionValue="intervencionFaseId"
+            [showClear]="true" 
+            placeholder="Seleccionar fase"
+            (onChange)="obtenerFase()"/>
+            <div class="text-danger" *ngIf="alertMessageError('inicioIntervencionFaseId')">{{msgErrorControl('inicioIntervencionFaseId','Fase inicial')}}</div>
+        </div>
 
-		<div class="w-full flex flex-col">
-			<label nzFor="inicioIntervencionEtapaId">Etapa inicial</label>
-			<p-dropdown 
-			[options]="etapasInicial()"
-			formControlName="inicioIntervencionEtapaId"
-			optionLabel="nombre"
-			optionValue="intervencionEtapaId"
-			[showClear]="true" 
-			placeholder="Seleccionar etapa"
-			(onChange)="obtenerEtapa()"/>
-			<div class="text-danger" *ngIf="alertMessageError('inicioIntervencionEtapaId')">{{msgErrorControl('inicioIntervencionEtapaId','Etapa inicial')}}</div>
-		</div>
+        <div class="w-full flex flex-col">
+            <label nzFor="inicioIntervencionEtapaId">Etapa inicial</label>
+            <p-dropdown 
+            [options]="etapasInicial()"
+            formControlName="inicioIntervencionEtapaId"
+            optionLabel="nombre"
+            optionValue="intervencionEtapaId"
+            [showClear]="true" 
+            placeholder="Seleccionar etapa"
+            (onChange)="obtenerEtapa()"/>
+            <div class="text-danger" *ngIf="alertMessageError('inicioIntervencionEtapaId')">{{msgErrorControl('inicioIntervencionEtapaId','Etapa inicial')}}</div>
+        </div>
 
-		<div class="w-full flex flex-col">
-			<label nzFor="inicioIntervencionHitoId">Hito inicial</label>
-			<p-dropdown 
-			[options]="hitosInicial()"
-			formControlName="inicioIntervencionHitoId"
-			optionLabel="nombre"
-			optionValue="intervencionHitoId"
-			[showClear]="true" 
-			placeholder="Seleccionar hito"/>
-			<div class="text-danger" *ngIf="alertMessageError('inicioIntervencionHitoId')">{{msgErrorControl('inicioIntervencionHitoId','Hito inicial')}}</div>
-		</div>
-	</div>
+        <div class="w-full flex flex-col">
+            <label nzFor="inicioIntervencionHitoId">Hito inicial</label>
+            <p-dropdown 
+            [options]="hitosInicial()"
+            formControlName="inicioIntervencionHitoId"
+            optionLabel="nombre"
+            optionValue="intervencionHitoId"
+            [showClear]="true" 
+            placeholder="Seleccionar hito"/>
+            <div class="text-danger" *ngIf="alertMessageError('inicioIntervencionHitoId')">{{msgErrorControl('inicioIntervencionHitoId','Hito inicial')}}</div>
+        </div>
+    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 bg-white gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border border-sky-100 bg-sky-100 rounded">
 		<div class="w-full flex flex-col">
 			<label nzFor="objetivoIntervencionFaseId">Fase objetivo</label>
 			<p-dropdown 
