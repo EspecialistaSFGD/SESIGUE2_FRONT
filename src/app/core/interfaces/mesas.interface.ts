@@ -28,6 +28,7 @@ export interface MesaResponse {
   am?:string,
   fechaResumen?:string,
   resumen?:string,
+  alerta?:string,
   usuarioId: string,
   fechaRegistro?: Date,
   ubigeos?: MesaIntegranteResponse[],
