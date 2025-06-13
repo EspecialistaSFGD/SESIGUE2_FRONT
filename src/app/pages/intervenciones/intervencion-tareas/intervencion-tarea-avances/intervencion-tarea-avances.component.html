@@ -1,9 +1,10 @@
 @if(intervencionTarea!.intervencionTareaId){
 	<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
-		[nzData]="intervencionTareasAvances()" [nzFrontPagination]="false" [nzLoading]="loadindAvances" [nzTotal]="paginationAvance.total!" [nzShowPagination]="paginationAvance.total! > 5"
+		[nzData]="intervencionTareasAvances()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="paginationAvance.total!" [nzShowPagination]="paginationAvance.total! > 5"
 		[nzPageSize]="paginationAvance.pageSize!" [nzPageIndex]="paginationAvance.currentPage!">
 		<thead>
 			<tr>
+				<th nzWidth="10px" nzAlign="center"></th>
 				<th nzWidth="12px" nzAlign="center">Fecha</th>
 				<th nzWidth="32px" nzAlign="center">Avance</th>
 				<th nzWidth="64px" nzAlign="center">Evidencia</th>
@@ -18,6 +19,7 @@
 		<tbody>
 			@for(avance of intervencionTareasAvances(); track $index){
 				<tr>
+					<td nzAlign="center"> <span *ngIf="avance.validado" class="text-2xl" nz-icon nzType="check-circle" nzTheme="twotone" nzTwotoneColor="#52c41a" nz-tooltip nzTooltipTitle="Validado" ></span></td>
 					<td nzAlign="center">{{avance.fecha}}</td>
 					<td nzAlign="center">{{avance.avance}}</td>
 					<td nzAlign="center">
@@ -30,8 +32,14 @@
 					<td nzAlign="center">{{avance.comentarioSd}}</td>
 					<td nzAlign="center">{{avance.comentarioEntidad}}</td>
 					<td nzAlign="center">
-						<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Comentar">
+						<button nz-button nzDanger nzType="link" [nz-tooltip]="!avance.validado ? 'Eliminar avance' : ''" [disabled]="avance.validado" (click)="eliminarTarea(avance)">
+							<span nz-icon nzType="delete" nzTheme="outline"></span>
+						</button>
+						<button nz-button nzType="link" [nz-tooltip]="!avance.validado ? 'Comentar avance' : ''" [disabled]="avance.validado" (click)="comentarTarea(avance)">
 							<span nz-icon nzType="comment" nzTheme="outline"></span>
+						</button>
+						<button nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!avance.validado ? 'Validar avance' : ''" [disabled]="avance.validado">
+							<span nz-icon [ngClass]="{ 'text-green-500' : !avance.validado }" (click)="validarTarea(avance)" nzType="check-circle" nzTheme="outline"></span>
 						</button>
 					</td>
 				</tr>
@@ -42,11 +50,11 @@
 	<ng-template #HeaderMesas>
 			<div class="flex flex-col sm:flex-row justify-between items-center gap-3">
 					<div class="flex flex-col ">
-							<p class="font-semibold text-base">Gestión de avances de tarea: {{intervencionTarea?.codigo}}</p>
+							<p class="font-semibold text-base">Gestión de avances de tarea: {{intervencionTarea?.codigo}} - {{tareaCulminado}}</p>
 							<p class="text-sm">Resultados {{paginationAvance.total}}</p>
 					</div>
 
-					<button nz-button nzType="primary" (click)="agregarAvance()">
+					<button nz-button nzType="primary" (click)="agregarAvance()" [disabled]="tareaCulminado">
 							<span nz-icon nzType="plus" nzTheme="outline"></span>
 							<span class="button-text">Nuevo Avance</span>
 					</button>

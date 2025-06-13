@@ -49,14 +49,14 @@ export class IntervencionTareaService {
     }
 
     eliminarIntervencionTarea(tareaId: string) {
-        const headers = this.helpersServices.getAutorizationToken()
-        return this.http.delete<IntervencionTareasResponses>(`${this.urlIntervencionTarea}/EliminarIntervencionTarea/${tareaId}`, { headers })
-          .pipe(
-            tap(resp => {
-              return resp
-            }),
-            map(valid => valid),
-            catchError(err => of(err))
-          )
-      }
+      const headers = this.helpersServices.getAutorizationToken()
+      return this.http.delete<IntervencionTareasResponses>(`${this.urlIntervencionTarea}/EliminarIntervencionTarea/${tareaId}`, { headers })
+        .pipe(
+          tap(resp => {
+            return resp
+          }),
+          map(valid => valid),
+          catchError(err => of(err))
+        )
+    }
 }

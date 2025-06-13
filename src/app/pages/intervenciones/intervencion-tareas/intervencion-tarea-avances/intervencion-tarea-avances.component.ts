@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, signal, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IntervencionTareaAvanceResponse, IntervencionTareaResponse, Pagination } from '@core/interfaces';
 import { DescargarService, IntervencionTareaAvanceService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaAvanceComponent } from './formulario-intervencion-tarea-avance/formulario-intervencion-tarea-avance.component';
-import { generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
+import { convertDateStringToDate, generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
 import saveAs from 'file-saver';
+import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-intervencion-tarea-avances',
@@ -17,13 +19,19 @@ import saveAs from 'file-saver';
   styles: ``
 })
 export default class IntervencionTareaAvancesComponent {
-  @Input() intervencionTarea: IntervencionTareaResponse | null = null
 
-  loadindAvances: boolean = false
+  @Input() intervencionTarea: IntervencionTareaResponse | null = null
+  @Output() tareaUpdated = new EventEmitter<boolean>()
+
+  loading: boolean = false
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
+  tareaCulminado: boolean = false
 
   intervencionTareasAvances = signal<IntervencionTareaAvanceResponse[]>([])
 
   private intervencionTareaAvanceServices = inject(IntervencionTareaAvanceService)
+  private authStore = inject(AuthService)
   private modal = inject(NzModalService);
   private descargarService = inject(DescargarService)
 
@@ -34,16 +42,28 @@ export default class IntervencionTareaAvancesComponent {
     currentPage: 1,
     total: 0
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     this.obtenerInversionTareaAvanceService()
   }
 
+  ngOnInit(): void {    
+    this.tareaCulminado = this.intervencionTarea?.estadoRegistroNombre?.toLowerCase() == 'culminado'
+    this.permisosPCM = this.setPermisosPCM()    
+  }
+
+  setPermisosPCM(){
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    const profilePCM = [11,12,23]
+    return profilePCM.includes(this.perfilAuth)
+  }
+
   obtenerInversionTareaAvanceService(){
     this.paginationAvance.intervencionTareaId = this.intervencionTarea!.intervencionTareaId
-    this.loadindAvances = true
+    this.loading = true
     this.intervencionTareaAvanceServices.ListarIntervencionTareaAvances(this.paginationAvance)
       .subscribe( resp => {
-        this.loadindAvances = false
+        this.loading = false
         this.intervencionTareasAvances.set(resp.data)
         this.paginationAvance.total = resp.info!.total
       })
@@ -114,12 +134,85 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   crearIntervencionTareaAvance(intervencionTareaAvance: IntervencionTareaAvanceResponse){
-      this.intervencionTareaAvanceServices.registarIntervencionTareaAvance(intervencionTareaAvance)
-        .subscribe( resp => {          
-          this.obtenerInversionTareaAvanceService()
-          this.modal.closeAll()
-        })
+    this.intervencionTareaAvanceServices.registarIntervencionTareaAvance(intervencionTareaAvance)
+      .subscribe( resp => {          
+        // this.obtenerInversionTareaAvanceService()
+        this.tareaUpdated.emit(true)
+        this.modal.closeAll()
+      })
+  }
 
+  comentarTarea(intervencionTareaAvance: IntervencionTareaAvanceResponse){
+    this.modal.create<FormularioComentarComponent>({
+      nzTitle: `COMENTAR AVANCE`,
+      nzContent: FormularioComentarComponent,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Guardar',
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formComentario = componentResponse!.formComentario
+
+            if (formComentario.invalid) {
+              const invalidFields = Object.keys(formComentario.controls).filter(field => formComentario.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formComentario.markAllAsTouched();
+            }
+
+            const comentario = formComentario.get('comentario')?.value
+
+            if(this.permisosPCM){
+              intervencionTareaAvance.comentarioSd = comentario
+            }
+
+            const fechaDate = convertDateStringToDate(intervencionTareaAvance.fecha)
+            intervencionTareaAvance.fecha = getDateFormat(fechaDate,'month')
+
+            this.actualizartareaService(intervencionTareaAvance)
+          }
+        }
+      ]
+    })
+  }
+
+  validarTarea(intervencionTareaAvance: IntervencionTareaAvanceResponse){
+    const fechaDate = convertDateStringToDate(intervencionTareaAvance.fecha)
+    intervencionTareaAvance.validado = true
+    intervencionTareaAvance.fecha = getDateFormat(fechaDate,'month')
+    this.actualizartareaService(intervencionTareaAvance)
+  }
+
+  eliminarTarea(intervencionTareaAvance: IntervencionTareaAvanceResponse){
+    this.modal.confirm({
+      nzTitle: `Eliminar avance`,
+      nzContent: `¿Está seguro de que desea eliminar el avance del ${intervencionTareaAvance.fecha}?`,
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.intervencionTareaAvanceServices.eliminarIntervencionTareaAvance(intervencionTareaAvance.intervencionAvanceId!)
+          .subscribe( resp => {
+            if(resp.success){
+              this.tareaUpdated.emit(true)
+              // this.obtenerInversionTareaAvanceService()
+            }
+          })
+      },
+      nzCancelText: 'Cancelar'
+    });
+  }
+
+  actualizartareaService(intervencionTareaAvance: IntervencionTareaAvanceResponse){
+    intervencionTareaAvance.estadoRegistro = intervencionTareaAvance.estadoRegistroNombre!
+    this.intervencionTareaAvanceServices.actualizarIntervencionTareaAvance(intervencionTareaAvance)
+      .subscribe( resp => {
+        this.obtenerInversionTareaAvanceService()
+        this.modal.closeAll()
+      })
   }
 
 }

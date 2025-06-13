@@ -193,7 +193,7 @@ export default class IntervencionTareasComponent {
 
   comentarTarea(intervencionTarea: IntervencionTareaResponse){
     this.modal.create<FormularioComentarComponent>({
-      nzTitle: `COMENTAR AVANCE ${intervencionTarea.codigo}`,
+      nzTitle: `COMENTAR TAREA ${intervencionTarea.codigo}`,
       nzContent: FormularioComentarComponent,
       nzFooter: [
         {
@@ -226,8 +226,6 @@ export default class IntervencionTareasComponent {
     })
   }
 
-
-
   validarTarea(intervencionTarea: IntervencionTareaResponse){
     const plazoDate = convertDateStringToDate(intervencionTarea.plazo)
     intervencionTarea.validado = true
@@ -238,6 +236,12 @@ export default class IntervencionTareasComponent {
   obtenerTareaAvances(intervencionTarea: IntervencionTareaResponse){
     this.listarAvances = true
     this.intervencionTarea = intervencionTarea
+  }
+
+  actualizarListaTareas(actualiza: boolean){
+    if(actualiza){
+      this.obtenerIntervencionTareasService()
+    }
   }
 
 }
