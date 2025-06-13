@@ -147,9 +147,10 @@ export default class MesasComponent {
       })
   }
 
-  crearEstadoResumen(mesaId: string){
+  crearEstadoResumen(mesa: MesaResponse, esAlerta: boolean){
+    const title = esAlerta ? 'ALERTA' : 'ESTADO RESUMEN'
     this.modal.create<FormularioMesaEstadoResumenComponent>({
-      nzTitle: `AGREGAR ESTADO RESUMEN`,
+      nzTitle: `AGREGAR ${title} A MESA ${mesa.codigo}`,
       nzContent: FormularioMesaEstadoResumenComponent,
       nzFooter: [
         {
@@ -171,7 +172,9 @@ export default class MesasComponent {
 
             const fecha = getDateFormat(formEstado.get('fecha')?.value, 'month')
             const usuarioId =localStorage.getItem('codigoUsuario')
-            const bodyEstado: MesaEstadoResponse = { ...formEstado.value, mesaId, fecha, usuarioId }
+            const tipo = esAlerta ? 1 : 0
+            const mesaId = mesa.mesaId
+            const bodyEstado: MesaEstadoResponse = { ...formEstado.value, tipo, mesaId, fecha, usuarioId }
             this.registrarMesaEstado(bodyEstado)
           }
         }

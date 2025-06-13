@@ -48,7 +48,8 @@
 				optionLabel="nombre"
 				optionValue="entidadId"
 				[showClear]="true" 
-				placeholder="Seleccionar entidad"/>
+				placeholder="Seleccionar entidad"
+				(onClick)="obtenerEntidadId()"/>
 			} @else {
 				<input type="text" class="form-control" id="entidad" formControlName="entidad">
 			}

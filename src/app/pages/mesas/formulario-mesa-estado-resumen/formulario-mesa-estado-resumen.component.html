@@ -12,8 +12,8 @@
     </div>
 
     <div class="flex flex-col col-span-2">
-        <label for="resumen">Resumen</label>
-        <textarea  class="form-control" placeholder="Resumen aquí" formControlName="resumen" rows="2"> </textarea>
+        <label for="resumen">Descripción</label>
+        <textarea  class="form-control" placeholder="Descripción aquí" formControlName="resumen" rows="2"> </textarea>
         <div class="w-full text-danger" *ngIf="alertMessageError('resumen')">{{msgErrorControl('resumen','Resumen')}}</div>
     </div>
 </form>

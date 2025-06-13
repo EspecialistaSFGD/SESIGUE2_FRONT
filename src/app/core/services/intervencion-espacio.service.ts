@@ -18,9 +18,10 @@ export class IntervencionEspacioService {
     return this.http.get<IntervencionesEspaciosResponses>(`${this.urlIntervencionEspacio}/ListarIntervencionEspacios`, { headers, params })
   }
 
-  obtenerIntervencionEspacio(inversionEspacioId: string ){
+  obtenerIntervencionEspacio(intervencionEspacioId:string, pagination: Pagination ){
+    const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<IntervencionEspacioResponses>(`${this.urlIntervencionEspacio}/ObtenerIntervencionEspacio/${inversionEspacioId}`, { headers })
+    return this.http.get<IntervencionEspacioResponses>(`${this.urlIntervencionEspacio}/ObtenerIntervencionEspacio/${intervencionEspacioId}`, { headers, params })
   }
 
   registrarIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse) {  

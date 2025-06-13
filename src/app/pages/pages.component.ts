@@ -86,13 +86,13 @@ export class PagesComponent implements OnInit, AfterViewInit {
 
   onLogout(): void {
 
-    this.authService.logout(this.authService.token()!).subscribe({
-      next: () => {
-        this.authService.removerLocalStorage();
-        this.router.navigate(['/auth']);
-      },
-      error: (err) => console.error(err)
-    });
+    this.authService.removerLocalStorage();
+    this.router.navigate(['/auth']);
+    // this.authService.logout(this.authService.token()!).subscribe({
+    //   next: () => {
+    //   },
+    //   error: (err) => console.error(err)
+    // });
   }
 
   getDataRoute() {
