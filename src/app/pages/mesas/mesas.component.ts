@@ -147,7 +147,7 @@ export default class MesasComponent {
       })
   }
 
-  crearEstadoResumen(mesaId: string){
+  crearEstadoResumen(mesaId: string, esAlerta: boolean){
     this.modal.create<FormularioMesaEstadoResumenComponent>({
       nzTitle: `AGREGAR ESTADO RESUMEN`,
       nzContent: FormularioMesaEstadoResumenComponent,

@@ -24,7 +24,7 @@ export const themeState = (state: string) => {
       break;
     case 'seguimiento':
       theme.color = 'bg-blue-200 border-blue-400 text-blue-600'
-      theme.icono = 'thumbs-up'
+      theme.icono = 'like'
       break;
   }
   return theme
