@@ -5,12 +5,13 @@
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
     <thead>
       <tr>
-        <th nzWidth="32px" nzAlign="center"nzColumnKey="codigoIntervencion" [nzSortFn]="true">Codigo</th>
+        <th nzWidth="10px" nzAlign="center"></th>
+        <th nzWidth="20px" nzAlign="center"nzColumnKey="codigoIntervencion" [nzSortFn]="true">Codigo</th>
         <th nzLeft nzWidth="100px" nzColumnKey="tarea" [nzSortFn]="true">Tarea</th>
-        <th nzWidth="32px" nzAlign="center" nzColumnKey="responsableId" [nzSortFn]="true">Responsable</th>
+        <th nzWidth="24px" nzAlign="center" nzColumnKey="responsableId" [nzSortFn]="true">Responsable</th>
         <th nzWidth="64px" nzAlign="center">Entidad</th>
-        <th nzWidth="32px" nzAlign="center">Plazo</th>
-        <th nzWidth="32px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
+        <th nzWidth="16px" nzAlign="center">Plazo</th>
+        <th nzWidth="24px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
         <th nzWidth="24px" nzAlign="center">Comentario</th>
         <th nzWidth="32px" nzAlign="center"></th>
       </tr>
@@ -19,6 +20,7 @@
     <tbody>
       @for(tarea of intervencionTareas(); track $index){
         <tr>
+          <td nzAlign="center"> <span *ngIf="tarea.validado" class="text-2xl" nz-icon nzType="check-circle" nzTheme="twotone" nzTwotoneColor="#52c41a" nz-tooltip nzTooltipTitle="Validado" ></span></td>
           <td nzAlign="center">
             <p class="font-bold" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.codigo}}</p>
           </td>
@@ -44,7 +46,7 @@
             <button nz-button nzType="link" [nz-tooltip]="tarea.validado ? 'Ver Avances' : ''" [disabled]="!tarea.validado" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null">
               <span nz-icon nzType="eye" nzTheme="outline"></span>
             </button>
-            <button nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!tarea.validado ? 'validar' : ''" [disabled]="tarea.validado">
+            <button nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!tarea.validado ? 'Validar' : ''" [disabled]="tarea.validado">
               <span nz-icon [ngClass]="{ 'text-green-500' : !tarea.validado }" (click)="validarTarea(tarea)" nzType="check-circle" nzTheme="outline"></span>
             </button>
           </td>
