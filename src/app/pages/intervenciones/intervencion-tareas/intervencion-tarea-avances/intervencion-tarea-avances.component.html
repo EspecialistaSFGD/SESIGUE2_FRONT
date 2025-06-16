@@ -1,4 +1,4 @@
-@if(intervencionTarea!.intervencionTareaId){
+@if(intervencionTarea?.intervencionTareaId){
 	<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
 		[nzData]="intervencionTareasAvances()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="paginationAvance.total!" [nzShowPagination]="paginationAvance.total! > 5"
 		[nzPageSize]="paginationAvance.pageSize!" [nzPageIndex]="paginationAvance.currentPage!">
@@ -19,9 +19,9 @@
 		<tbody>
 			@for(avance of intervencionTareasAvances(); track $index){
 				<tr>
-					<td nzAlign="center"> <span *ngIf="avance.validado" class="text-2xl" nz-icon nzType="check-circle" nzTheme="twotone" nzTwotoneColor="#52c41a" nz-tooltip nzTooltipTitle="Validado" ></span></td>
+					<td nzAlign="center"> <span *ngIf="avance.validaPcm" class="text-2xl" nz-icon nzType="check-circle" nzTheme="twotone" nzTwotoneColor="#52c41a" nz-tooltip nzTooltipTitle="Validado" ></span></td>
 					<td nzAlign="center">{{avance.fecha}}</td>
-					<td nzAlign="center">{{avance.avance}} {{verificarProyectoCulminadoAvance(avance.estadoRegistroNombre!)}}</td>
+					<td nzAlign="center">{{avance.avance}}</td>
 					<td nzAlign="center">
 						<span *ngIf="avance.evidencia" class="px-3 py-1 cursor-pointer text-sky-700 hover:text-sky-800" (click)="descargarPdf(avance.evidencia)">
 							<i class="pi pi-file-pdf text-sm"></i>
@@ -50,7 +50,7 @@
 	<ng-template #HeaderMesas>
 			<div class="flex flex-col sm:flex-row justify-between items-center gap-3">
 					<div class="flex flex-col ">
-							<p class="font-semibold text-base">Gestión de avances de tarea: {{intervencionTarea?.codigo}}</p>
+							<p class="font-semibold text-base">Gestión de avances de tarea: {{intervencionTarea!.codigo}}</p>
 							<p class="text-sm">Resultados {{paginationAvance.total}}</p>
 					</div>
 
