@@ -1,7 +1,7 @@
 @if(intervencionTarea?.intervencionTareaId){
 	<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
-		[nzData]="intervencionTareasAvances()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="paginationAvance.total!" [nzShowPagination]="paginationAvance.total! > 5"
-		[nzPageSize]="paginationAvance.pageSize!" [nzPageIndex]="paginationAvance.currentPage!">
+		[nzData]="intervencionTareasAvances()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!" [nzShowPagination]="pagination.total! > 5"
+		[nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
 		<thead>
 			<tr>
 				<th nzWidth="10px" nzAlign="center"></th>
@@ -51,7 +51,7 @@
 			<div class="flex flex-col sm:flex-row justify-between items-center gap-3">
 					<div class="flex flex-col ">
 							<p class="font-semibold text-base">Gestión de avances de tarea: {{intervencionTarea!.codigo}}</p>
-							<p class="text-sm">Resultados {{paginationAvance.total}}</p>
+							<p class="text-sm">Resultados {{pagination.total}}</p>
 					</div>
 
 					<button nz-button nzType="primary" (click)="agregarAvance()" [disabled]="tareaProyectoCulminado || tareaCulminado">

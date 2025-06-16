@@ -41,6 +41,14 @@ export default class IntervencionTareaAvancesComponent {
   tareaCulminado: boolean = false
   estadosRegistros: ItemEnum[] = convertEnumToObject(IntervencionTareaAvanceEstadoRegistroEnum)
 
+  pagination: Pagination = {
+    columnSort: 'intervencionAvanceId',
+    typeSort: 'DESC',
+    pageSize: 5,
+    currentPage: 1,
+    total: 0
+  }
+
   intervencionTareasAvances = signal<IntervencionTareaAvanceResponse[]>([])
 
   private intervencionTareaAvanceServices = inject(IntervencionTareaAvanceService)
@@ -48,13 +56,6 @@ export default class IntervencionTareaAvancesComponent {
   private modal = inject(NzModalService);
   private descargarService = inject(DescargarService)
 
-  paginationAvance: Pagination = {
-    columnSort: 'intervencionAvanceId',
-    typeSort: 'DESC',
-    pageSize: 5,
-    currentPage: 1,
-    total: 0
-  }
 
   verificarTareaAvances(){    
     this.tareaProyectoCulminado = this.intervencionTarea?.estadoRegistroNombre?.toLowerCase() == IntervencionTareaEstadoRegistroEnum.PROYECTO_CULMINADO
@@ -70,13 +71,13 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   obtenerInversionTareaAvanceService(){
-    this.paginationAvance.intervencionTareaId = this.intervencionTarea!.intervencionTareaId
+    this.pagination.intervencionTareaId = this.intervencionTarea!.intervencionTareaId
     this.loading = true
-    this.intervencionTareaAvanceServices.ListarIntervencionTareaAvances(this.paginationAvance)
+    this.intervencionTareaAvanceServices.ListarIntervencionTareaAvances(this.pagination)
       .subscribe( resp => {
         this.loading = false
         this.intervencionTareasAvances.set(resp.data)
-        this.paginationAvance.total = resp.info!.total
+        this.pagination.total = resp.info!.total
       })
   }
 
