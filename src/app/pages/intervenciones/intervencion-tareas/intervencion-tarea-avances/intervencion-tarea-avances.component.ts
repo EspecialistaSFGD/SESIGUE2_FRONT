@@ -21,7 +21,17 @@ import { IntervencionTareaAvanceEstadoRegistroEnum, IntervencionTareaEstadoRegis
 })
 export default class IntervencionTareaAvancesComponent {
 
-  @Input() intervencionTarea: IntervencionTareaResponse | null = null
+  private _intervencionTarea: IntervencionTareaResponse | null = null;
+  @Input()
+  set intervencionTarea(value: IntervencionTareaResponse | null) {
+    this._intervencionTarea = value;
+    if (value?.intervencionTareaId) {
+      this.verificarTareaAvances()
+    }
+  }
+  get intervencionTarea(): IntervencionTareaResponse | null {
+    return this._intervencionTarea;
+  }
   @Output() tareaUpdated = new EventEmitter<boolean>()
 
   loading: boolean = false
@@ -31,14 +41,7 @@ export default class IntervencionTareaAvancesComponent {
   tareaCulminado: boolean = false
   estadosRegistros: ItemEnum[] = convertEnumToObject(IntervencionTareaAvanceEstadoRegistroEnum)
 
-  intervencionTareasAvances = signal<IntervencionTareaAvanceResponse[]>([])
-
-  private intervencionTareaAvanceServices = inject(IntervencionTareaAvanceService)
-  private authStore = inject(AuthService)
-  private modal = inject(NzModalService);
-  private descargarService = inject(DescargarService)
-
-  paginationAvance: Pagination = {
+  pagination: Pagination = {
     columnSort: 'intervencionAvanceId',
     typeSort: 'DESC',
     pageSize: 5,
@@ -46,13 +49,18 @@ export default class IntervencionTareaAvancesComponent {
     total: 0
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.obtenerInversionTareaAvanceService()
-  }
+  intervencionTareasAvances = signal<IntervencionTareaAvanceResponse[]>([])
 
-  ngOnInit(): void {    
+  private intervencionTareaAvanceServices = inject(IntervencionTareaAvanceService)
+  private authStore = inject(AuthService)
+  private modal = inject(NzModalService);
+  private descargarService = inject(DescargarService)
+
+
+  verificarTareaAvances(){    
     this.tareaProyectoCulminado = this.intervencionTarea?.estadoRegistroNombre?.toLowerCase() == IntervencionTareaEstadoRegistroEnum.PROYECTO_CULMINADO
     this.tareaCulminado = this.intervencionTarea?.estadoRegistroNombre?.toLowerCase() == IntervencionTareaEstadoRegistroEnum.CULMINADO
+    this.obtenerInversionTareaAvanceService()
     this.permisosPCM = this.setPermisosPCM()    
   }
 
@@ -63,13 +71,13 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   obtenerInversionTareaAvanceService(){
-    this.paginationAvance.intervencionTareaId = this.intervencionTarea!.intervencionTareaId
+    this.pagination.intervencionTareaId = this.intervencionTarea!.intervencionTareaId
     this.loading = true
-    this.intervencionTareaAvanceServices.ListarIntervencionTareaAvances(this.paginationAvance)
+    this.intervencionTareaAvanceServices.ListarIntervencionTareaAvances(this.pagination)
       .subscribe( resp => {
         this.loading = false
         this.intervencionTareasAvances.set(resp.data)
-        this.paginationAvance.total = resp.info!.total
+        this.pagination.total = resp.info!.total
       })
   }
 
@@ -140,7 +148,7 @@ export default class IntervencionTareaAvancesComponent {
   crearIntervencionTareaAvance(intervencionTareaAvance: IntervencionTareaAvanceResponse){
     this.intervencionTareaAvanceServices.registarIntervencionTareaAvance(intervencionTareaAvance)
       .subscribe( resp => {          
-        this.obtenerInversionTareaAvanceService()
+        this.verificarTareaAvances()
         this.tareaUpdated.emit(true)
         this.modal.closeAll()
       })
@@ -170,9 +178,6 @@ export default class IntervencionTareaAvancesComponent {
 
             const comentario = formComentario.get('comentario')?.value
 
-            // if(this.permisosPCM){
-            //   intervencionTareaAvance.comentarioSd = comentario
-            // }
             this.permisosPCM
             ? intervencionTareaAvance.comentarioSd = comentario
             : intervencionTareaAvance.comentario = comentario
@@ -209,7 +214,7 @@ export default class IntervencionTareaAvancesComponent {
           .subscribe( resp => {
             if(resp.success){
               this.tareaUpdated.emit(true)
-              this.obtenerInversionTareaAvanceService()
+              this.verificarTareaAvances()
             }
           })
       },
@@ -221,7 +226,8 @@ export default class IntervencionTareaAvancesComponent {
     intervencionTareaAvance.estadoRegistro = intervencionTareaAvance.estadoRegistroNombre!
     this.intervencionTareaAvanceServices.actualizarIntervencionTareaAvance(intervencionTareaAvance)
       .subscribe( resp => {
-        this.obtenerInversionTareaAvanceService()
+        this.tareaUpdated.emit(true)
+        this.verificarTareaAvances()
         this.modal.closeAll()
       })
   }

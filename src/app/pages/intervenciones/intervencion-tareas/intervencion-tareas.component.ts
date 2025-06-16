@@ -27,6 +27,7 @@ export default class IntervencionTareasComponent {
   botonNuevoActivo: boolean = true
   listarAvances: boolean = false
   loadingTareas: boolean =  false
+  tareaId: number = 0
 
   permisosPCM: boolean = false
   perfilAuth: number = 0
@@ -41,15 +42,7 @@ export default class IntervencionTareasComponent {
     total: 0
   }
 
-  intervencionTarea: IntervencionTareaResponse = {
-    tarea: '',
-    plazo: '',
-    entidadId: '',
-    intervencionHitoId: '',
-    intervencionEspacioId: '',
-    responsableId: '',
-    validado: false
-  }
+  intervencionTarea: IntervencionTareaResponse | null = null
   
   intervencionTareas = signal<IntervencionTareaResponse[]>([])
 
@@ -70,6 +63,7 @@ export default class IntervencionTareasComponent {
 
   obtenerIntervencionTareasService(){
     this.loadingTareas = true
+    this.botonNuevoActivo = true
     const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId
 
     this.intervencionTareasServices.ListarIntervencionTareas({...this.pagination, intervencionEspacioId})
@@ -77,9 +71,9 @@ export default class IntervencionTareasComponent {
         this.loadingTareas = false
         this.intervencionTareas.set(resp.data)
         this.pagination.total = resp.info?.total
-
+   
         resp.data.map( item => {
-          if(item.estadoRegistroNombre != 'culminado'){
+          if(item.estadoRegistroNombre != IntervencionTareaEstadoRegistroEnum.CULMINADO){
             this.botonNuevoActivo = false
             return
           }
@@ -97,6 +91,7 @@ export default class IntervencionTareasComponent {
   }
 
   agregarTarea(){
+    this.tareaId = 0
     this.intervencionTarea = {
       tarea: '',
       plazo: '',
@@ -118,7 +113,7 @@ export default class IntervencionTareasComponent {
 
   intervencionTareaFormModal(create: boolean){    
     const action = `${create ? 'Crear' : 'Actualizar' } tarea`
-    const codigoTarea = create ? '' : this.intervencionTarea.codigo
+    const codigoTarea = create ? '' : this.intervencionTarea!.codigo
     this.modal.create<FormularioIntervencionTareaComponent>({
       nzTitle: `${action.toUpperCase()} ${codigoTarea}`,
       nzWidth: '50%',
@@ -156,7 +151,7 @@ export default class IntervencionTareasComponent {
             if(create){ 
               this.crearIntervencionTareaService(intervencionTarea)         
             } else {
-              intervencionTarea.intervencionTareaId = this.intervencionTarea.intervencionTareaId
+              intervencionTarea.intervencionTareaId = this.intervencionTarea!.intervencionTareaId
               this.actualizarTareaServices(intervencionTarea)
             }
           }
@@ -243,12 +238,14 @@ export default class IntervencionTareasComponent {
   }
 
   obtenerTareaAvances(intervencionTarea: IntervencionTareaResponse){
+    this.tareaId = Number(intervencionTarea.intervencionTareaId)
     this.listarAvances = true
     this.intervencionTarea = intervencionTarea
   }
 
   actualizarListaTareas(actualiza: boolean){
     this.obtenerIntervencionTareasService()
+    this.obtenerIntervencionTareaService(this.tareaId.toString())
   }
 
 }
