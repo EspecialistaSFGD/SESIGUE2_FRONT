@@ -8,6 +8,10 @@ export interface IntervencionEspacioResponses extends DataResponses {
 	data: IntervencionEspacioResponse
 }
 
+export interface ProcesoIntervencionEspacioResponses extends DataResponses {
+	data: procesoIntervencionEspacio
+}
+
 export interface IntervencionEspacioResponse {
 	intervencionEspacioId?: string,
 	intervencionId: string,
@@ -53,6 +57,10 @@ export interface IntervencionEspacioResponse {
 	objetivoIntervencionEtapa?: string,
 	objetivoIntervencionFaseId?: string,
 	objetivoIntervencionFase?: string,
+}
+
+export interface procesoIntervencionEspacio {
+	fecha: string,
 }
 
 export interface IntervencionEspacioTipo {

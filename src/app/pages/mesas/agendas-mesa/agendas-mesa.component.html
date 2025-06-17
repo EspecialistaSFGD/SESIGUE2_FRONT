@@ -21,10 +21,10 @@
             <th nzAlign="center">Nombre</th>
             <th nzAlign="center">Costo Act.</th>
             <th nzAlign="center">Dev Acum</th>
-            <th nzAlign="center">PIA</th>
+            <!-- <th nzAlign="center">PIA</th> -->
             <th nzAlign="center">PIM</th>
             <th nzAlign="center">DEV</th>
-            <th nzAlign="center">Trans 2025</th>
+            <!-- <th nzAlign="center">Trans 2025</th> -->
             <th nzAlign="center">Fecha</th>
             <th nzAlign="center">Situación</th>
             <th nzAlign="center">Fase</th>
@@ -50,10 +50,10 @@
 			  <td nzAlign="center">{{intervencionEspacio.nombreIntervencion}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.costoActualizado}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.devAcumulado}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.pia}}</td>
+			  <!-- <td nzAlign="center">{{intervencionEspacio.pia}}</td> -->
 			  <td nzAlign="center">{{intervencionEspacio.pim}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.devengado}}</td>
-			  <td nzAlign="center">0.0</td>
+			  <!-- <td nzAlign="center">0.0</td> -->
 			  <td nzAlign="center">{{intervencionEspacio.fechaRegistro}}</td>
 			  <td nzAlign="center"></td>
 			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionFase}}</td>
@@ -73,11 +73,11 @@
     <div class="ant-table-header flex flex-col md:flex-row justify-between items-center">
 		<div class="flex gap-4">
 			<div class="mb-2 sm:mb-0">Resultados {{pagination.total}}</div>
-			<div>Fecha de sincronizacion: 10/06/2025 05:30</div>
+			<div *ngIf="fechaSincronizacion" >Fecha de sincronizacion: {{fechaSincronizacion}}</div>
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
-			<div class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-red-700 border-red-700 text-white hover:bg-red-900">
+			<div class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-red-700 border-red-700 text-white hover:bg-red-900" (click)="procesarIntervencion()">
 				<span nz-icon nzType="sync" nzTheme="outline"></span>
 				Procesar
 			</div>

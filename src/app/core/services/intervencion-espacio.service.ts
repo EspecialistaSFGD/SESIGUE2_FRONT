@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { IntervencionesEspaciosResponses, IntervencionEspacioResponse, IntervencionEspacioResponses, Pagination } from '@core/interfaces';
+import { IntervencionesEspaciosResponses, IntervencionEspacioResponse, IntervencionEspacioResponses, Pagination, ProcesoIntervencionEspacioResponses } from '@core/interfaces';
 import { environment } from '@environments/environment';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
@@ -16,6 +16,12 @@ export class IntervencionEspacioService {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<IntervencionesEspaciosResponses>(`${this.urlIntervencionEspacio}/ListarIntervencionEspacios`, { headers, params })
+  }
+
+  procesarIntervencionEspacio(pagination: Pagination){
+    const params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<ProcesoIntervencionEspacioResponses>(`${this.urlIntervencionEspacio}/ProcesarIntervencionEspacios`, { headers, params })
   }
 
   obtenerIntervencionEspacio(intervencionEspacioId:string, pagination: Pagination ){

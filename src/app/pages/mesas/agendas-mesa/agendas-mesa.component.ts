@@ -27,6 +27,8 @@ export default class AgendasMesaComponent {
   sectores:number[] = []
   ubigeos:string[] = []
 
+  fechaSincronizacion: string = ''
+
   mesa = signal<MesaResponse>({
     nombre: '',
     abreviatura: '',
@@ -109,6 +111,17 @@ export default class AgendasMesaComponent {
         modeloId: this.mesa().mesaId
       }
     });
+  }
+
+  procesarIntervencion(){
+    const pagination:Pagination = { origenId: '1', interaccionId: this.mesaId.toString() }
+    this.intervencionEspaciosServices.procesarIntervencionEspacio(pagination)
+      .subscribe( resp => {
+        // if(resp.data){
+        // }
+        this.fechaSincronizacion = resp.data.fecha
+        this.obtenerIntervencionEspacioService()
+      })
   }
 
   crearIntervencion(){
