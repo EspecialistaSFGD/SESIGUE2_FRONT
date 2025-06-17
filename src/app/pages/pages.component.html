@@ -1,30 +1,12 @@
-<nz-layout class="app-layout">
-  <div class="bg-transparent h-20 px-8 bg-white">
+<nz-layout>
+  <app-super-header></app-super-header>
 
-    <app-super-header></app-super-header>
-  </div>
   <nz-layout class="dark:bg-gray-700">
-    <nz-sider class="menu-sidebar bg-punche-blue dark:bg-gray-800" nzCollapsible [nzCollapsedWidth]="56"
-      [(nzCollapsed)]="this.isSiderCollapsed" [nzTrigger]="null">
-      <!-- <div class="sidebar-logo">
-      <a href="/" class="flex items-center justify-start">
-        <figure>
-          <img src="./assets/images/isotipo--small--colored--old.svg" alt="SeSigue" class="w-8" srcset="">
-        </figure>
-        <h1 class="text-white font-semibold mt-3 ml-2" *ngIf="!this.isSiderCollapsed">SeSigue</h1>
-      </a>
-    </div> -->
-
+    <nz-sider class="menu-sidebar bg-punche-blue dark:bg-gray-800" nzCollapsible [nzCollapsedWidth]="56" [(nzCollapsed)]="this.isSiderCollapsed" [nzTrigger]="null">
       @if (menuItems != null && menuItems!= undefined && menuItems.length > 0){
       <div class="p-2">
         <ul class="mt-8 border-r-0 bg-transparent" nz-menu [nzTheme]="(selectedTheme == 'dark' ? 'dark' : 'light' )"
           nzMode="inline" [nzInlineCollapsed]="this.isSiderCollapsed">
-          <!-- <li nz-menu-item routerLinkActive="ant-menu-item-selected" nzMatchRouterExact>
-            <a class="flex items-center" routerLink="/mesas">
-              <span nz-icon nzType="file" nzTheme="outline"></span>
-              <span>Mesas</span>
-            </a>
-          </li> -->
 
           @for (item of menuItems; track item.codigoMenu) {
           @if(item.children != null && item.children != undefined && item.children.length > 0) {
@@ -68,13 +50,6 @@
               <span class="trigger text-gray-500 dark:text-gray-300" nz-icon
                 [nzType]="this.isSiderCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
             </span>
-
-            <a routerLink="/" class="flex items-center justify-start">
-              <figure>
-                <img src="./assets/images/logo-old-final_2.svg" alt="SeSigue" class="h-10" srcset="">
-              </figure>
-              <!-- <h1 class="text-white font-semibold mt-3 ml-2" *ngIf="!this.isSiderCollapsed">SeSigue</h1> -->
-            </a>
           </div>
 
           <div class="header-right-content mr-6 flex items-center text-gray-500 dark:text-gray-300">
