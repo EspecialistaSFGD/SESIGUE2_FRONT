@@ -12,6 +12,8 @@ import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from './formulario-mesa/formulario-mesa.component';
 import { FormularioMesaEstadoResumenComponent } from './formulario-mesa-estado-resumen/formulario-mesa-estado-resumen.component';
+import saveAs from 'file-saver';
+import { UtilesService } from '@libs/shared/services/utiles.service';
 
 @Component({
   selector: 'app-mesas',
@@ -23,7 +25,8 @@ import { FormularioMesaEstadoResumenComponent } from './formulario-mesa-estado-r
 export default class MesasComponent {
   title: string = `Mesas`;
   
-  loadingData: boolean = false
+  loadingExport: boolean = false
+  loading: boolean = false
   permisosPCM: boolean = false
   perfilAuth: number = 0
 
@@ -56,6 +59,7 @@ export default class MesasComponent {
   private mesasService = inject(MesasService)
   private mesaUbigeosService = inject(MesaIntegrantesService)
   private mesaEstadosService = inject(MesaEstadosService)
+  private utilesService = inject(UtilesService);
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
@@ -74,6 +78,24 @@ export default class MesasComponent {
         this.mesas.set(resp.data)
         this.pagination.total = resp.info?.total
       })
+  }
+
+  reporteMesas(){
+    this.loadingExport = true;
+    this.mesasService.reporteMesas(this.pagination)
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+        }
+        this.loadingExport = false
+      })
+  }
+  
+  generarExcel(archivo: any, nombreArchivo: string): void {
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
   }
 
   crearMesa(){
@@ -114,7 +136,7 @@ export default class MesasComponent {
 
             const bodyMesa: MesaResponse = {...formMesa.getRawValue() , fechaCreacion, fechaVigencia, usuarioId}
 
-            this.loadingData = true
+            this.loading = true
             if(create){
               this.registrarMesaService(bodyMesa)
             }
@@ -128,7 +150,7 @@ export default class MesasComponent {
   registrarMesaService(mesa: MesaResponse) {
     this.mesasService.registarMesa(mesa)
       .subscribe( resp => {
-        this.loadingData = false
+        this.loading = false
         if(resp.success == true){
           const mesaId = resp.data
           const ubigeos: MesaIntegranteResponse[] = mesa.ubigeos!
