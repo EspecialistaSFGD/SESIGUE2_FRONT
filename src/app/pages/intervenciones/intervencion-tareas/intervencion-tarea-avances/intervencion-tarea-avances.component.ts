@@ -1,21 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { IntervencionTareaAvanceEstadoRegistroEnum, IntervencionTareaEstadoRegistroEnum } from '@core/enums';
+import { convertDateStringToDate, convertEnumToObject, getDateFormat } from '@core/helpers';
 import { IntervencionTareaAvanceResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
-import { DescargarService, IntervencionTareaAvanceService } from '@core/services';
+import { IntervencionTareaAvanceService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
+import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaAvanceComponent } from './formulario-intervencion-tarea-avance/formulario-intervencion-tarea-avance.component';
-import { convertDateStringToDate, convertEnumToObject, generateBase64ToArrayBuffer, getDateFormat } from '@core/helpers';
-import saveAs from 'file-saver';
-import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
-import { AuthService } from '@libs/services/auth/auth.service';
-import { IntervencionTareaAvanceEstadoRegistroEnum, IntervencionTareaEstadoRegistroEnum } from '@core/enums';
 
 @Component({
   selector: 'app-intervencion-tarea-avances',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgZorroModule],
+  imports: [CommonModule, ReactiveFormsModule, NgZorroModule, SharedModule],
   templateUrl: './intervencion-tarea-avances.component.html',
   styles: ``
 })
@@ -54,7 +54,6 @@ export default class IntervencionTareaAvancesComponent {
   private intervencionTareaAvanceServices = inject(IntervencionTareaAvanceService)
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
-  private descargarService = inject(DescargarService)
 
 
   verificarTareaAvances(){    
@@ -80,17 +79,6 @@ export default class IntervencionTareaAvancesComponent {
         this.pagination.total = resp.info!.total
       })
   }
-
-  descargarPdf(archivo: string){
-      this.descargarService.descargarPdf(archivo)
-        .subscribe((resp) => {        
-          if (resp.success == true) {
-            var binary_string = generateBase64ToArrayBuffer(resp.data.binario);
-            var blob = new Blob([binary_string], { type: `application/${resp.data.tipo}` });
-            saveAs(blob, resp.data.nombre);
-          }
-        })
-    }
 
   agregarAvance(){
     this.intervencionTareaAvanceForm(true)

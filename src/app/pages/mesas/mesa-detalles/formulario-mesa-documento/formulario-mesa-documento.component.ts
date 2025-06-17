@@ -31,7 +31,7 @@ export class FormularioMesaDocumentoComponent {
     fechaCreacion: ['', Validators.required]
   })
 
-  alertMessageError(control: string) {
+  alertMessageError(control: string) {    
     return this.formMesaDocumento.get(control)?.errors && this.formMesaDocumento.get(control)?.touched
   }
 
