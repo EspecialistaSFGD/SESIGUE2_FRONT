@@ -10,6 +10,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 import { MesaDetalleComponent } from '../mesa-detalles/mesa-detalle/mesa-detalle.component';
 import { arrayDeleteDuplicates } from '@core/helpers';
+import saveAs from 'file-saver';
+import { UtilesService } from '@libs/shared/services/utiles.service';
 
 @Component({
   selector: 'app-agendas-mesa',
@@ -26,6 +28,9 @@ export default class AgendasMesaComponent {
   loadingIntervencionEspacio: boolean = false
   sectores:number[] = []
   ubigeos:string[] = []
+  loadingExport: boolean = false
+
+  fechaSincronizacion: string = ''
 
   mesa = signal<MesaResponse>({
     nombre: '',
@@ -39,6 +44,7 @@ export default class AgendasMesaComponent {
     estadoRegistro: '',
     usuarioId: this.authUserId!
   })
+
   intervencionesEspacios = signal<IntervencionEspacioResponse[]>([])
 
   pagination: Pagination = {
@@ -54,6 +60,7 @@ export default class AgendasMesaComponent {
   private mesaIntegranteServices = inject(MesaIntegrantesService)
   private intervencionEspaciosServices = inject(IntervencionEspacioService)
   private modal = inject(NzModalService);
+  private utilesService = inject(UtilesService);
 
   ngOnInit(): void {
     this.verificarMesa()
@@ -109,6 +116,33 @@ export default class AgendasMesaComponent {
         modeloId: this.mesa().mesaId
       }
     });
+  }
+
+  procesarIntervencion(){
+    const pagination:Pagination = { origenId: '1', interaccionId: this.mesaId.toString() }
+    this.intervencionEspaciosServices.procesarIntervencionEspacio(pagination)
+      .subscribe( resp => {
+        this.fechaSincronizacion = resp.data.fecha
+        this.obtenerIntervencionEspacioService()
+      })
+  }
+
+  reporteIntervencion(){
+    this.loadingExport = true;
+    this.intervencionEspaciosServices.reporteIntervencionEspacios(this.pagination)
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+        }
+        this.loadingExport = false
+      })
+  }
+
+  generarExcel(archivo: any, nombreArchivo: string): void {
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
   }
 
   crearIntervencion(){

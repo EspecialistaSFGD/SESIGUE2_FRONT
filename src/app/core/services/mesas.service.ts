@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { MesaResponse, MesaResponses, MesasResponses, Pagination } from '@core/interfaces';
+import { ExportResponses, MesaResponse, MesaResponses, MesasResponses, Pagination } from '@core/interfaces';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({
@@ -17,6 +17,12 @@ export class MesasService {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<MesasResponses>(`${this.urlMesas}/ListarMesas`, { headers, params })
+  }
+
+  reporteMesas(pagination: Pagination){
+    const params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<ExportResponses>(`${this.urlMesas}/ReporteMesas`, { headers, params })
   }
 
   obtenerMesa(mesaId: string ){
