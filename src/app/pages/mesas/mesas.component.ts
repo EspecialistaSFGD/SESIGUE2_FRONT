@@ -14,11 +14,12 @@ import { FormularioMesaComponent } from './formulario-mesa/formulario-mesa.compo
 import { FormularioMesaEstadoResumenComponent } from './formulario-mesa-estado-resumen/formulario-mesa-estado-resumen.component';
 import saveAs from 'file-saver';
 import { UtilesService } from '@libs/shared/services/utiles.service';
+import { FiltroMesasComponent } from './filtro-mesas/filtro-mesas.component';
 
 @Component({
   selector: 'app-mesas',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, PageHeaderComponent, SharedModule],
+  imports: [CommonModule, RouterModule, NgZorroModule, PageHeaderComponent, SharedModule, FiltroMesasComponent],
   templateUrl: './mesas.component.html',
   styles: ``
 })
@@ -29,6 +30,7 @@ export default class MesasComponent {
   loading: boolean = false
   permisosPCM: boolean = false
   perfilAuth: number = 0
+  openFilters: boolean = false
 
   pagination: Pagination = {
     code: 0,
@@ -79,6 +81,10 @@ export default class MesasComponent {
         this.mesas.set(resp.data)
         this.pagination.total = resp.info?.total
       })
+  }
+
+  changeVisibleDrawer(visible: boolean){
+    this.openFilters = false
   }
 
   reporteMesas(){

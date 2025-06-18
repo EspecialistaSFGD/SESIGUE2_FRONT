@@ -69,10 +69,15 @@
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
     <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
     <div class="flex gap-2">
+      <button nz-button nzType="default" (click)="openFilters = true">
+        <span nz-icon nzType="filter"></span>
+        <span class="button-text">Filtros</span>
+      </button>
       <!-- <button nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteMesas()">
         <span nz-icon nzType="file-excel"></span>
         <span class="button-text">Exportar</span>
       </button> -->
+
       <button nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
           <span nz-icon nzType="file-excel" nzTheme="outline"></span>
           <span class="button-text">Exportar</span>
@@ -96,5 +101,7 @@
     </div>
   </div>
 </ng-template>
+
+<app-filtro-mesas [visible]="openFilters" (visibleDrawer)="changeVisibleDrawer($event)" />
 
 

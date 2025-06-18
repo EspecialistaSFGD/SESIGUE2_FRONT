@@ -1,0 +1,110 @@
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="'400px'" [nzClosable]="true" [nzVisible]="visible"
+	nzTitle="Filtrar los resultados" [nzFooter]="footerFilter" (nzOnClose)="changeVisibleDrawer(false)">
+    <form *nzDrawerContent [formGroup]="formFilters" nz-form nzLayout="vertical" autocomplete="off" class="flex flex-col w-full gap-2">
+        <div class="flex flex-col">
+            <label for="codigo">Código de mesa</label>
+            <input type="text" class="form-control" id="codigo" placeholder="Codigo aqui" formControlName="codigo"/>
+        </div>
+        <div class="flex flex-col">
+            <label for="nombre">Nombre de mesa</label>
+            <input type="text" class="form-control" id="nombre" placeholder="Nombre aqui" formControlName="nombre"/>
+        </div>
+        <div class="flex flex-col">
+          <label>Sector</label>
+          <p-dropdown 
+            [options]="sectores()"
+            formControlName="sectorId"
+            optionLabel="nombre"
+            optionValue="grupoID"
+            [showClear]="true" 
+            placeholder="Seleccionar sector"
+            (onChange)="obtenerSecretaria()"/>
+        </div>
+
+        <div class="flex flex-col col-span-2">
+            <label for="secretariaTecnicaId">Secretaría Técnica</label>
+            <p-dropdown 
+                [options]="secreatariaTecnicas()"
+                formControlName="secretariaTecnicaId"
+                optionLabel="nombre"
+                optionValue="entidadId"
+                [showClear]="true" 
+                placeholder="Seleccionar secretaría"/>
+        </div>
+
+        <div class="flex flex-col">
+          <label>Integrante sector</label>
+          <p-dropdown 
+            [options]="sectores()"
+            formControlName="sectorEntidadId"
+            optionLabel="nombre"
+            optionValue="grupoID"
+            [showClear]="true" 
+            placeholder="Seleccionar sector"
+            (onChange)="changeSector()"/>
+        </div>
+
+        <div class="flex flex-col col-span-2">
+            <label for="sector">Unidad organica</label>
+            <p-dropdown 
+                [options]="entidades()"
+                formControlName="entidadId"
+                optionLabel="nombre"
+                optionValue="entidadId"
+                [showClear]="true" 
+                placeholder="Seleccionar secretaría"/>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="departamento">Departamento</label>
+            <p-dropdown 
+                [options]="departamentos()"
+                formControlName="departamento"
+                optionLabel="departamento"
+                optionValue="departamentoId"
+                [showClear]="true" 
+                placeholder="Seleccionar departamento"
+                (onChange)="changeDepartamento()"/>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="nombre">Provincia</label>
+            <p-dropdown 
+            [options]="provincias()"
+            formControlName="provincia"
+            optionLabel="provincia"
+            optionValue="provinciaId"
+            [showClear]="true" 
+            placeholder="Seleccionar provincia"
+            (onChange)="changeProvincia()"/>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="nombre">Distrito</label>
+            <p-dropdown 
+            [options]="distritos()"
+            formControlName="distrito"
+            optionLabel="distrito"
+            optionValue="distritoId"
+            [showClear]="true" 
+            placeholder="Seleccionar distrito"
+            (onChange)="changeDistrito()"/>
+        </div>
+
+    </form>
+</nz-drawer>
+<ng-template #footerFilter>
+    <div class="flex justify-end gap-2">
+        <button nz-button (click)="changeVisibleDrawer(false)">
+            <span nz-icon nzType="file-excel"></span>
+            <span class="button-text">Exportar</span>
+        </button>
+        <button nz-button (click)="changeVisibleDrawer(false)">
+            <span class="button-text">Limpiar filtros</span>
+        </button>
+        <button nz-button nzType="primary" (click)="changeVisibleDrawer(false)">
+            <span nz-icon nzType="save"></span>
+            <span class="button-text">Guardar filtros</span>
+        </button>
+    </div>
+</ng-template>
