@@ -20,10 +20,10 @@ export class MesasService {
   }
 
   reporteMesas(pagination: Pagination){
-      const params = this.helpersServices.setParams(pagination)
-      const headers = this.helpersServices.getAutorizationToken()
-      return this.http.get<ExportResponses>(`${this.urlMesas}/ReporteMesas`, { headers, params })
-    }
+    const params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<ExportResponses>(`${this.urlMesas}/ReporteMesas`, { headers, params })
+  }
 
   obtenerMesa(mesaId: string ){
     const headers = this.helpersServices.getAutorizationToken()
