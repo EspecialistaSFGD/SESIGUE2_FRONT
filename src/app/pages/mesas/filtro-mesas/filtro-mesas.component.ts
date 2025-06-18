@@ -15,6 +15,7 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 })
 export class FiltroMesasComponent {
   @Input() visible: boolean = false
+  @Input() pagination: Pagination = {}
   
   @Output() visibleDrawer = new EventEmitter()
   @Output() filters = new EventEmitter<Pagination>()
@@ -33,19 +34,20 @@ export class FiltroMesasComponent {
   private ubigeosService = inject(UbigeosService)
 
   formFilters: FormGroup = this.fb.group({
-    codigo: [''],
-    nombre: [''],
-    sectorId: [''],
+    codigo: [null],
+    nombre: [null],
+    sectorId: [null],
     secretariaTecnicaId: [{ value: null, disabled: true }],
-    sectorEntidadId: [''],
+    sectorEntidadId: [null],
     entidadId: [{ value: null, disabled: true }],
-    departamento: [''],
+    departamento: [null],
     provincia: [{ value: null, disabled: true }],
     distrito: [{ value: null, disabled: true }],
-    ubigeo: ['']
+    ubigeo: [null]
   })
 
   ngOnInit(): void {
+    this.formFilters.reset(this.pagination)
     this.obtenerSectoresServicio()
     this.obtenerDepartamentoService()
   }
@@ -72,6 +74,7 @@ export class FiltroMesasComponent {
       secretariaTecnicaIdControl?.disable()
       secretariaTecnicaIdControl?.reset()
     }
+    this.generateFilters()
   }
 
   obtenerSecreatriaTecnicaService(sectorId: number){
@@ -89,6 +92,7 @@ export class FiltroMesasComponent {
       entidadIdControl?.disable()
       entidadIdControl?.reset()
     }
+    this.generateFilters()
   }
 
   obtenerEntidadesService(sectorId: number){
@@ -113,7 +117,8 @@ export class FiltroMesasComponent {
     }
     ubigeoControl?.setValue(ubigeo)
     distritoControl?.disable()
-    distritoControl?.reset()    
+    distritoControl?.reset() 
+    this.generateFilters()   
   }
 
   obtenerProvinciaService(departamento: string){
@@ -138,6 +143,7 @@ export class FiltroMesasComponent {
       distritoControl?.reset()
     }
     ubigeoControl?.setValue(ubigeo)
+    this.generateFilters()
     
   }
 
@@ -154,6 +160,22 @@ export class FiltroMesasComponent {
 
     let ubigeo = distritoValue ? distritoValue : provinciaValue
     ubigeoControl?.setValue(ubigeo)
+    this.generateFilters()
+  }
 
+  generateFilters(){
+    delete this.pagination.columnSort
+    delete this.pagination.typeSort
+    delete this.pagination.pageSize
+    delete this.pagination.currentPage
+    Object.keys(this.formFilters.controls).forEach(key => {
+      const value = this.formFilters.get(key)?.value
+      if (value !== null && value !== undefined && value !== '') {
+        (this.pagination as any)[key] = value
+      } else {
+        delete (this.pagination as any)[key]
+      }
+    })
+    this.filters.emit(this.pagination)
   }
 }

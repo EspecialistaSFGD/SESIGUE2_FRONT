@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { getDateFormat } from '@core/helpers';
 import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse } from '@core/interfaces';
 import { IntervencionEspacioService, MesaEstadosService, MesaIntegrantesService } from '@core/services';
@@ -15,6 +15,7 @@ import { FormularioMesaEstadoResumenComponent } from './formulario-mesa-estado-r
 import saveAs from 'file-saver';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import { FiltroMesasComponent } from './filtro-mesas/filtro-mesas.component';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'app-mesas',
@@ -63,6 +64,8 @@ export default class MesasComponent {
   private mesaUbigeosService = inject(MesaIntegrantesService)
   private mesaEstadosService = inject(MesaEstadosService)
   private utilesService = inject(UtilesService);
+    private router = inject(Router);
+    private route = inject(ActivatedRoute)
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
@@ -85,6 +88,33 @@ export default class MesasComponent {
 
   changeVisibleDrawer(visible: boolean){
     this.openFilters = false
+  }
+
+  onQueryParamsChange(params: NzTableQueryParams): void {
+      const sortsNames = ['ascend', 'descend']
+      const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+      const qtySorts = params.sort.reduce((total, item) => {
+        return sortsNames.includes(item.value!) ? total + 1 : total
+      }, 0)
+      const ordenar = sorts?.value!.slice(0, -3)
+      console.log(params);
+      
+      this.paramsNavigate({ pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar })
+    }
+
+  generateFilters(pagination: Pagination){
+    this.paramsNavigate(pagination)
+  }
+  
+  paramsNavigate(queryParams: Params){
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: 'merge',
+      }
+    );
   }
 
   reporteMesas(){
