@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { getDateFormat } from '@core/helpers';
 import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse } from '@core/interfaces';
-import { MesaEstadosService, MesaIntegrantesService } from '@core/services';
+import { IntervencionEspacioService, MesaEstadosService, MesaIntegrantesService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -57,6 +57,7 @@ export default class MesasComponent {
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
   private mesasService = inject(MesasService)
+  private intervencionEspaciosServices = inject(IntervencionEspacioService)
   private mesaUbigeosService = inject(MesaIntegrantesService)
   private mesaEstadosService = inject(MesaEstadosService)
   private utilesService = inject(UtilesService);
@@ -83,6 +84,19 @@ export default class MesasComponent {
   reporteMesas(){
     this.loadingExport = true;
     this.mesasService.reporteMesas(this.pagination)
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+        }
+        this.loadingExport = false
+      })
+  }
+
+  reporteIntervencion(){
+    this.loadingExport = true;
+    const pagination: Pagination = { origenId: '1' }
+    this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '1' })
       .subscribe( resp => {
         if(resp.data){
           const data = resp.data;
