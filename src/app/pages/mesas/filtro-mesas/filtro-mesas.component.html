@@ -3,11 +3,11 @@
     <form *nzDrawerContent [formGroup]="formFilters" nz-form nzLayout="vertical" autocomplete="off" class="flex flex-col w-full gap-2">
         <div class="flex flex-col">
             <label for="codigo">Código de mesa</label>
-            <input type="text" class="form-control" id="codigo" placeholder="Codigo aqui" formControlName="codigo"/>
+            <input type="text" class="form-control" id="codigo" placeholder="Codigo aqui" formControlName="codigo" (keyup)="changeControl($event,'codigo')"/>
         </div>
         <div class="flex flex-col">
             <label for="nombre">Nombre de mesa</label>
-            <input type="text" class="form-control" id="nombre" placeholder="Nombre aqui" formControlName="nombre"/>
+            <input type="text" class="form-control" id="nombre" placeholder="Nombre aqui" formControlName="nombre" (keyup)="changeControl($event,'nombre')"/>
         </div>
         <div class="flex flex-col">
           <label>Sector</label>

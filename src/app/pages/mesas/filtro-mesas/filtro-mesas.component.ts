@@ -3,6 +3,7 @@ import { Component, EventEmitter, inject, Input, Output, signal } from '@angular
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EntidadResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, SectoresService, UbigeosService } from '@core/services';
+import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
@@ -21,6 +22,8 @@ export class FiltroMesasComponent {
   @Output() filters = new EventEmitter<Pagination>()
   @Output() export = new EventEmitter<boolean>()
 
+  private timeout: any;
+
   sectores = signal<SectorResponse[]>([])
   secreatariaTecnicas = signal<EntidadResponse[]>([])
   entidades = signal<EntidadResponse[]>([])
@@ -32,6 +35,7 @@ export class FiltroMesasComponent {
   private sectoresService = inject(SectoresService)
   private entidadesService = inject(EntidadesService)
   private ubigeosService = inject(UbigeosService)
+  private validatorsService = inject(ValidatorService)
 
   formFilters: FormGroup = this.fb.group({
     codigo: [null],
@@ -43,6 +47,7 @@ export class FiltroMesasComponent {
     departamento: [null],
     provincia: [{ value: null, disabled: true }],
     distrito: [{ value: null, disabled: true }],
+    entidadUbigeoId: [null],
     ubigeo: [null]
   })
 
@@ -62,6 +67,26 @@ export class FiltroMesasComponent {
 
   obtenerDepartamentoService(){
     this.ubigeosService.getDepartments().subscribe( resp => this.departamentos.set(resp.data))
+  }
+
+  changeControl(event: any, control:string){
+    const codigoControl = this.formFilters.get(control)
+    const codigoValue = codigoControl?.value
+
+    const nameControl = control as keyof Pagination;
+    if(codigoValue){
+      clearTimeout(this.timeout);
+      var $this = this;
+      this.timeout = setTimeout(function () {
+        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {          
+          $this.pagination[nameControl] = codigoValue          
+          $this.generateFilters()
+        }
+      }, 500);
+    } else {      
+      delete this.pagination[nameControl]
+      this.generateFilters()
+    }
   }
 
   obtenerSecretaria(){
@@ -106,24 +131,37 @@ export class FiltroMesasComponent {
     const provinciaControl = this.formFilters.get('provincia')
     const distritoControl = this.formFilters.get('distrito')
     const ubigeoControl = this.formFilters.get('ubigeo')
+    const entidadUbigeoIdControl = this.formFilters.get('entidadUbigeoId')
     let ubigeo = null 
     if(departamentoValue){
       ubigeo = `${departamentoValue}0000`
       provinciaControl?.enable()
       this.obtenerProvinciaService(departamentoValue)
+      this.obtenerEntidadUbigeoService(ubigeo) 
     } else {
       provinciaControl?.disable()
       provinciaControl?.reset()
+      entidadUbigeoIdControl?.reset()
     }
     ubigeoControl?.setValue(ubigeo)
     distritoControl?.disable()
-    distritoControl?.reset() 
-    this.generateFilters()   
+    distritoControl?.reset()
+    this.filterUbigeoTime()    
   }
 
   obtenerProvinciaService(departamento: string){
     this.ubigeosService.getProvinces(departamento).subscribe( resp => this.provincias.set(resp.data))
   }
+
+  obtenerEntidadUbigeoService(ubigeo: string){
+      const entidadUbigeoIdControl = this.formFilters.get('entidadUbigeoId')
+      const pagination: Pagination = { ubigeo, columnSort: 'entidadId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
+      this.entidadesService.listarEntidades(pagination)
+        .subscribe( resp => {
+          const entidad = resp.data[0]
+          entidadUbigeoIdControl?.setValue(entidad ? entidad.entidadId : null)
+        })
+    }
 
   changeProvincia(){
     const departamentoControl = this.formFilters.get('departamento')
@@ -143,8 +181,8 @@ export class FiltroMesasComponent {
       distritoControl?.reset()
     }
     ubigeoControl?.setValue(ubigeo)
-    this.generateFilters()
-    
+    this.obtenerEntidadUbigeoService(ubigeo)
+    this.filterUbigeoTime()    
   }
 
   obtenerDistritosService(provincia: string){
@@ -160,22 +198,18 @@ export class FiltroMesasComponent {
 
     let ubigeo = distritoValue ? distritoValue : provinciaValue
     ubigeoControl?.setValue(ubigeo)
-    this.generateFilters()
+    this.obtenerEntidadUbigeoService(ubigeo)
+    this.filterUbigeoTime()
   }
 
-  generateFilters(){
-    delete this.pagination.columnSort
-    delete this.pagination.typeSort
-    delete this.pagination.pageSize
-    delete this.pagination.currentPage
-    Object.keys(this.formFilters.controls).forEach(key => {
-      const value = this.formFilters.get(key)?.value
-      if (value !== null && value !== undefined && value !== '') {
-        (this.pagination as any)[key] = value
-      } else {
-        delete (this.pagination as any)[key]
-      }
-    })
+  filterUbigeoTime(){
+    setTimeout(() => {
+      this.generateFilters()   
+    }, 500);
+  }
+
+  generateFilters(){    
+    this.pagination = { ...this.formFilters.value } 
     this.filters.emit(this.pagination)
   }
 }

@@ -1,3 +1,4 @@
+import { Params } from "@angular/router"
 import { ItemEnum } from "@core/interfaces"
 
 export const convertEnumToObject = <E extends Record<string, string>>(enumType: E, replace: boolean = false): ItemEnum[] => {
@@ -11,4 +12,24 @@ export const findEnumToText = <E extends Record<string, string>>(enumType: E, ke
 
 export const arrayDeleteDuplicates = (array: string[]):string[] => {
   return Array.from(new Set(array));
+}
+
+export const setParamsToObject = (params: Params, object: any, key: string) => {
+    if(params[key]){
+      object[key] = params[key]
+    } else {
+      delete object[key]
+    }
+    // return object
+}
+
+export const deleteKeysToObject = (object: any, keysDelete: string[]) => {
+  const filteredPagination = Object.keys(object)
+    .filter(key => !keysDelete.includes(key))
+    .reduce((acc, key) => {
+      acc[key] = object[key];
+      return acc;
+    }, {} as typeof object);
+
+  return filteredPagination
 }

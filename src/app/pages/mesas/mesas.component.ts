@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { getDateFormat } from '@core/helpers';
+import { deleteKeysToObject, getDateFormat, setParamsToObject } from '@core/helpers';
 import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse } from '@core/interfaces';
 import { IntervencionEspacioService, MesaEstadosService, MesaIntegrantesService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
@@ -33,6 +33,9 @@ export default class MesasComponent {
   perfilAuth: number = 0
   openFilters: boolean = false
 
+  paginationParams:Pagination = {
+
+  }
   pagination: Pagination = {
     code: 0,
     columnSort: 'mesaId',
@@ -64,13 +67,38 @@ export default class MesasComponent {
   private mesaUbigeosService = inject(MesaIntegrantesService)
   private mesaEstadosService = inject(MesaEstadosService)
   private utilesService = inject(UtilesService);
-    private router = inject(Router);
-    private route = inject(ActivatedRoute)
+  private router = inject(Router);
+  private route = inject(ActivatedRoute)
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     this.permisosPCM = this.setPermisosPCM()
-    this.obtenerMesasService()
+      // this.obtenerMesasService()
+    this.getParams()
+    
+  }
+
+  getParams() {
+    this.route.queryParams.subscribe(params => {
+      if (Object.keys(params).length > 0) {
+        let campo = params['campo'] ?? 'mesaId'
+
+        this.pagination.columnSort = campo
+        this.pagination.currentPage = params['pagina']
+        this.pagination.pageSize = params['cantidad']
+        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+
+        setParamsToObject(params, this.pagination, 'codigo')
+        setParamsToObject(params, this.pagination, 'nombre')
+        setParamsToObject(params, this.pagination, 'sectorId')
+        setParamsToObject(params, this.pagination, 'secretariaTecnicaId')
+        setParamsToObject(params, this.pagination, 'sectorEntidadId')
+        setParamsToObject(params, this.pagination, 'entidadId')
+        setParamsToObject(params, this.pagination, 'ubigeo')
+        setParamsToObject(params, this.pagination, 'entidadUbigeoId')
+      }
+      this.obtenerMesasService()
+    })
   }
 
   setPermisosPCM(){
@@ -97,13 +125,14 @@ export default class MesasComponent {
         return sortsNames.includes(item.value!) ? total + 1 : total
       }, 0)
       const ordenar = sorts?.value!.slice(0, -3)
-      console.log(params);
       
       this.paramsNavigate({ pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar })
     }
 
-  generateFilters(pagination: Pagination){
-    this.paramsNavigate(pagination)
+  generateFilters(pagination: Pagination){        
+    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito']
+    const params = deleteKeysToObject(pagination, paramsInvalid)
+    this.paramsNavigate(params)
   }
   
   paramsNavigate(queryParams: Params){
