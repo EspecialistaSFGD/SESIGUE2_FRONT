@@ -4,13 +4,13 @@
   [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
-      <th nzWidth="42px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">Estado</th>
+      <th nzWidth="42px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
       <th nzWidth="32px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Codigo</th>
       <th nzLeft nzWidth="100px">Mesa</th>
-      <th nzWidth="32px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
-      <th nzWidth="64px" nzAlign="center">Secretaría Técnica</th>
-      <th nzWidth="32px" nzAlign="center" nzColumnKey="fechaCreacion" [nzSortFn]="true">Fecha de Creación</th>
-      <th nzWidth="32px" nzAlign="center" nzColumnKey="fechaVigencia" [nzSortFn]="true">Fecha de Vigencia</th>
+      <th nzWidth="32px" nzAlign="center" nzColumnKey="sectorId" [nzSortFn]="true">Sector</th>
+      <th nzWidth="64px" nzAlign="center" nzColumnKey="secretariaTecnicaId" [nzSortFn]="true">Secretaría Técnica</th>
+      <th nzWidth="32px" nzAlign="center">Fecha de Creación</th>
+      <th nzWidth="32px" nzAlign="center">Fecha de Vigencia</th>
       <th nzWidth="24px" nzAlign="center">Resolución</th>
       <th nzWidth="24px" nzAlign="center">Sesión</th>
       <th nzWidth="24px" nzAlign="center">AM</th>
@@ -102,6 +102,6 @@
   </div>
 </ng-template>
 
-<app-filtro-mesas [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="changeVisibleDrawer($event)" (filters)="generateFilters($event)" />
+<app-filtro-mesas [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="changeVisibleDrawer($event)" (filters)="generateFilters($event)" (export)="reporteMesas()" (save)="saveFilters($event)" />
 
 

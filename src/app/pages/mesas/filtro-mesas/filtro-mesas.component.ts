@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EntidadResponse, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, SectoresService, UbigeosService } from '@core/services';
@@ -16,10 +16,11 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 })
 export class FiltroMesasComponent {
   @Input() visible: boolean = false
-  @Input() pagination: Pagination = {}
+  @Input() pagination: any = {}
   
   @Output() visibleDrawer = new EventEmitter()
   @Output() filters = new EventEmitter<Pagination>()
+  @Output() save = new EventEmitter<boolean>()
   @Output() export = new EventEmitter<boolean>()
 
   private timeout: any;
@@ -51,13 +52,78 @@ export class FiltroMesasComponent {
     ubigeo: [null]
   })
 
-  ngOnInit(): void {
-    this.formFilters.reset(this.pagination)
+  // ngOnInit(): void {
+  //   this.setParamsFilters()
+  // }
+  ngOnChanges(changes: SimpleChanges): void {
+    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+    //Add '${implements OnChanges}' to the class.
+    this.setParamsFilters()
+  }
+  
+  setParamsFilters(){
+    const pagination = { ...this.pagination }
+    const codigo = pagination.codigo ? pagination.codigo.toUpperCase() : null
+    const nombre = pagination.nombre ? pagination.nombre : null
+    const sectorId = pagination.sectorId ? Number(pagination.sectorId) : null
+    const secretariaTecnicaId = pagination.secretariaTecnicaId ? Number(pagination.secretariaTecnicaId) : null
+    const sectorEntidadId = pagination.sectorEntidadId ? Number(pagination.sectorEntidadId) : null
+    const entidadId = pagination.entidadId ? Number(pagination.entidadId) : null
+    const ubigeo = pagination.ubigeo ? pagination.ubigeo : null
+    
+    this.formFilters.reset({  ... pagination, codigo, nombre, sectorId, secretariaTecnicaId, sectorEntidadId, entidadId })
     this.obtenerSectoresServicio()
     this.obtenerDepartamentoService()
+
+    if(sectorId){
+      this.formFilters.get('secretariaTecnicaId')?.enable()
+      this.obtenerSecreatriaTecnicaService(sectorId)
+    }
+
+    if(sectorEntidadId){
+      this.formFilters.get('entidadId')?.enable()
+      this.obtenerEntidadesService(sectorEntidadId)
+    }
+
+    if(ubigeo){
+      const departamentoUbigeo = ubigeo.slice(0,2)      
+      this.formFilters.get('departamento')?.setValue(departamentoUbigeo)
+      const provinciaControl = this.formFilters.get('provincia')
+      provinciaControl?.enable()
+      this.obtenerProvinciaService(departamentoUbigeo)
+
+      const restUbigeo = ubigeo.slice(2,6)
+      if(restUbigeo !== '0000'){
+        const ubigeoDistrito = ubigeo.slice(0,4)
+        provinciaControl?.setValue(`${ubigeoDistrito}01`)
+
+        this.obtenerDistritosService(ubigeo)        
+        const distritoControl = this.formFilters.get('distrito')
+        distritoControl?.enable()
+
+        const lastUbigeo = ubigeo.slice(4,6)
+        if(lastUbigeo !== '01'){
+          distritoControl?.setValue(ubigeo)
+        }
+      }
+      
+    }
   }
 
-  changeVisibleDrawer(visible: boolean){
+  generarReporte(){
+    this.export.emit(true)
+    this.changeVisibleDrawer(false)
+  }
+
+  cleanParamsMesas(){
+    localStorage.removeItem('filtrosMesas');
+    this.formFilters.reset()
+    this.generateFilters()
+    this.changeVisibleDrawer(false)
+  }
+
+  changeVisibleDrawer(visible: boolean, save: boolean = true){   
+    this.save.emit(save) 
     this.visibleDrawer.emit(visible)
   }
 
@@ -115,8 +181,8 @@ export class FiltroMesasComponent {
       this.obtenerEntidadesService(sectorValue)
     } else {
       entidadIdControl?.disable()
-      entidadIdControl?.reset()
     }
+    entidadIdControl?.reset()
     this.generateFilters()
   }
 

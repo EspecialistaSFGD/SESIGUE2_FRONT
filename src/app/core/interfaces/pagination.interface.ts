@@ -50,8 +50,7 @@ export interface Pagination {
   origenId?: string,
   interaccionId?: string,
   tipoEventoId?: string,
-  entidadUbigeoId?: string
-  
+  entidadUbigeoId?: string  
 }
 
 export interface PaginationPanel {

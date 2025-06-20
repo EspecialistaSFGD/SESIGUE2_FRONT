@@ -33,13 +33,12 @@ export default class MesasComponent {
   perfilAuth: number = 0
   openFilters: boolean = false
 
-  paginationParams:Pagination = {
-
-  }
+  columnSort:string = 'mesaId'
+  typeSort:string = 'DESC'
   pagination: Pagination = {
     code: 0,
-    columnSort: 'mesaId',
-    typeSort: 'DESC',
+    columnSort: this.columnSort,
+    typeSort: this.typeSort,
     pageSize: 10,
     currentPage: 1,
     total: 0
@@ -80,7 +79,7 @@ export default class MesasComponent {
 
   getParams() {
     this.route.queryParams.subscribe(params => {
-      if (Object.keys(params).length > 0) {
+      if (Object.keys(params).length > 0) {        
         let campo = params['campo'] ?? 'mesaId'
 
         this.pagination.columnSort = campo
@@ -95,9 +94,11 @@ export default class MesasComponent {
         setParamsToObject(params, this.pagination, 'sectorEntidadId')
         setParamsToObject(params, this.pagination, 'entidadId')
         setParamsToObject(params, this.pagination, 'ubigeo')
-        setParamsToObject(params, this.pagination, 'entidadUbigeoId')
+        setParamsToObject(params, this.pagination, 'entidadUbigeoId')        
       }
-      this.obtenerMesasService()
+      setTimeout(() => {
+        this.obtenerMesasService()
+      }, 500);
     })
   }
 
@@ -119,15 +120,44 @@ export default class MesasComponent {
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
-      const sortsNames = ['ascend', 'descend']
-      const sorts = params.sort.find(item => sortsNames.includes(item.value!))
-      const qtySorts = params.sort.reduce((total, item) => {
-        return sortsNames.includes(item.value!) ? total + 1 : total
-      }, 0)
-      const ordenar = sorts?.value!.slice(0, -3)
-      
-      this.paramsNavigate({ pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar })
+    const sortsNames = ['ascend', 'descend']
+    const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+    const qtySorts = params.sort.reduce((total, item) => {
+      return sortsNames.includes(item.value!) ? total + 1 : total
+    }, 0)
+    const campo = sorts?.key
+    const ordenar = sorts?.value!.slice(0, -3)
+    const filtrosMesas = localStorage.getItem('filtrosMesas');
+    let filtros:any = {}
+    if(filtrosMesas){
+      filtros = JSON.parse(filtrosMesas)
+      filtros.save = false      
+      localStorage.setItem('filtrosMesas', JSON.stringify(filtros))
     }
+    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar })
+  }
+
+  saveFilters(save: boolean){
+    if(save){
+      const pagination: any = { ...this.pagination };
+      pagination.pagina = pagination.currentPage
+      pagination.cantidad = pagination.pageSize
+      pagination.save = true
+      if(pagination.columnSort != this.columnSort &&  pagination.typeSort != this.typeSort ){
+        pagination.campo = pagination.columnSort
+        pagination.ordenar = pagination.typeSort
+      }
+  
+      delete pagination.currentPage
+      delete pagination.pageSize
+      delete pagination.columnSort
+      delete pagination.typeSort
+      delete pagination.code
+      delete pagination.total
+  
+      localStorage.setItem('filtrosMesas', JSON.stringify(pagination));
+    }
+  }
 
   generateFilters(pagination: Pagination){        
     const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito']
@@ -135,7 +165,7 @@ export default class MesasComponent {
     this.paramsNavigate(params)
   }
   
-  paramsNavigate(queryParams: Params){
+  paramsNavigate(queryParams: Params){    
     this.router.navigate(
       [],
       {
