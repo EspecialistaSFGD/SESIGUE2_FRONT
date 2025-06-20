@@ -10,7 +10,7 @@
 
 	<div class="grid grid-cols-1 md:grid-cols-4 gap-3">
 		<div class="w-full flex flex-col">
-			<label nzFor="plazo">Fecha de atención</label>
+			<label nzFor="plazo">Plazo</label>
 			<p-calendar 
 				formControlName="plazo"
 				[iconDisplay]="'input'" 
@@ -48,11 +48,29 @@
 				optionLabel="nombre"
 				optionValue="entidadId"
 				[showClear]="true" 
-				placeholder="Seleccionar entidad"/>
+				placeholder="Seleccionar entidad"
+				(onClick)="obtenerEntidadId()"/>
 			} @else {
 				<input type="text" class="form-control" id="entidad" formControlName="entidad">
 			}
 			<div class="text-danger" *ngIf="alertMessageError('entidadId')">{{msgErrorControl('entidadId','Entidad')}}</div>
+		</div>
+	</div>
+
+	<div class="flex gap-4 p-2 bg-cyan-50 border border-cyan-100 rounded">
+		<div class="w-full flex flex-col gap-1">
+			<label nzFor="intervencionFaseId">Fase inicial</label>
+			<div class="form-control bg-cyan-100 border-transparent hover:border-transparent">{{intervencionEspacio().inicioIntervencionFase}}</div>
+		</div>
+
+		<div class="w-full flex flex-col gap-1">
+			<label nzFor="intervencionFaseId">Etapa inicial</label>
+			<div class="form-control bg-cyan-100 border-transparent hover:border-transparent">{{intervencionEspacio().inicioIntervencionEtapa}}</div>
+		</div>
+
+		<div class="w-full flex flex-col gap-1">
+			<label nzFor="intervencionFaseId">Hito Inicial</label>
+			<div class="form-control bg-cyan-100 border-transparent hover:border-transparent">{{intervencionEspacio().inicioIntervencionHito}}</div>
 		</div>
 	</div>
 
@@ -93,6 +111,23 @@
 			[showClear]="true" 
 			placeholder="Seleccionar hito"/>
 			<div class="text-danger" *ngIf="alertMessageError('intervencionHitoId')">{{msgErrorControl('intervencionHitoId','Hito')}}</div>
+		</div>
+	</div>
+
+	<div class="flex gap-4 p-2 bg-teal-50 border border-teal-100 rounded">
+		<div class="w-full flex flex-col gap-1">
+			<label nzFor="intervencionFaseId">Fase objetivo</label>
+			<div class="form-control bg-teal-100 border-transparent hover:border-transparent">{{intervencionEspacio().objetivoIntervencionFase}}</div>
+		</div>
+
+		<div class="w-full flex flex-col gap-1">
+			<label nzFor="intervencionFaseId">Etapa objetivo</label>
+			<div class="form-control bg-teal-100 border-transparent hover:border-transparent">{{intervencionEspacio().objetivoIntervencionEtapa}}</div>
+		</div>
+
+		<div class="w-full flex flex-col gap-1">
+			<label nzFor="intervencionFaseId">Hito objetivo</label>
+			<div class="form-control bg-teal-100 border-transparent hover:border-transparent">{{intervencionEspacio().objetivoIntervencionHito}}</div>
 		</div>
 	</div>
 

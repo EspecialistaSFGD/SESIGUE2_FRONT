@@ -5,7 +5,6 @@
 @if(mesa().mesaId){
 	<app-mesa-detalle [mesa]="mesa()" [action]="false"/>
 }
-
 <nz-table nzSize="small" [nzTitle]="headerUbigeos" nzShowSizeChanger [nzData]="intervencionesEspacios()"
 [nzFrontPagination]="false" [nzShowPagination]="pagination.pageSize! > 10"
 [nzLoading]="loadingIntervencionEspacio" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
@@ -13,52 +12,56 @@
     <thead>
         <tr>
             <th nzAlign="center">Sector</th>
-            <th nzAlign="center">Ubica</th>
+            <th nzAlign="center">Ubicación</th>
             <th nzAlign="center">Entidad</th>
             <th nzAlign="center">Tipo</th>
             <th nzAlign="center">Subtipo</th>
             <th nzAlign="center">Codigo</th>
             <th nzAlign="center">Nombre</th>
-            <!-- <th nzAlign="center">Costo Act.</th>
+            <th nzAlign="center">Costo Act.</th>
             <th nzAlign="center">Dev Acum</th>
-            <th nzAlign="center">PIA</th>
+            <!-- <th nzAlign="center">PIA</th> -->
             <th nzAlign="center">PIM</th>
             <th nzAlign="center">DEV</th>
-            <th nzAlign="center">Trans 2025</th> -->
+            <!-- <th nzAlign="center">Trans 2025</th> -->
             <th nzAlign="center">Fecha</th>
-            <th nzAlign="center">Situación</th>
-            <th nzAlign="center">Fase</th>
-            <th nzAlign="center">Etapa</th>
-            <th nzAlign="center">Hito</th>
-            <th nzAlign="center">Situación</th>
-            <th nzAlign="center"></th>
+            <th nzAlign="center">Fase Inicial</th>
+            <th nzAlign="center">Etapa Inicial</th>
+            <th nzAlign="center">Hito Inicial</th>
+            <th nzWidth="80px" nzAlign="center">Situación</th>
         </tr>
     </thead>
     <tbody>
 		@for(intervencionEspacio of intervencionesEspacios(); track $index){
 			<tr>
 			  <td nzAlign="center">{{intervencionEspacio.sector}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.departamento}} / {{intervencionEspacio.provincia}} / {{intervencionEspacio.distrito}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.entidad}}</td>
+			  <td nzAlign="center">
+				{{intervencionEspacio.departamento}}
+				{{intervencionEspacio.provincia ? ' / ' + intervencionEspacio.provincia  : '' }}
+				{{intervencionEspacio.distrito ? ' / ' + intervencionEspacio.distrito  : '' }}
+			</td>
+			  <td nzAlign="center">{{intervencionEspacio.entidadTipo}} {{intervencionEspacio.entidadSlug}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.tipo | uppercase }}</td>
 			  <td nzAlign="center">{{intervencionEspacio.subTipo | uppercase }}</td>
 			  <td nzAlign="center">{{intervencionEspacio.codigoIntervencion}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.nombreIntervencion}}</td>
-			  <!-- <td nzAlign="center">{{intervencionEspacio.costoActualizado}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.costoActualizado}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.devAcumulado}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.pia}}</td>
+			  <!-- <td nzAlign="center">{{intervencionEspacio.pia}}</td> -->
 			  <td nzAlign="center">{{intervencionEspacio.pim}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.devengado}}</td>
-			  <td nzAlign="center">0.0</td> -->
+			  <!-- <td nzAlign="center">0.0</td> -->
 			  <td nzAlign="center">{{intervencionEspacio.fechaRegistro}}</td>
-			  <td nzAlign="center"></td>
 			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionFase}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionEtapa}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionHito}}</td>
 			  <td nzAlign="center">
-				  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención"  (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)">
+				  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención" (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)">
 					<span nz-icon nzType="eye" nzTheme="outline"></span>
-				  </button>
+				</button>
+				<button nz-button nzDanger nzType="link" [nz-tooltip]="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? 'Eliminar intervención' : ''" (click)="eliminarIntervencion(intervencionEspacio)" [disabled]="estadoEliminarIntervencionEspacio(intervencionEspacio)">
+					<span nz-icon nzType="delete" nzTheme="outline"></span>
+				</button>
 			  </td>
 			<tr>
 		}
@@ -69,14 +72,18 @@
     <div class="ant-table-header flex flex-col md:flex-row justify-between items-center">
 		<div class="flex gap-4">
 			<div class="mb-2 sm:mb-0">Resultados {{pagination.total}}</div>
-			<div>Fecha de sincronizacion: 10/06/2025 05:30</div>
+			<div *ngIf="fechaSincronizacion" >Fecha de sincronizacion: {{fechaSincronizacion}}</div>
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
-			<div class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-sky-700 border-sky-700 text-white hover:bg-sky-900">
+			<div class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-red-700 border-red-700 text-white hover:bg-red-900" (click)="procesarIntervencion()">
 				<span nz-icon nzType="sync" nzTheme="outline"></span>
 				Procesar
 			</div>
+			<button nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteIntervencion()">
+				<span nz-icon nzType="file-excel"></span>
+				<span class="button-text">Exportar</span>
+			</button>
 			<div class="flex gap-1 py-1 px-4 border rounded cursor-pointer bg-sky-700 border-sky-700 text-white hover:bg-sky-900"  (click)="crearIntervencion()">
 				<span nz-icon nzType="plus" nzTheme="outline"></span>
 				Nueva intervencion

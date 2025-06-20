@@ -19,9 +19,9 @@ export class IntervencionTareaAvanceService {
     return this.http.get<IntervencionTareaAvancesResponses>(`${this.urlIntervencionTareaAvance}/ListarIntervencionTareaAvances`, { headers, params })
   }
 
-  registarIntervencionTareaAvance(intervencionTarea: IntervencionTareaAvanceResponse) {
+  registarIntervencionTareaAvance(intervencionAvance: IntervencionTareaAvanceResponse) {
     const headers = this.helpersServices.getAutorizationToken() 
-    const formData = this.generateFormData(intervencionTarea)         
+    const formData = this.generateFormData(intervencionAvance)         
     return this.http.post<IntervencionTareaAvanceResponse>(`${this.urlIntervencionTareaAvance}/RegistrarIntervencionTareaAvance`, formData, { headers })
       .pipe(
         tap(resp => {
@@ -31,6 +31,30 @@ export class IntervencionTareaAvanceService {
         catchError(err => of(err))
       )
   }
+
+  actualizarIntervencionTareaAvance(intervencionAvance: IntervencionTareaAvanceResponse){
+      const headers = this.helpersServices.getAutorizationToken()
+      return this.http.put<IntervencionTareaAvanceResponse>(`${this.urlIntervencionTareaAvance}/ActualizarIntervencionTareaAvance/${intervencionAvance.intervencionAvanceId}`, intervencionAvance, { headers })
+        .pipe(
+          tap(resp => {
+            return resp
+          }),
+          map(valid => valid),
+          catchError(err => of(err))
+        )
+    }
+
+    eliminarIntervencionTareaAvance(avanceId: string) {
+      const headers = this.helpersServices.getAutorizationToken()
+      return this.http.delete<IntervencionTareaAvancesResponses>(`${this.urlIntervencionTareaAvance}/EliminarIntervencionTareaAvance/${avanceId}`, { headers })
+        .pipe(
+          tap(resp => {
+            return resp
+          }),
+          map(valid => valid),
+          catchError(err => of(err))
+        )
+    }
 
   private generateFormData(tareaAvance: IntervencionTareaAvanceResponse): FormData {
     const formData = new FormData()

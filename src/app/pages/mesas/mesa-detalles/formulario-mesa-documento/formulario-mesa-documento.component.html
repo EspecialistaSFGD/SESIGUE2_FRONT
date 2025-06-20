@@ -15,7 +15,7 @@
 			[showButtonBar]="true"
 			dateFormat="dd/mm/yy"
 			inputId="icondisplay" 
-            (onSelect)="verificarFecha()"/>
+            (onSelect)="mesa ? verificarFecha() : null"/>
 			<div class="w-full text-danger" *ngIf="alertMessageError('fechaCreacion')">{{msgErrorControl('fechaCreacion','fecha de creación')}}</div>
 		</div>
 

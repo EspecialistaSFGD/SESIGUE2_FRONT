@@ -58,7 +58,7 @@ export class FormularioMesaComponent {
     abreviatura: ['MT_', [Validators.required, Validators.pattern(this.validatorService.slugMTPattern)]],
     resolucion: ['', Validators.required],
     sectorId: [null, Validators.required],
-    secretariaTecnicaId: [ '', Validators.required],
+    secretariaTecnicaId: [ { value: null, disabled: true }, Validators.required],
     fechaCreacion: ['', Validators.required],
     fechaVigencia: ['', Validators.required],
     estadoRegistro: ['', Validators.required],

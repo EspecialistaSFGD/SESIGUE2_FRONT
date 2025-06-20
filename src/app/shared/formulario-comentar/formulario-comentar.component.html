@@ -1,0 +1,10 @@
+<form [formGroup]="formComentario" class="flex flex-col gap-3" autocomplete="off">
+	<div class="flex flex-col">
+		<div class="flex justify-between">
+			<label class="w-full" for="comentario">Comentario</label>
+			<div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : cantidadCaracteresTarea < 20 }">{{cantidadCaracteresTarea}}</div>
+		</div>
+		<textarea class="form-control" id="comentario" formControlName="comentario" (keyup)="caracteresContador()" placeholder="Comenta aquí" rows="2"></textarea>
+		<div class="w-full text-danger" *ngIf="alertMessageError('comentario')">{{msgErrorControl('comentario','Comentario')}}</div>
+	</div>
+</form>
