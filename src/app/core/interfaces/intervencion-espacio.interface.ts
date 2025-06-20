@@ -45,6 +45,7 @@ export interface IntervencionEspacioResponse {
 	devengado?: string,
 	usuarioIdRegistro?: string,
 	usuarioIdModifica?: string,
+	cantidadTareas?: number,
 	inicioIntervencionHitoId: string,
 	inicioIntervencionHito?: string,
 	inicioIntervencionEtapaId?: string,

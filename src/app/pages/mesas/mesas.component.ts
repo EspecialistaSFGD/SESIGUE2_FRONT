@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { getDateFormat } from '@core/helpers';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { deleteKeysToObject, getDateFormat, setParamsToObject } from '@core/helpers';
 import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse } from '@core/interfaces';
 import { IntervencionEspacioService, MesaEstadosService, MesaIntegrantesService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
@@ -14,11 +14,13 @@ import { FormularioMesaComponent } from './formulario-mesa/formulario-mesa.compo
 import { FormularioMesaEstadoResumenComponent } from './formulario-mesa-estado-resumen/formulario-mesa-estado-resumen.component';
 import saveAs from 'file-saver';
 import { UtilesService } from '@libs/shared/services/utiles.service';
+import { FiltroMesasComponent } from './filtro-mesas/filtro-mesas.component';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'app-mesas',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, PageHeaderComponent, SharedModule],
+  imports: [CommonModule, RouterModule, NgZorroModule, PageHeaderComponent, SharedModule, FiltroMesasComponent],
   templateUrl: './mesas.component.html',
   styles: ``
 })
@@ -29,11 +31,14 @@ export default class MesasComponent {
   loading: boolean = false
   permisosPCM: boolean = false
   perfilAuth: number = 0
+  openFilters: boolean = false
 
+  columnSort:string = 'mesaId'
+  typeSort:string = 'DESC'
   pagination: Pagination = {
     code: 0,
-    columnSort: 'mesaId',
-    typeSort: 'DESC',
+    columnSort: this.columnSort,
+    typeSort: this.typeSort,
     pageSize: 10,
     currentPage: 1,
     total: 0
@@ -61,11 +66,40 @@ export default class MesasComponent {
   private mesaUbigeosService = inject(MesaIntegrantesService)
   private mesaEstadosService = inject(MesaEstadosService)
   private utilesService = inject(UtilesService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute)
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     this.permisosPCM = this.setPermisosPCM()
-    this.obtenerMesasService()
+      // this.obtenerMesasService()
+    this.getParams()
+    
+  }
+
+  getParams() {
+    this.route.queryParams.subscribe(params => {
+      if (Object.keys(params).length > 0) {        
+        let campo = params['campo'] ?? 'mesaId'
+
+        this.pagination.columnSort = campo
+        this.pagination.currentPage = params['pagina']
+        this.pagination.pageSize = params['cantidad']
+        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+
+        setParamsToObject(params, this.pagination, 'codigo')
+        setParamsToObject(params, this.pagination, 'nombre')
+        setParamsToObject(params, this.pagination, 'sectorId')
+        setParamsToObject(params, this.pagination, 'secretariaTecnicaId')
+        setParamsToObject(params, this.pagination, 'sectorEntidadId')
+        setParamsToObject(params, this.pagination, 'entidadId')
+        setParamsToObject(params, this.pagination, 'ubigeo')
+        setParamsToObject(params, this.pagination, 'entidadUbigeoId')        
+      }
+      setTimeout(() => {
+        this.obtenerMesasService()
+      }, 500);
+    })
   }
 
   setPermisosPCM(){
@@ -79,6 +113,67 @@ export default class MesasComponent {
         this.mesas.set(resp.data)
         this.pagination.total = resp.info?.total
       })
+  }
+
+  changeVisibleDrawer(visible: boolean){
+    this.openFilters = false
+  }
+
+  onQueryParamsChange(params: NzTableQueryParams): void {
+    const sortsNames = ['ascend', 'descend']
+    const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+    const qtySorts = params.sort.reduce((total, item) => {
+      return sortsNames.includes(item.value!) ? total + 1 : total
+    }, 0)
+    const campo = sorts?.key
+    const ordenar = sorts?.value!.slice(0, -3)
+    const filtrosMesas = localStorage.getItem('filtrosMesas');
+    let filtros:any = {}
+    if(filtrosMesas){
+      filtros = JSON.parse(filtrosMesas)
+      filtros.save = false      
+      localStorage.setItem('filtrosMesas', JSON.stringify(filtros))
+    }
+    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar })
+  }
+
+  saveFilters(save: boolean){
+    if(save){
+      const pagination: any = { ...this.pagination };
+      pagination.pagina = pagination.currentPage
+      pagination.cantidad = pagination.pageSize
+      pagination.save = true
+      if(pagination.columnSort != this.columnSort &&  pagination.typeSort != this.typeSort ){
+        pagination.campo = pagination.columnSort
+        pagination.ordenar = pagination.typeSort
+      }
+  
+      delete pagination.currentPage
+      delete pagination.pageSize
+      delete pagination.columnSort
+      delete pagination.typeSort
+      delete pagination.code
+      delete pagination.total
+  
+      localStorage.setItem('filtrosMesas', JSON.stringify(pagination));
+    }
+  }
+
+  generateFilters(pagination: Pagination){        
+    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito']
+    const params = deleteKeysToObject(pagination, paramsInvalid)
+    this.paramsNavigate(params)
+  }
+  
+  paramsNavigate(queryParams: Params){    
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: 'merge',
+      }
+    );
   }
 
   reporteMesas(){

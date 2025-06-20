@@ -1,14 +1,14 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
   [nzData]="mesas()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
-  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
+  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
-      <th nzWidth="42px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">Estado</th>
-      <th nzWidth="32px" nzAlign="center">Codigo</th>
-      <th nzLeft nzWidth="100px" nzColumnKey="nombreArchivo" [nzSortFn]="true">Mesa</th>
-      <th nzWidth="32px" nzAlign="center">Sector</th>
-      <th nzWidth="64px" nzAlign="center">Secretaría Técnica</th>
+      <th nzWidth="42px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
+      <th nzWidth="32px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Codigo</th>
+      <th nzLeft nzWidth="100px">Mesa</th>
+      <th nzWidth="32px" nzAlign="center" nzColumnKey="sectorId" [nzSortFn]="true">Sector</th>
+      <th nzWidth="64px" nzAlign="center" nzColumnKey="secretariaTecnicaId" [nzSortFn]="true">Secretaría Técnica</th>
       <th nzWidth="32px" nzAlign="center">Fecha de Creación</th>
       <th nzWidth="32px" nzAlign="center">Fecha de Vigencia</th>
       <th nzWidth="24px" nzAlign="center">Resolución</th>
@@ -69,10 +69,15 @@
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
     <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
     <div class="flex gap-2">
+      <button nz-button nzType="default" (click)="openFilters = true">
+        <span nz-icon nzType="filter"></span>
+        <span class="button-text">Filtros</span>
+      </button>
       <!-- <button nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteMesas()">
         <span nz-icon nzType="file-excel"></span>
         <span class="button-text">Exportar</span>
       </button> -->
+
       <button nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
           <span nz-icon nzType="file-excel" nzTheme="outline"></span>
           <span class="button-text">Exportar</span>
@@ -96,5 +101,7 @@
     </div>
   </div>
 </ng-template>
+
+<app-filtro-mesas [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="changeVisibleDrawer($event)" (filters)="generateFilters($event)" (export)="reporteMesas()" (save)="saveFilters($event)" />
 
 

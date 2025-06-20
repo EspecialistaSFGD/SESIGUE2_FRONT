@@ -49,7 +49,8 @@ export interface Pagination {
   esSector?: string
   origenId?: string,
   interaccionId?: string,
-  tipoEventoId?: string
+  tipoEventoId?: string,
+  entidadUbigeoId?: string  
 }
 
 export interface PaginationPanel {
