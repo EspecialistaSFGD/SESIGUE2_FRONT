@@ -90,6 +90,13 @@ export default class IntervencionTareasComponent {
     this.intervencionTareasServices.obtenerIntervencionTareas(tareaId).subscribe( resp => this.intervencionTarea = resp.data)
   }
 
+  esResponsable(tarea:IntervencionTareaResponse){
+    const sectorAuth = localStorage.getItem('codigoSector')!
+    const nivelGobiernoAuth = localStorage.getItem('descripcionSector')!
+    const entidad = localStorage.getItem('entidad')!
+    return nivelGobiernoAuth === 'GN' ? tarea.responsableId == sectorAuth : tarea.responsableId == entidad
+  }
+
   agregarTarea(){
     this.tareaId = 0
     this.intervencionTarea = {
@@ -170,6 +177,8 @@ export default class IntervencionTareasComponent {
   }
 
   actualizarTareaServices(intervencionTarea: IntervencionTareaResponse){
+    const plazoDate = convertDateStringToDate(intervencionTarea.plazo)
+    intervencionTarea.plazo = getDateFormat(plazoDate,'month')
     this.intervencionTareasServices.actualizarIntervencionTarea(intervencionTarea)
       .subscribe( resp => {
         this.obtenerIntervencionTareasService()
@@ -231,10 +240,17 @@ export default class IntervencionTareasComponent {
   }
 
   validarTarea(intervencionTarea: IntervencionTareaResponse){
-    const plazoDate = convertDateStringToDate(intervencionTarea.plazo)
-    intervencionTarea.validado = true
-    intervencionTarea.plazo = getDateFormat(plazoDate,'month')
-    this.actualizarTareaServices(intervencionTarea)
+    this.modal.confirm({
+      nzTitle: `Validar tarea`,
+      nzContent: `¿Está seguro de que desea validar la tarea ${intervencionTarea.codigo}?`,
+      nzOkText: 'Validar',
+      nzOkDanger: false,
+      nzOnOk: () => {
+        intervencionTarea.validado = true
+        this.actualizarTareaServices(intervencionTarea)
+      },
+      nzCancelText: 'Cancelar'
+    });
   }
 
   obtenerTareaAvances(intervencionTarea: IntervencionTareaResponse){
