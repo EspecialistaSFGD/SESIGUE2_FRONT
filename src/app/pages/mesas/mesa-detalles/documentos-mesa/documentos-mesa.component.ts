@@ -6,7 +6,7 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { FormularioMesaDocumentoComponent } from '../formulario-mesa-documento/formulario-mesa-documento.component';
+import { FormularioMesaDocumentoComponent } from './formulario-mesa-documento/formulario-mesa-documento.component';
 import { convertEnumToObject, getDateFormat } from '@core/helpers';
 import { MesaDocumentoTipoEnum } from '@core/enums';
 

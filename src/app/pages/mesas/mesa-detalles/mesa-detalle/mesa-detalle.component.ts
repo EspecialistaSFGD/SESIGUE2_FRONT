@@ -8,7 +8,7 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from '../../formulario-mesa/formulario-mesa.component';
-import { FormularioMesaDocumentoComponent } from '../formulario-mesa-documento/formulario-mesa-documento.component';
+import { FormularioMesaDocumentoComponent } from '../documentos-mesa/formulario-mesa-documento/formulario-mesa-documento.component';
 
 @Component({
   selector: 'app-mesa-detalle',
