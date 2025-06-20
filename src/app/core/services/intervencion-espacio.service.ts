@@ -37,14 +37,26 @@ export class IntervencionEspacioService {
   }
 
   registrarIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse) {  
-      const headers = this.helpersServices.getAutorizationToken()
-      return this.http.post<IntervencionEspacioResponse>(`${this.urlIntervencionEspacio}/RegistrarIntervencionEspacio`, intervencionEspacio, { headers })
-        .pipe(
-          tap(resp => {
-            return resp
-          }),
-          map(valid => valid),
-          catchError(err => of(err))
-        )
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.post<IntervencionEspacioResponse>(`${this.urlIntervencionEspacio}/RegistrarIntervencionEspacio`, intervencionEspacio, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
+  }
+
+  eliminarIntervencionEspacio(intervencionEspacioiD: string) {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.delete<IntervencionesEspaciosResponses>(`${this.urlIntervencionEspacio}/EliminarIntervencionEspacio/${intervencionEspacioiD}`, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
     }
 }

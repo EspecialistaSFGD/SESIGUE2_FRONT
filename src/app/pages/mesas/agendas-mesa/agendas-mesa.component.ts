@@ -127,6 +127,29 @@ export default class AgendasMesaComponent {
       })
   }
 
+  estadoEliminarIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse): boolean {
+    return intervencionEspacio.cantidadTareas != 0
+  }
+
+  eliminarIntervencion(intervencionEspacio: IntervencionEspacioResponse){
+    this.modal.confirm({
+      nzTitle: `Eliminar intervención`,
+      nzContent: `¿Está seguro de que desea eliminar ${intervencionEspacio.tipo?.toUpperCase()} ${intervencionEspacio.codigoIntervencion}?`,
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.intervencionEspaciosServices.eliminarIntervencionEspacio(intervencionEspacio.intervencionEspacioId!)
+      .subscribe( resp => {
+        if(resp.success){
+          this.obtenerIntervencionEspacioService()
+        }
+      })
+      },
+      nzCancelText: 'Cancelar'
+    });
+    
+  }
+
   reporteIntervencion(){
     this.loadingExport = true;
     this.intervencionEspaciosServices.reporteIntervencionEspacios(this.pagination)
