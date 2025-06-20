@@ -15,19 +15,19 @@
         <th nzWidth="20px" nzAlign="center">Plazo</th>
         <th nzWidth="24px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
         <th nzWidth="24px" nzAlign="center">Comentario</th>
-        <th nzWidth="32px" nzAlign="center"></th>
+        <th nzWidth="40px" nzAlign="center"></th>
       </tr>
     </thead>
     
     <tbody>
       @for(tarea of intervencionTareas(); track $index){
         <tr>
-          <td nzAlign="center"> <span *ngIf="tarea.validado" class="text-2xl" nz-icon nzType="check-circle" nzTheme="twotone" nzTwotoneColor="#52c41a" nz-tooltip nzTooltipTitle="Validado" ></span></td>
+          <td nzAlign="center"><app-icono-validado [validado]="tarea.validado!" /></td>
           <td nzAlign="center">
             <p class="font-bold" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.codigo}}</p>
           </td>
           <td>
-            <p (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.tarea}} - {{esResponsable(tarea)}}</p>
+            <p (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.tarea}}</p>
           </td>
           <td nzAlign="center">{{tarea.intervencionFase}}</td>
           <td nzAlign="center">{{tarea.intervencionEtapa}}</td>
