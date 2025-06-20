@@ -14,7 +14,7 @@
       <th nzWidth="24px" nzAlign="center">Resolución</th>
       <th nzWidth="24px" nzAlign="center">Sesión</th>
       <th nzWidth="24px" nzAlign="center">AM</th>
-      <th nzWidth="32px" nzAlign="center"></th>
+      <th nzWidth="32px" *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center"></th>
     </tr>
   </thead>
   
@@ -47,16 +47,16 @@
             <app-boton-descargar [rutaArchivo]="mesa.am" [titulo]="'Descargar ultima AM'"></app-boton-descargar>
           }
         </td>
-        <td nzAlign="center">
-            <a [routerLink]="['/mesas', mesa.mesaId]">
+        <td *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center">
+            <a *ngIf="mesasActions.view" [routerLink]="['/mesas', mesa.mesaId]">
               <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
                 <span nz-icon nzType="eye" nzTheme="outline"></span>
               </button>
             </a>
-            <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar estado resumen" (click)="crearEstadoResumen(mesa, false)">
+            <button *ngIf="mesasActions.comment" nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar estado resumen" (click)="crearEstadoResumen(mesa, false)">
               <span nz-icon nzType="comment" nzTheme="outline"></span>
             </button>
-            <button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Agregar alerta" (click)="crearEstadoResumen(mesa, true)">
+            <button *ngIf="mesasActions.comment" nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Agregar alerta" (click)="crearEstadoResumen(mesa, true)">
               <span nz-icon nzType="comment" nzTheme="outline"></span>
             </button>
         </td>
@@ -69,16 +69,12 @@
   <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
     <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
     <div class="flex gap-2">
-      <button nz-button nzType="default" (click)="openFilters = true">
+      <button *ngIf="mesasActions.report" nz-button nzType="default" (click)="openFilters = true">
         <span nz-icon nzType="filter"></span>
         <span class="button-text">Filtros</span>
       </button>
-      <!-- <button nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteMesas()">
-        <span nz-icon nzType="file-excel"></span>
-        <span class="button-text">Exportar</span>
-      </button> -->
 
-      <button nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
+      <button *ngIf="mesasActions.report" nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
           <span nz-icon nzType="file-excel" nzTheme="outline"></span>
           <span class="button-text">Exportar</span>
           <span nz-icon nzType="down"></span>
@@ -94,7 +90,7 @@
           </ul>
       </nz-dropdown-menu>
 
-      <button nz-button nzType="primary" (click)="crearMesa()">
+      <button *ngIf="mesasActions.new" nz-button nzType="primary" (click)="crearMesa()">
         <span nz-icon nzType="plus" nzTheme="outline"></span>
         <span class="button-text">Nueva mesa</span>
       </button>

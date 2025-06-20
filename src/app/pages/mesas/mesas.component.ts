@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { deleteKeysToObject, getDateFormat, setParamsToObject } from '@core/helpers';
-import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse } from '@core/interfaces';
+import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
+import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse, ButtonsActions } from '@core/interfaces';
 import { IntervencionEspacioService, MesaEstadosService, MesaIntegrantesService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -32,6 +32,8 @@ export default class MesasComponent {
   permisosPCM: boolean = false
   perfilAuth: number = 0
   openFilters: boolean = false
+
+  mesasActions: ButtonsActions = {}
 
   columnSort:string = 'mesaId'
   typeSort:string = 'DESC'
@@ -74,6 +76,7 @@ export default class MesasComponent {
     this.permisosPCM = this.setPermisosPCM()
       // this.obtenerMesasService()
     this.getParams()
+    this.getPermissions()
     
   }
 
@@ -100,6 +103,12 @@ export default class MesasComponent {
         this.obtenerMesasService()
       }, 500);
     })
+  }
+
+  getPermissions() {
+    const navigation = this.authStore.navigationAuth()!
+    const atenciones = navigation.find(nav => nav.descripcionItem == 'Mesas')
+    this.mesasActions = obtenerPermisosBotones(atenciones!.botones!)    
   }
 
   setPermisosPCM(){
