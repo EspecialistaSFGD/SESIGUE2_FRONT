@@ -11,11 +11,12 @@ import { FormularioComentarComponent } from '@shared/formulario-comentar/formula
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaAvanceComponent } from './formulario-intervencion-tarea-avance/formulario-intervencion-tarea-avance.component';
+import { IconoValidadoComponent } from '@shared/icons/icono-validado/icono-validado.component';
 
 @Component({
   selector: 'app-intervencion-tarea-avances',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgZorroModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, NgZorroModule, SharedModule, IconoValidadoComponent],
   templateUrl: './intervencion-tarea-avances.component.html',
   styles: ``
 })

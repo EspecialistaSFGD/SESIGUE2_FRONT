@@ -19,7 +19,7 @@
 		<tbody>
 			@for(avance of intervencionTareasAvances(); track $index){
 				<tr>
-					<td nzAlign="center"> <span *ngIf="avance.validaPcm" class="text-2xl" nz-icon nzType="check-circle" nzTheme="twotone" nzTwotoneColor="#52c41a" nz-tooltip nzTooltipTitle="Validado" ></span></td>
+					<td nzAlign="center"><app-icono-validado [validado]="avance.validaPcm!" /></td>
 					<td nzAlign="center">{{avance.fecha}}</td>
 					<td nzAlign="center">{{avance.avance}}</td>
 					<td nzAlign="center"><app-boton-descargar [rutaArchivo]="avance.evidencia!" [titulo]="'Descargar evidencia'"></app-boton-descargar></td>

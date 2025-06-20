@@ -11,11 +11,12 @@ import { FormularioComentarComponent } from '@shared/formulario-comentar/formula
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaComponent } from './formulario-Intervencion-tarea/formulario-intervencion-tarea.component';
 import IntervencionTareaAvancesComponent from './intervencion-tarea-avances/intervencion-tarea-avances.component';
+import { IconoValidadoComponent } from '@shared/icons/icono-validado/icono-validado.component';
 
 @Component({
   selector: 'app-intervencion-tareas',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, IntervencionTareaAvancesComponent, PipesModule ],
+  imports: [CommonModule, NgZorroModule, IntervencionTareaAvancesComponent, PipesModule, IconoValidadoComponent ],
   templateUrl: './intervencion-tareas.component.html',
   styles: ``
 })
