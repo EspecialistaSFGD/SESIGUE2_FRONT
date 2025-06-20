@@ -37,6 +37,7 @@ export default class IntervencionTareaAvancesComponent {
   loading: boolean = false
   permisosPCM: boolean = false
   perfilAuth: number = 0
+  esResponsable: boolean = false
   tareaProyectoCulminado: boolean = false
   tareaCulminado: boolean = false
   estadosRegistros: ItemEnum[] = convertEnumToObject(IntervencionTareaAvanceEstadoRegistroEnum)
@@ -67,6 +68,13 @@ export default class IntervencionTareaAvancesComponent {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     const profilePCM = [11,12,23]
     return profilePCM.includes(this.perfilAuth)
+  }
+
+  verificarResponsable(){
+    const sectorAuth = localStorage.getItem('codigoSector')!
+    const nivelGobiernoAuth = localStorage.getItem('descripcionSector')!
+    const entidad = localStorage.getItem('entidad')!
+    this.esResponsable = nivelGobiernoAuth === 'GN' ? this.intervencionTarea!.responsableId == sectorAuth : this.intervencionTarea!.responsableId == entidad
   }
 
   obtenerInversionTareaAvanceService(){
@@ -185,10 +193,19 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   validarAvance(intervencionTareaAvance: IntervencionTareaAvanceResponse){
-    const fechaDate = convertDateStringToDate(intervencionTareaAvance.fecha)
-    this.permisosPCM ? intervencionTareaAvance.validaPcm = true : intervencionTareaAvance.validado = true
-    intervencionTareaAvance.fecha = getDateFormat(fechaDate,'month')
-    this.actualizartareaService(intervencionTareaAvance)
+    this.modal.confirm({
+      nzTitle: `Validar avance`,
+      nzContent: `¿Está seguro de que desea validar el avance del  ${intervencionTareaAvance.fecha}?`,
+      nzOkText: 'Validar',
+      nzOkDanger: false,
+      nzOnOk: () => {
+      const fechaDate = convertDateStringToDate(intervencionTareaAvance.fecha)
+      this.permisosPCM ? intervencionTareaAvance.validaPcm = true : intervencionTareaAvance.validado = true
+      intervencionTareaAvance.fecha = getDateFormat(fechaDate,'month')
+        this.actualizartareaService(intervencionTareaAvance)
+      },
+      nzCancelText: 'Cancelar'
+    });
   }
 
   eliminarTarea(intervencionTareaAvance: IntervencionTareaAvanceResponse){

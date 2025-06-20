@@ -6,10 +6,13 @@
       <tr>
         <th nzWidth="10px" nzAlign="center"></th>
         <th nzWidth="20px" nzAlign="center"nzColumnKey="codigoIntervencion" [nzSortFn]="true">Codigo</th>
-        <th nzLeft nzWidth="100px" nzColumnKey="tarea" [nzSortFn]="true">Tarea</th>
+        <th nzLeft nzWidth="80px" nzColumnKey="tarea" [nzSortFn]="true">Tarea</th>
+        <th nzWidth="36px" nzAlign="center">Fase</th>
+        <th nzWidth="36px" nzAlign="center">Etapa</th>
+        <th nzWidth="36px" nzAlign="center">Hito</th>
         <th nzWidth="24px" nzAlign="center" nzColumnKey="responsableId" [nzSortFn]="true">Responsable</th>
         <th nzWidth="64px" nzAlign="center">Entidad</th>
-        <th nzWidth="16px" nzAlign="center">Plazo</th>
+        <th nzWidth="20px" nzAlign="center">Plazo</th>
         <th nzWidth="24px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
         <th nzWidth="24px" nzAlign="center">Comentario</th>
         <th nzWidth="32px" nzAlign="center"></th>
@@ -24,19 +27,22 @@
             <p class="font-bold" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.codigo}}</p>
           </td>
           <td>
-            <p (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.tarea}}</p>
+            <p (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.tarea}} - {{esResponsable(tarea)}}</p>
           </td>
+          <td nzAlign="center">{{tarea.intervencionFase}}</td>
+          <td nzAlign="center">{{tarea.intervencionEtapa}}</td>
+          <td nzAlign="center">{{tarea.intervencionHito}}</td>
           <td nzAlign="center">{{tarea.responsable}}</td>
           <td nzAlign="center">{{tarea.entidad}}</td>
           <td nzAlign="center">{{tarea.plazo}}</td>
           <td nzAlign="center">{{obtenerEstadoRegistro(tarea.estadoRegistroNombre!) | replace : '_' : ' ' }}</td>
-          <!-- <td nzAlign="center">{{permisosPCM ? tarea.comentario : tarea.comentarioSd }}</td> -->
-          <td nzAlign="center">{{tarea.comentarioSd}}</td>
+          <td nzAlign="center">{{permisosPCM ? tarea.comentario : tarea.comentarioSd }}</td>
+          <!-- <td nzAlign="center">{{tarea.comentarioSd}}</td> -->
           <td nzAlign="center">
-            <button nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!tarea.validado ? 'Actualizar tarea' : ''" [disabled]="tarea.validado" (click)="actualizarTarea(tarea.intervencionTareaId!)">
+            <button *ngIf="!esResponsable(tarea)" nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!tarea.validado ? 'Actualizar tarea' : ''" [disabled]="tarea.validado" (click)="actualizarTarea(tarea.intervencionTareaId!)">
               <span nz-icon nzType="edit" nzTheme="outline"></span>
             </button>
-            <button nz-button nzDanger nzType="link" [nz-tooltip]="!tarea.validado ? 'Eliminar tarea' : ''" [disabled]="tarea.validado" (click)="eliminarTarea(tarea)">
+            <button *ngIf="!esResponsable(tarea)" nz-button nzDanger nzType="link" [nz-tooltip]="!tarea.validado ? 'Eliminar tarea' : ''" [disabled]="tarea.validado" (click)="eliminarTarea(tarea)">
               <span nz-icon nzType="delete" nzTheme="outline"></span>
             </button>
             <button nz-button nzType="link" [nz-tooltip]="!tarea.validado ? 'Comentar tarea' : ''" [disabled]="tarea.validado" (click)="comentarTarea(tarea)">
