@@ -9,6 +9,7 @@ import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from '../../formulario-mesa/formulario-mesa.component';
 import { FormularioMesaDocumentoComponent } from '../documentos-mesa/formulario-mesa-documento/formulario-mesa-documento.component';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-mesa-detalle',
@@ -21,6 +22,9 @@ export class MesaDetalleComponent {
   @Input() mesa!: MesaResponse
   @Input() action: boolean = true
   @Output() updated = new EventEmitter<boolean>()
+
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
 
   tipos: ItemEnum[] = convertEnumToObject(MesaDocumentoTipoEnum)
 
@@ -36,11 +40,19 @@ export class MesaDetalleComponent {
     
   private mesaServices = inject(MesasService)
   private mesaDetalleServices = inject(MesaDocumentosService)
+  private authStore = inject(AuthService)
 
   private modal = inject(NzModalService);
 
   ngOnInit(): void {
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = this.setPermisosPCM()
     this.obtenerMesaDocumentos()
+  }
+  
+  setPermisosPCM(){
+    const profilePCM = [11,12,23]
+    return profilePCM.includes(this.perfilAuth)
   }
 
   obtenerMesaDocumentos(){

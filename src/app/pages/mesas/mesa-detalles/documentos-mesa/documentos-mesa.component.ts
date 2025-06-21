@@ -9,6 +9,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaDocumentoComponent } from './formulario-mesa-documento/formulario-mesa-documento.component';
 import { convertEnumToObject, getDateFormat } from '@core/helpers';
 import { MesaDocumentoTipoEnum } from '@core/enums';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-documentos-mesa',
@@ -22,6 +23,8 @@ export class DocumentosMesaComponent {
   @Input() tipo: number = 0
   
   loading: boolean = false
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
   tipos: ItemEnum[] = convertEnumToObject(MesaDocumentoTipoEnum)
 
   documentos = signal<MesaDocumentoResponse[]>([])
@@ -36,11 +39,19 @@ export class DocumentosMesaComponent {
 
   private mesaDocumentosServices = inject(MesaDocumentosService)
   private modal = inject(NzModalService);
+  private authStore = inject(AuthService)
 
   ngOnInit(): void {
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = this.setPermisosPCM()
     setTimeout(() => {
       this.obtenerDocumentosService()
     }, 500);
+  }
+
+  setPermisosPCM(){
+    const profilePCM = [11,12,23]
+    return profilePCM.includes(this.perfilAuth)
   }
 
   obtenerDocumentosService(){

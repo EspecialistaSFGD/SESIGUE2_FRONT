@@ -74,7 +74,6 @@ export default class MesasComponent {
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     this.permisosPCM = this.setPermisosPCM()
-      // this.obtenerMesasService()
     this.getParams()
     this.getPermissions()
     

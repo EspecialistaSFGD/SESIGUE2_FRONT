@@ -26,6 +26,7 @@ export interface MesaResponse {
   estadoRegistroNombre?: string,
   sesion?: string,
   am?:string,
+  cantidadIntervenciones?:number,
   fechaResumen?:string,
   resumen?:string,
   alerta?:string,
