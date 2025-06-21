@@ -5,6 +5,7 @@ import { MesaIntegrantesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntegranteMesaComponent } from './formulario-integrante-mesa/formulario-integrante-mesa.component';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-integrantes-mesa',
@@ -16,6 +17,9 @@ import { FormularioIntegranteMesaComponent } from './formulario-integrante-mesa/
 export class IntegrantesMesaComponent {
   @Input() mesaId!: number
   @Input() esSector:boolean = true
+
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
 
   integrantes = signal<MesaIntegranteResponse[]>([])
   modal = inject(NzModalService);
@@ -37,9 +41,17 @@ export class IntegrantesMesaComponent {
   }
 
   private integrantesService = inject(MesaIntegrantesService)
+  private authStore = inject(AuthService)
 
   ngOnInit(): void {
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = this.setPermisosPCM()
     this.obtenerIntegrantesService()
+  }
+
+  setPermisosPCM(){
+    const profilePCM = [11,12,23]
+    return profilePCM.includes(this.perfilAuth)
   }
 
   obtenerIntegrantesService(){

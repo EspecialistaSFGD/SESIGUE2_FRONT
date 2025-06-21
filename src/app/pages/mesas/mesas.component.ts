@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { deleteKeysToObject, getDateFormat, setParamsToObject } from '@core/helpers';
-import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse } from '@core/interfaces';
+import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
+import { MesaResponse, MesaIntegranteResponse, Pagination, MesaEstadoResponse, ButtonsActions } from '@core/interfaces';
 import { IntervencionEspacioService, MesaEstadosService, MesaIntegrantesService } from '@core/services';
 import { MesasService } from '@core/services/mesas.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -32,6 +32,8 @@ export default class MesasComponent {
   permisosPCM: boolean = false
   perfilAuth: number = 0
   openFilters: boolean = false
+
+  mesasActions: ButtonsActions = {}
 
   columnSort:string = 'mesaId'
   typeSort:string = 'DESC'
@@ -72,13 +74,14 @@ export default class MesasComponent {
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     this.permisosPCM = this.setPermisosPCM()
-      // this.obtenerMesasService()
     this.getParams()
+    this.getPermissions()
     
   }
 
   getParams() {
     this.route.queryParams.subscribe(params => {
+      this.loading = true
       if (Object.keys(params).length > 0) {        
         let campo = params['campo'] ?? 'mesaId'
 
@@ -102,6 +105,12 @@ export default class MesasComponent {
     })
   }
 
+  getPermissions() {
+    const navigation = this.authStore.navigationAuth()!
+    const atenciones = navigation.find(nav => nav.descripcionItem == 'Mesas')
+    this.mesasActions = obtenerPermisosBotones(atenciones!.botones!)    
+  }
+
   setPermisosPCM(){
     const profilePCM = [11,12,23]
     return profilePCM.includes(this.perfilAuth)
@@ -110,6 +119,7 @@ export default class MesasComponent {
   obtenerMesasService(){
     this.mesasService.ListarMesas(this.pagination)
       .subscribe( resp => {
+        this.loading = false
         this.mesas.set(resp.data)
         this.pagination.total = resp.info?.total
       })
