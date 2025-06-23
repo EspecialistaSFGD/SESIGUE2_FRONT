@@ -17,7 +17,7 @@ export interface IntervencionEspacioResponse {
 	intervencionId: string,
 	eventoId: string,
 	evento?: string,
-	origenId: string,
+	origen: string,
 	interaccionId: string,
 	acuerdoId: string,
 	fechaRegistro?: string,

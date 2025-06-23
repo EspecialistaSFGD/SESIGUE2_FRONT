@@ -28,7 +28,7 @@
             <th nzAlign="center">Fase Inicial</th>
             <th nzAlign="center">Etapa Inicial</th>
             <th nzAlign="center">Hito Inicial</th>
-            <th nzWidth="80px" nzAlign="center">Situación</th>
+            <th nzWidth="94px" nzAlign="center">Situación</th>
         </tr>
     </thead>
     <tbody>
@@ -59,6 +59,9 @@
 				  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención" (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)">
 					<span nz-icon nzType="eye" nzTheme="outline"></span>
 				</button>
+				<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar resumen: descripcion de reumen">
+              <span nz-icon nzType="comment" nzTheme="outline"></span>
+            </button>
 				<button nz-button nzDanger nzType="link" [nz-tooltip]="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? 'Eliminar intervención' : ''" (click)="eliminarIntervencion(intervencionEspacio)" [disabled]="estadoEliminarIntervencionEspacio(intervencionEspacio)">
 					<span nz-icon nzType="delete" nzTheme="outline"></span>
 				</button>

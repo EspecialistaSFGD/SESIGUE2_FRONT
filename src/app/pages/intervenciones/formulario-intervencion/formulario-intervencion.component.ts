@@ -73,7 +73,7 @@ export class FormularioIntervencionComponent {
   private validatorsService = inject(ValidatorService)
 
   formIntervencionEspacio: FormGroup = this.fb.group({
-    origenId: [ { value: '', disabled: true }, Validators.required ],
+    origen: [ { value: '', disabled: true }, Validators.required ],
     tipoEventoId: [ { value: '', disabled: true }, Validators.required ],
     eventoId: [ { value: '', disabled: true }, Validators.required],
     tipoIntervencion: [ '', Validators.required ],
@@ -96,7 +96,9 @@ export class FormularioIntervencionComponent {
 
   ngOnInit(): void {
     const origen = this.origenes.find( item => item.value.toLowerCase() == this.origen.origen.toLowerCase())
-    this.formIntervencionEspacio.get('origenId')?.setValue(origen?.text)
+    console.log(origen);
+    
+    this.formIntervencionEspacio.get('origen')?.setValue(origen?.value.toLowerCase())
     this.formIntervencionEspacio.get('interaccionId')?.setValue(this.origen.interaccionId)
     this.formIntervencionEspacio.get('eventoId')?.setValue(this.origen.eventoId)
 
