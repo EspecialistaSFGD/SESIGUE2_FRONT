@@ -51,14 +51,14 @@
 	</div>
 	<div class="flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">
-			@if (permisosPCM) { Acciones }
-			@if (!permisosPCM) { Cantidad }
+			@if (mesasActions.edit) { Acciones }
+			@if (!mesasActions.edit) { Cantidad }
 		</div>
 		<div class="w-full flex items-center px-2 py-1 border-l border-grey-200">
-			@if (!permisosPCM) {
+			@if (!mesasActions.edit) {
 				{{mesa.cantidadIntervenciones}} @if (mesa.cantidadIntervenciones == 1) { intervención } @else { intervenciones}
 			}
-			<div *ngIf="permisosPCM" class="py-1 px-2 border rounded" [ngClass]="{ 'cursor-pointer border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white' : action, 'border-slate-400 text-slate-400' : !action }" nz-tooltip [nzTooltipTitle]="action ? 'Actualizar mesa' : ''" (click)=" action ? actualizarMesa() : null"><span nz-icon nzType="edit" nzTheme="outline"></span></div>
+			<div *ngIf="mesasActions.edit" class="py-1 px-2 border rounded" [ngClass]="{ 'cursor-pointer border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white' : action, 'border-slate-400 text-slate-400' : !action }" nz-tooltip [nzTooltipTitle]="action ? 'Actualizar mesa' : ''" (click)=" action ? actualizarMesa() : null"><span nz-icon nzType="edit" nzTheme="outline"></span></div>
 		</div>
 	</div>
 </div>

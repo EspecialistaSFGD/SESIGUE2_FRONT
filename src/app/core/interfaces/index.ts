@@ -1,3 +1,4 @@
+export * from './login.interface'
 export * from './asistencia-tecnica-agenda'
 export * from './asistencia-tecnica-congresista.interface'
 export * from './asistencia-tecnica-participante'

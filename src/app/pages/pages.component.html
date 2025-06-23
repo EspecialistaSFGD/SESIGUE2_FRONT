@@ -8,7 +8,23 @@
         <ul class="mt-8 border-r-0 bg-transparent" nz-menu [nzTheme]="(selectedTheme == 'dark' ? 'dark' : 'light' )"
           nzMode="inline" [nzInlineCollapsed]="this.isSiderCollapsed">
 
-          @for (item of menuItems; track item.codigoMenu) {
+          @for (item of menuItems; track $index) {
+            <li nz-menu-item routerLinkActive="ant-menu-item-selected" nzMatchRouterExact>
+              @if (item.esExterno) {
+              <a class="flex items-center" [href]="item.direccionUrl" target="_blank">
+                <span nz-icon [nzType]="item.iconoMenu!" nzTheme="outline"></span>
+                <span>{{item.descripcionItem}}</span>
+              </a>
+              } @else {
+              <a class="flex items-center" [routerLink]="item.direccionUrl">
+                <span nz-icon [nzType]="item.iconoMenu!" nzTheme="outline"></span>
+                <span>{{item.descripcionItem}}</span>
+              </a>
+              }
+            </li>
+          }
+
+          <!-- @for (item of menuItems; track item.codigoMenu) {
           @if(item.children != null && item.children != undefined && item.children.length > 0) {
           <li nz-submenu nzOpen [nzTitle]="item.descripcionItem" [nzIcon]="item.iconoMenu!"
             routerLinkActive="ant-menu-item-selected" class="my-2">
@@ -35,7 +51,7 @@
             }
 
             }
-            }
+            } -->
         </ul>
       </div>
       }
