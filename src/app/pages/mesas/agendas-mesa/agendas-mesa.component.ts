@@ -12,6 +12,7 @@ import { MesaDetalleComponent } from '../mesa-detalles/mesa-detalle/mesa-detalle
 import { arrayDeleteDuplicates } from '@core/helpers';
 import saveAs from 'file-saver';
 import { UtilesService } from '@libs/shared/services/utiles.service';
+import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
 
 @Component({
   selector: 'app-agendas-mesa',
@@ -124,6 +125,49 @@ export default class AgendasMesaComponent {
       .subscribe( resp => {
         this.fechaSincronizacion = resp.data.fecha
         this.obtenerIntervencionEspacioService()
+      })
+  }
+
+  comentarIntervencion(intervencionEspacio: IntervencionEspacioResponse){
+    this.modal.create<FormularioComentarComponent>({
+      nzTitle: `AGREGAR RESUMEN`,
+      nzContent: FormularioComentarComponent,
+      nzData: {},
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Agregar',
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formComentario = componentResponse!.formComentario
+            if (formComentario.invalid) {
+              const invalidFields = Object.keys(formComentario.controls).filter(field => formComentario.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formComentario.markAllAsTouched();
+            }
+            const comentario = formComentario.get('comentario')?.value;
+            const usuarioId = localStorage.getItem('codigoUsuario')!
+            intervencionEspacio.resumen = comentario
+            intervencionEspacio.usuarioId = usuarioId
+
+            this.actualizarIntervencionEspacio(intervencionEspacio)
+          }
+        }
+      ]
+    })
+  }
+
+  actualizarIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse){
+    this.intervencionEspaciosServices.actualizarIntervencionEspacio(intervencionEspacio)
+      .subscribe( resp => {
+        if(resp.success){
+          this.obtenerIntervencionEspacioService()
+          this.modal.closeAll()
+        }
       })
   }
 

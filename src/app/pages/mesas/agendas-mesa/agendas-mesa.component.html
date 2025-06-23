@@ -59,7 +59,7 @@
 				  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención" (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)">
 					<span nz-icon nzType="eye" nzTheme="outline"></span>
 				</button>
-				<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar resumen: descripcion de reumen">
+				<button nz-button nzType="link" nz-tooltip [nzTooltipTitle]="'Agregar resumen: ' + intervencionEspacio.resumen" (click)="comentarIntervencion(intervencionEspacio)">
               <span nz-icon nzType="comment" nzTheme="outline"></span>
             </button>
 				<button nz-button nzDanger nzType="link" [nz-tooltip]="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? 'Eliminar intervención' : ''" (click)="eliminarIntervencion(intervencionEspacio)" [disabled]="estadoEliminarIntervencionEspacio(intervencionEspacio)">
