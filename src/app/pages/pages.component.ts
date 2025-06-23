@@ -13,8 +13,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { ThemeSwitcherComponent } from '../libs/shared/components/theme-switcher/theme-switcher.component';
 import { SuperHeaderComponent } from '../libs/shared/layout/super-header/super-header.component';
 import { FooterComponent } from '../libs/shared/layout/footer/footer.component';
-import { ResponseModel } from '../libs/models/shared/response.model';
-import { LoginInterface, LoginMenuResponse } from '@core/interfaces';
+import { UsuarioNavigation } from '@core/interfaces';
 
 
 @Component({
@@ -64,7 +63,7 @@ export class PagesComponent implements OnInit, AfterViewInit {
     });
 
     const storedMenu = localStorage.getItem('menus');
-    const menuParse = JSON.parse(storedMenu!).filter( (item:LoginMenuResponse )=> item.visible)
+    const menuParse = JSON.parse(storedMenu!).filter( (item:UsuarioNavigation )=> item.visible)
     console.log(menuParse);
     
     this.menuItems = (storedMenu) ? menuParse : [];

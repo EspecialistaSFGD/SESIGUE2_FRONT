@@ -76,7 +76,6 @@ export default class MesasComponent {
     this.permisosPCM = this.setPermisosPCM()
     this.getParams()
     this.getPermissions()
-    
   }
 
   getParams() {

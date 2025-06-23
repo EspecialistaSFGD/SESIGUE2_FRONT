@@ -27,6 +27,7 @@ export class MesaDetalleComponent {
   perfilAuth: number = 0
 
   mesasActions: ButtonsActions = {}
+  mesasIntegrantesActions: ButtonsActions = {}
 
   tipos: ItemEnum[] = convertEnumToObject(MesaDocumentoTipoEnum)
 
@@ -59,10 +60,13 @@ export class MesaDetalleComponent {
   }
 
   getPermissions() {
-      const navigation = this.authStore.navigationAuth()!
-      const atenciones = navigation.find(nav => nav.descripcionItem == 'Mesas')
-      this.mesasActions = obtenerPermisosBotones(atenciones!.botones!)    
-    }
+    const navigation = this.authStore.navigationAuth()!
+    const menu = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'mesas')
+    this.mesasActions = obtenerPermisosBotones(menu!.botones!)
+
+    const menuLevel = menu?.children?.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa integrantes')
+    this.mesasIntegrantesActions = obtenerPermisosBotones(menuLevel?.botones!)
+  }
 
   obtenerMesaDocumentos(){
     const tipo = 2
