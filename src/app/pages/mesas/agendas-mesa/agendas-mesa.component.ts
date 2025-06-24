@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { IntervencionEspacioResponse, MesaResponse, Pagination } from '@core/interfaces';
+import { ButtonsActions, IntervencionEspacioResponse, MesaResponse, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { IntervencionEspacioService, MesaIntegrantesService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { UtilesService } from '@libs/shared/services/utiles.service';
+import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
 import { SharedModule } from '@shared/shared.module';
+import saveAs from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 import { MesaDetalleComponent } from '../mesa-detalles/mesa-detalle/mesa-detalle.component';
-import { arrayDeleteDuplicates } from '@core/helpers';
-import saveAs from 'file-saver';
-import { UtilesService } from '@libs/shared/services/utiles.service';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { obtenerPermisosBotones } from '@core/helpers';
 
 @Component({
   selector: 'app-agendas-mesa',
@@ -29,6 +31,11 @@ export default class AgendasMesaComponent {
   sectores:number[] = []
   ubigeos:string[] = []
   loadingExport: boolean = false
+
+  mesasAgendaActions: ButtonsActions = {}
+  mesasActions: ButtonsActions = {}
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
 
   fechaSincronizacion: string = ''
 
@@ -61,8 +68,12 @@ export default class AgendasMesaComponent {
   private intervencionEspaciosServices = inject(IntervencionEspacioService)
   private modal = inject(NzModalService);
   private utilesService = inject(UtilesService);
+  private authStore = inject(AuthService)
 
   ngOnInit(): void {
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = this.setPermisosPCM()
+    this.getPermissions()
     this.verificarMesa()
     this.pagination.origenId = '1'
     this.pagination.interaccionId = `${this.mesaId}`
@@ -70,6 +81,22 @@ export default class AgendasMesaComponent {
     this.obtenerMesaIntegrantesService(false)
     this.obtenerIntervencionEspacioService()
   }
+    
+    setPermisosPCM(){
+      const profilePCM = [11,12,23]
+      return profilePCM.includes(this.perfilAuth)
+    }
+  
+    getPermissions() {
+      // const navigation  = this.authStore.navigationAuth()!
+      const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
+      const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'mesas')
+      this.mesasActions = obtenerPermisosBotones(menu!.botones!)
+      const navLevel =  menu!.children!
+
+      const mesaAgendaNav = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa agenda')
+      this.mesasAgendaActions = obtenerPermisosBotones(mesaAgendaNav!.botones!)
+    }
 
   verificarMesa(){
     const mesaId = this.route.snapshot.params['id'];
@@ -124,6 +151,49 @@ export default class AgendasMesaComponent {
       .subscribe( resp => {
         this.fechaSincronizacion = resp.data.fecha
         this.obtenerIntervencionEspacioService()
+      })
+  }
+
+  comentarIntervencion(intervencionEspacio: IntervencionEspacioResponse){
+    this.modal.create<FormularioComentarComponent>({
+      nzTitle: `AGREGAR RESUMEN`,
+      nzContent: FormularioComentarComponent,
+      nzData: {},
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Agregar',
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formComentario = componentResponse!.formComentario
+            if (formComentario.invalid) {
+              const invalidFields = Object.keys(formComentario.controls).filter(field => formComentario.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formComentario.markAllAsTouched();
+            }
+            const comentario = formComentario.get('comentario')?.value;
+            const usuarioId = localStorage.getItem('codigoUsuario')!
+            intervencionEspacio.resumen = comentario
+            intervencionEspacio.usuarioId = usuarioId
+
+            this.actualizarIntervencionEspacio(intervencionEspacio)
+          }
+        }
+      ]
+    })
+  }
+
+  actualizarIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse){
+    this.intervencionEspaciosServices.actualizarIntervencionEspacio(intervencionEspacio)
+      .subscribe( resp => {
+        if(resp.success){
+          this.obtenerIntervencionEspacioService()
+          this.modal.closeAll()
+        }
       })
   }
 

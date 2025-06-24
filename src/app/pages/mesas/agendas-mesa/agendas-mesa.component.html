@@ -28,7 +28,7 @@
             <th nzAlign="center">Fase Inicial</th>
             <th nzAlign="center">Etapa Inicial</th>
             <th nzAlign="center">Hito Inicial</th>
-            <th nzWidth="80px" nzAlign="center">Situación</th>
+            <th *ngIf="mesasAgendaActions.view || mesasAgendaActions.comment || mesasAgendaActions.delete" nzWidth="94px" nzAlign="center">Situación</th>
         </tr>
     </thead>
     <tbody>
@@ -54,12 +54,15 @@
 			  <td nzAlign="center">{{intervencionEspacio.fechaRegistro}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionFase}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionEtapa}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionHito}}</td>
+			  <td nzAlign="center" nz-tooltip [nzTooltipTitle]=" mesasAgendaActions.comment ? intervencionEspacio.resumen : null">{{intervencionEspacio.inicioIntervencionHito}}</td>
 			  <td nzAlign="center">
-				  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención" (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)">
+				  <button *ngIf="mesasAgendaActions.view" nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención" (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)">
 					<span nz-icon nzType="eye" nzTheme="outline"></span>
 				</button>
-				<button nz-button nzDanger nzType="link" [nz-tooltip]="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? 'Eliminar intervención' : ''" (click)="eliminarIntervencion(intervencionEspacio)" [disabled]="estadoEliminarIntervencionEspacio(intervencionEspacio)">
+				<button *ngIf="mesasAgendaActions.comment" nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar resumen" (click)="comentarIntervencion(intervencionEspacio)">
+					<span nz-icon nzType="comment" nzTheme="outline"></span>
+				</button>
+				<button *ngIf="mesasAgendaActions.delete" nz-button nzDanger nzType="link" [nz-tooltip]="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? 'Eliminar intervención' : ''" (click)="eliminarIntervencion(intervencionEspacio)" [disabled]="estadoEliminarIntervencionEspacio(intervencionEspacio)">
 					<span nz-icon nzType="delete" nzTheme="outline"></span>
 				</button>
 			  </td>
@@ -76,15 +79,15 @@
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
-			<div class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-red-700 border-red-700 text-white hover:bg-red-900" (click)="procesarIntervencion()">
+			<div *ngIf="mesasAgendaActions.new && permisosPCM" class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-red-700 border-red-700 text-white hover:bg-red-900" (click)="procesarIntervencion()">
 				<span nz-icon nzType="sync" nzTheme="outline"></span>
 				Procesar
 			</div>
-			<button nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteIntervencion()">
+			<button *ngIf="mesasAgendaActions.report" nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteIntervencion()">
 				<span nz-icon nzType="file-excel"></span>
 				<span class="button-text">Exportar</span>
 			</button>
-			<div class="flex gap-1 py-1 px-4 border rounded cursor-pointer bg-sky-700 border-sky-700 text-white hover:bg-sky-900"  (click)="crearIntervencion()">
+			<div *ngIf="mesasAgendaActions.new" class="flex gap-1 py-1 px-4 border rounded cursor-pointer bg-sky-700 border-sky-700 text-white hover:bg-sky-900"  (click)="crearIntervencion()">
 				<span nz-icon nzType="plus" nzTheme="outline"></span>
 				Nueva intervencion
 			</div>

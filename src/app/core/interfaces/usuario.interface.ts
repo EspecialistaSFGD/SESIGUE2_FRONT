@@ -12,6 +12,22 @@ export interface UsuarioNavigation {
 	iconoMenu: string,
 	ordenMenu?: number,
 	esExterno: boolean,
+	visible: boolean,
+	paramsUrl?: string,
+	botones?: UsuarioPermisos[],
+	children?: UsuarioNavigationLevel[]
+}
+
+export interface UsuarioNavigationLevel {
+	codigoMenu?: string,
+	descripcionItem?: string,
+	direccionUrl?: string,
+	paramsUrl?: string,
+	parentMenu?: string,
+	iconoMenu?: string,
+	ordenMenu: number,
+	esExterno: false,
+	visible: true,
 	botones?: UsuarioPermisos[],
 }
 

@@ -2,13 +2,32 @@
   <app-super-header></app-super-header>
 
   <nz-layout class="dark:bg-gray-700">
+    
     <nz-sider class="menu-sidebar bg-punche-blue dark:bg-gray-800" nzCollapsible [nzCollapsedWidth]="56" [(nzCollapsed)]="this.isSiderCollapsed" [nzTrigger]="null">
       @if (menuItems != null && menuItems!= undefined && menuItems.length > 0){
       <div class="p-2">
         <ul class="mt-8 border-r-0 bg-transparent" nz-menu [nzTheme]="(selectedTheme == 'dark' ? 'dark' : 'light' )"
           nzMode="inline" [nzInlineCollapsed]="this.isSiderCollapsed">
 
-          @for (item of menuItems; track item.codigoMenu) {
+          @for (item of menuItems; track $index) {
+            <li nz-menu-item routerLinkActive="ant-menu-item-selected" nzMatchRouterExact>
+              @if (item.esExterno) {
+              <a class="flex items-center" [href]="item.direccionUrl" target="_blank">
+                <ng-template [ngTemplateOutlet]="itemMenu" [ngTemplateOutletContext]="{ item: item }"></ng-template>
+              </a>
+              } @else {
+              <a class="flex items-center" [routerLink]="item.direccionUrl">
+                <ng-template [ngTemplateOutlet]="itemMenu" [ngTemplateOutletContext]="{ item: item }"></ng-template>
+              </a>
+              }
+            </li>
+          }
+          <ng-template #itemMenu let-item="item">
+            <span nz-icon [nzType]="item.iconoMenu" nzTheme="outline"></span>
+            <span>{{item.descripcionItem}}</span>
+          </ng-template>
+
+          <!-- @for (item of menuItems; track item.codigoMenu) {
           @if(item.children != null && item.children != undefined && item.children.length > 0) {
           <li nz-submenu nzOpen [nzTitle]="item.descripcionItem" [nzIcon]="item.iconoMenu!"
             routerLinkActive="ant-menu-item-selected" class="my-2">
@@ -35,7 +54,7 @@
             }
 
             }
-            }
+            } -->
         </ul>
       </div>
       }

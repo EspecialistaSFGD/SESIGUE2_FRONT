@@ -48,6 +48,18 @@ export class IntervencionEspacioService {
       )
   }
 
+  actualizarIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse){
+      const headers = this.helpersServices.getAutorizationToken()      
+      return this.http.put<IntervencionEspacioResponse>(`${this.urlIntervencionEspacio}/ActualizarIntervencionEspacio/${intervencionEspacio.intervencionEspacioId}`, intervencionEspacio, { headers })
+        .pipe(
+          tap(resp => {
+            return resp
+          }),
+          map(valid => valid),
+          catchError(err => of(err))
+        )
+    }
+
   eliminarIntervencionEspacio(intervencionEspacioiD: string) {
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.delete<IntervencionesEspaciosResponses>(`${this.urlIntervencionEspacio}/EliminarIntervencionEspacio/${intervencionEspacioiD}`, { headers })

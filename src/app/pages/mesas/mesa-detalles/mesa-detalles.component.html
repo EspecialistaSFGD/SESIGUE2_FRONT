@@ -3,7 +3,7 @@
 		Detalle de Mesa
 	</nz-page-header-title>
 	<nz-page-header-extra>
-		<a [routerLink]="['/mesas', mesa().mesaId, 'agenda']" class="px-4 py-2 rounded border border-sky-700 bg-sky-700 text-white hover:border-sky-900 hover:bg-sky-900 hover:text-white">
+		<a *ngIf="permisosAgenda" [routerLink]="['/mesas', mesa().mesaId, 'agenda']" class="px-4 py-2 rounded border border-sky-700 bg-sky-700 text-white hover:border-sky-900 hover:bg-sky-900 hover:text-white">
 			VER AGENDA / CARTERA
 		</a>
 	</nz-page-header-extra>
@@ -13,12 +13,12 @@
 	<app-mesa-detalle [mesa]="mesa()" (updated)="updateDetalle($event)" />
 }
 
-<div class="grid grid-cols-2 gap-4 mt-4">
+<div *ngIf="permisosIntegrantes" class="grid grid-cols-2 gap-4 mt-4">
 	<app-integrantes-mesa [mesaId]="mesaId!" />
 	<app-integrantes-mesa [mesaId]="mesaId!" [esSector]="false" />
 </div>
 
-<div class="grid grid-cols-2 gap-4 mt-4">
+<div *ngIf="permisosDocumentos" class="grid grid-cols-2 gap-4 mt-4">
 	<app-documentos-mesa [mesa]="mesa()"/>
 	<app-documentos-mesa [mesa]="mesa()" [tipo]="1"/>
 </div>
