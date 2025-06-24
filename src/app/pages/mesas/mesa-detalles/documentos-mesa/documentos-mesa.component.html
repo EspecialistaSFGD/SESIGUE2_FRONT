@@ -2,9 +2,9 @@
 		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
 			<h5 class="m-0 text-base font-semibold">
                 @if(tipo === 0) { Sesiones }
-                    @if(tipo === 1) { AM }
+				@if(tipo === 1) { AM }
             </h5>
-			@if (mesa.estadoRegistroNombre != 'cerrado' && permisosPCM) {
+			@if (mesa.estadoRegistroNombre != 'cerrado' && mesasDocumentosActions.new) {
 				<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white" (click)="crearDocumento()">
 					Nueva
                     @if(tipo === 0) { sesión }
@@ -20,7 +20,7 @@
 						<th nzAlign="center">Nombre archivo</th>
 						<th nzAlign="center">Usuario</th>
 						<th nzAlign="center">Fecha</th>
-						<th nzAlign="center" *ngIf="permisosPCM" nzWidth="80px"></th>
+						<th nzAlign="center" *ngIf="mesasDocumentosActions.download || mesasDocumentosActions.delete" nzWidth="80px"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -30,10 +30,10 @@
 						<td nzAlign="center">{{detalle.nombre}}</td>
 						<td nzAlign="center">{{detalle.responsable}}</td>
 						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
-						<td *ngIf="permisosPCM" nzAlign="center">
+						<td *ngIf="mesasDocumentosActions.download || mesasDocumentosActions.delete" nzAlign="center">
 							<div class="flex justify-center gap-1">
-								<app-boton-descargar [rutaArchivo]="detalle.archivo"></app-boton-descargar>
-								<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteDocumento(detalle)">
+								<app-boton-descargar *ngIf="mesasDocumentosActions.download" [rutaArchivo]="detalle.archivo"></app-boton-descargar>
+								<button *ngIf="mesasDocumentosActions.delete" nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteDocumento(detalle)">
 									<span nz-icon nzType="delete" nzTheme="outline"></span>
 								</button>
 							</div>

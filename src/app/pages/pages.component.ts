@@ -64,7 +64,6 @@ export class PagesComponent implements OnInit, AfterViewInit {
 
     const storedMenu = localStorage.getItem('menus');
     const menuParse = JSON.parse(storedMenu!).filter( (item:UsuarioNavigation )=> item.visible)
-    console.log(menuParse);
     
     this.menuItems = (storedMenu) ? menuParse : [];
 

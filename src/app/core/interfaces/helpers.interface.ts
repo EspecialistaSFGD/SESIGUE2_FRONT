@@ -32,6 +32,7 @@ export interface ButtonsActions {
   delete?: boolean,
   view?: boolean,
   upload?: boolean,
+  download?: boolean,
   report?: boolean
   validate?: boolean
   goals?:boolean

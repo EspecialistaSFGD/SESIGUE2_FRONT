@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, input, Input, Output, output, signal } from '@angular/core';
 import { MesaDocumentoTipoEnum } from '@core/enums';
 import { convertEnumToObject, getDateFormat, obtenerPermisosBotones } from '@core/helpers';
-import { ButtonsActions, ItemEnum, MesaDocumentoResponse, MesaResponse, Pagination } from '@core/interfaces';
+import { ButtonsActions, ItemEnum, MesaDocumentoResponse, MesaResponse, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { MesaDocumentosService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
@@ -27,7 +27,7 @@ export class MesaDetalleComponent {
   perfilAuth: number = 0
 
   mesasActions: ButtonsActions = {}
-  mesasIntegrantesActions: ButtonsActions = {}
+  mesasDocumentosActions: ButtonsActions = {}
 
   tipos: ItemEnum[] = convertEnumToObject(MesaDocumentoTipoEnum)
 
@@ -47,6 +47,9 @@ export class MesaDetalleComponent {
 
   private modal = inject(NzModalService);
 
+  ngAfterViewInit(): void {
+  }
+
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     this.permisosPCM = this.setPermisosPCM()
@@ -60,12 +63,13 @@ export class MesaDetalleComponent {
   }
 
   getPermissions() {
-    const navigation = this.authStore.navigationAuth()!
-    const menu = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'mesas')
+    // const navigation:UsuarioNavigation[] = this.authStore.navigationAuth()!
+    const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')    
+    const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'mesas')
     this.mesasActions = obtenerPermisosBotones(menu!.botones!)
 
-    const menuLevel = menu?.children?.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa integrantes')
-    this.mesasIntegrantesActions = obtenerPermisosBotones(menuLevel?.botones!)
+    const menuLevel = menu!.children!.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa documentos')
+    this.mesasDocumentosActions = obtenerPermisosBotones(menuLevel!.botones!)
   }
 
   obtenerMesaDocumentos(){
