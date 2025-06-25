@@ -96,6 +96,8 @@ export default class AgendasMesaComponent {
 
       const mesaAgendaNav = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa agenda')
       this.mesasAgendaActions = obtenerPermisosBotones(mesaAgendaNav!.botones!)
+      console.log(this.mesasAgendaActions);
+      
     }
 
   verificarMesa(){
