@@ -1,0 +1,6 @@
+<div class="flex flex-col">
+    <div *ngIf="titulo" class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">{{titulo}}</div>
+    <div class="bg-white rounded-b-2xl p-4">
+        <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+    </div>
+</div>
