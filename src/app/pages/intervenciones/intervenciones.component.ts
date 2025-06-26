@@ -1,5 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { Pagination } from '@core/interfaces';
+import { IntervencionPanel } from '@core/interfaces/intervencion.interface';
+import { IntervencionService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { IntervencionPanelAptosComponent } from './intervencionPanel/intervencion-panel-aptos/intervencion-panel-aptos.component';
 import { IntervencionPanelEstadoComponent } from './intervencionPanel/intervencion-panel-estado/intervencion-panel-estado.component';
@@ -18,6 +21,18 @@ import { IntervencionPanelUbigeoComponent } from './intervencionPanel/intervenci
 })
 export default class IntervencionesComponent {
   title: string = `Intervenciones`;
+
+  pagination: Pagination = {}
+
+  intervenciones = signal<IntervencionPanel>({})
+
+  private intervencionService = inject(IntervencionService)
+
   ngOnInit(): void {
+    this.obtenerIntervencionPanelService()
+  }
+
+  obtenerIntervencionPanelService(){
+    this.intervencionService.ListarIntervencionEtapas(this.pagination).subscribe( resp => this.intervenciones.set(resp.data) )
   }
 }

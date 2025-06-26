@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { InterfacePanelUbigeo } from '@core/interfaces/intervencion.interface';
 import { CardComponent } from '@shared/card/card.component';
 
 @Component({
@@ -10,5 +11,10 @@ import { CardComponent } from '@shared/card/card.component';
   styles: ``
 })
 export class IntervencionPanelMapaComponent {
+  @Input() intervencionUbigeo: InterfacePanelUbigeo[] = []
 
+  ngOnInit(): void {
+  }
+
+  
 }

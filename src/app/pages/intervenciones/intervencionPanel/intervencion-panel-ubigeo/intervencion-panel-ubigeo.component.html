@@ -11,17 +11,19 @@
                 </tr>
             </ng-template>
             <ng-template #body>
-                <tr>
-                    <td>Cusco</td>
-                    <td nzAlign="center">32</td>
-                    <td nzAlign="center">10,817,044.808</td>
-                    <td nzAlign="center">24</td>
-                    <td nzAlign="center">
-                    <div class="object-contain w-[86%]">
-                        <nz-progress [nzPercent]="86.0" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(86.0)" />
-                    </div>
-                    </td>
-                </tr>
+                @for(ubigeo of intervencionUbigeo(); track $index){
+                    <tr>
+                        <td>{{ubigeo.departamento}}</td>
+                        <td nzAlign="center">{{ubigeo.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{ubigeo.costoActualizado}}</td>
+                        <td nzAlign="center">{{ubigeo.pim}}</td>
+                        <td nzAlign="center">
+                        <div class="object-contain w-[{{ubigeo.avance}}%]">
+                            <nz-progress [nzPercent]="ubigeo.avance" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(ubigeo.avance)" />
+                        </div>
+                        </td>
+                    </tr>
+                }
             </ng-template>
         </app-table-card>
     </ng-template>

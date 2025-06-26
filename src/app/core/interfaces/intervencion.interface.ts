@@ -6,15 +6,15 @@ export interface IntervencionesPanelResponses extends DataResponses {
 
 
 export interface IntervencionPanel {
-	intervencionUbigeo: InterfacePanelUbigeo[]
+	intervencionUbigeo?: InterfacePanelUbigeo[]
 }
 
 export interface InterfacePanelUbigeo {
     departamento: string,
-		cantIntervenciones: number,
-		costoActualizado: number,
-		devAcumulado: number,
-		pim: number,
-		devengado: number,
-		avance: number,
+	cantIntervenciones: number,
+	costoActualizado: number,
+	devAcumulado: number,
+	pim: number,
+	devengado: number,
+	avance: number,
 }
