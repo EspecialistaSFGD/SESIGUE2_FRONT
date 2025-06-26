@@ -3,110 +3,21 @@
 </nz-page-header>
 
 <div class="flex flex-col gap-6">
-	<app-slider-tiny>
-		<ng-template #items>
-			@for (info of inversionInfo; track $index) {
-			<div>
-				<div class="rounded-xl bg-punche-green-550 flex text-white gap-4 p-4 relative">
-				<img class="flex" src="./assets/images/inicio/{{info.icono}}" alt="{{info.titulo}}" srcset="">
-				<div class="flex items-center">
-					<div class="flex flex-col">
-					<div class="text-xl sm:text-3xl font-bold">{{info.titulo}}</div>
-					<div class="text-sm font-bold">{{info.descripcion | titlecase }}</div>
-					</div>
-				</div>
-				<span *ngIf="info.comentario" class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
-					nzType="question-circle" nzTheme="outline" nz-tooltip="{{info.comentario | titlecase}}"></span>
-				</div>
-			</div>
-			}
-		</ng-template>
-	</app-slider-tiny>
+	<app-intervencion-panel-info />
 
 	<div class="grid md:grid-cols-3 gap-4">
-		<app-card [titulo]="'Inversiones por espacio'">
-			<ng-template #content>
-				mapa
-			</ng-template>
-		</app-card>
+		<app-intervencion-panel-mapa />
 
 		<div class="flex flex-col gap-4">
 			<app-intervencion-panel-sector />
 			<app-intervencion-panel-nivel-gobierno />
 		</div>
 
-		<app-intervencion-panel-ubigeo />
-		</div>
+		<app-intervencion-panel-ubigeo /> 
 
-		<div class="grid md:grid-cols-2 gap-4">
-		<app-card [titulo]="'Proyectos aptos por financiar'">
-			<ng-template #content>
-				<app-table-card [scrollY]="550">
-					<ng-template #header>
-						<tr>
-							<th rowspan="2">Mesa</th>
-							<th colspan="2" nzAlign="center" [nzWidth]="'100px'">Cartera total</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Demanda estimada 2026</th>
-							<th colspan="2" nzAlign="center" [nzWidth]="'100px'">Demanda de recursos para continuar</th>
-							<th colspan="2" nzAlign="center" [nzWidth]="'100px'">Demanda para nuevo proyecto</th>
-						</tr>
-						<tr>
-							<th nzAlign="center" [nzWidth]="'100px'">N°</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-							<th nzAlign="center" [nzWidth]="'100px'">N°</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Dem. estimada</th>
-							<th nzAlign="center" [nzWidth]="'100px'">N°</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Dem. estimada</th>
-						</tr>
-					</ng-template>
-					<ng-template #body>
-						<tr>
-							<td>MT_ANTA</td>
-							<td nzAlign="center">10</td>
-							<td nzAlign="center">72,751,661</td>
-							<td nzAlign="center">23,579,295</td>
-							<td nzAlign="center">2</td>
-							<td nzAlign="center">2,805,519</td>
-							<td nzAlign="center">8</td>
-							<td nzAlign="center">20,773,776</td>
-						</tr>
-					</ng-template>
-				</app-table-card>
-			</ng-template>
-		</app-card>
-
-		<app-card [titulo]="'Inversiones por estado'">
-			<ng-template #content>
-				<app-table-card [scrollY]="550">
-					<ng-template #header>
-						<tr>
-							<th rowspan="2">Estado</th>
-							<th colspan="3" nzAlign="center" [nzWidth]="'100px'">Cartera CER</th>
-							<th colspan="3" nzAlign="center" [nzWidth]="'100px'">Presupuesto 2025</th>
-						</tr>
-						<tr>
-							<th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Dev. Acum.</th>
-							<th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Monto PIM</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Dev. 2025</th>
-						</tr>
-					</ng-template>
-					<ng-template #body>
-						<tr>
-							<td>MT_ANTA</td>
-							<td nzAlign="center">10</td>
-							<td nzAlign="center">72,751,661</td>
-							<td nzAlign="center">23,579,295</td>
-							<td nzAlign="center">2</td>
-							<td nzAlign="center">2,805,519</td>
-							<td nzAlign="center">20,773,776</td>
-						</tr>
-					</ng-template>
-				</app-table-card>
-			</ng-template>
-		</app-card>
+	</div>
+	<div class="grid md:grid-cols-2 gap-4">
+		<app-intervencion-panel-aptos />
+		<app-intervencion-panel-estado />
 	</div>
 </div>
