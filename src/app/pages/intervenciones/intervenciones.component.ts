@@ -33,6 +33,6 @@ export default class IntervencionesComponent {
   }
 
   obtenerIntervencionPanelService(){
-    this.intervencionService.ListarIntervencionEtapas(this.pagination).subscribe( resp => this.intervenciones.set(resp.data) )
+    this.intervencionService.ListarIntervencionEtapas(this.pagination).subscribe( resp => this.intervenciones.set(resp.data))
   }
 }

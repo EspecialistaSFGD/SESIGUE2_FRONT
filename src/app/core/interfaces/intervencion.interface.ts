@@ -12,9 +12,9 @@ export interface IntervencionPanel {
 export interface InterfacePanelUbigeo {
     departamento: string,
 	cantIntervenciones: number,
-	costoActualizado: number,
-	devAcumulado: number,
-	pim: number,
-	devengado: number,
+	costoActualizado: string,
+	devAcumulado: string,
+	pim: string,
+	devengado: string,
 	avance: number,
 }

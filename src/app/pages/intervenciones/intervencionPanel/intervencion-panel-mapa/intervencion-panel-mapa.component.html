@@ -1,5 +1,5 @@
 <app-card [titulo]="'Inversiones por espacio'">
     <ng-template #content>
-        {{intervencionUbigeo | json}}
+        <app-geo-map [dataSet]="dataTopoJson" />
     </ng-template>
 </app-card>

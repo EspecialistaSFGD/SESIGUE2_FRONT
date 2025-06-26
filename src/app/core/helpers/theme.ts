@@ -8,7 +8,7 @@ export const themeProgressBarPercente = (value: number): string => {
     { percent: 100, theme: '#018D86' },
   ]
   const theme = themes.find(theme => theme.percent >= value)
-  return theme!.theme ?? '#D6D4D3'
+  return theme ? theme!.theme : '#D6D4D3'
 }
 
 
