@@ -6,11 +6,14 @@ import { SliderTinyComponent } from '@shared/slider-tiny/slider-tiny.component';
 import { CardComponent } from "../../shared/card/card.component";
 import { TableCardComponent } from "../../shared/table-card/table-card.component";
 import { themeProgressBarPercente } from '@core/helpers';
+import { IntervencionPanelSectorComponent } from './intervencionPanel/intervencion-panel-sector/intervencion-panel-sector.component';
+import { IntervencionPanelNivelGobiernoComponent } from './intervencionPanel/intervencion-panel-nivel-gobierno/intervencion-panel-nivel-gobierno.component';
+import { IntervencionPanelUbigeoComponent } from './intervencionPanel/intervencion-panel-ubigeo/intervencion-panel-ubigeo.component';
 
 @Component({
   selector: 'app-intervenciones',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, SliderTinyComponent, CardComponent, TableCardComponent],
+  imports: [CommonModule, NgZorroModule, SliderTinyComponent, CardComponent, TableCardComponent, IntervencionPanelSectorComponent, IntervencionPanelNivelGobiernoComponent, IntervencionPanelUbigeoComponent],
   templateUrl: './intervenciones.component.html',
   styles: ``
 })

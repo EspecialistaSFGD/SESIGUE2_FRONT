@@ -31,91 +31,11 @@
 		</app-card>
 
 		<div class="flex flex-col gap-4">
-			<app-card [titulo]="'Inversiones por sector'">
-				<ng-template #content>
-					<app-table-card [scrollY]="550">
-						<ng-template #header>
-							<tr>
-								<th>Sector</th>
-								<th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
-								<th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-								<th nzAlign="center" [nzWidth]="'100px'">N° invers. PIM</th>
-								<th nzAlign="center" [nzWidth]="'100px'">Avance</th>
-							</tr>
-						</ng-template>
-						<ng-template #body>
-							<tr>
-								<td>MIdagri</td>
-								<td nzAlign="center">32</td>
-								<td nzAlign="center">10,817,044.808</td>
-								<td nzAlign="center">24</td>
-								<td nzAlign="center">
-								<div class="object-contain w-[86%]">
-									<nz-progress [nzPercent]="86.0" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(86.0)" />
-								</div>
-								</td>
-							</tr>
-						</ng-template>
-					</app-table-card>
-				</ng-template>
-			</app-card>
-
-			<app-card [titulo]="'Inversiones por nivel de gobierno'">
-				<ng-template #content>
-					<app-table-card [scrollY]="550">
-						<ng-template #header>
-							<tr>
-								<th>Nivel de gobierno</th>
-								<th nzAlign="center" [nzWidth]="'100px'">Vigentes</th>
-								<th nzAlign="center" [nzWidth]="'100px'">Ejecutados</th>
-								<th nzAlign="center" [nzWidth]="'100px'">Avance</th>
-							</tr>
-						</ng-template>
-						<ng-template #body>
-							<tr>
-								<td>Gobierno Nacional</td>
-								<td nzAlign="center">429</td>
-								<td nzAlign="center">404</td>
-								<td nzAlign="center">
-								<div class="object-contain w-[94.2%]">
-									<nz-progress [nzPercent]="94.2" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(94.2)" />
-								</div>
-								</td>
-							</tr>
-						</ng-template>
-					</app-table-card>
-				</ng-template>
-			</app-card>
+			<app-intervencion-panel-sector />
+			<app-intervencion-panel-nivel-gobierno />
 		</div>
 
-		<app-card [titulo]="'Inversiones por región'">
-			<ng-template #content>
-				<app-table-card [scrollY]="550">
-					<ng-template #header>
-						<tr>
-							<th>Departamento</th>
-							<th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-							<th nzAlign="center" [nzWidth]="'100px'">N° invers. PIM</th>
-							<th nzAlign="center" [nzWidth]="'100px'">Avance</th>
-						</tr>
-					</ng-template>
-					<ng-template #body>
-						<tr>
-							<td>Cusco</td>
-							<td nzAlign="center">32</td>
-							<td nzAlign="center">10,817,044.808</td>
-							<td nzAlign="center">24</td>
-							<td nzAlign="center">
-							<div class="object-contain w-[86%]">
-								<nz-progress [nzPercent]="86.0" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(86.0)" />
-							</div>
-							</td>
-						</tr>
-					</ng-template>
-				</app-table-card>
-			</ng-template>
-		</app-card>
+		<app-intervencion-panel-ubigeo />
 		</div>
 
 		<div class="grid md:grid-cols-2 gap-4">
