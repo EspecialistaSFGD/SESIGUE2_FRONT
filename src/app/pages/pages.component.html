@@ -60,55 +60,78 @@
       }
     </nz-sider>
 
-    <nz-content>
-      <nz-header class="bg-white dark:bg-gray-800">
-        <div class="app-header flex items-center justify-between px-6">
-
-          <div class="flex items-center gap-2">
-            <span class="header-trigger ml-6" (click)="switchCollapseSider()">
-              <span class="trigger text-gray-500 dark:text-gray-300" nz-icon
-                [nzType]="this.isSiderCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
-            </span>
-          </div>
-
-          <div class="header-right-content mr-6 flex items-center text-gray-500 dark:text-gray-300">
-            <div class="h-full mr-4">
-              <app-theme-switcher [isAbsolute]="false" [isRounded]="false"
-                [hasInitialDarkBackground]="false"></app-theme-switcher>
-            </div>
-
-            <div class="h-full">
-              <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
-                <nz-avatar nzSize="small" [nzText]="descripcionTipo"
-                  class="bg-blue-700 dark:bg-neutral-700"></nz-avatar>
-                <span class="ml-1">
-                  {{ authService.nombreTrabajador() }} {{ (descripcionSector != undefined && descripcionSector != '') ?
-                  ' - ' + descripcionSector :'' }}
-                </span>
-
-              </div>
-
-              <nz-dropdown-menu #menu="nzDropdownMenu">
-                <ul nz-menu class="bg-white dark:bg-gray-700">
-                  <li
-                    class="text-gray-500 hover:text-gray-950 dark:text-gray-300 dark:hover:text-gray-200 dark:hover:bg-gray-600"
-                    nz-menu-item (click)="onLogout()">
-                    <button class="flex items-center gap-1">
-                      <span class="material-symbols-outlined text-sm">
-                        power_settings_new
-                      </span><span>Cerrar sesión</span>
-                    </button>
-                  </li>
-                </ul>
-              </nz-dropdown-menu>
-            </div>
+    <div class="w-full flex flex-col">
+      <!-- <div class="flex justify-between bg-slate-50 py-1">
+        <div class="flex items-center">
+          <div class="py-2 px-3 cursor-pointer text-gray-500 text-base hover:text-sky-700" (click)="switchCollapseSider()">
+            <span nz-icon [nzType]="this.isSiderCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
           </div>
         </div>
-      </nz-header>
-      <!-- <div class="inner-content"> -->
-      <router-outlet></router-outlet>
-      <!-- </div> -->
-    </nz-content>
+        <div class="flex items-center pr-4">
+          <div class="relative" (mouseover)="leave = true">
+            <div class="p-2 rounded-full bg-sky-700 text-white font-bold hover:bg-sky-800 cursor-default">
+              {{ authService.nombreTrabajador()! | primeraLetra : 2 }}
+            </div>
+            <div class="absolute z-10 top-full right-0 bg-white font-normal rounded border border-slate-200 text-slate-500 w-[180px] mt-1" [ngClass]="{ 'flex flex-col' : leave, 'hidden' : !leave }" (mouseout)="leave = false">
+              <div *ngIf="authService.nombreTrabajador()" class="py-1 px-3">{{authService.nombreTrabajador()! | word : 2 | uppercase }}</div>
+              <div *ngIf="descripcionSector" class="py-1 px-3">{{ descripcionSector }}</div>
+            </div>
+          </div>
+          <div class="py-2 px-3 cursor-pointer text-gray-500 text-base hover:text-sky-700" (click)="onLogout()">
+            <span nz-icon nzType="poweroff"></span>
+          </div>
+        </div>
+      </div> -->
+      <div class="w-full p-4">
+        <nz-header class="bg-white dark:bg-gray-800">
+          <div class="app-header flex items-center justify-between px-6">
+  
+            <div class="flex items-center gap-2">
+              <span class="header-trigger ml-6" (click)="switchCollapseSider()">
+                <span class="trigger text-gray-500 dark:text-gray-300" nz-icon
+                  [nzType]="this.isSiderCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
+              </span>
+            </div>
+  
+            <div class="header-right-content mr-6 flex items-center text-gray-500 dark:text-gray-300">
+              <div class="h-full mr-4">
+                <app-theme-switcher [isAbsolute]="false" [isRounded]="false"
+                  [hasInitialDarkBackground]="false"></app-theme-switcher>
+              </div>
+  
+              <div class="h-full">
+                <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
+                  <nz-avatar nzSize="small" [nzText]="descripcionTipo"
+                    class="bg-blue-700 dark:bg-neutral-700"></nz-avatar>
+                  <span class="ml-1">
+                    {{ authService.nombreTrabajador() }} {{ (descripcionSector != undefined && descripcionSector != '') ?
+                    ' - ' + descripcionSector :'' }}
+                  </span>
+  
+                </div>
+  
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                  <ul nz-menu class="bg-white dark:bg-gray-700">
+                    <li
+                      class="text-gray-500 hover:text-gray-950 dark:text-gray-300 dark:hover:text-gray-200 dark:hover:bg-gray-600"
+                      nz-menu-item (click)="onLogout()">
+                      <button class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">
+                          power_settings_new
+                        </span><span>Cerrar sesión</span>
+                      </button>
+                    </li>
+                  </ul>
+                </nz-dropdown-menu>
+              </div>
+            </div>
+          </div>
+        </nz-header>
+        <!-- <div class="inner-content"> -->
+        <router-outlet></router-outlet>
+        <!-- </div> -->
+      </div>
+    </div>
   </nz-layout>
   <nz-footer class="bg-punche-blue dark:bg-neutral-800 text-white">
     <app-footer></app-footer>

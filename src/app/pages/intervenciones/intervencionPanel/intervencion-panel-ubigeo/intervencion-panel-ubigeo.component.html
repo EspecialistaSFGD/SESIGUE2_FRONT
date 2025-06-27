@@ -1,0 +1,30 @@
+<app-card [titulo]="'Inversiones por región'">
+    <ng-template #content>
+        <app-table-card [scrollY]="550">
+            <ng-template #header>
+                <tr>
+                    <th>Departamento</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">Costo</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">N° invers. PIM</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+                </tr>
+            </ng-template>
+            <ng-template #body>
+                @for(ubigeo of intervencionUbigeo; track $index){
+                    <tr (click)="obtenerIntervencionUbigeo(ubigeo)">
+                        <td>{{ubigeo.nombre}}</td>
+                        <td nzAlign="center">{{ubigeo.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{ubigeo.costoActualizado | numero : 0}}</td>
+                        <td nzAlign="center">{{ubigeo.pim | numero : 0}}</td>
+                        <td nzAlign="center">
+                        <div class="object-contain w-[{{ubigeo.avance}}%]">
+                            <nz-progress [nzPercent]="ubigeo.avance" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(ubigeo.avance)" />
+                        </div>
+                        </td>
+                    </tr>
+                }
+            </ng-template>
+        </app-table-card>
+    </ng-template>
+</app-card>

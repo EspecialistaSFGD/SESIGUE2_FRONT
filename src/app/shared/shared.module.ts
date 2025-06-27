@@ -7,6 +7,7 @@ import { EstadoTagComponent } from './estado-tag/estado-tag.component';
 import { BotonDescargarComponent } from './boton/boton-descargar/boton-descargar.component';
 import { ProgressSpinerComponent } from './progress-spiner/progress-spiner.component';
 import { FormularioComentarComponent } from './formulario-comentar/formulario-comentar.component';
+import { GeoMapComponent } from './geo-map/geo-map.component';
 
 
 
@@ -21,7 +22,8 @@ import { FormularioComentarComponent } from './formulario-comentar/formulario-co
     EstadoTagComponent,
     BotonDescargarComponent,
     ProgressSpinerComponent,
-    FormularioComentarComponent
+    FormularioComentarComponent,
+    GeoMapComponent
   ],
   exports: [
     ChartComponent,
@@ -31,7 +33,8 @@ import { FormularioComentarComponent } from './formulario-comentar/formulario-co
     EstadoTagComponent,
     BotonDescargarComponent,
     ProgressSpinerComponent,
-    FormularioComentarComponent
+    FormularioComentarComponent,
+    GeoMapComponent
   ]
 })
 export class SharedModule { }

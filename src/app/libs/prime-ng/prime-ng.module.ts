@@ -10,6 +10,7 @@ import { StepperModule } from 'primeng/stepper';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { FieldsetModule } from 'primeng/fieldset';
+import { MenubarModule } from 'primeng/menubar';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { FieldsetModule } from 'primeng/fieldset';
     StepperModule,
     InputSwitchModule,
     ProgressSpinnerModule,
-    FieldsetModule
+    FieldsetModule,
+    MenubarModule
   ],
   exports: [
     DropdownModule,
@@ -38,7 +40,8 @@ import { FieldsetModule } from 'primeng/fieldset';
     StepperModule,
     InputSwitchModule,
     ProgressSpinnerModule,
-    FieldsetModule
+    FieldsetModule,
+    MenubarModule
   ]
 })
 export class PrimeNgModule { }
