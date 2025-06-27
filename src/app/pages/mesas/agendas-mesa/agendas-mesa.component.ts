@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { ButtonsActions, IntervencionEspacioResponse, MesaResponse, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { IntervencionEspacioService, MesaIntegrantesService, MesasService } from '@core/services';
@@ -13,7 +13,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 import { MesaDetalleComponent } from '../mesa-detalles/mesa-detalle/mesa-detalle.component';
 import { AuthService } from '@libs/services/auth/auth.service';
-import { obtenerPermisosBotones } from '@core/helpers';
+import { obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'app-agendas-mesa',
@@ -27,7 +28,7 @@ export default class AgendasMesaComponent {
 
   authUserId = localStorage.getItem('codigoUsuario')
   mesaId!: number
-  loadingIntervencionEspacio: boolean = false
+  loading: boolean = false
   sectores:number[] = []
   ubigeos:string[] = []
   loadingExport: boolean = false
@@ -77,9 +78,36 @@ export default class AgendasMesaComponent {
     this.verificarMesa()
     this.pagination.origenId = '1'
     this.pagination.interaccionId = `${this.mesaId}`
-    this.obtenerMesaIntegrantesService(true)
-    this.obtenerMesaIntegrantesService(false)
-    this.obtenerIntervencionEspacioService()
+    this.getParams()
+  }
+
+  getParams() {
+    this.route.queryParams.subscribe(params => {
+      this.loading = true
+      if (Object.keys(params).length > 0) {        
+        let campo = params['campo'] ?? 'mesaId'
+        
+        this.pagination.columnSort = campo
+        this.pagination.currentPage = params['pagina']
+        this.pagination.pageSize = params['cantidad']
+        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+  
+        // setParamsToObject(params, this.pagination, 'codigo')
+        // setParamsToObject(params, this.pagination, 'nombre')
+        // setParamsToObject(params, this.pagination, 'sectorId')
+        // setParamsToObject(params, this.pagination, 'secretariaTecnicaId')
+        // setParamsToObject(params, this.pagination, 'sectorEntidadId')
+        // setParamsToObject(params, this.pagination, 'entidadId')
+        // setParamsToObject(params, this.pagination, 'ubigeo')
+        // setParamsToObject(params, this.pagination, 'entidadUbigeoId')
+
+        setTimeout(() => {
+          this.obtenerMesaIntegrantesService(true)
+          this.obtenerMesaIntegrantesService(false)
+          this.obtenerIntervencionEspacioService()
+        }, 500)
+      }
+    })
   }
     
     setPermisosPCM(){
@@ -96,8 +124,6 @@ export default class AgendasMesaComponent {
 
       const mesaAgendaNav = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa agenda')
       this.mesasAgendaActions = obtenerPermisosBotones(mesaAgendaNav!.botones!)
-      console.log(this.mesasAgendaActions);
-      
     }
 
   verificarMesa(){
@@ -119,6 +145,35 @@ export default class AgendasMesaComponent {
       })
   }
 
+  onQueryParamsChange(params: NzTableQueryParams): void {
+    const sortsNames = ['ascend', 'descend']
+    const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+    const qtySorts = params.sort.reduce((total, item) => {
+      return sortsNames.includes(item.value!) ? total + 1 : total
+    }, 0)
+    const campo = sorts?.key
+    const ordenar = sorts?.value!.slice(0, -3)
+    const filtrosMesas = localStorage.getItem('filtrosMesas');
+    let filtros:any = {}
+    if(filtrosMesas){
+      filtros = JSON.parse(filtrosMesas)
+      filtros.save = false      
+      localStorage.setItem('filtrosIntervenciones', JSON.stringify(filtros))
+    }
+    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
+  }
+
+  paramsNavigate(queryParams: Params){    
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: 'merge',
+      }
+    );
+  }
+
   obtenerMesaIntegrantesService(sector: boolean){
     const esSector = sector ? '1' : '0'
     this.mesaIntegranteServices.ListarMesaIntegrantes(this.mesaId.toString(), {...this.pagination, pageSize: 100, esSector})
@@ -130,11 +185,12 @@ export default class AgendasMesaComponent {
   }
 
   obtenerIntervencionEspacioService(){
-    this.loadingIntervencionEspacio = true
+    this.loading = true
     this.intervencionEspaciosServices.ListarIntervencionEspacios({...this.pagination, columnSort: 'intervencionEspacioId'})
-      .subscribe( resp => {        
-        this.loadingIntervencionEspacio = false
+      .subscribe( resp => {           
+        this.loading = false
         this.intervencionesEspacios.set(resp.data)
+        this.pagination.total = resp.info?.total
       })
   }
 
