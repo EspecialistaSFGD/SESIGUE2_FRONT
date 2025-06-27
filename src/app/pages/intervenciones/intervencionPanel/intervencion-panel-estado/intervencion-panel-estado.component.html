@@ -17,15 +17,17 @@
                 </tr>
             </ng-template>
             <ng-template #body>
-                <tr>
-                    <td>MT_ANTA</td>
-                    <td nzAlign="center">10</td>
-                    <td nzAlign="center">72,751,661</td>
-                    <td nzAlign="center">23,579,295</td>
-                    <td nzAlign="center">2</td>
-                    <td nzAlign="center">2,805,519</td>
-                    <td nzAlign="center">20,773,776</td>
-                </tr>
+                @for(estado of intervencionEstados; track $index){
+                    <tr>
+                        <td>{{estado.nombre}}</td>
+                        <td nzAlign="center">{{estado.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{estado.costoActualizado | numero : 0}}</td>
+                        <td nzAlign="center">{{estado.devAcumulado | numero : 0}}</td>
+                        <td nzAlign="center">{{estado.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{estado.pim | numero : 0}}</td>
+                        <td nzAlign="center">{{estado.devengado | numero : 0}}</td>
+                    </tr>
+                }
             </ng-template>
         </app-table-card>
     </ng-template>

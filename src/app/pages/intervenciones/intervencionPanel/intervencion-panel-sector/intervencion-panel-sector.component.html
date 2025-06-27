@@ -11,17 +11,19 @@
                 </tr>
             </ng-template>
             <ng-template #body>
-                <tr>
-                    <td>MIdagri</td>
-                    <td nzAlign="center">32</td>
-                    <td nzAlign="center">10,817,044.808</td>
-                    <td nzAlign="center">24</td>
-                    <td nzAlign="center">
-                    <div class="object-contain w-[86%]">
-                        <nz-progress [nzPercent]="86.0" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(86.0)" />
-                    </div>
-                    </td>
-                </tr>
+                @for(sector of intervencionSectores; track $index){
+                    <tr>
+                        <td>{{sector.nombre}}</td>
+                        <td nzAlign="center">{{sector.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{sector.costoActualizado | numero : 0 }}</td>
+                        <td nzAlign="center">{{sector.pim}}</td>
+                        <td nzAlign="center">
+                        <div class="object-contain w-[{{sector.avance}}%]">
+                            <nz-progress [nzPercent]="sector.avance" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(sector.avance)" />
+                        </div>
+                        </td>
+                    </tr>
+                }
             </ng-template>
         </app-table-card>
     </ng-template>
