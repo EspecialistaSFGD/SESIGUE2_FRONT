@@ -11,11 +11,12 @@ import { IntervencionPanelMapaComponent } from './intervencionPanel/intervencion
 import { IntervencionPanelNivelGobiernoComponent } from './intervencionPanel/intervencion-panel-nivel-gobierno/intervencion-panel-nivel-gobierno.component';
 import { IntervencionPanelSectorComponent } from './intervencionPanel/intervencion-panel-sector/intervencion-panel-sector.component';
 import { IntervencionPanelUbigeoComponent } from './intervencionPanel/intervencion-panel-ubigeo/intervencion-panel-ubigeo.component';
+import { IntervencionPanelFiltrosComponent } from "./intervencionPanel/intervencion-panel-filtros/intervencion-panel-filtros.component";
 
 @Component({
   selector: 'app-intervenciones',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, IntervencionPanelInfoComponent, IntervencionPanelMapaComponent, IntervencionPanelSectorComponent, IntervencionPanelNivelGobiernoComponent, IntervencionPanelUbigeoComponent, IntervencionPanelEstadoComponent, IntervencionPanelAptosComponent],
+  imports: [CommonModule, NgZorroModule, IntervencionPanelInfoComponent, IntervencionPanelMapaComponent, IntervencionPanelSectorComponent, IntervencionPanelNivelGobiernoComponent, IntervencionPanelUbigeoComponent, IntervencionPanelEstadoComponent, IntervencionPanelAptosComponent, IntervencionPanelFiltrosComponent],
   templateUrl: './intervenciones.component.html',
   styles: ``
 })

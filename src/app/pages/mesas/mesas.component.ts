@@ -143,7 +143,7 @@ export default class MesasComponent {
       filtros.save = false      
       localStorage.setItem('filtrosMesas', JSON.stringify(filtros))
     }
-    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar })
+    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
   }
 
   saveFilters(save: boolean){

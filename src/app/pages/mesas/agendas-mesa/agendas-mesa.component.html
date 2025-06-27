@@ -1,4 +1,4 @@
-<nz-page-header nzBackIcon [nzGhost]="false">
+<nz-page-header nzBackIcon [nzGhost]="false" backUrl="mesas">
 	<nz-page-header-title>{{title}}</nz-page-header-title>
 </nz-page-header>
 
@@ -6,9 +6,9 @@
 	<app-mesa-detalle [mesa]="mesa()" [action]="false"/>
 }
 <nz-table nzSize="small" [nzTitle]="headerUbigeos" nzShowSizeChanger [nzData]="intervencionesEspacios()"
-[nzFrontPagination]="false" [nzShowPagination]="pagination.pageSize! > 10"
-[nzLoading]="loadingIntervencionEspacio" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
-[nzPageIndex]="pagination.currentPage!">
+[nzFrontPagination]="false" [nzShowPagination]="pagination.total! > 10"
+[nzLoading]="loading" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
+[nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
             <th nzAlign="center">Sector</th>
