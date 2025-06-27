@@ -1,4 +1,4 @@
-<form  [formGroup]="formFilterPanel" class="bg-punche-blue-50 grid md:grid-cols-4 gap p-4">
+<form  [formGroup]="formFilterPanel" class="bg-punche-blue-50 grid md:grid-cols-4 gap-4 p-4">
     <div class="flex flex-col">
         <label class="font-bold text-sm xl:text-xl" for="sector">Sector</label>
         <p-dropdown 
@@ -8,5 +8,80 @@
         optionValue="grupoID"
         [showClear]="true" 
         placeholder="Seleccionar sector"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-xl" for="tipoEspacio">Tipo Espacio</label>
+        <p-dropdown 
+        [options]="tiposEventos()"
+        formControlName="tipoEspacioId"
+        optionLabel="descripcionTipoEvento"
+        optionValue="codigoTipoEvento"
+        [showClear]="true" 
+        placeholder="Seleccionar tipo evento"
+        (onChange)="obtenerTipoEvento()"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-xl" for="interaccionId">Espacio</label>
+        <p-dropdown 
+        [options]="eventos()"
+        formControlName="eventoId"
+        optionLabel="abreviatura"
+        optionValue="eventoId"
+        [showClear]="true" 
+        placeholder="Seleccionar evento"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-xl" for="nombre">Departamento</label>
+        <p-dropdown 
+            [options]="departamentos()"
+            formControlName="departamento"
+            optionLabel="departamento"
+            optionValue="departamentoId"
+            [showClear]="true" 
+            placeholder="Seleccionar departamento"
+            (onChange)="obtenerDepartamento()"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-xl" for="nombre">Provincia</label>
+        <p-dropdown 
+        [options]="provincias()"
+        formControlName="provincia"
+        optionLabel="provincia"
+        optionValue="provinciaId"
+        [showClear]="true" 
+        placeholder="Seleccionar provincia"
+        (onChange)="obtenerProvincia()"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-xl" for="nombre">Distrito</label>
+        <p-dropdown 
+        [options]="distritos()"
+        formControlName="distrito"
+        optionLabel="distrito"
+        optionValue="distritoId"
+        [showClear]="true" 
+        placeholder="Seleccionar distrito"
+        (onChange)="obtenerDistrito()"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-xl" for="nombre">Código Unico</label>
+        <input type="text" formControlName="codigoUnico" class="form-control">
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-xl" for="nivelGobiernoId">Nivel de gobierno</label>
+        <p-dropdown 
+        [options]="tipoEntidades()"
+        formControlName="nivelGobiernoId"
+        optionLabel="nombre"
+        optionValue="tipoId"
+        [showClear]="true" 
+        placeholder="Seleccionar nivel gobierno"/>
     </div>
 </form>
