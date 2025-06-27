@@ -1,0 +1,12 @@
+<form  [formGroup]="formFilterPanel" class="bg-punche-blue-50 grid md:grid-cols-4 gap p-4">
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-xl" for="sector">Sector</label>
+        <p-dropdown 
+        [options]="sectores()"
+        formControlName="sectorId"
+        optionLabel="nombre"
+        optionValue="grupoID"
+        [showClear]="true" 
+        placeholder="Seleccionar sector"/>
+    </div>
+</form>
