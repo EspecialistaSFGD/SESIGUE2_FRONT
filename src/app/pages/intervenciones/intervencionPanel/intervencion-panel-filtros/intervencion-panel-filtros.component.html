@@ -22,7 +22,7 @@
         (onChange)="obtenerTipoEvento()"/>
     </div>
 
-    <div class="flex flex-col">
+    <div class="flex flex-col" [ngClass]="{ 'hidden' : !formFilterPanel.get('tipoEspacioId')?.value }">
         <label class="font-bold text-sm xl:text-xl" for="interaccionId">Espacio</label>
         <p-dropdown 
         [options]="eventos()"
@@ -45,7 +45,7 @@
             (onChange)="obtenerDepartamento()"/>
     </div>
 
-    <div class="flex flex-col">
+    <div class="flex flex-col" [ngClass]="{ 'hidden' : !formFilterPanel.get('departamento')?.value }">
         <label class="font-bold text-sm xl:text-xl" for="nombre">Provincia</label>
         <p-dropdown 
         [options]="provincias()"
@@ -57,7 +57,7 @@
         (onChange)="obtenerProvincia()"/>
     </div>
 
-    <div class="flex flex-col">
+    <div class="flex flex-col" [ngClass]="{ 'hidden' : !formFilterPanel.get('provincia')?.value }">
         <label class="font-bold text-sm xl:text-xl" for="nombre">Distrito</label>
         <p-dropdown 
         [options]="distritos()"
