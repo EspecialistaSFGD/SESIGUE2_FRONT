@@ -13,17 +13,17 @@ import { GeoTopoJson, UbigeoTopoJson } from '@core/interfaces';
 })
 export class GeoMapComponent {
   @Input() dataSet: UbigeoTopoJson[] = departamentosTopoJSON()
-  @Input() geoTopoJson: GeoTopoJson = {
-    geo: 'departamentos',
-    ubigeo: 'departamentos'
-  }
+  @Input() geoTopoJson: GeoTopoJson = { geo: 'departamentos', ubigeo: 'departamentos' }
+
 
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
 
   chart!: Chart;
 
   ngAfterViewInit(): void {
-    this.generateGeoMap()
+    setTimeout(() => {
+      this.generateGeoMap()
+    }, 100);
   }
 
   getTopoJson() {
@@ -59,15 +59,16 @@ export class GeoMapComponent {
             join: this.dataSet,
             on: ['id', 'id'],
             select: ['porcentaje'],
-            as: ['Porcentaje'],
+            as: ['Avance'],
           },
         ],
       })
-      .encode('color', 'Porcentaje')
+      .encode('color', 'Avance')
       .style({
         fill: (datum: any) => {
-          const { Porcentaje } = datum;
-          return themeProgressBarPercente(Porcentaje)
+          const { Avance } = datum;
+          const percent = Avance.split(' ')[0]
+          return themeProgressBarPercente(Number(percent))
         },
         stroke: '#ffffff',
         lineWidth: 2,

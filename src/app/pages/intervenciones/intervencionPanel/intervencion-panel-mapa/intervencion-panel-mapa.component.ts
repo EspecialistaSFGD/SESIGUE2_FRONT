@@ -25,7 +25,7 @@ export class IntervencionPanelMapaComponent {
      for(let data of this.dataTopoJson){
       const intervencion = this.intervencionUbigeo.find((item:any) => item.departamento == data.nombre)
       if(intervencion){
-        data.porcentaje = intervencion.avance.toString()
+        data.porcentaje = `${intervencion.avance.toFixed(1)} %` 
       }      
     }
   }

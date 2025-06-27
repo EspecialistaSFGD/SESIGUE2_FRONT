@@ -1,5 +1,28 @@
-<app-card [titulo]="'Inversiones por espacio'">
-    <ng-template #content>
-        <app-geo-map [dataSet]="dataTopoJson" />
-    </ng-template>
-</app-card>
+<div class="flex flex-col gap-2">
+    <app-card [titulo]="'Inversiones por espacio'">
+        <ng-template #content>
+            <app-geo-map [dataSet]="dataTopoJson" />
+        </ng-template>
+    </app-card>
+    <div class="flex flex-col">
+        <div class="text-white bg-[#5C95C1] px-4 py-2 text-sm font-bold rounded-t-xl">Leyenda</div>
+        <div class="grid md:grid-cols-2 gap-4 p-4 bg-white border border-slate-200 rounded-b-xl">
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-[#018D86]"></div>
+                <span class="leading-[14px]">100% de avance</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-[#DAEDE9]"></div>
+                <span class="leading-[14px]">Mayor al 50% y menor al 75% de avance</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-[#6EC6D8]"></div>
+                <span class="leading-[14px]">Mayor al 75 % y menor a 99% de avance</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-[#D6D4D3]"></div>
+                <span class="leading-[14px]">Menor al 50% de avance</span>
+            </div>
+        </div>
+    </div>
+</div>
