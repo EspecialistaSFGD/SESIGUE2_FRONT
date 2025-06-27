@@ -4,6 +4,7 @@ import { PrimeraLetraPipe } from './primera-letra.pipe';
 import { NumeroPipe } from './numero.pipe';
 import { SafeUrlPipe } from './safe-url.pipe';
 import { ReplacePipe } from './replace.pipe';
+import { WordPipe } from './word.pipe';
 
 
 
@@ -14,13 +15,15 @@ import { ReplacePipe } from './replace.pipe';
     PrimeraLetraPipe,
     NumeroPipe,
     SafeUrlPipe,
-    ReplacePipe
+    ReplacePipe,
+    WordPipe
   ],
   exports: [
     PrimeraLetraPipe,
     NumeroPipe,
     SafeUrlPipe,
-    ReplacePipe
+    ReplacePipe,
+    WordPipe
   ]
 })
 export class PipesModule { }

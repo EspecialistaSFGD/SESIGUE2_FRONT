@@ -13,7 +13,9 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { ThemeSwitcherComponent } from '../libs/shared/components/theme-switcher/theme-switcher.component';
 import { SuperHeaderComponent } from '../libs/shared/layout/super-header/super-header.component';
 import { FooterComponent } from '../libs/shared/layout/footer/footer.component';
-import { ResponseModel } from '../libs/models/shared/response.model';
+import { UsuarioNavigation } from '@core/interfaces';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { PipesModule } from '@core/pipes/pipes.module';
 
 
 @Component({
@@ -32,6 +34,8 @@ import { ResponseModel } from '../libs/models/shared/response.model';
     ThemeSwitcherComponent,
     SuperHeaderComponent,
     FooterComponent,
+    PrimeNgModule,
+    PipesModule
   ],
   templateUrl: './pages.component.html',
   styleUrl: './pages.component.less'
@@ -46,6 +50,7 @@ export class PagesComponent implements OnInit, AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
   public isSiderCollapsed = localStorage.getItem('isSiderCollapsed') === 'true' ? true : false;
 
+  leave:boolean = false
   menuItems: MenuModel[] = [];
   pageTitle: string | undefined;
   descripcionTipo: string | undefined;
@@ -63,8 +68,9 @@ export class PagesComponent implements OnInit, AfterViewInit {
     });
 
     const storedMenu = localStorage.getItem('menus');
-
-    this.menuItems = (storedMenu) ? JSON.parse(storedMenu) : [];
+    const menuParse = JSON.parse(storedMenu!).filter( (item:UsuarioNavigation )=> item.visible)
+    
+    this.menuItems = (storedMenu) ? menuParse : [];
 
     const storedDescripcionTipo = localStorage.getItem('descripcionTipo');
 

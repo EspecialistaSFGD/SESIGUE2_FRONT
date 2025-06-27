@@ -1,0 +1,28 @@
+<app-card [titulo]="'Inversiones por nivel de gobierno'">
+    <ng-template #content>
+        <app-table-card>
+            <ng-template #header>
+                <tr>
+                    <th>Nivel de gobierno</th>
+                    <th nzAlign="center" [nzWidth]="'60px'">Vigentes</th>
+                    <th nzAlign="center" [nzWidth]="'60px'">Ejecutados</th>
+                    <th nzAlign="center" [nzWidth]="'80px'">Avance</th>
+                </tr>
+            </ng-template>
+            <ng-template #body>
+                @for(nivelGobierno of intervencionNivelesGobierno; track $index){
+                    <tr>
+                        <td>{{nivelGobierno.nombre}}</td>
+                        <td nzAlign="center">{{nivelGobierno.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{nivelGobierno.cantIntervenciones}}</td>
+                        <td nzAlign="center">
+                        <div class="object-contain w-[{{nivelGobierno.avance}}%]">
+                            <nz-progress [nzPercent]="nivelGobierno.avance" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(nivelGobierno.avance)" />
+                        </div>
+                        </td>
+                    </tr>
+                }
+            </ng-template>
+        </app-table-card>
+    </ng-template>
+</app-card>

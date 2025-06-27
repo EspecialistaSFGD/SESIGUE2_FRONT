@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, input, Input, Output, output, signal } from '@angular/core';
 import { MesaDocumentoTipoEnum } from '@core/enums';
-import { convertEnumToObject, getDateFormat } from '@core/helpers';
-import { ItemEnum, MesaDocumentoResponse, MesaResponse, Pagination } from '@core/interfaces';
+import { convertEnumToObject, getDateFormat, obtenerPermisosBotones } from '@core/helpers';
+import { ButtonsActions, ItemEnum, MesaDocumentoResponse, MesaResponse, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { MesaDocumentosService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SharedModule } from '@shared/shared.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioMesaComponent } from '../../formulario-mesa/formulario-mesa.component';
-import { FormularioMesaDocumentoComponent } from '../formulario-mesa-documento/formulario-mesa-documento.component';
+import { FormularioMesaDocumentoComponent } from '../documentos-mesa/formulario-mesa-documento/formulario-mesa-documento.component';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-mesa-detalle',
@@ -21,6 +22,12 @@ export class MesaDetalleComponent {
   @Input() mesa!: MesaResponse
   @Input() action: boolean = true
   @Output() updated = new EventEmitter<boolean>()
+
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
+
+  mesasActions: ButtonsActions = {}
+  mesasDocumentosActions: ButtonsActions = {}
 
   tipos: ItemEnum[] = convertEnumToObject(MesaDocumentoTipoEnum)
 
@@ -36,11 +43,33 @@ export class MesaDetalleComponent {
     
   private mesaServices = inject(MesasService)
   private mesaDetalleServices = inject(MesaDocumentosService)
+  private authStore = inject(AuthService)
 
   private modal = inject(NzModalService);
 
+  ngAfterViewInit(): void {
+  }
+
   ngOnInit(): void {
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = this.setPermisosPCM()
     this.obtenerMesaDocumentos()
+    this.getPermissions()
+  }
+  
+  setPermisosPCM(){
+    const profilePCM = [11,12,23]
+    return profilePCM.includes(this.perfilAuth)
+  }
+
+  getPermissions() {
+    // const navigation:UsuarioNavigation[] = this.authStore.navigationAuth()!
+    const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')    
+    const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'mesas')
+    this.mesasActions = obtenerPermisosBotones(menu!.botones!)
+
+    const menuLevel = menu!.children!.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa documentos')
+    this.mesasDocumentosActions = obtenerPermisosBotones(menuLevel!.botones!)
   }
 
   obtenerMesaDocumentos(){

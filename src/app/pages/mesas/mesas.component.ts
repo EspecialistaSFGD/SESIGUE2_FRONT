@@ -74,14 +74,13 @@ export default class MesasComponent {
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     this.permisosPCM = this.setPermisosPCM()
-      // this.obtenerMesasService()
     this.getParams()
     this.getPermissions()
-    
   }
 
   getParams() {
     this.route.queryParams.subscribe(params => {
+      this.loading = true
       if (Object.keys(params).length > 0) {        
         let campo = params['campo'] ?? 'mesaId'
 
@@ -119,6 +118,7 @@ export default class MesasComponent {
   obtenerMesasService(){
     this.mesasService.ListarMesas(this.pagination)
       .subscribe( resp => {
+        this.loading = false
         this.mesas.set(resp.data)
         this.pagination.total = resp.info?.total
       })

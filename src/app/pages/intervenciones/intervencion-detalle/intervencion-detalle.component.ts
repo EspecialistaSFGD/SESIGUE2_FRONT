@@ -24,7 +24,7 @@ export default class IntervencionDetalleComponent {
   intervencionEspacio = signal<IntervencionEspacioResponse>({
     intervencionId: '',
     eventoId: '',
-    origenId: '',
+    origen: '',
     interaccionId : '',
     acuerdoId: '',
     inicioIntervencionHitoId: '',

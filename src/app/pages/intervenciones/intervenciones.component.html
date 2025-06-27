@@ -1,3 +1,23 @@
 <nz-page-header nzBackIcon [nzGhost]="false">
 	<nz-page-header-title>{{title}}</nz-page-header-title>
 </nz-page-header>
+
+<div class="flex flex-col gap-6">
+	<app-intervencion-panel-info />
+
+	<div class="grid md:grid-cols-3 gap-4">
+		<app-intervencion-panel-mapa [intervencionUbigeo]="intervenciones().intervencionUbigeo!" />
+
+		<div class="flex flex-col gap-4">
+			<app-intervencion-panel-sector [intervencionSectores]="intervenciones().intervencionSectores!" class="h-full" />
+			<app-intervencion-panel-nivel-gobierno [intervencionNivelesGobierno]="intervenciones().intervencionNivelesGobierno!" />
+		</div>
+
+		<app-intervencion-panel-ubigeo [intervencionUbigeo]="intervenciones().intervencionUbigeo!" /> 
+
+	</div>
+	<div class="grid md:grid-cols-2 gap-4">
+		<app-intervencion-panel-aptos />
+		<app-intervencion-panel-estado [intervencionEstados]="intervenciones().intervencionEstados!" />
+	</div>
+</div>

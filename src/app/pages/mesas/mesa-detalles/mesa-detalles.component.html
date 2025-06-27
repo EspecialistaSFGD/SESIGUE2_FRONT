@@ -3,7 +3,7 @@
 		Detalle de Mesa
 	</nz-page-header-title>
 	<nz-page-header-extra>
-		<a [routerLink]="['/mesas', mesa().mesaId, 'agenda']" class="px-4 py-2 rounded border border-sky-700 bg-sky-700 text-white hover:border-sky-900 hover:bg-sky-900 hover:text-white">
+		<a *ngIf="permisosAgenda" [routerLink]="['/mesas', mesa().mesaId, 'agenda']" class="px-4 py-2 rounded border border-sky-700 bg-sky-700 text-white hover:border-sky-900 hover:bg-sky-900 hover:text-white">
 			VER AGENDA / CARTERA
 		</a>
 	</nz-page-header-extra>
@@ -13,93 +13,12 @@
 	<app-mesa-detalle [mesa]="mesa()" (updated)="updateDetalle($event)" />
 }
 
-<div class="grid grid-cols-2 gap-4 mt-4">
+<div *ngIf="permisosIntegrantes" class="grid grid-cols-2 gap-4 mt-4">
 	<app-integrantes-mesa [mesaId]="mesaId!" />
 	<app-integrantes-mesa [mesaId]="mesaId!" [esSector]="false" />
 </div>
 
-<div class="grid grid-cols-2 gap-4 mt-4">
-	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
-		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
-			<h5 class="m-0 text-base font-semibold">Sesiones</h5>
-			@if (mesa().estadoRegistroNombre != 'cerrado') {
-				<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white" (click)="modalCreateFile(0)">
-					Nueva sesión
-				</div>
-			}
-		</div>
-		<div class="flex border-solid ">
-			<nz-table [nzData]="mesasSesion()" class="w-full" [nzFrontPagination]="false" [nzShowPagination]="false" >
-				<thead>
-					<tr>
-						<th nzAlign="center" nzWidth="64px">Nro</th>
-						<th nzAlign="center">Nombre archivo</th>
-						<th nzAlign="center">Usuario</th>
-						<th nzAlign="center">Fecha</th>
-						<th nzAlign="center" nzWidth="80px"></th>
-					</tr>
-				</thead>
-				<tbody>
-					@for(detalle of mesasSesion(); track $index){
-					<tr>
-						<td nzAlign="center">{{$index + 1}}</td>
-						<td nzAlign="center">{{detalle.nombre}}</td>
-						<td nzAlign="center">{{detalle.responsable}}</td>
-						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
-						<td nzAlign="center">
-							<div class="flex justify-center gap-1">
-								<app-boton-descargar [rutaArchivo]="detalle.archivo"></app-boton-descargar>
-								<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteMesaDetalle(detalle,0)">
-									<span nz-icon nzType="delete" nzTheme="outline"></span>
-								</button>
-							</div>
-						</td>
-					</tr>
-					}
-				</tbody>
-			</nz-table>
-		</div>
-	</div>
-
-	<div class="w-full flex flex-col bg-white border border-solid border-grey-200">
-		<div class="flex items-center justify-between px-4 py-3 border border-solid border-grey-200">
-			<h5 class="m-0 text-base font-semibold">AM</h5>
-			@if (mesa().estadoRegistroNombre != 'cerrado') {
-				<div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white" (click)="modalCreateFile(1)">
-					Nueva am
-				</div>
-			}
-		</div>
-		<div class="flex border-solid ">
-			<nz-table [nzData]="mesasAm()" class="w-full" [nzFrontPagination]="false" [nzShowPagination]="false" >
-				<thead>
-					<tr>
-						<th nzWidth="64px" nzAlign="center">Nro</th>
-						<th nzAlign="center">Nombre archivo</th>
-						<th nzAlign="center">Usuario</th>
-						<th nzAlign="center">Fecha</th>
-						<th nzWidth="80px"></th>
-					</tr>
-				</thead>
-				<tbody>
-					@for(detalle of mesasAm(); track $index){
-					<tr>
-						<td nzAlign="center">{{$index + 1}}</td>
-						<td nzAlign="center">{{detalle.nombre}}</td>
-						<td nzAlign="center">{{detalle.responsable}}</td>
-						<td nzAlign="center">{{detalle.fechaCreacion}}</td>
-						<td nzAlign="center">
-							<div class="flex justify-center gap-1">
-								<app-boton-descargar [rutaArchivo]="detalle.archivo"></app-boton-descargar>
-								<button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar" (click)="deleteMesaDetalle(detalle,1)">
-									<span nz-icon nzType="delete" nzTheme="outline"></span>
-								</button>
-							</div>
-						</td>
-					</tr>
-					}
-				</tbody>
-			</nz-table>
-		</div>
-	</div>
+<div *ngIf="permisosDocumentos" class="grid grid-cols-2 gap-4 mt-4">
+	<app-documentos-mesa [mesa]="mesa()"/>
+	<app-documentos-mesa [mesa]="mesa()" [tipo]="1"/>
 </div>

@@ -1,0 +1,34 @@
+<app-card [titulo]="'Inversiones por estado'">
+    <ng-template #content>
+        <app-table-card [scrollY]="550">
+            <ng-template #header>
+                <tr>
+                    <th rowspan="2">Estado</th>
+                    <th colspan="3" nzAlign="center" [nzWidth]="'100px'">Cartera CER</th>
+                    <th colspan="3" nzAlign="center" [nzWidth]="'100px'">Presupuesto 2025</th>
+                </tr>
+                <tr>
+                    <th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">Costo</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">Dev. Acum.</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">Monto PIM</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">Dev. 2025</th>
+                </tr>
+            </ng-template>
+            <ng-template #body>
+                @for(estado of intervencionEstados; track $index){
+                    <tr>
+                        <td>{{estado.nombre}}</td>
+                        <td nzAlign="center">{{estado.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{estado.costoActualizado | numero : 0}}</td>
+                        <td nzAlign="center">{{estado.devAcumulado | numero : 0}}</td>
+                        <td nzAlign="center">{{estado.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{estado.pim | numero : 0}}</td>
+                        <td nzAlign="center">{{estado.devengado | numero : 0}}</td>
+                    </tr>
+                }
+            </ng-template>
+        </app-table-card>
+    </ng-template>
+</app-card>

@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
-import { MesaResponse, MesaIntegranteResponse, Pagination } from '@core/interfaces';
+import { MesaResponse, MesaIntegranteResponse, Pagination, ButtonsActions, UsuarioNavigation } from '@core/interfaces';
 import { MesaIntegrantesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntegranteMesaComponent } from './formulario-integrante-mesa/formulario-integrante-mesa.component';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { obtenerPermisosBotones } from '@core/helpers';
 
 @Component({
   selector: 'app-integrantes-mesa',
@@ -16,6 +18,12 @@ import { FormularioIntegranteMesaComponent } from './formulario-integrante-mesa/
 export class IntegrantesMesaComponent {
   @Input() mesaId!: number
   @Input() esSector:boolean = true
+
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
+
+  mesasActions: ButtonsActions = {}
+  mesasIntegrantesActions: ButtonsActions = {}
 
   integrantes = signal<MesaIntegranteResponse[]>([])
   modal = inject(NzModalService);
@@ -37,10 +45,29 @@ export class IntegrantesMesaComponent {
   }
 
   private integrantesService = inject(MesaIntegrantesService)
+  private authStore = inject(AuthService)
 
   ngOnInit(): void {
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = this.setPermisosPCM()
     this.obtenerIntegrantesService()
+    this.getPermissions()
   }
+
+  setPermisosPCM(){
+    const profilePCM = [11,12,23]
+    return profilePCM.includes(this.perfilAuth)
+  }
+
+  getPermissions() {
+      // const navigation = this.authStore.navigationAuth()!
+      const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
+      const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'mesas')
+      this.mesasActions = obtenerPermisosBotones(menu!.botones!)
+  
+      const menuLevel = menu!.children!.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa integrantes')
+      this.mesasIntegrantesActions = obtenerPermisosBotones(menuLevel!.botones!)
+    }
 
   obtenerIntegrantesService(){
     this.loading = true
