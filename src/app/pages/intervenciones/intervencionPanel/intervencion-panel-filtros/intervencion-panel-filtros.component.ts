@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, Input, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EventoResponse, Pagination, SectorResponse, TipoEntidadResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EventosService, SectoresService, TipoEntidadesService, TipoEventosService, UbigeosService } from '@core/services';
@@ -13,6 +13,8 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
   styles: ``
 })
 export class IntervencionPanelFiltrosComponent {
+
+  @Input() pagination!: Pagination
 
   sectores = signal<SectorResponse[]>([])
   tiposEventos = signal<TipoEventoResponse[]>([])

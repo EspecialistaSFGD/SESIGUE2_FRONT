@@ -15,7 +15,7 @@
                     <tr>
                         <td>{{sector.nombre}}</td>
                         <td nzAlign="center">{{sector.cantIntervenciones}}</td>
-                        <td nzAlign="center">{{sector.costoActualizado | numero : 0 }}</td>
+                        <td nzAlign="center">{{sector.costoActualizado.toString() | numero : 0 }}</td>
                         <td nzAlign="center">{{sector.pim}}</td>
                         <td nzAlign="center">
                         <div class="object-contain w-[{{sector.avance}}%]">

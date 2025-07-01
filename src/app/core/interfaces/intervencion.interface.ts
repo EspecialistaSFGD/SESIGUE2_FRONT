@@ -15,10 +15,11 @@ export interface IntervencionPanel {
 export interface InterfacePanelResult {
     nombre: string,
 	cantIntervenciones: number,
-	costoActualizado: string,
-	devAcumulado: string,
-	pim: string,
-	devengado: string,
+	costoActualizado: number,
+	devAcumulado: number,
+	pim: number,
+	inversionActual: number,
+	devengado: number,
 	avance: number,
 }
 // export interface InterfacePanelUbigeo {
