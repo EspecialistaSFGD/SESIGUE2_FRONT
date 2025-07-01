@@ -36,4 +36,9 @@ export default class IntervencionesComponent {
   obtenerIntervencionPanelService(){
     this.intervencionService.ListarIntervencionEtapas(this.pagination).subscribe( resp => this.intervenciones.set(resp.data))
   }
+
+  getFilterPagination(pagination: Pagination){
+    this.pagination = pagination
+    this.obtenerIntervencionPanelService()  
+  }
 }
