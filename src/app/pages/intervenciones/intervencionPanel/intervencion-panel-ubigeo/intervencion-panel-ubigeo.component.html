@@ -3,7 +3,7 @@
         <app-table-card [scrollY]="170">
             <ng-template #header>
                 <tr>
-                    <th>Departamento</th>
+                    <th [nzLeft]="true" nzWidth="250px">Departamento</th>
                     <th nzAlign="center">N° invers.</th>
                     <th nzAlign="center">Costo</th>
                     <th nzAlign="center">Invers. 2025</th>
@@ -14,11 +14,11 @@
             <ng-template #body>
                 @for(ubigeo of intervencionUbigeo; track $index){
                     <tr (click)="obtenerIntervencionUbigeo(ubigeo)">
-                        <td>{{ubigeo.nombre}}</td>
+                        <td [nzLeft]="true">{{ubigeo.nombre}}</td>
                         <td nzAlign="center">{{ubigeo.cantIntervenciones}}</td>
-                        <td nzAlign="center">{{ubigeo.costoActualizado.toString()| numero : 0}}</td>
-                        <td nzAlign="center">{{ubigeo.inversionActual.toString() | numero : 0}}</td>
-                        <td nzAlign="center">{{ubigeo.pim.toString() | numero : 0}}</td>
+                        <td nzAlign="center">{{ubigeo.costoActualizado | numero : 0}}</td>
+                        <td nzAlign="center">{{ubigeo.inversionActual | numero : 0}}</td>
+                        <td nzAlign="center">{{ubigeo.pim | numero : 0}}</td>
                         <td nzAlign="center">
                             @if (ubigeo.avance == 0) {
                                 {{ubigeo.avance}}%
@@ -34,7 +34,7 @@
                     <td> Total</td>
                     <td nzAlign="center">{{totales.cantIntervenciones}}</td>
                     <td nzAlign="center">{{totales.costoActualizado}}</td>
-                    <td nzAlign="center">{{totales.pim}}</td>
+                    <td nzAlign="center">{{totales.inversionActual}}</td>
                     <td nzAlign="center">{{totales.pim}}</td>
                     <td nzAlign="center">{{totales.avance}}% </td>
                 </tr>

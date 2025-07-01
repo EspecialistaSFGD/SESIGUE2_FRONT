@@ -32,13 +32,13 @@ export class IntervencionPanelFiltrosComponent {
   private tipoEntidadService = inject(TipoEntidadesService)
 
   formFilterPanel: FormGroup = this.fb.group({
-    tipoEspacioId: [''],
+    tipoEspacioId: [null],
     eventoId: [{ value: null, disabled: true}],
-    entidadUbigeoId: [''],
-    sectorId: [''],
-    nivelGobiernoId: [''],
-    codigoUnico: [''],
-    departamento: [''],
+    entidadUbigeoId: [null],
+    sectorId: [null],
+    nivelGobiernoId: [null],
+    codigoUnico: [null],
+    departamento: [null],
     distrito: [{ value: null, disabled: true}],
     provincia: [{ value: null, disabled: true}],
   })

@@ -24,24 +24,17 @@ export class IntervencionPanelUbigeoComponent implements AfterViewInit {
     setTimeout(() => {
       this.generarTotales()
     }, 100)
-    
-    // this.intervencionUbigeo.find( item => {
-    //   console.log(item);
-      
-    // })
   }
 
   generarTotales(){
-    this.totales.pim = 32.5
     this.intervencionUbigeo.find( item => {
       this.totales.cantIntervenciones += item.cantIntervenciones;
       this.totales.costoActualizado += item.costoActualizado
       this.totales.pim += item.pim
+      this.totales.devAcumulado = item.devAcumulado
       this.totales.devengado = item.devengado
-      this.totales.inversionActual = item.inversionActual
-      console.log(item);
-      
-    })
+      this.totales.inversionActual = item.inversionActual      
+    })    
   }
   
   colorBarraProgreso(porcentaje: number): string {
