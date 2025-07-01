@@ -23,11 +23,20 @@
                         <td nzAlign="center">{{estado.cantIntervenciones}}</td>
                         <td nzAlign="center">{{estado.costoActualizado.toString() | numero : 0}}</td>
                         <td nzAlign="center">{{estado.devAcumulado.toString() | numero : 0}}</td>
-                        <td nzAlign="center">{{estado.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{estado.inversionActual | numero : 0}}</td>
                         <td nzAlign="center">{{estado.pim.toString() | numero : 0}}</td>
                         <td nzAlign="center">{{estado.devengado.toString() | numero : 0}}</td>
                     </tr>
                 }
+                <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-sm uppercase">
+                    <td> Total</td>
+                    <td nzAlign="center">{{totales.cantIntervenciones}}</td>
+                    <td nzAlign="center">{{totales.costoActualizado}}</td>
+                    <td nzAlign="center">{{totales.devAcumulado}}</td>
+                    <td nzAlign="center">{{totales.inversionActual}}</td>
+                    <td nzAlign="center">{{totales.pim}}</td>
+                    <td nzAlign="center">{{totales.avance}}% </td>
+                </tr>
             </ng-template>
         </app-table-card>
     </ng-template>
