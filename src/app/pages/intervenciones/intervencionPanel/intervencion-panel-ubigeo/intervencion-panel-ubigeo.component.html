@@ -3,18 +3,18 @@
         <app-table-card [scrollY]="170">
             <ng-template #header>
                 <tr>
-                    <th [nzLeft]="true" nzWidth="250px">Departamento</th>
-                    <th nzAlign="center">N° invers.</th>
-                    <th nzAlign="center">Costo</th>
-                    <th nzAlign="center">Invers. 2025</th>
-                    <th nzAlign="center">PIM 2025</th>
+                    <th [nzLeft]="true" width="148px">Departamento</th>
+                    <th nzAlign="center">N°<br>invers.</th>
+                    <th nzAlign="center" nzWidth="60px">Costo</th>
+                    <th nzAlign="center">Invers.<br>2025</th>
+                    <th nzAlign="center">PIM<br>2025</th>
                     <th nzAlign="center">Avance</th>
                 </tr>
             </ng-template>
             <ng-template #body>
                 @for(ubigeo of intervencionUbigeo; track $index){
                     <tr (click)="obtenerIntervencionUbigeo(ubigeo)">
-                        <td [nzLeft]="true">{{ubigeo.nombre}}</td>
+                        <td [nzLeft]="true" width="148px">{{ubigeo.nombre}}</td>
                         <td nzAlign="center">{{ubigeo.cantIntervenciones}}</td>
                         <td nzAlign="center">{{ubigeo.costoActualizado | numero : 0}}</td>
                         <td nzAlign="center">{{ubigeo.inversionActual | numero : 0}}</td>

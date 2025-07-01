@@ -3,27 +3,43 @@
         <app-table-card [scrollY]="440">
             <ng-template #header>
                 <tr>
-                    <th>Sector</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">N° invers. PIM</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+                    <th [nzLeft]="true" width="148px">Sector</th>
+                    <th nzAlign="center">N°<br>invers.</th>
+                    <th nzAlign="center" nzWidth="60px">Costo</th>
+                    <th nzAlign="center">Invers.<br>2025</th>
+                    <th nzAlign="center">PIM<br>2025</th>
+                    <th nzAlign="center">Avance</th>
                 </tr>
             </ng-template>
             <ng-template #body>
                 @for(sector of intervencionSectores; track $index){
                     <tr>
-                        <td>{{sector.nombre}}</td>
+                        <td [nzLeft]="true" width="160px">{{sector.nombre}}</td>
                         <td nzAlign="center">{{sector.cantIntervenciones}}</td>
-                        <td nzAlign="center">{{sector.costoActualizado.toString() | numero : 0 }}</td>
-                        <td nzAlign="center">{{sector.pim}}</td>
+                        <td nzAlign="center">{{sector.costoActualizado | numero : 0}}</td>
+                        <td nzAlign="center">{{sector.inversionActual | numero : 0}}</td>
+                        <td nzAlign="center">{{sector.pim | numero : 0}}</td>
                         <td nzAlign="center">
                         <div class="object-contain w-[{{sector.avance}}%]">
-                            <nz-progress [nzPercent]="sector.avance" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(sector.avance)" />
+                             @if (sector.avance == 0) {
+                                {{sector.avance}}%
+                            } @else {
+                                <div class="object-contain w-[{{sector.avance}}%]">
+                                    <nz-progress [nzPercent]="sector.avance" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(sector.avance)" />
+                                </div>
+                            }
                         </div>
                         </td>
                     </tr>
                 }
+                <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-sm uppercase">
+                    <td> Total</td>
+                    <td nzAlign="center">{{totales.cantIntervenciones}}</td>
+                    <td nzAlign="center">{{totales.costoActualizado}}</td>
+                    <td nzAlign="center">{{totales.inversionActual}}</td>
+                    <td nzAlign="center">{{totales.pim}}</td>
+                    <td nzAlign="center">{{totales.avance}}% </td>
+                </tr>
             </ng-template>
         </app-table-card>
     </ng-template>
