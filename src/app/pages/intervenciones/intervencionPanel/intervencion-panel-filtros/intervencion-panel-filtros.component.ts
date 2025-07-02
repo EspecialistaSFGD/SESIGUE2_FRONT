@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventoResponse, Pagination, SectorResponse, TipoEntidadResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, EventosService, SectoresService, TipoEntidadesService, TipoEventosService, UbigeosService } from '@core/services';
+import { ValidatorService } from '@core/services/validators';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
 @Component({
@@ -35,6 +36,7 @@ export class IntervencionPanelFiltrosComponent {
   private eventosService = inject(EventosService)
   private tipoEntidadService = inject(TipoEntidadesService)
   private entidadService = inject(EntidadesService)
+  private validatorService = inject(ValidatorService)
 
   formFilterPanel: FormGroup = this.fb.group({
     tipoEspacioId: [null],
@@ -46,7 +48,6 @@ export class IntervencionPanelFiltrosComponent {
     distrito: [{ value: null, disabled: true}],
     provincia: [{ value: null, disabled: true}],
     entidadUbigeoId: [null],
-    nivelUbigeo: [null],
   })
   ngOnInit(): void {
     this.obtenerSectoresServices()
@@ -116,7 +117,7 @@ export class IntervencionPanelFiltrosComponent {
       clearTimeout(this.timeout);
       var $this = this;
       this.timeout = setTimeout(function () {
-        if (event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {
+        if ($this.validatorService.sevenNumberPattern.test(event.key) ||  event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {
           $this.pagination.codigoUnico = codigoValue
           $this.setPagination()
         }
@@ -138,13 +139,13 @@ export class IntervencionPanelFiltrosComponent {
     const provinciaControl = this.formFilterPanel.get('provincia')
     const distritoControl = this.formFilterPanel.get('distrito')
     let ubigeo = '' 
-    let nivelUbigeo = 1
     if(departamento){
       this.pagination.nivelUbigeo = '1'
       ubigeo = `${departamento}0000`
       provinciaControl?.enable()
       this.obtenerProvinciasService(departamento)
     } else {
+      this.pagination.nivelUbigeo = ''
       provinciaControl?.disable()
       provinciaControl?.reset()
     }
@@ -165,14 +166,16 @@ export class IntervencionPanelFiltrosComponent {
     const departamento = this.formFilterPanel.get('departamento')?.value
     let ubigeo = `${departamento.departamentoId}0000`
     const provincia = this.formFilterPanel.get('provincia')?.value
-    const distritoControl = this.formFilterPanel.get('distrito')    
+    const distritoControl = this.formFilterPanel.get('distrito')  
     if(provincia){
       ubigeo = provincia
       distritoControl?.enable()
       this.obtenerDistritosService(ubigeo)
     } else {
       distritoControl?.disable()
-    }    
+    }
+    const nivelUbigeo = provincia ? '2' : '1'
+    this.pagination.nivelUbigeo = nivelUbigeo
     this.obtenerEntidadPorUbigeoService(`${departamento}0000`)
   }
 
@@ -187,6 +190,8 @@ export class IntervencionPanelFiltrosComponent {
     const provinciaValue = this.formFilterPanel.get('provincia')?.value
     const distritoValue = this.formFilterPanel.get('distrito')?.value
     const ubigeo = distritoValue ? distritoValue : provinciaValue
+    const nivelUbigeo = distritoValue ? '3' : '2'
+    this.pagination.nivelUbigeo = nivelUbigeo
     this.obtenerEntidadPorUbigeoService(ubigeo)
   }
 
