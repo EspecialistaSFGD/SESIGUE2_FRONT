@@ -32,6 +32,7 @@ export class IntervencionPanelNivelGobiernoComponent {
       this.totales.devengado = item.devengado
       this.totales.inversionActual = item.inversionActual      
     })    
+    this.totales.avance = this.totales.devengado > 0 ? this.totales.devengado / this.totales.pim * 100 : 0
   }
 
   colorBarraProgreso(porcentaje: number): string {

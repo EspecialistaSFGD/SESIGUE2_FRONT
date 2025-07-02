@@ -16,9 +16,9 @@
                     <tr>
                         <td [nzLeft]="true" width="160px">{{sector.nombre}}</td>
                         <td nzAlign="center">{{sector.cantIntervenciones}}</td>
-                        <td nzAlign="center">{{sector.costoActualizado | numero : 0}}</td>
-                        <td nzAlign="center">{{sector.inversionActual | numero : 0}}</td>
-                        <td nzAlign="center">{{sector.pim | numero : 0}}</td>
+                        <td nzAlign="center">{{sector.costoActualizado | numero : 1}}</td>
+                        <td nzAlign="center">{{sector.inversionActual | numero : 1}}</td>
+                        <td nzAlign="center">{{sector.pim | numero : 1}}</td>
                         <td nzAlign="center">
                         <div class="object-contain w-[{{sector.avance}}%]">
                              @if (sector.avance == 0) {
@@ -34,11 +34,11 @@
                 }
                 <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-sm uppercase">
                     <td> Total</td>
-                    <td nzAlign="center">{{totales.cantIntervenciones}}</td>
-                    <td nzAlign="center">{{totales.costoActualizado}}</td>
-                    <td nzAlign="center">{{totales.inversionActual}}</td>
-                    <td nzAlign="center">{{totales.pim}}</td>
-                    <td nzAlign="center">{{totales.avance}}% </td>
+                    <td nzAlign="center">{{totales.cantIntervenciones | numero : 1}}</td>
+                    <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
+                    <td nzAlign="center">{{totales.inversionActual | numero : 1}}</td>
+                    <td nzAlign="center">{{totales.pim | numero : 1}}</td>
+                    <td nzAlign="center">{{totales.avance | numero : 1}}% </td>
                 </tr>
             </ng-template>
         </app-table-card>
