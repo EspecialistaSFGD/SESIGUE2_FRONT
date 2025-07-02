@@ -26,9 +26,9 @@ export class IntervencionPanelEstadoComponent {
       this.totales.cantIntervenciones += item.cantIntervenciones;
       this.totales.costoActualizado += item.costoActualizado
       this.totales.pim += item.pim
-      this.totales.devAcumulado = item.devAcumulado
-      this.totales.devengado = item.devengado
-      this.totales.inversionActual = item.inversionActual      
+      this.totales.devAcumulado += item.devAcumulado
+      this.totales.devengado += item.devengado
+      this.totales.inversionActual += item.inversionActual      
     })
     this.totales.avance = this.totales.devengado > 0 ? this.totales.devengado / this.totales.pim * 100 : 0
   }
