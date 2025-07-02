@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input, SimpleChanges } from '@angular/core';
 import { InterfacePanelResult } from '@core/interfaces/intervencion.interface';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -13,18 +13,14 @@ import { TableCardComponent } from '@shared/table-card/table-card.component';
   templateUrl: './intervencion-panel-estado.component.html',
   styles: ``
 })
-export class IntervencionPanelEstadoComponent implements AfterViewInit {
+export class IntervencionPanelEstadoComponent {
   @Input() intervencionEstados: InterfacePanelResult[] = []
-  totales: InterfacePanelResult = {
-    nombre: 'Total', cantIntervenciones: 0, costoActualizado: 0.0, devAcumulado: 0.0, pim: 0.0, devengado: 0.0, avance: 0, inversionActual: 0
+  totales!: InterfacePanelResult
+  ngOnChanges(changes: SimpleChanges): void {
+    this.totales = {nombre: 'Total', cantIntervenciones: 0, costoActualizado: 0.0, devAcumulado: 0.0, pim: 0.0, devengado: 0.0, avance: 0, inversionActual: 0}
+    this.generarTotales()
+    
   }
-
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.generarTotales()
-    }, 100)
-  }
-
   generarTotales(){
     this.intervencionEstados.find( item => {
       this.totales.cantIntervenciones += item.cantIntervenciones;
