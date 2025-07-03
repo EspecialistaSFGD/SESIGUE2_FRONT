@@ -16,9 +16,13 @@ export class TableCardComponent {
 
   @Input() fixed: boolean = false
   @Input() scrollY: number = 0;
-  @Input() scrollX: boolean = false;
+  @Input() scrollX: number = 0;
 
   setScrollY() {
-    return this.scrollY == 0 ? '' : `${this.scrollY}px`
+    return this.scrollY == 0 ? null : `${this.scrollY}px`
+  }
+
+  setScrollX(){
+    return this.scrollX == 0 ? null : `${this.scrollX}px`
   }
 }
