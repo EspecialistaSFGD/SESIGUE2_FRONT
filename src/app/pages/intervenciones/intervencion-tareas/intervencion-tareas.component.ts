@@ -66,7 +66,7 @@ export default class IntervencionTareasComponent {
     this.loadingTareas = true
     this.botonNuevoActivo = true
     const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId
-
+  
     this.intervencionTareasServices.ListarIntervencionTareas({...this.pagination, intervencionEspacioId})
       .subscribe( resp => {
         this.loadingTareas = false
@@ -153,8 +153,9 @@ export default class IntervencionTareasComponent {
             const plazoDateFormat =  getDateFormat(datePlazo,'month')
             formIntervencionTarea.get('plazo')?.setValue(plazoDateFormat)
             const accesoId = localStorage.getItem('codigoUsuario')!
-
-            let intervencionTarea: IntervencionTareaResponse = { ...formIntervencionTarea.getRawValue(), accesoId }
+            
+            const intervencionEspacioId = this.intervencionEspacio.intervencionId
+            let intervencionTarea: IntervencionTareaResponse = { ...formIntervencionTarea.getRawValue(), accesoId, intervencionEspacioId }
 
             if(create){ 
               this.crearIntervencionTareaService(intervencionTarea)         

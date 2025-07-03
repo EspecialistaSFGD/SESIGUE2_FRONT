@@ -4,9 +4,9 @@
             <label class="w-full" for="origenId">Origen</label>
             <p-dropdown 
             [options]="origenes"
-            formControlName="origenId"
+            formControlName="origen"
             optionLabel="value"
-            optionValue="text"
+            optionValue="value"
             [showClear]="true" 
             placeholder="Seleccionar origen"
             (onChange)="obtenerTipo()"/>
@@ -64,7 +64,9 @@
         </div>
 
         <div class="flex flex-col">
-            <label class="w-full" for="codigoIntervencion">Código de intervención</label>
+            <label class="w-full" for="codigoIntervencion">
+                Código de intervención
+            </label>
             <input type="text" class="form-control" id="codigoIntervencion" formControlName="codigoIntervencion">
             <div class="w-full text-danger" *ngIf="alertMessageError('codigoIntervencion')">{{msgErrorControl('codigoIntervencion','Código')}}</div>
         </div>
