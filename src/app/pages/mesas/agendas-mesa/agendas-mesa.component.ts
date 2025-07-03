@@ -330,9 +330,7 @@ export default class AgendasMesaComponent {
               return formIntervencionEspacio.markAllAsTouched();
             }
 
-            const origen = formIntervencionEspacio.get('origen')?.value.toLowerCase()
-            console.log(origen);
-            
+            const origen = formIntervencionEspacio.get('origen')?.value.toLowerCase()            
             const intervencionEspacio: IntervencionEspacioResponse = {...formIntervencionEspacio.getRawValue(), origen }
             const usuarioId = localStorage.getItem('codigoUsuario')!
             if(create){

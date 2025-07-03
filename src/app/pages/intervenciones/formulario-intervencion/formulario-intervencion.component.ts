@@ -174,10 +174,6 @@ export class FormularioIntervencionComponent {
   }
 
   setFasesdeTipo(tipo: number){
-    console.log(this.fasesInicial());
-    console.log(this.fasesObjetivo());
-    
-    
     this.obtenerIntervencionFaseService(true,tipo)
     this.obtenerIntervencionFaseService(false,tipo)
     const controlFaseObjetivo = this.formIntervencionEspacio.get('inicioIntervencionFaseId')
