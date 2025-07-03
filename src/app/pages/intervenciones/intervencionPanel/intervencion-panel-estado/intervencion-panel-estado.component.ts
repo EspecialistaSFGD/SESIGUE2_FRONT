@@ -17,7 +17,7 @@ export class IntervencionPanelEstadoComponent {
   @Input() intervencionEstados: InterfacePanelResult[] = []
   totales!: InterfacePanelResult
   ngOnChanges(changes: SimpleChanges): void {
-    this.totales = {nombre: 'Total', cantIntervenciones: 0, costoActualizado: 0.0, devAcumulado: 0.0, pim: 0.0, devengado: 0.0, avance: 0, inversionActual: 0}
+    this.totales = {nombre: 'Total', id: 0, cantIntervenciones: 0, costoActualizado: 0.0, devAcumulado: 0.0, pim: 0.0, devengado: 0.0, avance: 0, inversionActual: 0}
     this.generarTotales()
     
   }

@@ -13,7 +13,7 @@
             </ng-template>
             <ng-template #body>
                 @for(sector of intervencionSectores; track $index){
-                    <tr>
+                    <tr [ngClass]="{ 'cursor-pointer' : sector.id > 0 }" (click)="sector.id ? obtenerIntervencionSector(sector) : null">
                         <td [nzLeft]="true" width="160px">{{sector.nombre}}</td>
                         <td nzAlign="center">{{sector.cantIntervenciones}}</td>
                         <td nzAlign="center">{{sector.costoActualizado | numero : 1}}</td>
@@ -32,7 +32,7 @@
                         </td>
                     </tr>
                 }
-                <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-sm uppercase">
+                <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
                     <td> Total</td>
                     <td nzAlign="center">{{totales.cantIntervenciones}}</td>
                     <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>

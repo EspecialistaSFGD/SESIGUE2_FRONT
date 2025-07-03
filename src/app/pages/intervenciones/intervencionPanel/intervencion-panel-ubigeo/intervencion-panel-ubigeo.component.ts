@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, Input, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { themeProgressBarPercente } from '@core/helpers';
 import { InterfacePanelResult } from '@core/interfaces/intervencion.interface';
 import { PipesModule } from '@core/pipes/pipes.module';
@@ -16,14 +16,16 @@ import { TableCardComponent } from '@shared/table-card/table-card.component';
 })
 export class IntervencionPanelUbigeoComponent {
   @Input() intervencionUbigeo: InterfacePanelResult[] = []
+  @Output() ubigeoId = new EventEmitter<Number>()
+
   totales!: InterfacePanelResult
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.totales = {nombre: 'Total', cantIntervenciones: 0, costoActualizado: 0.0, devAcumulado: 0.0, pim: 0.0, devengado: 0.0, avance: 0, inversionActual: 0}
+    this.totales = {nombre: 'Total', id: 0, cantIntervenciones: 0, costoActualizado: 0.0, devAcumulado: 0.0, pim: 0.0, devengado: 0.0, avance: 0, inversionActual: 0}
     this.generarTotales()
   }
 
-  generarTotales(){    
+  generarTotales(){
     this.intervencionUbigeo.find( item => {
       this.totales.cantIntervenciones += item.cantIntervenciones;
       this.totales.costoActualizado += item.costoActualizado
@@ -38,7 +40,8 @@ export class IntervencionPanelUbigeoComponent {
     return themeProgressBarPercente(porcentaje)
   }
 
-  obtenerIntervencionUbigeo(intervencionUbigeo: InterfacePanelResult){
-    console.log(intervencionUbigeo);
+  obtenerIntervencionUbigeo(ubigeo: InterfacePanelResult){
+    this.ubigeoId.emit(ubigeo.id)
   }
+
 }

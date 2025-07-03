@@ -6,13 +6,24 @@ export interface IntervencionesPanelResponses extends DataResponses {
 
 
 export interface IntervencionPanel {
+	intervencionInfo?: InterfacePanelInfoResult
 	intervencionUbigeo?: InterfacePanelResult[]
 	intervencionSectores?: InterfacePanelResult[]
 	intervencionEstados?: InterfacePanelResult[]
 	intervencionNivelesGobierno?: InterfacePanelResult[]
 }
 
+export interface InterfacePanelInfoResult {
+	aptos: number,
+	viable: number,
+	concluidos: number,
+	ejecucion: number,
+	paralizados: number,
+	ideas: number,
+}
+
 export interface InterfacePanelResult {
+	id: number,
     nombre: string,
 	cantIntervenciones: number,
 	costoActualizado: number,
@@ -22,41 +33,3 @@ export interface InterfacePanelResult {
 	devengado: number,
 	avance: number,
 }
-// export interface InterfacePanelUbigeo {
-//     departamento: string,
-// 	cantIntervenciones: number,
-// 	costoActualizado: string,
-// 	devAcumulado: string,
-// 	pim: string,
-// 	devengado: string,
-// 	avance: number,
-// }
-
-// export interface InterfacePanelSector {
-//     sector: string,
-// 	costoActualizado: string,
-// 	devAcumulado: string,
-// 	pim: string,
-// 	devengado: string,
-// 	avance: number,
-// }
-
-// export interface InterfacePanelEstado {
-//     estado: string,
-// 	cantIntervenciones: number,
-// 	costoActualizado: string,
-// 	devAcumulado: string,
-// 	pim: string,
-// 	devengado: string,
-// 	avance: number,
-// }
-
-// export interface InterfacePanelNivelGobierno {
-//     nivelGobierno: string,
-// 	cantIntervenciones: number,
-// 	costoActualizado: string,
-// 	devAcumulado: string,
-// 	pim: string,
-// 	devengado: string,
-// 	avance: number,
-// }

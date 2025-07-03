@@ -49,7 +49,9 @@ export class IntervencionPanelFiltrosComponent {
     provincia: [{ value: null, disabled: true}],
     entidadUbigeoId: [null],
   })
+
   ngOnInit(): void {
+    console.log(this.pagination);
     this.obtenerSectoresServices()
     this.obtenerDepartamentoServices()
     this.obtenerTipoEventoServices()

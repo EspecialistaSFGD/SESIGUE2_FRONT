@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ItemInfo } from '@core/interfaces';
+import { InterfacePanelResult } from '@core/interfaces/intervencion.interface';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { SliderTinyComponent } from '@shared/slider-tiny/slider-tiny.component';
 
@@ -12,6 +13,7 @@ import { SliderTinyComponent } from '@shared/slider-tiny/slider-tiny.component';
   styles: ``
 })
 export class IntervencionPanelInfoComponent {
+  @Input() intervencionEstados: InterfacePanelResult[] = []
 
   inversionInfo: ItemInfo[] = []
 
