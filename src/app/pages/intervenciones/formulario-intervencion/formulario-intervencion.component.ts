@@ -86,27 +86,26 @@ export class FormularioIntervencionComponent {
     distrito: [{ value: '', disabled: true }],
     entidadUbigeoId: [ '', Validators.required ],
     interaccionId: [ '', Validators.required ],
-    inicioIntervencionFaseId: [ '', Validators.required ],
+    inicioIntervencionFaseId: [ { value: '', disabled: true }, Validators.required ],
     inicioIntervencionEtapaId: [ { value: '', disabled: true }, Validators.required ],
     inicioIntervencionHitoId: [ { value: '', disabled: true }, Validators.required ],
-    objetivoIntervencionFaseId: [ '', Validators.required ],
+    objetivoIntervencionFaseId: [ { value: '', disabled: true }, Validators.required ],
     objetivoIntervencionEtapaId: [ { value: '', disabled: true }, Validators.required ],
     objetivoIntervencionHitoId: [ { value: '', disabled: true }, Validators.required ],
   })
 
   ngOnInit(): void {
     const origen = this.origenes.find( item => item.value.toLowerCase() == this.origen.origen.toLowerCase())
-    console.log(origen);
     
-    this.formIntervencionEspacio.get('origen')?.setValue(origen?.value.toLowerCase())
+    this.formIntervencionEspacio.get('origen')?.setValue(origen?.value.toUpperCase())
     this.formIntervencionEspacio.get('interaccionId')?.setValue(this.origen.interaccionId)
     this.formIntervencionEspacio.get('eventoId')?.setValue(this.origen.eventoId)
 
     this.obtenerTipoEventoServices()
     this.obtenerSectoresServices()
     this.obtenerDepartamentoServices()
-    this.obtenerIntervencionFaseService()
-    this.obtenerIntervencionFaseService(false)
+    // this.obtenerIntervencionFaseService()
+    // this.obtenerIntervencionFaseService(false)
     // this.obtenerEventosServices() 
   }
 
@@ -151,9 +150,9 @@ export class FormularioIntervencionComponent {
     this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(resp.data.filter( item => this.ubigeosValidos.includes(item.departamentoId))))
   }
 
-  obtenerIntervencionFaseService(inicial: boolean = true){
+  obtenerIntervencionFaseService(inicial: boolean, tipoIntervencion: number){
     this.intervencionFaseService.ListarIntervencionFases(this.pagination)
-      .subscribe( resp => inicial ? this.fasesInicial.set(resp.data) : this.fasesObjetivo.set(resp.data) )
+      .subscribe( resp => inicial ? this.fasesInicial.set(resp.data.filter(item => Number(item.tipoIntervencion) == tipoIntervencion )) : this.fasesObjetivo.set(resp.data) )
   }
 
   obtenerTipo(){
@@ -163,6 +162,7 @@ export class FormularioIntervencionComponent {
     if(tipoValue){
       const subTipos = this.subTipos.filter( item => item.tipoId == tipoValue)
       this.intervencionSubTipos.set(subTipos)
+      this.setFasesdeTipo(tipoValue)
     } else {
       this.intervencionSubTipos.set([])
       subTipoControl?.reset()
@@ -173,6 +173,36 @@ export class FormularioIntervencionComponent {
     codigoIntervencionControl?.disable()
   }
 
+  setFasesdeTipo(tipo: number){
+    console.log(this.fasesInicial());
+    console.log(this.fasesObjetivo());
+    
+    
+    this.obtenerIntervencionFaseService(true,tipo)
+    this.obtenerIntervencionFaseService(false,tipo)
+    const controlFaseObjetivo = this.formIntervencionEspacio.get('inicioIntervencionFaseId')
+    const controlEtapaObjetivo = this.formIntervencionEspacio.get('inicioIntervencionEtapaId')
+    const controlHitoObjetivo = this.formIntervencionEspacio.get('inicioIntervencionHitoId')
+    const controlFaseInicial = this.formIntervencionEspacio.get('objetivoIntervencionFaseId')
+    const controlEtapaInicial = this.formIntervencionEspacio.get('objetivoIntervencionEtapaId')
+    const controlHitoInicial = this.formIntervencionEspacio.get('objetivoIntervencionHitoId')
+    
+    controlFaseObjetivo?.enable()
+    controlFaseObjetivo?.reset()
+    controlEtapaObjetivo?.disable()
+    controlEtapaObjetivo?.reset()
+    controlHitoObjetivo?.disable()
+    controlHitoObjetivo?.reset()
+
+    controlFaseInicial?.enable()
+    controlFaseInicial?.reset()
+    controlEtapaInicial?.disable()
+    controlEtapaInicial?.reset()
+    controlHitoInicial?.disable()
+    controlHitoInicial?.reset()
+
+  }
+
   obtenerSubTipo(){
     const subTipoValue = this.formIntervencionEspacio.get('subTipoIntervencion')?.value
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
@@ -180,9 +210,11 @@ export class FormularioIntervencionComponent {
       const subTipo: IntervencionEspacioSubTipo = this.subTipos.find( item => item.subTipoId == subTipoValue)!
       switch (subTipo.subTipo) {
         case 'CUI': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)]); break;
-        case 'IDEA': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sixNumberPattern)]); break;
+        case 'IDEA': codigoIntervencionControl?.clearValidators(); break;
+        // case 'IDEA': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sixNumberPattern)]); break;
         case 'RCC': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)]); break;
-        case 'ACTIVIDAD': codigoIntervencionControl?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(7), Validators.pattern(this.validatorsService.startFiveNumberPattern)]); break;
+        case 'ACTIVIDAD': codigoIntervencionControl?.clearValidators(); break;
+        // case 'ACTIVIDAD': codigoIntervencionControl?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(7), Validators.pattern(this.validatorsService.startFiveNumberPattern)]); break;
       }
     } else {
       codigoIntervencionControl?.clearValidators();
