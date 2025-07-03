@@ -1,0 +1,90 @@
+<form  [formGroup]="formFilterPanel" class="bg-punche-blue-50 grid md:grid-cols-8 gap-4 p-4">
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="sector">Sector</label>
+        <p-dropdown 
+        [options]="sectores()"
+        formControlName="sectorId"
+        optionLabel="nombre"
+        optionValue="grupoID"
+        [showClear]="true" 
+        placeholder="Seleccionar sector"
+        (onChange)="obtenerSector()"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="tipoEspacio">Tipo Espacio</label>
+        <p-dropdown 
+        [options]="tiposEventos()"
+        formControlName="tipoEspacioId"
+        optionLabel="descripcionTipoEvento"
+        optionValue="codigoTipoEvento"
+        [showClear]="true" 
+        placeholder="Seleccionar tipo evento"
+        (onChange)="obtenerTipoEvento()"/>
+    </div>
+
+    <div class="flex flex-col" [ngClass]="{ 'hidden' : !formFilterPanel.get('tipoEspacioId')?.value }">
+        <label class="font-bold text-sm xl:text-base" for="interaccionId">Espacio</label>
+        <p-dropdown 
+        [options]="eventos()"
+        formControlName="eventoId"
+        optionLabel="abreviatura"
+        optionValue="eventoId"
+        [showClear]="true" 
+        placeholder="Seleccionar evento"
+        (onChange)="obtenerEvento()"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="codigoUnico">Código Unico</label>
+        <input type="text" formControlName="codigoUnico" class="form-control"  (keyup)="changeCodigo($event)">
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="nivelGobiernoId">Nivel de gobierno</label>
+        <p-dropdown 
+        [options]="tipoEntidades()"
+        formControlName="nivelGobiernoId"
+        optionLabel="nombre"
+        optionValue="tipoId"
+        [showClear]="true" 
+        placeholder="Seleccionar nivel gobierno"
+        (onChange)="obtenerNivelGobierno()"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Departamento</label>
+        <p-dropdown 
+            [options]="departamentos()"
+            formControlName="departamento"
+            optionLabel="departamento"
+            optionValue="departamentoId"
+            [showClear]="true" 
+            placeholder="Seleccionar departamento"
+            (onChange)="obtenerDepartamento()"/>
+    </div>
+
+    <div class="flex flex-col" [ngClass]="{ 'hidden' : !formFilterPanel.get('departamento')?.value }">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Provincia</label>
+        <p-dropdown 
+        [options]="provincias()"
+        formControlName="provincia"
+        optionLabel="provincia"
+        optionValue="provinciaId"
+        [showClear]="true" 
+        placeholder="Seleccionar provincia"
+        (onChange)="obtenerProvincia()"/>
+    </div>
+
+    <div class="flex flex-col" [ngClass]="{ 'hidden' : !formFilterPanel.get('provincia')?.value }">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Distrito</label>
+        <p-dropdown 
+        [options]="distritos()"
+        formControlName="distrito"
+        optionLabel="distrito"
+        optionValue="distritoId"
+        [showClear]="true" 
+        placeholder="Seleccionar distrito"
+        (onChange)="obtenerDistrito()"/>
+    </div>
+</form>

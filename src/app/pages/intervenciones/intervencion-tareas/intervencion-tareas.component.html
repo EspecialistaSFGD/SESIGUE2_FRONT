@@ -1,43 +1,72 @@
 <div class="flex flex-col gap-5">
-  <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
-    [nzData]="intervencionTareas()" [nzFrontPagination]="false" [nzLoading]="loadingTareas" [nzTotal]="paginationTareas.total!" [nzShowPagination]="paginationTareas.total! > 5"
-    [nzPageSize]="paginationTareas.pageSize!" [nzPageIndex]="paginationTareas.currentPage!">
+  <nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderTareas" nzShowSizeChanger nzSize="small"
+    [nzData]="intervencionTareas()" [nzFrontPagination]="false" [nzLoading]="loadingTareas" [nzTotal]="pagination.total!" [nzShowPagination]="pagination.total! > 5"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
     <thead>
       <tr>
-        <th nzWidth="32px" nzAlign="center"nzColumnKey="codigoIntervencion" [nzSortFn]="true">Codigo</th>
-        <th nzLeft nzWidth="100px" nzColumnKey="tarea" [nzSortFn]="true">Tarea</th>
-        <th nzWidth="32px" nzAlign="center" nzColumnKey="responsableId" [nzSortFn]="true">Responsable</th>
+        <th nzWidth="10px" nzAlign="center"></th>
+        <th nzWidth="20px" nzAlign="center"nzColumnKey="codigoIntervencion" [nzSortFn]="true">Codigo</th>
+        <th nzLeft nzWidth="80px" nzColumnKey="tarea" [nzSortFn]="true">Tarea</th>
+        <th nzWidth="36px" nzAlign="center">Fase</th>
+        <th nzWidth="36px" nzAlign="center">Etapa</th>
+        <th nzWidth="36px" nzAlign="center">Hito</th>
+        <th nzWidth="24px" nzAlign="center" nzColumnKey="responsableId" [nzSortFn]="true">Responsable</th>
         <th nzWidth="64px" nzAlign="center">Entidad</th>
-        <th nzWidth="32px" nzAlign="center">Plazo</th>
-        <th nzWidth="32px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
+        <th nzWidth="20px" nzAlign="center">Plazo</th>
+        <th nzWidth="24px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
         <th nzWidth="24px" nzAlign="center">Comentario</th>
-        <th nzWidth="24px" nzAlign="center"></th>
+        <th nzWidth="40px" nzAlign="center"></th>
       </tr>
     </thead>
     
     <tbody>
       @for(tarea of intervencionTareas(); track $index){
-        <tr (click)="obtenerTareaAvances(tarea)" class="cursor-pointer">
-          <td nzAlign="center"><p class="font-bold">{{tarea.codigo}}</p></td>
-          <td>{{tarea.tarea}}</td>
+        <tr>
+          <td nzAlign="center"><app-icono-validado [validado]="tarea.validado!" /></td>
+          <td nzAlign="center">
+            <p class="font-bold" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.codigo}}</p>
+          </td>
+          <td>
+            <p (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.tarea}}</p>
+          </td>
+          <td nzAlign="center">{{tarea.intervencionFase}}</td>
+          <td nzAlign="center">{{tarea.intervencionEtapa}}</td>
+          <td nzAlign="center">{{tarea.intervencionHito}}</td>
           <td nzAlign="center">{{tarea.responsable}}</td>
           <td nzAlign="center">{{tarea.entidad}}</td>
           <td nzAlign="center">{{tarea.plazo}}</td>
-          <td nzAlign="center">{{tarea.estadoRegistroNombre | uppercase}}</td>
-          <td nzAlign="center">{{tarea.comentario}}</td>
-          <td nzAlign="center"></td>
+          <td nzAlign="center">{{obtenerEstadoRegistro(tarea.estadoRegistroNombre!) | replace : '_' : ' ' }}</td>
+          <td nzAlign="center">{{permisosPCM ? tarea.comentario : tarea.comentarioSd }}</td>
+          <!-- <td nzAlign="center">{{tarea.comentarioSd}}</td> -->
+          <td nzAlign="center">
+            <button *ngIf="!esResponsable(tarea)" nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!tarea.validado ? 'Actualizar tarea' : ''" [disabled]="tarea.validado" (click)="actualizarTarea(tarea.intervencionTareaId!)">
+              <span nz-icon nzType="edit" nzTheme="outline"></span>
+            </button>
+            <button *ngIf="!esResponsable(tarea)" nz-button nzDanger nzType="link" [nz-tooltip]="!tarea.validado ? 'Eliminar tarea' : ''" [disabled]="tarea.validado" (click)="eliminarTarea(tarea)">
+              <span nz-icon nzType="delete" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="link" [nz-tooltip]="!tarea.validado ? 'Comentar tarea' : ''" [disabled]="tarea.validado" (click)="comentarTarea(tarea)">
+              <span nz-icon nzType="comment" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="link" [nz-tooltip]="tarea.validado ? 'Ver Avances' : ''" [disabled]="!tarea.validado" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null">
+              <span nz-icon nzType="eye" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!tarea.validado ? 'Validar tarea' : ''" [disabled]="tarea.validado">
+              <span nz-icon [ngClass]="{ 'text-green-500' : !tarea.validado }" (click)="validarTarea(tarea)" nzType="check-circle" nzTheme="outline"></span>
+            </button>
+          </td>
         </tr>
         }
     </tbody>
   </nz-table>
   
-  <ng-template #HeaderMesas>
+  <ng-template #HeaderTareas>
       <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
           <div class="flex flex-col ">
               <p class="font-semibold text-base">Gestión de tareas</p>
-              <p class="text-sm">Resultados {{paginationTareas.total}}</p>
+              <p class="text-sm">Resultados {{pagination.total}}</p>
           </div>
-  
+
           <button nz-button nzType="primary" (click)="agregarTarea()" [disabled]="!botonNuevoActivo">
               <span nz-icon nzType="plus" nzTheme="outline"></span>
               <span class="button-text">Nueva Tarea</span>
@@ -45,7 +74,5 @@
       </div>
   </ng-template>
   
-  @if (listarAvances) {
-    <app-intervencion-tarea-avances [intervencionTarea]="intervencionTarea"/>
-  }
+  <app-intervencion-tarea-avances [intervencionTarea]="intervencionTarea" (tareaUpdated)="actualizarListaTareas($event)"/>
 </div>

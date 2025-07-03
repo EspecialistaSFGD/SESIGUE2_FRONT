@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IntervencionEspacioOriginEnum } from '@core/enums';
+import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { convertEnumToObject, typeErrorControl } from '@core/helpers';
 import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
@@ -21,6 +21,8 @@ export class FormularioIntervencionComponent {
 
   create: boolean = this.dataIntervencionTarea.create
   origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
+  sectoresValidos: number[] = this.dataIntervencionTarea.sectores
+  ubigeosValidos: string[] = this.dataIntervencionTarea.ubigeos
 
   pagination: Pagination = {
     columnSort: 'nombre',
@@ -29,7 +31,7 @@ export class FormularioIntervencionComponent {
     currentPage: 1
   }
 
-  origenes: ItemEnum[] = convertEnumToObject(IntervencionEspacioOriginEnum)
+  origenes: ItemEnum[] = convertEnumToObject(IntervencionEspacioOrigenEnum)
 
   intervencionTipos: IntervencionEspacioTipo[] = [
     { tipoId: '1', tipo: 'PROYECTO' },
@@ -71,9 +73,9 @@ export class FormularioIntervencionComponent {
   private validatorsService = inject(ValidatorService)
 
   formIntervencionEspacio: FormGroup = this.fb.group({
-    origenId: [ { value: '', disabled: true }, Validators.required ],
+    origen: [ { value: '', disabled: true }, Validators.required ],
     tipoEventoId: [ { value: '', disabled: true }, Validators.required ],
-    eventoId: [ '', Validators.required ],
+    eventoId: [ { value: '', disabled: true }, Validators.required],
     tipoIntervencion: [ '', Validators.required ],
     subTipoIntervencion: [ { value: '', disabled: true }, Validators.required ],
     codigoIntervencion: [ { value: '', disabled: true }, Validators.required ],
@@ -93,9 +95,12 @@ export class FormularioIntervencionComponent {
   })
 
   ngOnInit(): void {
-    const origenId = this.origenes.find( item => item.value.toLowerCase() == this.origen.origen.toLowerCase())?.text
-    this.formIntervencionEspacio.get('origenId')?.setValue(origenId)
+    const origen = this.origenes.find( item => item.value.toLowerCase() == this.origen.origen.toLowerCase())
+    console.log(origen);
+    
+    this.formIntervencionEspacio.get('origen')?.setValue(origen?.value.toLowerCase())
     this.formIntervencionEspacio.get('interaccionId')?.setValue(this.origen.interaccionId)
+    this.formIntervencionEspacio.get('eventoId')?.setValue(this.origen.eventoId)
 
     this.obtenerTipoEventoServices()
     this.obtenerSectoresServices()
@@ -134,12 +139,16 @@ export class FormularioIntervencionComponent {
     this.eventosService.getAllEventos([tipoEventoId], 1, [1, 2, 3], paginationTipoEvento).subscribe( resp => this.eventos.set(resp.data))
   }
 
+  obtenerIntegrantesMesas(){
+
+  }
+
   obtenerSectoresServices(){
-    this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data))
+    this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID)))))
   }
 
   obtenerDepartamentoServices(){
-    this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(resp.data))
+    this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(resp.data.filter( item => this.ubigeosValidos.includes(item.departamentoId))))
   }
 
   obtenerIntervencionFaseService(inicial: boolean = true){
@@ -196,7 +205,6 @@ export class FormularioIntervencionComponent {
 
   obtenerEntidadSector(){
     const sectorId = this.formIntervencionEspacio.get('sectorId')?.value
-    // const paginationEntidadSector: Pagination = { entidadId: 0, tipo: '1', sectorId }
     const pagination: Pagination = { ...this.pagination, sectorId, columnSort: 'entidadId' }
     this.entidadService.listarEntidades(pagination).subscribe( resp => this.sectorEntidades.set(resp.data) )
   }

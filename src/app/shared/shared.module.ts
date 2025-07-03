@@ -6,6 +6,8 @@ import { SliderTinyComponent } from './slider-tiny/slider-tiny.component';
 import { EstadoTagComponent } from './estado-tag/estado-tag.component';
 import { BotonDescargarComponent } from './boton/boton-descargar/boton-descargar.component';
 import { ProgressSpinerComponent } from './progress-spiner/progress-spiner.component';
+import { FormularioComentarComponent } from './formulario-comentar/formulario-comentar.component';
+import { GeoMapComponent } from './geo-map/geo-map.component';
 
 
 
@@ -19,7 +21,9 @@ import { ProgressSpinerComponent } from './progress-spiner/progress-spiner.compo
     SliderTinyComponent,
     EstadoTagComponent,
     BotonDescargarComponent,
-    ProgressSpinerComponent
+    ProgressSpinerComponent,
+    FormularioComentarComponent,
+    GeoMapComponent
   ],
   exports: [
     ChartComponent,
@@ -28,7 +32,9 @@ import { ProgressSpinerComponent } from './progress-spiner/progress-spiner.compo
     SliderTinyComponent,
     EstadoTagComponent,
     BotonDescargarComponent,
-    ProgressSpinerComponent
+    ProgressSpinerComponent,
+    FormularioComentarComponent,
+    GeoMapComponent
   ]
 })
 export class SharedModule { }

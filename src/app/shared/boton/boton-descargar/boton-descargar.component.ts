@@ -15,6 +15,8 @@ import saveAs from 'file-saver';
 export class BotonDescargarComponent {
 
   @Input() rutaArchivo:string = ''
+  @Input() active: boolean = true
+  @Input() titulo: string = 'Descargar'
 
   private descargarServices = inject(DescargarService)
 

@@ -8,7 +8,7 @@ export const themeProgressBarPercente = (value: number): string => {
     { percent: 100, theme: '#018D86' },
   ]
   const theme = themes.find(theme => theme.percent >= value)
-  return theme!.theme ?? '#D6D4D3'
+  return theme ? theme!.theme : '#D6D4D3'
 }
 
 
@@ -24,7 +24,7 @@ export const themeState = (state: string) => {
       break;
     case 'seguimiento':
       theme.color = 'bg-blue-200 border-blue-400 text-blue-600'
-      theme.icono = 'thumbs-up'
+      theme.icono = 'like'
       break;
   }
   return theme

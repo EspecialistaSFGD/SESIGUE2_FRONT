@@ -1,5 +1,4 @@
 export enum IntervencionTareaAvanceEstadoRegistroEnum {
-    PROYECTO = '0',
-    APROBACION = '1',
-    CULMINADO = '2'
+    EN_PROCESO = 'proceso',
+    PROYECTO_CULMINADO = 'culminado'
 }

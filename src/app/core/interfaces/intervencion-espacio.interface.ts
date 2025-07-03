@@ -8,16 +8,22 @@ export interface IntervencionEspacioResponses extends DataResponses {
 	data: IntervencionEspacioResponse
 }
 
+export interface ProcesoIntervencionEspacioResponses extends DataResponses {
+	data: procesoIntervencionEspacio
+}
+
 export interface IntervencionEspacioResponse {
 	intervencionEspacioId?: string,
 	intervencionId: string,
 	eventoId: string,
 	evento?: string,
-	origenId: string,
+	resumen?: string,
+	origen: string,
 	interaccionId: string,
 	acuerdoId: string,
 	fechaRegistro?: string,
 	tipoIntervencion?: string,
+	tipoEventoId?: string,
 	tipo?: string,
 	subTipoIntervencion?: string,
 	subTipo?: string,
@@ -31,14 +37,18 @@ export interface IntervencionEspacioResponse {
 	provincia?: string,
 	distrito?: string,
 	entidad?: string,
+	entidadTipo?: string,
+	entidadSlug?: string,
 	beneficiarios?: string,
 	costoActualizado?: string,
 	devAcumulado?: string,
 	pia?: string,
 	pim?: string,
 	devengado?: string,
+	usuarioId?:string,
 	usuarioIdRegistro?: string,
 	usuarioIdModifica?: string,
+	cantidadTareas?: number,
 	inicioIntervencionHitoId: string,
 	inicioIntervencionHito?: string,
 	inicioIntervencionEtapaId?: string,
@@ -51,6 +61,10 @@ export interface IntervencionEspacioResponse {
 	objetivoIntervencionEtapa?: string,
 	objetivoIntervencionFaseId?: string,
 	objetivoIntervencionFase?: string,
+}
+
+export interface procesoIntervencionEspacio {
+	fecha: string,
 }
 
 export interface IntervencionEspacioTipo {
@@ -66,10 +80,13 @@ export interface IntervencionEspacioSubTipo {
 
 export interface IntervencionEspacioOriginResponse {
 	origen: string,
-	interaccionId: string
+	interaccionId: string,
+	eventoId: string
 }
 
 export interface DataModalIntervencion {
 	create: boolean
-	origen: IntervencionEspacioOriginResponse
+	origen: IntervencionEspacioOriginResponse,
+	sectores: number[],
+	ubigeos: string[]
 }

@@ -1,5 +1,5 @@
 import { DataResponses } from "./helpers.interface"
-import { MesaUbigeoResponse } from "./mesa-ubigeo.interface"
+import { MesaIntegranteResponse } from "./mesa-integrantes.interface"
 
 export interface MesasResponses extends DataResponses {
   data: MesaResponse[]
@@ -13,8 +13,10 @@ export interface MesaResponse {
   mesaId?: string,
   codigo?: string,
   nombre: string,
+  abreviatura: string,
   sectorId: string,
   sector?: string,
+  eventoId?: string,
   secretariaTecnicaId: string,
   secretariaTecnica?: string,
   fechaCreacion: string,
@@ -24,9 +26,14 @@ export interface MesaResponse {
   estadoRegistroNombre?: string,
   sesion?: string,
   am?:string,
+  cantidadIntervenciones?:number,
+  fechaResumen?:string,
+  resumen?:string,
+  alerta?:string,
+  usuarioId: string,
   fechaRegistro?: Date,
-  ubigeos?: MesaUbigeoResponse[],
-  sectores?: MesaUbigeoResponse[],
+  ubigeos?: MesaIntegranteResponse[],
+  sectores?: MesaIntegranteResponse[],
 }
 
 export interface MesaFilesResponse {
@@ -35,4 +42,9 @@ export interface MesaFilesResponse {
   nombreArchivo: string,
   usuario: string,
   fecha: string
+}
+
+export interface DataModalMesa{
+  create: boolean,
+  mesa: MesaResponse
 }

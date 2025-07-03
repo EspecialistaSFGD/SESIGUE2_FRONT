@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { PrimeraLetraPipe } from './primera-letra.pipe';
 import { NumeroPipe } from './numero.pipe';
 import { SafeUrlPipe } from './safe-url.pipe';
+import { ReplacePipe } from './replace.pipe';
+import { WordPipe } from './word.pipe';
 
 
 
@@ -12,12 +14,16 @@ import { SafeUrlPipe } from './safe-url.pipe';
     CommonModule,
     PrimeraLetraPipe,
     NumeroPipe,
-    SafeUrlPipe
+    SafeUrlPipe,
+    ReplacePipe,
+    WordPipe
   ],
   exports: [
     PrimeraLetraPipe,
     NumeroPipe,
-    SafeUrlPipe
+    SafeUrlPipe,
+    ReplacePipe,
+    WordPipe
   ]
 })
 export class PipesModule { }

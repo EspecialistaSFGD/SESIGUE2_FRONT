@@ -1,3 +1,36 @@
 <nz-page-header nzBackIcon [nzGhost]="false">
 	<nz-page-header-title>{{title}}</nz-page-header-title>
 </nz-page-header>
+
+<app-intervencion-panel-filtros [pagination]="pagination" (filterPagination)="getFilterPagination($event)" />
+
+<div class="flex flex-col gap-6 mt-6">
+	<app-intervencion-panel-info [intervencionEstados]="intervenciones().intervencionEstados!" />
+
+	<div class="grid md:grid-cols-3 gap-4">
+		@if(intervenciones().intervencionUbigeo){
+			<app-intervencion-panel-mapa [intervencionUbigeo]="intervenciones().intervencionUbigeo!" />
+		}
+
+		
+		<div class="flex flex-col gap-4">
+			@if(intervenciones().intervencionUbigeo){
+				<app-intervencion-panel-ubigeo [intervencionUbigeo]="intervenciones().intervencionUbigeo!" (ubigeoId)="getIdPanel($event, 'ubigeo')" class="h-full" /> 
+			}
+			@if(intervenciones().intervencionNivelesGobierno){
+				<app-intervencion-panel-nivel-gobierno [intervencionNivelesGobierno]="intervenciones().intervencionNivelesGobierno!" (nivelGobiernoId)="getIdPanel($event, 'nivelGobierno')" />
+			}
+		</div>
+		@if(intervenciones().intervencionSectores){
+			<app-intervencion-panel-sector [intervencionSectores]="intervenciones().intervencionSectores!" (sectorId)="getIdPanel($event,'sector')" />
+		}
+
+
+	</div>
+	<div class="grid md:grid-cols-2 gap-4">
+		<app-intervencion-panel-aptos />
+		@if(intervenciones().intervencionEstados){
+			<app-intervencion-panel-estado [intervencionEstados]="intervenciones().intervencionEstados!" />
+		}
+	</div>
+</div>

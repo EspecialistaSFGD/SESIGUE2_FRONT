@@ -377,8 +377,9 @@ export default class AsistenciasTecnicasComponent {
             const fechaAtencion = `${month}/${day}/${dateForm.getFullYear()}`
             formAtencion.get('fechaAtencion')?.setValue(fechaAtencion)
 
-            const tipoPerfil = formAtencion.get('tipoPerfil')?.value
-            formAtencion.get('tipoPerfil')?.setValue(`${tipoPerfil ? 0 : 1}`)
+            // const tipoPerfil = formAtencion.get('tipoPerfil')?.value
+            const tipoPerfil = this.permisosPCM ? 0 : 1
+            formAtencion.get('tipoPerfil')?.setValue(tipoPerfil)
             
             if(create){
               this.crearAtencion(formAtencion)

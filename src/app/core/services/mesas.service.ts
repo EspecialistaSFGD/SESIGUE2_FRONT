@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { MesaResponse, MesaResponses, MesasResponses, Pagination } from '@core/interfaces';
+import { ExportResponses, MesaResponse, MesaResponses, MesasResponses, Pagination } from '@core/interfaces';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({
@@ -17,6 +17,12 @@ export class MesasService {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<MesasResponses>(`${this.urlMesas}/ListarMesas`, { headers, params })
+  }
+
+  reporteMesas(pagination: Pagination){
+    const params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<ExportResponses>(`${this.urlMesas}/ReporteMesas`, { headers, params })
   }
 
   obtenerMesa(mesaId: string ){
@@ -37,14 +43,30 @@ export class MesasService {
       )
   }
 
+  actualizarMesa(mesa: MesaResponse){
+    const headers = this.helpersServices.getAutorizationToken()          
+    const formData = this.generateFormData(mesa)
+    return this.http.put<MesaResponse>(`${this.urlMesas}/ActualizarMesa/${mesa.mesaId}`, formData, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
+  }
+
   private generateFormData(mesa: MesaResponse): FormData {
     const formData = new FormData()
     formData.append('nombre', mesa.nombre)
+    formData.append('abreviatura', mesa.abreviatura)
+    formData.append('usuarioId', mesa.usuarioId)
     formData.append('sectorId', mesa.sectorId)
     formData.append('secretariaTecnicaId', mesa.secretariaTecnicaId)
     formData.append('fechaCreacion', mesa.fechaCreacion)
     formData.append('fechaVigencia', mesa.fechaVigencia)
     formData.append('resolucion', mesa.resolucion)
+    formData.append('estadoRegistro', mesa.estadoRegistro!)
     return formData
   }
 }

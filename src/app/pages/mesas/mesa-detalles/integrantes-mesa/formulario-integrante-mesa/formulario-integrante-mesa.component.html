@@ -1,0 +1,112 @@
+<form [formGroup]="formIntegrante" class="grid grid-cols-1 gap-4" [ngClass]="{ 'md:grid-cols-3' : integrante.esSector, 'md:grid-cols-4' : !integrante.esSector }" autocomplete="off">
+	@if (integrante.esSector) {
+		<div class="flex flex-col">
+			<label for="sector">Sector</label>
+			<p-dropdown 
+				[options]="sectores()"
+				formControlName="sectorId"
+				optionLabel="nombre"
+				optionValue="grupoID"
+				[showClear]="true" 
+				placeholder="Seleccionar sector"
+				(onChange)="changeSector()"/>
+			<div class="text-danger" *ngIf="alertMessageError('sectorId')">{{msgErrorControl('sectorId','Sector')}}</div>
+		</div>
+	
+		<div class="w-full flex flex-col col-span-2">
+			<label for="entidadId">Unidad organica</label>
+			<p-dropdown 
+			[options]="entidadesSector()"
+			formControlName="entidadId"
+			optionLabel="nombre"
+			optionValue="entidadId"
+			[showClear]="true" 
+			placeholder="Seleccionar unidad organica"/>
+			<div class="text-danger" *ngIf="alertMessageError('entidadId')">{{msgErrorControl('entidadId','Unidad')}}</div>
+		</div>
+	} @else {
+		<div class="flex flex-col">
+			<label for="nombre">Departamento</label>
+			<p-dropdown 
+				[options]="departamentos()"
+				formControlName="departamento"
+				optionLabel="departamento"
+				optionValue="departamentoId"
+				[showClear]="true" 
+				placeholder="Seleccionar departamento"
+				(onChange)="changeDepartamento()"/>
+			<div class="text-danger" *ngIf="alertMessageError('departamento')">{{msgErrorControl('departamento','Departamento')}}</div>
+		</div>
+
+		<div class="flex flex-col">
+			<label for="nombre">Provincia</label>
+			<p-dropdown 
+			[options]="provincias()"
+			formControlName="provincia"
+			optionLabel="provincia"
+			optionValue="provinciaId"
+			[showClear]="true" 
+			placeholder="Seleccionar provincia"
+			(onChange)="changeProvincia()"/>
+			<div class="text-danger" *ngIf="alertMessageError('provincia')">{{msgErrorControl('provincia','Provincia')}}</div>
+		</div>
+
+		<div class="flex flex-col">
+			<label for="nombre">Distrito</label>
+			<p-dropdown 
+			[options]="distritos()"
+			formControlName="distrito"
+			optionLabel="distrito"
+			optionValue="distritoId"
+			[showClear]="true" 
+			placeholder="Seleccionar distrito"
+			(onChange)="changeDistrito()"/>
+			<div class="text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}</div>
+		</div>
+
+		<div class="flex flex-col">
+			<label for="entidadSlug">
+				Entidad
+				<span *ngIf="formIntegrante.get('entidadId')?.value" nz-icon nzType="info-circle" [nz-tooltip]="formIntegrante.get('entidad')?.value"></span>
+			</label>
+			<input type="text" class="form-control" id="entidadSlug" formControlName="entidadSlug">
+		</div>
+
+		<div class="flex flex-col">
+		<label class="mb-1">Autoridad</label>
+		 <div class="flex gap-4">
+			 @for (item of siNo; track $index) {
+				 <div class="flex align-items-center">
+					<p-radioButton [value]="item.toLowerCase() == 'si' ? true : false" formControlName="autoridad" [inputId]="item" (onClick)="validarAutoridad()" />
+					<label [for]="item" class="ml-2 cursor-pointer">{{item}}</label>
+				</div>
+			 }
+		 </div>
+		<div class="text-danger" *ngIf="alertMessageError('autoridad')">{{msgErrorControl('autoridad','Autoridad')}}</div>
+	</div>
+	}
+
+	<div class="flex flex-col">
+		<label for="dni">DNI titular</label>
+		<input type="text" class="form-control" id="dni" placeholder="Ingrese el documento aquí" formControlName="dni" (keyup)="validarDNI()">
+		<div class="text-danger" *ngIf="alertMessageError('dni')">{{msgErrorControl('dni','DNI')}}</div>
+	</div>
+
+	<div class="flex flex-col">
+		<label for="nombre">Nombre titular</label>
+		<div class="relative">
+			<input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre aquí" formControlName="nombre">
+			<app-progress-spiner [loading]="loading" />
+		</div>
+		<div class="text-danger" *ngIf="alertMessageError('nombre')">{{msgErrorControl('nombre','Nombre')}}</div>
+	</div>
+
+	<div class="flex flex-col">
+		<label for="telefono">Teléfono titular</label>
+		<div class="relative">
+			<input type="text" class="form-control" id="telefono" placeholder="Ingrese el telefono aquí" formControlName="telefono">
+			<app-progress-spiner [loading]="loading" />
+		</div>
+		<div class="text-danger" *ngIf="alertMessageError('telefono')">{{msgErrorControl('telefono','Teléfono')}}</div>
+	</div>
+</form>

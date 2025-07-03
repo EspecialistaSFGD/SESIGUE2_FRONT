@@ -4,6 +4,11 @@ export const getDateFormat = (date: Date, first: string = 'day'): string => {
 	return first == 'day' ? `${day}/${month}/${date.getFullYear()}` : `${month}/${day}/${date.getFullYear()}`
 }
 
+export const convertDateStringToDate = (date:string, separator:string = '/' ):Date => {
+	const [day, month, year] = date.split(separator);
+	return new Date(Number(year), Number(month) - 1, Number(day));
+}
+
 export const getBusinessDays = (fecha: Date, dias: number): Date => {
 	let contador = 0;
 		const nuevaFecha = new Date(fecha);
