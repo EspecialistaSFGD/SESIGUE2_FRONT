@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventoResponse, Pagination, SectorResponse, TipoEntidadResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, EventosService, SectoresService, TipoEntidadesService, TipoEventosService, UbigeosService } from '@core/services';
@@ -16,6 +16,7 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 export class IntervencionPanelFiltrosComponent {
 
   @Input() pagination!: Pagination
+  @Input() filter!: Pagination
 
   @Output() filterPagination = new EventEmitter<Pagination>()
 
@@ -50,8 +51,17 @@ export class IntervencionPanelFiltrosComponent {
     entidadUbigeoId: [null],
   })
 
+  ngOnChanges(changes: SimpleChanges): void {
+     const sectorId = this.filter.sectorId ? Number(this.filter.sectorId) : null
+    const nivelGobiernoId = this.filter.nivelGobiernoId ? Number(this.filter.nivelGobiernoId) : null
+    this.formFilterPanel.reset({ sectorId, nivelGobiernoId })
+
+    if(this.filter.entidadUbigeoId){      
+      this.obtenerEntidadPorId(this.filter.entidadUbigeoId)
+    }
+  }
+
   ngOnInit(): void {
-    console.log(this.pagination);
     this.obtenerSectoresServices()
     this.obtenerDepartamentoServices()
     this.obtenerTipoEventoServices()
@@ -78,6 +88,15 @@ export class IntervencionPanelFiltrosComponent {
         const tipoHidden:string[] = ['MR','MM']
         const tipos = resp.data.filter(item => !tipoHidden.includes(item.abreviatura.toUpperCase()))
         this.tipoEntidades.set(tipos)
+      })
+  }
+  obtenerEntidadPorId(entidadId: string){
+    const departamentoControl = this.formFilterPanel.get('departamento')
+    this.entidadService.getEntidadPorId(entidadId)
+      .subscribe( resp => {
+        const entidad = resp.data[0]
+        const ubigeo = entidad.ubigeo.slice(0,2)
+        departamentoControl?.setValue(ubigeo)
       })
   }
 
@@ -146,15 +165,18 @@ export class IntervencionPanelFiltrosComponent {
       ubigeo = `${departamento}0000`
       provinciaControl?.enable()
       this.obtenerProvinciasService(departamento)
+      this.obtenerEntidadPorUbigeoService(ubigeo)
     } else {
       this.pagination.nivelUbigeo = ''
+      delete this.pagination.entidadUbigeoId
       provinciaControl?.disable()
       provinciaControl?.reset()
+      this.setPagination()
     }
     
     distritoControl?.disable()
     distritoControl?.reset()
-    this.obtenerEntidadPorUbigeoService(ubigeo)
+    // this.obtenerEntidadPorUbigeoService(ubigeo)
   }
 
   obtenerProvinciasService(departamento: string) {
