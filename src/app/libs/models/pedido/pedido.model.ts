@@ -45,6 +45,7 @@ export class PedidoModel extends SeguridadModel {
 
         public codigoPerfil?: number,
         public ubicacion?: string,
+        public usuarioId?: string
     ) {
         super();
     }
@@ -105,6 +106,7 @@ export class PedidoRequestModel {
         public comentarioPcm?: string,
         public codigoPerfil?: number,
         public tipoInversionId?: number,
+        public usuarioId?: string,
 
         // public ubigeo?: string,
         // public region?: string,

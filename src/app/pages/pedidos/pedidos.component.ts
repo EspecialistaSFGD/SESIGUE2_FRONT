@@ -389,7 +389,9 @@ export class PedidosComponent implements OnInit, AfterViewInit {
           label: labelOk,
           type: 'primary',
           onClick: (componentInstance) => {
-            return this.pedidosService.agregarPedido(componentInstance!.pedidoForm.value).then((res) => {
+            const usuarioId = localStorage.getItem('codigoUsuario') || '0'
+            const valueForm = {...componentInstance!.pedidoForm.value, usuarioId}
+            return this.pedidosService.agregarPedido(valueForm).then((res) => {
               this.traerPedidos({});
               if(res.success == true){
                 this.modal.closeAll();
