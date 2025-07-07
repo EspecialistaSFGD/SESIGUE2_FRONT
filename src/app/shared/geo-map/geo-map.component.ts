@@ -14,6 +14,7 @@ import { GeoTopoJson, UbigeoTopoJson } from '@core/interfaces';
 export class GeoMapComponent {
   @Input() dataSet: UbigeoTopoJson[] = departamentosTopoJSON()
   @Input() geoTopoJson: GeoTopoJson = { geo: 'departamentos', ubigeo: 'departamentos' }
+  @Input() codigo: number = 1 // 1 - Departamento, 2 - Provincia, 3 - Distrito
 
 
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;

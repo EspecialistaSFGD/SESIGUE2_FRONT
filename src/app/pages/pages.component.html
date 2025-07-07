@@ -61,7 +61,8 @@
     </nz-sider>
 
     <div class="w-full flex flex-col">
-      <!-- <div class="flex justify-between bg-slate-50 py-1">
+      <!-- {{authService.departamento() | json}} -->
+      <div class="flex justify-between bg-slate-50 py-1">
         <div class="flex items-center">
           <div class="py-2 px-3 cursor-pointer text-gray-500 text-base hover:text-sky-700" (click)="switchCollapseSider()">
             <span nz-icon [nzType]="this.isSiderCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
@@ -72,18 +73,22 @@
             <div class="p-2 rounded-full bg-sky-700 text-white font-bold hover:bg-sky-800 cursor-default">
               {{ authService.nombreTrabajador()! | primeraLetra : 2 }}
             </div>
-            <div class="absolute z-10 top-full right-0 bg-white font-normal rounded border border-slate-200 text-slate-500 w-[180px] mt-1" [ngClass]="{ 'flex flex-col' : leave, 'hidden' : !leave }" (mouseout)="leave = false">
-              <div *ngIf="authService.nombreTrabajador()" class="py-1 px-3">{{authService.nombreTrabajador()! | word : 2 | uppercase }}</div>
-              <div *ngIf="descripcionSector" class="py-1 px-3">{{ descripcionSector }}</div>
+            <div class="absolute z-10 top-full right-0 bg-slate-50 rounded border border-slate-200 text-slate-600 w-[264px]" [ngClass]="{ 'flex flex-col' : leave, 'hidden' : !leave }" (mouseout)="leave = false">
+              <div class="flex items-center gap-2 py-2 px-4 font-medium bg-sky-800 text-white rounded-ss rounded-se"><span nz-icon nzType="user" nzTheme="outline"></span> {{authService.nombreTrabajador()! }}</div>
+              <div *ngIf="descripcionTipo" class="flex gap-2 py-2 px-4 text-sm font-normal"><span nz-icon nzType="schedule" nzTheme="outline"></span> {{ descripcionTipo }}</div>
+              <div *ngIf="descripcionSector" class="flex gap-2 py-2 px-4 font-normal"><span nz-icon nzType="pushpin" nzTheme="outline"></span> {{ descripcionSector }}</div>
+              <div *ngIf="authService.departamento()" class="flex gap-2 py-2 px-4 font-normal"><span nz-icon nzType="environment" nzTheme="outline"></span>{{ authService.departamento()?.label }}</div>
+              <div class="flex gap-2 py-2 px-4 font-normal cursor-pointer hover:text-sky-700"  (click)="onLogout()"><span nz-icon nzType="poweroff"></span> Cerrar Sesión</div>
             </div>
           </div>
-          <div class="py-2 px-3 cursor-pointer text-gray-500 text-base hover:text-sky-700" (click)="onLogout()">
+          <!-- <nz-icon nzType="schedule" nzTheme="outline" /> -->
+          <!-- <div class="py-2 px-3 cursor-pointer text-gray-500 text-base hover:text-sky-700" (click)="onLogout()">
             <span nz-icon nzType="poweroff"></span>
-          </div>
+          </div> -->
         </div>
-      </div> -->
+      </div>
       <div class="w-full p-4">
-        <nz-header class="bg-white dark:bg-gray-800">
+        <!-- <nz-header class="bg-white dark:bg-gray-800">
           <div class="app-header flex items-center justify-between px-6">
   
             <div class="flex items-center gap-2">
@@ -126,7 +131,7 @@
               </div>
             </div>
           </div>
-        </nz-header>
+        </nz-header> -->
         <!-- <div class="inner-content"> -->
         <router-outlet></router-outlet>
         <!-- </div> -->

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { departamentosTopoJSON } from '@core/helpers';
 import { UbigeoTopoJson } from '@core/interfaces';
 import { InterfacePanelResult } from '@core/interfaces/intervencion.interface';
@@ -16,6 +16,11 @@ import { GeoMapComponent } from "../../../../shared/geo-map/geo-map.component";
 export class IntervencionPanelMapaComponent {
   @Input() intervencionUbigeo: InterfacePanelResult[] = []
   dataTopoJson: UbigeoTopoJson[] = departamentosTopoJSON()
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.intervencionUbigeo);
+    
+  }
 
   ngOnInit(): void {
     setTimeout(() => this.setIntervencionUbigeo(), 100);
