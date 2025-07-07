@@ -195,6 +195,7 @@ export class PedidosService {
             }
 
             ots.accesoId = Number(accesoId);
+            ots.usuarioId = pedido.usuarioId;
             ots.codigoPerfil = Number(perfilId);
 
             if (pedido.sectorSelect) ots.grupoId = Number(pedido.sectorSelect.value);

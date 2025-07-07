@@ -24,7 +24,7 @@ export default class IntervencionesComponent {
   title: string = `Intervenciones`;
 
   pagination: Pagination = {}
-
+  filter = signal<Pagination>({})
   intervenciones = signal<IntervencionPanel>({})
 
   private intervencionService = inject(IntervencionService)
@@ -48,6 +48,13 @@ export default class IntervencionesComponent {
       case 'sector': this.pagination.sectorId = id; break;
       case 'nivelGobierno': this.pagination.nivelGobiernoId = `${id}`; break;
     }
+    this.filter.update( f => ({
+      ...f,
+      entidadUbigeoId: this.pagination.entidadUbigeoId,
+      sectorId: this.pagination.sectorId,
+      nivelGobiernoId: this.pagination.nivelGobiernoId
+    }))
+    
     this.obtenerIntervencionPanelService()  
   }
 }
