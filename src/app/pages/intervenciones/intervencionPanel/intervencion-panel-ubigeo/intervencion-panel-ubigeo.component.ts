@@ -41,7 +41,9 @@ export class IntervencionPanelUbigeoComponent {
   }
 
   obtenerIntervencionUbigeo(ubigeo: InterfacePanelResult){
-    this.ubigeoId.emit(ubigeo.id)
+    if(ubigeo.id){
+      this.ubigeoId.emit(ubigeo.id)
+    }
   }
 
 }

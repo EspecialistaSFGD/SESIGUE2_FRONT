@@ -42,6 +42,8 @@ export class IntervencionPanelNivelGobiernoComponent {
   }
 
   obtenerIntervencionNivelGobierno(nivelGobierno: InterfacePanelResult){
-    this.nivelGobiernoId.emit(nivelGobierno.id)
+    if(nivelGobierno.id){
+      this.nivelGobiernoId.emit(nivelGobierno.id)
+    }
   }
 }
