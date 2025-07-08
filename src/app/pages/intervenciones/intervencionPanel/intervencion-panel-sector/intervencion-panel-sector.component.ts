@@ -42,6 +42,8 @@ export class IntervencionPanelSectorComponent {
   }
 
   obtenerIntervencionSector(sector: InterfacePanelResult){
-    this.sectorId.emit(sector.id)
+    if(sector.id){
+      this.sectorId.emit(sector.id)
+    }
   }
 }
