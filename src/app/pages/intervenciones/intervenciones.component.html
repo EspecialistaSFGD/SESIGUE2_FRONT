@@ -9,7 +9,7 @@
 
 	<div class="grid md:grid-cols-3 gap-4">
 		@if(intervenciones().intervencionUbigeo){
-			<app-intervencion-panel-mapa [intervencionUbigeo]="intervenciones().intervencionUbigeo!" />
+			<app-intervencion-panel-mapa [intervencionUbigeo]="intervenciones().intervencionUbigeo!" [pagination]="pagination" />
 		}
 
 		
@@ -24,7 +24,6 @@
 		@if(intervenciones().intervencionSectores){
 			<app-intervencion-panel-sector [intervencionSectores]="intervenciones().intervencionSectores!" (sectorId)="getIdPanel($event,'sector')" />
 		}
-
 
 	</div>
 	<div class="grid md:grid-cols-2 gap-4">

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { departamentosTopoJSON } from '@core/helpers';
-import { UbigeoTopoJson } from '@core/interfaces';
+import { Pagination, UbigeoTopoJson } from '@core/interfaces';
 import { InterfacePanelResult } from '@core/interfaces/intervencion.interface';
 import { CardComponent } from '@shared/card/card.component';
 import { GeoMapComponent } from "../../../../shared/geo-map/geo-map.component";
@@ -15,10 +15,13 @@ import { GeoMapComponent } from "../../../../shared/geo-map/geo-map.component";
 })
 export class IntervencionPanelMapaComponent {
   @Input() intervencionUbigeo: InterfacePanelResult[] = []
+  @Input() pagination!: Pagination
   dataTopoJson: UbigeoTopoJson[] = departamentosTopoJSON()
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.intervencionUbigeo);
+    // console.log(this.pagination);
+    
+    // console.log(this.intervencionUbigeo);
     
   }
 
