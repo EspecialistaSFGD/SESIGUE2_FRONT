@@ -13,7 +13,7 @@
             </ng-template>
             <ng-template #body>
                 @for(ubigeo of intervencionUbigeo; track $index){
-                    <tr [ngClass]="{ 'cursor-pointer' : ubigeo.id > 0 }" (click)="ubigeo.id ? obtenerIntervencionUbigeo(ubigeo) : null">
+                    <tr [ngClass]="{ 'cursor-pointer' : ubigeo.id > 0 }" [id]="$index" (click)="ubigeo.id ? obtenerIntervencionUbigeo(ubigeo) : null">
                         <td [nzLeft]="true" width="148px">{{ubigeo.nombre}}</td>
                         <td nzAlign="center">{{ubigeo.cantIntervenciones}}</td>
                         <td nzAlign="center">{{ubigeo.costoActualizado | numero : 1}}</td>
