@@ -30,6 +30,7 @@ export class IntervencionPanelUbigeoComponent {
       this.totales.cantIntervenciones += item.cantIntervenciones;
       this.totales.costoActualizado += item.costoActualizado
       this.totales.pim += item.pim
+      this.totales.inversionActual += item.inversionActual
       this.totales.devAcumulado += item.devAcumulado
       this.totales.devengado += item.devengado   
     })
