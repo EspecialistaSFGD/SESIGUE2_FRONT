@@ -16,6 +16,27 @@ export class IntervencionPanelInfoComponent {
   @Input() intervencionEstados: InterfacePanelResult[] = []
 
   inversionInfo: ItemInfo[] = []
+  responsive: any = {
+    575: {
+      items: 2
+    },
+    576: {
+      items: 2
+    },
+    768: {
+      items: 3
+    },
+    992: {
+      items: 4
+    },
+    1200: {
+      items: 6
+    },
+    1600: {
+      items: 8,
+      "mouseDrag": false,
+    },
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if(this.intervencionEstados){
@@ -30,13 +51,14 @@ export class IntervencionPanelInfoComponent {
   obtenerCardInfo() {
     const label = 'mesas'
     this.inversionInfo = [
-      { code: 'total', icono: 'acuerdos-total.svg', titulo: '3208', descripcion: `Total inversiones`, comentario: `${label} generados en las reuniones bilaterales` },
+      { code: 'total', icono: 'acuerdos-total.svg', titulo: '3208', descripcion: `Total invers.`, comentario: `${label} generados en las reuniones bilaterales` },
       { code: 'aptos', icono: 'acuerdos-desestimado.svg', titulo: '52', descripcion: `PI Aptos`, comentario: `${label} que, por razón justificada, y en coordinación entre las partes, dejan de ser consideradas para la medición` },
       { code: 'viable', icono: 'acuerdos-vigente.svg', titulo: '3156', descripcion: `PI Viable`, comentario: `Resultado de la diferencia de ${label} establecidos menos los aptos` },
       { code: 'concluidos', icono: 'acuerdos-cumplido.svg', titulo: '2442', descripcion: `PI Concluido`, comentario: `${label} que han sido cumplidos por el gobierno Nacional, regional y/o local` },
       { code: 'ejecucion', icono: 'acuerdos-proceso.svg', titulo: '612', descripcion: `PI En ejecución`, comentario: `${label} que se encuentran dentro del plazo para su cumplimiento` },
       { code: 'paralizadas', icono: 'acuerdos-pendiente.svg', titulo: '102', descripcion: `PI Paralizada`, comentario: `${label} que no tienen definidos los hitos para su cumplimiento` },
-      { code: 'idea', icono: 'acuerdos-vencido.svg', titulo: '231', descripcion: `PI Idea`, comentario: `${label} que superaron el plazo establecido para su cumplimiento` }
+      { code: 'idea', icono: 'acuerdos-vencido.svg', titulo: '231', descripcion: `PI Idea`, comentario: `${label} que superaron el plazo establecido para su cumplimiento` },
+      { code: 'otros', icono: 'acuerdos-desestimado.svg', titulo: '231', descripcion: `Otros`, comentario: `${label} que superaron el plazo establecido para su cumplimiento` }
     ]
   }
 
@@ -75,6 +97,7 @@ export class IntervencionPanelInfoComponent {
       if(item.code.toLowerCase() == 'ejecucion'){ item.titulo = `${ejecucion}` }
       if(item.code.toLowerCase() == 'paralizadas'){ item.titulo = `${paralizada}` }
       if(item.code.toLowerCase() == 'idea'){ item.titulo = `${idea}` }
+      if(item.code.toLowerCase() == 'otros'){ item.titulo = `${otros}` }
     })
   }
 }
