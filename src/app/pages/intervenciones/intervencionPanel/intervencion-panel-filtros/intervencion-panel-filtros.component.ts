@@ -167,8 +167,8 @@ export class IntervencionPanelFiltrosComponent {
       this.obtenerProvinciasService(departamento)
       this.obtenerEntidadPorUbigeoService(ubigeo)
     } else {
-      this.pagination.nivelUbigeo = ''
       delete this.pagination.entidadUbigeoId
+      delete this.pagination.nivelUbigeo
       provinciaControl?.disable()
       provinciaControl?.reset()
       this.setPagination()
@@ -180,10 +180,7 @@ export class IntervencionPanelFiltrosComponent {
   }
 
   obtenerProvinciasService(departamento: string) {
-    this.ubigeoService.getProvinces(departamento)
-      .subscribe(resp => {
-        this.provincias.set(resp.data)
-      })
+    this.ubigeoService.getProvinces(departamento).subscribe(resp => this.provincias.set(resp.data))
   }
 
   obtenerProvincia(){
@@ -204,10 +201,7 @@ export class IntervencionPanelFiltrosComponent {
   }
 
   obtenerDistritosService(provincia: string) {
-    this.ubigeoService.getDistricts(provincia)
-      .subscribe(resp => {
-        this.distritos.set(resp.data)
-      })
+    this.ubigeoService.getDistricts(provincia).subscribe(resp => this.distritos.set(resp.data))
   }
 
   obtenerDistrito(){

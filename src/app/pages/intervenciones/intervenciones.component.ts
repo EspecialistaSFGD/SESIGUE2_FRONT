@@ -44,7 +44,7 @@ export default class IntervencionesComponent {
 
   getIdPanel(id:Number, panel: string){
     switch (panel) {
-      case 'ubigeo': this.pagination.entidadUbigeoId = `${id}`; break;
+      case 'ubigeo': this.pagination.entidadUbigeoId = `${id}`, this.pagination.nivelUbigeo = '1'; break;
       case 'sector': this.pagination.sectorId = id; break;
       case 'nivelGobierno': this.pagination.nivelGobiernoId = `${id}`; break;
     }

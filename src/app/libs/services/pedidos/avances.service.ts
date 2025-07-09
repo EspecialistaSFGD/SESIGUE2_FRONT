@@ -68,7 +68,8 @@ export class AvancesService {
 
             if (avance.fecha) {
                 const fechaE = new Date(avance.fecha);
-                formData.append('fecha', `${fechaE.toISOString()}`);
+                // formData.append('fecha', `${fechaE.toISOString()}`);
+                formData.append('fecha', avance.fecha);
             }
             formData.append('estadoRegistroHito', `${avance.estado}`);
             formData.append('avance', `${avance.avance}`);
