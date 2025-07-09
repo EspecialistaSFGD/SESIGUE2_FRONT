@@ -1,4 +1,4 @@
-<nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: setScrollY(),  x: setScrollX()  }" [nzFooter]="footerTable" class="custom-table">
+<nz-table nzSize="small" nzTemplateMode [nzScroll]="setScroll()" [nzFooter]="footerTable" class="custom-table">
   <thead>
     <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
   </thead>
