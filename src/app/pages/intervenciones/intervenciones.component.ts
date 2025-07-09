@@ -11,11 +11,12 @@ import { IntervencionPanelMapaComponent } from './intervencionPanel/intervencion
 import { IntervencionPanelNivelGobiernoComponent } from './intervencionPanel/intervencion-panel-nivel-gobierno/intervencion-panel-nivel-gobierno.component';
 import { IntervencionPanelSectorComponent } from './intervencionPanel/intervencion-panel-sector/intervencion-panel-sector.component';
 import { IntervencionPanelUbigeoComponent } from './intervencionPanel/intervencion-panel-ubigeo/intervencion-panel-ubigeo.component';
+import { IntervencionPanelFiltrosComponent } from "./intervencionPanel/intervencion-panel-filtros/intervencion-panel-filtros.component";
 
 @Component({
   selector: 'app-intervenciones',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, IntervencionPanelInfoComponent, IntervencionPanelMapaComponent, IntervencionPanelSectorComponent, IntervencionPanelNivelGobiernoComponent, IntervencionPanelUbigeoComponent, IntervencionPanelEstadoComponent, IntervencionPanelAptosComponent],
+  imports: [CommonModule, NgZorroModule, IntervencionPanelInfoComponent, IntervencionPanelMapaComponent, IntervencionPanelSectorComponent, IntervencionPanelNivelGobiernoComponent, IntervencionPanelUbigeoComponent, IntervencionPanelEstadoComponent, IntervencionPanelAptosComponent, IntervencionPanelFiltrosComponent],
   templateUrl: './intervenciones.component.html',
   styles: ``
 })
@@ -23,7 +24,7 @@ export default class IntervencionesComponent {
   title: string = `Intervenciones`;
 
   pagination: Pagination = {}
-
+  filter = signal<Pagination>({})
   intervenciones = signal<IntervencionPanel>({})
 
   private intervencionService = inject(IntervencionService)
@@ -34,5 +35,26 @@ export default class IntervencionesComponent {
 
   obtenerIntervencionPanelService(){
     this.intervencionService.ListarIntervencionEtapas(this.pagination).subscribe( resp => this.intervenciones.set(resp.data))
+  }
+
+  getFilterPagination(pagination: Pagination){
+    this.pagination = pagination
+    this.obtenerIntervencionPanelService()  
+  }
+
+  getIdPanel(id:Number, panel: string){
+    switch (panel) {
+      case 'ubigeo': this.pagination.entidadUbigeoId = `${id}`, this.pagination.nivelUbigeo = '1'; break;
+      case 'sector': this.pagination.sectorId = id; break;
+      case 'nivelGobierno': this.pagination.nivelGobiernoId = `${id}`; break;
+    }
+    this.filter.update( f => ({
+      ...f,
+      entidadUbigeoId: this.pagination.entidadUbigeoId,
+      sectorId: this.pagination.sectorId,
+      nivelGobiernoId: this.pagination.nivelGobiernoId
+    }))
+    
+    this.obtenerIntervencionPanelService()  
   }
 }

@@ -1,29 +1,43 @@
 <app-card [titulo]="'Inversiones por región'" class="flex h-full">
     <ng-template #content>
-        <app-table-card [scrollY]="520">
+        <app-table-card [scrollY]="170">
             <ng-template #header>
                 <tr>
-                    <th>Departamento</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">N° invers. PIM</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+                    <th [nzLeft]="true" width="148px">Departamento</th>
+                    <th nzAlign="center">N°<br>invers.</th>
+                    <th nzAlign="center" nzWidth="60px">Costo</th>
+                    <th nzAlign="center">N° Invers. PIM</th>
+                    <th nzAlign="center">Monto PIM</th>
+                    <th nzAlign="center">Avance</th>
                 </tr>
             </ng-template>
             <ng-template #body>
                 @for(ubigeo of intervencionUbigeo; track $index){
-                    <tr (click)="obtenerIntervencionUbigeo(ubigeo)">
-                        <td>{{ubigeo.nombre}}</td>
+                    <tr [ngClass]="{ 'cursor-pointer' : ubigeo.id > 0 }" (click)="obtenerIntervencionUbigeo(ubigeo)">
+                        <td [nzLeft]="true" width="148px">{{ubigeo.nombre}}</td>
                         <td nzAlign="center">{{ubigeo.cantIntervenciones}}</td>
-                        <td nzAlign="center">{{ubigeo.costoActualizado | numero : 0}}</td>
-                        <td nzAlign="center">{{ubigeo.pim | numero : 0}}</td>
+                        <td nzAlign="center">{{ubigeo.costoActualizado | numero : 1}}</td>
+                        <td nzAlign="center">{{ubigeo.inversionActual}}</td>
+                        <td nzAlign="center">{{ubigeo.pim | numero : 1}}</td>
                         <td nzAlign="center">
-                        <div class="object-contain w-[{{ubigeo.avance}}%]">
-                            <nz-progress [nzPercent]="ubigeo.avance" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(ubigeo.avance)" />
-                        </div>
+                            @if (ubigeo.avance == 0) {
+                                {{ubigeo.avance}}%
+                            } @else {
+                                <div class="object-contain w-[{{ubigeo.avance}}%]">
+                                    <nz-progress [nzPercent]="ubigeo.avance" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(ubigeo.avance)" />
+                                </div>
+                            }
                         </td>
                     </tr>
                 }
+                <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
+                    <td> Total</td>
+                    <td nzAlign="center">{{totales.cantIntervenciones}}</td>
+                    <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
+                    <td nzAlign="center">{{totales.inversionActual}}</td>
+                    <td nzAlign="center">{{totales.pim | numero : 1}}</td>
+                    <td nzAlign="center">{{totales.avance | numero : 1}}% </td>
+                </tr>
             </ng-template>
         </app-table-card>
     </ng-template>

@@ -6,7 +6,11 @@
 				<ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
 					<ng-container *ngTemplateOutlet="generales"></ng-container>
 					<div class="flex pt-4 justify-end">
-						<p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right" (onClick)="generalValidate() ? nextCallback.emit() : null" />
+						<p-button label="Siguiente" (onClick)="generalValidate() ? nextCallback.emit() : null" />
+						<!-- <div class="border border-green-700 text-green-700 py-2 px-3 rounded cursor-pointer hover:bg-green-700 hover:text-white" (onClick)="generalValidate() ? nextCallback.emit() : null">
+							Siguiente
+							<span nz-icon nzType="arrow-right" nzTheme="outline"></span>
+						</div> -->
 					</div>
 				</ng-template>
 			</p-stepperPanel>
@@ -79,8 +83,8 @@
 						</div>
 					</div>
 					<div class="flex pt-4 justify-between">
-						<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
-						<p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right" (onClick)="sectorsValidate() ? nextCallback.emit() : null" />
+						<p-button label="Atras" (onClick)="prevCallback.emit()" />
+						<p-button label="Siguiente" (onClick)="sectorsValidate() ? nextCallback.emit() : null" />
 					</div>
 				</ng-template>
 			</p-stepperPanel>
@@ -203,7 +207,7 @@
 						</div>
 					</div>
 					<div class="flex pt-4 justify-start">
-						<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+						<p-button label="Atras" (onClick)="prevCallback.emit()" />
 					</div>
 				</ng-template>
 			</p-stepperPanel>

@@ -308,7 +308,8 @@ export class FormularioAtencionComponent {
       .subscribe(resp => {        
         if (resp.success = true) {          
           const tipoEntidaes: TipoEntidadResponse[] = []
-          resp.data.find(item => {
+          const tipos = resp.data.filter(item => item.abreviatura != 'GN')          
+          tipos.find(item => {
             if(this.esDocumento){              
               tipoEntidaes.push(item)
             } else {
@@ -984,7 +985,6 @@ export class FormularioAtencionComponent {
   changeTipoInversion(){
     const inversion = this.formAtencion.get('orientacionId')?.value
     this.cuiClasificacion = inversion == 2 || inversion == 3 ? true : false
-    console.log(inversion);
     if(inversion){
       // const getControl = this.formAtencion.get('agendas') as FormArray
       // getControl.at(0).get('cui')?.setValidators([Validators.required])
