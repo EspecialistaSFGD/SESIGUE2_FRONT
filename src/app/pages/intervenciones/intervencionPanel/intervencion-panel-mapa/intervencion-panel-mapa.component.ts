@@ -25,6 +25,7 @@ export class IntervencionPanelMapaComponent {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.setIntervencionUbigeo()
+    
   }
   
   setIntervencionUbigeo(){
@@ -53,5 +54,9 @@ export class IntervencionPanelMapaComponent {
         const geo = nivelUbigeo == 1 ? 'provincias' : 'distritos'
         this.geoTopoJson = { geo, ubigeo }        
       })
+  }
+
+  ngOnDestroy(): void {
+    this.setIntervencionUbigeo()
   }
 }
