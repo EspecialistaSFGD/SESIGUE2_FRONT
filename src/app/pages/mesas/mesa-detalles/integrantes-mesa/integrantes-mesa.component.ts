@@ -7,6 +7,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntegranteMesaComponent } from './formulario-integrante-mesa/formulario-integrante-mesa.component';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { obtenerPermisosBotones } from '@core/helpers';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'app-integrantes-mesa',
@@ -175,4 +176,21 @@ export class IntegrantesMesaComponent {
       nzCancelText: 'Cancelar'
     });
   }
+
+  onQueryParamsChange(params: NzTableQueryParams): void {
+      const sortsNames = ['ascend', 'descend']
+      const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+      const qtySorts = params.sort.reduce((total, item) => {
+        return sortsNames.includes(item.value!) ? total + 1 : total
+      }, 0)
+      const campo = sorts?.key
+      const ordenar = sorts?.value!.slice(0, -3)
+      
+      this.pagination.pageSize = params.pageSize
+      this.pagination.currentPage = params.pageIndex
+      // this.pagination.typeSort = ordenar
+      // this.pagination.columnSort = campo
+      this.obtenerIntegrantesService()
+      // this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
+    }
 }

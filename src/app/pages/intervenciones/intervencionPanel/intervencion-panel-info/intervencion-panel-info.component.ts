@@ -49,16 +49,15 @@ export class IntervencionPanelInfoComponent {
   }
 
   obtenerCardInfo() {
-    const label = 'mesas'
     this.inversionInfo = [
-      { code: 'total', icono: 'acuerdos-total.svg', titulo: '3208', descripcion: `Total invers.`, comentario: `${label} generados en las reuniones bilaterales` },
-      { code: 'aptos', icono: 'acuerdos-desestimado.svg', titulo: '52', descripcion: `PI Aptos`, comentario: `${label} que, por razón justificada, y en coordinación entre las partes, dejan de ser consideradas para la medición` },
-      { code: 'viable', icono: 'acuerdos-vigente.svg', titulo: '3156', descripcion: `PI Viable`, comentario: `Resultado de la diferencia de ${label} establecidos menos los aptos` },
-      { code: 'concluidos', icono: 'acuerdos-cumplido.svg', titulo: '2442', descripcion: `PI Concluido`, comentario: `${label} que han sido cumplidos por el gobierno Nacional, regional y/o local` },
-      { code: 'ejecucion', icono: 'acuerdos-proceso.svg', titulo: '612', descripcion: `PI En ejecución`, comentario: `${label} que se encuentran dentro del plazo para su cumplimiento` },
-      { code: 'paralizadas', icono: 'acuerdos-pendiente.svg', titulo: '102', descripcion: `PI Paralizada`, comentario: `${label} que no tienen definidos los hitos para su cumplimiento` },
-      { code: 'idea', icono: 'acuerdos-vencido.svg', titulo: '231', descripcion: `PI Idea`, comentario: `${label} que superaron el plazo establecido para su cumplimiento` },
-      { code: 'otros', icono: 'acuerdos-desestimado.svg', titulo: '231', descripcion: `Otros`, comentario: `${label} que superaron el plazo establecido para su cumplimiento` }
+      { code: 'total', icono: 'acuerdos-total.svg', titulo: '3208', descripcion: `Total invers.`, comentario: `Total de proyectos de inversión priorizados por los gobiernos regionales y locales para su financiamiento` },
+      { code: 'aptos', icono: 'acuerdos-desestimado.svg', titulo: '52', descripcion: `PI Aptos`, comentario: `Proyectos de inversión vigentes, que cuentan con ET aprobado y opinión favorable de los sectores` },
+      { code: 'viable', icono: 'acuerdos-vigente.svg', titulo: '3156', descripcion: `PI Viable`, comentario: `Proyecto de inversión que ha superado satisfactoriamente las fases de formulación y evaluación, y cuenta con declaratoria de viabilidad en el marco del Invierte.pe` },
+      { code: 'concluidos', icono: 'acuerdos-cumplido.svg', titulo: '2442', descripcion: `PI Concluido`, comentario: `Proyecto de inversión que ha culminado la fase de ejecución física y financiera` },
+      { code: 'ejecucion', icono: 'acuerdos-proceso.svg', titulo: '612', descripcion: `PI En ejecución`, comentario: `Proyecto de inversión que se encuentra en proceso de implementación física y/o financiera, habiendo iniciado su etapa de ejecución conforme al ET aprobado` },
+      { code: 'paralizadas', icono: 'acuerdos-pendiente.svg', titulo: '102', descripcion: `PI Paralizada`, comentario: `Proyecto de inversión cuya ejecución ha sido interrumpida total o parcialmente, debido a causas técnicas, administrativas, financieras, contractuales o sociales, lo que impide el cumplimiento de su cronograma y metas previstas` },
+      { code: 'idea', icono: 'acuerdos-vencido.svg', titulo: '231', descripcion: `PI Idea`, comentario: `Iniciativa de inversión identificada en una etapa temprana del ciclo de inversión, donde se reconoce una necesidad o problema público por resolver, pero aún no cuenta con estudios ni registros en el Banco de Inversiones` },
+      { code: 'otros', icono: 'acuerdos-desestimado.svg', titulo: '231', descripcion: `Otros`, comentario: `Proyectos de inversion en diversas fases del proceso de formulación y evaluación` }
     ]
   }
 
