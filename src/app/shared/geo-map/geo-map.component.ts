@@ -22,9 +22,7 @@ export class GeoMapComponent {
   chart!: Chart;
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.generateGeoMap()
-    }, 100);
+    setTimeout(() => this.generateGeoMap());
   }
 
   getTopoJson() {
