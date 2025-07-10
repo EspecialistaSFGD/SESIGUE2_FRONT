@@ -34,7 +34,6 @@ export class IntervencionPanelMapaComponent {
         data.porcentaje = `${intervencion.avance.toFixed(1)} %` 
       }      
     }
-    console.log(this.pagination);
     
     if( this.pagination.entidadUbigeoId && this.pagination.nivelUbigeo ){
       const entidadId = this.pagination.entidadUbigeoId

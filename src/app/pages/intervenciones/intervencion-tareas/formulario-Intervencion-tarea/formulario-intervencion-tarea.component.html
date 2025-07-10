@@ -52,6 +52,14 @@
 				(onClick)="obtenerEntidadId()"/>
 			} @else {
 				<input type="text" class="form-control" id="entidad" formControlName="entidad">
+				 <!-- <p-dropdown 
+				[options]="sectorEntidades()"
+				formControlName="entidadId"
+				optionLabel="nombre"
+				optionValue="entidadId"
+				[showClear]="true" 
+				placeholder="Seleccionar entidad"
+				(onClick)="obtenerEntidadId()"/> -->
 			}
 			<div class="text-danger" *ngIf="alertMessageError('entidadId')">{{msgErrorControl('entidadId','Entidad')}}</div>
 		</div>

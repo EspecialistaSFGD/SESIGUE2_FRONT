@@ -100,8 +100,7 @@ export class FormularioIntervencionTareaComponent {
   }
 
   obtenerIntervencionFaseService(){
-    this.intervencionFaseService.ListarIntervencionFases(this.pagination)
-      .subscribe( resp => this.intervencionFases.set(resp.data.filter( item => item.intervencionFaseId! >= this.intervencionEspacio().inicioIntervencionFaseId! )))
+    this.intervencionFaseService.ListarIntervencionFases(this.pagination).subscribe( resp => this.intervencionFases.set(resp.data.filter( item => item.tipoIntervencion == this.intervencionEspacio().tipoIntervencion && item.intervencionFaseId! >= this.intervencionEspacio().inicioIntervencionFaseId! )))
   }
 
   alertMessageError(control: string) {
@@ -134,8 +133,9 @@ export class FormularioIntervencionTareaComponent {
     const responsable = this.responsables().find( item => item.grupoID == responsableValue )
     this.sectorEntidad = responsable!.nombre == 'GN'  
 
-    responsableValue && this.sectorEntidad ? entidadIdControl?.enable() :entidadIdControl?.disable()
+    // responsableValue && this.sectorEntidad ? entidadIdControl?.enable() :entidadIdControl?.disable()
 
+    entidadIdControl?.enable()
     if(this.sectorEntidad){
       entidadControl?.reset()
       entidadIdControl?.reset()
