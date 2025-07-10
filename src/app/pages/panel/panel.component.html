@@ -344,7 +344,8 @@
 
         @if(acuerdos().length>0) {
         <nz-card class="card-no-padding bg-transparent">
-            <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '200px' }" [nzFooter]="tplFooter"
+            <!-- [nzFooter]="tplFooter" -->
+            <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '200px' }"
                 class="custom-table">
                 <thead>
                     <tr>
@@ -377,10 +378,16 @@
                         </td>
                     </tr>
                     }
+                    <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
+                        <td> Total</td>
+                        <td nzAlign="center">{{totales()?.vigente}}</td>
+                        <td nzAlign="center">{{totales()?.cumplido}}</td>
+                        <td nzAlign="center">{{totales()?.porcentaje?.toFixed(1)}}%</td>
+                    </tr>
                 </tbody>
             </nz-table>
 
-            <ng-template #tplFooter>
+            <!-- <ng-template #tplFooter>
                 <tfoot>
                     <tr>
                         <td class="w-[150px] font-bold">TOTAL</td>
@@ -392,7 +399,7 @@
 
                     </tr>
                 </tfoot>
-            </ng-template>
+            </ng-template> -->
         </nz-card>
         }
 
@@ -418,7 +425,8 @@
         @if(reporteSectores().length>0) {
         <nz-card class="card-no-padding bg-transparent">
 
-            <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '200px' }" [nzFooter]="tplFooter"
+            <!-- [nzFooter]="tplFooter" -->
+            <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '200px' }"
                 class="custom-table">
                 <thead>
                     <tr>
@@ -453,10 +461,16 @@
                         </td>
                     </tr>
                     }
+                    <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
+                        <td> Total</td>
+                        <td nzAlign="center">{{totales()?.vigente}}</td>
+                        <td nzAlign="center">{{totales()?.cumplido}}</td>
+                        <td nzAlign="center">{{totales()?.porcentaje?.toFixed(1)}}%</td>
+                    </tr>
                 </tbody>
             </nz-table>
 
-            <ng-template #tplFooter>
+            <!-- <ng-template #tplFooter>
                 <tfoot>
                     <tr>
                         <td class="w-[150px] font-bold">TOTAL</td>
@@ -469,7 +483,7 @@
                         </td>
                     </tr>
                 </tfoot>
-            </ng-template>
+            </ng-template> -->
         </nz-card>
         }
 

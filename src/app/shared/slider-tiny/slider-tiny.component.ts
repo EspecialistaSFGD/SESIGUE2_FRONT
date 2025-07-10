@@ -37,7 +37,7 @@ export class SliderTinyComponent {
   }
 
   ngAfterViewInit(): void {
-    this.tinySlider()
+    setTimeout(() => this.tinySlider() )
   }
 
   tinySlider() {
