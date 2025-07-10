@@ -40,7 +40,7 @@ export class IntervencionPanelFiltrosComponent {
   private validatorService = inject(ValidatorService)
 
   formFilterPanel: FormGroup = this.fb.group({
-    tipoEspacioId: [null],
+    tipoEspacioId: [{ value: null, disabled: true}],
     eventoId: [{ value: null, disabled: true}],
     sectorId: [null],
     nivelGobiernoId: [null],
@@ -52,12 +52,18 @@ export class IntervencionPanelFiltrosComponent {
   })
 
   ngOnChanges(changes: SimpleChanges): void {
-     const sectorId = this.filter.sectorId ? Number(this.filter.sectorId) : null
+    const tipoEspacioId = this.filter.tipoEspacioId ? Number(this.filter.tipoEspacioId) : null
+    const sectorId = this.filter.sectorId ? Number(this.filter.sectorId) : null
     const nivelGobiernoId = this.filter.nivelGobiernoId ? Number(this.filter.nivelGobiernoId) : null
-    this.formFilterPanel.reset({ sectorId, nivelGobiernoId })
+    this.formFilterPanel.reset({ tipoEspacioId, sectorId, nivelGobiernoId })
+    
 
     if(this.filter.entidadUbigeoId){      
       this.obtenerEntidadPorId(this.filter.entidadUbigeoId)
+    }
+    if(tipoEspacioId){
+      this.obtenerEventosServices(tipoEspacioId)
+      this.formFilterPanel.get('eventoId')?.enable()
     }
   }
 

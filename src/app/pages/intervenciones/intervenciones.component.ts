@@ -23,8 +23,8 @@ import { IntervencionPanelFiltrosComponent } from "./intervencionPanel/intervenc
 export default class IntervencionesComponent {
   title: string = `Intervenciones`;
 
-  pagination: Pagination = {}
-  filter = signal<Pagination>({})
+  pagination: Pagination = { tipoEspacioId: '2' }
+  filter = signal<Pagination>({ tipoEspacioId: '2' })
   intervenciones = signal<IntervencionPanel>({})
 
   private intervencionService = inject(IntervencionService)
