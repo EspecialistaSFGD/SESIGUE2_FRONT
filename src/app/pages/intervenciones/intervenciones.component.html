@@ -31,7 +31,9 @@
 	</div>
 	<div class="grid md:grid-cols-2 gap-4">
 		<div class="flex flex-col gap-4">
-			<app-intervencion-panel-aptos />
+			@if(intervenciones().intervencionFinanciamiento){
+				<app-intervencion-panel-aptos [intervencionFinanciamiento]="intervenciones().intervencionFinanciamiento!" />
+			}
 			@if(intervenciones().intervencionNivelesGobierno){
 				<app-intervencion-panel-nivel-gobierno [intervencionNivelesGobierno]="intervenciones().intervencionNivelesGobierno!" (nivelGobiernoId)="getIdPanel($event, 'nivelGobierno')" />
 			}

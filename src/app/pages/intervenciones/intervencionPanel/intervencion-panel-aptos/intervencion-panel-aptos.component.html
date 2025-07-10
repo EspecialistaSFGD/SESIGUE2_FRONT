@@ -3,42 +3,36 @@
         <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '200px' }" class="custom-table">
             <thead>
                 <tr>
-                    <th rowspan="2">Mesa</th>
+                    <th rowspan="2">Espacio</th>
                     <th colspan="2" nzAlign="center" [nzWidth]="'100px'">Cartera total</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Demanda estimada 2026</th>
-                    <th colspan="2" nzAlign="center" [nzWidth]="'100px'">Demanda de recursos para continuar</th>
-                    <th colspan="2" nzAlign="center" [nzWidth]="'100px'">Demanda para nuevo proyecto</th>
+                    <th colspan="2" nzAlign="center" [nzWidth]="'100px'">PIM 2025</th>
+                    <th rowspan="2" nzAlign="center">Demanda</th>
                 </tr>
                 <tr>
-                    <th nzAlign="center" [nzWidth]="'100px'">N°</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">N° Invers.</th>
                     <th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">N°</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Dem. estimada</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">N°</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Dem. estimada</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">N° Invers.</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">PIM</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>MT_ANTA</td>
-                    <td nzAlign="center">10</td>
-                    <td nzAlign="center">72,751,661</td>
-                    <td nzAlign="center">23,579,295</td>
-                    <td nzAlign="center">2</td>
-                    <td nzAlign="center">2,805,519</td>
-                    <td nzAlign="center">8</td>
-                    <td nzAlign="center">20,773,776</td>
-                </tr>
+                @for (proyecto of intervencionFinanciamiento; track $index) {
+                    <tr>
+                        <td>{{proyecto.nombre}}</td>
+                        <td nzAlign="center">{{proyecto.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{proyecto.costoActualizado | numero : 1}}</td>
+                        <td nzAlign="center">{{proyecto.inversionActual}}</td>
+                        <td nzAlign="center">{{proyecto.pim | numero : 2}}</td>
+                        <td nzAlign="center">{{proyecto.demanda | numero : 1}}</td>
+                    </tr>
+                }
                 <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
                     <td> Total</td>
-                    <td nzAlign="center">10</td>
-                    <td nzAlign="center">72,751,661</td>
-                    <td nzAlign="center">23,579,295</td>
-                    <td nzAlign="center">2</td>
-                    <td nzAlign="center">2,805,519</td>
-                    <td nzAlign="center">8</td>
-                    <td nzAlign="center">20,773,776</td>
+                    <td nzAlign="center">{{totales.cantIntervenciones}}</td>
+                    <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
+                    <td nzAlign="center">{{totales.inversionActual}}</td>
+                    <td nzAlign="center">{{totales.pim | numero : 2}}</td>
+                    <td nzAlign="center">{{totales.demanda | numero : 1}}</td>
                 </tr>
             </tbody>
         </nz-table>
