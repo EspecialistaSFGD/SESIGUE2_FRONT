@@ -11,6 +11,7 @@ export interface IntervencionPanel {
 	intervencionSectores?: InterfacePanelResult[]
 	intervencionEstados?: InterfacePanelResult[]
 	intervencionNivelesGobierno?: InterfacePanelResult[]
+	intervencionFinanciamiento?: InterfacePanelFinanciamientoResult[]
 }
 
 export interface InterfacePanelInfoResult {
@@ -32,4 +33,8 @@ export interface InterfacePanelResult {
 	inversionActual: number,
 	devengado: number,
 	avance: number,
+}
+
+export interface InterfacePanelFinanciamientoResult extends InterfacePanelResult {
+	demanda: number,
 }

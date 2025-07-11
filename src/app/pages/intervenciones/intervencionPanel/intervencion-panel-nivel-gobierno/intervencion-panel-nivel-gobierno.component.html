@@ -1,6 +1,47 @@
-<app-card [titulo]="'Inversiones por nivel de gobierno'">
+<app-card [titulo]="'Inversiones por nivel de gobierno'" [px]="'px-1'" [py]="'py-1'">
     <ng-template #content>
-        <app-table-card>
+        <nz-table nzSize="small" nzTemplateMode class="custom-table">
+            <thead>
+                <tr>
+                    <th>Nivel de gobierno</th>
+                    <th nzAlign="center" [nzWidth]="'60px'">N° invers.</th>
+                    <th nzAlign="center" [nzWidth]="'74px'">Costo</th>
+                    <th nzAlign="center" [nzWidth]="'70px'">N° Invers. PIM</th>
+                    <th nzAlign="center" [nzWidth]="'74px'">Monto PIM</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(nivelGobierno of intervencionNivelesGobierno; track $index){
+                    <tr [ngClass]="{ 'cursor-pointer' : nivelGobierno.id > 0 }" (click)="obtenerIntervencionNivelGobierno(nivelGobierno)">
+                        <td>{{nivelGobierno.nombre}}</td>
+                        <td nzAlign="center">{{nivelGobierno.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{nivelGobierno.costoActualizado | numero : 1}}</td>
+                        <td nzAlign="center">{{nivelGobierno.inversionActual}}</td>
+                        <td nzAlign="center">{{nivelGobierno.pim | numero : 2}}</td>
+                        <td nzAlign="center">
+                            @if (nivelGobierno.avance == 0) {
+                               {{nivelGobierno.avance}}%
+                           } @else {
+                               <div class="object-contain w-[85%]">
+                                   <nz-progress [nzPercent]="nivelGobierno.avance" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(nivelGobierno.avance)" />
+                               </div>
+                           }
+                        </td>
+                    </tr>
+                }
+                <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
+                    <td> Total</td>
+                    <td nzAlign="center">{{totales.cantIntervenciones}}</td>
+                    <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
+                    <td nzAlign="center">{{totales.inversionActual}}</td>
+                    <td nzAlign="center">{{totales.pim | numero : 2}}</td>
+                    <td nzAlign="center">{{totales.avance | numero : 1}}% </td>
+                </tr>
+            </tbody>
+        </nz-table>
+
+        <!-- <app-table-card>
             <ng-template #header>
                 <tr>
                     <th [nzLeft]="true" width="148px">Nivel de gobierno</th>
@@ -41,6 +82,6 @@
                     <td nzAlign="center">{{totales.avance | numero : 1}}% </td>
                 </tr>
             </ng-template>
-        </app-table-card>
+        </app-table-card> -->
     </ng-template>
 </app-card>

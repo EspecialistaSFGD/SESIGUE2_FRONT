@@ -4,7 +4,7 @@
 
 <app-intervencion-panel-filtros [pagination]="pagination" [filter]="filter()" (filterPagination)="getFilterPagination($event)" />
 
-<div class="flex flex-col gap-6 mt-6">
+<div class="flex flex-col gap-6 mt-6 w-full">
 	<app-intervencion-panel-info [intervencionEstados]="intervenciones().intervencionEstados!" />
 
 	<div class="grid md:grid-cols-3 gap-4">
@@ -13,21 +13,31 @@
 		}
 
 		
-		<div class="flex flex-col gap-4">
+		@if(intervenciones().intervencionUbigeo){
+			<app-intervencion-panel-ubigeo [intervencionUbigeo]="intervenciones().intervencionUbigeo!" (ubigeoId)="getIdPanel($event, 'ubigeo')" class="h-full" /> 
+		}
+		<!-- <div class="flex flex-col gap-4">
 			@if(intervenciones().intervencionUbigeo){
 				<app-intervencion-panel-ubigeo [intervencionUbigeo]="intervenciones().intervencionUbigeo!" (ubigeoId)="getIdPanel($event, 'ubigeo')" class="h-full" /> 
 			}
 			@if(intervenciones().intervencionNivelesGobierno){
 				<app-intervencion-panel-nivel-gobierno [intervencionNivelesGobierno]="intervenciones().intervencionNivelesGobierno!" (nivelGobiernoId)="getIdPanel($event, 'nivelGobierno')" />
 			}
-		</div>
+		</div> -->
 		@if(intervenciones().intervencionSectores){
 			<app-intervencion-panel-sector [intervencionSectores]="intervenciones().intervencionSectores!" (sectorId)="getIdPanel($event,'sector')" />
 		}
 
 	</div>
 	<div class="grid md:grid-cols-2 gap-4">
-		<app-intervencion-panel-aptos />
+		<div class="flex flex-col gap-4">
+			@if(intervenciones().intervencionFinanciamiento){
+				<app-intervencion-panel-aptos [intervencionFinanciamiento]="intervenciones().intervencionFinanciamiento!" />
+			}
+			@if(intervenciones().intervencionNivelesGobierno){
+				<app-intervencion-panel-nivel-gobierno [intervencionNivelesGobierno]="intervenciones().intervencionNivelesGobierno!" (nivelGobiernoId)="getIdPanel($event, 'nivelGobierno')" />
+			}
+		</div>
 		@if(intervenciones().intervencionEstados){
 			<app-intervencion-panel-estado [intervencionEstados]="intervenciones().intervencionEstados!" />
 		}
