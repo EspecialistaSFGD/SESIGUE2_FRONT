@@ -23,8 +23,8 @@ import { IntervencionPanelFiltrosComponent } from "./intervencionPanel/intervenc
 export default class IntervencionesComponent {
   title: string = `Intervenciones`;
 
-  pagination: Pagination = {}
-  filter = signal<Pagination>({})
+  pagination: Pagination = { tipoEspacioId: '2' }
+  filter = signal<Pagination>({ tipoEspacioId: '2' })
   intervenciones = signal<IntervencionPanel>({})
 
   private intervencionService = inject(IntervencionService)
@@ -44,7 +44,7 @@ export default class IntervencionesComponent {
 
   getIdPanel(id:Number, panel: string){
     switch (panel) {
-      case 'ubigeo': this.pagination.entidadUbigeoId = `${id}`; break;
+      case 'ubigeo': this.pagination.entidadUbigeoId = `${id}`, this.pagination.nivelUbigeo = '1'; break;
       case 'sector': this.pagination.sectorId = id; break;
       case 'nivelGobierno': this.pagination.nivelGobiernoId = `${id}`; break;
     }

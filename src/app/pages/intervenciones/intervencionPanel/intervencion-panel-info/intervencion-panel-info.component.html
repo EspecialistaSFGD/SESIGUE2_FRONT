@@ -1,18 +1,17 @@
-<app-slider-tiny>
+<app-slider-tiny [responsive]="responsive">
     <ng-template #items>
         @for (info of inversionInfo; track $index) {
         <div>
             <div class="rounded-xl bg-punche-green-550 flex text-white gap-4 p-4 relative">
-            <img class="flex w-[60px]" src="./assets/images/inicio/{{info.icono}}" alt="{{info.titulo}}">
+            <img class="flex w-[52px]" src="./assets/images/inicio/{{info.icono}}" alt="{{info.titulo}}">
             <div class="flex items-center">
                 <div class="flex flex-col">
-                <div class="text-xl sm:text-3xl font-bold">{{info.titulo}}</div>
-                <div class="text-sm font-bold" [innerHTML]="info.descripcion"></div>
-                <!-- <div class="text-sm font-bold">{{info.descripcion | titlecase }}</div> -->
+                <div class="text-xl sm:text-2xl font-bold">{{info.titulo}}</div>
+                <div class="text-sm font-medium" [innerHTML]="info.descripcion"></div>
                 </div>
             </div>
             <span *ngIf="info.comentario" class="absolute bottom-2 right-2 bg-orange-400 rounded-full cursor-help" nz-icon
-                nzType="question-circle" nzTheme="outline" nz-tooltip="{{info.comentario | titlecase}}"></span>
+                nzType="question-circle" nzTheme="outline" nz-tooltip="{{info.comentario}}"></span>
             </div>
         </div>
         }

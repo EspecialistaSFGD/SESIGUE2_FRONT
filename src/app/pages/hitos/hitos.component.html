@@ -1,7 +1,7 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <!-- {{this.authService.sector() |json}} -->
 <!-- {{ this.authService.subTipo() |json}} -->
-<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+<nz-table [nzScroll]="{ x: '1150px' }" #fixedTable [nzTitle]="Header" nzShowSizeChanger nzSize="small"
     [nzData]="this.hitosService.hitos()!" [nzFrontPagination]="false" [nzLoading]="this.hitosService.isLoading()"
     [nzTotal]="this.hitosService.total()" [nzPageSize]="this.pageSize" [nzPageIndex]="this.pageIndex"
     (nzQueryParams)="onQueryParamsChange($event)">

@@ -10,5 +10,8 @@ import { Component, ContentChild, Input, TemplateRef } from '@angular/core';
 })
 export class CardComponent {
   @Input() titulo:string = ''
+  @Input() py:string = 'py-4'
+  @Input() px:string = 'px-4'
+
   @ContentChild('content', { static: true }) contentTemplate!: TemplateRef<any>;
 }

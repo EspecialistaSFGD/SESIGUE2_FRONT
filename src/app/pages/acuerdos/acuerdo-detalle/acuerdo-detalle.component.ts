@@ -41,6 +41,7 @@ import { AprobarDesestimacionComponent } from './aprobar-desestimacion/aprobar-d
 import { AcuerdoDesestimacionResponse, ButtonsActions } from '@core/interfaces';
 import { AcuerdoNoCumplidoComponent } from './acuerdo-no-cumplido/acuerdo-no-cumplido.component';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { getDateFormat } from '@core/helpers';
 
 const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
@@ -554,7 +555,11 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
           type: 'primary',
           label: labelOk,
           onClick: componentInstance => {
-            return this.avancesService.agregarEditarAvance(componentInstance!.avanceForm.value).then((res) => {
+            const formAvance = componentInstance!.avanceForm
+            const fecha = getDateFormat(formAvance.get('fecha')?.value)
+            formAvance.get('fecha')?.setValue(fecha)
+            const avanceForm = componentInstance!.avanceForm.value
+            return this.avancesService.agregarEditarAvance(avanceForm).then((res) => {
               this.acuerdosService.listarAcuerdo(Number(this.id));
               this.traerHitos({});
               this.traerAvances({ hitoId: Number(this.hitoSeleccionadoId) });

@@ -1,16 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { themeProgressBarPercente } from '@core/helpers';
 import { InterfacePanelResult } from '@core/interfaces/intervencion.interface';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { CardComponent } from '@shared/card/card.component';
-import { TableCardComponent } from '@shared/table-card/table-card.component';
 
 @Component({
   selector: 'app-intervencion-panel-ubigeo',
   standalone: true,
-  imports: [CommonModule, CardComponent, TableCardComponent, NgZorroModule, PipesModule],
+  imports: [CommonModule, CardComponent,  NgZorroModule, PipesModule],
   templateUrl: './intervencion-panel-ubigeo.component.html',
   styles: ``
 })
@@ -30,6 +29,7 @@ export class IntervencionPanelUbigeoComponent {
       this.totales.cantIntervenciones += item.cantIntervenciones;
       this.totales.costoActualizado += item.costoActualizado
       this.totales.pim += item.pim
+      this.totales.inversionActual += item.inversionActual
       this.totales.devAcumulado += item.devAcumulado
       this.totales.devengado += item.devengado   
     })
@@ -41,7 +41,9 @@ export class IntervencionPanelUbigeoComponent {
   }
 
   obtenerIntervencionUbigeo(ubigeo: InterfacePanelResult){
-    this.ubigeoId.emit(ubigeo.id)
+    if(ubigeo.id){
+      this.ubigeoId.emit(ubigeo.id)
+    }
   }
 
 }
