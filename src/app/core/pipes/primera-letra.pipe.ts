@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class PrimeraLetraPipe implements PipeTransform {
   transform ( value: string, qty: number = 0  ): string {
-    const words = value.split(' ')
+    const words = value ? value.split(' ') : []
     if( qty > 0 && words.length > qty ){
       words.length = qty
     }
