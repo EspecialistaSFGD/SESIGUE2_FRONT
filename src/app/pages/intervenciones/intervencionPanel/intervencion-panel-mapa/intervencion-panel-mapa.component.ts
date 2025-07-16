@@ -29,12 +29,15 @@ export class IntervencionPanelMapaComponent {
   }
   
   setIntervencionUbigeo(){
-     for(let data of this.dataTopoJson){
+    const newData: UbigeoTopoJson[] = [ ...this.dataTopoJson ]
+     for(let data of newData){
       const intervencion = this.intervencionUbigeo.find((item:InterfacePanelResult) => item.nombre == data.nombre)
       if(intervencion){
         data.porcentaje = `${intervencion.avance.toFixed(1)} %` 
       }      
     }
+
+    this.dataTopoJson = newData
     
     if( this.pagination.entidadUbigeoId && this.pagination.nivelUbigeo ){
       const entidadId = this.pagination.entidadUbigeoId
