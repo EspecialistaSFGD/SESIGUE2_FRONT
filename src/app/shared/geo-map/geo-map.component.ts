@@ -11,41 +11,26 @@ import { GeoTopoJson, UbigeoTopoJson } from '@core/interfaces';
   templateUrl: './geo-map.component.html',
   styles: ``
 })
-export class GeoMapComponent {
-  @Input() dataSet: UbigeoTopoJson[] = departamentosTopoJSON()
+export class GeoMapComponent  {
+  @Input() dataSet: UbigeoTopoJson[] = []
   @Input() geoTopoJson: GeoTopoJson = { geo: 'departamentos', ubigeo: 'departamentos' }
   @Input() codigo: number = 1 // 1 - Departamento, 2 - Provincia, 3 - Distrito
-
-  // private _dataSet: UbigeoTopoJson[] | null = null;
-  // @Input()
-  //   set dataSet(value: UbigeoTopoJson[] | null) {
-  //     this._dataSet = value;
-  //     if (value!.length > 0 ) {
-  //       this.generateGeoMap()
-  //     }
-  //   }
 
 
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
 
   chart!: Chart;
 
-  // get dataSet(): UbigeoTopoJson[] | null {
-  //   return this._dataSet;
-  // }
+  ngOnChanges(changes: SimpleChanges): void {  
+    if (changes['dataSet'] && this.dataSet && this.chartContainer) {      
+      this.generateGeoMap()
+    }
+  }
 
-  // ngAfterViewInit(): void {
-  //   setTimeout(() => this.generateGeoMap());
-  // }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-    //Add '${implements OnChanges}' to the class.
-    console.log('cambios en map');
-    
-    setTimeout(() => this.generateGeoMap());
-    console.log(this.dataSet);
-    
+  ngAfterViewInit(): void {
+  if (this.dataSet) {
+    this.generateGeoMap();
+  }
   }
 
   ngOnDestroy(): void {
@@ -61,7 +46,7 @@ export class GeoMapComponent {
     return { topoJsonUrl: `assets/data/json/${this.geoTopoJson.geo}/${ubigeo}.topo.json`, rqDataFeature: ubigeo }
   }
 
-  generateGeoMap(){
+  generateGeoMap(){    
     const { topoJsonUrl, rqDataFeature } = this.getTopoJson();
     if (this.chart) {
       this.chart.destroy();
