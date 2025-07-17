@@ -7,12 +7,12 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { AuthService } from '../../libs/services/auth/auth.service';
+import { AuthService } from '../../../../libs/services/auth/auth.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { ThemeSwitcherComponent } from '../../libs/shared/components/theme-switcher/theme-switcher.component';
-import { OnlyNumbersDirective } from '../../libs/shared/directives/only-numbers.directive';
+import { ThemeSwitcherComponent } from '../../../../libs/shared/components/theme-switcher/theme-switcher.component';
+import { OnlyNumbersDirective } from '../../../../libs/shared/directives/only-numbers.directive';
 import { ValidatorService } from '@core/services/validators';
 
 const claveValidPattern = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\~-]{6,}$/;
