@@ -1,6 +1,42 @@
-<app-card [titulo]="'Proyectos aptos por financiar'">
+<app-card [titulo]="'Proyectos aptos por financiar'" [px]="'px-1'" [py]="'py-1'">
     <ng-template #content>
-        <app-table-card [scrollY]="550">
+        <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '200px' }" class="custom-table">
+            <thead>
+                <tr>
+                    <th rowspan="2">Sector</th>
+                    <th colspan="2" nzAlign="center" [nzWidth]="'100px'">Cartera total</th>
+                    <th colspan="2" nzAlign="center" [nzWidth]="'100px'">PIM 2025</th>
+                    <th rowspan="2" nzAlign="center">Demanda</th>
+                </tr>
+                <tr>
+                    <th nzAlign="center" [nzWidth]="'100px'">N° Invers.</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">Costo</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">N° Invers.</th>
+                    <th nzAlign="center" [nzWidth]="'100px'">PIM</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (proyecto of intervencionFinanciamiento; track $index) {
+                    <tr>
+                        <td>{{proyecto.nombre}}</td>
+                        <td nzAlign="center">{{proyecto.cantIntervenciones}}</td>
+                        <td nzAlign="center">{{proyecto.costoActualizado | numero : 1}}</td>
+                        <td nzAlign="center">{{proyecto.inversionActual}}</td>
+                        <td nzAlign="center">{{proyecto.pim | numero : 2}}</td>
+                        <td nzAlign="center">{{proyecto.demanda | numero : 2}}</td>
+                    </tr>
+                }
+                <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
+                    <td> Total</td>
+                    <td nzAlign="center">{{totales.cantIntervenciones}}</td>
+                    <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
+                    <td nzAlign="center">{{totales.inversionActual}}</td>
+                    <td nzAlign="center">{{totales.pim | numero : 2}}</td>
+                    <td nzAlign="center">{{totales.demanda | numero : 2}}</td>
+                </tr>
+            </tbody>
+        </nz-table>
+        <!-- <app-table-card [scrollY]="550">
             <ng-template #header>
                 <tr>
                     <th rowspan="2">Mesa</th>
@@ -41,6 +77,6 @@
                     <td nzAlign="center">20,773,776</td>
                 </tr>
             </ng-template>
-        </app-table-card>
+        </app-table-card> -->
     </ng-template>
 </app-card>

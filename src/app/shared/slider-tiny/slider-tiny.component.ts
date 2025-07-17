@@ -37,7 +37,7 @@ export class SliderTinyComponent {
   }
 
   ngAfterViewInit(): void {
-    this.tinySlider()
+    setTimeout(() => this.tinySlider() )
   }
 
   tinySlider() {
@@ -55,27 +55,7 @@ export class SliderTinyComponent {
       nextButton: '#next',
       arrowKeys: true,
       "nav": false,
-      responsive: {
-        575: {
-          items: 2
-        },
-        576: {
-          items: 2
-        },
-        768: {
-          items: 3
-        },
-        992: {
-          items: 4
-        },
-        1200: {
-          items: 6
-        },
-        1600: {
-          items: 7,
-          "mouseDrag": false,
-        },
-      }
+      responsive: this.responsive
     });
   }
 }

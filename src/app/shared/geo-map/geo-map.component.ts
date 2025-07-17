@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart } from '@antv/g2';
 import { departamentosTopoJSON, themeProgressBarPercente } from '@core/helpers';
 import { GeoTopoJson, UbigeoTopoJson } from '@core/interfaces';
@@ -11,8 +11,8 @@ import { GeoTopoJson, UbigeoTopoJson } from '@core/interfaces';
   templateUrl: './geo-map.component.html',
   styles: ``
 })
-export class GeoMapComponent {
-  @Input() dataSet: UbigeoTopoJson[] = departamentosTopoJSON()
+export class GeoMapComponent  {
+  @Input() dataSet: UbigeoTopoJson[] = []
   @Input() geoTopoJson: GeoTopoJson = { geo: 'departamentos', ubigeo: 'departamentos' }
   @Input() codigo: number = 1 // 1 - Departamento, 2 - Provincia, 3 - Distrito
 
@@ -21,10 +21,20 @@ export class GeoMapComponent {
 
   chart!: Chart;
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
+  ngOnChanges(changes: SimpleChanges): void {  
+    if (changes['dataSet'] && this.dataSet && this.chartContainer) {      
       this.generateGeoMap()
-    }, 100);
+    }
+  }
+
+  ngAfterViewInit(): void {
+  if (this.dataSet) {
+    this.generateGeoMap();
+  }
+  }
+
+  ngOnDestroy(): void {
+    this.generateGeoMap()
   }
 
   getTopoJson() {
@@ -36,7 +46,7 @@ export class GeoMapComponent {
     return { topoJsonUrl: `assets/data/json/${this.geoTopoJson.geo}/${ubigeo}.topo.json`, rqDataFeature: ubigeo }
   }
 
-  generateGeoMap(){
+  generateGeoMap(){    
     const { topoJsonUrl, rqDataFeature } = this.getTopoJson();
     if (this.chart) {
       this.chart.destroy();
@@ -84,6 +94,5 @@ export class GeoMapComponent {
 
   private eventGeoMap(evt: any): void {
     const { data } = evt;
-    console.log(data);
   }
 }

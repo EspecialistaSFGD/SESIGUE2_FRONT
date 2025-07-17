@@ -18,11 +18,11 @@ export class TableCardComponent {
   @Input() scrollY: number = 0;
   @Input() scrollX: number = 0;
 
-  setScrollY() {
-    return this.scrollY == 0 ? null : `${this.scrollY}px`
-  }
+  setScroll(){
+    const scroll: { x?: string; y?: string } = {};
+    if (this.scrollY > 0) scroll.y = `${this.scrollY}px`;
+    if (this.scrollX > 0) scroll.x = `${this.scrollX}px`;
 
-  setScrollX(){
-    return this.scrollX == 0 ? null : `${this.scrollX}px`
+    return scroll;
   }
 }

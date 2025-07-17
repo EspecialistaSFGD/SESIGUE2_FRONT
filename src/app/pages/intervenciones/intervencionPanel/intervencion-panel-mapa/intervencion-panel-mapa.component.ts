@@ -25,16 +25,19 @@ export class IntervencionPanelMapaComponent {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.setIntervencionUbigeo()
+    
   }
   
   setIntervencionUbigeo(){
-     for(let data of this.dataTopoJson){
+    const newData: UbigeoTopoJson[] = [ ...this.dataTopoJson ]
+     for(let data of newData){
       const intervencion = this.intervencionUbigeo.find((item:InterfacePanelResult) => item.nombre == data.nombre)
       if(intervencion){
         data.porcentaje = `${intervencion.avance.toFixed(1)} %` 
       }      
     }
-    console.log(this.pagination);
+
+    this.dataTopoJson = newData
     
     if( this.pagination.entidadUbigeoId && this.pagination.nivelUbigeo ){
       const entidadId = this.pagination.entidadUbigeoId
@@ -54,5 +57,9 @@ export class IntervencionPanelMapaComponent {
         const geo = nivelUbigeo == 1 ? 'provincias' : 'distritos'
         this.geoTopoJson = { geo, ubigeo }        
       })
+  }
+
+  ngOnDestroy(): void {
+    this.setIntervencionUbigeo()
   }
 }
