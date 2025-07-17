@@ -8,7 +8,7 @@
         <label for="clave">Contraseña</label>
         <div class="flex">
             <input [type]="visiblePassword ? 'text' : 'password'" class="form-control border-r-0 rounded-r-none" formControlName="clave" autocomplete="off">
-            <div class="cursor-pointer flex items-center px-4 border border-slate-400 rounded-r-md" (click)="visiblePassword = !visiblePassword">
+            <div class="cursor-pointer flex items-center px-4 border border-slate-400 rounded-r-md dark:border-gray-500" (click)="visiblePassword = !visiblePassword">
                 <i class="cursor-pointer" nz-icon [nzType]="visiblePassword ? 'eye-invisible' : 'eye'"></i>
             </div>
         </div>
@@ -24,5 +24,8 @@
             ¡Has olvidado tu contraseña!
         </div>
     </div>
-    <button type="button" class="px-3 py-3 bg-red-600 text-white rounded leading-none hover:bg-red-700 font-medium" (click)="login()">Ingresar</button>
+    <button type="button" class="flex justify-center gap-2 px-3 py-3 bg-red-600 text-white rounded leading-none hover:bg-red-700 font-medium" (click)="login()">
+        Ingresar
+        <div class="w-[16px] h-[16px] border-2 border-slate-600 border-r-slate-400 rounded-full"></div>
+    </button>
 </form>

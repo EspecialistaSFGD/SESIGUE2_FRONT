@@ -32,8 +32,6 @@ export class FormLoginComponent {
   })
 
   ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
     const recordar = localStorage.getItem('usuario') ? true : false
     const usuario = localStorage.getItem('usuario') ? localStorage.getItem('usuario') : null
     this.formLogin.reset({ usuario, recordar })
@@ -74,9 +72,6 @@ export class FormLoginComponent {
             }, 100);
             this.loading = false;
           }
-        },
-        error: (error) => {
-          console.log(error);
         },
         complete: () => {
           const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/panel';

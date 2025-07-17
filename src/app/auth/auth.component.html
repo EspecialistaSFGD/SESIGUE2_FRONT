@@ -1,0 +1,13 @@
+<nz-layout class="min-h-screen">
+    <app-super-header></app-super-header>
+    <nz-content class="bg-[url('./assets/images/login-bg-final.jpg')] bg-cover bg-center flex items-center relative px-4 md:px-[50px]">
+        <div class="absolute top-0 right-0 lex px-8 items-center justify-end">
+            <app-theme-switcher [isAbsolute]="false" [isRounded]="false" [hasInitialDarkBackground]="false" />
+        </div>
+
+        <router-outlet />
+    </nz-content>
+    <nz-footer class="bg-punche-blue dark:bg-neutral-800 text-white">
+        <app-footer></app-footer>
+    </nz-footer>
+</nz-layout>

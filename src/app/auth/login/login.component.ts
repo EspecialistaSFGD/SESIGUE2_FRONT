@@ -7,9 +7,8 @@ import { NzTabChangeEvent, NzTabsModule } from 'ng-zorro-antd/tabs';
 import { ThemeSwitcherComponent } from '../../libs/shared/components/theme-switcher/theme-switcher.component';
 import { FooterComponent } from '../../libs/shared/layout/footer/footer.component';
 import { SuperHeaderComponent } from '../../libs/shared/layout/super-header/super-header.component';
-import { LoginComponent } from "./forms/login/login.component";
-import { RegisterComponent } from './forms/register/register.component';
 import { FormLoginComponent } from './form/form-login/form-login.component';
+import { RegisterComponent } from './forms/register/register.component';
 
 @Component({
   selector: 'app-auth',
@@ -19,7 +18,6 @@ import { FormLoginComponent } from './form/form-login/form-login.component';
     RouterModule,
     NzTabsModule,
     FormLoginComponent,
-    LoginComponent,
     RegisterComponent,
     NzLayoutModule,
     NzCardModule,
@@ -27,9 +25,9 @@ import { FormLoginComponent } from './form/form-login/form-login.component';
     SuperHeaderComponent,
     FooterComponent,
   ],
-  templateUrl: './auth.component.html',
+  templateUrl: './login.component.html',
 })
-export default class AuthComponent {
+export default class LoginComponent {
   // private route: ActivatedRoute = inject(ActivatedRoute);
   // private router = inject(Router);
   // private authService = inject(AuthService);
