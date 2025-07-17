@@ -3,11 +3,12 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { typeErrorControl } from '@core/helpers';
+import { OtpForgotComponent } from './otp-forgot/otp-forgot.component';
 
 @Component({
   selector: 'app-forgot',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, OtpForgotComponent],
   templateUrl: './forgot.component.html',
   styles: ``
 })
