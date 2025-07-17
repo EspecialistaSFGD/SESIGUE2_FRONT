@@ -1,1 +1,22 @@
-<p>form-login works!</p>
+<form [formGroup]="formLogin" autocomplete="off" class="flex flex-col gap-4 md:px-10">
+    <div class="flex flex-col">
+        <label for="usuario">Documento de Identidad</label>
+        <input type="text" class="form-control" formControlName="usuario" autocomplete="off">
+        <div class="w-full text-danger" *ngIf="alertMessageError('usuario')">{{msgErrorControl('usuario','Documento de identidad')}}</div>
+    </div>
+    <div class="flex flex-col">
+        <label for="clave">Contraseña</label>
+        <input type="text" class="form-control" formControlName="clave" autocomplete="off">
+        <div class="w-full text-danger" *ngIf="alertMessageError('clave')">{{msgErrorControl('clave','Contraseña')}}</div>
+    </div>
+    <div class="flex justify-between gap-2">
+        <div class="flex items-center">
+            <input type="checkbox" id="rememberUser" formControlName="rememberUser">
+            <label for="rememberUser" class="ml-2"> Recordar usuario </label>
+        </div>
+        <div class="cursor-pointer text-sky-600 hover:text-sky-700 font-medium">
+            ¡Has olvidado tu contraseña!
+        </div>
+    </div>
+    <button type="button" class="px-3 py-3 bg-red-600 text-white rounded leading-none hover:bg-red-700 font-medium" (click)="login()">Ingresar</button>
+</form>
