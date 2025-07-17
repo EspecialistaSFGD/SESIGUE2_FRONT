@@ -6,13 +6,19 @@
     </div>
     <div class="flex flex-col">
         <label for="clave">Contraseña</label>
-        <input type="text" class="form-control" formControlName="clave" autocomplete="off">
+        <div class="flex">
+            <input [type]="visiblePassword ? 'text' : 'password'" class="form-control rounded-r-0 " formControlName="clave" autocomplete="off">
+            <div class="cursor-pointer flex items-center px-4 border border-slate-400 rounded-r-md" (click)="visiblePassword = !visiblePassword">
+                <i class="cursor-pointer" nz-icon [nzType]="visiblePassword ? 'eye-invisible' : 'eye'"></i>
+            </div>
+        </div>
         <div class="w-full text-danger" *ngIf="alertMessageError('clave')">{{msgErrorControl('clave','Contraseña')}}</div>
     </div>
     <div class="flex justify-between gap-2">
         <div class="flex items-center">
-            <input type="checkbox" id="rememberUser" formControlName="rememberUser">
-            <label for="rememberUser" class="ml-2"> Recordar usuario </label>
+            <input type="checkbox" id="recordar" formControlName="recordar">
+            
+            <label for="recordar" class="ml-2"> Recordar usuario </label>
         </div>
         <div class="cursor-pointer text-sky-600 hover:text-sky-700 font-medium">
             ¡Has olvidado tu contraseña!
