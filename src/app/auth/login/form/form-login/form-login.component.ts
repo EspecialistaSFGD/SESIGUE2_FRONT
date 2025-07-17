@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { typeErrorControl } from '@core/helpers';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -10,7 +10,7 @@ import { AuthService } from '@libs/services/auth/auth.service';
 @Component({
   selector: 'app-form-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgZorroModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgZorroModule],
   templateUrl: './form-login.component.html',
   styles: ``
 })

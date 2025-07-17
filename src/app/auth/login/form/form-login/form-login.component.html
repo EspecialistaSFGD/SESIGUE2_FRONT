@@ -20,12 +20,12 @@
             
             <label for="recordar" class="ml-2"> Recordar usuario </label>
         </div>
-        <div class="cursor-pointer text-sky-600 hover:text-sky-700 font-medium">
+        <a [routerLink]="['./forgot']" class="cursor-pointer text-sky-600 hover:text-sky-700 font-medium">
             ¡Has olvidado tu contraseña!
-        </div>
+        </a>
     </div>
     <button type="button" class="flex justify-center gap-2 px-3 py-3 bg-red-600 text-white rounded leading-none hover:bg-red-700 font-medium" (click)="login()">
-        Ingresar
-        <div class="w-[16px] h-[16px] border-2 border-slate-600 border-r-slate-400 rounded-full"></div>
+        {{loading ? 'Ingresando...' : 'Ingresar'}}
+        <div *ngIf="loading" class="loading"></div>
     </button>
 </form>
