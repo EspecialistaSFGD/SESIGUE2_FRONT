@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Component, inject, Renderer2 } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzTabChangeEvent, NzTabsModule } from 'ng-zorro-antd/tabs';
-import { AuthService } from '../libs/services/auth/auth.service';
 import { ThemeSwitcherComponent } from '../libs/shared/components/theme-switcher/theme-switcher.component';
 import { FooterComponent } from '../libs/shared/layout/footer/footer.component';
 import { SuperHeaderComponent } from '../libs/shared/layout/super-header/super-header.component';
 import { LoginComponent } from "./login/login.component";
 import { RegisterComponent } from "./register/register.component";
+import { FormLoginComponent } from './form/form-login/form-login.component';
 
 @Component({
   selector: 'app-auth',
@@ -18,6 +18,7 @@ import { RegisterComponent } from "./register/register.component";
     CommonModule,
     RouterModule,
     NzTabsModule,
+    FormLoginComponent,
     LoginComponent,
     RegisterComponent,
     NzLayoutModule,
@@ -28,49 +29,30 @@ import { RegisterComponent } from "./register/register.component";
   ],
   templateUrl: './auth.component.html',
 })
-export default class AuthComponent implements OnInit, OnDestroy {
+export default class AuthComponent {
   // private route: ActivatedRoute = inject(ActivatedRoute);
   // private router = inject(Router);
   // private authService = inject(AuthService);
   private renderer = inject(Renderer2);
-  // public currentAction!: string;
   login: boolean = true
 
-  constructor() {
-    // this.route.queryParams.subscribe(params => {
-    //   if (!params['action']) {
-    //     this.router.navigate([], {
-    //       relativeTo: this.route,
-    //       queryParams: { action: 'login' },
-    //       queryParamsHandling: 'merge',
-    //     });
-    //   } else {
-    //     this.currentAction = params['action'];
-    //   }
-    // });
-  }
+  // ngOnInit(): void {
+  //   this.addBodyClass('auth');
+  // }
 
-  ngOnInit(): void {
-    this.addBodyClass('auth');
-  }
+  // ngOnDestroy(): void {
+  //   this.removeBodyClass('auth');
+  // }
 
-  ngOnDestroy(): void {
-    this.removeBodyClass('auth');
-  }
+  // addBodyClass(className: string): void {
+  //   this.renderer.addClass(document.body, className);
+  // }
 
-  addBodyClass(className: string): void {
-    this.renderer.addClass(document.body, className);
-  }
+  // removeBodyClass(className: string): void {
+  //   this.renderer.removeClass(document.body, className);
+  // }
 
-  removeBodyClass(className: string): void {
-    this.renderer.removeClass(document.body, className);
-  }
-
-  actiontabs(event: NzTabChangeEvent){
-    
-    this.login = event.index == 0
-    console.log(this.login);
-    console.log(event);
-    
+  actiontabs(event: NzTabChangeEvent){    
+    this.login = event.index == 0    
   }
 }

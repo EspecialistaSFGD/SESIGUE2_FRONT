@@ -5,7 +5,31 @@
             <app-theme-switcher [isAbsolute]="false" [isRounded]="false" [hasInitialDarkBackground]="false" />
         </div>
 
-        <div class="px-8 flex">
+        <div class="w-full md:w-[580px] bg-white flex flex-col shadow-md rounded-xl">
+            <div class="flex flex-col text-center bg-red-600 text-white rounded-t-xl py-4">
+                <h1 class="text-lg text-white font-normal">
+                    {{ login ? 'Bienvenido al sistema de seguimiento' : 'Registro de usuario' }}
+                </h1>
+                <p>
+                    {{ login ? 'Ingrese sus credenciales para ingresar al sistema' : 'Ingrese los campos necesarios para registrarse' }}
+                </p>
+            </div>
+            <nz-tabset nzCentered (nzSelectChange)="actiontabs($event)">
+                <nz-tab nzTitle="Iniciar sesión">
+                    <div class="px-8 py-8 md:px-16">
+                        <!-- <app-form-login /> -->
+                          <app-login />
+                    </div>
+                </nz-tab>
+                <nz-tab nzTitle="Registrarse">
+                    <div class="p-8">
+                        <app-register></app-register>
+                    </div>
+                </nz-tab>
+            </nz-tabset>
+        </div>
+        
+        <!-- <div class="px-8 flex">
             <div class="w-full lg:basis-5/12">
                 <nz-card class="w-full shadow rounded-xl">
                     <header class="rounded-t-xl text-center bg-red-600 text-white py-2">
@@ -30,7 +54,7 @@
                     </nz-tabset>
                 </nz-card>
             </div>
-        </div>
+        </div> -->
     </nz-content>
     <nz-footer class="bg-punche-blue dark:bg-neutral-800 text-white">
         <app-footer></app-footer>
