@@ -7,7 +7,7 @@
     <div class="flex flex-col">
         <label for="clave">Contraseña</label>
         <div class="flex">
-            <input [type]="visiblePassword ? 'text' : 'password'" class="form-control rounded-r-0 " formControlName="clave" autocomplete="off">
+            <input [type]="visiblePassword ? 'text' : 'password'" class="form-control border-r-0 rounded-r-none" formControlName="clave" autocomplete="off">
             <div class="cursor-pointer flex items-center px-4 border border-slate-400 rounded-r-md" (click)="visiblePassword = !visiblePassword">
                 <i class="cursor-pointer" nz-icon [nzType]="visiblePassword ? 'eye-invisible' : 'eye'"></i>
             </div>
