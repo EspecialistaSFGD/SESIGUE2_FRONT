@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
+import { PasswordForgotComponent } from '../password-forgot/password-forgot.component';
 
 @Component({
   selector: 'app-otp-forgot',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, PasswordForgotComponent],
   templateUrl: './otp-forgot.component.html',
   styles: ``
 })
