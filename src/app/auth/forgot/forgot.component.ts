@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RouterModule } from '@angular/router';
 import { typeErrorControl } from '@core/helpers';
 import { OtpForgotComponent } from './otp-forgot/otp-forgot.component';
+import { AuthService } from '@core/services';
+import { GenerarClaveResponse } from '@core/interfaces';
 
 @Component({
   selector: 'app-forgot',
@@ -13,10 +15,12 @@ import { OtpForgotComponent } from './otp-forgot/otp-forgot.component';
   styles: ``
 })
 export default class ForgotComponent {
-  validate: boolean = true
+  validate: boolean = false
   loading: boolean = false
+  recuperaClave: GenerarClaveResponse = {}
 
   private fb = inject(FormBuilder)
+  private authService = inject(AuthService)
 
   formForgot: FormGroup = this.fb.group({
     usuario: [ '', Validators.required]
@@ -39,6 +43,25 @@ export default class ForgotComponent {
       console.error('Invalid fields:', invalidFields);
       return this.formForgot.markAllAsTouched();
     }
+    this.generarOtp();
+  }
 
+  generarOtp() {
+    this.loading = true;
+    const usuario = this.formForgot.get('usuario')?.value;
+    this.authService.obtenerOtp(usuario).subscribe({
+      next: (response) => {
+        this.loading = false;
+        this.validate = true
+        this.recuperaClave = { email: response?.data?.email, usuario }
+        this.formForgot.reset();
+      },
+      error: (error) => {
+        this.loading = false;
+        this.validate = false
+        delete this.recuperaClave.email;
+        delete this.recuperaClave.usuario;
+      }
+    });
   }
 }
