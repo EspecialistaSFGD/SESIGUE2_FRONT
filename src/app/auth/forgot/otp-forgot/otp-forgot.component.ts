@@ -12,6 +12,7 @@ import { PasswordForgotComponent } from '../password-forgot/password-forgot.comp
   styles: ``
 })
 export class OtpForgotComponent {
+  validate: boolean = false
   loading: boolean = false
 
   private fb = inject(FormBuilder)

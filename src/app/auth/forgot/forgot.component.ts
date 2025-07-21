@@ -13,7 +13,7 @@ import { OtpForgotComponent } from './otp-forgot/otp-forgot.component';
   styles: ``
 })
 export default class ForgotComponent {
-  validate: boolean = false
+  validate: boolean = true
   loading: boolean = false
 
   private fb = inject(FormBuilder)
