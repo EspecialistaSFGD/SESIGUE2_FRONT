@@ -1,4 +1,33 @@
-<div class="flex flex-col md:flex-row items-center justify-between h-full">
+<nz-footer class="bg-punche-blue dark:bg-neutral-800 text-white grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center justify-center">
+    <div class="flex flex-col gap-1">
+        <div class="w-full text-center md:text-left">
+            <a href="https://www.gob.pe/26865-presidencia-del-consejo-de-ministros-secretaria-de-descentralizacion"
+                target="_blank" class="bg-white p-[2px] inline-flex">
+                <img class="w-[220px] md:w-[338px]" src="./assets/images/sd-logo.svg" alt="">
+            </a>
+        </div>
+        <div class="w-full text-center md:text-left">
+            <a class="text-sm font-semibold text-white hover:text-white underline decoration-solid" href="https://www.descentralizacion.gob.pe"
+                target="_blank">www.descentralizacion.gob.pe</a>
+        </div>
+    </div>
+    <div class="flex flex-col items-center md:gap-2">
+        <div class="hidden md:flex text-base font-medium">Síguenos</div>
+        <div class="flex gap-2">
+            @for (social of followUs; track $index) {
+                <a [href]="social.url" target="_blank" class="text-white"><i class="pi pi-{{social.icon}}" style="font-size: 1.25rem"></i></a>
+            }
+        </div>
+    </div>
+    <div class="w-full flex justify-center md:justify-end">
+        <div class="flex flex-col gap-2 items-center md:items-end">
+            <a href="tel: 01219700" class="flex items-center hover:text-white gap-2"> <i class="pi pi-phone"></i> 219-7000, anexo 6113</a>
+            <div class="flex items-center gap-2"> <i class="pi pi-calendar"></i> Lunes a viernes, de 09:00 a.m. a 05:00 p.m.</div>
+            <a href="https://maps.app.goo.gl/6iacjqRSACKbBT4WA" target="_blank" class="flex items-center hover:text-white gap-2"> <i class="pi pi-map-marker"></i> Calle Schell, N.° 310, piso 12, Lima, Miraflores</a>
+        </div>
+    </div>
+</nz-footer>
+<!-- <div class="flex flex-col md:flex-row items-center justify-between h-full">
     <div class="basis-1/2 flex justify-start ">
         <div class="flex flex-col gap-2">
             <div class="bg-white p-[2px]">
@@ -39,4 +68,4 @@
             </dl>
         </div>
     </div>
-</div>
+</div> -->
