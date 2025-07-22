@@ -1,3 +1,4 @@
+export * from './auth.service'
 export * from './asistencia-tecnica-agendas.service'
 export * from './asistencia-tecnica-congresistas.service'
 export * from './asistencia-tecnica-participantes.service'

@@ -11,6 +11,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { FieldsetModule } from 'primeng/fieldset';
 import { MenubarModule } from 'primeng/menubar';
+import { ToastModule } from 'primeng/toast';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { MenubarModule } from 'primeng/menubar';
     InputSwitchModule,
     ProgressSpinnerModule,
     FieldsetModule,
-    MenubarModule
+    MenubarModule,
+    ToastModule
   ],
   exports: [
     DropdownModule,
@@ -41,7 +43,8 @@ import { MenubarModule } from 'primeng/menubar';
     InputSwitchModule,
     ProgressSpinnerModule,
     FieldsetModule,
-    MenubarModule
+    MenubarModule,
+    ToastModule
   ]
 })
 export class PrimeNgModule { }

@@ -25,12 +25,14 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzAvatarComponent } from 'ng-zorro-antd/avatar';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
 
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
+    NzLayoutModule,
     NzFormModule,
     NzRadioModule,
     NzInputModule,
@@ -58,6 +60,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzDropDownModule
   ],
   exports: [
+    NzLayoutModule,
     NzFormModule,
     NzRadioModule,
     NzInputModule,
