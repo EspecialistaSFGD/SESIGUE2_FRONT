@@ -5,12 +5,15 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { typeErrorControl } from '@core/helpers';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { AuthService } from '@libs/services/auth/auth.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-form-login',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgZorroModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgZorroModule, PrimeNgModule],
+  providers: [MessageService],
   templateUrl: './form-login.component.html',
   styles: ``
 })
@@ -24,6 +27,7 @@ export class FormLoginComponent {
   public authService = inject(AuthService)  
   private router = inject(Router)
   private route = inject(ActivatedRoute)
+  private messageService = inject(MessageService)
 
   formLogin:FormGroup = this.fb.group({
     usuario: [ '', [Validators.required,Validators.pattern(this.validatorService.DNIPattern)] ],
@@ -57,27 +61,19 @@ export class FormLoginComponent {
     }
 
     this.loading = true;
-    this.authService.login(this.formLogin.value).subscribe(
-      {
-        next: (result: any) => {
-          if (result.success) {
+    this.authService.login(this.formLogin.value)
+      .subscribe(resp => {    
+        if(resp!.success){
             if (this.formLogin.get('recordar')?.value != null && this.formLogin.get('recordar')?.value == true) {
               localStorage.setItem('usuario', this.formLogin.get('usuario')?.value);
-            } else {
-              localStorage.removeItem('usuario');
             }
-          } else {
-            setTimeout(() => {
-              this.formLogin.reset()
-            }, 100);
-            this.loading = false;
-          }
-        },
-        complete: () => {
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/panel';
-          this.router.navigateByUrl(returnUrl);
-          this.loading = false;
+            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/panel';
+            this.router.navigateByUrl(returnUrl);
+        } else {
+          localStorage.removeItem('usuario');
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp!.message });
         }
+        this.loading = false;
       })
   }
 }
