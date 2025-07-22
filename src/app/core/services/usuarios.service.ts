@@ -41,7 +41,7 @@ export class UsuariosService {
   }
 
   actualizarContraseña(usuarioClave: GenerarClaveResponse){
-    return this.http.put<GenerarClaveResponse>(`${this.urlUsuario}/CambiarClave`, usuarioClave )
+    return this.http.post<GenerarClaveResponse>(`${this.urlUsuario}/CambiarClave`, usuarioClave )
       .pipe(
         tap(resp => {
           return resp

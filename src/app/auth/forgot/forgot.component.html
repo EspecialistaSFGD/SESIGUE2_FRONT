@@ -17,11 +17,15 @@
                 <div *ngIf="loading" class="loading"></div>
             </button>
 
-            <a [routerLink]="['']" class="cursor-pointer text-sky-600 hover:text-sky-700 font-medium">
-                Iniciar Sesión
-            </a>
+            <div class="w-full">
+                <a [routerLink]="['']" class="cursor-pointer text-sky-600 hover:text-sky-700 font-medium">
+                    Iniciar Sesión
+                </a>
+            </div>
         </form>
     </div>
 </div>
+
+<p-toast />
 
 <app-otp-forgot *ngIf="validate" [usuarioClave]="claveUsuario"  />

@@ -7,11 +7,14 @@ import { GenerarClaveResponse } from '@core/interfaces';
 import { UsuariosService } from '@core/services/usuarios.service';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-password-forgot',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgZorroModule],
+  imports: [CommonModule, ReactiveFormsModule, NgZorroModule, PrimeNgModule],
+  providers: [MessageService],
   templateUrl: './password-forgot.component.html',
   styles: ``
 })
@@ -27,6 +30,7 @@ export class PasswordForgotComponent {
   private validatorService = inject(ValidatorService) 
   private router = inject(Router)
   private route = inject(ActivatedRoute)
+  private messageService = inject(MessageService)
 
   formPassword: FormGroup = this.fb.group({
     nuevaClave: [ '', [Validators.required, Validators.pattern(this.validatorService.passwordPattern)] ],
@@ -64,16 +68,17 @@ export class PasswordForgotComponent {
     this.loading = true;
 
     const usuarioClave: GenerarClaveResponse = { ...this.usuarioClave, ...this.formPassword.value };
-    this.usuarioService.actualizarContraseña(usuarioClave).subscribe({
-      next: (response) => {
-        this.loading = false;
-        this.formPassword.reset();
-        this.router.navigate(['../login'], { relativeTo: this.route });
-        // this.router.navigateByUrl(returnUrl);
-      },
-      error: (error) => {
-        this.loading = false;
-      }
-    });
+    this.usuarioService.actualizarContraseña(usuarioClave)
+      .subscribe(resp => {
+        if(resp.success) {
+          this.loading = false;
+          this.formPassword.reset();
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Contraseña cambiada con exito' });
+          this.router.navigate(['../login'], { relativeTo: this.route });
+        } else {
+          this.loading = false;
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
+        }
+      })
   }
 }

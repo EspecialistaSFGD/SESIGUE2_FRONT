@@ -6,11 +6,14 @@ import { typeErrorControl } from '@core/helpers';
 import { OtpForgotComponent } from './otp-forgot/otp-forgot.component';
 import { AuthService } from '@core/services';
 import { GenerarClaveResponse } from '@core/interfaces';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-forgot',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, OtpForgotComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, OtpForgotComponent, PrimeNgModule],
+  providers: [MessageService],
   templateUrl: './forgot.component.html',
   styles: ``
 })
@@ -21,6 +24,7 @@ export default class ForgotComponent {
 
   private fb = inject(FormBuilder)
   private authService = inject(AuthService)
+  private messageService = inject(MessageService)
 
   formForgot: FormGroup = this.fb.group({
     usuario: [ '', Validators.required]
@@ -49,19 +53,21 @@ export default class ForgotComponent {
   generarOtp() {
     this.loading = true;
     const usuario = this.formForgot.get('usuario')?.value;
-    this.authService.obtenerOtp(usuario).subscribe({
-      next: (response) => {
-        this.loading = false;
-        this.validate = true
-        this.claveUsuario = { email: response?.data?.email, usuario }
-        this.formForgot.reset();
-      },
-      error: (error) => {
-        this.loading = false;
-        this.validate = false
-        delete this.claveUsuario.email;
-        delete this.claveUsuario.usuario;
-      }
-    });
+    this.authService.obtenerOtp(usuario)
+      .subscribe(resp => {
+        if(resp.success) {
+          this.loading = false;
+          this.validate = true;
+          this.claveUsuario = { email: resp.data.email, usuario };
+          this.messageService.add({ severity: 'success', summary: 'Usuario Valido', detail: 'Revise su correo para verificar el código de acceso' });
+          this.formForgot.reset();
+        } else {
+          this.loading = false;
+          this.validate = false;
+          delete this.claveUsuario.email;
+          delete this.claveUsuario.usuario;
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
+        }
+      })
   }
 }

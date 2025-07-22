@@ -5,11 +5,14 @@ import { typeErrorControl } from '@core/helpers';
 import { PasswordForgotComponent } from '../password-forgot/password-forgot.component';
 import { GenerarClaveResponse } from '@core/interfaces';
 import { AuthService } from '@core/services';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-otp-forgot',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PasswordForgotComponent],
+  imports: [CommonModule, ReactiveFormsModule, PasswordForgotComponent, PrimeNgModule],
+  providers: [MessageService],
   templateUrl: './otp-forgot.component.html',
   styles: ``
 })
@@ -20,7 +23,8 @@ export class OtpForgotComponent {
 
 
   private fb = inject(FormBuilder)
-    private authService = inject(AuthService)
+  private authService = inject(AuthService)
+  private messageService = inject(MessageService)
 
   formOtpForgot: FormGroup = this.fb.group({
     otp: ['', Validators.required]
@@ -51,18 +55,20 @@ export class OtpForgotComponent {
     const codigo = this.formOtpForgot.get('otp')?.value;
     const otpData: GenerarClaveResponse = { ...this.usuarioClave, codigo };
 
-    this.authService.validarOtp(otpData).subscribe({
-      next: (response) => {
-        this.loading = false;
-        this.validate = true;
-        this.usuarioClave = { ...this.usuarioClave, codigo: response?.data?.codigo };
-        this.formOtpForgot.reset();
-      },
-      error: (error) => {
-        this.loading = false;
-        this.validate = false;
-        delete this.usuarioClave.codigo;
-      }
-    });
+    this.authService.validarOtp(otpData)
+      .subscribe(resp => {
+        if(resp.success) {
+          this.loading = false;
+          this.validate = true;
+          this.usuarioClave = { ...this.usuarioClave, codigo: resp.data?.codigo };
+          this.messageService.add({ severity: 'success', summary: 'Validado', detail: 'Código validado' });
+          this.formOtpForgot.reset();
+        } else {
+          this.loading = false;
+          this.validate = false;
+          delete this.usuarioClave.codigo;
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
+        }
+      })
   }
 }
