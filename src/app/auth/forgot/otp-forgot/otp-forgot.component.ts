@@ -14,7 +14,7 @@ import { AuthService } from '@core/services';
   styles: ``
 })
 export class OtpForgotComponent {
-  @Input() recuperarClaveData: GenerarClaveResponse = {}
+  @Input() usuarioClave: GenerarClaveResponse = {}
   validate: boolean = false
   loading: boolean = false
 
@@ -49,19 +49,19 @@ export class OtpForgotComponent {
   validarOtp(){
     this.loading = true;
     const codigo = this.formOtpForgot.get('otp')?.value;
-    const otpData: GenerarClaveResponse = { ...this.recuperarClaveData, codigo };
+    const otpData: GenerarClaveResponse = { ...this.usuarioClave, codigo };
 
     this.authService.validarOtp(otpData).subscribe({
       next: (response) => {
         this.loading = false;
         this.validate = true;
-        this.recuperarClaveData = { ...this.recuperarClaveData, codigo: response?.data?.codigo };
+        this.usuarioClave = { ...this.usuarioClave, codigo: response?.data?.codigo };
         this.formOtpForgot.reset();
       },
       error: (error) => {
         this.loading = false;
         this.validate = false;
-        delete this.recuperarClaveData.codigo;
+        delete this.usuarioClave.codigo;
       }
     });
   }

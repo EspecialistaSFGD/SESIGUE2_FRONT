@@ -2,8 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { Observable } from 'rxjs';
-import { ExportResponses, Pagination, UsuariosResponses } from '@core/interfaces';
+import { catchError, map, Observable, of, tap } from 'rxjs';
+import { ExportResponses, GenerarClaveResponse, Pagination, UsuariosResponses } from '@core/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -38,5 +38,17 @@ export class UsuariosService {
     }
     
     return params
+  }
+
+  actualizarContraseña(usuarioClave: GenerarClaveResponse){
+    return this.http.put<GenerarClaveResponse>(`${this.urlUsuario}/CambiarClave`, usuarioClave )
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
+
   }
 }

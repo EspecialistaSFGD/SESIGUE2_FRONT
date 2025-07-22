@@ -8,4 +8,6 @@ export interface GenerarClaveResponse {
 	email?: string;
 	usuario?: string;
 	codigo?: string;
+	nuevaClave?: string;
+	confirmarClave?: string;
 }

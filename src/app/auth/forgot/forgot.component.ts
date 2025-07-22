@@ -17,7 +17,7 @@ import { GenerarClaveResponse } from '@core/interfaces';
 export default class ForgotComponent {
   validate: boolean = false
   loading: boolean = false
-  recuperaClave: GenerarClaveResponse = {}
+  claveUsuario: GenerarClaveResponse = {}
 
   private fb = inject(FormBuilder)
   private authService = inject(AuthService)
@@ -53,14 +53,14 @@ export default class ForgotComponent {
       next: (response) => {
         this.loading = false;
         this.validate = true
-        this.recuperaClave = { email: response?.data?.email, usuario }
+        this.claveUsuario = { email: response?.data?.email, usuario }
         this.formForgot.reset();
       },
       error: (error) => {
         this.loading = false;
         this.validate = false
-        delete this.recuperaClave.email;
-        delete this.recuperaClave.usuario;
+        delete this.claveUsuario.email;
+        delete this.claveUsuario.usuario;
       }
     });
   }
