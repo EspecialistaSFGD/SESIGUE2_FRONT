@@ -5,9 +5,11 @@
             <app-theme-switcher [isAbsolute]="false" [isRounded]="false" [hasInitialDarkBackground]="false" />
         </div>
 
-        <router-outlet />
+        <div class="w-full grid grid-cols-1 py-8 md:py-0">
+            <router-outlet />
+        </div>
     </nz-content>
-    <nz-footer class="bg-punche-blue dark:bg-neutral-800 text-white">
-        <app-footer></app-footer>
-    </nz-footer>
+    <app-footer></app-footer>
+    <!-- <nz-footer class="bg-punche-blue dark:bg-neutral-800 text-white">
+    </nz-footer> -->
 </nz-layout>

@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './super-header.component.html',
-  styleUrl: './super-header.component.less'
+  styles: []
 })
 export class SuperHeaderComponent {
 

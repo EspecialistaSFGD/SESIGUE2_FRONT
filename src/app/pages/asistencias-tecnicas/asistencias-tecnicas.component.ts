@@ -338,6 +338,7 @@ export default class AsistenciasTecnicasComponent {
     const modal = this.modal.create<FormularioAtencionComponent>({
       nzTitle: `${action.toUpperCase()}${evento}`,
       nzWidth: '75%',
+      nzMaskClosable: false,
       nzContent: FormularioAtencionComponent,
       nzData: {
         atencion: this.asistenciaTecnica,
