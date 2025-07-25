@@ -1,14 +1,14 @@
 <app-card [titulo]="'Inversiones por sector'" class="flex h-full" [px]="'px-1'" [py]="'py-1'">
     <ng-template #content>
-        <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '454px' }" class="custom-table">
+        <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '454px', x: '100%' }" class="custom-table">
             <thead>
                 <tr>
-                    <th>Sector</th>
+                    <th [nzWidth]="'120px'">Sector</th>
                     <th nzAlign="center" [nzWidth]="'60px'">N° invers.</th>
                     <th nzAlign="center" [nzWidth]="'74px'">Costo</th>
                     <th nzAlign="center" [nzWidth]="'70px'">N° Invers. PIM</th>
                     <th nzAlign="center" [nzWidth]="'74px'">Monto PIM</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+                    <th nzRight nzAlign="center" [nzWidth]="'100px'">Avance</th>
                 </tr>
             </thead>
             <tbody>
@@ -19,7 +19,7 @@
                         <td nzAlign="center">{{sector.costoActualizado | numero : 1}}</td>
                         <td nzAlign="center">{{sector.inversionActual}}</td>
                         <td nzAlign="center">{{sector.pim | numero : 2}}</td>
-                        <td nzAlign="center">
+                        <td nzRight nzAlign="center">
                             @if (sector.avance == 0) {
                                 {{sector.avance}}%
                             } @else {
@@ -40,47 +40,5 @@
                 </tr>
             </tbody>
         </nz-table>
-        <!-- <app-table-card [scrollY]="440">
-            <ng-template #header>
-                <tr>
-                    <th [nzLeft]="true" width="148px">Sector</th>
-                    <th nzAlign="center">N°<br>invers.</th>
-                    <th nzAlign="center" nzWidth="60px">Costo</th>
-                    <th nzAlign="center">N° Invers. PIM</th>
-                    <th nzAlign="center">Monto PIM</th>
-                    <th nzAlign="center">Avance</th>
-                </tr>
-            </ng-template>
-            <ng-template #body>
-                @for(sector of intervencionSectores; track $index){
-                    <tr [ngClass]="{ 'cursor-pointer' : sector.id > 0 }" (click)="obtenerIntervencionSector(sector)">
-                        <td [nzLeft]="true" width="160px">{{sector.nombre}}</td>
-                        <td nzAlign="center">{{sector.cantIntervenciones}}</td>
-                        <td nzAlign="center">{{sector.costoActualizado | numero : 1}}</td>
-                        <td nzAlign="center">{{sector.inversionActual}}</td>
-                        <td nzAlign="center">{{sector.pim | numero : 1}}</td>
-                        <td nzAlign="center">
-                        <div class="object-contain w-[{{sector.avance}}%]">
-                             @if (sector.avance == 0) {
-                                {{sector.avance}}%
-                            } @else {
-                                <div class="object-contain w-[{{sector.avance}}%]">
-                                    <nz-progress [nzPercent]="sector.avance" [nzStrokeWidth]="12" [nzStrokeColor]="colorBarraProgreso(sector.avance)" />
-                                </div>
-                            }
-                        </div>
-                        </td>
-                    </tr>
-                }
-                <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
-                    <td> Total</td>
-                    <td nzAlign="center">{{totales.cantIntervenciones}}</td>
-                    <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
-                    <td nzAlign="center">{{totales.inversionActual}}</td>
-                    <td nzAlign="center">{{totales.pim | numero : 1}}</td>
-                    <td nzAlign="center">{{totales.avance | numero : 1}}% </td>
-                </tr>
-            </ng-template>
-        </app-table-card> -->
     </ng-template>
 </app-card>
