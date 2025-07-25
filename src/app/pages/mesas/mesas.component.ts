@@ -225,6 +225,7 @@ export default class MesasComponent {
     this.modal.create<FormularioMesaComponent>({
       nzTitle: `${action.toUpperCase()}`,
       nzWidth: '75%',
+      nzMaskClosable: false,
       nzContent: FormularioMesaComponent,
       nzData: {
         create,

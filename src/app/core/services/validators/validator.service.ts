@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class ValidatorService {
   public timePatter: RegExp = /^([0-1][0-9]|2[0-3])(:)([0-5][0-9])$/
   public NumberPattern: RegExp = /^[1-9]\d*$/
   public userPattern: RegExp = /^\d{8}$/
-  public passwordPattern: RegExp = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\~-]{6,}$/
+  public passwordPattern: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,12}$/
 
   // letras numero y guion al medio
   public codigoPattern: RegExp = /^[a-zA-Z0-9-]$/
@@ -24,5 +25,18 @@ export class ValidatorService {
   // public slugMTPattern: RegExp = /^MT_.+$/;
 
   public slugMTPattern: RegExp = /^MT_.{3,}$/;
-  
+
+  controlEquals( control:string, compare:string ) {
+    return ( formGroup: AbstractControl ):ValidationErrors | null => {
+      const first = formGroup.get( control )?.value
+      const second = formGroup.get( compare )?.value
+
+      if( second != first ){
+        formGroup.get( compare )?.setErrors({ notSame:true })
+        return { notSame: true }
+      }
+      formGroup.get( compare )?.setErrors( null )
+      return null
+    }
+  }
 }
