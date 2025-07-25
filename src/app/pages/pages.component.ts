@@ -42,6 +42,7 @@ import { PipesModule } from '@core/pipes/pipes.module';
 })
 export class PagesComponent implements OnInit, AfterViewInit {
   isCollapsed: boolean = true;
+  open: boolean = false;
 
   public authService = inject(AuthService);
   private router = inject(Router);
