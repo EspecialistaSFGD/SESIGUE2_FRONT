@@ -3,7 +3,7 @@
         <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '454px', x: '100%' }" class="custom-table">
             <thead>
                 <tr>
-                    <th [nzWidth]="'120px'">Sector</th>
+                    <th [nzWidth]="'80px'">Sector</th>
                     <th nzAlign="center" [nzWidth]="'60px'">N° invers.</th>
                     <th nzAlign="center" [nzWidth]="'74px'">Costo</th>
                     <th nzAlign="center" [nzWidth]="'70px'">N° Invers. PIM</th>
@@ -36,7 +36,7 @@
                     <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
                     <td nzAlign="center">{{totales.inversionActual}}</td>
                     <td nzAlign="center">{{totales.pim | numero : 2}}</td>
-                    <td nzAlign="center">{{totales.avance | numero : 1}}% </td>
+                    <td nzRight nzAlign="center" class="bg-[#e8e8e8]">{{totales.avance | numero : 1}}% </td>
                 </tr>
             </tbody>
         </nz-table>
