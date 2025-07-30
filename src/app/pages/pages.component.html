@@ -15,12 +15,25 @@
         <ul class="bg-transparent list-none m-0 p-0 text-white">
           @for (item of menuItems; track $index) {
             <li>
-              <a class="flex items-center py-[6px] px-4 w-full overflow-hidden whitespace-nowrap text-ellipsis transition-all duration-500" [ngClass]="{ 'gap-2' : isCollapsed, 'gap-8' : !isCollapsed }" routerLinkActive="color-[#f9ccd1]" [href]="item.direccionUrl" [target]="item.esExterno ? '_blank' : '_self'">
+              <!-- <a class="flex items-center py-[6px] px-4 w-full overflow-hidden whitespace-nowrap text-ellipsis transition-all duration-500" [ngClass]="{ 'gap-2' : isCollapsed, 'gap-8' : !isCollapsed }" routerLinkActive="color-[#f9ccd1]" [href]="item.direccionUrl" [target]="item.esExterno ? '_blank' : '_self'">
                 <span nz-icon [nzType]="item.iconoMenu!" nzTheme="outline"></span>
                 <span [ngClass]="{ '' : !isCollapsed }">{{item.descripcionItem}}</span>
+              </a> -->
+              @if (item.esExterno) {
+              <a class="flex items-center" [href]="item.direccionUrl" target="_blank">
+                <ng-template [ngTemplateOutlet]="itemMenu" [ngTemplateOutletContext]="{ item: item }"></ng-template>
               </a>
+              } @else {
+              <a class="flex items-center" [routerLink]="item.direccionUrl">
+                <ng-template [ngTemplateOutlet]="itemMenu" [ngTemplateOutletContext]="{ item: item }"></ng-template>
+                </a>
+              }
             </li>
           }
+          <ng-template #itemMenu let-item="item">
+            <span nz-icon [nzType]="item.iconoMenu" nzTheme="outline"></span>
+            <span>{{item.descripcionItem}}</span>
+          </ng-template>
         </ul>
       }
     </div>
