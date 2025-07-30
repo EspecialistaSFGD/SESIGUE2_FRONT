@@ -1,5 +1,4 @@
 <div class="flex flex-col gap-2">
-    {{dataTopoJson | json}}
     <app-card [titulo]="'Inversiones por espacio'">
         <ng-template #content>
             <app-geo-map [dataSet]="dataTopoJson" />
