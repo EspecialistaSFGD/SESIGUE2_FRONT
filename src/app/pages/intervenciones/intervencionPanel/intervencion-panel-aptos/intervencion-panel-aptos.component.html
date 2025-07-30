@@ -1,12 +1,12 @@
 <app-card [titulo]="'Proyectos aptos por financiar'" [px]="'px-1'" [py]="'py-1'">
     <ng-template #content>
-        <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '200px' }" class="custom-table">
+        <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '200px', x: '100%' }" class="custom-table">
             <thead>
                 <tr>
-                    <th rowspan="2">Sector</th>
-                    <th colspan="2" nzAlign="center" [nzWidth]="'100px'">Cartera total</th>
-                    <th colspan="2" nzAlign="center" [nzWidth]="'100px'">PIM 2025</th>
-                    <th rowspan="2" nzAlign="center">Demanda</th>
+                    <th nzLeft rowspan="2" [nzWidth]="'80px'">Sector</th>
+                    <th colspan="2" nzAlign="center">Cartera total</th>
+                    <th colspan="2" nzAlign="center">PIM 2025</th>
+                    <th nzRight rowspan="2" nzAlign="center" [nzWidth]="'80px'">Demanda</th>
                 </tr>
                 <tr>
                     <th nzAlign="center" [nzWidth]="'100px'">N° Invers.</th>
@@ -18,65 +18,23 @@
             <tbody>
                 @for (proyecto of intervencionFinanciamiento; track $index) {
                     <tr>
-                        <td>{{proyecto.nombre}}</td>
+                        <td nzLeft>{{proyecto.nombre}}</td>
                         <td nzAlign="center">{{proyecto.cantIntervenciones}}</td>
                         <td nzAlign="center">{{proyecto.costoActualizado | numero : 1}}</td>
                         <td nzAlign="center">{{proyecto.inversionActual}}</td>
                         <td nzAlign="center">{{proyecto.pim | numero : 2}}</td>
-                        <td nzAlign="center">{{proyecto.demanda | numero : 2}}</td>
+                        <td nzRight nzAlign="center">{{proyecto.demanda | numero : 2}}</td>
                     </tr>
                 }
                 <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
-                    <td> Total</td>
+                    <td nzLeft class="bg-[#e8e8e8]"> Total</td>
                     <td nzAlign="center">{{totales.cantIntervenciones}}</td>
                     <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
                     <td nzAlign="center">{{totales.inversionActual}}</td>
                     <td nzAlign="center">{{totales.pim | numero : 2}}</td>
-                    <td nzAlign="center">{{totales.demanda | numero : 2}}</td>
+                    <td nzRight nzAlign="center" class="bg-[#e8e8e8]">{{totales.demanda | numero : 2}}</td>
                 </tr>
             </tbody>
         </nz-table>
-        <!-- <app-table-card [scrollY]="550">
-            <ng-template #header>
-                <tr>
-                    <th rowspan="2">Mesa</th>
-                    <th colspan="2" nzAlign="center" [nzWidth]="'100px'">Cartera total</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Demanda estimada 2026</th>
-                    <th colspan="2" nzAlign="center" [nzWidth]="'100px'">Demanda de recursos para continuar</th>
-                    <th colspan="2" nzAlign="center" [nzWidth]="'100px'">Demanda para nuevo proyecto</th>
-                </tr>
-                <tr>
-                    <th nzAlign="center" [nzWidth]="'100px'">N°</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">N°</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Dem. estimada</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">N°</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Dem. estimada</th>
-                </tr>
-            </ng-template>
-            <ng-template #body>
-                <tr>
-                    <td>MT_ANTA</td>
-                    <td nzAlign="center">10</td>
-                    <td nzAlign="center">72,751,661</td>
-                    <td nzAlign="center">23,579,295</td>
-                    <td nzAlign="center">2</td>
-                    <td nzAlign="center">2,805,519</td>
-                    <td nzAlign="center">8</td>
-                    <td nzAlign="center">20,773,776</td>
-                </tr>
-                <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
-                    <td> Total</td>
-                    <td nzAlign="center">10</td>
-                    <td nzAlign="center">72,751,661</td>
-                    <td nzAlign="center">23,579,295</td>
-                    <td nzAlign="center">2</td>
-                    <td nzAlign="center">2,805,519</td>
-                    <td nzAlign="center">8</td>
-                    <td nzAlign="center">20,773,776</td>
-                </tr>
-            </ng-template>
-        </app-table-card> -->
     </ng-template>
 </app-card>

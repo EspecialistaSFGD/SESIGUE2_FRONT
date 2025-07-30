@@ -1,14 +1,14 @@
 <app-card [titulo]="'Inversiones por nivel de gobierno'" [px]="'px-1'" [py]="'py-1'">
     <ng-template #content>
-        <nz-table nzSize="small" nzTemplateMode class="custom-table">
+        <nz-table nzSize="small" nzTemplateMode class="custom-table" [nzScroll]="{ x: '100%' }">
             <thead>
                 <tr>
-                    <th>Nivel de gobierno</th>
+                    <th [nzWidth]="'80px'">Nivel de gobierno</th>
                     <th nzAlign="center" [nzWidth]="'60px'">N° invers.</th>
                     <th nzAlign="center" [nzWidth]="'74px'">Costo</th>
                     <th nzAlign="center" [nzWidth]="'70px'">N° Invers. PIM</th>
                     <th nzAlign="center" [nzWidth]="'74px'">Monto PIM</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Avance</th>
+                    <th nzRight nzAlign="center" [nzWidth]="'100px'">Avancess</th>
                 </tr>
             </thead>
             <tbody>
@@ -19,7 +19,7 @@
                         <td nzAlign="center">{{nivelGobierno.costoActualizado | numero : 1}}</td>
                         <td nzAlign="center">{{nivelGobierno.inversionActual}}</td>
                         <td nzAlign="center">{{nivelGobierno.pim | numero : 2}}</td>
-                        <td nzAlign="center">
+                        <td nzRight nzAlign="center">
                             @if (nivelGobierno.avance == 0) {
                                {{nivelGobierno.avance}}%
                            } @else {
@@ -36,7 +36,7 @@
                     <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
                     <td nzAlign="center">{{totales.inversionActual}}</td>
                     <td nzAlign="center">{{totales.pim | numero : 2}}</td>
-                    <td nzAlign="center">{{totales.avance | numero : 1}}% </td>
+                    <td nzRight nzAlign="center" class="bg-[#e8e8e8]">{{totales.avance | numero : 1}}% </td>
                 </tr>
             </tbody>
         </nz-table>
