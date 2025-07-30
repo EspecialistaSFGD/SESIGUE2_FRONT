@@ -1,4 +1,4 @@
-<div class="flex flex-col w-full">
+<div class="flex flex-col w-full h-full">
   <app-super-header />
 
   <div class="flex flex-col md:flex-row dark:bg-gray-700">
@@ -15,16 +15,12 @@
         <ul class="bg-transparent list-none m-0 p-0 text-white">
           @for (item of menuItems; track $index) {
             <li>
-              <!-- <a class="flex items-center py-[6px] px-4 w-full overflow-hidden whitespace-nowrap text-ellipsis transition-all duration-500" [ngClass]="{ 'gap-2' : isCollapsed, 'gap-8' : !isCollapsed }" routerLinkActive="color-[#f9ccd1]" [href]="item.direccionUrl" [target]="item.esExterno ? '_blank' : '_self'">
-                <span nz-icon [nzType]="item.iconoMenu!" nzTheme="outline"></span>
-                <span [ngClass]="{ '' : !isCollapsed }">{{item.descripcionItem}}</span>
-              </a> -->
               @if (item.esExterno) {
-              <a class="flex items-center" [href]="item.direccionUrl" target="_blank">
+              <a class="flex items-center py-[6px] px-4 w-full overflow-hidden whitespace-nowrap text-ellipsis transition-all duration-500 hover:text-[#f9ccd1]" [ngClass]="{ 'gap-2' : isCollapsed, 'gap-8' : !isCollapsed }" [href]="item.direccionUrl" target="_blank" (click)="open = !open">
                 <ng-template [ngTemplateOutlet]="itemMenu" [ngTemplateOutletContext]="{ item: item }"></ng-template>
               </a>
               } @else {
-              <a class="flex items-center" [routerLink]="item.direccionUrl">
+              <a class="flex items-center py-[6px] px-4 w-full overflow-hidden whitespace-nowrap text-ellipsis transition-all duration-500 hover:text-[#f9ccd1]" [ngClass]="{ 'gap-2' : isCollapsed, 'gap-8' : !isCollapsed }" [routerLink]="item.direccionUrl"  routerLinkActive="text-[#f9ccd1]" (click)="open = !open">
                 <ng-template [ngTemplateOutlet]="itemMenu" [ngTemplateOutletContext]="{ item: item }"></ng-template>
                 </a>
               }
