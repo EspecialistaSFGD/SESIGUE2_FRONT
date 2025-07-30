@@ -114,6 +114,10 @@ export default class AgendasMesaComponent {
       const profilePCM = [11,12,23]
       return profilePCM.includes(this.perfilAuth)
     }
+
+    onBack(){
+      this.router.navigate(['/mesas/', this.mesa().mesaId])
+    }
   
     getPermissions() {
       // const navigation  = this.authStore.navigationAuth()!
