@@ -119,7 +119,7 @@ export class FiltroMesasComponent {
     localStorage.removeItem('filtrosMesas');
     this.formFilters.reset()
     this.generateFilters()
-    this.changeVisibleDrawer(false)
+    this.changeVisibleDrawer(false,false)
   }
 
   changeVisibleDrawer(visible: boolean, save: boolean = true){   
