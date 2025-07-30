@@ -13,12 +13,12 @@
 	<app-mesa-detalle [mesa]="mesa()" (updated)="updateDetalle($event)" />
 }
 
-<div *ngIf="permisosIntegrantes" class="grid grid-cols-2 gap-4 mt-4">
+<div *ngIf="permisosIntegrantes" class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
 	<app-integrantes-mesa [mesaId]="mesaId!" />
 	<app-integrantes-mesa [mesaId]="mesaId!" [esSector]="false" />
 </div>
 
-<div *ngIf="permisosDocumentos" class="grid grid-cols-2 gap-4 mt-4">
+<div *ngIf="permisosDocumentos" class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
 	<app-documentos-mesa [mesa]="mesa()"/>
 	<app-documentos-mesa [mesa]="mesa()" [tipo]="1"/>
 </div>
