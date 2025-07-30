@@ -102,4 +102,8 @@ export default class MesaDetallesComponent {
     }
   }
 
+  onBack(){
+      this.router.navigate(['/mesas'])
+    }
+
 }
