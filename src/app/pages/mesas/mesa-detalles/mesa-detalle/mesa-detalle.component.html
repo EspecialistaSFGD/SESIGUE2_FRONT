@@ -25,9 +25,9 @@
 		<div class="flex items-center  min-w-[124px] lg:min-w-[80px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Resolución</div>
 		<div class="w-full flex items-center justify-between px-2 py-1 border-l border-gray-200 overflow-hidden">
 			<div class="flex w-full overflow-hidden">
-				<app-boton-descargar *ngIf="mesa.resolucion" [rutaArchivo]="mesa.resolucion" [titulo]="'Descargar Resolucion de creación'" [preload]="true"></app-boton-descargar>
+				<app-boton-descargar *ngIf="mesa.resolucion" [rutaArchivo]="mesa.resolucion" [titulo]="'Descargar Resolucion de creación'"></app-boton-descargar>
 				@for(resolucion of documentosResolucion(); track $index){
-					<app-boton-descargar [rutaArchivo]="resolucion.archivo" [titulo]="'Descargar ' + resolucion.nombre" [active]="false" [preload]="true" />
+					<app-boton-descargar [rutaArchivo]="resolucion.archivo" [titulo]="'Descargar ' + resolucion.nombre" [active]="false"/>
 				}
 			</div>
 			<div *ngIf="mesasDocumentosActions.new && mesa.resolucion" class="py-1 px-2 border rounded" [ngClass]="{ 'cursor-pointer border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white' : action, 'border-slate-400 text-slate-400' : !action }" nz-tooltip [nzTooltipTitle]=" action ? 'Nueva Ampliación' : ''" (click)="action ? modalCreateFile(2) : null"><span nz-icon nzType="plus" nzTheme="outline"></span></div>

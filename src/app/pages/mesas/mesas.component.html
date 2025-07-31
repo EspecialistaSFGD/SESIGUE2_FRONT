@@ -35,16 +35,16 @@
         <td nzAlign="center">{{mesa.fechaCreacion}}</td>
         <td nzAlign="center">{{mesa.fechaVigencia}}</td>
         <td nzAlign="center">
-          <app-boton-descargar *ngIf="mesa.resolucion" [rutaArchivo]="mesa.resolucion" [preload]="true" [titulo]="'Descargar resolución de creación'" />
+          <app-boton-descargar *ngIf="mesa.resolucion" [rutaArchivo]="mesa.resolucion" [titulo]="'Descargar resolución de creación'" />
         </td>
         <td nzAlign="center">
           @if(mesa.sesion){
-            <app-boton-descargar [rutaArchivo]="mesa.sesion" [preload]="true" [titulo]="'Descargar ultima sesión'"></app-boton-descargar>
+            <app-boton-descargar [rutaArchivo]="mesa.sesion" [titulo]="'Descargar ultima sesión'"></app-boton-descargar>
           }
         </td>
         <td nzAlign="center">
           @if(mesa.am){
-            <app-boton-descargar [rutaArchivo]="mesa.am" [preload]="true" [titulo]="'Descargar ultima AM'"></app-boton-descargar>
+            <app-boton-descargar [rutaArchivo]="mesa.am" [titulo]="'Descargar ultima AM'"></app-boton-descargar>
           }
         </td>
         <td *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center">

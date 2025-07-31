@@ -20,7 +20,7 @@ export class BotonDescargarComponent {
   @Input() rutaArchivo:string = ''
   @Input() active: boolean = true
   @Input() titulo: string = 'Descargar'
-  @Input() preload: boolean = false
+  @Input() preload: boolean = true
 
   loading: boolean = false
 
