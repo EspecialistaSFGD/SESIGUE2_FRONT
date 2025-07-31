@@ -12,7 +12,7 @@ import { GeoTopoJson, UbigeoTopoJson } from '@core/interfaces';
   styles: ``
 })
 export class GeoMapComponent  {
-  @Input() dataSet: UbigeoTopoJson[] = []
+  @Input() dataSet: UbigeoTopoJson[] = departamentosTopoJSON()
   @Input() geoTopoJson: GeoTopoJson = { geo: 'departamentos', ubigeo: 'departamentos' }
   @Input() codigo: number = 1 // 1 - Departamento, 2 - Provincia, 3 - Distrito
 
@@ -46,7 +46,7 @@ export class GeoMapComponent  {
     return { topoJsonUrl: `assets/data/json/${this.geoTopoJson.geo}/${ubigeo}.topo.json`, rqDataFeature: ubigeo }
   }
 
-  generateGeoMap(){    
+  generateGeoMap(){           
     const { topoJsonUrl, rqDataFeature } = this.getTopoJson();
     if (this.chart) {
       this.chart.destroy();

@@ -8,12 +8,13 @@ import { AcuerdoPanelTotales, AcuerdoPanelsResponse, CardInfo, ConfigChart, Even
 import { HitoPanelCumplimientoResponse } from '@core/interfaces/hito.interface';
 import { AcuerdosService, EventosService, HitosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { SharedModule } from '@shared/shared.module';
 
 @Component({
   selector: 'app-panel-acuerdos',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, NgZorroModule, ReactiveFormsModule, SharedModule, PrimeNgModule],
   templateUrl: './panel-acuerdos.component.html',
   styles: ``
 })
@@ -93,12 +94,12 @@ export default class PanelAcuerdosComponent {
 
   formPanel: FormGroup = this.fb.group({
     tipo: [this.tipos[0], Validators.required],
-    sector: [''],
-    tipoEspacio: [''],
-    espacio: [''],
-    departamento: [''],
-    provincia: [''],
-    distrito: ['']
+    sector: [null],
+    tipoEspacio: [null],
+    espacio: [null],
+    departamento: [null],
+    provincia: [null],
+    distrito: [null]
   })
 
   ngOnInit(): void {

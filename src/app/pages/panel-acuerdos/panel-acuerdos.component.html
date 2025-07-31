@@ -1,11 +1,96 @@
 <div class="site-page-header-ghost-wrapper mb-4 flex flex-col gap-5">
-  <nz-page-header [nzGhost]="false" class="bg-punche-blue-50">
+  <form  [formGroup]="formPanel" class="bg-punche-blue-50 grid grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 p-4">
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="tipo">Tipo</label>
+        <nz-radio-group class="radio-form-control flex gap-2" formControlName="tipo" (ngModelChange)="selectTipo()">
+            @for (tipo of tipos; track $index){
+            <label nz-radio [nzValue]="tipo">{{tipo | titlecase }}</label>
+            }
+          </nz-radio-group>
+    </div>
+    <div class="col-span-1 md:col-span-2 lg:col-span-5">
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <div class="flex flex-col">
+          <label class="font-bold text-sm xl:text-base" for="sector">Sector</label>
+          <p-dropdown 
+          [options]="sectores()"
+          formControlName="sector"
+          optionLabel="nombre"
+          optionValue="grupoID"
+          [showClear]="true" 
+          placeholder="Seleccionar sector"
+          (onChange)="selectSector()"/>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="font-bold text-sm xl:text-base" for="sector">Tipos de Espacio</label>
+          <p-dropdown 
+          [options]="tipoEventos()"
+          formControlName="tipoEspacio"
+          optionLabel="descripcionTipoEvento"
+          optionValue="codigoTipoEvento"
+          [showClear]="true" 
+          placeholder="Seleccionar tipo de espacio"
+          (onChange)="selectTipoEspacio()"/>
+        </div>
+
+        <div class="flex flex-col" [ngClass]="{'hidden': !formPanel.get('tipoEspacio')?.value}">
+          <label class="font-bold text-sm xl:text-base" for="espacio">Espacio</label>
+          <p-dropdown 
+          [options]="eventos()"
+          formControlName="espacio"
+          optionLabel="nombre"
+          optionValue="eventoId"
+          [showClear]="true" 
+          placeholder="Seleccionar espacio"
+          (onChange)="selectEspacio()"/>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="font-bold text-sm xl:text-base" for="departamento">Departamento</label>
+          <p-dropdown 
+          [options]="departamentos()"
+          formControlName="departamento"
+          optionLabel="departamento"
+          optionValue="departamentoId"
+          [showClear]="true" 
+          placeholder="Seleccionar departamento"
+          (onChange)="selectDepartamento()"/>
+        </div>
+
+        <div class="flex flex-col" [ngClass]="{'hidden': !formPanel.get('departamento')?.value}">
+          <label class="font-bold text-sm xl:text-base" for="provincia">Provincia</label>
+          <p-dropdown 
+          [options]="provincias()"
+          formControlName="provincia"
+          optionLabel="provincia"
+          optionValue="provinciaId"
+          [showClear]="true" 
+          placeholder="Seleccionar provincia"
+          (onChange)="selectProvincia()"/>
+        </div>
+
+        <div class="flex flex-col" [ngClass]="{'hidden': !formPanel.get('provincia')?.value}">
+          <label class="font-bold text-sm xl:text-base" for="distrito">Distrito</label>
+          <p-dropdown 
+          [options]="distritos()"
+          formControlName="distrito"
+          optionLabel="distrito"
+          optionValue="distritoId"
+          [showClear]="true" 
+          placeholder="Seleccionar distrito"
+          (onChange)="selectDistrito()"/>
+        </div>
+      </div>
+    </div>
+  </form>
+  <!-- <nz-page-header [nzGhost]="false" class="bg-punche-blue-50">
     <nz-page-header-content>
       <form [formGroup]="formPanel" nz-form nzLayout="vertical">
-        <div class="grid grid-cols-1 md:grid-cols-12 md:gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-12 md:gap-4">
           <div class="col-span-2">
-            <nz-form-item>
-              <nz-form-label><span class="font-bold text-sm xl:text-xl">Tipo</span></nz-form-label>
+            <nz-form-item class="flex flex-col">
+               <label class="font-bold text-sm xl:text-base" for="tipo">Tipo</label>
               <nz-radio-group class="radio-form-control flex md:flex-col gap-2" formControlName="tipo"
                 (ngModelChange)="selectTipo()">
                 @for (tipo of tipos; track $index){
@@ -18,7 +103,7 @@
             <div class="grid grid-cols-1 md:grid-cols-12 gap-x-4">
               <div class="col-span-12 md:col-span-4">
                 <nz-form-item>
-                  <nz-form-label><span class="font-bold text-sm xl:text-xl">Sector</span></nz-form-label>
+                  <label class="font-bold text-sm xl:text-base" for="sector">Sector</label>
                   <nz-form-control>
                     <nz-select id="sector" nzPlaceHolder="Seleccione sector" class="select-form-control"
                       formControlName="sector" (ngModelChange)="selectSector()" nzAllowClear>
@@ -31,7 +116,7 @@
               <div class="col-span-12 md:col-span-4">
                 <nz-form-item>
                   <nz-form-label [nzSpan]="null">
-                    <span class="font-bold text-sm xl:text-xl">Tipos de Espacio</span>
+                    <label class="font-bold text-sm xl:text-base" for="tipoEspacio">Tipos de Espacio</label>
                   </nz-form-label>
                   <nz-form-control nzSpan="null">
                     <nz-select nzPlaceHolder="Seleccione tipo de espacio" id="tipoEspacio" class="select-form-control"
@@ -47,7 +132,7 @@
               <div class="col-span-12 md:col-span-4" [ngClass]="{'hidden': !formPanel.get('tipoEspacio')?.value}">
                 <nz-form-item>
                   <nz-form-label [nzSpan]="null">
-                    <span class="font-bold text-sm xl:text-xl">Espacio</span>
+                    <label class="font-bold text-sm xl:text-base" for="espacio">Espacio</label>
                   </nz-form-label>
                   <nz-form-control nzSpan="null">
                     <nz-select nzPlaceHolder="Seleccione espacio" id="espacio" class="select-form-control"
@@ -62,7 +147,7 @@
 
               <div class="col-span-12 md:col-span-4">
                 <nz-form-item>
-                  <nz-form-label><span class="font-bold text-sm xl:text-xl">Departamento</span></nz-form-label>
+                  <label class="font-bold text-sm xl:text-base" for="departamento">Departamento</label>
                   <nz-form-control>
                     <nz-select id="departamento" class="w-full" class="select-form-control"
                       formControlName="departamento" nzPlaceHolder="Seleccione departamento" nzShowSearch nzAllowClear
@@ -77,7 +162,7 @@
 
               <div class="col-span-12 md:col-span-4" [ngClass]="{'hidden': !formPanel.get('departamento')?.value}">
                 <nz-form-item>
-                  <nz-form-label><span class="font-bold text-sm xl:text-xl">Provincia</span></nz-form-label>
+                  <label class="font-bold text-sm xl:text-base" for="provincia">Provincia</label>
                   <nz-form-control>
                     <nz-select class="w-full" id="provincia" class="select-form-control" formControlName="provincia"
                       nzPlaceHolder="Seleccione provincia" nzShowSearch nzAllowClear
@@ -92,8 +177,7 @@
 
               <div class="col-span-12 md:col-span-4" [ngClass]="{'hidden': !formPanel.get('provincia')?.value}">
                 <nz-form-item>
-                  <nz-form-label [nzSpan]="null"><span
-                      class="font-bold text-sm xl:text-xl">Distrito</span></nz-form-label>
+                  <label class="font-bold text-sm xl:text-base" for="distrito">Distrito</label>
                   <nz-form-control nzSpan="null">
                     <nz-select class="w-full" id="distrito" class="select-form-control" formControlName="distrito"
                       nzPlaceHolder="Seleccione distrito" nzShowSearch (ngModelChange)="selectDistrito()" nzAllowClear>
@@ -109,7 +193,7 @@
         </div>
       </form>
     </nz-page-header-content>
-  </nz-page-header>
+  </nz-page-header> -->
 
   <app-slider-tiny>
     <ng-template #items>
@@ -131,7 +215,7 @@
     </ng-template>
   </app-slider-tiny>
 
-  <div class="grid grid-cols-3 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div class="flex flex-col">
       <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-2xl text-center text-sm py-2">
         HITOS POR ACUERDOS EN PROCESO
@@ -178,7 +262,7 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-4 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     <div class="flex rounded-xl bg-punche-green-550 text-white gap-2 p-4 items-center justify-center">
       <img class="flex" src="./assets/images/inicio/acuerdos-vigente.svg" alt="hitos por cumplir" srcset="">
       <div class="flex flex-col">
@@ -217,7 +301,7 @@
 
   </div>
 
-  <div class="grid grid-cols-3 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     @for(card of cardsAcuerdos; track $index){
     <div class="flex flex-col">
       <div class="w-full uppercase font-bold text-white bg-red-500 rounded-t-3xl text-center text-sm py-2 uppercase">

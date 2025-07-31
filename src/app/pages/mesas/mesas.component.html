@@ -35,7 +35,7 @@
         <td nzAlign="center">{{mesa.fechaCreacion}}</td>
         <td nzAlign="center">{{mesa.fechaVigencia}}</td>
         <td nzAlign="center">
-          <app-boton-descargar [rutaArchivo]="mesa.resolucion" [titulo]="'Descargar resolución de creación'"></app-boton-descargar>
+          <app-boton-descargar *ngIf="mesa.resolucion" [rutaArchivo]="mesa.resolucion" [titulo]="'Descargar resolución de creación'" />
         </td>
         <td nzAlign="center">
           @if(mesa.sesion){

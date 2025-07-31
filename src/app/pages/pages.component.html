@@ -1,23 +1,28 @@
-<nz-layout>
-  <app-super-header></app-super-header>
+<div class="flex flex-col w-full h-full">
+  <app-super-header />
 
-  <nz-layout class="dark:bg-gray-700">
-    <nz-sider class="menu-sidebar bg-punche-blue dark:bg-gray-800" nzCollapsible [nzCollapsedWidth]="56" [(nzCollapsed)]="this.isSiderCollapsed" [nzTrigger]="null">
-      @if (menuItems != null && menuItems!= undefined && menuItems.length > 0){
+  <div class="flex flex-col md:flex-row dark:bg-gray-700">
+    <div class="md:hidden w-full flex items-center justify-between cursor-pointer px-2 border-t border-slate-200" (click)="open = !open">
+      <div class="text-normal font-bold">
+        Menú
+      </div>
       <div class="p-2">
-        <ul class="mt-8 border-r-0 bg-transparent" nz-menu [nzTheme]="(selectedTheme == 'dark' ? 'dark' : 'light' )"
-          nzMode="inline" [nzInlineCollapsed]="this.isSiderCollapsed">
-
+        <i class="pi pi-align-right"></i>
+      </div>
+    </div>
+    <div class="md:h-full w-full bg-punche-blue dark:bg-gray-800 transition-all duration-500 md:py-8 overflow-hidden" [ngClass]="{ 'h-0 md:w-[200px]' : isCollapsed, 'h-0 md:w-[48px]' : !isCollapsed, 'h-full' : open, 'h-0' : !open }">
+      @if (menuItems){
+        <ul class="bg-transparent list-none m-0 p-0 text-white">
           @for (item of menuItems; track $index) {
-            <li nz-menu-item routerLinkActive="ant-menu-item-selected" nzMatchRouterExact>
+            <li>
               @if (item.esExterno) {
-              <a class="flex items-center" [href]="item.direccionUrl" target="_blank">
+              <a class="flex items-center py-[6px] px-4 w-full overflow-hidden whitespace-nowrap text-ellipsis transition-all duration-500 hover:text-[#f9ccd1]" [ngClass]="{ 'gap-2' : isCollapsed, 'gap-8' : !isCollapsed }" [href]="item.direccionUrl" target="_blank" (click)="open = !open">
                 <ng-template [ngTemplateOutlet]="itemMenu" [ngTemplateOutletContext]="{ item: item }"></ng-template>
               </a>
               } @else {
-              <a class="flex items-center" [routerLink]="item.direccionUrl">
+              <a class="flex items-center py-[6px] px-4 w-full overflow-hidden whitespace-nowrap text-ellipsis transition-all duration-500 hover:text-[#f9ccd1]" [ngClass]="{ 'gap-2' : isCollapsed, 'gap-8' : !isCollapsed }" [routerLink]="item.direccionUrl"  routerLinkActive="text-[#f9ccd1]" (click)="open = !open">
                 <ng-template [ngTemplateOutlet]="itemMenu" [ngTemplateOutletContext]="{ item: item }"></ng-template>
-              </a>
+                </a>
               }
             </li>
           }
@@ -25,49 +30,18 @@
             <span nz-icon [nzType]="item.iconoMenu" nzTheme="outline"></span>
             <span>{{item.descripcionItem}}</span>
           </ng-template>
-
-          <!-- @for (item of menuItems; track item.codigoMenu) {
-          @if(item.children != null && item.children != undefined && item.children.length > 0) {
-          <li nz-submenu nzOpen [nzTitle]="item.descripcionItem" [nzIcon]="item.iconoMenu!"
-            routerLinkActive="ant-menu-item-selected" class="my-2">
-            <ul>
-              @for (subItem of item.children; track subItem.codigoMenu) {
-              <li nz-menu-item routerLinkActive="ant-menu-item-selected">
-                <a [routerLink]="subItem.direccionUrl">{{subItem.descripcionItem}}</a>
-              </li>
-              }
-            </ul>
-          </li>
-          } @else {
-          <li nz-menu-item routerLinkActive="ant-menu-item-selected" nzMatchRouterExact>
-            @if (item.esExterno) {
-            <a class="flex items-center" [href]="item.direccionUrl" target="_blank">
-              <span nz-icon [nzType]="item.iconoMenu!" nzTheme="outline"></span>
-              <span>{{item.descripcionItem}}</span>
-            </a>
-            } @else {
-            <a class="flex items-center" [routerLink]="item.direccionUrl">
-              <span nz-icon [nzType]="item.iconoMenu!" nzTheme="outline"></span>
-              <span>{{item.descripcionItem}}</span>
-            </a>
-            }
-
-            }
-            } -->
         </ul>
-      </div>
       }
-    </nz-sider>
+    </div>
 
-    <div class="w-full flex flex-col">
-      <!-- {{authService.departamento() | json}} -->
-      <div class="flex justify-between bg-slate-50 py-1">
+    <div class="flex w-full flex-col">
+      <div class="flex justify-between bg-slate-50 dark:bg-gray-600 py-1">
         <div class="flex items-center">
-          <div class="py-2 px-3 cursor-pointer text-gray-500 text-base hover:text-sky-700" (click)="switchCollapseSider()">
+          <div class="hidden md:block py-2 px-3 cursor-pointer text-gray-500 text-base hover:text-sky-700" (click)="isCollapsed = !isCollapsed">
             <span nz-icon [nzType]="this.isSiderCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
           </div>
         </div>
-        <div class="flex gap-2 items-center pr-4">
+        <div class="flex gap-2 items-center pr-4"> 
           <div class="relative" (mouseover)="leave = true">
             <div class="p-2 rounded-full bg-sky-700 text-white font-bold hover:bg-sky-800 cursor-default">
               {{ authService.nombreTrabajador()! | primeraLetra : 2 }}
@@ -84,57 +58,9 @@
         </div>
       </div>
       <div class="w-full p-4">
-        <!-- <nz-header class="bg-white dark:bg-gray-800">
-          <div class="app-header flex items-center justify-between px-6">
-  
-            <div class="flex items-center gap-2">
-              <span class="header-trigger ml-6" (click)="switchCollapseSider()">
-                <span class="trigger text-gray-500 dark:text-gray-300" nz-icon
-                  [nzType]="this.isSiderCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
-              </span>
-            </div>
-  
-            <div class="header-right-content mr-6 flex items-center text-gray-500 dark:text-gray-300">
-              <div class="h-full mr-4">
-                <app-theme-switcher [isAbsolute]="false" [isRounded]="false"
-                  [hasInitialDarkBackground]="false"></app-theme-switcher>
-              </div>
-  
-              <div class="h-full">
-                <div class="ant-dropdown-trigger cursor-pointer" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
-                  <nz-avatar nzSize="small" [nzText]="descripcionTipo"
-                    class="bg-blue-700 dark:bg-neutral-700"></nz-avatar>
-                  <span class="ml-1">
-                    {{ authService.nombreTrabajador() }} {{ (descripcionSector != undefined && descripcionSector != '') ?
-                    ' - ' + descripcionSector :'' }}
-                  </span>
-  
-                </div>
-  
-                <nz-dropdown-menu #menu="nzDropdownMenu">
-                  <ul nz-menu class="bg-white dark:bg-gray-700">
-                    <li
-                      class="text-gray-500 hover:text-gray-950 dark:text-gray-300 dark:hover:text-gray-200 dark:hover:bg-gray-600"
-                      nz-menu-item (click)="onLogout()">
-                      <button class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">
-                          power_settings_new
-                        </span><span>Cerrar sesión</span>
-                      </button>
-                    </li>
-                  </ul>
-                </nz-dropdown-menu>
-              </div>
-            </div>
-          </div>
-        </nz-header> -->
-        <!-- <div class="inner-content"> -->
         <router-outlet></router-outlet>
-        <!-- </div> -->
       </div>
     </div>
-  </nz-layout>
+  </div>
   <app-footer></app-footer>
-  <!-- <nz-footer class="bg-punche-blue dark:bg-neutral-800 text-white">
-  </nz-footer> -->
-</nz-layout>
+</div>

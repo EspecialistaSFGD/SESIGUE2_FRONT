@@ -1,11 +1,11 @@
 <app-card [titulo]="'Inversiones por estado'" [px]="'px-1'" [py]="'py-1'">
     <ng-template #content>
-        <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '454px' }" class="custom-table">
+        <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '454px', x: '100%' }" class="custom-table">
             <thead>
                 <tr>
-                    <th rowspan="2">Estado</th>
-                    <th colspan="3" nzAlign="center" [nzWidth]="'100px'">Cartera CER</th>
-                    <th colspan="3" nzAlign="center" [nzWidth]="'100px'">Presupuesto 2025</th>
+                    <th nzLeft [nzWidth]="'140px'" rowspan="2">Estado</th>
+                    <th colspan="3" nzAlign="center">Cartera CER</th>
+                    <th colspan="3" nzAlign="center">Presupuesto 2025</th>
                 </tr>
                 <tr>
                     <th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
@@ -19,7 +19,7 @@
             <tbody>
                 @for(estado of intervencionEstados; track $index){
                     <tr>
-                        <td>{{estado.nombre}}</td>
+                        <td nzLeft>{{estado.nombre}}</td>
                         <td nzAlign="center">{{estado.cantIntervenciones}}</td>
                         <td nzAlign="center">{{estado.costoActualizado.toString() | numero : 1}}</td>
                         <td nzAlign="center">{{estado.devAcumulado.toString() | numero : 1}}</td>
@@ -29,7 +29,7 @@
                     </tr>
                 }
                 <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
-                    <td> Total</td>
+                    <td nzLeft class="bg-[#e8e8e8]"> Total</td>
                     <td nzAlign="center">{{totales.cantIntervenciones}}</td>
                     <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
                     <td nzAlign="center">{{totales.devAcumulado | numero : 1}}</td>
@@ -39,44 +39,5 @@
                 </tr>
             </tbody>
         </nz-table>
-        <!-- <app-table-card [scrollY]="550">
-            <ng-template #header>
-                <tr>
-                    <th rowspan="2">Estado</th>
-                    <th colspan="3" nzAlign="center" [nzWidth]="'100px'">Cartera CER</th>
-                    <th colspan="3" nzAlign="center" [nzWidth]="'100px'">Presupuesto 2025</th>
-                </tr>
-                <tr>
-                    <th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Costo</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Dev. Acum.</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">N° invers.</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Monto PIM</th>
-                    <th nzAlign="center" [nzWidth]="'100px'">Dev. 2025</th>
-                </tr>
-            </ng-template>
-            <ng-template #body>
-                @for(estado of intervencionEstados; track $index){
-                    <tr>
-                        <td>{{estado.nombre}}</td>
-                        <td nzAlign="center">{{estado.cantIntervenciones}}</td>
-                        <td nzAlign="center">{{estado.costoActualizado.toString() | numero : 1}}</td>
-                        <td nzAlign="center">{{estado.devAcumulado.toString() | numero : 1}}</td>
-                        <td nzAlign="center">{{estado.inversionActual}}</td>
-                        <td nzAlign="center">{{estado.pim.toString() | numero : 1}}</td>
-                        <td nzAlign="center">{{estado.devengado.toString() | numero : 1}}</td>
-                    </tr>
-                }
-                <tr class="sticky bottom-0 bg-[#e8e8e8] z-10 shadow-md font-bold text-xs uppercase">
-                    <td> Total</td>
-                    <td nzAlign="center">{{totales.cantIntervenciones}}</td>
-                    <td nzAlign="center">{{totales.costoActualizado | numero : 1}}</td>
-                    <td nzAlign="center">{{totales.devAcumulado | numero : 1}}</td>
-                    <td nzAlign="center">{{totales.inversionActual}}</td>
-                    <td nzAlign="center">{{totales.pim | numero : 1}}</td>
-                    <td nzAlign="center">{{totales.avance | numero : 1}}% </td>
-                </tr>
-            </ng-template>
-        </app-table-card>-->
     </ng-template> 
 </app-card>
