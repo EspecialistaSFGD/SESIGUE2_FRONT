@@ -1,0 +1,23 @@
+
+<div class="flex justify-between">
+  <div class="flex flex-col">
+    <input type="file" [accept]='accept' class="hidden" [id]="name" [name]="name" (change)="previewImage($event)">
+    <div class="flex gap-4 items-center">
+      <label [for]="name" class="flex gap-2 py-2 px-4 border border-solid border-sky-700 text-sky-700 cursor-pointer rounded-3xl hover:bg-sky-700 hover:text-white">
+        <i class="pi pi-upload"></i> {{titleBoton}}</label>
+        <div class="flex flex-col">
+          @if(loaded){
+            <div class="text-sm">{{nameFile}}</div>
+            <div class="text-sm">{{sizeFile}}</div>
+            }
+        </div>
+    </div>
+  </div>
+
+  @if(loaded){
+  <div class="flex items-center justify-center">
+    <div (click)="clearImage()" class="cursor-pointer tooltip rounded-6 text-slate-400" nz-tooltip nzTooltipTitle="Borrar archivo">
+        <i class="pi pi-trash" style="font-size: 1rem"></i>
+    </div>
+  </div>
+  }

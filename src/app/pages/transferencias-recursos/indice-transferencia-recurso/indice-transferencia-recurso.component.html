@@ -1,5 +1,5 @@
 <form [formGroup]="formIndice" class="flex flex-col gap-4">
-	<div  class="flex flex-col">
+	<div *ngIf="!indice" class="flex flex-col">
 		<label for="monto">Monto</label>
 		<input type="text" class="form-control" id="monto" placeholder="Monto aquí" formControlName="monto">
 		<div class="w-full text-danger" *ngIf="alertMessageError('monto')">{{msgErrorControl('monto','Monto')}}</div>
@@ -18,13 +18,8 @@
 	</div>
 
 	<div class="flex flex-col">
-		<label for="resolucion">Resolución</label>
-		<!-- <nz-upload [(nzFileList)]="filesList" [nzBeforeUpload]="beforeUploadMeet">
-			<div class="form-control-file">
-				<span nz-icon nzType="upload"></span>
-				Selecionar archivo
-			</div>
-		</nz-upload> -->
-		<div class="w-full text-danger" *ngIf="alertMessageError('resolucion')">{{msgErrorControl('resolucion','Resolución')}}</div>
+		<label for="archivo">Adjunto</label>
+		<app-boton-upload  (files)="getFiles($event)" />
+		<div class="w-full text-danger" *ngIf="alertMessageError('archivo')">{{msgErrorControl('archivo','Adjunto')}}</div>
 	</div>
 </form>

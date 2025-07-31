@@ -112,3 +112,8 @@ export interface SocialMedia {
   icon: string,
   url: string
 }
+
+export interface DataFile {
+  exist: boolean,
+  file?: File
+}

@@ -41,10 +41,9 @@ export default class TransferenciasRecursosComponent {
     const title = indice ? 'NUEVO INDICE' : 'NUEVA PROYECCIÓN'
     this.modal.create<IndiceTransferenciaRecursoComponent>({
       nzTitle: title,
-      // nzWidth: '75%',
       nzMaskClosable: false,
       nzContent: IndiceTransferenciaRecursoComponent,
-      nzData: {},
+      nzData: { indice },
       nzFooter: [
         {
           label: 'Cancelar',
@@ -55,6 +54,16 @@ export default class TransferenciasRecursosComponent {
           label: 'Guardar',
           type: 'primary',
           onClick: (componentResponse) => {
+            const formIndice = componentResponse!.formIndice
+           
+            if (formIndice.invalid) {
+              const invalidFields = Object.keys(formIndice.controls).filter(field => formIndice.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formIndice.markAllAsTouched();
+            }
+
+            console.log(formIndice);
+            
           }
         }
       ]

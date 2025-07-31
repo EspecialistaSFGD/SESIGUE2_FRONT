@@ -7,3 +7,7 @@ export interface TransferenciasRecursosResponses extends DataResponses {
 export interface TransferenciaRecursoResponse {
   transferenciaId?: string,
 }
+
+export interface TransferenciaRecursoIndiceFormData {
+  indice: boolean
+}
