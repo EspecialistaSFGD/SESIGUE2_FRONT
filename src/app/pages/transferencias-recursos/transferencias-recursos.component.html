@@ -1,0 +1,63 @@
+<app-page-header [title]="'TRANSFERENCIAS DE RECURSOS'" backUrl="panel" />
+
+<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderTransferencias" nzShowSizeChanger nzSize="small"
+  [nzData]="transferencias()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
+  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+  <thead>
+    <tr>
+			<th nzWidth="32px" nzAlign="center">Codigo</th>
+      <th nzLeft nzWidth="100px">Recursos</th>
+      <th nzWidth="42px" nzAlign="center">Indices</th>
+      <th nzWidth="32px" nzAlign="center" >Fecha</th>
+      <th nzWidth="64px" nzAlign="center" >XLS</th>
+      <th nzWidth="32px" nzAlign="center">UIT</th>
+      <th nzWidth="32px" nzAlign="center">Monto</th>
+      <th nzWidth="24px" nzAlign="center">Evidencia</th>
+      <th nzWidth="24px" nzAlign="center">MOV</th>
+      <th nzWidth="24px" nzAlign="center">XLS</th>
+      <th nzWidth="32px" nzAlign="center"></th>
+    </tr>
+  </thead>
+	<tr>
+		<td nzAlign="center">02356</td>
+		<td>nombre recurso</td>
+		<td nzAlign="center">0.002</td>
+		<td nzAlign="center">30/07/2025</td>
+		<td nzAlign="center"></td>
+		<td nzAlign="center">18%</td>
+		<td nzAlign="center">10,000.00</td>
+		<td nzAlign="center"></td>
+		<td nzAlign="center">mov</td>
+		<td nzAlign="center"></td>
+		<td nzAlign="center">
+			<a [routerLink]="[24]">
+				<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
+					<span nz-icon nzType="eye" nzTheme="outline"></span>
+				</button>
+			</a>
+		</td>
+	</tr>
+  <tbody>
+	</tbody>
+</nz-table>
+<ng-template #HeaderTransferencias>
+  <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+    <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+    <div class="flex gap-2">
+      <button nz-button nzType="default">
+        <span nz-icon nzType="filter"></span>
+        <span class="button-text">Filtros</span>
+      </button>
+
+      <button nz-button [nzLoading]="loading">
+          <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+          <span class="button-text">Exportar</span>
+      </button>
+
+      <button  nz-button nzType="primary">
+        <span nz-icon nzType="plus" nzTheme="outline"></span>
+        <span class="button-text">Nueva Transferencia</span>
+      </button>
+    </div>
+  </div>
+</ng-template>

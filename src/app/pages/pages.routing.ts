@@ -13,5 +13,6 @@ export const PAGES_ROUTES: Routes = [
   { path: 'usuarios', loadComponent: () => import('./usuarios/usuarios.component') },
   { path: 'configuraciones', loadChildren: () => import('./configuraciones/configuraciones.routes').then(m => m.CONFIG_ROUTES) },
   { path: 'hitos', loadChildren: () => import('./hitos/hitos.routes').then(r => r.HITOS_ROUTES) },
+  { path: 'transferencias_recursos', loadChildren: () => import('./transferencias-recursos/transferencias-recursos.routes').then(r => r.TRANSFERENCIAS_RECURSOS_ROUTES) },
   { path: '**', redirectTo: 'panel', pathMatch: 'full' },
 ];
