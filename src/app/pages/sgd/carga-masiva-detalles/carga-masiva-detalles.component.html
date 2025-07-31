@@ -6,10 +6,11 @@
 			<nz-descriptions-item nzTitle="Archivo">{{cargaMasiva().nombreArchivo}}</nz-descriptions-item>
 
 			<nz-descriptions-item nzTitle="Descargar">
-				<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar Archivo"
+				<app-boton-descargar [rutaArchivo]="cargaMasiva().directorioArchivo" [titulo]="'Descargar archivo'" />
+				<!-- <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Descargar Archivo"
 					(click)="downloadFile(cargaMasiva().directorioArchivo)">
 					<span nz-icon nzType="file-excel" nzTheme="outline"></span>
-				</button>
+				</button> -->
 			</nz-descriptions-item>
 
 			<nz-descriptions-item nzTitle="Total de filas">{{cargaMasiva().totalFilas}}</nz-descriptions-item>

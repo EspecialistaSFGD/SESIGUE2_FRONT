@@ -1,4 +1,5 @@
 <div nz-tooltip [nzTooltipTitle]="titulo" (click)="descargarPdf(rutaArchivo)" class="p-1 cursor-pointer" [ngClass]="{ 'text-sky-700' : active, 'text-slate-400' : !active }">
-    <!-- <i class="pi pi-file-pdf"></i> -->
-     <span nz-icon nzType="file-pdf" nzTheme="outline"></span>
+    <i class="pi" [ngClass]="{ 'pi-file-pdf' : !preload || preload && !loading, 'pi-spin pi-spinner' : preload && loading }" style="font-size: 0.85rem"></i>
+     <!-- <span nz-icon nzType="file-pdf" nzTheme="outline"></span> -->
 </div>
+<p-toast />
