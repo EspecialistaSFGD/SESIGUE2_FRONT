@@ -8,13 +8,14 @@ import { CargaMasivaResponse } from '@core/interfaces/carga-masiva.interface';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { CargasMasivasService, DescargarService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
 import saveAs from 'file-saver';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'app-carga-masiva-detalles',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, PipesModule],
+  imports: [CommonModule, NgZorroModule, PipesModule, BotonDescargarComponent],
   templateUrl: './carga-masiva-detalles.component.html',
   styles: ``
 })

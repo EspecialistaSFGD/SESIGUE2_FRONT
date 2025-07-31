@@ -4,7 +4,9 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Pagination, TransferenciaRecursoResponse } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { IndiceTransferenciaRecursoComponent } from './indice-transferencia-recurso/indice-transferencia-recurso.component';
 
 @Component({
   selector: 'app-transferencias-recursos',
@@ -29,8 +31,33 @@ export default class TransferenciasRecursosComponent {
   
   private router = inject(Router)
   private route = inject(ActivatedRoute)
+  private modal = inject(NzModalService)
 
   onQueryParamsChange(params: NzTableQueryParams): void {
     
+  }
+
+  agregarTransferenciaIndice(indice: boolean = true){
+    const title = indice ? 'NUEVO INDICE' : 'NUEVA PROYECCIÓN'
+    this.modal.create<IndiceTransferenciaRecursoComponent>({
+      nzTitle: title,
+      // nzWidth: '75%',
+      nzMaskClosable: false,
+      nzContent: IndiceTransferenciaRecursoComponent,
+      nzData: {},
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Guardar',
+          type: 'primary',
+          onClick: (componentResponse) => {
+          }
+        }
+      ]
+    })
   }
 }

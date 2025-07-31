@@ -30,11 +30,19 @@
 		<td nzAlign="center">mov</td>
 		<td nzAlign="center"></td>
 		<td nzAlign="center">
-			<a [routerLink]="[24]">
-				<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
-					<span nz-icon nzType="eye" nzTheme="outline"></span>
-				</button>
-			</a>
+			<div class="flex">
+				<div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Agregar nuevo indice" (click)="agregarTransferenciaIndice()">
+					<i class="pi pi-percentage" style="font-size: 0.75rem"></i>
+				</div>
+				<div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Agregar nueva proyección" (click)="agregarTransferenciaIndice(false)">
+					<i class="pi pi-chart-line" style="font-size: 0.75rem"></i>
+				</div>
+				<a [routerLink]="[24]">
+					<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
+						<span nz-icon nzType="eye" nzTheme="outline"></span>
+					</button>
+				</a>
+			</div>
 		</td>
 	</tr>
   <tbody>
