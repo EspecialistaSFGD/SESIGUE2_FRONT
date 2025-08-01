@@ -98,6 +98,14 @@ export default class IntervencionTareasComponent {
     return nivelGobiernoAuth === 'GN' ? tarea.responsableId == sectorAuth : tarea.responsableId == entidad
   }
 
+  validarBotonNuevo(){
+    let disabled = !this.botonNuevoActivo
+    if(this.permisosPCM){
+      disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
+    }
+    return disabled
+  }
+
   agregarTarea(){
     this.tareaId = 0
     this.intervencionTarea = {

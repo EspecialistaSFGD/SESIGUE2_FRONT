@@ -67,7 +67,7 @@
               <p class="text-sm">Resultados {{pagination.total}}</p>
           </div>
 
-          <button nz-button nzType="primary" (click)="agregarTarea()" [disabled]="!botonNuevoActivo">
+          <button  nz-button nzType="primary" (click)="agregarTarea()" [disabled]="validarBotonNuevo()">
               <span nz-icon nzType="plus" nzTheme="outline"></span>
               <span class="button-text">Nueva Tarea</span>
           </button>
