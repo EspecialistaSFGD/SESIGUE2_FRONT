@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Pagination, TransferenciaRecursoResponse } from '@core/interfaces';
+import { FileResponse, Pagination, TransferenciaRecursoResponse } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { IndiceTransferenciaRecursoComponent } from './indice-transferencia-recurso/indice-transferencia-recurso.component';
+import { TransferenciaRecursoService } from '@core/services';
+import { UtilesService } from '@libs/shared/services/utiles.service';
+import saveAs from 'file-saver';
 
 @Component({
   selector: 'app-transferencias-recursos',
@@ -29,12 +32,30 @@ export default class TransferenciasRecursosComponent {
 
   transferencias = signal<TransferenciaRecursoResponse[]>([])
   
+  private transferenciaRecurso = inject(TransferenciaRecursoService)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private modal = inject(NzModalService)
+  
+    private utilesService = inject(UtilesService);
 
   onQueryParamsChange(params: NzTableQueryParams): void {
     
+  }
+
+  generarMov(transferenciaId: string){
+    this.transferenciaRecurso.GenerarMov(transferenciaId,this.pagination)
+      .subscribe( resp => {
+        if(resp.data){
+          this.generarDescarga(resp.data);
+        }
+      })
+  }
+
+  generarDescarga(archivo: FileResponse): void {    
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo.archivo);
+    const blob = new Blob([arrayBuffer], { type: archivo.contentType });
+    saveAs(blob, archivo.nombreArchivo);
   }
 
   agregarTransferenciaIndice(indice: boolean = true){

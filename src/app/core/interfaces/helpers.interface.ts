@@ -97,8 +97,9 @@ export interface ExportResponses extends DataResponses {
 }
 
 export interface FileResponse {
- archivo: any,
-  nombreArchivo: string
+  archivo: any,
+  nombreArchivo: string,
+  contentType?: string
 }
 
 export interface ColorEstados {
