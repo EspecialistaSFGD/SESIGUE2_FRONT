@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { IntervencionTareaEstadoRegistroEnum } from '@core/enums';
-import { convertDateStringToDate, convertEnumToObject, getDateFormat } from '@core/helpers';
-import { IntervencionEspacioResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
+import { convertDateStringToDate, convertEnumToObject, getDateFormat, obtenerPermisosBotones } from '@core/helpers';
+import { ButtonsActions, IntervencionEspacioResponse, IntervencionTareaResponse, ItemEnum, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { IntervencionTareaService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -25,6 +25,7 @@ export default class IntervencionTareasComponent {
   title: string = `Tareas`;
   @Input() intervencionEspacio!: IntervencionEspacioResponse
 
+  tareaActions: ButtonsActions = {}
   botonNuevoActivo: boolean = true
   listarAvances: boolean = false
   loadingTareas: boolean =  false
@@ -61,6 +62,18 @@ export default class IntervencionTareasComponent {
     const profilePCM = [11,12,23]
     return profilePCM.includes(this.perfilAuth)
   }
+
+  getPermissions() {
+      // const navigation  = this.authStore.navigationAuth()!
+      const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
+      const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'intervenciones')
+      this.tareaActions = obtenerPermisosBotones(menu!.botones!)
+      const navLevel =  menu!.children!
+  
+      // this.permisosAgenda = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa agenda') ? true : false
+      // this.permisosIntegrantes = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa integrantes') ? true : false
+      // this.permisosDocumentos = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa documentos') ? true : false
+    }
 
   obtenerIntervencionTareasService(){
     this.loadingTareas = true
