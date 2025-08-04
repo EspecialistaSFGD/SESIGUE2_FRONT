@@ -1,44 +1,34 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <div class="bg-white p-4">
-	<!-- <div class="relative">
-		<button nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteExcelTransferencias()">
-			<span nz-icon nzType="file-excel"></span>
-			<span class="button-text">Exportar</span>
-		  </button>
-		<button nz-button class="absolute right-0 top-0 z-10" (click)="onOpenDrawer()">
-			<span nz-icon nzType="filter" nzTheme="outline"></span>
-			<span class="button-text">Filtros</span>
-		</button>
-	</div> -->
 	<nz-tabset [nzTabBarExtraContent]="actionTransferences">
 		<nz-tab nzTitle="TRANSFERENCIAS DETALLE">
-			<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderDetail" nzShowSizeChanger nzSize="small"
+			<nz-table [nzScroll]="{ x: '100%' }" [nzTitle]="HeaderDetail" nzShowSizeChanger
 				[nzData]="transferDetails()" [nzFrontPagination]="false" [nzLoading]="loadingDetail"
 				[nzTotal]="paginationDetails.total!" [nzPageSize]="paginationDetails.pageSize!"
 				[nzPageIndex]="paginationDetails.currentPage!" (nzQueryParams)="paramsDetailChange($event)">
 				<thead>
 					<tr>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="Tipo" [nzSortFn]="true">Tipo</th>
-						<th nzWidth="60px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="sub_tipo" [nzSortFn]="true">Sub Tipo</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="sub_tipo" [nzSortFn]="true">Tipo 1</th>
-						<th nzWidth="350px" nzColumnKey="Nombre_proyecto" [nzSortFn]="true">Nombre del proyecto</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="funcion" [nzSortFn]="true">Función</th>
+						<th nzWidth="90px" nzAlign="center" nzColumnKey="Tipo" [nzSortFn]="true">Tipo</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
+						<th nzWidth="90px" nzAlign="center" nzColumnKey="sub_tipo" [nzSortFn]="true">Sub Tipo</th>
+						<th nzWidth="90px" nzAlign="center" nzColumnKey="sub_tipo" [nzSortFn]="true">Tipo 1</th>
+						<th nzWidth="250px" nzColumnKey="Nombre_proyecto" [nzSortFn]="true">Nombre del proyecto</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="funcion" [nzSortFn]="true">Función</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="nivel_gobierno" [nzSortFn]="true">Nivel de Gobierno</th>
 						<th nzWidth="60px" nzAlign="center" nzColumnKey="UE_codigo_ubigeo" [nzSortFn]="true">UE CUI</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="UE_departamento" [nzSortFn]="true">UE Departamento</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="UE_provincia" [nzSortFn]="true">UE Provincia</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="UE_distrito" [nzSortFn]="true">UE Distrito</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="pliego" [nzSortFn]="true">Pliego</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="transferencia" [nzSortFn]="true">Transferencias</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="transferencia" [nzSortFn]="true">Transferencias</th>
 						<th nzWidth="60px" nzAlign="center" nzColumnKey="anio" [nzSortFn]="true">Año</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="periodo" [nzSortFn]="true">Periodo</th>
-						<th nzWidth="120px" nzAlign="center" nzColumnKey="resolucion" [nzSortFn]="true">Dispositivo legal</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="fecha_publicacion" [nzSortFn]="true">Fecha de publicación</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="periodo" [nzSortFn]="true">Periodo</th>
+						<th nzWidth="108px" nzAlign="center" nzColumnKey="resolucion" [nzSortFn]="true">Dispositivo legal</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="fecha_publicacion" [nzSortFn]="true">Fecha de publicación</th>
 						<th nzWidth="50px" nzAlign="center" nzColumnKey="anexos" [nzSortFn]="true">Anexos</th>
 						<th nzWidth="50px" nzAlign="center" nzColumnKey="fondes" [nzSortFn]="true">Fondes</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="fuente_financiamiento" [nzSortFn]="true">Fuente de financiamiento</th>
+						<th nzWidth="104px" nzAlign="center" nzColumnKey="fuente_financiamiento" [nzSortFn]="true">Fuente de financiamiento</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -79,31 +69,31 @@
 			</ng-template>
 		</nz-tab>
 		<nz-tab nzTitle="TRANSFERENCIAS RESUMIDO">
-			<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderResumen" nzShowSizeChanger nzSize="small"
+			<nz-table [nzScroll]="{ x: '100%' }" [nzTitle]="HeaderResumen" nzShowSizeChanger nzSize="small"
 				[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="paginationResumen.total!"
 				[nzPageSize]="paginationResumen.pageSize!" [nzPageIndex]="paginationResumen.currentPage!" (nzQueryParams)="paramsDetailChange($event)">
 				<thead>
 					<tr>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo</th>
+						<th nzWidth="90px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo</th>
 						<th nzWidth="60px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="funcion" [nzSortFn]="true">Función</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="funcion" [nzSortFn]="true">Función</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="nivel" [nzSortFn]="true">Nivel de Gobierno</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_departamento" [nzSortFn]="true">UE Departamento</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_provincia" [nzSortFn]="true">UE Provincia</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="ue_distrito" [nzSortFn]="true">UE Distrito</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="pliego" [nzSortFn]="true">Pliego</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="ley" [nzSortFn]="true">Ley de presupuesto</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="transferencia" [nzSortFn]="true">Transferencias</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="periodo" [nzSortFn]="true">Periodo</th>
-						<th nzWidth="350px" nzColumnKey="nombre_proyecto" [nzSortFn]="true">Nombre del proyecto</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="costoActualizado" [nzSortFn]="true">Costo Actualizado</th>
-						<th nzWidth="150px" nzAlign="center" nzColumnKey="devAcumulado" [nzSortFn]="true">Dev Acumulado</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="pim" [nzSortFn]="true">PIM</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="pia" [nzSortFn]="true">PIA</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="dev" [nzSortFn]="true">DEV</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="compromiso" [nzSortFn]="true">Compromiso</th>
-						<th nzWidth="100px" nzAlign="center" nzColumnKey="certificado" [nzSortFn]="true">Certificado</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="ley" [nzSortFn]="true">Ley de presupuesto</th>
+						<th nzWidth="100px" nzAlign="center" nzColumnKey="transferencia" [nzSortFn]="true">Transferencias</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="periodo" [nzSortFn]="true">Periodo</th>
+						<th nzWidth="250px" nzColumnKey="nombre_proyecto" [nzSortFn]="true">Nombre del proyecto</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="costoActualizado" [nzSortFn]="true">Costo Actualizado</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="devAcumulado" [nzSortFn]="true">Dev Acumulado</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="pim" [nzSortFn]="true">PIM</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="pia" [nzSortFn]="true">PIA</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="dev" [nzSortFn]="true">DEV</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="compromiso" [nzSortFn]="true">Compromiso</th>
+						<th nzWidth="80px" nzAlign="center" nzColumnKey="certificado" [nzSortFn]="true">Certificado</th>
 					</tr>
 				</thead>
 				<tbody>
