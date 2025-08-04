@@ -294,9 +294,16 @@ export default class PanelAcuerdosComponent {
       })
   }
 
-  tipoCardTabla(tipo: string) {
-    return tipo == 'acuerdos' ? this.panelSectores() : this.panelDepartamentos()
+  tipoCardTabla(tipo: string) {   
+    return tipo == 'acuerdos' ? this.panelSectores() : this.copyPanelUbigeo()
   }
+
+  copyPanelUbigeo(){
+    let ubigeo:AcuerdoPanelsResponse[] = [...this.panelDepartamentos()]
+    const departamentos = ubigeo.filter( item => item.nombre.toLowerCase() != 'lima' )
+    return departamentos
+  }
+
   totalesCardTabla(tipo: string): AcuerdoPanelTotales {
     return tipo == 'acuerdos' ? this.totalSector : this.totalUbigeo;
   }

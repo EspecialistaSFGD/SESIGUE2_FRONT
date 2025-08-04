@@ -1,34 +1,34 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <!-- {{this.authService.sector() |json}} -->
 <!-- {{ this.authService.subTipo() |json}} -->
-<nz-table [nzScroll]="{ x: '1150px' }" #fixedTable [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+<nz-table [nzScroll]="{ x: '100%' }" #fixedTable [nzTitle]="Header" nzShowSizeChanger nzSize="small"
     [nzData]="this.hitosService.hitos()!" [nzFrontPagination]="false" [nzLoading]="this.hitosService.isLoading()"
     [nzTotal]="this.hitosService.total()" [nzPageSize]="this.pageSize" [nzPageIndex]="this.pageIndex"
     (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
         <tr>
-            <th class="text-center w-10" nzLeft></th>
+            <th nzWidth="40px" class="text-center" nzLeft></th>
             <th nzWidth="100px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
-            <th nzWidth="120px" nzAlign="center" nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
-            <th nzWidth="150px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
+            <th nzWidth="100px" nzAlign="center" nzColumnKey="region" [nzSortFn]="true">Ubicación</th>
+            <th nzWidth="100px" nzAlign="center" nzColumnKey="intervencionesEstrategicas">Tipo intervención</th>
 
             <th nzWidth="150px" nzColumnKey="pedido">Pedido</th>
-            <th nzWidth="150px" nzAlign="center" nzColumnKey="cuis">CUI</th>
-            <th nzWidth="150px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código</th>
+            <th nzWidth="80px" nzAlign="center" nzColumnKey="cuis">CUI</th>
+            <th nzWidth="100px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código</th>
 
             <th nzWidth="150px" nzColumnKey="acuerdo">Acuerdo</th>
-            <th nzWidth="120px" nzAlign="center" nzColumnKey="plazo" [nzSortFn]="true">Plazo</th>
+            <th nzWidth="80px" nzAlign="center" nzColumnKey="plazo" [nzSortFn]="true">Plazo</th>
             <th nzWidth="120px" nzAlign="center" nzColumnKey="nomEstadoRegistro">Estado</th>
 
             <th nzWidth="150px" nzAlign="center" nzColumnKey="hito">Hito</th>
-            <th nzWidth="120px" nzAlign="center" nzColumnKey="responsableHito">Responsable del Hito</th>
-            <th nzWidth="120px" nzAlign="center" nzColumnKey="plazoHito">Plazo del Hito</th>
-            <th nzWidth="120px" nzAlign="center" nzColumnKey="estadoHito">Estado del Hito</th>
+            <th nzWidth="140px" nzAlign="center" nzColumnKey="responsableHito">Responsable del Hito</th>
+            <th nzWidth="80px" nzAlign="center" nzColumnKey="plazoHito">Plazo del Hito</th>
+            <th nzWidth="80px" nzAlign="center" nzColumnKey="estadoHito">Estado del Hito</th>
             <th nzWidth="150px" nzColumnKey="avance">Avance</th>
             <th nzWidth="150px" nzColumnKey="comentarioSector">Comentario Sector</th>
             <th nzWidth="150px" nzColumnKey="comentarioSDAv">Comentario PCM</th>
 
-            <th nzColumnKey="acciones" nzRight nzWidth="150px" nzAlign="center"></th>
+            <th nzColumnKey="acciones" nzRight nzWidth="100px" nzAlign="center"></th>
         </tr>
     </thead>
     <tbody>

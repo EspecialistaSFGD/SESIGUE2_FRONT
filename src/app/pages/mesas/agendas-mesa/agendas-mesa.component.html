@@ -45,11 +45,11 @@
 			  <td nzAlign="center">{{intervencionEspacio.subTipo | uppercase }}</td>
 			  <td nzAlign="center">{{intervencionEspacio.codigoIntervencion}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.nombreIntervencion}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.costoActualizado}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.devAcumulado}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.costoActualizado! | numero : 2}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.devAcumulado! | numero : 2}}</td>
 			  <!-- <td nzAlign="center">{{intervencionEspacio.pia}}</td> -->
-			  <td nzAlign="center">{{intervencionEspacio.pim}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.devengado}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.pim! | numero : 2}}</td>
+			  <td nzAlign="center">{{intervencionEspacio.devengado! | numero : 2}}</td>
 			  <!-- <td nzAlign="center">0.0</td> -->
 			  <td nzAlign="center">{{intervencionEspacio.fechaRegistro}}</td>
 			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionFase}}</td>
