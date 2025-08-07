@@ -85,7 +85,9 @@ export default class AgendasMesaComponent {
     this.route.queryParams.subscribe(params => {
       this.loading = true
       if (Object.keys(params).length > 0) {        
-        let campo = params['campo'] ?? 'mesaId'
+        let campo = params['campo'] ?? 'intervencionEspacioId'
+        console.log(campo);
+        
         
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
@@ -102,10 +104,10 @@ export default class AgendasMesaComponent {
         // setParamsToObject(params, this.pagination, 'entidadUbigeoId')
 
         setTimeout(() => {
-          this.obtenerMesaIntegrantesService(true)
-          this.obtenerMesaIntegrantesService(false)
+          // this.obtenerMesaIntegrantesService(true)
+          // this.obtenerMesaIntegrantesService(false)
           this.obtenerIntervencionEspacioService()
-        }, 500)
+        }, 100)
       }
     })
   }
@@ -180,7 +182,7 @@ export default class AgendasMesaComponent {
 
   obtenerMesaIntegrantesService(sector: boolean){
     const esSector = sector ? '1' : '0'
-    this.mesaIntegranteServices.ListarMesaIntegrantes(this.mesaId.toString(), {...this.pagination, pageSize: 100, esSector})
+    this.mesaIntegranteServices.ListarMesaIntegrantes(this.mesaId.toString(), {...this.pagination, columnSort: 'mesaIntegranteId', pageSize: 100, esSector})
       .subscribe( resp => {
         sector
         ? this.sectores = Array.from(new Set(resp.data.map( item => Number(item.sectorId))))
@@ -190,7 +192,7 @@ export default class AgendasMesaComponent {
 
   obtenerIntervencionEspacioService(){
     this.loading = true
-    this.intervencionEspaciosServices.ListarIntervencionEspacios({...this.pagination, columnSort: 'intervencionEspacioId'})
+    this.intervencionEspaciosServices.ListarIntervencionEspacios({...this.pagination })
       .subscribe( resp => {           
         this.loading = false
         this.intervencionesEspacios.set(resp.data)
@@ -301,7 +303,11 @@ export default class AgendasMesaComponent {
   }
 
   crearIntervencion(){
-    this.intervencionEspacioForm(true)
+    this.obtenerMesaIntegrantesService(true)
+    this.obtenerMesaIntegrantesService(false)
+    setTimeout(() => {
+      this.intervencionEspacioForm(true)
+    }, 100);
   }
 
   intervencionEspacioForm(create: boolean){    

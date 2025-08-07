@@ -7,11 +7,12 @@ import { IntervencionEspacioService } from '@core/services';
 import { IntervencionEspacioResponse, ItemEnum, Pagination } from '@core/interfaces';
 import { convertEnumToObject } from '@core/helpers';
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
+import { PipesModule } from '@core/pipes/pipes.module';
 
 @Component({
   selector: 'app-intervencion-detalle',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, IntervencionTareasComponent],
+  imports: [CommonModule, NgZorroModule, IntervencionTareasComponent, PipesModule],
   templateUrl: './intervencion-detalle.component.html',
   styles: ``
 })

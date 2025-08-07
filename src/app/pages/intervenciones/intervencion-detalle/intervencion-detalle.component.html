@@ -65,7 +65,7 @@
 
 	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[116px] lg:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Costo Actualizado</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().costoActualizado}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().costoActualizado! | numero : 0}}</div>
 	</div>
 	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[116px] lg:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-teal-100 ">Fase Objetivo</div>
@@ -82,19 +82,19 @@
 
 	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[116px] lg:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Dev. Acumulado</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().devAcumulado}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().devAcumulado! | numero : 0}}</div>
 	</div>
 	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[116px] lg:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">PIA</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().pia}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().pia! | numero : 0}}</div>
 	</div>
 	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[116px] lg:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">PIM</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().pim}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().pim! | numero : 0}}</div>
 	</div>
 	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[116px] lg:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Devengado</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().devengado}}</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio().devengado! | numero : 0}}</div>
 	</div>
 </div>
 

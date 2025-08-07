@@ -1,14 +1,14 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
-<div class="bg-white p-4">
+<div class="grid grid-cols-1">
 	<nz-tabset [nzTabBarExtraContent]="actionTransferences">
 		<nz-tab nzTitle="TRANSFERENCIAS DETALLE">
-			<nz-table [nzScroll]="{ x: '100%' }" [nzTitle]="HeaderDetail" nzShowSizeChanger
+			<nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderDetail" nzShowSizeChanger
 				[nzData]="transferDetails()" [nzFrontPagination]="false" [nzLoading]="loadingDetail"
 				[nzTotal]="paginationDetails.total!" [nzPageSize]="paginationDetails.pageSize!"
 				[nzPageIndex]="paginationDetails.currentPage!" (nzQueryParams)="paramsDetailChange($event)">
 				<thead>
 					<tr>
-						<th nzWidth="90px" nzAlign="center" nzColumnKey="Tipo" [nzSortFn]="true">Tipo</th>
+						<th nzLeft nzWidth="90px" nzAlign="center" nzColumnKey="Tipo" [nzSortFn]="true">Tipo</th>
 						<th nzWidth="80px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
 						<th nzWidth="90px" nzAlign="center" nzColumnKey="sub_tipo" [nzSortFn]="true">Sub Tipo</th>
 						<th nzWidth="90px" nzAlign="center" nzColumnKey="sub_tipo" [nzSortFn]="true">Tipo 1</th>
@@ -34,7 +34,7 @@
 				<tbody>
 					@for(detail of transferDetails(); track $index){
 					<tr>
-						<td nzAlign="center" class="text-xs">{{detail.tipo}}</td>
+						<td nzLeft nzAlign="center" class="text-xs">{{detail.tipo}}</td>
 						<td nzAlign="center" class="text-xs">{{detail.codigo_unico}}</td>
 						<td nzAlign="center" class="text-xs">{{detail.sub_tipo}}</td>
 						<td nzAlign="center" class="text-xs">{{detail.tipo_1}}</td>
@@ -69,12 +69,12 @@
 			</ng-template>
 		</nz-tab>
 		<nz-tab nzTitle="TRANSFERENCIAS RESUMIDO">
-			<nz-table [nzScroll]="{ x: '100%' }" [nzTitle]="HeaderResumen" nzShowSizeChanger nzSize="small"
+			<nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderResumen" nzShowSizeChanger nzSize="small"
 				[nzData]="transferResume()" [nzFrontPagination]="false" [nzLoading]="false" [nzTotal]="paginationResumen.total!"
 				[nzPageSize]="paginationResumen.pageSize!" [nzPageIndex]="paginationResumen.currentPage!" (nzQueryParams)="paramsDetailChange($event)">
 				<thead>
 					<tr>
-						<th nzWidth="90px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo</th>
+						<th nzLeft nzWidth="90px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo</th>
 						<th nzWidth="60px" nzAlign="center" nzColumnKey="codigo_unico" [nzSortFn]="true">CUI</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="sector" [nzSortFn]="true">Sector</th>
 						<th nzWidth="100px" nzAlign="center" nzColumnKey="funcion" [nzSortFn]="true">Función</th>
@@ -99,7 +99,7 @@
 				<tbody>
 					@for(resumen of transferResume(); track $index){
 					<tr>
-						<td nzAlign="center" class="text-xs">{{resumen.tipo}}</td>
+						<td nzLeft nzAlign="center" class="text-xs">{{resumen.tipo}}</td>
 						<td nzAlign="center" class="text-xs">{{resumen.codigo_unico}}</td>
 						<td nzAlign="center" class="text-xs">{{resumen.sector}}</td>
 						<td nzAlign="center" class="text-xs">{{resumen.funcion}}</td>
