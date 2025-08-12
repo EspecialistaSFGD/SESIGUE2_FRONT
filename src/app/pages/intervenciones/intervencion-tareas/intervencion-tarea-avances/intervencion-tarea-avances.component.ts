@@ -3,7 +3,7 @@ import { Component, EventEmitter, inject, Input, Output, signal } from '@angular
 import { ReactiveFormsModule } from '@angular/forms';
 import { IntervencionTareaAvanceEstadoRegistroEnum, IntervencionTareaEstadoRegistroEnum } from '@core/enums';
 import { convertDateStringToDate, convertEnumToObject, getDateFormat } from '@core/helpers';
-import { IntervencionTareaAvanceResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
+import { IntervencionEspacioResponse, IntervencionTareaAvanceResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
 import { IntervencionTareaAvanceService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -34,6 +34,7 @@ export default class IntervencionTareaAvancesComponent {
     return this._intervencionTarea;
   }
 
+  @Input() intervencionEspacio!: IntervencionEspacioResponse
   @Input() primeraTarea: boolean = false
   @Output() tareaUpdated = new EventEmitter<boolean>()
 
@@ -171,6 +172,7 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   comentarTarea(intervencionTareaAvance: IntervencionTareaAvanceResponse){
+    const entidad = localStorage.getItem('entidad')!
     this.modal.create<FormularioComentarComponent>({
       nzTitle: `COMENTAR AVANCE`,
       nzContent: FormularioComentarComponent,
@@ -194,9 +196,18 @@ export default class IntervencionTareaAvancesComponent {
 
             const comentario = formComentario.get('comentario')?.value
 
-            this.permisosPCM
-            ? intervencionTareaAvance.comentarioSd = comentario
-            : intervencionTareaAvance.comentario = comentario
+            if(this.permisosPCM){
+              intervencionTareaAvance.comentarioSd = comentario
+            } else {
+              switch (this.intervencionTarea!.subTipo!) {
+                case 'M': intervencionTareaAvance.comentarioSector = comentario; break;
+                case 'E': intervencionTareaAvance.comentarioEntidad = comentario; break;
+                case 'R': intervencionTareaAvance.comentarioGl = comentario; break;
+                case 'P': intervencionTareaAvance.comentarioGl = comentario; break;
+                case 'D': intervencionTareaAvance.comentarioGl = comentario; break;
+              }
+            }
+
 
             const fechaDate = convertDateStringToDate(intervencionTareaAvance.fecha)
             intervencionTareaAvance.fecha = getDateFormat(fechaDate,'month')
@@ -214,10 +225,6 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   disabledValidar(intervencionTareaAvance: IntervencionTareaAvanceResponse){
-    console.log(intervencionTareaAvance.validado);
-    console.log(intervencionTareaAvance.accesoId);
-    console.log(this.usuarioId);
-    
     return !intervencionTareaAvance.validado && Number(intervencionTareaAvance.accesoId!) == this.usuarioId
   }
 
