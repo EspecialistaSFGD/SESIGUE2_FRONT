@@ -54,9 +54,7 @@ export default class IntervencionTareasComponent {
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
 
-  ngOnInit(): void {
-    console.log(this.intervencionEspacio);
-    
+  ngOnInit(): void {    
     this.permisosPCM = this.setPermisosPCM()
     this.obtenerIntervencionTareasService()
   }

@@ -27,7 +27,7 @@
             <p class="font-bold" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.codigo}}</p>
           </td>
           <td>
-            <p (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.tarea}} - {{tarea.validado}} - {{visibleBotonNuevaTarea()}}</p>
+            <p (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.tarea}}</p>
           </td>
           <td nzAlign="center">{{tarea.intervencionFase}}</td>
           <td nzAlign="center">{{tarea.intervencionEtapa}}</td>
@@ -73,5 +73,5 @@
       </div>
   </ng-template>
   
-  <app-intervencion-tarea-avances [intervencionTarea]="intervencionTarea" (tareaUpdated)="actualizarListaTareas($event)"/>
+  <app-intervencion-tarea-avances [intervencionTarea]="intervencionTarea" [primeraTarea]="intervencionTareas().length == 1" (tareaUpdated)="actualizarListaTareas($event)"/>
 </div>
