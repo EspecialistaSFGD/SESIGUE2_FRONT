@@ -2,7 +2,6 @@
 <!-- {{this.authService.sector() |json}} -->
 <!-- {{ this.authService.subTipo() |json}} -->
   <div class="grid grid-cols-1">
-
       <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
           [nzData]="this.acuerdosService.acuerdos()!" [nzFrontPagination]="false"
           [nzLoading]="this.acuerdosService.isLoading()" [nzTotal]="this.acuerdosService.total()" [nzPageSize]="this.pageSize"
