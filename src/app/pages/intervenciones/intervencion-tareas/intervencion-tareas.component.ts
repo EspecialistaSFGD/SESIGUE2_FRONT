@@ -120,10 +120,25 @@ export default class IntervencionTareasComponent {
   }
 
   disabledBotonNuevo(){
-    let disabled = this.permisosPCM ? false : true
+    // let disabled = !this.botonNuevoActivo
+    // if(this.permisosPCM){
+    //   disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
+    // }
+    
+    // let disabled = this.permisosPCM  ? false : true
+    // if(this.permisosPCM){
+      //   disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
+      // }
+    const cantidadTareas = this.intervencionTareas().length == 0
+    // let disabled = cantidadTareas ? !this.permisosPCM  : !this.botonNuevoActivo
+    let disabled = true
     if(this.permisosPCM){
-      disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
+      disabled = !cantidadTareas
+    } else {
+      disabled = !this.botonNuevoActivo
     }
+
+    
     return disabled
   }
 
