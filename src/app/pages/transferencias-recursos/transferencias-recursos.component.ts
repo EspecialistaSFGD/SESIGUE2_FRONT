@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FileResponse, Pagination, TransferenciaRecursoResponse } from '@core/interfaces';
+import { FileResponse, Pagination, TransferenciaRecursoData, TransferenciaRecursoResponse } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -12,6 +12,7 @@ import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
+import { getDateFormat } from '@core/helpers';
 
 @Component({
   selector: 'app-transferencias-recursos',
@@ -23,6 +24,7 @@ import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-des
 export default class TransferenciasRecursosComponent {
 
   loading: boolean = false
+  formatoIndice: string = '/assets/uploads/transferencias_recursos/formato_indice.xlsx'
 
   transferenciasRecursos = signal<TransferenciaRecursoResponse[]>([])
   
@@ -49,6 +51,7 @@ export default class TransferenciasRecursosComponent {
     this.transferenciaRecurso.ListarTransferenciasRecurso({...this.pagination, pageSize: 13, columnSort: 'grupoID' })
       .subscribe( resp => {
         this.transferenciasRecursos.set(resp.data)
+        this.pagination.total = resp.info?.total
       })
   }
 
@@ -71,10 +74,10 @@ export default class TransferenciasRecursosComponent {
     saveAs(blob, archivo.nombreArchivo);
   }
 
-  agregarTransferenciaIndice(indice: boolean = true){
-    const title = indice ? 'NUEVO INDICE' : 'NUEVA PROYECCIÓN'
+  agregarTransferenciaIndice(recurso:TransferenciaRecursoResponse, indice: boolean = true){
+    const title = indice ? `NUEVO INDICE` : `NUEVA PROYECCIÓN`
     this.modal.create<IndiceTransferenciaRecursoComponent>({
-      nzTitle: title,
+      nzTitle: `${title} DE ${recurso.recurso.toUpperCase()}`,
       nzMaskClosable: false,
       nzContent: IndiceTransferenciaRecursoComponent,
       nzData: { indice },
@@ -96,11 +99,28 @@ export default class TransferenciasRecursosComponent {
               return formIndice.markAllAsTouched();
             }
 
-            console.log(formIndice);
+            const usuarioId = localStorage.getItem('codigoUsuario')
+            const recursoId = recurso.recursoId
+            const fecha = getDateFormat(formIndice.get('fecha')?.value, 'month')
+
+            const transferenciaRecursoIndice: TransferenciaRecursoData = { ...formIndice.value, fecha, recursoId, usuarioId  }
+            this.subirIndice(transferenciaRecursoIndice)
             
           }
         }
       ]
     })
+  }
+
+  subirIndice(transferenciaRecursoIndice: TransferenciaRecursoData){
+    this.loading = true
+    this.transferenciaRecurso.subirIndice(transferenciaRecursoIndice)
+      .subscribe( resp => {
+        if(resp.success){
+          this.obtenerRecursos()
+          this.modal.closeAll();
+        }
+        this.loading = false
+      })
   }
 }
