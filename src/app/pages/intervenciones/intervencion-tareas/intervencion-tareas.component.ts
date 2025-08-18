@@ -26,11 +26,13 @@ export default class IntervencionTareasComponent {
   @Input() intervencionEspacio!: IntervencionEspacioResponse
 
   tareaActions: ButtonsActions = {}
-  botonNuevoActivo: boolean = true
+  botonNuevoActivo: boolean = false
   listarAvances: boolean = false
   loadingTareas: boolean =  false
   tareaId: number = 0
 
+  sectorAuth: number = 0
+  usuarioId: number = 0
   permisosPCM: boolean = false
   perfilAuth: number = 0
 
@@ -52,12 +54,14 @@ export default class IntervencionTareasComponent {
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
     this.permisosPCM = this.setPermisosPCM()
     this.obtenerIntervencionTareasService()
   }
-
+  
   setPermisosPCM(){
+    this.sectorAuth = Number(localStorage.getItem('codigoSector') || 0)
+    this.usuarioId = Number(localStorage.getItem('codigoUsuario') || 0)
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     const profilePCM = [11,12,23]
     return profilePCM.includes(this.perfilAuth)
@@ -111,12 +115,39 @@ export default class IntervencionTareasComponent {
     return nivelGobiernoAuth === 'GN' ? tarea.responsableId == sectorAuth : tarea.responsableId == entidad
   }
 
-  validarBotonNuevo(){
-    let disabled = !this.botonNuevoActivo
+  visibleBotonNuevaTarea(){
+    return Number(this.intervencionEspacio.sectorId!) === this.sectorAuth || this.permisosPCM
+  }
+
+  disabledBotonNuevo(){
+    // let disabled = !this.botonNuevoActivo
+    // if(this.permisosPCM){
+    //   disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
+    // }
+    
+    // let disabled = this.permisosPCM  ? false : true
+    // if(this.permisosPCM){
+      //   disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
+      // }
+    const cantidadTareas = this.intervencionTareas().length == 0
+    // let disabled = cantidadTareas ? !this.permisosPCM  : !this.botonNuevoActivo
+    let disabled = true
     if(this.permisosPCM){
-      disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
+      disabled = !cantidadTareas
+    } else {
+      disabled = !this.botonNuevoActivo
     }
+
+    
     return disabled
+  }
+
+  disabledValidar(tarea:IntervencionTareaResponse){
+    let validado = true
+    if(!tarea.validado && Number(tarea.accesoId!) == this.usuarioId){
+      validado = false
+    }
+    return validado
   }
 
   agregarTarea(){

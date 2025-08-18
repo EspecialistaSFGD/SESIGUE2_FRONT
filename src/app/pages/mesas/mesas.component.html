@@ -1,102 +1,104 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
-<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
-  [nzData]="mesas()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
-  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
-  <thead>
-    <tr>
-      <th nzWidth="42px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
-      <th nzWidth="32px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Codigo</th>
-      <th nzLeft nzWidth="100px">Mesa</th>
-      <th nzWidth="32px" nzAlign="center" nzColumnKey="sectorId" [nzSortFn]="true">Sector</th>
-      <th nzWidth="64px" nzAlign="center" nzColumnKey="secretariaTecnicaId" [nzSortFn]="true">Secretaría Técnica</th>
-      <th nzWidth="32px" nzAlign="center">Fecha de Creación</th>
-      <th nzWidth="32px" nzAlign="center">Fecha de Vigencia</th>
-      <th nzWidth="24px" nzAlign="center">Resolución</th>
-      <th nzWidth="24px" nzAlign="center">Sesión</th>
-      <th nzWidth="24px" nzAlign="center">AM</th>
-      <th nzWidth="32px" *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center"></th>
-    </tr>
-  </thead>
-  
-  <tbody>
-    @for(mesa of mesas(); track $index){
+<div class="grid grid-cols-1">
+  <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
+    [nzData]="mesas()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
       <tr>
-        <td nzAlign="center">
-          <app-estado-tag [estado]="mesa.estadoRegistroNombre!"></app-estado-tag>
-        </td>
-        <td nzAlign="center">
-          <a [routerLink]="['/mesas', mesa.mesaId]" class="font-bold" nz-tooltip [nzTooltipTitle]="permisosPCM ? mesa.resumen : null">
-            {{mesa.codigo}}
-          </a>
-        </td>
-        <td><a [routerLink]="['/mesas', mesa.mesaId]" nz-tooltip [nzTooltipTitle]="permisosPCM ? mesa.alerta : null" nzTooltipColor="#b91c1c">{{mesa.nombre}}</a></td>
-        <td nzAlign="center">{{mesa.sector}}</td>
-        <td nzAlign="center">{{mesa.secretariaTecnica}}</td>
-        <td nzAlign="center">{{mesa.fechaCreacion}}</td>
-        <td nzAlign="center">{{mesa.fechaVigencia}}</td>
-        <td nzAlign="center">
-          <app-boton-descargar *ngIf="mesa.resolucion" [rutaArchivo]="mesa.resolucion" [titulo]="'Descargar resolución de creación'" />
-        </td>
-        <td nzAlign="center">
-          @if(mesa.sesion){
-            <app-boton-descargar [rutaArchivo]="mesa.sesion" [titulo]="'Descargar ultima sesión'"></app-boton-descargar>
-          }
-        </td>
-        <td nzAlign="center">
-          @if(mesa.am){
-            <app-boton-descargar [rutaArchivo]="mesa.am" [titulo]="'Descargar ultima AM'"></app-boton-descargar>
-          }
-        </td>
-        <td *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center">
-            <a *ngIf="mesasActions.view" [routerLink]="['/mesas', mesa.mesaId]">
-              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
-                <span nz-icon nzType="eye" nzTheme="outline"></span>
-              </button>
-            </a>
-            <button *ngIf="mesasActions.comment" nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar estado resumen" (click)="crearEstadoResumen(mesa, false)">
-              <span nz-icon nzType="comment" nzTheme="outline"></span>
-            </button>
-            <button *ngIf="mesasActions.comment" nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Agregar alerta" (click)="crearEstadoResumen(mesa, true)">
-              <span nz-icon nzType="comment" nzTheme="outline"></span>
-            </button>
-        </td>
+        <th nzWidth="42px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
+        <th nzWidth="32px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Codigo</th>
+        <th nzLeft nzWidth="100px">Mesa</th>
+        <th nzWidth="32px" nzAlign="center" nzColumnKey="sectorId" [nzSortFn]="true">Sector</th>
+        <th nzWidth="64px" nzAlign="center" nzColumnKey="secretariaTecnicaId" [nzSortFn]="true">Secretaría Técnica</th>
+        <th nzWidth="32px" nzAlign="center">Fecha de Creación</th>
+        <th nzWidth="32px" nzAlign="center">Fecha de Vigencia</th>
+        <th nzWidth="24px" nzAlign="center">Resolución</th>
+        <th nzWidth="24px" nzAlign="center">Sesión</th>
+        <th nzWidth="24px" nzAlign="center">AM</th>
+        <th nzWidth="32px" *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center"></th>
       </tr>
-      }
-  </tbody>
-</nz-table>
-
-<ng-template #HeaderMesas>
-  <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
-    <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
-    <div class="flex gap-2">
-      <button *ngIf="mesasActions.report" nz-button nzType="default" (click)="openFilters = true">
-        <span nz-icon nzType="filter"></span>
-        <span class="button-text">Filtros</span>
-      </button>
-
-      <button *ngIf="mesasActions.report" nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
-          <span nz-icon nzType="file-excel" nzTheme="outline"></span>
-          <span class="button-text">Exportar</span>
-          <span nz-icon nzType="down"></span>
-      </button>
-      <nz-dropdown-menu #menu="nzDropdownMenu">
-          <ul nz-menu>
-              <li nz-menu-item>
-                  <button (click)="reporteMesas()" nz-button nzType="text" type="button">Exportar Mesas</button>
-              </li>
-              <li nz-menu-item>
-                  <button (click)="reporteIntervencion()" nz-button nzType="text" type="button">Exportar intervenciones</button>
-              </li>
-          </ul>
-      </nz-dropdown-menu>
-
-      <button *ngIf="mesasActions.new" nz-button nzType="primary" (click)="crearMesa()">
-        <span nz-icon nzType="plus" nzTheme="outline"></span>
-        <span class="button-text">Nueva mesa</span>
-      </button>
+    </thead>
+    
+    <tbody>
+      @for(mesa of mesas(); track $index){
+        <tr>
+          <td nzAlign="center">
+            <app-estado-tag [estado]="mesa.estadoRegistroNombre!"></app-estado-tag>
+          </td>
+          <td nzAlign="center">
+            <a [routerLink]="['/mesas', mesa.mesaId]" class="font-bold" nz-tooltip [nzTooltipTitle]="permisosPCM ? mesa.resumen : null">
+              {{mesa.codigo}}
+            </a>
+          </td>
+          <td><a [routerLink]="['/mesas', mesa.mesaId]" nz-tooltip [nzTooltipTitle]="permisosPCM ? mesa.alerta : null" nzTooltipColor="#b91c1c">{{mesa.nombre}}</a></td>
+          <td nzAlign="center">{{mesa.sector}}</td>
+          <td nzAlign="center">{{mesa.secretariaTecnica}}</td>
+          <td nzAlign="center">{{mesa.fechaCreacion}}</td>
+          <td nzAlign="center">{{mesa.fechaVigencia}}</td>
+          <td nzAlign="center">
+            <app-boton-descargar *ngIf="mesa.resolucion" [rutaArchivo]="mesa.resolucion" [titulo]="'Descargar resolución de creación'" />
+          </td>
+          <td nzAlign="center">
+            @if(mesa.sesion){
+              <app-boton-descargar [rutaArchivo]="mesa.sesion" [titulo]="'Descargar ultima sesión'"></app-boton-descargar>
+            }
+          </td>
+          <td nzAlign="center">
+            @if(mesa.am){
+              <app-boton-descargar [rutaArchivo]="mesa.am" [titulo]="'Descargar ultima AM'"></app-boton-descargar>
+            }
+          </td>
+          <td *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center">
+              <a *ngIf="mesasActions.view" [routerLink]="['/mesas', mesa.mesaId]">
+                <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
+                  <span nz-icon nzType="eye" nzTheme="outline"></span>
+                </button>
+              </a>
+              <button *ngIf="mesasActions.comment" nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar estado resumen" (click)="crearEstadoResumen(mesa, false)">
+                <span nz-icon nzType="comment" nzTheme="outline"></span>
+              </button>
+              <button *ngIf="mesasActions.comment" nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Agregar alerta" (click)="crearEstadoResumen(mesa, true)">
+                <span nz-icon nzType="comment" nzTheme="outline"></span>
+              </button>
+          </td>
+        </tr>
+        }
+    </tbody>
+  </nz-table>
+  
+  <ng-template #HeaderMesas>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+      <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+      <div class="flex gap-2">
+        <button *ngIf="mesasActions.report" nz-button nzType="default" (click)="openFilters = true">
+          <span nz-icon nzType="filter"></span>
+          <span class="button-text">Filtros</span>
+        </button>
+  
+        <button *ngIf="mesasActions.report" nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
+            <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+            <span class="button-text">Exportar</span>
+            <span nz-icon nzType="down"></span>
+        </button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+                <li nz-menu-item>
+                    <button (click)="reporteMesas()" nz-button nzType="text" type="button">Exportar Mesas</button>
+                </li>
+                <li nz-menu-item>
+                    <button (click)="reporteIntervencion()" nz-button nzType="text" type="button">Exportar intervenciones</button>
+                </li>
+            </ul>
+        </nz-dropdown-menu>
+  
+        <button *ngIf="mesasActions.new" nz-button nzType="primary" (click)="crearMesa()">
+          <span nz-icon nzType="plus" nzTheme="outline"></span>
+          <span class="button-text">Nueva mesa</span>
+        </button>
+      </div>
     </div>
-  </div>
-</ng-template>
+  </ng-template>
+</div>
 
 <app-filtro-mesas [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="changeVisibleDrawer($event)" (filters)="generateFilters($event)" (export)="reporteMesas()" (save)="saveFilters($event)" />
 

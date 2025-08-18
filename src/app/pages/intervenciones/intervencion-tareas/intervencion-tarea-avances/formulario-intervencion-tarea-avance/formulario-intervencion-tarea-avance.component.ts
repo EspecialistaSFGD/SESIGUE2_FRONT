@@ -24,9 +24,9 @@ export class FormularioIntervencionTareaAvanceComponent {
   private fb = inject(FormBuilder)
 
   formTareaAvance: FormGroup = this.fb.group({
-    avance: [ '', Validators.required ],
-    fecha: [ '', Validators.required ],
-    estadoRegistro: [ '', Validators.required ],
+    avance: [ null, Validators.required ],
+    fecha: [ null, Validators.required ],
+    estadoRegistro: [ null, Validators.required ],
     evidencia: [ '' ]
   })
 

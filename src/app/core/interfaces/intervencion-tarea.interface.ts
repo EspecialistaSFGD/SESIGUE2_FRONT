@@ -24,6 +24,7 @@ export interface IntervencionTareaResponse {
 	accesoIdMod?: string,
 	entidadId: string,
 	entidad?:string,
+	subTipo?:string,
 	intervencionHitoId: string,
 	intervencionHito?:string,
 	intervencionEtapaId?: string,

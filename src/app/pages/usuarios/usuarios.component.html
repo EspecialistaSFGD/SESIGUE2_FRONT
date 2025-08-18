@@ -1,78 +1,80 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
-<nz-table [nzScroll]="{ x: '1150px' }" [nzTitle]="HeaderUser" nzShowSizeChanger nzSize="small"
-  [nzData]="usuarios()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
-  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
-  <thead>
-    <tr>
-		@if (perfilAuth == 11) {
-			<th nzWidth="20px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">DNI</th>
-		}
-      <th nzWidth="40px" nzAlign="center">Correo</th>
-      <th nzWidth="50px" nzAlign="center">Nombre</th>
-      <th nzWidth="60px" nzAlign="center">Entidad</th>
-      <th nzWidth="32px" nzAlign="center">Departamento</th>
-      <th nzWidth="32px" nzAlign="center">Provincia</th>
-      <th nzWidth="32px" nzAlign="center">Distrito</th>
-      <th nzWidth="32px" nzAlign="center">Perfil</th>
-      <th nzWidth="32px" nzAlign="center">Telefono</th>
-    </tr>
-  </thead>
-  
-  <tbody>
-    @for(usuario of usuarios(); track $index){
-			<tr>
-				@if (perfilAuth == 11) {
-					<td nzAlign="center">{{usuario.numeroDocumento}}</td>
-				}
-				<td nzAlign="center">{{usuario.correoNotificacion}}</td>
-				<td nzAlign="center">{{usuario.nombresPersona}}</td>
-				<td nzAlign="center">{{usuario.entidadNombre}}</td>
-				<td nzAlign="center">{{usuario.departamento}}</td>
-				<td nzAlign="center">{{usuario.provincia}}</td>
-				<td nzAlign="center">{{usuario.distrito}}</td>
-				<td nzAlign="center"><p [nz-tooltip]="usuario.descripcionPerfil">{{usuario.perfil}}</p></td>
-				<td nzAlign="center">{{usuario.telefono}}</td>
-			</tr>
-		}
-		</tbody>
-	</nz-table>
-
-	<ng-template #HeaderUser>
-		<div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
-			<p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
-			@if (usuarioPermisos.report) {
-				<div class="flex gap-2">
-					<button nz-button nzType="default" (click)="openFilter = true">
-						<span nz-icon nzType="filter"></span>
-						<span class="button-text">Filtros</span>
-					</button>
-	
-					<button nz-button nz-dropdown [nzDropdownMenu]="selectExport" nzType="default" [nzLoading]="loadingExport">
-						<span nz-icon nzType="file-excel"></span>
-						<span class="button-text">Descargar</span>
-					</button>
-					<nz-dropdown-menu #selectExport="nzDropdownMenu">
-						<ul nz-menu>
-							@if ((!permisosPCM && !nivelAuth) || permisosPCM) {
-								<li nz-menu-item>
-									<button nz-button nzType="text" (click)="reporteUsuarios('sector')" type="button">Sectores</button>
-								</li>
-							}
-							@if ((!permisosPCM && nivelAuth) || permisosPCM) {
-								<li nz-menu-item>
-									<button nz-button nzType="text" (click)="reporteUsuarios('gore')" type="button">Gores</button>
-								</li>
-							}
-							@if (permisosPCM) {
-								<li nz-menu-item>
-									<button nz-button nzType="text" (click)="reporteUsuarios('todos')" type="button">Todos</button>
-								</li>
-							}
-						</ul>
-					</nz-dropdown-menu>
-				</div>
+<div class="grid grid-cols-1">
+	<nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderUser" nzShowSizeChanger nzSize="small"
+	  [nzData]="usuarios()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+	  [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+	  <thead>
+		<tr>
+			@if (perfilAuth == 11) {
+				<th nzLeft nzWidth="'80px'" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">DNI</th>
 			}
-		</div>
-	</ng-template>
+		<th	nzLeft nzWidth="'100px'" nzAlign="center">Nombre</th>
+		  <th nzWidth="'120px'" nzAlign="center">Correo</th>
+		  <th nzWidth="'100px'" nzAlign="center">Entidad</th>
+		  <th nzWidth="'100px'" nzAlign="center">Departamento</th>
+		  <th nzWidth="'100px'" nzAlign="center">Provincia</th>
+		  <th nzWidth="'100px'" nzAlign="center">Distrito</th>
+		  <th nzWidth="'100px'" nzAlign="center">Perfil</th>
+		  <th nzWidth="'100px'" nzAlign="center">Telefono</th>
+		</tr>
+	  </thead>
+	  
+	  <tbody>
+		@for(usuario of usuarios(); track $index){
+				<tr>
+					@if (perfilAuth == 11) {
+						<td nzLeft nzAlign="center">{{usuario.numeroDocumento}}</td>
+					}
+					<td nzLeft nzAlign="center">{{usuario.nombresPersona}}</td>
+					<td nzAlign="center">{{usuario.correoNotificacion}}</td>
+					<td nzAlign="center">{{usuario.entidadNombre}}</td>
+					<td nzAlign="center">{{usuario.departamento}}</td>
+					<td nzAlign="center">{{usuario.provincia}}</td>
+					<td nzAlign="center">{{usuario.distrito}}</td>
+					<td nzAlign="center"><p [nz-tooltip]="usuario.descripcionPerfil">{{usuario.perfil}}</p></td>
+					<td nzAlign="center">{{usuario.telefono}}</td>
+				</tr>
+			}
+			</tbody>
+		</nz-table>
+	
+		<ng-template #HeaderUser>
+			<div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+				<p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+				@if (usuarioPermisos.report) {
+					<div class="flex gap-2">
+						<button nz-button nzType="default" (click)="openFilter = true">
+							<span nz-icon nzType="filter"></span>
+							<span class="button-text">Filtros</span>
+						</button>
+		
+						<button nz-button nz-dropdown [nzDropdownMenu]="selectExport" nzType="default" [nzLoading]="loadingExport">
+							<span nz-icon nzType="file-excel"></span>
+							<span class="button-text">Descargar</span>
+						</button>
+						<nz-dropdown-menu #selectExport="nzDropdownMenu">
+							<ul nz-menu>
+								@if ((!permisosPCM && !nivelAuth) || permisosPCM) {
+									<li nz-menu-item>
+										<button nz-button nzType="text" (click)="reporteUsuarios('sector')" type="button">Sectores</button>
+									</li>
+								}
+								@if ((!permisosPCM && nivelAuth) || permisosPCM) {
+									<li nz-menu-item>
+										<button nz-button nzType="text" (click)="reporteUsuarios('gore')" type="button">Gores</button>
+									</li>
+								}
+								@if (permisosPCM) {
+									<li nz-menu-item>
+										<button nz-button nzType="text" (click)="reporteUsuarios('todos')" type="button">Todos</button>
+									</li>
+								}
+							</ul>
+						</nz-dropdown-menu>
+					</div>
+				}
+			</div>
+		</ng-template>
+</div>
 
 	<app-filtros-usuario [visible]="openFilter" [sectores]="sectores()" [departamentos]="departamentos()" [perfiles]="perfiles()" [permisosPCM]="permisosPCM" [nivelAuth]="nivelAuth" (visibleDrawer)="openFilter = false" (filters)="getFilterDrawer($event)" (export)="exportToFilters()"></app-filtros-usuario>

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FileResponse, Pagination, TransferenciaRecursoResponse } from '@core/interfaces';
+import { FileResponse, Pagination, TransferenciaRecursoData, TransferenciaRecursoResponse } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -10,17 +10,23 @@ import { IndiceTransferenciaRecursoComponent } from './indice-transferencia-recu
 import { TransferenciaRecursoService } from '@core/services';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
+import { PipesModule } from '@core/pipes/pipes.module';
+import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
+import { getDateFormat } from '@core/helpers';
 
 @Component({
   selector: 'app-transferencias-recursos',
   standalone: true,
-  imports: [CommonModule, RouterModule, PageHeaderComponent, NgZorroModule],
+  imports: [CommonModule, RouterModule, PageHeaderComponent, NgZorroModule, PipesModule, BotonDescargarComponent],
   templateUrl: './transferencias-recursos.component.html',
   styles: ``
 })
 export default class TransferenciasRecursosComponent {
 
   loading: boolean = false
+  formatoIndice: string = '/assets/uploads/transferencias_recursos/formato_indice.xlsx'
+
+  transferenciasRecursos = signal<TransferenciaRecursoResponse[]>([])
   
   pagination: Pagination = {
     columnSort: 'recursoId',
@@ -30,14 +36,24 @@ export default class TransferenciasRecursosComponent {
     total: 0
   }
 
-  transferencias = signal<TransferenciaRecursoResponse[]>([])
   
   private transferenciaRecurso = inject(TransferenciaRecursoService)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
-  private modal = inject(NzModalService)
-  
-    private utilesService = inject(UtilesService);
+  private modal = inject(NzModalService) 
+  private utilesService = inject(UtilesService);
+
+  ngOnInit(): void {
+    this.obtenerRecursos()
+  }
+
+  obtenerRecursos(){
+    this.transferenciaRecurso.ListarTransferenciasRecurso({...this.pagination, pageSize: 13, columnSort: 'grupoID' })
+      .subscribe( resp => {
+        this.transferenciasRecursos.set(resp.data)
+        this.pagination.total = resp.info?.total
+      })
+  }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
     
@@ -58,10 +74,10 @@ export default class TransferenciasRecursosComponent {
     saveAs(blob, archivo.nombreArchivo);
   }
 
-  agregarTransferenciaIndice(indice: boolean = true){
-    const title = indice ? 'NUEVO INDICE' : 'NUEVA PROYECCIÓN'
+  agregarTransferenciaIndice(recurso:TransferenciaRecursoResponse, indice: boolean = true){
+    const title = indice ? `NUEVO INDICE` : `NUEVA PROYECCIÓN`
     this.modal.create<IndiceTransferenciaRecursoComponent>({
-      nzTitle: title,
+      nzTitle: `${title} DE ${recurso.recurso.toUpperCase()}`,
       nzMaskClosable: false,
       nzContent: IndiceTransferenciaRecursoComponent,
       nzData: { indice },
@@ -83,11 +99,28 @@ export default class TransferenciasRecursosComponent {
               return formIndice.markAllAsTouched();
             }
 
-            console.log(formIndice);
+            const usuarioId = localStorage.getItem('codigoUsuario')
+            const recursoId = recurso.recursoId
+            const fecha = getDateFormat(formIndice.get('fecha')?.value, 'month')
+
+            const transferenciaRecursoIndice: TransferenciaRecursoData = { ...formIndice.value, fecha, recursoId, usuarioId  }
+            this.subirIndice(transferenciaRecursoIndice)
             
           }
         }
       ]
     })
+  }
+
+  subirIndice(transferenciaRecursoIndice: TransferenciaRecursoData){
+    this.loading = true
+    this.transferenciaRecurso.subirIndice(transferenciaRecursoIndice)
+      .subscribe( resp => {
+        if(resp.success){
+          this.obtenerRecursos()
+          this.modal.closeAll();
+        }
+        this.loading = false
+      })
   }
 }
