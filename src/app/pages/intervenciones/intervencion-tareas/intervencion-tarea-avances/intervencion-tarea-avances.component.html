@@ -9,7 +9,7 @@
 				<th nzWidth="32px" nzAlign="center">Avance</th>
 				<th nzWidth="64px" nzAlign="center">Evidencia</th>
 				<th nzWidth="32px" nzAlign="center">Comentario Sector</th>
-				<th nzWidth="32px" nzAlign="center">Comentario UE/GL</th>
+				<th nzWidth="32px" nzAlign="center">Comentario GR/GL</th>
 				<th nzWidth="24px" nzAlign="center">Comentario PCM</th>
 				<th nzWidth="24px" nzAlign="center">Comentario Ejecutora</th>
 				<th nzWidth="24px" nzAlign="center"></th>
@@ -22,20 +22,20 @@
 					<td nzAlign="center"><app-icono-validado [validado]="avance.validaPcm!" /></td>
 					<td nzAlign="center">{{avance.fecha}}</td>
 					<td nzAlign="center">{{avance.avance}}</td>
-					<td nzAlign="center"><app-boton-descargar [rutaArchivo]="avance.evidencia!" [titulo]="'Descargar evidencia'"></app-boton-descargar></td>
+					<td nzAlign="center"><app-boton-descargar *ngIf="avance.evidencia" [rutaArchivo]="avance.evidencia" [titulo]="'Descargar evidencia'"></app-boton-descargar></td>
 					<td nzAlign="center">{{avance.comentarioSector}}</td>
 					<td nzAlign="center">{{avance.comentarioGl}}</td>
 					<td nzAlign="center">{{avance.comentarioSd}}</td>
 					<td nzAlign="center">{{avance.comentarioEntidad}}</td>
 					<td nzAlign="center">
-						<button nz-button nzDanger nzType="link" [nz-tooltip]="!verificarProyectoCulminadoAvance(avance.estadoRegistroNombre!) || !tareaCulminado ? 'Eliminar avance' : ''" [disabled]="verificarProyectoCulminadoAvance(avance.estadoRegistroNombre!) || tareaCulminado" (click)="eliminarTarea(avance)">
+						<button nz-button nzDanger nzType="link" [nz-tooltip]="!verificarProyectoCulminadoAvance(avance) || !tareaCulminado ? 'Eliminar avance' : ''" [disabled]="!disabledValidar(avance)" (click)="eliminarTarea(avance)">
 							<span nz-icon nzType="delete" nzTheme="outline"></span>
 						</button>
-						<button nz-button nzType="link" [nz-tooltip]="!verificarProyectoCulminadoAvance(avance.estadoRegistroNombre!) || !tareaCulminado ? 'Comentar avance' : ''" [disabled]="verificarProyectoCulminadoAvance(avance.estadoRegistroNombre!) || tareaCulminado" (click)="comentarTarea(avance)">
+						<button nz-button nzType="link" [nz-tooltip]="!verificarProyectoCulminadoAvance(avance) || !tareaCulminado ? 'Comentar avance' : ''" [disabled]="verificarProyectoCulminadoAvance(avance) || tareaCulminado" (click)="comentarTarea(avance)">
 							<span nz-icon nzType="comment" nzTheme="outline"></span>
 						</button>
-						<button *ngIf="permisosPCM" nz-button nzType="link" nz-tooltip [nzTooltipTitle]="verificarProyectoCulminadoAvance(avance.estadoRegistroNombre!) ? 'Validar avance' : ''" [disabled]="!verificarProyectoCulminadoAvance(avance.estadoRegistroNombre!)">
-							<span nz-icon [ngClass]="{ 'text-green-500' : verificarProyectoCulminadoAvance(avance.estadoRegistroNombre!) }" (click)="validarAvance(avance)" nzType="check-circle" nzTheme="outline"></span>
+						<button *ngIf="permisosPCM" nz-button nzType="link" nz-tooltip [nzTooltipTitle]="verificarProyectoCulminadoAvance(avance) ? 'Validar avance' : ''" [disabled]="!verificarProyectoCulminadoAvance(avance)">
+							<span nz-icon [ngClass]="{ 'text-green-500' : verificarProyectoCulminadoAvance(avance) }" (click)="validarAvance(avance)" nzType="check-circle" nzTheme="outline"></span>
 						</button>
 					</td>
 				</tr>
@@ -50,7 +50,7 @@
 							<p class="text-sm">Resultados {{pagination.total}}</p>
 					</div>
 
-					<button nz-button nzType="primary" (click)="agregarAvance()" [disabled]="tareaProyectoCulminado || tareaCulminado">
+					<button *ngIf="esResponsable || primeraTarea" nz-button nzType="primary" (click)="agregarAvance()" [disabled]="disabledBotonNuevo()">
 							<span nz-icon nzType="plus" nzTheme="outline"></span>
 							<span class="button-text">Nuevo Avance</span>
 					</button>

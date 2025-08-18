@@ -1,0 +1,25 @@
+<form [formGroup]="formIndice" class="flex flex-col gap-3">
+	<div *ngIf="!indice" class="flex flex-col">
+		<label for="monto">Monto</label>
+		<input type="text" class="form-control" id="monto" placeholder="Monto aquí" formControlName="monto">
+		<div class="w-full text-danger" *ngIf="alertMessageError('monto')">{{msgErrorControl('monto','Monto')}}</div>
+	</div>
+
+	<div class="flex flex-col">
+		<label for="nombre">Fecha de creación</label>
+		<p-calendar 
+		formControlName="fecha"
+		[iconDisplay]="'input'" 
+		[showIcon]="true"
+		[showButtonBar]="true"
+		dateFormat="dd/mm/yy"
+		inputId="icondisplay"/>
+		<div class="w-full text-danger" *ngIf="alertMessageError('fecha')">{{msgErrorControl('fecha','Fecha')}}</div>
+	</div>
+
+	<div class="flex flex-col">
+		<label for="archivo">Adjunto</label>
+		<app-boton-upload  (files)="getFiles($event)" [accept]="'.xlsx'" />
+		<div class="w-full text-danger" *ngIf="alertMessageError('archivo')">{{msgErrorControl('archivo','Adjunto')}}</div>
+	</div>
+</form>

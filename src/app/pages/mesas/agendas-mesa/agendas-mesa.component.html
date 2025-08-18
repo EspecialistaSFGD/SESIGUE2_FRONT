@@ -5,74 +5,71 @@
 @if(mesa().mesaId){
 	<app-mesa-detalle [mesa]="mesa()" [action]="false"/>
 }
-<nz-table nzSize="small" [nzTitle]="headerUbigeos" nzShowSizeChanger [nzData]="intervencionesEspacios()"
-[nzFrontPagination]="false" [nzShowPagination]="pagination.total! > 10"
-[nzLoading]="loading" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
-[nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
-    <thead>
-        <tr>
-            <th nzAlign="center">Sector</th>
-            <th nzAlign="center">Ubicación</th>
-            <th nzAlign="center">Entidad</th>
-            <th nzAlign="center">Tipo</th>
-            <th nzAlign="center">Subtipo</th>
-            <th nzAlign="center">Codigo</th>
-            <th nzAlign="center">Nombre</th>
-            <th nzAlign="center">Costo Act.</th>
-            <th nzAlign="center">Dev Acum</th>
-            <!-- <th nzAlign="center">PIA</th> -->
-            <th nzAlign="center">PIM</th>
-            <th nzAlign="center">DEV</th>
-            <!-- <th nzAlign="center">Trans 2025</th> -->
-            <th nzAlign="center">Fecha</th>
-            <th nzAlign="center">Fase Inicial</th>
-            <th nzAlign="center">Etapa Inicial</th>
-            <th nzAlign="center">Hito Inicial</th>
-            <th *ngIf="mesasAgendaActions.view || mesasAgendaActions.comment || mesasAgendaActions.delete" nzWidth="94px" nzAlign="center">Situación</th>
-        </tr>
-    </thead>
-    <tbody>
-		@for(intervencionEspacio of intervencionesEspacios(); track $index){
+
+<div class="grid grid-cols-1">
+	<nz-table #basicTable [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="headerUbigeos" [nzData]="intervencionesEspacios()"
+	[nzFrontPagination]="false" [nzShowPagination]="pagination.total! > 10"
+	[nzLoading]="loading" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
+	[nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+		<thead>
 			<tr>
-			  <td nzAlign="center">{{intervencionEspacio.sector}}</td>
-			  <td nzAlign="center">
-				{{intervencionEspacio.departamento}}
-				{{intervencionEspacio.provincia ? ' / ' + intervencionEspacio.provincia  : '' }}
-				{{intervencionEspacio.distrito ? ' / ' + intervencionEspacio.distrito  : '' }}
-			</td>
-			  <td nzAlign="center">{{intervencionEspacio.entidadTipo}} {{intervencionEspacio.entidadSlug}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.tipo | uppercase }}</td>
-			  <td nzAlign="center">{{intervencionEspacio.subTipo | uppercase }}</td>
-			  <td nzAlign="center">{{intervencionEspacio.codigoIntervencion}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.nombreIntervencion}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.costoActualizado}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.devAcumulado}}</td>
-			  <!-- <td nzAlign="center">{{intervencionEspacio.pia}}</td> -->
-			  <td nzAlign="center">{{intervencionEspacio.pim}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.devengado}}</td>
-			  <!-- <td nzAlign="center">0.0</td> -->
-			  <td nzAlign="center">{{intervencionEspacio.fechaRegistro}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionFase}}</td>
-			  <td nzAlign="center">{{intervencionEspacio.inicioIntervencionEtapa}}</td>
-			  <td nzAlign="center" nz-tooltip [nzTooltipTitle]=" mesasAgendaActions.comment ? intervencionEspacio.resumen : null">{{intervencionEspacio.inicioIntervencionHito}}</td>
-			  <td nzAlign="center">
-				  <button *ngIf="mesasAgendaActions.view" nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención" (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)">
-					<span nz-icon nzType="eye" nzTheme="outline"></span>
-				</button>
-				<button *ngIf="mesasAgendaActions.comment" nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar resumen" (click)="comentarIntervencion(intervencionEspacio)">
-					<span nz-icon nzType="comment" nzTheme="outline"></span>
-				</button>
-				<button *ngIf="mesasAgendaActions.delete" nz-button nzDanger nzType="link" [nz-tooltip]="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? 'Eliminar intervención' : ''" (click)="eliminarIntervencion(intervencionEspacio)" [disabled]="estadoEliminarIntervencionEspacio(intervencionEspacio)">
-					<span nz-icon nzType="delete" nzTheme="outline"></span>
-				</button>
-			  </td>
-			<tr>
-		}
-	</tbody>
-</nz-table>
+				<th nzAlign="center" nzWidth="80px">Sector</th>
+				<th nzAlign="center" nzWidth="120px">Ubicación</th>
+				<th nzAlign="center" nzWidth="120px" nzColumnKey="e.entidad" [nzSortFn]="true">Entidad</th>
+				<th nzAlign="center" nzWidth="100px">Tipo</th>
+				<th nzAlign="center" nzWidth="100px">Subtipo</th>
+				<th nzAlign="center" nzWidth="80px">Codigo</th>
+				<th nzAlign="center" nzWidth="350px">Nombre</th>
+				<th nzAlign="center" nzWidth="80px">Fecha SSI</th>
+				<th nzAlign="center" nzWidth="100px">Costo Act.</th>
+				<th nzAlign="center" nzWidth="100px">Dev Acum</th>
+				<th nzAlign="center" nzWidth="100px">PIM</th>
+				<th nzAlign="center" nzWidth="100px">DEV</th>
+				<th nzAlign="center" nzWidth="250px" nzColumnKey="inicioIntervencionHitoId" [nzSortFn]="true">Hito Inicial</th>
+				<th *ngIf="mesasAgendaActions.view || mesasAgendaActions.comment || mesasAgendaActions.delete" nzRight nzWidth="100px" nzAlign="center">Situación</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for(intervencionEspacio of intervencionesEspacios(); track $index){
+				<tr>
+				  <td nzAlign="center">{{intervencionEspacio.sector}}</td>
+				  <td nzAlign="center">
+					{{intervencionEspacio.departamento}}
+					{{intervencionEspacio.provincia ? ' / ' + intervencionEspacio.provincia  : '' }}
+					{{intervencionEspacio.distrito ? ' / ' + intervencionEspacio.distrito  : '' }}
+					</td>
+				  <td nzAlign="center">{{intervencionEspacio.entidadTipo}} {{intervencionEspacio.entidadSlug}}</td>
+				  <td nzAlign="center">{{intervencionEspacio.tipo | uppercase }}</td>
+				  <td nzAlign="center">{{intervencionEspacio.subTipo | uppercase }}</td>
+				  <td nzAlign="center">{{intervencionEspacio.codigoIntervencion}}</td>
+				  <td nzAlign="center">{{intervencionEspacio.nombreIntervencion}}</td>
+				  <td nzAlign="center" class="font-bold">{{intervencionEspacio.fechaSsi}}</td>
+				  <td nzAlign="center">{{intervencionEspacio.costoActualizado! | numero : 0}}</td>
+				  <td nzAlign="center">{{intervencionEspacio.devAcumulado! | numero : 0}}</td>
+				  <td nzAlign="center">{{intervencionEspacio.pim! | numero : 0}}</td>
+				  <td nzAlign="center">{{intervencionEspacio.devengado! | numero : 0}}</td>
+				  <td nzAlign="center" nz-tooltip [nzTooltipTitle]=" mesasAgendaActions.comment ? intervencionEspacio.resumen : null">
+					{{intervencionEspacio.inicioIntervencionFase}} <br> {{intervencionEspacio.inicioIntervencionEtapa}} <br> {{intervencionEspacio.inicioIntervencionHito}}
+					</td>
+				  <td nzRight nzAlign="center">
+					  <button *ngIf="mesasAgendaActions.view" nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención" (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)">
+						<span nz-icon nzType="eye" nzTheme="outline"></span>
+					</button>
+					<button *ngIf="mesasAgendaActions.comment" nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar resumen" (click)="comentarIntervencion(intervencionEspacio)">
+						<span nz-icon nzType="comment" nzTheme="outline"></span>
+					</button>
+					<button *ngIf="mesasAgendaActions.delete" nz-button nzDanger nzType="link" [nz-tooltip]="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? 'Eliminar intervención' : ''" (click)="eliminarIntervencion(intervencionEspacio)" [disabled]="estadoEliminarIntervencionEspacio(intervencionEspacio)">
+						<span nz-icon nzType="delete" nzTheme="outline"></span>
+					</button>
+				  </td>
+				<tr>
+			}
+		</tbody>
+	</nz-table>
+</div>
 
 <ng-template #headerUbigeos>
-    <div class="ant-table-header flex flex-col md:flex-row justify-between items-center">
+	<div class="ant-table-header flex flex-col md:flex-row justify-between items-center">
 		<div class="flex gap-4">
 			<div class="mb-2 sm:mb-0">Resultados {{pagination.total}}</div>
 			<div *ngIf="fechaSincronizacion" >Fecha de sincronizacion: {{fechaSincronizacion}}</div>

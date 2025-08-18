@@ -3,7 +3,7 @@ import { Component, EventEmitter, inject, Input, Output, signal } from '@angular
 import { ReactiveFormsModule } from '@angular/forms';
 import { IntervencionTareaAvanceEstadoRegistroEnum, IntervencionTareaEstadoRegistroEnum } from '@core/enums';
 import { convertDateStringToDate, convertEnumToObject, getDateFormat } from '@core/helpers';
-import { IntervencionTareaAvanceResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
+import { IntervencionEspacioResponse, IntervencionTareaAvanceResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
 import { IntervencionTareaAvanceService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -33,9 +33,14 @@ export default class IntervencionTareaAvancesComponent {
   get intervencionTarea(): IntervencionTareaResponse | null {
     return this._intervencionTarea;
   }
+
+  @Input() intervencionEspacio!: IntervencionEspacioResponse
+  @Input() primeraTarea: boolean = false
   @Output() tareaUpdated = new EventEmitter<boolean>()
 
   loading: boolean = false
+  sectorAuth: number = 0
+  usuarioId: number = 0
   permisosPCM: boolean = false
   perfilAuth: number = 0
   esResponsable: boolean = false
@@ -66,16 +71,18 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   setPermisosPCM(){
+    this.sectorAuth = Number(localStorage.getItem('codigoSector') || 0)
+    this.usuarioId = Number(localStorage.getItem('codigoUsuario') || 0)
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     const profilePCM = [11,12,23]
     return profilePCM.includes(this.perfilAuth)
   }
 
   verificarResponsable(){
-    const sectorAuth = localStorage.getItem('codigoSector')!
-    const nivelGobiernoAuth = localStorage.getItem('descripcionSector')!
-    const entidad = localStorage.getItem('entidad')!
-    this.esResponsable = nivelGobiernoAuth === 'GN' ? this.intervencionTarea!.responsableId == sectorAuth : this.intervencionTarea!.responsableId == entidad
+    // const nivelGobiernoAuth = localStorage.getItem('descripcionTipo')!
+    const entidad = localStorage.getItem('entidad')!    
+    // this.esResponsable = nivelGobiernoAuth === 'GN' ? Number(this.intervencionTarea!.responsableId) == this.sectorAuth : this.intervencionTarea!.responsableId == entidad
+    this.esResponsable = Number(this.intervencionTarea!.entidadId) == Number(entidad)
   }
 
   obtenerInversionTareaAvanceService(){
@@ -87,6 +94,19 @@ export default class IntervencionTareaAvancesComponent {
         this.intervencionTareasAvances.set(resp.data)
         this.pagination.total = resp.info!.total
       })
+  }
+
+  visibleBotonNuevaTarea(){
+    return Number(this.intervencionTarea?.entidadId!) === this.sectorAuth || this.permisosPCM
+  }
+
+  disabledBotonNuevo(){
+    let disabled = this.tareaProyectoCulminado || this.tareaCulminado
+    if(!disabled && this.primeraTarea){
+      disabled = !this.permisosPCM
+    }
+
+    return disabled
   }
 
   agregarAvance(){
@@ -152,6 +172,7 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   comentarTarea(intervencionTareaAvance: IntervencionTareaAvanceResponse){
+    const entidad = localStorage.getItem('entidad')!
     this.modal.create<FormularioComentarComponent>({
       nzTitle: `COMENTAR AVANCE`,
       nzContent: FormularioComentarComponent,
@@ -175,9 +196,18 @@ export default class IntervencionTareaAvancesComponent {
 
             const comentario = formComentario.get('comentario')?.value
 
-            this.permisosPCM
-            ? intervencionTareaAvance.comentarioSd = comentario
-            : intervencionTareaAvance.comentario = comentario
+            if(this.permisosPCM){
+              intervencionTareaAvance.comentarioSd = comentario
+            } else {
+              switch (this.intervencionTarea!.subTipo!) {
+                case 'M': intervencionTareaAvance.comentarioSector = comentario; break;
+                case 'E': intervencionTareaAvance.comentarioEntidad = comentario; break;
+                case 'R': intervencionTareaAvance.comentarioGl = comentario; break;
+                case 'P': intervencionTareaAvance.comentarioGl = comentario; break;
+                case 'D': intervencionTareaAvance.comentarioGl = comentario; break;
+              }
+            }
+
 
             const fechaDate = convertDateStringToDate(intervencionTareaAvance.fecha)
             intervencionTareaAvance.fecha = getDateFormat(fechaDate,'month')
@@ -189,8 +219,13 @@ export default class IntervencionTareaAvancesComponent {
     })
   }
 
-  verificarProyectoCulminadoAvance(estadoRegistroNombre: string): boolean{
+  verificarProyectoCulminadoAvance(intervencionTareaAvance: IntervencionTareaAvanceResponse): boolean{
+    const estadoRegistroNombre = intervencionTareaAvance.estadoRegistroNombre
     return this.tareaProyectoCulminado && estadoRegistroNombre == IntervencionTareaAvanceEstadoRegistroEnum.PROYECTO_CULMINADO
+  }
+
+  disabledValidar(intervencionTareaAvance: IntervencionTareaAvanceResponse){
+    return !intervencionTareaAvance.validado && Number(intervencionTareaAvance.accesoId!) == this.usuarioId
   }
 
   validarAvance(intervencionTareaAvance: IntervencionTareaAvanceResponse){

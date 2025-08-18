@@ -218,6 +218,6 @@ export class FormularioIntervencionTareaComponent {
 
   obtenerIntervencionHitoService(){
     const etapaId = this.formIntervencionTarea.get('intervencionEtapaId')?.value    
-    this.intervencionHitoService.ListarIntervencionHitos({...this.pagination, etapaId }).subscribe( resp => this.intervencionHitos.set(resp.data.filter( item => item.intervencionHitoId! > this.intervencionEspacio().inicioIntervencionHitoId! )))
+    this.intervencionHitoService.ListarIntervencionHitos({...this.pagination, etapaId }).subscribe( resp => this.intervencionHitos.set(resp.data.filter( item => item.intervencionHitoId! >= this.intervencionEspacio().inicioIntervencionHitoId! )))
   }
 }

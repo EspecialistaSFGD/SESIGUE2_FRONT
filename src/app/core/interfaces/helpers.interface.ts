@@ -97,8 +97,9 @@ export interface ExportResponses extends DataResponses {
 }
 
 export interface FileResponse {
- archivo: any,
-  nombreArchivo: string
+  archivo: any,
+  nombreArchivo: string,
+  contentType?: string
 }
 
 export interface ColorEstados {
@@ -111,4 +112,9 @@ export interface SocialMedia {
   name: string,
   icon: string,
   url: string
+}
+
+export interface DataFile {
+  exist: boolean,
+  file?: File
 }

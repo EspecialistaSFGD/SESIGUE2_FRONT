@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { IntervencionTareaEstadoRegistroEnum } from '@core/enums';
-import { convertDateStringToDate, convertEnumToObject, getDateFormat } from '@core/helpers';
-import { IntervencionEspacioResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
+import { convertDateStringToDate, convertEnumToObject, getDateFormat, obtenerPermisosBotones } from '@core/helpers';
+import { ButtonsActions, IntervencionEspacioResponse, IntervencionTareaResponse, ItemEnum, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { IntervencionTareaService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -25,11 +25,14 @@ export default class IntervencionTareasComponent {
   title: string = `Tareas`;
   @Input() intervencionEspacio!: IntervencionEspacioResponse
 
-  botonNuevoActivo: boolean = true
+  tareaActions: ButtonsActions = {}
+  botonNuevoActivo: boolean = false
   listarAvances: boolean = false
   loadingTareas: boolean =  false
   tareaId: number = 0
 
+  sectorAuth: number = 0
+  usuarioId: number = 0
   permisosPCM: boolean = false
   perfilAuth: number = 0
 
@@ -51,16 +54,30 @@ export default class IntervencionTareasComponent {
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
     this.permisosPCM = this.setPermisosPCM()
     this.obtenerIntervencionTareasService()
   }
-
+  
   setPermisosPCM(){
+    this.sectorAuth = Number(localStorage.getItem('codigoSector') || 0)
+    this.usuarioId = Number(localStorage.getItem('codigoUsuario') || 0)
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     const profilePCM = [11,12,23]
     return profilePCM.includes(this.perfilAuth)
   }
+
+  getPermissions() {
+      // const navigation  = this.authStore.navigationAuth()!
+      const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
+      const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'intervenciones')
+      this.tareaActions = obtenerPermisosBotones(menu!.botones!)
+      const navLevel =  menu!.children!
+  
+      // this.permisosAgenda = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa agenda') ? true : false
+      // this.permisosIntegrantes = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa integrantes') ? true : false
+      // this.permisosDocumentos = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa documentos') ? true : false
+    }
 
   obtenerIntervencionTareasService(){
     this.loadingTareas = true
@@ -96,6 +113,41 @@ export default class IntervencionTareasComponent {
     const nivelGobiernoAuth = localStorage.getItem('descripcionSector')!
     const entidad = localStorage.getItem('entidad')!
     return nivelGobiernoAuth === 'GN' ? tarea.responsableId == sectorAuth : tarea.responsableId == entidad
+  }
+
+  visibleBotonNuevaTarea(){
+    return Number(this.intervencionEspacio.sectorId!) === this.sectorAuth || this.permisosPCM
+  }
+
+  disabledBotonNuevo(){
+    // let disabled = !this.botonNuevoActivo
+    // if(this.permisosPCM){
+    //   disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
+    // }
+    
+    // let disabled = this.permisosPCM  ? false : true
+    // if(this.permisosPCM){
+      //   disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
+      // }
+    const cantidadTareas = this.intervencionTareas().length == 0
+    // let disabled = cantidadTareas ? !this.permisosPCM  : !this.botonNuevoActivo
+    let disabled = true
+    if(this.permisosPCM){
+      disabled = !cantidadTareas
+    } else {
+      disabled = !this.botonNuevoActivo
+    }
+
+    
+    return disabled
+  }
+
+  disabledValidar(tarea:IntervencionTareaResponse){
+    let validado = true
+    if(!tarea.validado && Number(tarea.accesoId!) == this.usuarioId){
+      validado = false
+    }
+    return validado
   }
 
   agregarTarea(){
