@@ -5,7 +5,14 @@ export interface TransferenciasRecursosResponses extends DataResponses {
 }
 
 export interface TransferenciaRecursoResponse {
-  transferenciaId?: string,
+  recursoId?: string,
+  recurso: string,
+  abreviatura: string,
+  periodo: number,
+  fechaPublicacion: string,
+  archivoOriginal: string,
+  uit: number,
+  monto: number
 }
 
 export interface TransferenciaRecursoIndiceFormData {

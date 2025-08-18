@@ -10,17 +10,21 @@ import { IndiceTransferenciaRecursoComponent } from './indice-transferencia-recu
 import { TransferenciaRecursoService } from '@core/services';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
+import { PipesModule } from '@core/pipes/pipes.module';
+import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
 
 @Component({
   selector: 'app-transferencias-recursos',
   standalone: true,
-  imports: [CommonModule, RouterModule, PageHeaderComponent, NgZorroModule],
+  imports: [CommonModule, RouterModule, PageHeaderComponent, NgZorroModule, PipesModule, BotonDescargarComponent],
   templateUrl: './transferencias-recursos.component.html',
   styles: ``
 })
 export default class TransferenciasRecursosComponent {
 
   loading: boolean = false
+
+  transferenciasRecursos = signal<TransferenciaRecursoResponse[]>([])
   
   pagination: Pagination = {
     columnSort: 'recursoId',
@@ -30,14 +34,23 @@ export default class TransferenciasRecursosComponent {
     total: 0
   }
 
-  transferencias = signal<TransferenciaRecursoResponse[]>([])
   
   private transferenciaRecurso = inject(TransferenciaRecursoService)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
-  private modal = inject(NzModalService)
-  
-    private utilesService = inject(UtilesService);
+  private modal = inject(NzModalService) 
+  private utilesService = inject(UtilesService);
+
+  ngOnInit(): void {
+    this.obtenerRecursos()
+  }
+
+  obtenerRecursos(){
+    this.transferenciaRecurso.ListarTransferenciasRecurso({...this.pagination, pageSize: 13, columnSort: 'grupoID' })
+      .subscribe( resp => {
+        this.transferenciasRecursos.set(resp.data)
+      })
+  }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
     
