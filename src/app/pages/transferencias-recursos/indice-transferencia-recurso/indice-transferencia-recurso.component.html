@@ -19,7 +19,7 @@
 
 	<div class="flex flex-col">
 		<label for="archivo">Adjunto</label>
-		<app-boton-upload  (files)="getFiles($event)" [accept]="'.xlsx'" />
+		<app-boton-upload  (files)="getFiles($event)" [accept]="indice ? '.xlsx' : '.pdf'" />
 		<div class="w-full text-danger" *ngIf="alertMessageError('archivo')">{{msgErrorControl('archivo','Adjunto')}}</div>
 	</div>
 </form>
