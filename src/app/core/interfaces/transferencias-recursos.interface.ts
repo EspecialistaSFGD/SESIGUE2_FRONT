@@ -15,7 +15,8 @@ export interface TransferenciaRecursoResponse {
   abreviatura: string,
   periodo: number,
   fechaPublicacion: string,
-  archivoOriginal: string,
+  archivoIndice: string,
+  archivoProyeccion: string,
   vigencia: boolean,
   uit: number,
   monto: number
@@ -28,6 +29,7 @@ export interface TransferenciaRecursoIndiceFormData {
 export interface TransferenciaRecursoData{
   usuarioId: string,
   recursoId: string,
+  monto: string,
   fecha: string,
   archivo: string
 }

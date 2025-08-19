@@ -106,7 +106,7 @@ export default class TransferenciasRecursosComponent {
             const fecha = getDateFormat(formIndice.get('fecha')?.value, 'month')
 
             const transferenciaRecursoIndice: TransferenciaRecursoData = { ...formIndice.value, fecha, recursoId, usuarioId  }
-            this.subirIndice(transferenciaRecursoIndice)
+            this.subirRecurso(transferenciaRecursoIndice, indice)
             
           }
         }
@@ -114,9 +114,9 @@ export default class TransferenciasRecursosComponent {
     })
   }
 
-  subirIndice(transferenciaRecursoIndice: TransferenciaRecursoData){
+  subirRecurso(transferenciaRecursoIndice: TransferenciaRecursoData, indice:boolean){
     this.loadingUpload = true
-    this.transferenciaRecurso.subirIndice(transferenciaRecursoIndice)
+    this.transferenciaRecurso.subirRecurso(transferenciaRecursoIndice, indice)
       .subscribe( resp => {
         if(resp.success){
           this.obtenerRecursos()
