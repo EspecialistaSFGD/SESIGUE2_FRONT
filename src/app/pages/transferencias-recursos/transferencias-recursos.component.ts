@@ -24,6 +24,7 @@ import { getDateFormat } from '@core/helpers';
 export default class TransferenciasRecursosComponent {
 
   loading: boolean = false
+  loadingUpload: boolean = false
   formatoIndice: string = '/assets/uploads/transferencias_recursos/formato_indice.xlsx'
 
   transferenciasRecursos = signal<TransferenciaRecursoResponse[]>([])
@@ -90,6 +91,7 @@ export default class TransferenciasRecursosComponent {
         {
           label: 'Guardar',
           type: 'primary',
+          loading: () => this.loadingUpload,
           onClick: (componentResponse) => {
             const formIndice = componentResponse!.formIndice
            
@@ -113,14 +115,14 @@ export default class TransferenciasRecursosComponent {
   }
 
   subirIndice(transferenciaRecursoIndice: TransferenciaRecursoData){
-    this.loading = true
+    this.loadingUpload = true
     this.transferenciaRecurso.subirIndice(transferenciaRecursoIndice)
       .subscribe( resp => {
         if(resp.success){
           this.obtenerRecursos()
           this.modal.closeAll();
         }
-        this.loading = false
+        this.loadingUpload = false
       })
   }
 }
