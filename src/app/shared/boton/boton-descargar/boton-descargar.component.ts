@@ -21,6 +21,7 @@ export class BotonDescargarComponent {
   @Input() active: boolean = true
   @Input() titulo: string = 'Descargar'
   @Input() label: string = ''
+  @Input() icono: string = 'pi-file-pdf'
   @Input() preload: boolean = true
 
   loading: boolean = false

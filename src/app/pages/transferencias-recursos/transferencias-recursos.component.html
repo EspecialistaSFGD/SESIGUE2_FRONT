@@ -25,7 +25,7 @@
         <td nzAlign="center">{{recurso.uit * 100}}%</td>
         <td nzAlign="center">{{recurso.monto | numero : 2 }}</td>
         <td nzAlign="center">
-          <app-boton-descargar *ngIf="recurso.archivoIndice" [rutaArchivo]="recurso.archivoIndice" [titulo]="'Descargar Indice'" />
+          <app-boton-descargar *ngIf="recurso.archivoIndice" [rutaArchivo]="recurso.archivoIndice" [icono]="'pi-file-excel'" [titulo]="'Descargar Indice'" />
         </td>
         <td nzAlign="center">
           <app-boton-descargar *ngIf="recurso.archivoProyeccion" [rutaArchivo]="recurso.archivoProyeccion" [titulo]="'Descargar oficio'"  />
