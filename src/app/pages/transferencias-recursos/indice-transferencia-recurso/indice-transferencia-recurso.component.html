@@ -19,7 +19,34 @@
 
 	<div class="flex flex-col">
 		<label for="archivo">Adjunto</label>
-		<app-boton-upload  (files)="getFiles($event)" [accept]="indice ? '.xlsx' : '.pdf'" />
+		<app-boton-upload  (files)="getFiles($event)" [accept]="indice ? '.xlsx' : '.pdf'" [resetFile]="resetFile" />
 		<div class="w-full text-danger" *ngIf="alertMessageError('archivo')">{{msgErrorControl('archivo','Adjunto')}}</div>
 	</div>
 </form>
+
+@if(!data.success){
+	<div class="grid pt-6 gap-2">
+		<h5 class="text-base font-semibold">Revisa las siguientes filas del archivo adjunto</h5>
+		<nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" nzShowSizeChanger nzSize="small"
+		[nzData]="data.recursosIndices" [nzFrontPagination]="false">
+		<thead>
+		  <tr>
+			<th nzWidth="'100px'" nzAlign="center">Fila</th>
+			<th nzWidth="'120px'" nzAlign="center">Departamento</th>
+			<th nzWidth="'100px'" nzAlign="center" >Provincia</th>
+			<th nzWidth="'100px'" nzAlign="center">Distrito</th>
+		  </tr>
+		</thead>
+		<tbody>
+			@for (recurso of data.recursosIndices; track $index) {
+			  <tr>
+				<td nzAlign="center">{{recurso.row}}</td>
+				<td nzAlign="center">{{recurso.departamento}}</td>
+				<td nzAlign="center">{{recurso.provincia}}</td>
+				<td nzAlign="center">{{recurso.distrito}}</td>
+			  </tr>
+			}
+		</tbody>
+	  </nz-table>
+	</div>
+}
