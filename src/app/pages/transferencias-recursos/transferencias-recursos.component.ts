@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FileResponse, Pagination, TransferenciaRecursoData, TransferenciaRecursoResponse } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { IndiceTransferenciaRecursoComponent } from './indice-transferencia-recurso/indice-transferencia-recurso.component';
 import { TransferenciaRecursoService } from '@core/services';
@@ -13,11 +13,14 @@ import saveAs from 'file-saver';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
 import { getDateFormat } from '@core/helpers';
+import { MessageService } from 'primeng/api';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
 @Component({
   selector: 'app-transferencias-recursos',
   standalone: true,
-  imports: [CommonModule, RouterModule, PageHeaderComponent, NgZorroModule, PipesModule, BotonDescargarComponent],
+  imports: [CommonModule, RouterModule, PageHeaderComponent, PrimeNgModule, NgZorroModule, PipesModule, BotonDescargarComponent],
+  providers: [MessageService],
   templateUrl: './transferencias-recursos.component.html',
   styles: ``
 })
@@ -26,6 +29,7 @@ export default class TransferenciasRecursosComponent {
   loading: boolean = false
   loadingUpload: boolean = false
   formatoIndice: string = '/assets/uploads/transferencias_recursos/formato_indice.xlsx'
+  modalRef: NzModalRef | null = null
 
   transferenciasRecursos = signal<TransferenciaRecursoResponse[]>([])
   
@@ -37,12 +41,12 @@ export default class TransferenciasRecursosComponent {
     total: 0
   }
 
-  
   private transferenciaRecurso = inject(TransferenciaRecursoService)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private modal = inject(NzModalService) 
   private utilesService = inject(UtilesService);
+  private messageService = inject(MessageService)
 
   ngOnInit(): void {
     this.obtenerRecursos()
@@ -76,12 +80,14 @@ export default class TransferenciasRecursosComponent {
   }
 
   agregarTransferenciaIndice(recurso:TransferenciaRecursoResponse, indice: boolean = true){
+    let success = true
     const title = indice ? `NUEVO INDICE` : `NUEVA PROYECCIÓN`
-    this.modal.create<IndiceTransferenciaRecursoComponent>({
+    this.modalRef = this.modal.create<IndiceTransferenciaRecursoComponent>({
       nzTitle: `${title} DE ${recurso.recurso.toUpperCase()}`,
       nzMaskClosable: false,
+      nzWidth: '40%',
       nzContent: IndiceTransferenciaRecursoComponent,
-      nzData: { indice },
+      nzData: { indice, success, recursosIndices: [] },
       nzFooter: [
         {
           label: 'Cancelar',
@@ -119,8 +125,13 @@ export default class TransferenciasRecursosComponent {
     this.transferenciaRecurso.subirRecurso(transferenciaRecursoIndice, indice)
       .subscribe( resp => {
         if(resp.success){
+          this.messageService.add({ severity: 'success', summary: 'Carga exitosa', detail: resp.message });       
           this.obtenerRecursos()
           this.modal.closeAll();
+        } else {
+          const recursosIndices = resp.data.filter(item => item.estado === false);
+          this.modalRef!.getContentComponent()!.data = { indice, success: false, recursosIndices }
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });       
         }
         this.loadingUpload = false
       })

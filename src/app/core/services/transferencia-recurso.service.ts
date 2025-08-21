@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ExportResponses, Pagination, TransferenciaRecursoData, TransferenciaRecursoResponses, TransferenciasRecursosResponses } from '@core/interfaces';
+import { ExportResponses, Pagination, TransferenciaRecursoData, TransferenciaRecursoIndiceDataResponses, TransferenciasRecursosResponses } from '@core/interfaces';
 import { environment } from '@environments/environment';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
@@ -19,11 +19,11 @@ export class TransferenciaRecursoService {
     return this.http.get<TransferenciasRecursosResponses>(`${this.urlTransferenciaRecurso}/ListarTransferenciasRecursos`, { headers, params })
   }
 
-  subirRecurso(transferenciaIndice: TransferenciaRecursoData, indice: boolean = true): Observable<TransferenciaRecursoResponses> {
+  subirRecurso(transferenciaIndice: TransferenciaRecursoData, indice: boolean = true): Observable<TransferenciaRecursoIndiceDataResponses> {
     const headers = this.helpersServices.getAutorizationToken()
     const formData = this.generateFormData(transferenciaIndice)
     const rutaRecurso = indice ? 'SubirIndice' : 'SubirProyeccion'
-    return this.http.post<TransferenciaRecursoResponses>(`${this.urlTransferenciaRecurso}/${rutaRecurso}`, formData, { headers })
+    return this.http.post<TransferenciaRecursoIndiceDataResponses>(`${this.urlTransferenciaRecurso}/${rutaRecurso}`, formData, { headers })
       .pipe(
         tap(resp => {
           return resp

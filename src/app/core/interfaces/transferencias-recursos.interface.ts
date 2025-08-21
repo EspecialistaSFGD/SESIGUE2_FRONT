@@ -23,7 +23,9 @@ export interface TransferenciaRecursoResponse {
 }
 
 export interface TransferenciaRecursoIndiceFormData {
-  indice: boolean
+  indice: boolean,
+  success: boolean,
+  recursosIndices: TransferenciaRecursoIndiceData[]
 }
 
 export interface TransferenciaRecursoData{
@@ -32,4 +34,20 @@ export interface TransferenciaRecursoData{
   monto: string,
   fecha: string,
   archivo: string
+}
+
+export interface TransferenciaRecursoIndiceDataResponses extends DataResponses {
+  data: TransferenciaRecursoIndiceData[]
+}
+
+export interface TransferenciaRecursoIndiceData {
+  row: string,
+  tipo: string,
+  departamento: string,
+  provincia: string,
+  distrito: string,
+  indice: string,
+  indiceDistrito: string,
+  total: string,
+  estado: boolean
 }
