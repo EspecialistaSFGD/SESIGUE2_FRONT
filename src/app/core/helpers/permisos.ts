@@ -13,6 +13,7 @@ export const obtenerPermisosBotones = (botones: UsuarioPermisos[]) => {
 			case 'Ver': permisos.view = true; break;
 			case 'Comentar': permisos.comment = true; break;
 			case 'Descargar': permisos.download = true; break;
+			case 'Invalidar': permisos.unvalidate = true; break;
 		}
 	})
 	return permisos;
