@@ -185,9 +185,6 @@ export default class AgendasMesaComponent {
         sector
         ? this.sectores = Array.from(new Set(resp.data.map( item => Number(item.sectorId))))
         : this.ubigeos = Array.from(new Set(resp.data.map( item => item.ubigeo!.slice(0,2))))
-        console.log('CONSULTA DE INTEGRANTES POR SECTOR O UBIGEO, SECTOR: ', sector);
-        
-        console.log(resp.data);
       })
   }
 
@@ -312,11 +309,7 @@ export default class AgendasMesaComponent {
     this.intervencionEspacioForm(true)
   }
 
-  intervencionEspacioForm(create: boolean){   
-    console.log('AL ABRIR MODAL');
-    
-    console.log(this.sectores);
-    console.log(this.ubigeos);
+  intervencionEspacioForm(create: boolean){
     const action = `${create ? 'Crear' : 'Actualizar' } Intervencion`
     this.modal.create<FormularioIntervencionComponent>({
       nzTitle: `${action.toUpperCase()}`,
