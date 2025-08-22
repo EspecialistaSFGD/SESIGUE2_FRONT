@@ -86,9 +86,7 @@ export default class AgendasMesaComponent {
       this.loading = true
       if (Object.keys(params).length > 0) {        
         let campo = params['campo'] ?? 'intervencionEspacioId'
-        console.log(campo);
-        
-        
+
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
         this.pagination.pageSize = params['cantidad']
@@ -187,6 +185,9 @@ export default class AgendasMesaComponent {
         sector
         ? this.sectores = Array.from(new Set(resp.data.map( item => Number(item.sectorId))))
         : this.ubigeos = Array.from(new Set(resp.data.map( item => item.ubigeo!.slice(0,2))))
+
+        console.log(resp.data);
+        
       })
   }
 
