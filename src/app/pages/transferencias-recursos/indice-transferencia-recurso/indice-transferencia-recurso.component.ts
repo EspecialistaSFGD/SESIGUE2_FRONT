@@ -49,7 +49,7 @@ export class IndiceTransferenciaRecursoComponent {
   }
 
   ngOnInit(): void {
-    if(this.data.success){
+    if(!this.indice){
       const monto = this.formIndice.get('monto')!
       monto.setValidators([Validators.required, Validators.pattern(this.validatorSevice.amountPattern)]);
     }
