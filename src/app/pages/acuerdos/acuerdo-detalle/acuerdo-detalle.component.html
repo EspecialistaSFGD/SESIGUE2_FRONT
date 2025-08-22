@@ -223,12 +223,13 @@
                         </button>
                     }
 
-                    <button [disabled]="disabledValidarHito(data.validado, data.nomEstadoRegistro)" (click)="validarHito(data, false)" *nzSpaceItem
-                        nz-button nzType="link" nz-tooltip
-                        [nzTooltipTitle]="!disabledValidarHito(data.validado, data.nomEstadoRegistro) ? 'Quitar validación' : ''">
-                        <i class="pi pi-undo" style="font-size: 0.85rem"></i>
-                    </button>
-
+                    @if(hitoActions.unvalidate){
+                        <button [disabled]="disabledValidarHito(data.validado, data.nomEstadoRegistro)" (click)="validarHito(data, false)" *nzSpaceItem
+                            nz-button nzType="link" nz-tooltip
+                            [nzTooltipTitle]="!disabledValidarHito(data.validado, data.nomEstadoRegistro) ? 'Quitar validación' : ''">
+                            <i class="pi pi-undo" style="font-size: 0.85rem"></i>
+                        </button>
+                    }
 
                     @if(authService.permisos()?.puede_eliminar_hito){
                     <button [disabled]="data.validado==1||data.estado==0||acuerdosService.isDesestimated()" *nzSpaceItem

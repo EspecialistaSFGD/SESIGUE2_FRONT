@@ -38,6 +38,7 @@ export interface ButtonsActions {
   goals?:boolean
   approve?:boolean
   comment?: boolean
+  unvalidate?: boolean
 }
 
 export interface Filters {

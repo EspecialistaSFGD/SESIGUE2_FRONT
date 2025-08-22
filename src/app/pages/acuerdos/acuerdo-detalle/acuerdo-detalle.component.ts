@@ -42,7 +42,7 @@ import { AcuerdoDesestimacionResponse, ButtonsActions, HitoResponse } from '@cor
 import { HitosService as HitosCoreService } from '@core/services';
 import { AcuerdoNoCumplidoComponent } from './acuerdo-no-cumplido/acuerdo-no-cumplido.component';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { getDateFormat } from '@core/helpers';
+import { getDateFormat, obtenerPermisosBotones } from '@core/helpers';
 
 const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
@@ -84,6 +84,8 @@ const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
   searchForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
+
+  hitoActions: ButtonsActions = {}
 
   // title: string = `Gestión de hitos para el ...`;
   id: string | null = null;
@@ -220,6 +222,12 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     acuerdos?.botones?.map(btn => {      
       this.authPermission.approve = btn.descripcionBoton === 'Aprobar' ? true : this.authPermission.approve
     })
+
+    
+    const hitosNav = navigation.find(nav => nav.descripcionItem == 'Hitos')
+    if(hitosNav && hitosNav!.botones){
+      this.hitoActions = obtenerPermisosBotones(hitosNav!.botones!)
+    }    
   }
 
   onHitoSelected(hito: HitoAcuerdoModel): void {
