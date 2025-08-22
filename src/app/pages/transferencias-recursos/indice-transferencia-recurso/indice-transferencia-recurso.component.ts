@@ -3,6 +3,7 @@ import { Component, inject, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
 import { DataFile, TransferenciaRecursoIndiceFormData } from '@core/interfaces';
+import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { BotonUploadComponent } from '@shared/boton/boton-upload/boton-upload.component';
@@ -32,6 +33,7 @@ export class IndiceTransferenciaRecursoComponent {
   }
   
   private fb = inject(FormBuilder)
+  private validatorSevice = inject(ValidatorService)
   
   resetFile: boolean = false
   indice: boolean = this.data.indice
@@ -44,6 +46,13 @@ export class IndiceTransferenciaRecursoComponent {
   
   alertMessageError(control: string) {
     return this.formIndice.get(control)?.errors && this.formIndice.get(control)?.touched
+  }
+
+  ngOnInit(): void {
+    if(this.data.success){
+      const monto = this.formIndice.get('monto')!
+      monto.setValidators([Validators.required, Validators.pattern(this.validatorSevice.amountPattern)]);
+    }
   }
 
   msgErrorControl(control: string, label?: string): string {

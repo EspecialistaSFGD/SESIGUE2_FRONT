@@ -51,6 +51,7 @@ export interface Pagination {
   nombre?: string,
   esSector?: string
   origenId?: string,
+  recursoId?: string,
   interaccionId?: string,
   tipoEventoId?: string,
   entidadUbigeoId?: string  

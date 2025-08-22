@@ -20,3 +20,29 @@ export interface HitoPanelCumplimientoResponse {
   cumplidos: number
 }
 
+export interface HitoResponses extends DataResponses {
+  data: HitoResponse,
+}
+
+export interface HitoResponse {
+  hitoId?: number,
+  acuerdoId: number,
+  codigo?: string,
+  hito: string,
+  responsableId: number,
+  responsable?: string,
+  plazo: string,
+  comentarioSd?: string,
+  estadoRegistro?: number,
+  entidadId: number,
+  entidad?: string,
+  validado: boolean,
+  fechaValidacion?: string,
+  nomContacto?: string,
+  telefContacto?: string,
+  accesoId: number,
+  estado: number,
+  nomEstadoRegistro?: string,
+  nomEstado?: string,
+}
+

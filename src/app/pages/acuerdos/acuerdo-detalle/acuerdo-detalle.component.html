@@ -169,7 +169,7 @@
                 }
             </td>
 
-            <td>{{ data.hito }}</td>
+            <td>{{ data.hito }} {{data.estado}}</td>
             <td>{{ data.responsable }}</td>
             <td>{{ data.entidad }}</td>
             <td>{{ data.nomContacto }}</td>
@@ -214,14 +214,21 @@
                     }
 
                     @if(authService.permisos()?.puede_validar_hito){
-                    <button [disabled]="data.validado==1||data.estado==0||acuerdosService.isDesestimated()" *nzSpaceItem
-                        nz-button nzType="link" nz-tooltip
-                        [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede validar':'Validar hito'"
-                        (click)="onValidarHito(data)">
-                        <span [class.text-green-500]="data.validado != 1&&data.estado!=0" nz-icon nzType="check-circle"
-                            nzTheme="outline"></span>
-                    </button>
+                        <button [disabled]="data.validado==1||data.estado==0||acuerdosService.isDesestimated()" *nzSpaceItem
+                            nz-button nzType="link" nz-tooltip
+                            [nzTooltipTitle]="(data.validado==1||data.estado==0)?'No se puede validar':'Validar hito'"
+                            (click)="onValidarHito(data)">
+                            <span [class.text-green-500]="data.validado != 1&&data.estado!=0" nz-icon nzType="check-circle"
+                                nzTheme="outline"></span>
+                        </button>
                     }
+
+                    <button [disabled]="disabledValidarHito(data.validado, data.nomEstadoRegistro)" (click)="validarHito(data, false)" *nzSpaceItem
+                        nz-button nzType="link" nz-tooltip
+                        [nzTooltipTitle]="!disabledValidarHito(data.validado, data.nomEstadoRegistro) ? 'Quitar validación' : ''">
+                        <i class="pi pi-undo" style="font-size: 0.85rem"></i>
+                    </button>
+
 
                     @if(authService.permisos()?.puede_eliminar_hito){
                     <button [disabled]="data.validado==1||data.estado==0||acuerdosService.isDesestimated()" *nzSpaceItem
