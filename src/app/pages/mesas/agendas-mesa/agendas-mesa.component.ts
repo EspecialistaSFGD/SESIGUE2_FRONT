@@ -102,8 +102,8 @@ export default class AgendasMesaComponent {
         // setParamsToObject(params, this.pagination, 'entidadUbigeoId')
 
         setTimeout(() => {
-          // this.obtenerMesaIntegrantesService(true)
-          // this.obtenerMesaIntegrantesService(false)
+          this.obtenerMesaIntegrantesService(true)
+          this.obtenerMesaIntegrantesService(false)
           this.obtenerIntervencionEspacioService()
         }, 100)
       }
@@ -185,9 +185,9 @@ export default class AgendasMesaComponent {
         sector
         ? this.sectores = Array.from(new Set(resp.data.map( item => Number(item.sectorId))))
         : this.ubigeos = Array.from(new Set(resp.data.map( item => item.ubigeo!.slice(0,2))))
-
-        console.log(resp.data);
+        console.log('CONSULTA DE INTEGRANTES POR SECTOR O UBIGEO, SECTOR: ', sector);
         
+        console.log(resp.data);
       })
   }
 
@@ -304,14 +304,19 @@ export default class AgendasMesaComponent {
   }
 
   crearIntervencion(){
-    this.obtenerMesaIntegrantesService(true)
-    this.obtenerMesaIntegrantesService(false)
-    setTimeout(() => {
-      this.intervencionEspacioForm(true)
-    }, 100);
+    // this.obtenerMesaIntegrantesService(true)
+    // this.obtenerMesaIntegrantesService(false)
+    // setTimeout(() => {
+    //   this.intervencionEspacioForm(true)
+    // }, 100);
+    this.intervencionEspacioForm(true)
   }
 
-  intervencionEspacioForm(create: boolean){    
+  intervencionEspacioForm(create: boolean){   
+    console.log('AL ABRIR MODAL');
+    
+    console.log(this.sectores);
+    console.log(this.ubigeos);
     const action = `${create ? 'Crear' : 'Actualizar' } Intervencion`
     this.modal.create<FormularioIntervencionComponent>({
       nzTitle: `${action.toUpperCase()}`,
