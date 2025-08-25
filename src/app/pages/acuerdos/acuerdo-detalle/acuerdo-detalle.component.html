@@ -215,7 +215,8 @@
                     @if(hitoActions.reactivate){
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip [nzTooltipTitle]="data.nomEstadoRegistro == 'CULMINADO' ? 'Reactivar estado' : ''"
                         (click)="onReactivarEstadoHito(data)" [disabled]="data.nomEstadoRegistro != 'CULMINADO'">
-                        <span nz-icon nzType="rollback" nzTheme="outline"></span>
+                        <!-- <span nz-icon nzType="rollback" nzTheme="outline"></span> -->
+                         <i class="transform scale-x-[-1] pi pi-reply" style="font-size: 0.75rem"></i>
                     </button>
                     }
 
