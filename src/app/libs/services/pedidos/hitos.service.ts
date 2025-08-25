@@ -267,7 +267,7 @@ export class HitosService {
 
         if (accesoId != null) hitoRequest.accesoId = Number(accesoId);
 
-        this.http.post(`${environment.api}/Hito/Reactivar`, hitoRequest).subscribe({
+        this.http.post(`${environment.api}/Hito/ReactivaHito`, hitoRequest).subscribe({
             next: (data) => {
                 this.msg.success('Hito reactivado correctamente');
                 this.listarHitos(hito.acuerdoID, null, 1, 10, 'hitoId', 'ascend');
