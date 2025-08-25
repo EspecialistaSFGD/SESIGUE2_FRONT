@@ -14,6 +14,7 @@ export const obtenerPermisosBotones = (botones: UsuarioPermisos[]) => {
 			case 'Comentar': permisos.comment = true; break;
 			case 'Descargar': permisos.download = true; break;
 			case 'Invalidar': permisos.unvalidate = true; break;
+			case 'Reactivar': permisos.reactivate = true; break;
 		}
 	})
 	return permisos;

@@ -51,7 +51,7 @@ export class IndiceTransferenciaRecursoComponent {
   ngOnInit(): void {
     if(!this.indice){
       const monto = this.formIndice.get('monto')!
-      monto.setValidators([Validators.required, Validators.pattern(this.validatorSevice.amountPattern)]);
+      monto.setValidators([Validators.required, Validators.pattern(this.validatorSevice.amountPattern)])
     }
   }
 
@@ -70,6 +70,28 @@ export class IndiceTransferenciaRecursoComponent {
       reader.readAsDataURL(dataFile.file!)
     } else {
       this.formIndice.patchValue({ archivo: null })
+    }
+  }
+
+  formatNumber(){
+    const montoControl = this.formIndice.get('monto');
+    if (montoControl) {
+      let value = montoControl.value;
+      // Eliminar caracteres no numéricos, excepto el punto decimal
+      value = value.replace(/[^0-9.]/g, '');
+      // Asegurarse de que solo haya un punto decimal
+      const parts = value.split('.');
+      if (parts.length > 2) {
+        value = parts[0] + '.' + parts.slice(1).join('');
+      }
+      // Limitar a dos decimales
+      let [integerPart, decimalPart] = value.split('.');
+      // Formatear el número con separadores de miles
+      const formattedIntegerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+      montoControl.setValue(value)
+      
+      // montoControl.setValue(decimalPart !== undefined ? `${formattedIntegerPart}.${decimalPart}` : formattedIntegerPart);
     }
   }
 }

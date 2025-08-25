@@ -526,7 +526,7 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     const hitoResponse = {...this.obtenerHitoResponse(hito), validado}
     this.confirmModal = this.modal.confirm({
       nzTitle: `¿Deseas quitar la valicación del hito?`,
-      nzContent: 'Se quitará la validación del hito',
+      nzContent: 'Se quitará la validación, lo que pemitirá que el sector pueda editar el hito.',
       nzIconType: 'check-circle',
       nzOnOk: () => this.actualizarHito(hitoResponse)
     });    

@@ -12,7 +12,7 @@ export class ValidatorService {
   public NumberPattern: RegExp = /^[1-9]\d*$/
   public userPattern: RegExp = /^\d{8}$/
   public passwordPattern: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,12}$/
-  public amountPattern: RegExp = /^\d{1,12}(\.\d{2})?$/
+  public amountPattern: RegExp = /^\d{1,12}(\.\d{1,2})?$/
 
   // letras numero y guion al medio
   public codigoPattern: RegExp = /^[a-zA-Z0-9-]$/

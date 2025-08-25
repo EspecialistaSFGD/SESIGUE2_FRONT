@@ -12,14 +12,15 @@ import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
-import { getDateFormat, setParamsToObject } from '@core/helpers';
+import { deleteKeysToObject, getDateFormat, setParamsToObject } from '@core/helpers';
 import { MessageService } from 'primeng/api';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { FiltroTransferenciaRecursoComponent } from './filtro-transferencia-recurso/filtro-transferencia-recurso.component';
 
 @Component({
   selector: 'app-transferencias-recursos',
   standalone: true,
-  imports: [CommonModule, RouterModule, PageHeaderComponent, PrimeNgModule, NgZorroModule, PipesModule, BotonDescargarComponent],
+  imports: [CommonModule, RouterModule, PageHeaderComponent, PrimeNgModule, NgZorroModule, PipesModule, BotonDescargarComponent, FiltroTransferenciaRecursoComponent],
   providers: [MessageService],
   templateUrl: './transferencias-recursos.component.html',
   styles: ``
@@ -30,6 +31,7 @@ export default class TransferenciasRecursosComponent {
   loadingUpload: boolean = false
   formatoIndice: string = '/assets/uploads/transferencias_recursos/formato_indice.xlsx'
   modalRef: NzModalRef | null = null
+  openFilters: boolean = false
 
   transferenciasRecursos = signal<TransferenciaRecursoResponse[]>([])
   
@@ -66,7 +68,7 @@ export default class TransferenciasRecursosComponent {
         
         setParamsToObject(params, this.pagination, 'codigo')
         setParamsToObject(params, this.pagination, 'nombre')
-        setParamsToObject(params, this.pagination, 'grupoID')
+        // setParamsToObject(params, this.pagination, 'grupoID')
       }
       setTimeout(() => this.obtenerRecursos(), 500);
     })
@@ -181,5 +183,11 @@ export default class TransferenciasRecursosComponent {
         }
         this.loadingUpload = false
       })
+  }
+
+  generateFilters(pagination: Pagination){
+    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total']
+    const params = deleteKeysToObject(pagination, paramsInvalid)
+    this.paramsNavigate(params)
   }
 }
