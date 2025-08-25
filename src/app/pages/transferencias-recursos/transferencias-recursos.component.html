@@ -2,7 +2,7 @@
 
 <div class="grid grid-cols-1">
   <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderRecursos" nzShowSizeChanger nzSize="small"
-    [nzData]="transferenciasRecursos()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!" [nzShowPagination]="pagination.total! > 13"
+    [nzData]="transferenciasRecursos()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!" [nzShowPagination]="pagination.total! > 10"
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
       <tr>
@@ -11,67 +11,73 @@
         <th nzWidth="'100px'" nzAlign="center" >Fecha</th>
         <th nzWidth="'100px'" nzAlign="center">UIT</th>
         <th nzWidth="'100px'" nzAlign="center">Monto</th>
-        <th nzWidth="'100px'" nzAlign="center">Evidencia</th>
+        <th nzWidth="'100px'" nzAlign="center">Indice</th>
+        <th nzWidth="'100px'" nzAlign="center">Oficio</th>
         <th nzWidth="'100px'" nzAlign="center">MOV</th>
-        <th nzWidth="'100px'" nzAlign="center">XLS</th>
         <th nzRight nzWidth="'100px'" nzAlign="center"></th>
       </tr>
     </thead>
-    @for (recurso of transferenciasRecursos(); track $index) {
-      <tr>
-        <td nzAlign="center">{{recurso.abreviatura}}</td>
-        <td>{{recurso.recurso}}</td>
-        <td nzAlign="center">{{recurso.fechaPublicacion}}</td>
-        <td nzAlign="center">{{recurso.uit * 100}}%</td>
-        <td nzAlign="center">{{recurso.monto | numero : 2 }}</td>
-        <td nzAlign="center">
-          <app-boton-descargar *ngIf="recurso.archivoOriginal" [rutaArchivo]="recurso.archivoOriginal" />
-        </td>
-        <td nzAlign="center">
-          <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Descargar archivo MOV" (click)="generarMov(recurso.recursoId! )">
-            <i class="pi pi-file-export" style="font-size: 0.75rem"></i>
-          </div>
-        </td>
-        <td nzAlign="center">
-          <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Descargar archivo XLS">
-            <i class="pi pi-file-excel" style="font-size: 0.75rem"></i>
-          </div>
-        </td>
-        <td nzRight nzAlign="center">
-          <div class="flex justify-center">
-            <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Agregar nuevo indice" (click)="agregarTransferenciaIndice(recurso)">
-              <i class="pi pi-percentage" style="font-size: 0.75rem"></i>
-            </div>
-            <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Agregar nueva proyección" (click)="agregarTransferenciaIndice(recurso,false)">
-              <i class="pi pi-chart-line" style="font-size: 0.75rem"></i>
-            </div>
-            <a [routerLink]="[recurso.recursoId]">
-              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
-                <span nz-icon nzType="eye" nzTheme="outline"></span>
-              </button>
-            </a>
-          </div>
-        </td>
-      </tr>
-    }
     <tbody>
+      @for (recurso of transferenciasRecursos(); track $index) {
+        <tr>
+          <td nzAlign="center">{{recurso.abreviatura}}</td>
+          <td>{{recurso.recurso}}</td>
+          <td nzAlign="center">{{recurso.fechaPublicacion}}</td>
+          <td nzAlign="center">{{recurso.uit * 100}}%</td>
+          <td nzAlign="center">{{recurso.monto | numero : 2 }}</td>
+          <td nzAlign="center">
+            <app-boton-descargar *ngIf="recurso.archivoIndice" [rutaArchivo]="recurso.archivoIndice" [icono]="'pi-file-excel'" [titulo]="'Descargar Indice'" />
+          </td>
+          <td nzAlign="center">
+            <app-boton-descargar *ngIf="recurso.archivoProyeccion" [rutaArchivo]="recurso.archivoProyeccion" [titulo]="'Descargar oficio'"  />
+          </td>
+          <td nzAlign="center">
+            <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Descargar archivo MOV" (click)="generarMov(recurso.recursoId! )">
+              <i class="pi pi-file-export" style="font-size: 0.75rem"></i>
+            </div>
+          </td>
+          <td nzRight nzAlign="center">
+            <div class="flex justify-center">
+              <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Agregar nuevo indice" (click)="agregarTransferenciaIndice(recurso)">
+                <i class="pi pi-percentage" style="font-size: 0.75rem"></i>
+              </div>
+              <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Agregar nueva proyección" (click)="agregarTransferenciaIndice(recurso,false)">
+                <i class="pi pi-chart-line" style="font-size: 0.75rem"></i>
+              </div>
+              <a [routerLink]="[recurso.recursoId]">
+                <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
+                  <span nz-icon nzType="eye" nzTheme="outline"></span>
+                </button>
+              </a>
+            </div>
+          </td>
+        </tr>
+      }
     </tbody>
   </nz-table>
   <ng-template #HeaderRecursos>
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
+
+        <div class="cursor-pointer flex items-center gap-2 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white">
+          <i class="pi pi-filter" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Filtros</span>
+        </div>
+
+        <app-boton-descargar [rutaArchivo]="formatoIndice" [label]="'Formato indice'" [titulo]="'Descargar el formato de indices'" />
+        
         <!-- <button nz-button nzType="default">
           <span nz-icon nzType="filter"></span>
           <span class="button-text">Filtros</span>
-        </button>
+        </button> -->
   
-        <button nz-button [nzLoading]="loading">
+        <!-- <button nz-button [nzLoading]="loading">
             <span nz-icon nzType="file-excel" nzTheme="outline"></span>
             <span class="button-text">Exportar</span>
         </button> -->
 
-        <button nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
+        <!-- <button nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
             <span nz-icon nzType="file-excel" nzTheme="outline"></span>
             <span class="button-text">Formato</span>
             <span nz-icon nzType="down"></span>
@@ -80,7 +86,7 @@
             <ul nz-menu>
                 <li nz-menu-item><app-boton-descargar [rutaArchivo]="formatoIndice" [label]="'Formato indice'" [titulo]="'Descargar el formato de indices'" /></li>
             </ul>
-        </nz-dropdown-menu>
+        </nz-dropdown-menu> -->
   
         <!-- <button  nz-button nzType="primary">
           <span nz-icon nzType="plus" nzTheme="outline"></span>
@@ -90,3 +96,5 @@
     </div>
   </ng-template>
 </div>
+
+<p-toast />

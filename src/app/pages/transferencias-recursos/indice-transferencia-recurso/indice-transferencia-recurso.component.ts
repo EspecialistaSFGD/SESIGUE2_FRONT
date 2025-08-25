@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
 import { DataFile, TransferenciaRecursoIndiceFormData } from '@core/interfaces';
+import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { BotonUploadComponent } from '@shared/boton/boton-upload/boton-upload.component';
@@ -16,11 +17,25 @@ import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
   styles: ``
 })
 export class IndiceTransferenciaRecursoComponent {
-  readonly data: TransferenciaRecursoIndiceFormData = inject(NZ_MODAL_DATA);
+  _data: TransferenciaRecursoIndiceFormData = inject(NZ_MODAL_DATA);
+
+  @Input()
+  set data(value: TransferenciaRecursoIndiceFormData) {
+    this._data = value;
+    if (!value.success) {
+      this.resetFile = true;
+      this.getFiles({ exist: false, file: undefined });
+    }
+  }
+
+  get data() {
+    return this._data;
+  }
   
   private fb = inject(FormBuilder)
+  private validatorSevice = inject(ValidatorService)
   
-  fileIndice: string = ''
+  resetFile: boolean = false
   indice: boolean = this.data.indice
 
   formIndice: FormGroup = this.fb.group({
@@ -28,13 +43,16 @@ export class IndiceTransferenciaRecursoComponent {
     fecha: [ '', Validators.required ],
     archivo:  [ '', Validators.required ]
   })
-
-  ngOnInit(): void {
-    
-  }
-
+  
   alertMessageError(control: string) {
     return this.formIndice.get(control)?.errors && this.formIndice.get(control)?.touched
+  }
+
+  ngOnInit(): void {
+    if(!this.indice){
+      const monto = this.formIndice.get('monto')!
+      monto.setValidators([Validators.required, Validators.pattern(this.validatorSevice.amountPattern)]);
+    }
   }
 
   msgErrorControl(control: string, label?: string): string {
@@ -49,7 +67,6 @@ export class IndiceTransferenciaRecursoComponent {
       this.formIndice.patchValue({ archivo: dataFile.file! })
 
       const reader = new FileReader()
-      reader.onload = () => this.fileIndice = reader.result as string
       reader.readAsDataURL(dataFile.file!)
     } else {
       this.formIndice.patchValue({ archivo: null })

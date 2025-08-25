@@ -143,11 +143,11 @@ export class FormularioIntervencionComponent {
   }
 
   obtenerSectoresServices(){
-    this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID)))))
+    this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID)))))  
   }
 
-  obtenerDepartamentoServices(){
-    this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(resp.data.filter( item => this.ubigeosValidos.includes(item.departamentoId))))
+  obtenerDepartamentoServices(){    
+    this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(resp.data.filter( item => this.ubigeosValidos.includes(item.departamentoId)))) 
   }
 
   obtenerIntervencionFaseService(inicial: boolean, tipoIntervencion: number){

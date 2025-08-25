@@ -86,9 +86,7 @@ export default class AgendasMesaComponent {
       this.loading = true
       if (Object.keys(params).length > 0) {        
         let campo = params['campo'] ?? 'intervencionEspacioId'
-        console.log(campo);
-        
-        
+
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
         this.pagination.pageSize = params['cantidad']
@@ -104,8 +102,8 @@ export default class AgendasMesaComponent {
         // setParamsToObject(params, this.pagination, 'entidadUbigeoId')
 
         setTimeout(() => {
-          // this.obtenerMesaIntegrantesService(true)
-          // this.obtenerMesaIntegrantesService(false)
+          this.obtenerMesaIntegrantesService(true)
+          this.obtenerMesaIntegrantesService(false)
           this.obtenerIntervencionEspacioService()
         }, 100)
       }
@@ -303,14 +301,15 @@ export default class AgendasMesaComponent {
   }
 
   crearIntervencion(){
-    this.obtenerMesaIntegrantesService(true)
-    this.obtenerMesaIntegrantesService(false)
-    setTimeout(() => {
-      this.intervencionEspacioForm(true)
-    }, 100);
+    // this.obtenerMesaIntegrantesService(true)
+    // this.obtenerMesaIntegrantesService(false)
+    // setTimeout(() => {
+    //   this.intervencionEspacioForm(true)
+    // }, 100);
+    this.intervencionEspacioForm(true)
   }
 
-  intervencionEspacioForm(create: boolean){    
+  intervencionEspacioForm(create: boolean){
     const action = `${create ? 'Crear' : 'Actualizar' } Intervencion`
     this.modal.create<FormularioIntervencionComponent>({
       nzTitle: `${action.toUpperCase()}`,

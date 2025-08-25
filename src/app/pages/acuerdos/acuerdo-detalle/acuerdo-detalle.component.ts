@@ -38,10 +38,11 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { DesestimacionComponent } from '../../../libs/shared/components/desestimacion/desestimacion.component';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { AprobarDesestimacionComponent } from './aprobar-desestimacion/aprobar-desestimacion.component';
-import { AcuerdoDesestimacionResponse, ButtonsActions } from '@core/interfaces';
+import { AcuerdoDesestimacionResponse, ButtonsActions, HitoResponse } from '@core/interfaces';
+import { HitosService as HitosCoreService } from '@core/services';
 import { AcuerdoNoCumplidoComponent } from './acuerdo-no-cumplido/acuerdo-no-cumplido.component';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { getDateFormat } from '@core/helpers';
+import { getDateFormat, obtenerPermisosBotones } from '@core/helpers';
 
 const subTipo = localStorage.getItem('subTipo')?.toUpperCase() || null;
 
@@ -84,6 +85,8 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
   searchForm!: UntypedFormGroup;
   fechaDateFormat = 'dd/MM/yyyy';
 
+  hitoActions: ButtonsActions = {}
+
   // title: string = `Gestión de hitos para el ...`;
   id: string | null = null;
   pageIndex: number = 1;
@@ -115,6 +118,7 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
   private router = inject(Router);
   private modal = inject(NzModalService);
   private utilesService = inject(UtilesService);
+  private hitoService = inject(HitosCoreService);
 
   // private confirmModal = inject(NzModalRef);
   confirmModal?: NzModalRef; // For testing by now
@@ -218,6 +222,12 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     acuerdos?.botones?.map(btn => {      
       this.authPermission.approve = btn.descripcionBoton === 'Aprobar' ? true : this.authPermission.approve
     })
+
+    
+    const hitosNav = navigation.find(nav => nav.descripcionItem == 'Hitos')
+    if(hitosNav && hitosNav!.botones){
+      this.hitoActions = obtenerPermisosBotones(hitosNav!.botones!)
+    }    
   }
 
   onHitoSelected(hito: HitoAcuerdoModel): void {
@@ -494,6 +504,44 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
     });
   }
 
+  obtenerHitoResponse(hito: HitoAcuerdoModel): HitoResponse {
+    const plazo = getDateFormat(hito.plazoFecha!, 'month')
+    const entidadId =localStorage.getItem('codigoUsuario')
+    const hitoResponse:HitoResponse = {
+      hitoId: hito.hitoId!,
+      acuerdoId: hito.acuerdoID!,
+      hito: hito.hito!,
+      validado: hito.validado! == 1,
+      responsableId: hito.responsableID!,
+      entidadId: hito.entidadId!,
+      plazo,
+      accesoId: Number(entidadId),
+      estado: hito.estado!,
+      nomEstado: hito.nomEstado!,
+    }
+    return hitoResponse
+  }
+
+  validarHito(hito: HitoAcuerdoModel, validado:boolean){    
+    const hitoResponse = {...this.obtenerHitoResponse(hito), validado}
+    this.confirmModal = this.modal.confirm({
+      nzTitle: `¿Deseas quitar la valicación del hito?`,
+      nzContent: 'Se quitará la validación del hito',
+      nzIconType: 'check-circle',
+      nzOnOk: () => this.actualizarHito(hitoResponse)
+    });    
+  }
+
+  actualizarHito(hito: HitoResponse){
+    this.hitoService.actualizarHito(hito)
+      .subscribe( resp => {
+        if(resp.success){
+          this.hitosService.listarHitos(hito.acuerdoId, null, 1, 10, 'hitoId', 'ascend');
+        }
+      })
+    
+  }
+
   onValidarAvance(avance: AvanceHitoModel): void {
     this.confirmModal = this.modal.confirm({
       nzTitle: `¿Deseas validar el avance: "${avance.avance}"?`,
@@ -761,6 +809,11 @@ export class AcuerdoDetalleComponent implements OnInit, AfterViewInit {
       this.updateParamsSubject.next();
     }
 
+  }
+
+  disabledValidarHito(validado: number, estadoNombre:string): boolean {
+    const estadosValidar = ['PENDIENTE', 'EN PROCESO'];
+    return !(validado == 1 && estadosValidar.includes(estadoNombre))
   }
 }
 
