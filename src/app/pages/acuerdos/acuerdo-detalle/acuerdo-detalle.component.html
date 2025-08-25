@@ -206,7 +206,13 @@
                         <span nz-icon nzType="file-add" nzTheme="outline"></span>
                     </button> -->
                     <!-- Comentario del responsable del hito -->
-                    @if(authService.permisos()?.puede_reactivar_estado_hito){
+                    <!-- @if(authService.permisos()?.puede_reactivar_estado_hito){
+                    <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Reactivar estado"
+                        (click)="onReactivarEstadoHito(data)" [disabled]="acuerdosService.isDesestimated()">
+                        <span nz-icon nzType="rollback" nzTheme="outline"></span>
+                    </button>
+                    } -->
+                    @if(hitoActions.reactivate){
                     <button *nzSpaceItem nz-button nzType="link" nz-tooltip nzTooltipTitle="Reactivar estado"
                         (click)="onReactivarEstadoHito(data)" [disabled]="acuerdosService.isDesestimated()">
                         <span nz-icon nzType="rollback" nzTheme="outline"></span>
