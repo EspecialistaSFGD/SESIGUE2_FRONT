@@ -59,17 +59,25 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
+
+        <div class="cursor-pointer flex items-center gap-2 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white">
+          <i class="pi pi-filter" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Filtros</span>
+        </div>
+
+        <app-boton-descargar [rutaArchivo]="formatoIndice" [label]="'Formato indice'" [titulo]="'Descargar el formato de indices'" />
+        
         <!-- <button nz-button nzType="default">
           <span nz-icon nzType="filter"></span>
           <span class="button-text">Filtros</span>
-        </button>
+        </button> -->
   
-        <button nz-button [nzLoading]="loading">
+        <!-- <button nz-button [nzLoading]="loading">
             <span nz-icon nzType="file-excel" nzTheme="outline"></span>
             <span class="button-text">Exportar</span>
         </button> -->
 
-        <button nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
+        <!-- <button nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
             <span nz-icon nzType="file-excel" nzTheme="outline"></span>
             <span class="button-text">Formato</span>
             <span nz-icon nzType="down"></span>
@@ -78,7 +86,7 @@
             <ul nz-menu>
                 <li nz-menu-item><app-boton-descargar [rutaArchivo]="formatoIndice" [label]="'Formato indice'" [titulo]="'Descargar el formato de indices'" /></li>
             </ul>
-        </nz-dropdown-menu>
+        </nz-dropdown-menu> -->
   
         <!-- <button  nz-button nzType="primary">
           <span nz-icon nzType="plus" nzTheme="outline"></span>

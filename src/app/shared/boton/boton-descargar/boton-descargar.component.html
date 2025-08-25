@@ -1,6 +1,5 @@
-<div nz-tooltip [nzTooltipTitle]="titulo" (click)="descargarPdf(rutaArchivo)" class="p-1 cursor-pointer" [ngClass]="{ 'text-sky-700' : active, 'text-slate-400' : !active }">
-    <!-- <i class="pi" [ngClass]="{ 'pi-file-pdf' : !preload || preload && !loading, 'pi-spin pi-spinner' : preload && loading }" style="font-size: 0.85rem"></i> -->
+<div nz-tooltip [nzTooltipTitle]="titulo" (click)="descargarPdf(rutaArchivo)" class="p-1 cursor-pointer" [ngClass]="{ 'text-sky-700' : active, 'text-slate-400' : !active, 'flex gap-2 items-center py-1 px-3 border border-sky-700 rounded hover:bg-sky-700 hover:text-white' : label }">
     <i class="pi" [ngClass]="(preload && loading) ? 'pi-spin pi-spinner' : icono" style="font-size: 0.85rem"></i>
-      @if(label){ {{label}} }
+    <span *ngIf="label" class="hidden md:flex">{{label}}</span>
 </div>
 <p-toast />
