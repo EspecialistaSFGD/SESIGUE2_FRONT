@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
 import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
+import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, JneService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -70,6 +70,8 @@ export class FormularioAtencionComponent {
   private entidadService = inject(EntidadesService)
   private alcaldeService = inject(AlcaldesService)
 
+  private jneService = inject(JneService)
+
   public sectoresStore = inject(SectoresStore)
   public entidadesStore = inject(EntidadesStore)
 
@@ -114,7 +116,7 @@ export class FormularioAtencionComponent {
     distrito: [{ value: '', disabled: true }],
     ubigeo: [''],
     entidad: [{ value: '', disabled: true }],
-    autoridad: ['', Validators.required],
+    autoridad: [{ value: '', disabled: true }],
     dniAutoridad: [''],
     nombreAutoridad: [{ value: '', disabled: false }, Validators.required],
     documentoTitulo: [{ value: '', disabled: false }],
@@ -583,11 +585,14 @@ export class FormularioAtencionComponent {
   }
 
   changeDepartamento(){
+    const autoridadControl = this.formAtencion.get('autoridad')
     const departamento = this.formAtencion.get('departamento')?.value
     const provinciaControl = this.formAtencion.get('provincia')
     const distritoControl = this.formAtencion.get('distrito')
     let ubigeo = null 
+    departamento ? autoridadControl?.enable() : autoridadControl?.disable()
     if(departamento){
+    console.log(departamento);
       ubigeo = `${departamento}0000`
       if(!this.esRegional){
         provinciaControl?.enable()
@@ -615,7 +620,8 @@ export class FormularioAtencionComponent {
     const departamento = this.formAtencion.get('departamento')?.value
     let ubigeo = `${departamento.departamentoId}0000`
     const provincia = this.formAtencion.get('provincia')?.value
-    const distritoControl = this.formAtencion.get('distrito')    
+    const distritoControl = this.formAtencion.get('distrito')
+
     if(provincia && !this.esRegional){
       ubigeo = provincia
       distritoControl?.enable()
@@ -816,32 +822,58 @@ export class FormularioAtencionComponent {
 
   obtenerAlcaldePorUbigeo() {
     const ubigeoValue = this.formAtencion.get('ubigeo')?.value
-    let endUbigeo = ubigeoValue.slice(-2);
-    const ubigeo = endUbigeo == '01' ? ubigeoValue.slice(0, -2) : ubigeoValue
+    // let endUbigeo = ubigeoValue.slice(-2);
+    // const ubigeo = endUbigeo == '01' ? ubigeoValue.slice(0, -2) : ubigeoValue
+    const departamentoControl = this.formAtencion.get('departamento')
+    const provinciaControl = this.formAtencion.get('provincia')
+    const distritoControl = this.formAtencion.get('distrito')
     const dniControl = this.formAtencion.get('dniAutoridad')
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
 
-    const pagination: Pagination = { ...this.pagination, ubigeo, columnSort: 'alcaldeId' }
-    this.alcaldeService.ListarAlcaldes(pagination)
-      .subscribe(resp => {        
-        if (resp.success = true) {
-          const autoridad = resp.data[0]
-          dniControl?.setValue(autoridad.dni)
-          dniControl?.disable()
-          nombreControl?.disable()
-          nombreControl?.setValue(autoridad.nombre)
-          cargoControl?.disable()
-          cargoControl?.setValue(autoridad.cargo)
-        } else {
-          dniControl?.reset()
-          dniControl?.enable()
-          nombreControl?.enable()
-          nombreControl?.reset()
-          cargoControl?.enable()
-          cargoControl?.reset()
-        }
+
+    const setUbigeo = provinciaControl?.value && !distritoControl?.value ? ubigeoValue.slice(0,4) + '00' : ubigeoValue
+    const strUbigeo = setUbigeo.length == 2 || setUbigeo.length == 4 ? setUbigeo.padEnd(6, "0") : setUbigeo
+
+    let idTipoEleccion = 6
+    if(provinciaControl?.value && !distritoControl?.value){
+      idTipoEleccion = 5
+    } else if(!provinciaControl?.value && !distritoControl?.value){
+      idTipoEleccion = 4
+    }
+
+    this.jneService.obtenerAutoridades({ strUbigeo, idTipoEleccion})
+      .subscribe(resp => {
+        console.log(resp);
+        
       })
+    
+    
+
+    
+
+
+
+    // const pagination: Pagination = { ...this.pagination, ubigeo, columnSort: 'alcaldeId' }
+    // this.alcaldeService.ListarAlcaldes(pagination)
+    //   .subscribe(resp => {        
+    //     if (resp.success = true) {
+    //       const autoridad = resp.data[0]
+    //       dniControl?.setValue(autoridad.dni)
+    //       dniControl?.disable()
+    //       nombreControl?.disable()
+    //       nombreControl?.setValue(autoridad.nombre)
+    //       cargoControl?.disable()
+    //       cargoControl?.setValue(autoridad.cargo)
+    //     } else {
+    //       dniControl?.reset()
+    //       dniControl?.enable()
+    //       nombreControl?.enable()
+    //       nombreControl?.reset()
+    //       cargoControl?.enable()
+    //       cargoControl?.reset()
+    //     }
+    //   })
   }
 
   changeCongresista(index: number) {

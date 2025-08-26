@@ -1,3 +1,4 @@
+export * from './jne.service'
 export * from './auth.service'
 export * from './asistencia-tecnica-agendas.service'
 export * from './asistencia-tecnica-congresistas.service'
