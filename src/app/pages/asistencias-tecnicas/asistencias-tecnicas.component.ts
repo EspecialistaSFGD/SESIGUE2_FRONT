@@ -4,21 +4,19 @@ import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, OrientacionAtencion, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-// import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
+import { FormGroup } from '@angular/forms';
+import { convertEnumToObject, obtenerPermisosBotones } from '@core/helpers';
 import { EventosService } from '@core/services/eventos.service';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
-import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
-import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
-import { convertEnumToObject, obtenerPermisosBotones } from '@core/helpers';
-import { FormGroup } from '@angular/forms';
-import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -39,7 +37,7 @@ export default class AsistenciasTecnicasComponent {
   title: string = `Lista de Atenciones`;
   public asistenciasTecnicas = signal<AsistenciaTecnicaResponse[]>([])
   public departamentos = signal<UbigeoDepartmentResponse[]>([])
-  public evento = signal<EventoResponse | null>(null)
+  public evento = signal<EventoResponse>({} as EventoResponse)
 
   pagination: Pagination = {
     code: 0,
@@ -89,12 +87,7 @@ export default class AsistenciasTecnicasComponent {
   private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
   private messageService = inject(NzMessageService)
 
-
   public navigationAuth = computed(() => this.authStore.navigationAuth())
-
-  // constructor() {
-  //   this.getParams()
-  // }
 
   ngOnInit() {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
@@ -102,7 +95,6 @@ export default class AsistenciasTecnicasComponent {
     this.permisosPCM = this.setPermisosPCM()
     this.obtenerEventos()
     this.getPermissions()
-    // this.obtenerAsistenciasTecnicas()
     this.obtenerDepartamentos()
     this.getParams()
   }
@@ -117,7 +109,9 @@ export default class AsistenciasTecnicasComponent {
     const vigenteId = this.permisosPCM ? 4 : 2
     const tipoEvento = this.permisosPCM ? [9] : [8]
     this.eventosService.getAllEventos(tipoEvento, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
-      .subscribe(resp => {        
+      .subscribe(resp => {
+        console.log(resp.data);
+        
         if(resp.data.length > 0){          
           this.evento.set(resp.data[0])
         }        
@@ -334,6 +328,8 @@ export default class AsistenciasTecnicasComponent {
   atencionFormModal(create: boolean): void{       
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
+    // console.log(this.evento());
+    
     
     const modal = this.modal.create<FormularioAtencionComponent>({
       nzTitle: `${action.toUpperCase()}${evento}`,

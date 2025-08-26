@@ -120,6 +120,7 @@ export interface AsistenteAtencionResponse {
   entidadId: number,
   entidad: string,
   entidadTipo: string,
+  subTipo: string,
   ubigeo: string,
   dni: string,
   nombres: string,

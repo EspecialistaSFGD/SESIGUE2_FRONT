@@ -178,12 +178,12 @@ export class FormularioAtencionComponent {
     this.permisosPCM ? especiosControl?.enable() : especiosControl?.disable()
 
     if(!this.permisosPCM){
-      this.formAtencion.get('fechaAtencion')?.disable()
-      this.formAtencion.get('tipoEntidadId')?.disable()
-      this.formAtencion.get('departamento')?.disable()
-      this.formAtencion.get('provincia')?.disable()
-      this.formAtencion.get('distrito')?.disable()
-      this.formAtencion.get('autoridad')?.disable()
+      // this.formAtencion.get('fechaAtencion')?.disable()
+      // this.formAtencion.get('tipoEntidadId')?.disable()
+      // this.formAtencion.get('departamento')?.disable()
+      // this.formAtencion.get('provincia')?.disable()
+      // this.formAtencion.get('distrito')?.disable()
+      // this.formAtencion.get('autoridad')?.disable()
       this.formAtencion.get('dniAutoridad')?.setValidators([ Validators.required, Validators.pattern(this.validatorService.DNIPattern)])
       this.formAtencion.get('orientacionId')?.setValidators([ Validators.required])
       this.formAtencion.get('unidadId')?.setValidators([ Validators.required])
@@ -308,7 +308,7 @@ export class FormularioAtencionComponent {
       .subscribe(resp => {        
         if (resp.success = true) {          
           const tipoEntidaes: TipoEntidadResponse[] = []
-          const tipos = resp.data.filter(item => item.abreviatura != 'GN')          
+          const tipos = resp.data.filter(item => this.permisosPCM ? item.abreviatura != 'GN' : item )          
           tipos.find(item => {
             if(this.esDocumento){              
               tipoEntidaes.push(item)
