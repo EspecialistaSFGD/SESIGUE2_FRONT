@@ -594,55 +594,54 @@ export class FormularioAtencionComponent {
     const provinciaControl = this.formAtencion.get('provincia')
     const distritoControl = this.formAtencion.get('distrito')
     let ubigeo = null 
+    
     departamento ? autoridadControl?.enable() : autoridadControl?.disable()
     if(departamento){
       ubigeo = `${departamento}0000`
       if(!this.esRegional){
-        ubigeoControl?.setValue(ubigeo)
-        provinciaControl?.enable()
+        // ubigeoControl?.setValue(ubigeo)
         this.obtenerProvinciasService(departamento)
-        this.changeAutoridad()
+        provinciaControl?.enable()
       }
     } else {
-      ubigeoControl?.setValue(null)
       provinciaControl?.disable()
       provinciaControl?.reset()
     }
     
+    ubigeoControl?.setValue(ubigeo)
+    this.changeAutoridad()
     this.obtenerEntidadPorUbigeoService(ubigeo ?? '0')
     distritoControl?.disable()
     distritoControl?.reset()
   }
 
   obtenerProvinciasService(departamento: string) {
-    this.ubigeoService.getProvinces(departamento)
-      .subscribe(resp => {
-        this.provincias.set(resp.data)
-      })
+    this.ubigeoService.getProvinces(departamento).subscribe(resp => this.provincias.set(resp.data))
   }
 
   changeProvincia(){
     const departamento = this.formAtencion.get('departamento')?.value
-    let ubigeo = `${departamento.departamentoId}0000`
     const provincia = this.formAtencion.get('provincia')?.value
     const distritoControl = this.formAtencion.get('distrito')
-
+    
+    let ubigeo = `${departamento}0000`
     if(provincia && !this.esRegional){
       ubigeo = provincia
       distritoControl?.enable()
       this.obtenerDistritosService(ubigeo)
     } else {
+      // ubigeo = `${departamento}0000`
       distritoControl?.disable()
-    }    
+    }
+
     this.formAtencion.get('ubigeo')?.setValue(ubigeo)
+    distritoControl?.reset()
+    this.changeAutoridad()
     this.obtenerEntidadPorUbigeoService(ubigeo)
   }
 
   obtenerDistritosService(provincia: string) {
-    this.ubigeoService.getDistricts(provincia)
-      .subscribe(resp => {
-        this.distritos.set(resp.data)
-      })
+    this.ubigeoService.getDistricts(provincia).subscribe(resp => this.distritos.set(resp.data))
   }
 
   changeDistrito(){
@@ -650,6 +649,7 @@ export class FormularioAtencionComponent {
     const distrito = this.formAtencion.get('distrito')?.value   
     const ubigeo = distrito && !this.esRegional ? distrito : provincia
     this.formAtencion.get('ubigeo')?.setValue(ubigeo)
+    this.changeAutoridad()
     this.obtenerEntidadPorUbigeoService(ubigeo) 
   }
 
@@ -705,18 +705,12 @@ export class FormularioAtencionComponent {
     const ubigeo = this.formAtencion.get('ubigeo')?.value
     const dniControl = this.formAtencion.get('dniAutoridad')
     const nombreControl = this.formAtencion.get('nombreAutoridad')
-    const cargoControl = this.formAtencion.get('cargoAutoridad')    
+    const cargoControl = this.formAtencion.get('cargoAutoridad')
+
     if(autoridad && ubigeo){
       this.obtenerAlcaldePorUbigeo()
-    } else {
-      // dniControl?.setValidators([ Validators.pattern(this.validatorService.DNIPattern)])
-      // dniControl?.reset()
-      // dniControl?.enable()
-      // nombreControl?.enable()
-      // nombreControl?.reset()
-      // cargoControl?.enable()
-      // cargoControl?.reset()
     }
+
     if(autoridad){
       if(this.permisosPCM){
         dniControl?.disable()
@@ -827,8 +821,6 @@ export class FormularioAtencionComponent {
 
   obtenerAlcaldePorUbigeo() {
     const ubigeoValue = this.formAtencion.get('ubigeo')?.value
-    // let endUbigeo = ubigeoValue.slice(-2);
-    // const ubigeo = endUbigeo == '01' ? ubigeoValue.slice(0, -2) : ubigeoValue
     const departamentoControl = this.formAtencion.get('departamento')
     const provinciaControl = this.formAtencion.get('provincia')
     const distritoControl = this.formAtencion.get('distrito')
@@ -836,15 +828,24 @@ export class FormularioAtencionComponent {
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
 
-    let tipo = JneAutoridadTipoEnum.DISTRITO
-    if(provinciaControl?.value && !distritoControl?.value){
-      tipo = JneAutoridadTipoEnum.PROVINCIA
-    } else if(!provinciaControl?.value && !distritoControl?.value){
-      tipo = JneAutoridadTipoEnum.REGION
-    }
+    // let tipo = JneAutoridadTipoEnum.DISTRITO
+    // let title = 'es distrito'
+    // if(departamentoControl?.value && provinciaControl?.value && !distritoControl?.value){
+    //   tipo = JneAutoridadTipoEnum.PROVINCIA
+    //   title = 'es provincia'
+    // } else if(departamentoControl?.value && !provinciaControl?.value && !distritoControl?.value){
+    //   tipo = JneAutoridadTipoEnum.REGION
+    //   title = 'es departamento'
+    // }
+
+    // console.log(title);
+    // console.log(ubigeoValue);
+    // console.log(`${departamentoControl?.value} - ${provinciaControl?.value} ${distritoControl?.value}`);
+    
 
     let ubigeoDepartamento = Number(ubigeoValue.slice(0, 2));
     let restUbigeo = ubigeoValue.slice(-4)
+
     if(ubigeoDepartamento > 7 && ubigeoDepartamento < 25){
       ubigeoDepartamento = ubigeoDepartamento - 1
     } else if(ubigeoDepartamento == 7){
@@ -852,13 +853,20 @@ export class FormularioAtencionComponent {
     } else if (ubigeoDepartamento == 26){
       ubigeoDepartamento = 14
       restUbigeo = '01' + restUbigeo.slice(2)
-      tipo = JneAutoridadTipoEnum.PROVINCIA
+      // tipo = JneAutoridadTipoEnum.PROVINCIA
     }
 
     const setDptoUbigeo = ubigeoDepartamento < 10 ? `0${ubigeoDepartamento}${restUbigeo}` : `${ubigeoDepartamento}${restUbigeo}`
 
     const setUbigeo = provinciaControl?.value && !distritoControl?.value ? setDptoUbigeo.slice(0,4) + '00' : setDptoUbigeo
     const ubigeo = setUbigeo.length == 2 || setUbigeo.length == 4 ? setUbigeo.padEnd(6, "0") : setUbigeo
+
+    let tipo = JneAutoridadTipoEnum.DISTRITO
+    if(ubigeo.slice(-4) == '0000'){
+      tipo = JneAutoridadTipoEnum.REGION
+    } else if(ubigeo.slice(2, 4) != '00' && ubigeo.slice(-2) == '00') {
+      tipo = JneAutoridadTipoEnum.PROVINCIA
+    }
 
     const tipocargo = tipo == JneAutoridadTipoEnum.REGION ? 'GOBERNADOR' : 'ALCALDE'
 
@@ -878,33 +886,6 @@ export class FormularioAtencionComponent {
         cargoControl?.setValue(cargo) 
         this.loadingAutoridad = false
       })
-    
-    
-
-    
-
-
-
-    // const pagination: Pagination = { ...this.pagination, ubigeo, columnSort: 'alcaldeId' }
-    // this.alcaldeService.ListarAlcaldes(pagination)
-    //   .subscribe(resp => {        
-    //     if (resp.success = true) {
-    //       const autoridad = resp.data[0]
-    //       dniControl?.setValue(autoridad.dni)
-    //       dniControl?.disable()
-    //       nombreControl?.disable()
-    //       nombreControl?.setValue(autoridad.nombre)
-    //       cargoControl?.disable()
-    //       cargoControl?.setValue(autoridad.cargo)
-    //     } else {
-    //       dniControl?.reset()
-    //       dniControl?.enable()
-    //       nombreControl?.enable()
-    //       nombreControl?.reset()
-    //       cargoControl?.enable()
-    //       cargoControl?.reset()
-    //     }
-    //   })
   }
 
   changeCongresista(index: number) {

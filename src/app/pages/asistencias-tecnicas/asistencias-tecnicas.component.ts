@@ -47,7 +47,7 @@ export default class AsistenciasTecnicasComponent {
     currentPage: 1,
     total: 0
   }
-
+  
   paginationFilter: Pagination = {}
 
   atencionActions: ButtonsActions = {}

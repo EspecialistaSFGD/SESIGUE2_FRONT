@@ -159,8 +159,7 @@
 			<label for="dniAutoridad">DNI</label>
 			<div class="relative">
 				<input type="text" id="dniAutoridad" class="form-control" placeholder="Ingresa el DNI aquí" formControlName="dniAutoridad" (keyup)="changeDocumentoAutoridad()">
-				<!-- <div class="absolute right-1 top-1"><i class="pi pi-spin pi-spinner" style="font-size: 0.85rem"></i></div> -->
-				 <app-progress-spiner [loading]="loadingAutoridad" />
+				<div class="absolute right-1 top-1"><app-progress-spiner [loading]="loadingAutoridad" /></div>
 			</div>
 			<div class="text-danger" *ngIf="alertMessageError('dniAutoridad')">{{msgErrorControl('dniAutoridad','DNI')}}</div>
 		</div>
@@ -171,8 +170,10 @@
 
 		<div class="flex flex-col" [ngClass]="{ 'col-span-2' : !permisosPCM }">
 			<label for="cargoAutoridad">Cargo</label>
-			<input type="text" class="form-control" id="cargoAutoridad" placeholder="Ingrese el cargo aquí"
-				formControlName="cargoAutoridad">
+			<div class="relative">
+				<input type="text" class="form-control" id="cargoAutoridad" placeholder="Ingrese el cargo aquí" formControlName="cargoAutoridad">
+				<div class="absolute right-1 top-1"><app-progress-spiner [loading]="loadingAutoridad" /></div>
+			</div>
 			<div class="text-danger" *ngIf="alertMessageError('cargoAutoridad')">{{msgErrorControl('cargoAutoridad','Cargo')}}</div>
 		</div>
 
@@ -482,8 +483,10 @@
 				(keyup)="caracteresContador('nombreAutoridad',900)" placeholder="Ingrese el participante aquí"
 				rows="2"></textarea>
 		  } @else {
-			<input type="text" class="form-control" id="nombreAutoridad" placeholder="Ingresa el nombre aquí"
-			  formControlName="nombreAutoridad">
+			<div class="relative">
+				<input type="text" class="form-control" id="nombreAutoridad" placeholder="Ingresa el nombre aquí" formControlName="nombreAutoridad">
+				<div class="absolute right-1 top-1"><app-progress-spiner [loading]="loadingAutoridad" /></div>
+			</div>
 		  }
 		  <div class="text-danger" *ngIf="alertMessageError('nombreAutoridad')">{{msgErrorControl('nombreAutoridad', esDocumento ? 'participante' : 'nombre')}}</div>
       </ng-template>
