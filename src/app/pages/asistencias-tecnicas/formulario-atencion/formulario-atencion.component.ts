@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { JneAutoridadTipoEnum } from '@core/enums';
 import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
 import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, JneService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
@@ -9,13 +10,14 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { EntidadesStore } from '@libs/shared/stores/entidades.store';
 import { SectoresStore } from '@libs/shared/stores/sectores.store';
+import { ProgressSpinerComponent } from '@shared/progress-spiner/progress-spiner.component';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 @Component({
   selector: 'app-formulario-atencion',
   standalone: true,
-  imports: [ CommonModule, ReactiveFormsModule, NgZorroModule, PrimeNgModule],
+  imports: [ CommonModule, ReactiveFormsModule, NgZorroModule, PrimeNgModule, ProgressSpinerComponent],
   templateUrl: './formulario-atencion.component.html',
   styles: ``
 })
@@ -30,6 +32,7 @@ export class FormularioAtencionComponent {
   authUser = this.dataAtention.authUser
 
   permisosPCM: boolean = false
+  loadingAutoridad: boolean = false
   esDocumento: boolean = this.atencion.tipo === AsistenciasTecnicasTipos.DOCUMENTO
   participar: string[] = ['si', 'no']
   mancomunidadSlug:string[] = ['MM','MR']
@@ -585,6 +588,7 @@ export class FormularioAtencionComponent {
   }
 
   changeDepartamento(){
+    const ubigeoControl = this.formAtencion.get('ubigeo')
     const autoridadControl = this.formAtencion.get('autoridad')
     const departamento = this.formAtencion.get('departamento')?.value
     const provinciaControl = this.formAtencion.get('provincia')
@@ -592,18 +596,19 @@ export class FormularioAtencionComponent {
     let ubigeo = null 
     departamento ? autoridadControl?.enable() : autoridadControl?.disable()
     if(departamento){
-    console.log(departamento);
       ubigeo = `${departamento}0000`
       if(!this.esRegional){
+        ubigeoControl?.setValue(ubigeo)
         provinciaControl?.enable()
         this.obtenerProvinciasService(departamento)
+        this.changeAutoridad()
       }
     } else {
+      ubigeoControl?.setValue(null)
       provinciaControl?.disable()
       provinciaControl?.reset()
     }
     
-    this.formAtencion.get('ubigeo')?.setValue(ubigeo)
     this.obtenerEntidadPorUbigeoService(ubigeo ?? '0')
     distritoControl?.disable()
     distritoControl?.reset()
@@ -831,21 +836,47 @@ export class FormularioAtencionComponent {
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
 
-
-    const setUbigeo = provinciaControl?.value && !distritoControl?.value ? ubigeoValue.slice(0,4) + '00' : ubigeoValue
-    const strUbigeo = setUbigeo.length == 2 || setUbigeo.length == 4 ? setUbigeo.padEnd(6, "0") : setUbigeo
-
-    let idTipoEleccion = 6
+    let tipo = JneAutoridadTipoEnum.DISTRITO
     if(provinciaControl?.value && !distritoControl?.value){
-      idTipoEleccion = 5
+      tipo = JneAutoridadTipoEnum.PROVINCIA
     } else if(!provinciaControl?.value && !distritoControl?.value){
-      idTipoEleccion = 4
+      tipo = JneAutoridadTipoEnum.REGION
     }
 
-    this.jneService.obtenerAutoridades({ strUbigeo, idTipoEleccion})
+    let ubigeoDepartamento = Number(ubigeoValue.slice(0, 2));
+    let restUbigeo = ubigeoValue.slice(-4)
+    if(ubigeoDepartamento > 7 && ubigeoDepartamento < 25){
+      ubigeoDepartamento = ubigeoDepartamento - 1
+    } else if(ubigeoDepartamento == 7){
+      ubigeoDepartamento = 24
+    } else if (ubigeoDepartamento == 26){
+      ubigeoDepartamento = 14
+      restUbigeo = '01' + restUbigeo.slice(2)
+      tipo = JneAutoridadTipoEnum.PROVINCIA
+    }
+
+    const setDptoUbigeo = ubigeoDepartamento < 10 ? `0${ubigeoDepartamento}${restUbigeo}` : `${ubigeoDepartamento}${restUbigeo}`
+
+    const setUbigeo = provinciaControl?.value && !distritoControl?.value ? setDptoUbigeo.slice(0,4) + '00' : setDptoUbigeo
+    const ubigeo = setUbigeo.length == 2 || setUbigeo.length == 4 ? setUbigeo.padEnd(6, "0") : setUbigeo
+
+    const tipocargo = tipo == JneAutoridadTipoEnum.REGION ? 'GOBERNADOR' : 'ALCALDE'
+
+    this.loadingAutoridad = true
+    this.jneService.obtenerAutoridades({ ubigeo, tipo})
       .subscribe(resp => {
-        console.log(resp);
-        
+        const existeAutoridad = resp.data.length > 0
+        const autoridad = existeAutoridad ? resp.data.find(item => item.cargo.split(' ')[0] == tipocargo ) : null
+        const dni = existeAutoridad ? autoridad?.documentoIdentidad : null
+        const nombres = existeAutoridad ? `${autoridad?.nombres} ${autoridad?.apellidoPaterno} ${autoridad?.apellidoMaterno}` : null
+        const cargo = existeAutoridad ? autoridad?.cargo : null
+        console.log(`${dni} ${nombres} ${cargo}`);
+        console.log(autoridad?.departamento);     
+        console.log('-------------------------------');    
+        dniControl?.setValue(dni) 
+        nombreControl?.setValue(nombres) 
+        cargoControl?.setValue(cargo) 
+        this.loadingAutoridad = false
       })
     
     
