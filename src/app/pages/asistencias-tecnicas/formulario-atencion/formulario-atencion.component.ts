@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { JneAutoridadTipoEnum } from '@core/enums';
+import { JneAutoridadTipoEnum, UbigeoTipoEnum } from '@core/enums';
 import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
 import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, JneService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
@@ -31,6 +31,7 @@ export class FormularioAtencionComponent {
   create: boolean = this.dataAtention.create
   authUser = this.dataAtention.authUser
 
+  ubigeoTipo: UbigeoTipoEnum = UbigeoTipoEnum.PAIS
   permisosPCM: boolean = false
   loadingAutoridad: boolean = false
   esDocumento: boolean = this.atencion.tipo === AsistenciasTecnicasTipos.DOCUMENTO
@@ -599,11 +600,13 @@ export class FormularioAtencionComponent {
     if(departamento){
       ubigeo = `${departamento}0000`
       if(!this.esRegional){
+        this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
         // ubigeoControl?.setValue(ubigeo)
         this.obtenerProvinciasService(departamento)
         provinciaControl?.enable()
       }
     } else {
+      this.ubigeoTipo = UbigeoTipoEnum.PAIS
       provinciaControl?.disable()
       provinciaControl?.reset()
     }
@@ -626,10 +629,12 @@ export class FormularioAtencionComponent {
     
     let ubigeo = `${departamento}0000`
     if(provincia && !this.esRegional){
+      this.ubigeoTipo = UbigeoTipoEnum.PROVINCIA
       ubigeo = provincia
       distritoControl?.enable()
       this.obtenerDistritosService(ubigeo)
     } else {
+      this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
       // ubigeo = `${departamento}0000`
       distritoControl?.disable()
     }
@@ -649,6 +654,7 @@ export class FormularioAtencionComponent {
     const distrito = this.formAtencion.get('distrito')?.value   
     const ubigeo = distrito && !this.esRegional ? distrito : provincia
     this.formAtencion.get('ubigeo')?.setValue(ubigeo)
+    this.ubigeoTipo = distrito && !this.esRegional ? UbigeoTipoEnum.DISTRITO : UbigeoTipoEnum.PROVINCIA
     this.changeAutoridad()
     this.obtenerEntidadPorUbigeoService(ubigeo) 
   }
@@ -820,7 +826,6 @@ export class FormularioAtencionComponent {
   }
 
   obtenerAlcaldePorUbigeo() {
-    const ubigeoValue = this.formAtencion.get('ubigeo')?.value
     const departamentoControl = this.formAtencion.get('departamento')
     const provinciaControl = this.formAtencion.get('provincia')
     const distritoControl = this.formAtencion.get('distrito')
@@ -828,44 +833,26 @@ export class FormularioAtencionComponent {
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
 
-    // let tipo = JneAutoridadTipoEnum.DISTRITO
-    // let title = 'es distrito'
-    // if(departamentoControl?.value && provinciaControl?.value && !distritoControl?.value){
-    //   tipo = JneAutoridadTipoEnum.PROVINCIA
-    //   title = 'es provincia'
-    // } else if(departamentoControl?.value && !provinciaControl?.value && !distritoControl?.value){
-    //   tipo = JneAutoridadTipoEnum.REGION
-    //   title = 'es departamento'
-    // }
-
-    // console.log(title);
-    // console.log(ubigeoValue);
-    // console.log(`${departamentoControl?.value} - ${provinciaControl?.value} ${distritoControl?.value}`);
-    
-
-    let ubigeoDepartamento = Number(ubigeoValue.slice(0, 2));
-    let restUbigeo = ubigeoValue.slice(-4)
-
-    if(ubigeoDepartamento > 7 && ubigeoDepartamento < 25){
-      ubigeoDepartamento = ubigeoDepartamento - 1
-    } else if(ubigeoDepartamento == 7){
-      ubigeoDepartamento = 24
-    } else if (ubigeoDepartamento == 26){
-      ubigeoDepartamento = 14
-      restUbigeo = '01' + restUbigeo.slice(2)
-      // tipo = JneAutoridadTipoEnum.PROVINCIA
+    let ubigeo = ''
+    let tipo = JneAutoridadTipoEnum.DISTRITO
+    let valueProvincia =  provinciaControl?.value
+    if(this.ubigeoTipo == UbigeoTipoEnum.DEPARTAMENTO){
+      const dpto = this.departamentos().find( departamento => departamento.departamentoId == departamentoControl?.value )
+      ubigeo = dpto!.jne
+      tipo = ubigeo.slice(2, 4) == '01' ? JneAutoridadTipoEnum.PROVINCIA : JneAutoridadTipoEnum.REGION
     }
 
-    const setDptoUbigeo = ubigeoDepartamento < 10 ? `0${ubigeoDepartamento}${restUbigeo}` : `${ubigeoDepartamento}${restUbigeo}`
-
-    const setUbigeo = provinciaControl?.value && !distritoControl?.value ? setDptoUbigeo.slice(0,4) + '00' : setDptoUbigeo
-    const ubigeo = setUbigeo.length == 2 || setUbigeo.length == 4 ? setUbigeo.padEnd(6, "0") : setUbigeo
-
-    let tipo = JneAutoridadTipoEnum.DISTRITO
-    if(ubigeo.slice(-4) == '0000'){
-      tipo = JneAutoridadTipoEnum.REGION
-    } else if(ubigeo.slice(2, 4) != '00' && ubigeo.slice(-2) == '00') {
+    if (this.ubigeoTipo == UbigeoTipoEnum.PROVINCIA) {      
+      const provincia = this.provincias().find( provincia => provincia.provinciaId == valueProvincia)      
+      ubigeo = `${provincia!.jne.slice(0, 4)}00`
       tipo = JneAutoridadTipoEnum.PROVINCIA
+    }
+
+    if (this.ubigeoTipo == UbigeoTipoEnum.DISTRITO) {
+      const distrito = this.distritos().find( distrito => distrito.distritoId == distritoControl?.value )
+      const ubigeoDistrito = distrito!.jne
+      ubigeo = ubigeoDistrito.slice(-2) == '01' ? `${ubigeoDistrito.slice(0, 4)}00` : ubigeoDistrito
+      tipo = ubigeoDistrito.slice(-2) == '01' ? JneAutoridadTipoEnum.PROVINCIA : JneAutoridadTipoEnum.DISTRITO
     }
 
     const tipocargo = tipo == JneAutoridadTipoEnum.REGION ? 'GOBERNADOR' : 'ALCALDE'
@@ -878,9 +865,6 @@ export class FormularioAtencionComponent {
         const dni = existeAutoridad ? autoridad?.documentoIdentidad : null
         const nombres = existeAutoridad ? `${autoridad?.nombres} ${autoridad?.apellidoPaterno} ${autoridad?.apellidoMaterno}` : null
         const cargo = existeAutoridad ? autoridad?.cargo : null
-        console.log(`${dni} ${nombres} ${cargo}`);
-        console.log(autoridad?.departamento);     
-        console.log('-------------------------------');    
         dniControl?.setValue(dni) 
         nombreControl?.setValue(nombres) 
         cargoControl?.setValue(cargo) 

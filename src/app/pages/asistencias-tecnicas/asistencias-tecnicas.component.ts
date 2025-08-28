@@ -108,14 +108,7 @@ export default class AsistenciasTecnicasComponent {
   obtenerEventos() {
     const vigenteId = this.permisosPCM ? 4 : 2
     const tipoEvento = this.permisosPCM ? [9] : [8]
-    this.eventosService.getAllEventos(tipoEvento, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
-      .subscribe(resp => {
-        console.log(resp.data);
-        
-        if(resp.data.length > 0){          
-          this.evento.set(resp.data[0])
-        }        
-      })
+    this.eventosService.getAllEventos(tipoEvento, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'}).subscribe(resp => this.evento.set(resp.data[0]))
   }
 
   getParams() {
@@ -328,9 +321,7 @@ export default class AsistenciasTecnicasComponent {
   atencionFormModal(create: boolean): void{       
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
-    // console.log(this.evento());
-    
-    
+
     const modal = this.modal.create<FormularioAtencionComponent>({
       nzTitle: `${action.toUpperCase()}${evento}`,
       nzWidth: '75%',
@@ -358,7 +349,6 @@ export default class AsistenciasTecnicasComponent {
           type: 'primary',
           onClick: (componentResponse) => {
             const formAtencion = componentResponse!.formAtencion  
-            // console.log(formAtencion.value);
                       
             if (formAtencion.invalid) {
               const invalidFields = Object.keys(formAtencion.controls).filter(field => formAtencion.controls[field].invalid);
