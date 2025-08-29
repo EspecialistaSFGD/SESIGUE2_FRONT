@@ -161,9 +161,8 @@ export class FormularioAtencionComponent {
     this.permisosPCM = profilePCM.includes(this.authUser.codigoPerfil)
   }
 
-  setFormValue(){
+  setFormValue(){    
     const fechaAtencion = !this.create ? new Date(this.atencion.fechaAtencion) : new Date()
-
     const tipo = !this.permisosPCM || !this.atencion.tipo ? 'atencion' : this.atencion.tipo
     const modalidad = !this.permisosPCM || !this.atencion.modalidad ? 'presencial' : this.atencion.modalidad
     const sector = !this.permisosPCM || !this.atencion.sectorId ? this.authUser.sector.label : this.atencion.sector
@@ -173,7 +172,7 @@ export class FormularioAtencionComponent {
     const orientacionId = this.permisosPCM && !this.atencion.orientacionId  ? '' : this.atencion.orientacionId
     const contactoAutoridad = this.permisosPCM && !this.atencion.contactoAutoridad  ? '' : this.atencion.contactoAutoridad
     this.formAtencion.reset({...this.atencion, tipo, modalidad, sector, sectorId, eventoId, tipoPerfil: this.permisosPCM, fechaAtencion, validado: false, unidadId, orientacionId, contactoAutoridad})
-
+       
     if(!this.create){
       const orientacionId = this.formAtencion.get('orientacionId')?.value
       this.cuiClasificacion = orientacionId == 2 || orientacionId == 3 ? true : false
@@ -226,33 +225,24 @@ export class FormularioAtencionComponent {
     if(!this.create){
       this.setCongresistasParams()
       this.setParticipantesParams()
-      this.setAgendasParams()
+      this.setAgendasParams()      
     }   
   }
 
   formularioControlEnable(control: string, enable: boolean = true){
     const formularioControl = this.formAtencion.get(control)
-    enable ? formularioControl?.enable : formularioControl?.disable
+    enable ? formularioControl?.enable() : formularioControl?.disable()
   }
 
   setFormubigeo(){
     if(!this.create){
+      this.formAtencion.get('ubigeo')?.setValue(this.atencion.ubigeo)
       const departamento = this.atencion.ubigeo?.slice(0,2)
       this.formAtencion.get('departamento')?.setValue(departamento)
+      this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
       if(this.atencion.tipoEntidadSlug == 'GL'){
+        this.ubigeoTipo = UbigeoTipoEnum.PROVINCIA
         this.setUbigeoGL(departamento!, this.atencion.ubigeo!)
-        // const controlProvincia = this.formAtencion.get('provincia')
-        // const controlDistrito = this.formAtencion.get('distrito')
-        // const provinciaUbigeo = this.atencion.ubigeo?.slice(0,4)
-        // controlProvincia?.setValue(`${provinciaUbigeo}01`)
-        // controlProvincia?.enable()
-        // this.obtenerProvinciasService(departamento!)
-        // const lastUbigeo = this.atencion.ubigeo?.slice(-2);
-        // if(lastUbigeo != '01'){         
-        //   controlDistrito?.setValue(this.atencion.ubigeo!)
-        //   this.obtenerDistritosService(this.atencion.ubigeo!)
-        // }  
-        // controlDistrito?.enable()
       }
     }
   }
@@ -265,7 +255,8 @@ export class FormularioAtencionComponent {
     controlProvincia?.enable()
     this.obtenerProvinciasService(ubigeoDepartamento)
     const lastUbigeo = ubigeo.slice(-2);
-    if(lastUbigeo != '01'){         
+    if(lastUbigeo != '01'){
+      this.ubigeoTipo = UbigeoTipoEnum.DISTRITO         
       controlDistrito?.setValue(ubigeo)
       this.obtenerDistritosService(ubigeo)
     }
@@ -307,8 +298,6 @@ export class FormularioAtencionComponent {
             }
             if(!item.estado){
               if(!this.permisosPCM && !lugarControl?.value){
-                console.log(item);
-                
                 lugarControl?.setValue(item.lugarId)
               }
             }
