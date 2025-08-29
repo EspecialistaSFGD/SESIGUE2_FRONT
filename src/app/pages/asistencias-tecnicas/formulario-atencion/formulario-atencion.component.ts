@@ -120,6 +120,7 @@ export class FormularioAtencionComponent {
     distrito: [{ value: '', disabled: true }],
     ubigeo: [''],
     entidad: [{ value: '', disabled: true }],
+    entidadSlug: [null],
     autoridad: [{ value: '', disabled: true }],
     dniAutoridad: [''],
     nombreAutoridad: [{ value: '', disabled: false }, Validators.required],
@@ -184,9 +185,9 @@ export class FormularioAtencionComponent {
     this.permisosPCM ? especiosControl?.enable() : especiosControl?.disable()
 
     if(!this.permisosPCM){
-      // this.formAtencion.get('fechaAtencion')?.disable()
-      // this.formAtencion.get('tipoEntidadId')?.disable()
-      // this.formAtencion.get('departamento')?.disable()
+      this.formAtencion.get('fechaAtencion')?.disable()
+      this.formAtencion.get('tipoEntidadId')?.disable()
+      this.formAtencion.get('departamento')?.disable()
       // this.formAtencion.get('provincia')?.disable()
       // this.formAtencion.get('distrito')?.disable()
       // this.formAtencion.get('autoridad')?.disable()
@@ -589,6 +590,7 @@ export class FormularioAtencionComponent {
   }
 
   changeDepartamento(){
+    const tipoEntidadControl = this.formAtencion.get('tipoEntidadId')
     const ubigeoControl = this.formAtencion.get('ubigeo')
     const autoridadControl = this.formAtencion.get('autoridad')
     const departamento = this.formAtencion.get('departamento')?.value
@@ -603,17 +605,23 @@ export class FormularioAtencionComponent {
         this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
         // ubigeoControl?.setValue(ubigeo)
         this.obtenerProvinciasService(departamento)
-        provinciaControl?.enable()
+
+        if(tipoEntidadControl?.value){
+          provinciaControl?.enable()
+        }
+
+        
+        this.obtenerEntidadPorUbigeoService(ubigeo)
       }
     } else {
       this.ubigeoTipo = UbigeoTipoEnum.PAIS
       provinciaControl?.disable()
-      provinciaControl?.reset()
     }
+    provinciaControl?.reset()
     
     ubigeoControl?.setValue(ubigeo)
     this.changeAutoridad()
-    this.obtenerEntidadPorUbigeoService(ubigeo ?? '0')
+    // this.obtenerEntidadPorUbigeoService(ubigeo ?? '0')
     distritoControl?.disable()
     distritoControl?.reset()
   }
@@ -669,13 +677,23 @@ export class FormularioAtencionComponent {
 
   obtenerEntidadPorUbigeoService(ubigeo: string) {
     if (ubigeo) {    
+      const tipoEntidadIdControl = this.formAtencion.get('tipoEntidadId')
       const entidadControl = this.formAtencion.get('entidad')
+      const entidadSlugControl = this.formAtencion.get('entidadSlug')
       const entidadIdControl = this.formAtencion.get('entidadId')
-      this.entidadService.getEntidadPorUbigeo(ubigeo)
-        .subscribe(resp => {
+
+      let tipo = this.esMancomunidad ? '3' : '2'
+      this.entidadService.obtenerEntidad({ ubigeo, tipo })
+        .subscribe( resp => {
           const entidad = resp.data
-          entidadControl?.setValue(entidad ? entidad.entidad : null)
+          entidadControl?.setValue(entidad ? entidad.entidadSlug : null)
+          entidadSlugControl?.setValue(entidad ? entidad.entidad : null)
           entidadIdControl?.setValue(entidad ? entidad.entidadId : null)
+          if(!this.perfilPOIAtencion()){
+            const nivelGobierno = entidad.nivelGobierno ?? null
+            const tipoEntidad = this.tipoEntidades().find(item => item.abreviatura.toUpperCase() === nivelGobierno)
+            tipoEntidadIdControl?.setValue(tipoEntidad?.tipoId ?? null)
+          }
         })
     }
   }
@@ -713,7 +731,7 @@ export class FormularioAtencionComponent {
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
 
-    if(autoridad && ubigeo){
+    if(this.permisosPCM && autoridad && ubigeo){
       this.obtenerAlcaldePorUbigeo()
     }
 
