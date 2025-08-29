@@ -21,7 +21,8 @@ export interface EntidadResponse {
   entidadSlug?: string,
 }
 
-export interface ParamsEntidad {
-  entidadId?: string,
-  ubigeo?: string,
-}
+// export interface ParamsEntidad {
+//   entidadId?: string,
+//   ubigeo?: string,
+//   tipo?: number,
+// }
