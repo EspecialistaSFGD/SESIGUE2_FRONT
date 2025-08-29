@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { JneAutoridadTipoEnum, UbigeoTipoEnum } from '@core/enums';
-import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
-import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { findEnumToText, generateMillesAndDecimal, getBusinessDays, typeErrorControl } from '@core/helpers';
+import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, SSInversionTooltip, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, JneService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -910,8 +910,11 @@ export class FormularioAtencionComponent {
     const agendaRow = this.fb.group({
       agendaId: [],
       clasificacionId: [null, Validators.required],
-      cui: [''],
-      inversion: ['']
+      cui: ['', Validators.required], //TODO: Verificar si la validacion va en el registro del sector
+      loading: [false],
+      visible: [false],
+      inversion: [''],
+      costoActualizado: ['']
     })
     this.agendas.push(agendaRow)
   }
@@ -964,35 +967,53 @@ export class FormularioAtencionComponent {
 
   }
 
-  obtenerIndexParaSsi(index: number) {
+  obtenerInversionSsi(index: number) {
     const agendas = this.formAtencion.get('agendas') as FormArray
     const cui = agendas.at(index).get('cui')
+    const loadingControl = agendas.at(index).get('loading')
+    const visibleControl = agendas.at(index).get('visible')
+    const inversionControl = agendas.at(index).get('inversion')
+    const costoActualizado = agendas.at(index).get('costoActualizado')
     let value = cui?.value
     if (value.length > 7) {
       const newValue = value.substring(0, 7);
       cui?.setValue(newValue)
     }
 
-    if (value.length == 7) {
-      if (this.timeoutId) {
-        clearTimeout(this.timeoutId)
-      }
 
-      // this.timeoutId = setTimeout(() => {
-      //   this.ssiService.obtenerSSIMef(value)
-      //     .subscribe(resp => {
-      //       console.log('VERIFIANDFO NOMBRE DE INVERSION');            
-      //       console.log(resp);            
-      //     })
-      // }, 1000);
+    if (value.length == 7) {
+      loadingControl?.setValue(true)
+      visibleControl?.setValue(false)
+      this.ssiService.obtenerInversion(value)
+      .subscribe( resp => {
+          loadingControl?.setValue(false)
+          const inversion  = resp.data
+          visibleControl?.setValue(inversion ? true : false)
+          inversionControl?.setValue(inversion ? inversion.nombre : null)
+          costoActualizado?.setValue(inversion ? generateMillesAndDecimal(inversion.costoActualizado, 2) : null)
+        })
+    } else {
+      loadingControl?.setValue(false)
+      visibleControl?.setValue(false)
+      inversionControl?.setValue(null)
+      costoActualizado?.setValue(null)
     }
   }
 
-  obtenerSSIMef(index: number) {
+  obtenerInversionEncontrada(i: number): SSInversionTooltip {
     const agendas = this.formAtencion.get('agendas') as FormArray
-    const inversion = agendas.at(index).get('inversion')?.value
-    return inversion
+    const loading = agendas.at(i).get('loading')?.value
+    const visible = agendas.at(i).get('visible')?.value
+    const inversion = agendas.at(i).get('inversion')?.value
+    const costoActualizado = agendas.at(i).get('costoActualizado')?.value
+    return { loading, visible, inversion, costoActualizado }
   }
+
+  // obtenerSSIMef(index: number) {
+  //   const agendas = this.formAtencion.get('agendas') as FormArray
+  //   const inversion = agendas.at(index).get('inversion')?.value
+  //   return inversion
+  // }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {
     const evidenciaReunion = this.formAtencion.get('evidenciaReunion')

@@ -377,10 +377,27 @@
 						  <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'clasificacionId')">{{msgErrorControlTwoNivel('agendas',i,'clasificacionId','Clasificación')}}</div>
 					</div>
 					<div class="flex flex-col">
-						<label for="cuiAgenda">CUI</label>
-						<input type="text" class="form-control" id="cuiAgenda" formControlName="cui" (keyup)="obtenerIndexParaSsi(i)">
+						<label for="cuiAgenda">
+							CUI
+							@if (obtenerInversionEncontrada(i).visible) {
+								<span nz-icon nzType="info-circle" [nz-tooltip]="tpl"></span>
+								<ng-template #tpl>
+									<div>
+										<div>
+											<strong>NOMBRE DE INVERSION: </strong> {{obtenerInversionEncontrada(i).inversion}}
+										</div>
+										<div>
+											<strong>COSTO ACTUALIZADO:</strong> {{obtenerInversionEncontrada(i).costoActualizado}}
+										</div>
+									</div>
+								</ng-template>
+							}
+						</label>
+						 <div class="relative">
+							<input type="text" class="form-control" id="cuiAgenda" formControlName="cui" (keyup)="obtenerInversionSsi(i)">
+							<div class="absolute right-1 top-1"><app-progress-spiner [loading]="obtenerInversionEncontrada(i).loading" /></div>
+						</div>
 						<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'cui')">{{msgErrorControlTwoNivel('agendas',i,'cui','CUI')}}</div>
-						<div class="text-xs text-slate-400">{{ obtenerSSIMef(i) }}</div>
 					</div>
 	
 					<div class="flex flex-col">
@@ -418,10 +435,10 @@
 				<div formArrayName="agendas" [ngClass]="{ '' : cuiClasificacion, 'hidden' : !cuiClasificacion }">
 					<div *ngFor="let agenda of agendas.controls; let i = index" [formGroupName]="i">
 					<label for="cuiAgenda">CUI</label>
-					<input type="text" class="form-control" id="cuiAgenda" formControlName="cui" (keyup)="obtenerIndexParaSsi(i)">
+					<input type="text" class="form-control" id="cuiAgenda" formControlName="cui" (keyup)="obtenerInversionSsi(i)">
 					<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'cui')">
 						{{msgErrorControlTwoNivel('agendas',i,'cui','CUI')}}</div>
-					<div class="text-xs text-slate-400">{{ obtenerSSIMef(i) }}</div>
+					<!-- <div class="text-xs text-slate-400">{{ obtenerSSIMef(i) }}</div> -->
 					</div>
 				</div>
 			</div>
