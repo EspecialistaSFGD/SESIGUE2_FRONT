@@ -1,60 +1,38 @@
-export interface JneAutoridadesResponses {
-    data: JneConformacionesResponses[],
-    type: number,
-    message: string,
-    messageLog: string,
-    success: boolean,
-    aditional: number
+import { JneAutoridadTipoEnum } from "@core/enums"
+import { DataResponses } from "./helpers.interface"
+
+export interface JneAutoridadesResponses extends DataResponses {
+  data: JneAutoridadResponse[]
 }
 
-export interface JneConformacionesResponses {
-    lbeConformacion: JneAutoridad[],
-    lbePronunciamiento: JnePronunciamiento[]
+export interface JneAutoridadResponses extends DataResponses {
+  data: JneAutoridadResponse
 }
 
-export interface JneAutoridad {
-    idOrganizacionPolitica: number,
-    strOrganizacionPolitica:string,
-    strSexo?:string,
-    strDocumentoIdentidad:string,
-    strNombres:string,
-    strApellidoPaterno:string,
-    strApellidoMaterno:string,
-    strCargo:string,
-    strFechaInicioVigencia?:string,
-    strFechaFinVigencia:string,
-    idConformacionDetalle:string,
-    strRutaFoto:string,
-    idHojaVida: number,
-    strDepartamento: string,
-    strProvincia: string,
-    strDistrito: string,
-    strRutaPlanGob: string,
-    strReemplaza: string,
-    strUbigeo?: string,
-    strDistritoElectoral: string,
-    strProcesoElectoral: string,
+export interface JneAutoridadResponse {
+    organizacionPolitica: string,
+    sexo: string,
+    documentoIdentidad: string,
+    nombres: string,
+    apellidoPaterno: string,
+    apellidoMaterno: string,
+    cargo: string,
+    fechaInicioVigencia: string,
+    fechaFinVigencia: string,
+    conformacionDetalleId: number,
+    hojaVidaId: number,
+    rutaFoto: string,
+    departamento: string,
+    provincia: string,
+    distrito: string,
+    rutaPlanGob: string,
+    reemplaza: string,
+    procesoElectoral: string,
+    ubigeo?: string,
+    distritoElectoral?: string,
 }
 
-export interface JnePronunciamiento {
-    idConformacion: number,
-    strRutaArchivo: string,
-    strPronunciamiento: string,
-    strFechaPublicacion: string,
-    idExpediente: number,
-    strCodExpedienteExt: string
-}
-
-export interface JneRequest {
-    strUbigeo: string,
-    idTipoEleccion: number
-}
-
-export interface JneAutoridadesPorDniResponses {
-    data: JneAutoridad,
-    type: number,
-    message: string,
-    messageLog: string,
-    success: boolean,
-    aditional: number
+export interface JneAutoridadParams {
+    tipo: JneAutoridadTipoEnum
+    ubigeo: string,
 }

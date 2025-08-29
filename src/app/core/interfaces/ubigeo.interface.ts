@@ -19,6 +19,8 @@ export interface UbigeosDepartamentosResponses extends UbigeosResponses {
 export interface UbigeoDepartmentResponse {
   departamentoId: string,
   departamento: string,
+  oficial: string,
+  jne: string
 }
 
 export interface UbigeosProvinciasResponses extends UbigeosResponses {
@@ -28,6 +30,8 @@ export interface UbigeosProvinciasResponses extends UbigeosResponses {
 export interface UbigeoProvinciaResponse {
   provinciaId: string,
   provincia: string,
+  oficial: string,
+  jne: string
 }
 
 export interface UbigeosDistritosResponses extends UbigeosResponses {
@@ -37,6 +41,8 @@ export interface UbigeosDistritosResponses extends UbigeosResponses {
 export interface UbigeoDistritoResponse {
   distritoId: string,
   distrito: string,
+  oficial: string,
+  jne: string
 }
 
 export interface ListUbigeoResponse {

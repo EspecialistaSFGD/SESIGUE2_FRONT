@@ -19,9 +19,5 @@ export interface EntidadResponse {
   entidad: string,
   entidadTipo?: string,
   entidadSlug?: string,
-}
-
-export interface ParamsEntidad {
-  entidadId?: string,
-  ubigeo?: string,
+  nivelGobierno?: string,
 }
