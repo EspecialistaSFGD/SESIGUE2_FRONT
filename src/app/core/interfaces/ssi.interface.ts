@@ -33,6 +33,6 @@ export interface SsiInversionResponse {
 export interface SSInversionTooltip {
 	loading: boolean,
 	visible: boolean,
-	inversion: string,
+	nombre: string,
 	costoActualizado: number
 }

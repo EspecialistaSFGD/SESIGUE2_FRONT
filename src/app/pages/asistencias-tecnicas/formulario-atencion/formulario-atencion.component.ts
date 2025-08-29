@@ -910,10 +910,11 @@ export class FormularioAtencionComponent {
     const agendaRow = this.fb.group({
       agendaId: [],
       clasificacionId: [null, Validators.required],
-      cui: ['', Validators.required], //TODO: Verificar si la validacion va en el registro del sector
+      cui: ['', Validators.required],
+      inversion: [''],
+      nombre: [''],
       loading: [false],
       visible: [false],
-      inversion: [''],
       costoActualizado: ['']
     })
     this.agendas.push(agendaRow)
@@ -972,7 +973,7 @@ export class FormularioAtencionComponent {
     const cui = agendas.at(index).get('cui')
     const loadingControl = agendas.at(index).get('loading')
     const visibleControl = agendas.at(index).get('visible')
-    const inversionControl = agendas.at(index).get('inversion')
+    const nombreControl = agendas.at(index).get('nombre')
     const costoActualizado = agendas.at(index).get('costoActualizado')
     let value = cui?.value
     if (value.length > 7) {
@@ -981,7 +982,7 @@ export class FormularioAtencionComponent {
     }
 
 
-    if (value.length == 7) {
+    if (value.length === 7) {      
       loadingControl?.setValue(true)
       visibleControl?.setValue(false)
       this.ssiService.obtenerInversion(value)
@@ -989,13 +990,13 @@ export class FormularioAtencionComponent {
           loadingControl?.setValue(false)
           const inversion  = resp.data
           visibleControl?.setValue(inversion ? true : false)
-          inversionControl?.setValue(inversion ? inversion.nombre : null)
+          nombreControl?.setValue(inversion ? inversion.nombre : null)
           costoActualizado?.setValue(inversion ? generateMillesAndDecimal(inversion.costoActualizado, 2) : null)
         })
     } else {
       loadingControl?.setValue(false)
       visibleControl?.setValue(false)
-      inversionControl?.setValue(null)
+      nombreControl?.setValue(null)
       costoActualizado?.setValue(null)
     }
   }
@@ -1004,16 +1005,10 @@ export class FormularioAtencionComponent {
     const agendas = this.formAtencion.get('agendas') as FormArray
     const loading = agendas.at(i).get('loading')?.value
     const visible = agendas.at(i).get('visible')?.value
-    const inversion = agendas.at(i).get('inversion')?.value
+    const nombre = agendas.at(i).get('nombre')?.value
     const costoActualizado = agendas.at(i).get('costoActualizado')?.value
-    return { loading, visible, inversion, costoActualizado }
+    return { loading, visible, nombre, costoActualizado }
   }
-
-  // obtenerSSIMef(index: number) {
-  //   const agendas = this.formAtencion.get('agendas') as FormArray
-  //   const inversion = agendas.at(index).get('inversion')?.value
-  //   return inversion
-  // }
 
   beforeUploadMeet = (file: NzUploadFile): boolean => {
     const evidenciaReunion = this.formAtencion.get('evidenciaReunion')
