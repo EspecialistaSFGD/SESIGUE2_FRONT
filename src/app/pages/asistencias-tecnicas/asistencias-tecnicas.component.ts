@@ -179,15 +179,14 @@ export default class AsistenciasTecnicasComponent {
       })
   }
 
-  geDocumentAtencion(atencion: AsistenciaTecnicaResponse) : boolean{
-    const type = atencion.tipo
-    return type == 'documento' ? true : false
+  esDocumento(atencion: AsistenciaTecnicaResponse) : boolean{
+    return this.permisosPCM && atencion.tipo == 'documento'
   }
 
   disabledActions(atencion: AsistenciaTecnicaResponse): boolean {
-    let validado = this.geDocumentAtencion(atencion) && atencion.validado!
+    let validado = this.esDocumento(atencion)
     if(!this.permisosPCM){
-      validado = this.evento() ? atencion.eventoId != this.evento()!.eventoId : true
+      validado = atencion.eventoId != this.evento()!.eventoId
     }
     return validado;
   }
@@ -217,7 +216,17 @@ export default class AsistenciasTecnicasComponent {
     this.paramsNavigate({ pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar })
   }
 
-  validarAtencion(asistenciaId: string){
+  validarAtencion(atencion: AsistenciaTecnicaResponse){
+    this.modal.confirm({
+      nzTitle: `¿Deseas validar la atencion ${atencion.codigo}?`,
+      nzContent: 'La atención pasará a estar VALIDADO.',
+      nzIconType: 'check-circle',
+      nzOnOk: () => this.validarAtencionServicio(atencion.asistenciaId!)
+    });    
+    
+  }
+
+  validarAtencionServicio(asistenciaId: string){
     this.asistenciaTecnicaService.validarAsistenciaTecnica(asistenciaId)
       .subscribe( resp => {
         if(resp == true){

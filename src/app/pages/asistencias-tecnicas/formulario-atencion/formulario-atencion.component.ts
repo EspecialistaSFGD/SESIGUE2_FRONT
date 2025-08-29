@@ -190,7 +190,7 @@ export class FormularioAtencionComponent {
       this.formAtencion.get('departamento')?.disable()
       // this.formAtencion.get('provincia')?.disable()
       // this.formAtencion.get('distrito')?.disable()
-      // this.formAtencion.get('autoridad')?.disable()
+      this.formAtencion.get('autoridad')?.disable()
       this.formAtencion.get('dniAutoridad')?.setValidators([ Validators.required, Validators.pattern(this.validatorService.DNIPattern)])
       this.formAtencion.get('orientacionId')?.setValidators([ Validators.required])
       this.formAtencion.get('unidadId')?.setValidators([ Validators.required])
@@ -204,20 +204,21 @@ export class FormularioAtencionComponent {
         this.formAtencion.get('lugarId')?.disable()
         this.formAtencion.get('documentoTitulo')?.disable()
         this.formAtencion.get('numeroExpediente')?.disable()
-        this.formAtencion.get('lugarId')?.disable()
         this.formAtencion.get('espacioId')?.disable()
         this.formAtencion.get('clasificacion')?.disable()
         this.formAtencion.get('tema')?.disable()
         this.formAtencion.get('nombreAutoridad')?.disable()
       } else {
         const autoridad = this.formAtencion.get('autoridad')
-        if(autoridad && !this.create){
-          this.formAtencion.get('dniAutoridad')?.disable()
-          this.formAtencion.get('nombreAutoridad')?.disable()
-          this.formAtencion.get('cargoAutoridad')?.disable()
-        } else {
-          this.formAtencion.get('cargoAutoridad')?.setValidators([Validators.required, Validators.maxLength(50)])
-        }
+        this.formularioControlEnable('autoridad')
+        // autoridad?.enable()
+        // if(autoridad && !this.create){
+        //   this.formAtencion.get('dniAutoridad')?.disable()
+        //   this.formAtencion.get('nombreAutoridad')?.disable()
+        //   this.formAtencion.get('cargoAutoridad')?.disable()
+        // } else {
+        //   this.formAtencion.get('cargoAutoridad')?.setValidators([Validators.required, Validators.maxLength(50)])
+        // }
       }
     }
 
@@ -227,6 +228,11 @@ export class FormularioAtencionComponent {
       this.setParticipantesParams()
       this.setAgendasParams()
     }   
+  }
+
+  formularioControlEnable(control: string, enable: boolean = true){
+    const formularioControl = this.formAtencion.get(control)
+    enable ? formularioControl?.enable : formularioControl?.disable
   }
 
   setFormubigeo(){
@@ -301,6 +307,8 @@ export class FormularioAtencionComponent {
             }
             if(!item.estado){
               if(!this.permisosPCM && !lugarControl?.value){
+                console.log(item);
+                
                 lugarControl?.setValue(item.lugarId)
               }
             }
