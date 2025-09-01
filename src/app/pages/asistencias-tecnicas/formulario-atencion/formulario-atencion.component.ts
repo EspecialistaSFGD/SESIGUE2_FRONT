@@ -997,23 +997,29 @@ export class FormularioAtencionComponent {
     }
 
 
-    if (value.length === 7) {      
-      loadingControl?.setValue(true)
-      visibleControl?.setValue(false)
-      this.ssiService.obtenerInversion(value)
-      .subscribe( resp => {
-          loadingControl?.setValue(false)
-          const inversion  = resp.data
-          visibleControl?.setValue(inversion ? true : false)
-          nombreControl?.setValue(inversion ? inversion.nombre : null)
-          costoActualizado?.setValue(inversion ? generateMillesAndDecimal(inversion.costoActualizado, 2) : null)
-        })
-    } else {
-      loadingControl?.setValue(false)
-      visibleControl?.setValue(false)
-      nombreControl?.setValue(null)
-      costoActualizado?.setValue(null)
-    }
+    // if (value.length === 7) {      
+    //   loadingControl?.setValue(true)
+    //   visibleControl?.setValue(false)
+    //   this.ssiService.obtenerInversion(value)
+    //   .subscribe( resp => {
+    //     console.log(resp);
+        
+    //       loadingControl?.setValue(false)
+    //       const inversion  = resp.data
+    //       visibleControl?.setValue(inversion ? true : false)
+    //       nombreControl?.setValue(inversion ? inversion.nombre : null)
+    //       costoActualizado?.setValue(inversion ? generateMillesAndDecimal(inversion.costoActualizado, 2) : null)
+    //     })
+    // } else {
+    //   loadingControl?.setValue(false)
+    //   visibleControl?.setValue(false)
+    //   nombreControl?.setValue(null)
+    //   costoActualizado?.setValue(null)
+    // }
+    loadingControl?.setValue(false)
+    visibleControl?.setValue(false)
+    nombreControl?.setValue(null)
+    costoActualizado?.setValue(null)
   }
 
   obtenerInversionEncontrada(i: number): SSInversionTooltip {
