@@ -330,10 +330,10 @@ export default class AsistenciasTecnicasComponent {
   atencionFormModal(create: boolean): void{       
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const codigoAtencion = create ? '' : this.asistenciaTecnica.codigo
-    const action = `${create ? 'Crear' : 'Actualizar' } atención ${codigoAtencion}`
+    const action = `${create ? 'Crear' : 'Actualizar' } atención`
 
     const modal = this.modal.create<FormularioAtencionComponent>({
-      nzTitle: `${action.toUpperCase()}${evento}`,
+      nzTitle: `${action.toUpperCase()}${evento} ${codigoAtencion}`,
       nzWidth: '75%',
       nzMaskClosable: false,
       nzContent: FormularioAtencionComponent,

@@ -190,6 +190,8 @@ export class FormularioAtencionComponent {
     } else {
       this.formularioControlEnable('autoridad', !this.create)
       this.formularioControlEnable('dniAutoridad', !this.create && !autoridad)
+      this.formularioControlEnable('nombreAutoridad', !this.create && !autoridad)
+      this.formularioControlEnable('cargoAutoridad', !this.create && !autoridad)
     }
   }
 
