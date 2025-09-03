@@ -329,10 +329,11 @@ export default class AsistenciasTecnicasComponent {
 
   atencionFormModal(create: boolean): void{       
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
+    const codigoAtencion = create ? '' : this.asistenciaTecnica.codigo
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
 
     const modal = this.modal.create<FormularioAtencionComponent>({
-      nzTitle: `${action.toUpperCase()}${evento}`,
+      nzTitle: `${action.toUpperCase()}${evento} ${codigoAtencion}`,
       nzWidth: '75%',
       nzMaskClosable: false,
       nzContent: FormularioAtencionComponent,
@@ -365,18 +366,30 @@ export default class AsistenciasTecnicasComponent {
               return formAtencion.markAllAsTouched();
             }
 
+            const tipoPerfil = this.permisosPCM ? 0 : 1
+            const eventoId = this.evento().eventoId
+            const sectorId = this.authStore.usuarioAuth().sector!.value
+
             const dateForm = new Date(formAtencion.get('fechaAtencion')?.value)
             const getMonth = dateForm.getMonth() + 1
             const getDay = dateForm.getDate()
             const month = getMonth > 9 ? getMonth : `0${getMonth}`
             const day = getDay > 9 ? getDay : `0${getDay}`
             const fechaAtencion = `${month}/${day}/${dateForm.getFullYear()}`
-            formAtencion.get('fechaAtencion')?.setValue(fechaAtencion)
-
-            // const tipoPerfil = formAtencion.get('tipoPerfil')?.value
-            const tipoPerfil = this.permisosPCM ? 0 : 1
-            formAtencion.get('tipoPerfil')?.setValue(tipoPerfil)
             
+            formAtencion.get('fechaAtencion')?.setValue(fechaAtencion)
+            formAtencion.get('tipoPerfil')?.setValue(tipoPerfil)
+            formAtencion.get('eventoId')?.setValue(eventoId)
+            formAtencion.get('sectorId')?.setValue(sectorId)
+            formAtencion.get('validado')?.setValue(false)
+
+            const unidadIdControl = formAtencion.get('unidadId')
+            const orientacionIdControl = formAtencion.get('orientacionId')
+            const unidadId = unidadIdControl?.value
+            const orientacionId = orientacionIdControl?.value
+            unidadIdControl?.setValue(unidadId ?? '')
+            orientacionIdControl?.setValue(orientacionId ?? '')
+
             if(create){
               this.crearAtencion(formAtencion)
             } else  {

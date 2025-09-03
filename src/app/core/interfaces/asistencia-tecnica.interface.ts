@@ -134,7 +134,7 @@ export interface DataModalAtencion {
   clasificaciones: ItemEnum[]
   departamentos: UbigeoDepartmentResponse[]
   modalidades: ItemEnum[]
-  orientaciones: ItemEnum[]
+  orientaciones: OrientacionAtencion[]
   tipos: ItemEnum[]
   evento: EventoResponse
   authUser: any

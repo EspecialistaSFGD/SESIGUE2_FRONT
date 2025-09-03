@@ -16,8 +16,10 @@ export interface EntidadResponse {
   distrito: string,
   ubigeo: string,
   ubigeo_oficial: string,
+  ubigeo_jne: string,
   entidad: string,
   entidadTipo?: string,
   entidadSlug?: string,
+  entidadTipoSlug?: string,
   nivelGobierno?: string,
 }

@@ -17,5 +17,6 @@ export interface EventoResponse {
 	estado: string,
 	descripcionEstado: string,
 	rowNumber?: string,
+	verificaAsistentes: boolean,
 	fechaFinEvento?: Date,
 }
