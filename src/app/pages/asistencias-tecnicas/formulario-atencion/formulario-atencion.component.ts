@@ -116,8 +116,11 @@ export class FormularioAtencionComponent {
     tipoEntidadId: ['', Validators.required],
     entidadId: ['1', Validators.required],
     departamento: ['', Validators.required],
+    departamentoNombre: [''],
     provincia: [{ value: '', disabled: true }],
+    provinciaNombre: [''],
     distrito: [{ value: '', disabled: true }],
+    distritoNombre: [''],
     ubigeo: [''],
     entidad: [{ value: '', disabled: true }],
     entidadSlug: [null],
@@ -631,26 +634,37 @@ export class FormularioAtencionComponent {
     
     this.esMancomunidad = this.mancomunidadSlug.includes(tipo!.abreviatura)
     this.esRegional = tipo!.abreviatura == 'GR'
-    const departamentoControl = this.formAtencion.get('departamento')
+    const departamentoNombreControl = this.formAtencion.get('departamentoNombre')
+    const departamento = this.formAtencion.get('departamento')
+    const provinciaNombreControl = this.formAtencion.get('provinciaNombre')
     const provinciaControl = this.formAtencion.get('provincia')
+    const distritoNombreControl = this.formAtencion.get('distritoNombre')
     const distritoControl = this.formAtencion.get('distrito')
     const autoridadControl = this.formAtencion.get('autoridad')
-    this.esMancomunidad ? departamentoControl?.disable() : departamentoControl?.enable()
+    this.esMancomunidad ? departamentoNombreControl?.disable() : departamentoNombreControl?.enable()
+    this.esMancomunidad ? departamento?.disable() : departamento?.enable()
     this.formAtencion.get('entidadId')?.reset()
     this.formAtencion.get('entidad')?.reset()
     if(this.esMancomunidad){
-      departamentoControl?.reset()
+      departamento?.reset()
+      departamentoNombreControl?.reset()
+      provinciaNombreControl?.disable()
+      provinciaNombreControl?.reset()
       provinciaControl?.disable()
       provinciaControl?.reset()
       this.obtenerMancomunidadesService(tipo!.abreviatura)
     } else {
-      !this.esRegional && departamentoControl?.value ? provinciaControl?.enable() : provinciaControl?.disable()
+      !this.esRegional && provinciaNombreControl?.value ? provinciaNombreControl?.enable() : provinciaNombreControl?.disable()
+      !this.esRegional && departamento?.value ? provinciaControl?.enable() : provinciaControl?.disable()
       provinciaControl?.reset()
-      if(departamentoControl?.value){
-        const ubigeo = departamentoControl.value.departamentoId
-        this.obtenerEntidadPorUbigeoService(`${ubigeo}0000`)        
+      provinciaNombreControl?.reset()
+      if(departamento?.value){
+        const ubigeo = departamento.value.departamentoId
+        this.obtenerEntidadPorUbigeoService(`${ubigeo}0000`) 
       }
     }
+    distritoNombreControl?.disable()
+    distritoNombreControl?.reset()
     distritoControl?.disable()
     distritoControl?.reset()
     autoridadControl?.reset()
@@ -660,7 +674,7 @@ export class FormularioAtencionComponent {
     return this.tipoEntidades().find(item => Number(item.tipoId!) == tipoId)
   }
 
-  changeDepartamento(){
+  changeDepartamento(){    
     const tipoEntidadControl = this.formAtencion.get('tipoEntidadId')
     const ubigeoControl = this.formAtencion.get('ubigeo')
     const autoridadControl = this.formAtencion.get('autoridad')
@@ -739,11 +753,12 @@ export class FormularioAtencionComponent {
   }
 
   obtenerMancomunidadesService(mancomunidad: string) {
-    const paginationMancomunidad = {...this.pagination, columnSort: 'entidad', pageSize: 300 }
-    this.entidadService.getMancomunidades(mancomunidad, paginationMancomunidad)
-      .subscribe(resp => {
-        this.mancomunidades.set(resp.data)
-      })
+    const paginationMancomunidad: Pagination = {...this.pagination, columnSort: 'entidad', pageSize: 300 }
+    this.entidadService.listarEntidades(paginationMancomunidad, [mancomunidad]).subscribe( resp => this.mancomunidades.set(resp.data))
+    // this.entidadService.getMancomunidades(mancomunidad, paginationMancomunidad)
+    //   .subscribe(resp => {
+    //     this.mancomunidades.set(resp.data)
+    //   })
   }
 
   obtenerEntidadPorUbigeoService(ubigeo: string) {
@@ -770,6 +785,7 @@ export class FormularioAtencionComponent {
   }
 
   changeMancomunidad(){
+    const tipoEntidadId = this.formAtencion.get('tipoEntidadId')?.value
     const mancomunidad = this.formAtencion.get('entidadId')?.value
     const autoridadControl = this.formAtencion.get('autoridad')
     const dniControl = this.formAtencion.get('dniAutoridad')
@@ -778,17 +794,39 @@ export class FormularioAtencionComponent {
 
     const ubigeoControl = this.formAtencion.get('ubigeo')
     const entidadControl = this.formAtencion.get('entidad')
+    this.ubigeoTipo == UbigeoTipoEnum.PAIS;
     if(mancomunidad){
       const entidad = this.mancomunidades().find(item => item.entidadId == mancomunidad)
       entidadControl?.setValue(entidad!.entidad)
       const ubigeo = entidad!.ubigeo_oficial
+      const firstUbigeo = ubigeo.slice(0,2)
+      const lastUbigeo = ubigeo.slice(-2)
+      const setUbigeo = lastUbigeo == '01' ? `${ubigeo.slice(0,4)}00` : ubigeo
       ubigeoControl?.setValue(ubigeo)
-      this.formAtencion.get('departamento')?.setValue(entidad?.departamento)
-      this.formAtencion.get('provincia')?.setValue(entidad?.provincia)
-      this.formAtencion.get('distrito')?.setValue(entidad?.distrito)
+      this.formAtencion.get('departamentoNombre')?.setValue(entidad?.departamento)
+      this.formAtencion.get('departamento')?.setValue(firstUbigeo)
+      this.formAtencion.get('provinciaNombre')?.setValue(entidad?.provincia)
+      this.formAtencion.get('provincia')?.setValue(setUbigeo)
+      this.formAtencion.get('distritoNombre')?.setValue(entidad?.distrito)
+      this.formAtencion.get('distrito')?.setValue(ubigeo)
+      const tipoEntidad = this.obtenerTipoEntidad(tipoEntidadId)
+      const tipoEntidadSlug = tipoEntidad?.abreviatura
+      switch (tipoEntidadSlug) {
+        case 'MR': this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO; break;
+        case 'MM':
+          this.ubigeoTipo = lastUbigeo == '01' ? UbigeoTipoEnum.PROVINCIA : UbigeoTipoEnum.DISTRITO;
+          this.obtenerProvinciasService(firstUbigeo)
+          if(lastUbigeo != '01'){
+            this.obtenerDistritosService(ubigeo)
+          }
+          break;        
+      }
     } else {
       entidadControl?.reset()
+      ubigeoControl?.setValue(null)
     }
+
+    mancomunidad ? autoridadControl?.enable() : autoridadControl?.disable()
     autoridadControl?.reset()
     dniControl?.reset()
     nombreControl?.reset()
@@ -807,7 +845,7 @@ export class FormularioAtencionComponent {
       autoridad ? nombreControl?.disable() : nombreControl?.enable()
       autoridad ? cargoControl?.disable() : cargoControl?.enable()
     }
-
+  
     if(this.permisosPCM && autoridad == true && ubigeo){
       this.obtenerAlcaldePorUbigeo()
     }
@@ -988,13 +1026,13 @@ export class FormularioAtencionComponent {
       tipo = ubigeo.slice(2, 4) == '01' ? JneAutoridadTipoEnum.PROVINCIA : JneAutoridadTipoEnum.REGION
     }
 
-    if (this.ubigeoTipo == UbigeoTipoEnum.PROVINCIA) {      
-      const provincia = this.provincias().find( provincia => provincia.provinciaId == valueProvincia)      
+    if (this.ubigeoTipo == UbigeoTipoEnum.PROVINCIA) { 
+      const provincia = this.provincias().find( provincia => provincia.provinciaId == valueProvincia)
       ubigeo = `${provincia!.jne.slice(0, 4)}00`
       tipo = JneAutoridadTipoEnum.PROVINCIA
     }
 
-    if (this.ubigeoTipo == UbigeoTipoEnum.DISTRITO) {
+    if (this.ubigeoTipo == UbigeoTipoEnum.DISTRITO) {    
       const distrito = this.distritos().find( distrito => distrito.distritoId == distritoControl?.value )
       const ubigeoDistrito = distrito!.jne
       ubigeo = ubigeoDistrito.slice(-2) == '01' ? `${ubigeoDistrito.slice(0, 4)}00` : ubigeoDistrito

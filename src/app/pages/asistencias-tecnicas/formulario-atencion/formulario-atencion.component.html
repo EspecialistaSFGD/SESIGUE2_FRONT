@@ -71,7 +71,7 @@
 	<div class="flex flex-col">
 		<label for="departamento">Departamento</label>
 		@if(esMancomunidad){
-			<input type="text" class="form-control" id="departamento" formControlName="departamento">
+			<input type="text" class="form-control" id="departamento" formControlName="departamentoNombre">
 		} @else {
 			<p-dropdown 
 			[options]="departamentos()"
@@ -88,7 +88,7 @@
 	<div class="flex flex-col">
 		<label for="provincia">Provincia</label>
 		@if(esMancomunidad){
-			<input type="text" class="form-control" id="provincia" formControlName="provincia">
+			<input type="text" class="form-control" id="provincia" formControlName="provinciaNombre">
 		} @else {
 			<p-dropdown 
 			[options]="provincias()"
@@ -105,7 +105,7 @@
 	<div class="flex flex-col">
 		<label for="distrito">Distrito</label>
 		@if(esMancomunidad){
-			<input type="text" class="form-control" id="distrito"  formControlName="distrito">
+			<input type="text" class="form-control" id="distrito"  formControlName="distritoNombre">
 		} @else {
 			<p-dropdown 
 			[options]="distritos()"
@@ -130,7 +130,7 @@
 			<p-dropdown 
 			[options]="mancomunidades()"
 			formControlName="entidadId"
-			optionLabel="entidad"
+			optionLabel="entidadTipoSlug"
 			optionValue="entidadId"
 			[showClear]="true"
 			[editable]="true"
