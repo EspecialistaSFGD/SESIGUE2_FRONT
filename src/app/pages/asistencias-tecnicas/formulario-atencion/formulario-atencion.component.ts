@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { JneAutoridadTipoEnum, UbigeoTipoEnum } from '@core/enums';
 import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
-import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, Pagination, SectorResponse, SSInversionTooltip, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, OrientacionAtencion, Pagination, SectorResponse, SSInversionTooltip, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, JneService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -26,7 +26,7 @@ export class FormularioAtencionComponent {
   atencion: AsistenciaTecnicaResponse = this.dataAtention.atencion
   clasificaciones: ItemEnum[] = this.dataAtention.clasificaciones
   modalidades: ItemEnum[] = this.dataAtention.modalidades
-  orientaciones: ItemEnum[] = this.dataAtention.orientaciones
+  orientaciones: OrientacionAtencion[] = this.dataAtention.orientaciones
   tipos: ItemEnum[] = this.dataAtention.tipos
   create: boolean = this.dataAtention.create
   authUser = this.dataAtention.authUser
@@ -163,11 +163,26 @@ export class FormularioAtencionComponent {
   }
 
   setFormAtention(){
+    console.log(this.atencion);
+    
     const fechaAtencion = !this.create ? new Date(this.atencion.fechaAtencion) : new Date()
     const sector = this.authUser.sector.label
     // const orientacionId = this.permisosPCM && !this.atencion.orientacionId  ? '' : this.atencion.orientacionId
     this.formAtencion.reset({ ...this.atencion, fechaAtencion, sector })
+    
     this.disabledControls()
+    if(!this.permisosPCM){
+      this.entidadesStore.listarEntidades(0, 1, Number(this.authUser.sector.value));
+      if(this.create){
+        this.formAtencion.get('tipo')?.setValue('atencion')
+        this.formAtencion.get('modalidad')?.setValue('presencial')
+      }
+      this.formAtencion.get('dniAutoridad')?.setValidators([Validators.required])
+      this.formAtencion.get('orientacionId')?.setValidators([Validators.required])
+      this.formAtencion.get('unidadId')?.setValidators([Validators.required])
+      setTimeout(() => this.changeTipoInversion(), 100);
+      
+    }
     if(!this.create){
       this.formUbigeoAtencion()
       this.setCongresistasParams()
@@ -187,6 +202,7 @@ export class FormularioAtencionComponent {
         this.formularioControlEnable('departamento', false)
       }
       this.formularioControlEnable('dniAutoridad')
+      this.formularioControlEnable('espacioId', false)
     } else {
       this.formularioControlEnable('autoridad', !this.create)
       this.formularioControlEnable('dniAutoridad', !this.create && !autoridad)
@@ -412,7 +428,7 @@ export class FormularioAtencionComponent {
       })
   }
 
-  obtenerClasificacionesService() {
+  obtenerClasificacionesService() {    
     this.clasificacionService.getAllClasificaciones({...this.pagination, columnSort: 'nombre'})
       .subscribe(resp => {
         if (resp.success = true) {
@@ -423,14 +439,18 @@ export class FormularioAtencionComponent {
               clasificaciones.push(item)
             }
             if(!item.estado && !this.permisosPCM){
-              const agendas = this.formAtencion.get('agendas') as FormArray
-              if (agendas.length == 0) {
-                this.addAgendadRow()
-              }
-              agendas.at(0).get('clasificacionId')?.setValue(item.clasificacionId) 
+              // const agendas = this.formAtencion.get('agendas') as FormArray
+              // console.log(agendas.value);
+              // console.log(item);
+              // console.log(item.clasificacionId);
+              
+              // if (agendas.length == 0) {
+              //   this.addAgendadRow()
+              // }
+              // agendas.at(0).get('clasificacionId')?.setValue(item.clasificacionId) 
             }
           })
-          this.agendaClasificaciones.set(clasificaciones)
+          this.agendaClasificaciones.set(clasificaciones)          
         }
       })
   }
@@ -510,7 +530,7 @@ export class FormularioAtencionComponent {
             const agendaRow = this.fb.group({
               agendaId: [data.agendaId],
               clasificacionId: [data.clasificacionId, Validators.required],
-              cui: [data.cui],
+              cui: [data.cui, Validators.required],
               inversion: ['']
             })
             this.agendas.push(agendaRow)
@@ -787,12 +807,11 @@ export class FormularioAtencionComponent {
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
 
-    autoridad ? this.permisosPCM ? dniControl?.disable() : dniControl?.enable() : dniControl?.enable()
-    autoridad ? nombreControl?.disable() : nombreControl?.enable()
-    autoridad ? cargoControl?.disable() : cargoControl?.enable()
-
-    console.log(autoridad);
-    
+    if(this.permisosPCM){
+      autoridad ? this.permisosPCM ? dniControl?.disable() : dniControl?.enable() : dniControl?.enable()
+      autoridad ? nombreControl?.disable() : nombreControl?.enable()
+      autoridad ? cargoControl?.disable() : cargoControl?.enable()
+    }
 
     if(this.permisosPCM && autoridad == true && ubigeo){
       this.obtenerAlcaldePorUbigeo()
@@ -898,6 +917,8 @@ export class FormularioAtencionComponent {
         } else {
           autoridadControl?.setValue(false)
           contacto?.enable()
+          this.formularioControlEnable('nombreAutoridad', false)
+          this.formularioControlEnable('cargoAutoridad', false)
           
           if(asistente){
             ubigeoControl?.setValue(asistente.ubigeo)
@@ -1036,11 +1057,11 @@ export class FormularioAtencionComponent {
     }
   }
   
-  addAgendadRow() {
+  addAgendadRow() {    
     const agendaRow = this.fb.group({
       agendaId: [],
       clasificacionId: [null, Validators.required],
-      cui: ['', Validators.required],
+      cui: ['', [Validators.required]],
       inversion: [''],
       nombre: [''],
       loading: [false],
@@ -1092,10 +1113,6 @@ export class FormularioAtencionComponent {
         this.agendas.removeAt(i)
       }
     }
-  }
-
-  changeOrientacion(){
-
   }
 
   obtenerInversionSsi(index: number) {
@@ -1163,13 +1180,35 @@ export class FormularioAtencionComponent {
   };
 
   changeTipoInversion(){
-    const inversion = this.formAtencion.get('orientacionId')?.value
-    this.cuiClasificacion = inversion == 2 || inversion == 3 ? true : false
-    if(inversion){
-      // const getControl = this.formAtencion.get('agendas') as FormArray
-      // getControl.at(0).get('cui')?.setValidators([Validators.required])
-      // console.log(getControl.at(0).get('cui')?);
+    const orientacionId = this.formAtencion.get('orientacionId')?.value
 
+    if(orientacionId){
+      const orientacion = this.orientaciones.find(item => item.orientacionId == orientacionId)
+      const codigoOrientacion: string[] = ['PROYECTO','IDEA']
+      this.cuiClasificacion = codigoOrientacion.includes(orientacion!.nombre.toUpperCase())  
+          
+      const getControl = this.formAtencion.get('agendas') as FormArray      
+      if(getControl.value.length > 0){
+        this.agendas.removeAt(0)
+      }
+
+      console.log(this.agendaClasificaciones());
+      
+      if(this.cuiClasificacion){
+        this.addAgendadRow()
+        const clasificacion = this.agendaClasificaciones().find(item => item.nombre.toUpperCase() == 'PROYECTO')
+        const clasificacionId = clasificacion ? clasificacion.clasificacionId : this.agendaClasificaciones()[0].clasificacionId
+        console.log(clasificacion);
+        
+        const clasificacionControl = getControl.at(0).get('clasificacionId')
+        clasificacionControl?.setValue(clasificacionId)
+        const cuiControl = getControl.at(0).get('cui')
+        const nombreOrientacion = orientacion!.nombre.toUpperCase()
+        switch (nombreOrientacion) {
+          case codigoOrientacion[0]: cuiControl?.setValidators([Validators.required, Validators.pattern(this.validatorService.sevenNumberPattern)]); break;
+          case codigoOrientacion[1]: cuiControl?.setValidators([Validators.required, Validators.pattern(this.validatorService.sixNumberPattern)]); break;
+        }
+      }
     }
   }
 

@@ -382,11 +382,13 @@ export default class AsistenciasTecnicasComponent {
             formAtencion.get('eventoId')?.setValue(eventoId)
             formAtencion.get('sectorId')?.setValue(sectorId)
             formAtencion.get('validado')?.setValue(false)
-            // formAtencion.get('evidenciaReunion')?.setValue('')
-            // formAtencion.get('evidenciaAsistencia')?.setValue('')
-            // formAtencion.get('contactoAutoridad')?.setValue('')
-            // formAtencion.get('unidadId')?.setValue('')
-            // formAtencion.get('orientacionId')?.setValue('')
+
+            const unidadIdControl = formAtencion.get('unidadId')
+            const orientacionIdControl = formAtencion.get('orientacionId')
+            const unidadId = unidadIdControl?.value
+            const orientacionId = orientacionIdControl?.value
+            unidadIdControl?.setValue(unidadId ?? '')
+            orientacionIdControl?.setValue(orientacionId ?? '')
 
             console.log(formAtencion.value);
             

@@ -422,7 +422,7 @@
 			</div>
 	
 			<div class="flex flex-col">
-				<div formArrayName="agendas" [ngClass]="{ '' : cuiClasificacion, 'hidden' : !cuiClasificacion }">
+				<div *ngIf="cuiClasificacion" formArrayName="agendas">
 					<div *ngFor="let agenda of agendas.controls; let i = index" [formGroupName]="i">
 					<label for="cuiAgenda">CUI
 						@if (obtenerInversionEncontrada(i).visible) {
