@@ -162,12 +162,9 @@ export class FormularioAtencionComponent {
     this.permisosPCM = profilePCM.includes(this.authUser.codigoPerfil)
   }
 
-  setFormAtention(){
-    console.log(this.atencion);
-    
+  setFormAtention(){    
     const fechaAtencion = !this.create ? new Date(this.atencion.fechaAtencion) : new Date()
     const sector = this.authUser.sector.label
-    // const orientacionId = this.permisosPCM && !this.atencion.orientacionId  ? '' : this.atencion.orientacionId
     this.formAtencion.reset({ ...this.atencion, fechaAtencion, sector })
     
     this.disabledControls()
@@ -180,11 +177,8 @@ export class FormularioAtencionComponent {
       this.formAtencion.get('dniAutoridad')?.setValidators([Validators.required])
       this.formAtencion.get('orientacionId')?.setValidators([Validators.required])
       this.formAtencion.get('unidadId')?.setValidators([Validators.required])
-      // if(this.create){
-      // }
-      // setTimeout(() => this.changeTipoInversion(), 100);
+
       setTimeout(() => this.verificarCuiClasificacion(), 100);
-      // this.verificarCuiClasificacion()
     }
     if(!this.create){
       this.formUbigeoAtencion()
@@ -442,17 +436,14 @@ export class FormularioAtencionComponent {
             if (item.estado == estado) {
               clasificaciones.push(item)
             }
-            if(!item.estado && !this.permisosPCM){
-              // const agendas = this.formAtencion.get('agendas') as FormArray
-              // console.log(agendas.value);
-              // console.log(item);
-              // console.log(item.clasificacionId);
+            // if(!item.estado && !this.permisosPCM){
+            //   const agendas = this.formAtencion.get('agendas') as FormArray
               
-              // if (agendas.length == 0) {
-              //   this.addAgendadRow()
-              // }
-              // agendas.at(0).get('clasificacionId')?.setValue(item.clasificacionId) 
-            }
+            //   if (agendas.length == 0) {
+            //     this.addAgendadRow()
+            //   }
+            //   agendas.at(0).get('clasificacionId')?.setValue(item.clasificacionId) 
+            // }
           })
           this.agendaClasificaciones.set(clasificaciones)          
         }
@@ -1192,17 +1183,13 @@ export class FormularioAtencionComponent {
       const codigoOrientacion: string[] = ['PROYECTO','IDEA']
       this.cuiClasificacion = codigoOrientacion.includes(orientacion!.nombre.toUpperCase())  
       const getControl = this.formAtencion.get('agendas') as FormArray
-      console.log(getControl.value.length);
-      
-      // if(getControl.value.length > 0){
-      //   this.agendas.removeAt(0)
-      // }
-      if(this.agendas.length > 0){
+
+      if(this.agendas.length > 0 && this.create){
         this.agendas.clear()
       }
       
       if(this.cuiClasificacion){
-        if(this.agendas.length == 0){
+        if(this.agendas.length == 0 && this.create){
           this.addAgendadRow() 
         }
         const clasificacion = this.agendaClasificaciones().find(item => item.nombre.toUpperCase() == 'PROYECTO')
