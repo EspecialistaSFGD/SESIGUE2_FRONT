@@ -171,7 +171,7 @@ export class FormularioAtencionComponent {
     this.formAtencion.reset({ ...this.atencion, fechaAtencion, sector })
     
     this.disabledControls()
-    if(!this.permisosPCM){
+    if(!this.permisosPCM){      
       this.entidadesStore.listarEntidades(0, 1, Number(this.authUser.sector.value));
       if(this.create){
         this.formAtencion.get('tipo')?.setValue('atencion')
@@ -384,11 +384,12 @@ export class FormularioAtencionComponent {
   }
 
   obtenerTipoEntidadesService() {
+    const gobiernoValidos: string[] = ['GR','GL']
     this.tipoEntidadService.getAllTipoEntidades({...this.pagination, columnSort: 'nombre'})
       .subscribe(resp => {        
         if (resp.success = true) {          
           const tipoEntidaes: TipoEntidadResponse[] = []
-          const tipos = resp.data.filter(item => this.permisosPCM ? item.abreviatura != 'GN' : item )          
+          const tipos = resp.data.filter(item => this.permisosPCM ? item.abreviatura != 'GN' : !this.evento().verificaAsistentes ? gobiernoValidos.includes(item.abreviatura.toUpperCase()) :  item )          
           tipos.find(item => {
             if(this.esDocumento){              
               tipoEntidaes.push(item)
@@ -659,8 +660,9 @@ export class FormularioAtencionComponent {
       provinciaControl?.reset()
       provinciaNombreControl?.reset()
       if(departamento?.value){
+        const getUbigeo = departamento.value
         const ubigeo = departamento.value.departamentoId
-        this.obtenerEntidadPorUbigeoService(`${ubigeo}0000`) 
+        this.obtenerEntidadPorUbigeoService(`${getUbigeo}0000`) 
       }
     }
     distritoNombreControl?.disable()
@@ -840,16 +842,19 @@ export class FormularioAtencionComponent {
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
 
-    if(this.permisosPCM){
-      autoridad ? this.permisosPCM ? dniControl?.disable() : dniControl?.enable() : dniControl?.enable()
+    const consultarAlcalde = this.permisosPCM ? this.permisosPCM : !this.permisosPCM && !this.evento().verificaAsistentes
+
+    if(consultarAlcalde){
+      autoridad ? consultarAlcalde ? dniControl?.disable() : dniControl?.enable() : dniControl?.enable()
       autoridad ? nombreControl?.disable() : nombreControl?.enable()
       autoridad ? cargoControl?.disable() : cargoControl?.enable()
     }
+
   
-    if(this.permisosPCM && autoridad == true && ubigeo){
+    if(consultarAlcalde && autoridad == true && ubigeo){
       this.obtenerAlcaldePorUbigeo()
     }
-    if(this.permisosPCM){
+    if(consultarAlcalde){
       dniControl?.reset()
       nombreControl?.reset()
       cargoControl?.reset()
@@ -1249,7 +1254,7 @@ export class FormularioAtencionComponent {
     const orientacionId = this.formAtencion.get('orientacionId')?.value
     const orientacion = this.orientaciones.find(item => item.orientacionId == orientacionId)
     const codigoOrientacion: string[] = ['PROYECTO','IDEA']
-    this.cuiClasificacion = codigoOrientacion.includes(orientacion!.nombre.toUpperCase())
+    this.cuiClasificacion = orientacion ? codigoOrientacion.includes(orientacion!.nombre.toUpperCase()) : false
   }
 
   caracteresContador(control: string, qty: number) {
