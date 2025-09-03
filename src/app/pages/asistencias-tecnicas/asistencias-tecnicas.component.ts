@@ -185,7 +185,7 @@ export default class AsistenciasTecnicasComponent {
 
   disabledActions(atencion: AsistenciaTecnicaResponse): boolean {
     let validado = this.esDocumento(atencion)
-    if(!this.permisosPCM){
+    if(!this.permisosPCM && this.evento()){
       validado = atencion.eventoId != this.evento()!.eventoId
     }
     return validado;
