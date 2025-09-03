@@ -390,8 +390,6 @@ export default class AsistenciasTecnicasComponent {
             unidadIdControl?.setValue(unidadId ?? '')
             orientacionIdControl?.setValue(orientacionId ?? '')
 
-            console.log(formAtencion.value);
-            
             if(create){
               this.crearAtencion(formAtencion)
             } else  {

@@ -1172,7 +1172,6 @@ export class FormularioAtencionComponent {
     //   visibleControl?.setValue(false)
     //   this.ssiService.obtenerInversion(value)
     //   .subscribe( resp => {
-    //     console.log(resp);
         
     //       loadingControl?.setValue(false)
     //       const inversion  = resp.data
