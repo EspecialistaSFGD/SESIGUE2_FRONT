@@ -180,16 +180,18 @@ export class FormularioAtencionComponent {
       this.formAtencion.get('dniAutoridad')?.setValidators([Validators.required])
       this.formAtencion.get('orientacionId')?.setValidators([Validators.required])
       this.formAtencion.get('unidadId')?.setValidators([Validators.required])
-      setTimeout(() => this.changeTipoInversion(), 100);
-      
+      // if(this.create){
+      // }
+      // setTimeout(() => this.changeTipoInversion(), 100);
+      setTimeout(() => this.verificarCuiClasificacion(), 100);
+      // this.verificarCuiClasificacion()
     }
     if(!this.create){
       this.formUbigeoAtencion()
       this.setCongresistasParams()
       this.setParticipantesParams()
-      this.setAgendasParams()  
-    }  
-
+      this.setAgendasParams() 
+    }
   }
 
   disabledControls(){
@@ -200,6 +202,8 @@ export class FormularioAtencionComponent {
       if(this.evento().verificaAsistentes){
         this.formularioControlEnable('tipoEntidadId', false)
         this.formularioControlEnable('departamento', false)
+        this.formularioControlEnable('provincia', false)
+        this.formularioControlEnable('distrito', false)
       }
       this.formularioControlEnable('dniAutoridad')
       this.formularioControlEnable('espacioId', false)
@@ -523,7 +527,7 @@ export class FormularioAtencionComponent {
 
   setAgendasParams() {
     this.asistenciaTecnicaAgendaService.getAllAgendas(this.atencion.asistenciaId!, {...this.pagination, columnSort: 'agendaId'})
-      .subscribe(resp => {
+      .subscribe(resp => {      
         if (resp.success == true) {
           this.agendas.clear()
           for (let data of resp.data) {
@@ -533,7 +537,7 @@ export class FormularioAtencionComponent {
               cui: [data.cui, Validators.required],
               inversion: ['']
             })
-            this.agendas.push(agendaRow)
+            this.agendas.push(agendaRow)            
           }
         }
       })
@@ -1182,24 +1186,28 @@ export class FormularioAtencionComponent {
   changeTipoInversion(){
     const orientacionId = this.formAtencion.get('orientacionId')?.value
 
+    
     if(orientacionId){
       const orientacion = this.orientaciones.find(item => item.orientacionId == orientacionId)
       const codigoOrientacion: string[] = ['PROYECTO','IDEA']
       this.cuiClasificacion = codigoOrientacion.includes(orientacion!.nombre.toUpperCase())  
-          
-      const getControl = this.formAtencion.get('agendas') as FormArray      
-      if(getControl.value.length > 0){
-        this.agendas.removeAt(0)
+      const getControl = this.formAtencion.get('agendas') as FormArray
+      console.log(getControl.value.length);
+      
+      // if(getControl.value.length > 0){
+      //   this.agendas.removeAt(0)
+      // }
+      if(this.agendas.length > 0){
+        this.agendas.clear()
       }
-
-      console.log(this.agendaClasificaciones());
       
       if(this.cuiClasificacion){
-        this.addAgendadRow()
+        if(this.agendas.length == 0){
+          this.addAgendadRow() 
+        }
         const clasificacion = this.agendaClasificaciones().find(item => item.nombre.toUpperCase() == 'PROYECTO')
         const clasificacionId = clasificacion ? clasificacion.clasificacionId : this.agendaClasificaciones()[0].clasificacionId
-        console.log(clasificacion);
-        
+
         const clasificacionControl = getControl.at(0).get('clasificacionId')
         clasificacionControl?.setValue(clasificacionId)
         const cuiControl = getControl.at(0).get('cui')
@@ -1210,6 +1218,13 @@ export class FormularioAtencionComponent {
         }
       }
     }
+  }
+
+  verificarCuiClasificacion(){
+    const orientacionId = this.formAtencion.get('orientacionId')?.value
+    const orientacion = this.orientaciones.find(item => item.orientacionId == orientacionId)
+    const codigoOrientacion: string[] = ['PROYECTO','IDEA']
+    this.cuiClasificacion = codigoOrientacion.includes(orientacion!.nombre.toUpperCase())
   }
 
   caracteresContador(control: string, qty: number) {
