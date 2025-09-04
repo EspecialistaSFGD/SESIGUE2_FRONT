@@ -120,6 +120,7 @@ export interface AsistenteAtencionResponse {
   entidadId: number,
   entidad: string,
   entidadTipo: string,
+  subTipo: string,
   ubigeo: string,
   dni: string,
   nombres: string,
@@ -133,7 +134,7 @@ export interface DataModalAtencion {
   clasificaciones: ItemEnum[]
   departamentos: UbigeoDepartmentResponse[]
   modalidades: ItemEnum[]
-  orientaciones: ItemEnum[]
+  orientaciones: OrientacionAtencion[]
   tipos: ItemEnum[]
   evento: EventoResponse
   authUser: any

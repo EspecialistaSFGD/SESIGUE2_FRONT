@@ -6,34 +6,28 @@
     (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
       <tr>
-        @if (permisosPCM){
-          <th nzWidth="42px" nzAlign="center" nzColumnKey="validado"></th>
-        }
         <th nzWidth="100px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Código </th>
-        <th nzWidth="120px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
+        <th nzWidth="80px" nzAlign="center" nzColumnKey="fechaAtencion" [nzSortFn]="true">Fecha de atención</th>
         @if(permisosPCM){
-          <th nzWidth="100px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención </th>
-          <th nzWidth="100px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
+          <th nzWidth="120px" nzAlign="center" nzColumnKey="tipo" [nzSortFn]="true">Tipo de atención </th>
+          <th nzWidth="120px" nzAlign="center" nzColumnKey="modalidad" [nzSortFn]="true">Modalidad</th>
         } @else {
           <th nzWidth="100px" nzAlign="center">Evento</th>
           <th nzWidth="200px" nzAlign="center">Unidad Organica</th>
         }
-        <th nzWidth="150px" nzAlign="center" nzColumnKey="tipoEntidad" [nzSortFn]="true">Tipo de entidad</th>
+        <th nzWidth="90px" nzAlign="center" nzColumnKey="tipoEntidad" [nzSortFn]="true">Tipo de entidad</th>
         <th nzWidth="200px" nzColumnKey="entidad">Entidad</th>
-        <th nzWidth="100px" nzAlign="center" nzColumnKey="autoridad" [nzSortFn]="true">Autoridad</th>
+        <th nzWidth="80px" nzAlign="center" nzColumnKey="autoridad" [nzSortFn]="true">Autoridad</th>
         <th nzWidth="150px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
         <th nzWidth="100px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
         @if(atencionActions.edit || atencionActions.delete || atencionActions.validate){
-          <th nzRight nzWidth="150px" nzAlign="center">Acciones</th>
+          <th nzRight nzWidth="100px" nzAlign="center">Acciones</th>
         }
       </tr>
     </thead>
     <tbody>
       @for(atencion of asistenciasTecnicas(); track $index){
       <tr>
-        @if (permisosPCM){
-          <td nzAlign="center"><nz-avatar [nzSize]="24" [ngClass]="{ 'bg-green-400' : atencion.validado && geDocumentAtencion(atencion), 'bg-gray-300' : !atencion.validado && geDocumentAtencion(atencion), 'bg-blue-400' : !geDocumentAtencion(atencion) }" nz-tooltip="{{ !geDocumentAtencion(atencion) ? '' :  atencion.validado ? 'Validado' : 'Sin Validar' }}" nzIcon="check"></nz-avatar></td>
-        }
         <td nzAlign="center"> <p class="font-bold">{{atencion.codigo}}</p></td>
         <td nzAlign="center">{{atencion.fechaAtencion | date : 'dd/MM/yyyy'}}</td>
         @if(permisosPCM){
@@ -51,23 +45,28 @@
         <td nzAlign="center">{{atencion.espacio| titlecase }}</td>
         <td nzAlign="center">{{atencion.clasificacion | titlecase}}</td>
         @if(atencionActions.edit || atencionActions.delete || atencionActions.validate){
-          <td nzRight nzAlign="center">
-            <nz-space>
+          <td nzRight>
+            <div class="w-full flex justify-center">
               @if(atencionActions.edit){
-              <button *nzSpaceItem nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !disabledActions(atencion) ? 'Actualizar Atención' : '' }}" [disabled]="disabledActions(atencion)"><span nz-icon
-                  nzType="edit" nzTheme="outline"></span></button>
+              <button nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !disabledActions(atencion)  ? 'Actualizar Atención' : '' }}" [disabled]="disabledActions(atencion)">
+                <!-- <span nz-icon nzType="edit" nzTheme="outline"></span> -->
+                 <i class="pi pi-pencil" style="font-size: .85rem;"></i>
+              </button>
               }
               @if(atencionActions.delete){
-              <button *nzSpaceItem nz-button nzDanger nzType="link" nz-tooltip="{{ !disabledActions(atencion) ? 'Eliminar Atención' : '' }}"
-                (click)="eliminarAsistencia(atencion.asistenciaId!)" [disabled]="disabledActions(atencion)"><span nz-icon nzType="delete"
-                  nzTheme="outline"></span></button>
+              <button nz-button nzDanger nzType="link" nz-tooltip="{{ !disabledActions(atencion) ? 'Eliminar Atención' : '' }}" (click)="eliminarAsistencia(atencion.asistenciaId!)" [disabled]="disabledActions(atencion)">
+                <!-- <span nz-icon nzType="delete" nzTheme="outline"></span> -->
+                <i class="pi pi-trash" style="font-size: .85rem;"></i>
+              </button>
               }
               @if(atencionActions.validate){
-                <button *nzSpaceItem nz-button nzInfo nzType="link" nz-tooltip="{{ geDocumentAtencion(atencion) && !atencion.validado ? 'Validar Atención' : '' }}" (click)="validarAtencion(atencion.asistenciaId!)"
-                  [disabled]="!geDocumentAtencion(atencion) || atencion.validado"><span nz-icon nzType="check"
-                    nzTheme="outline"></span></button>
+                <button nz-button nzType="link" nz-tooltip="{{ esDocumento(atencion) && !atencion.validado ? 'Validar Atención' : '' }}" (click)="validarAtencion(atencion)"
+                  [disabled]="!esDocumento(atencion) || atencion.validado">
+                  <!-- <span nz-icon nzType="check" nzTheme="outline"></span> -->
+                  <i class="pi pi-check" style="font-size: .85rem;"></i>
+                </button>
               }
-            </nz-space>
+            </div>
           </td>
         }
       </tr>

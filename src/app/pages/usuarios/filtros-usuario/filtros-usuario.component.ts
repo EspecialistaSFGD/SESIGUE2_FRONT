@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { Pagination, ParamsEntidad, PerfilResponse, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { Pagination, PerfilResponse, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -226,7 +226,7 @@ export class FiltrosUsuarioComponent {
 
     obtenerEntidadesService(){
       const ubigeo = this.paginationFilters.ubigeo
-      const params: ParamsEntidad = { ubigeo }      
+      const params: Pagination = { ubigeo }      
       this.entidadesService.obtenerEntidad(params)
         .subscribe( resp => {
           if(resp.data){

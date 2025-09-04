@@ -1,6 +1,6 @@
 <nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="'400px'" [nzClosable]="true" [nzVisible]="visible"
 	nzTitle="Filtrar los resultados" [nzFooter]="footerFilter" (nzOnClose)="changeVisibleDrawer(false, false)">
-    <form *nzDrawerContent [formGroup]="formFilters" nz-form nzLayout="vertical" autocomplete="off" class="flex flex-col w-full gap-2">
+    <form *nzDrawerContent [formGroup]="formFilters" nz-form nzLayout="vertical" autocomplete="off" class="flex flex-col w-full gap-3">
         <div class="flex flex-col">
             <label for="codigo">Código de mesa</label>
             <input type="text" class="form-control" id="codigo" placeholder="Codigo aqui" formControlName="codigo" (keyup)="changeControl($event,'codigo')"/>
@@ -100,16 +100,21 @@
 </nz-drawer>
 <ng-template #footerFilter>
     <div class="flex justify-end gap-2">
-        <button nz-button (click)="generarReporte()">
-            <span nz-icon nzType="file-excel"></span>
-            <span class="button-text">Exportar</span>
-        </button>
-        <button nz-button (click)="cleanParamsMesas()">
+        <!-- <button nz-button (click)="cleanParamsMesas()">
             <span class="button-text">Limpiar filtros</span>
         </button>
         <button nz-button nzType="primary" (click)="changeVisibleDrawer(false)">
             <span nz-icon nzType="save"></span>
             <span class="button-text">Guardar filtros</span>
-        </button>
+        </button> -->
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white" (click)="cleanParamsMesas()">
+          <i class="pi pi-filter-slash" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Limpiar filtros</span>
+        </div>
+
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 bg-sky-700 text-white hover:bg-sky-800" (click)="changeVisibleDrawer(false)">
+          <i class="pi pi-save" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Guardar filtros</span>
+        </div>
     </div>
 </ng-template>

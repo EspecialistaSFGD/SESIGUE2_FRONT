@@ -4,21 +4,19 @@ import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, OrientacionAtencion, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-// import { PageHeaderComponent } from '@shared/layout/page-header/page-header.component';
+import { FormGroup } from '@angular/forms';
+import { convertEnumToObject, obtenerPermisosBotones } from '@core/helpers';
 import { EventosService } from '@core/services/eventos.service';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
-import { FormularioAsistenciaTecnicaComponent } from './formulario-asistencia-tecnica/formulario-asistencia-tecnica.component';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
-import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
-import { convertEnumToObject, obtenerPermisosBotones } from '@core/helpers';
-import { FormGroup } from '@angular/forms';
-import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -39,7 +37,7 @@ export default class AsistenciasTecnicasComponent {
   title: string = `Lista de Atenciones`;
   public asistenciasTecnicas = signal<AsistenciaTecnicaResponse[]>([])
   public departamentos = signal<UbigeoDepartmentResponse[]>([])
-  public evento = signal<EventoResponse | null>(null)
+  public evento = signal<EventoResponse>({} as EventoResponse)
 
   pagination: Pagination = {
     code: 0,
@@ -49,7 +47,7 @@ export default class AsistenciasTecnicasComponent {
     currentPage: 1,
     total: 0
   }
-
+  
   paginationFilter: Pagination = {}
 
   atencionActions: ButtonsActions = {}
@@ -89,12 +87,7 @@ export default class AsistenciasTecnicasComponent {
   private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
   private messageService = inject(NzMessageService)
 
-
   public navigationAuth = computed(() => this.authStore.navigationAuth())
-
-  // constructor() {
-  //   this.getParams()
-  // }
 
   ngOnInit() {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
@@ -102,7 +95,6 @@ export default class AsistenciasTecnicasComponent {
     this.permisosPCM = this.setPermisosPCM()
     this.obtenerEventos()
     this.getPermissions()
-    // this.obtenerAsistenciasTecnicas()
     this.obtenerDepartamentos()
     this.getParams()
   }
@@ -116,12 +108,7 @@ export default class AsistenciasTecnicasComponent {
   obtenerEventos() {
     const vigenteId = this.permisosPCM ? 4 : 2
     const tipoEvento = this.permisosPCM ? [9] : [8]
-    this.eventosService.getAllEventos(tipoEvento, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
-      .subscribe(resp => {        
-        if(resp.data.length > 0){          
-          this.evento.set(resp.data[0])
-        }        
-      })
+    this.eventosService.getAllEventos(tipoEvento, 1, [vigenteId], {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'}).subscribe(resp => this.evento.set(resp.data[0]))
   }
 
   getParams() {
@@ -192,15 +179,14 @@ export default class AsistenciasTecnicasComponent {
       })
   }
 
-  geDocumentAtencion(atencion: AsistenciaTecnicaResponse) : boolean{
-    const type = atencion.tipo
-    return type == 'documento' ? true : false
+  esDocumento(atencion: AsistenciaTecnicaResponse) : boolean{
+    return this.permisosPCM && atencion.tipo == 'documento'
   }
 
   disabledActions(atencion: AsistenciaTecnicaResponse): boolean {
-    let validado = this.geDocumentAtencion(atencion) && atencion.validado!
-    if(!this.permisosPCM){
-      validado = this.evento() ? atencion.eventoId != this.evento()!.eventoId : true
+    let validado = this.esDocumento(atencion)
+    if(!this.permisosPCM && this.evento()){
+      validado = atencion.eventoId != this.evento()!.eventoId
     }
     return validado;
   }
@@ -230,7 +216,17 @@ export default class AsistenciasTecnicasComponent {
     this.paramsNavigate({ pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar })
   }
 
-  validarAtencion(asistenciaId: string){
+  validarAtencion(atencion: AsistenciaTecnicaResponse){
+    this.modal.confirm({
+      nzTitle: `¿Deseas validar la atencion ${atencion.codigo}?`,
+      nzContent: 'La atención pasará a estar VALIDADO.',
+      nzIconType: 'check-circle',
+      nzOnOk: () => this.validarAtencionServicio(atencion.asistenciaId!)
+    });    
+    
+  }
+
+  validarAtencionServicio(asistenciaId: string){
     this.asistenciaTecnicaService.validarAsistenciaTecnica(asistenciaId)
       .subscribe( resp => {
         if(resp == true){
@@ -333,10 +329,11 @@ export default class AsistenciasTecnicasComponent {
 
   atencionFormModal(create: boolean): void{       
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
+    const codigoAtencion = create ? '' : this.asistenciaTecnica.codigo
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
-    
+
     const modal = this.modal.create<FormularioAtencionComponent>({
-      nzTitle: `${action.toUpperCase()}${evento}`,
+      nzTitle: `${action.toUpperCase()}${evento} ${codigoAtencion}`,
       nzWidth: '75%',
       nzMaskClosable: false,
       nzContent: FormularioAtencionComponent,
@@ -362,7 +359,6 @@ export default class AsistenciasTecnicasComponent {
           type: 'primary',
           onClick: (componentResponse) => {
             const formAtencion = componentResponse!.formAtencion  
-            // console.log(formAtencion.value);
                       
             if (formAtencion.invalid) {
               const invalidFields = Object.keys(formAtencion.controls).filter(field => formAtencion.controls[field].invalid);
@@ -370,18 +366,30 @@ export default class AsistenciasTecnicasComponent {
               return formAtencion.markAllAsTouched();
             }
 
+            const tipoPerfil = this.permisosPCM ? 0 : 1
+            const eventoId = this.evento().eventoId
+            const sectorId = this.authStore.usuarioAuth().sector!.value
+
             const dateForm = new Date(formAtencion.get('fechaAtencion')?.value)
             const getMonth = dateForm.getMonth() + 1
             const getDay = dateForm.getDate()
             const month = getMonth > 9 ? getMonth : `0${getMonth}`
             const day = getDay > 9 ? getDay : `0${getDay}`
             const fechaAtencion = `${month}/${day}/${dateForm.getFullYear()}`
-            formAtencion.get('fechaAtencion')?.setValue(fechaAtencion)
-
-            // const tipoPerfil = formAtencion.get('tipoPerfil')?.value
-            const tipoPerfil = this.permisosPCM ? 0 : 1
-            formAtencion.get('tipoPerfil')?.setValue(tipoPerfil)
             
+            formAtencion.get('fechaAtencion')?.setValue(fechaAtencion)
+            formAtencion.get('tipoPerfil')?.setValue(tipoPerfil)
+            formAtencion.get('eventoId')?.setValue(eventoId)
+            formAtencion.get('sectorId')?.setValue(sectorId)
+            formAtencion.get('validado')?.setValue(false)
+
+            const unidadIdControl = formAtencion.get('unidadId')
+            const orientacionIdControl = formAtencion.get('orientacionId')
+            const unidadId = unidadIdControl?.value
+            const orientacionId = orientacionIdControl?.value
+            unidadIdControl?.setValue(unidadId ?? '')
+            orientacionIdControl?.setValue(orientacionId ?? '')
+
             if(create){
               this.crearAtencion(formAtencion)
             } else  {

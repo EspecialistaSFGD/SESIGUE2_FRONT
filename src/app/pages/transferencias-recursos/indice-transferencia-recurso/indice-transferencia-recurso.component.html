@@ -1,7 +1,7 @@
 <form [formGroup]="formIndice" class="flex flex-col gap-3">
 	<div *ngIf="!indice" class="flex flex-col">
 		<label for="monto">Monto</label>
-		<input type="text" class="form-control" id="monto" placeholder="Monto aquí" formControlName="monto">
+		<input type="text" class="form-control" id="monto" placeholder="Monto aquí" formControlName="monto" (keyup)="formatNumber()" />
 		<div class="w-full text-danger" *ngIf="alertMessageError('monto')">{{msgErrorControl('monto','Monto')}}</div>
 	</div>
 

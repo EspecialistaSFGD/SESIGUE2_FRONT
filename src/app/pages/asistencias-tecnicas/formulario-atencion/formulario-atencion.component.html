@@ -71,7 +71,7 @@
 	<div class="flex flex-col">
 		<label for="departamento">Departamento</label>
 		@if(esMancomunidad){
-			<input type="text" class="form-control" id="departamento" formControlName="departamento">
+			<input type="text" class="form-control" id="departamento" formControlName="departamentoNombre">
 		} @else {
 			<p-dropdown 
 			[options]="departamentos()"
@@ -88,7 +88,7 @@
 	<div class="flex flex-col">
 		<label for="provincia">Provincia</label>
 		@if(esMancomunidad){
-			<input type="text" class="form-control" id="provincia" formControlName="provincia">
+			<input type="text" class="form-control" id="provincia" formControlName="provinciaNombre">
 		} @else {
 			<p-dropdown 
 			[options]="provincias()"
@@ -105,7 +105,7 @@
 	<div class="flex flex-col">
 		<label for="distrito">Distrito</label>
 		@if(esMancomunidad){
-			<input type="text" class="form-control" id="distrito"  formControlName="distrito">
+			<input type="text" class="form-control" id="distrito"  formControlName="distritoNombre">
 		} @else {
 			<p-dropdown 
 			[options]="distritos()"
@@ -123,14 +123,14 @@
 		<label>
 			{{ esMancomunidad ? 'Mancomunidad' : 'Entidad' }}
 			@if (formAtencion.get('entidadId')?.value) {
-				<span nz-icon nzType="info-circle" [nz-tooltip]="formAtencion.get('entidad')?.value"></span>
+				<span nz-icon nzType="info-circle" [nz-tooltip]="formAtencion.get('entidadSlug')?.value"></span>
 			}
 		</label>
 		@if(esMancomunidad){
 			<p-dropdown 
 			[options]="mancomunidades()"
 			formControlName="entidadId"
-			optionLabel="entidad"
+			optionLabel="entidadTipoSlug"
 			optionValue="entidadId"
 			[showClear]="true"
 			[editable]="true"
@@ -157,8 +157,10 @@
 
 		<div class="flex flex-col">
 			<label for="dniAutoridad">DNI</label>
-			<input type="text" id="dniAutoridad" class="form-control" placeholder="Ingresa el DNI aquí"
-				formControlName="dniAutoridad" (keyup)="changeDocumentoAutoridad()">
+			<div class="relative">
+				<input type="text" id="dniAutoridad" class="form-control" placeholder="Ingresa el DNI aquí" formControlName="dniAutoridad" (keyup)="changeDocumentoAutoridad()">
+				<div class="absolute right-1 top-1"><app-progress-spiner [loading]="loadingAutoridad" /></div>
+			</div>
 			<div class="text-danger" *ngIf="alertMessageError('dniAutoridad')">{{msgErrorControl('dniAutoridad','DNI')}}</div>
 		</div>
 
@@ -168,8 +170,10 @@
 
 		<div class="flex flex-col" [ngClass]="{ 'col-span-2' : !permisosPCM }">
 			<label for="cargoAutoridad">Cargo</label>
-			<input type="text" class="form-control" id="cargoAutoridad" placeholder="Ingrese el cargo aquí"
-				formControlName="cargoAutoridad">
+			<div class="relative">
+				<input type="text" class="form-control" id="cargoAutoridad" placeholder="Ingrese el cargo aquí" formControlName="cargoAutoridad">
+				<div class="absolute right-1 top-1"><app-progress-spiner [loading]="loadingAutoridad" /></div>
+			</div>
 			<div class="text-danger" *ngIf="alertMessageError('cargoAutoridad')">{{msgErrorControl('cargoAutoridad','Cargo')}}</div>
 		</div>
 
@@ -373,10 +377,17 @@
 						  <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'clasificacionId')">{{msgErrorControlTwoNivel('agendas',i,'clasificacionId','Clasificación')}}</div>
 					</div>
 					<div class="flex flex-col">
-						<label for="cuiAgenda">CUI</label>
-						<input type="text" class="form-control" id="cuiAgenda" formControlName="cui" (keyup)="obtenerIndexParaSsi(i)">
+						<label for="cuiAgenda">
+							CUI
+							@if (obtenerInversionEncontrada(i).visible) {
+								<span nz-icon nzType="info-circle" [nz-tooltip]="tooltipCuiAgenda" [nzTooltipTitleContext]="{ index: i }"></span>
+							}
+						</label>
+						 <div class="relative">
+							<input type="text" class="form-control" id="cuiAgenda" formControlName="cui" (keyup)="obtenerInversionSsi(i)">
+							<div class="absolute right-1 top-1"><app-progress-spiner [loading]="obtenerInversionEncontrada(i).loading" /></div>
+						</div>
 						<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'cui')">{{msgErrorControlTwoNivel('agendas',i,'cui','CUI')}}</div>
-						<div class="text-xs text-slate-400">{{ obtenerSSIMef(i) }}</div>
 					</div>
 	
 					<div class="flex flex-col">
@@ -411,13 +422,19 @@
 			</div>
 	
 			<div class="flex flex-col">
-				<div formArrayName="agendas" [ngClass]="{ '' : cuiClasificacion, 'hidden' : !cuiClasificacion }">
+				<div *ngIf="cuiClasificacion" formArrayName="agendas">
 					<div *ngFor="let agenda of agendas.controls; let i = index" [formGroupName]="i">
-					<label for="cuiAgenda">CUI</label>
-					<input type="text" class="form-control" id="cuiAgenda" formControlName="cui" (keyup)="obtenerIndexParaSsi(i)">
+					<label for="cuiAgenda">CUI
+						@if (obtenerInversionEncontrada(i).visible) {
+							<span nz-icon nzType="info-circle" [nz-tooltip]="tooltipCuiAgenda"  [nzTooltipTitleContext]="{ index: i }"></span>
+						}
+					</label>
+					<div class="relative">
+						<input type="text" class="form-control" id="cuiAgenda" formControlName="cui" (keyup)="obtenerInversionSsi(i)">
+						<div class="absolute right-1 top-1"><app-progress-spiner [loading]="obtenerInversionEncontrada(i).loading" /></div>
+					</div>
 					<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('agendas',i,'cui')">
 						{{msgErrorControlTwoNivel('agendas',i,'cui','CUI')}}</div>
-					<div class="text-xs text-slate-400">{{ obtenerSSIMef(i) }}</div>
 					</div>
 				</div>
 			</div>
@@ -472,6 +489,13 @@
 		</div>
 	}
 
+	<ng-template #tooltipCuiAgenda let-index="index">
+		<div>
+			<div><strong>NOMBRE: </strong> {{obtenerInversionEncontrada(index).nombre}}</div>
+			<div><strong>COSTO ACTUALIZADO:</strong> {{obtenerInversionEncontrada(index).costoActualizado}}</div>
+		</div>
+	</ng-template>
+
 	  <ng-template #controlParticipante>
           <label for="nombreAutoridad">{{ esDocumento ? 'Participante' : 'Nombre'}}</label>
 		  @if (esDocumento) {
@@ -479,8 +503,10 @@
 				(keyup)="caracteresContador('nombreAutoridad',900)" placeholder="Ingrese el participante aquí"
 				rows="2"></textarea>
 		  } @else {
-			<input type="text" class="form-control" id="nombreAutoridad" placeholder="Ingresa el nombre aquí"
-			  formControlName="nombreAutoridad">
+			<div class="relative">
+				<input type="text" class="form-control" id="nombreAutoridad" placeholder="Ingresa el nombre aquí" formControlName="nombreAutoridad">
+				<div class="absolute right-1 top-1"><app-progress-spiner [loading]="loadingAutoridad" /></div>
+			</div>
 		  }
 		  <div class="text-danger" *ngIf="alertMessageError('nombreAutoridad')">{{msgErrorControl('nombreAutoridad', esDocumento ? 'participante' : 'nombre')}}</div>
       </ng-template>

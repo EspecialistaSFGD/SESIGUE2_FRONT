@@ -12,3 +12,7 @@ export const generateBase64ToArrayBuffer = (base64: any) => {
 	}
 	return bytes.buffer;
   }
+
+  export const generateMillesAndDecimal = (number: number, decimal: number = 0) => {
+	return number.toFixed(decimal).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }

@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { environment } from '@environments/environment';
-import { HelpersService } from './helpers.service';
-import { Observable } from 'rxjs';
-import { EntidadResponses, EntidadesResponses, ParamsEntidad } from '@core/interfaces/entidad.interface';
 import { Pagination } from '@core/interfaces';
+import { EntidadResponses, EntidadesResponses } from '@core/interfaces/entidad.interface';
+import { environment } from '@environments/environment';
+import { Observable } from 'rxjs';
+import { HelpersService } from './helpers.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,14 +16,17 @@ export class EntidadesService {
   private helpersServices = inject(HelpersService);
 
 
-  listarEntidades(pagination: Pagination): Observable<EntidadesResponses> {
-    const params = this.helpersServices.setParams(pagination)
+  listarEntidades(pagination: Pagination, subTipos: string[] = []): Observable<EntidadesResponses> {
+    let params = this.helpersServices.setParams(pagination)
+    for(let subTipo of subTipos){
+      params = params.append('subTipos[]', subTipo)
+    }
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<EntidadesResponses>(`${this.urlEntidad}/ListarEntidades`, { headers, params })
   }
 
-  obtenerEntidad(paramsEntidad: ParamsEntidad): Observable<EntidadResponses> {
-    const params = this.helpersServices.setParams(paramsEntidad)
+  obtenerEntidad(pagination: Pagination): Observable<EntidadResponses> {
+    const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<EntidadResponses>(`${this.urlEntidad}/ObtenerEntidad`, { headers, params })
   }
