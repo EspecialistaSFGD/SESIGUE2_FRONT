@@ -22,4 +22,11 @@ export interface EntidadResponse {
   entidadSlug?: string,
   entidadTipoSlug?: string,
   nivelGobierno?: string,
+  autoridadId?: string,
+  asistenteId?: string,
+  dnAutoridad?: string,
+  nombreAutoridad?: string,
+  apellidosAutoridad?: string,
+  cargoAutoridad?: string,
+  sexoAutoridad?: string,
 }
