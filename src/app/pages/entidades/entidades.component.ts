@@ -50,15 +50,15 @@ export default class EntidadesComponent {
           this.pagination.pageSize = params['cantidad']
           this.pagination.typeSort = params['ordenar'] ?? 'ASC'
           
-          setParamsToObject(params, this.pagination, 'codigo')
-          setParamsToObject(params, this.pagination, 'nombre')
+          setParamsToObject(params, this.pagination, 'ubigeo')
+          console.log(this.pagination);
+          
         }
         setTimeout(() => this.obtenerEntidadesService(), 500);
       })
     }
 
   obtenerEntidadesService(){
-    this.loading = true
     const subTipos:string[] = ['MR','MM','R','D','P']
     this.entidadService.listarEntidades(this.pagination, subTipos)
       .subscribe( resp => {
@@ -84,6 +84,28 @@ export default class EntidadesComponent {
       localStorage.setItem('filtrosEntidades', JSON.stringify(filtros))
     }
     this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
+  }
+
+  saveFilters(save: boolean){    
+    if(save){
+      const pagination: any = { ...this.pagination };
+      pagination.pagina = pagination.currentPage
+      pagination.cantidad = pagination.pageSize
+      pagination.save = true
+      if(pagination.columnSort != 'entidadId' &&  pagination.typeSort != 'ASC' ){
+        pagination.campo = pagination.columnSort
+        pagination.ordenar = pagination.typeSort
+      }
+  
+      delete pagination.currentPage
+      delete pagination.pageSize
+      delete pagination.columnSort
+      delete pagination.typeSort
+      delete pagination.code
+      delete pagination.total
+  
+      localStorage.setItem('filtrosEntidades', JSON.stringify(pagination));
+    }
   }
 
   generateFilters(pagination: Pagination){

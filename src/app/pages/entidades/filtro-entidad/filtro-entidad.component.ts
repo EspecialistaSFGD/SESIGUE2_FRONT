@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Pagination } from '@core/interfaces';
 import { ValidatorService } from '@core/services/validators';
@@ -29,6 +29,11 @@ export class FiltroEntidadComponent {
   formEntidadFilters:FormGroup = this.fb.group({
     ubigeo: [ null ],
   })
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const pagination = { ...this.pagination }
+    this.formEntidadFilters.reset(pagination)    
+  }
 
   changeControl(event: any, control:string){
     const codigoControl = this.formEntidadFilters.get(control)
