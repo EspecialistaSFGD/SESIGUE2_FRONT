@@ -1,1 +1,61 @@
 <app-page-header [title]="'ENTIDADES'" backUrl="panel" />
+<div class="grid grid-cols-1">
+  <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="Headerentidades" nzShowSizeChanger nzSize="small"
+    [nzData]="entidades()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+      <tr>
+        <th nzWidth="80px" nzAlign="center" nzColumnKey="ubigeo" [nzSortFn]="true">Ubigeo</th>
+        <th nzWidth="100px" nzAlign="center">Departamento</th>
+        <th nzWidth="100px" nzAlign="center">Provincia</th>
+        <th nzWidth="100px" nzAlign="center">Distrito</th>
+        <th nzWidth="120px" nzAlign="center">Entidad</th>
+        <th nzWidth="80px" nzAlign="center">DNI</th>
+        <th nzWidth="120px" nzAlign="center">Nombres</th>
+        <th nzWidth="120px" nzAlign="center">Cargo</th>
+        <th nzWidth="80px" nzAlign="center">Sexo</th>
+        <th nzRight nzWidth="80px" nzAlign="center"></th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      @for(entidad of entidades(); track $index){
+        <tr>
+          <td nzAlign="center">{{entidad.ubigeo}}</td>
+          <td nzAlign="center">{{entidad.departamento}}</td>
+          <td nzAlign="center">{{entidad.provincia}}</td>
+          <td nzAlign="center">{{entidad.distrito}}</td>
+          <td nzAlign="center"> <p class="w-full" nz-tooltip [nzTooltipTitle]="entidad.nombre">{{entidad.entidadTipoSlug}}</p></td>
+          <td nzAlign="center">{{entidad.dnAutoridad}}</td>
+          <td nzAlign="center">{{entidad.nombreAutoridad}} {{entidad.apellidosAutoridad}}</td>
+          <td nzAlign="center">{{entidad.cargoAutoridad}}</td>
+          <td nzAlign="center">{{entidad.sexoAutoridad}}</td>
+          <td nzRight nzAlign="center">
+            <div class="flex justify-center">
+                <a [routerLink]="[entidad.entidadId]" class="font-bold text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
+                  <i class="pi pi-eye" style="font-size: 0.85rem"></i>
+                </a>
+            </div>
+          </td>
+        </tr>
+        }
+    </tbody>
+  </nz-table>
+  
+  <ng-template #Headerentidades>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+      <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+      <div class="flex gap-2">
+        <button nz-button nzType="default">
+          <span nz-icon nzType="filter"></span>
+          <span class="button-text">Filtros</span>
+        </button>
+  
+        <button nz-button nzType="primary">
+          <span nz-icon nzType="plus" nzTheme="outline"></span>
+          <span class="button-text">Nueva mesa</span>
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</div>
