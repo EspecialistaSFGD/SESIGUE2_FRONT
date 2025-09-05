@@ -66,9 +66,7 @@ export default class TransferenciasRecursosComponent {
         this.pagination.pageSize = params['cantidad']
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
         
-        setParamsToObject(params, this.pagination, 'codigo')
-        setParamsToObject(params, this.pagination, 'nombre')
-        // setParamsToObject(params, this.pagination, 'grupoID')
+        setParamsToObject(params, this.pagination, 'ubigeo')
       }
       setTimeout(() => this.obtenerRecursos(), 500);
     })
