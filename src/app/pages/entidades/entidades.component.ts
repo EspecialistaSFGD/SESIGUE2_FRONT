@@ -7,7 +7,6 @@ import { EntidadesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { Toast } from 'primeng/toast';
 import { FiltroEntidadComponent } from './filtro-entidad/filtro-entidad.component';
 
 @Component({
@@ -42,24 +41,29 @@ export default class EntidadesComponent {
   getParams() {
       this.route.queryParams.subscribe(params => {
         this.loading = true
+        let tipoUbigeo = ''
         if (Object.keys(params).length > 0) {        
           let campo = params['campo'] ?? 'entidadId'
+          tipoUbigeo = params['tipoUbigeo'] ?? ''
   
           this.pagination.columnSort = campo
           this.pagination.currentPage = params['pagina']
           this.pagination.pageSize = params['cantidad']
           this.pagination.typeSort = params['ordenar'] ?? 'ASC'
           
-          setParamsToObject(params, this.pagination, 'ubigeo')
-          console.log(this.pagination);
-          
+          setParamsToObject(params, this.pagination, 'entidad')
+          setParamsToObject(params, this.pagination, 'ubigeo')          
+          // setParamsToObject(params, this.pagination, 'tipoUbigeo')          
+          // setParamsToObject(params, this.pagination, 'tipoUbigeo')          
         }
-        setTimeout(() => this.obtenerEntidadesService(), 500);
+        setTimeout(() => this.obtenerEntidadesService(tipoUbigeo), 500);
       })
     }
 
-  obtenerEntidadesService(){
-    const subTipos:string[] = ['MR','MM','R','D','P']
+  obtenerEntidadesService(tipo:string){
+    const ubigeoValidos = ['R','D','P']
+    const setTipo:string[] = ubigeoValidos.includes(tipo) ? ubigeoValidos : [tipo]
+    const subTipos:string[] = tipo ? setTipo : ['MR','MM','R','D','P']
     this.entidadService.listarEntidades(this.pagination, subTipos)
       .subscribe( resp => {
         this.entidades.set(resp.data)        
@@ -109,6 +113,7 @@ export default class EntidadesComponent {
   }
 
   generateFilters(pagination: Pagination){
+    console.log(pagination);    
     const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total']
     const params = deleteKeysToObject(pagination, paramsInvalid)
     this.paramsNavigate(params)

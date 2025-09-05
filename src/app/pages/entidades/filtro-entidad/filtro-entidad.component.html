@@ -2,8 +2,74 @@
 	nzTitle="Filtrar los resultados" [nzFooter]="footerFilter" (nzOnClose)="changeVisibleDrawer(false, false)">
     <form *nzDrawerContent [formGroup]="formEntidadFilters" nz-form nzLayout="vertical" autocomplete="off" class="flex flex-col w-full gap-3">
         <div class="flex flex-col">
-            <label for="ubigeo">ubigeo</label>
-            <input type="text" class="form-control" id="ubigeo" placeholder="ubigeo aqui" formControlName="ubigeo" (keyup)="changeControl($event,'ubigeo')"/>
+            <label for="entidad">entidad</label>
+            <input type="text" class="form-control" id="entidad" placeholder="entidad aqui" formControlName="entidad" (keyup)="changeControl($event,'entidad')"/>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="tipo">Tipo</label>
+            <nz-radio-group class="radio-form-control" formControlName="tipoEntidad" (ngModelChange)="changeTipo()">
+				@for (tipo of tipos; track $index){
+				<label nz-radio [nzValue]="tipo.value.toLowerCase()">{{tipo.text | titlecase}}</label>
+				}
+			</nz-radio-group>
+        </div>
+
+        <div *ngIf="!esUbigeo" class="flex flex-col">
+            <label for="tipo">Tipo de mancomunidad</label>
+            <nz-radio-group class="radio-form-control" formControlName="tipoMancomunidad" (ngModelChange)="changeTipoMancomunidad()">
+				@for (tipo of tipoMancomunidades; track $index){
+				<label nz-radio [nzValue]="tipo.value.toUpperCase()">{{tipo.text | titlecase}}</label>
+				}
+			</nz-radio-group>
+        </div>
+
+        <div *ngIf="!esUbigeo" class="flex flex-col">
+            <label for="departamento">Mancomunidad</label>
+            <p-dropdown 
+                [options]="mancomunidades()"
+                formControlName="mancomunidad"
+                optionLabel="entidadTipoSlug"
+                optionValue="ubigeo"
+                [showClear]="true" 
+                placeholder="Seleccionar mancomunidad"
+                (onChange)="changeMancomunidad()"/>
+        </div>
+
+        <div *ngIf="esUbigeo" class="flex flex-col">
+            <label for="departamento">Departamento</label>
+            <p-dropdown 
+                [options]="departamentos()"
+                formControlName="departamento"
+                optionLabel="departamento"
+                optionValue="departamentoId"
+                [showClear]="true" 
+                placeholder="Seleccionar departamento"
+                (onChange)="changeDepartamento()"/>
+        </div>
+
+        <div *ngIf="esUbigeo" class="flex flex-col">
+            <label for="nombre">Provincia</label>
+            <p-dropdown 
+            [options]="provincias()"
+            formControlName="provincia"
+            optionLabel="provincia"
+            optionValue="provinciaId"
+            [showClear]="true" 
+            placeholder="Seleccionar provincia"
+            (onChange)="changeProvincia()"/>
+        </div>
+
+        <div *ngIf="esUbigeo" class="flex flex-col">
+            <label for="nombre">Distrito</label>
+            <p-dropdown 
+            [options]="distritos()"
+            formControlName="distrito"
+            optionLabel="distrito"
+            optionValue="distritoId"
+            [showClear]="true" 
+            placeholder="Seleccionar distrito"
+            (onChange)="changeDistrito()"/>
         </div>
     </form>
 </nz-drawer>
