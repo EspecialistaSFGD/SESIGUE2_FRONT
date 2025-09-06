@@ -20,7 +20,7 @@ export class FiltroEntidadComponent {
   private timeout: any;
   tipos: ItemEnum[] = convertEnumToObject(EntidadTipoEnum)
   tipoMancomunidades: ItemEnum[] = convertEnumToObject(EntidadTipoMancomunidad)
-  esUbigeo:boolean = false
+  esUbigeo:boolean = true
 
   @Input() visible: boolean = false
   @Input() pagination: any = {}
@@ -41,19 +41,90 @@ export class FiltroEntidadComponent {
   private validatorsService = inject(ValidatorService);
 
   formEntidadFilters:FormGroup = this.fb.group({
-    tipoEntidad: [ null ],
     entidad: [ null ],
+    tipoEntidad: [ null ],
     tipoMancomunidad: [{ value: null, disabled: true }],
     mancomunidad: [{ value: null, disabled: true }],
     departamento: [{ value: null, disabled: true }],
     provincia: [{ value: null, disabled: true }],
     distrito: [{ value: null, disabled: true }],
+    tipoUbigeo: [null],
+    ubigeo: [null],
   })
 
   ngOnChanges(changes: SimpleChanges): void {
     const pagination = { ...this.pagination }
+    const tipoEntidad = pagination!.tipoEntidad
+    const ubigeo = pagination!.ubigeo
+
+    console.log(pagination);
+
+    if(ubigeo && tipoEntidad == 'ubigeo'){
+      const ubigeoLen = ubigeo.length
+      if(ubigeoLen >= 2){
+        pagination.departamento = ubigeo.slice(0,2)
+      } 
+      if(ubigeoLen >= 4) {
+        pagination.provincia = `${ubigeo.slice(0,4)}01`
+      }
+      if(ubigeoLen == 6) {
+        pagination.distrito = ubigeo
+      }
+    } 
+    
     this.formEntidadFilters.reset(pagination)
+    this.setFormControl()
+    this.setObtenerServicios()
+  }
+
+  setFormControl(){
+    const pagination = { ...this.pagination }
+    const tipoEntidad = pagination!.tipoEntidad
+    const ubigeo = pagination!.ubigeo
+    if(ubigeo && tipoEntidad == 'ubigeo'){
+      const ubigeoLen = ubigeo.length
+      if(ubigeoLen >= 2){
+        this.setControlEnable('departamento')
+        this.setControlEnable('provincia')
+      }
+      if(ubigeoLen >= 4) {
+        this.setControlEnable('provincia')
+        this.setControlEnable('distrito')
+      }
+      if (ubigeoLen == 6){
+        this.setControlEnable('distrito')
+      }
+    }
+  }
+
+  setObtenerServicios(){
     this.obtenerDepartamentoService()
+    const pagination = { ...this.pagination }
+    const tipoEntidad = pagination!.tipoEntidad
+    const ubigeo = pagination!.ubigeo
+    const departamentoControl = this.formEntidadFilters.get('departamento')
+    const provinciaControl = this.formEntidadFilters.get('provincia')
+    const distritoControl = this.formEntidadFilters.get('distrito')
+
+    if(ubigeo && tipoEntidad == 'ubigeo'){      
+      const ubigeoLen = ubigeo.length
+      if(ubigeoLen >= 2) {
+        this.obtenerProvinciaService(departamentoControl?.value.slice(0,2))
+      }
+      if (ubigeoLen >= 4){
+        const ubigeoProvincia = ubigeo.slice(0,4)
+        provinciaControl?.setValue(`${ubigeoProvincia}01`)
+        this.obtenerDistritosService(ubigeoProvincia)
+      }
+      if (ubigeoLen == 6){
+        distritoControl?.setValue(ubigeo)
+      }
+    }
+  }
+
+  setControlEnable(control:string, enable: boolean = true){
+    const formControl = this.formEntidadFilters.get(control)
+    enable ? formControl?.enable() : formControl?.disable()
   }
 
   changeControl(event: any, control:string){
@@ -67,7 +138,7 @@ export class FiltroEntidadComponent {
       this.timeout = setTimeout(function () {
         if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {          
           $this.pagination[nameControl] = codigoValue          
-          $this.generateFilters()
+          // $this.generateFilters()
         }
       }, 500);      
     } else {
@@ -83,8 +154,8 @@ export class FiltroEntidadComponent {
   }
 
   generateFilters(){ 
-    console.log(this.pagination);
-    this.filters.emit(this.pagination)
+    const formValue = { ...this.formEntidadFilters.value }
+    this.filters.emit(formValue)
   }
 
   cleanParams(){
@@ -99,6 +170,8 @@ export class FiltroEntidadComponent {
   }
 
   changeTipo(){
+    const tipoUbigeoControl = this.formEntidadFilters.get('tipoUbigeo')
+    const ubigeoControl = this.formEntidadFilters.get('ubigeo')
     const tipoEntidadControl = this.formEntidadFilters.get('tipoEntidad')
     const tipoEntidad = tipoEntidadControl?.value
     const tipoMancomunidadControl = this.formEntidadFilters.get('tipoMancomunidad')
@@ -121,6 +194,8 @@ export class FiltroEntidadComponent {
       mancomunidadControl?.disable()
       mancomunidadControl?.reset()
     }
+    tipoUbigeoControl?.reset()
+    ubigeoControl?.reset()
     
     this.pagination.tipoEntidad = tipoEntidad
     delete this.pagination.tipoUbigeo
@@ -144,6 +219,9 @@ export class FiltroEntidadComponent {
   }
 
   changeMancomunidad(){
+    const tipoUbigeoControl = this.formEntidadFilters.get('tipoUbigeo')
+    const ubigeoControl = this.formEntidadFilters.get('ubigeo')
+
     const tipoMancomunidadControl = this.formEntidadFilters.get('tipoMancomunidad')
     const tipoMancomunidad = tipoMancomunidadControl?.value 
     const mancomunidadControl = this.formEntidadFilters.get('mancomunidad')
@@ -158,15 +236,24 @@ export class FiltroEntidadComponent {
       ubigeo = lastUbigeo == '01' ? provUbigeo : ubigeo
     }
 
-    mancomunidad ? this.pagination.tipoUbigeo = tipoMancomunidad : delete this.pagination.tipoUbigeo
-    mancomunidad ? this.pagination.ubigeo = mancomunidad : delete this.pagination.ubigeo
+    // mancomunidad ? this.pagination.tipoUbigeo = tipoMancomunidad : delete this.pagination.tipoUbigeo
+    // mancomunidad ? this.pagination.ubigeo = mancomunidad : delete this.pagination.ubigeo
+    if(mancomunidad){
+      tipoUbigeoControl?.setValue(tipoMancomunidad)
+      ubigeoControl?.setValue(mancomunidad)
+    } else {
+      tipoUbigeoControl?.reset()
+      ubigeoControl?.reset()
+      delete this.pagination.tipoUbigeo
+      delete this.pagination.ubigeo      
+    }
     this.generateFilters()
 
   }
 
   changeDepartamento(){
-    console.log('en dpto');
-    
+    const tipoUbigeoControl = this.formEntidadFilters.get('tipoUbigeo')
+    const ubigeoControl = this.formEntidadFilters.get('ubigeo')
     const departamentoControl = this.formEntidadFilters.get('departamento')
     const departamento = departamentoControl?.value
     const provinciaControl = this.formEntidadFilters.get('provincia')
@@ -174,9 +261,13 @@ export class FiltroEntidadComponent {
     if(departamento){
       this.obtenerProvinciaService(departamento)
       provinciaControl?.enable()
-      this.pagination.tipoUbigeo = 'R'
-      this.pagination.ubigeo = departamento
+      // this.pagination.tipoUbigeo = 'R'
+      // this.pagination.ubigeo = departamento
+      tipoUbigeoControl?.setValue('R')
+      ubigeoControl?.setValue(departamento)
     } else {
+      tipoUbigeoControl?.reset
+      ubigeoControl?.reset
       delete this.pagination.tipoUbigeo    
       delete this.pagination.ubigeo    
       provinciaControl?.reset()
@@ -191,6 +282,8 @@ export class FiltroEntidadComponent {
     this.ubigeosService.getProvinces(departamento).subscribe( resp => this.provincias.set(resp.data))
   }
   changeProvincia(){
+    const tipoUbigeoControl = this.formEntidadFilters.get('tipoUbigeo')
+    const ubigeoControl = this.formEntidadFilters.get('ubigeo')
     const departamentoControl = this.formEntidadFilters.get('departamento')
     const departamentoValue = departamentoControl?.value
     const provinciaControl = this.formEntidadFilters.get('provincia')
@@ -204,9 +297,11 @@ export class FiltroEntidadComponent {
     } else {
       distritoControl?.disable()
     }
-    this.pagination.tipoUbigeo = provinciaValue ? 'P' : 'R'
+    // this.pagination.tipoUbigeo = provinciaValue ? 'P' : 'R'
+    tipoUbigeoControl?.setValue(provinciaValue ? 'P' : 'R')
+    ubigeoControl?.setValue(ubigeo)
     distritoControl?.reset()
-    this.pagination.ubigeo = ubigeo
+    // this.pagination.ubigeo = ubigeo
     this.generateFilters()
   }
 
@@ -215,14 +310,18 @@ export class FiltroEntidadComponent {
   }
 
   changeDistrito(){
+    const tipoUbigeoControl = this.formEntidadFilters.get('tipoUbigeo')
+    const ubigeoControl = this.formEntidadFilters.get('ubigeo')
     const provinciaControl = this.formEntidadFilters.get('provincia')
     const provinciaValue = provinciaControl?.value
     const distritoControl = this.formEntidadFilters.get('distrito')
     const distritoValue = distritoControl?.value
 
     let ubigeo = distritoValue ? distritoValue : provinciaValue.slice(0,4)
-    this.pagination.tipoUbigeo = distritoValue ? 'D' : 'P'
-    this.pagination.ubigeo = ubigeo
+    tipoUbigeoControl?.setValue(distritoValue ? 'D' : 'P')
+    ubigeoControl?.setValue(ubigeo)
+    // this.pagination.tipoUbigeo = distritoValue ? 'D' : 'P'
+    // this.pagination.ubigeo = ubigeo
     this.generateFilters()
   }
 }

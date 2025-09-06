@@ -39,7 +39,7 @@ export default class EntidadesComponent {
   }
 
   getParams() {
-      this.route.queryParams.subscribe(params => {
+      this.route.queryParams.subscribe(params => { 
         this.loading = true
         let tipoUbigeo = ''
         if (Object.keys(params).length > 0) {        
@@ -53,8 +53,8 @@ export default class EntidadesComponent {
           
           setParamsToObject(params, this.pagination, 'entidad')
           setParamsToObject(params, this.pagination, 'ubigeo')          
-          // setParamsToObject(params, this.pagination, 'tipoUbigeo')          
-          // setParamsToObject(params, this.pagination, 'tipoUbigeo')          
+          setParamsToObject(params, this.pagination, 'tipoEntidad')     
+          setParamsToObject(params, this.pagination, 'tipoUbigeo')          
         }
         setTimeout(() => this.obtenerEntidadesService(tipoUbigeo), 500);
       })
@@ -90,7 +90,9 @@ export default class EntidadesComponent {
     this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
   }
 
-  saveFilters(save: boolean){    
+  saveFilters(save: boolean){
+    console.log(this.pagination);
+    
     if(save){
       const pagination: any = { ...this.pagination };
       pagination.pagina = pagination.currentPage
@@ -113,8 +115,7 @@ export default class EntidadesComponent {
   }
 
   generateFilters(pagination: Pagination){
-    console.log(pagination);    
-    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total']
+    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito','tipoMancomunidad','mancomunidad']
     const params = deleteKeysToObject(pagination, paramsInvalid)
     this.paramsNavigate(params)
   }
