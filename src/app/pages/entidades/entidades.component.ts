@@ -7,6 +7,7 @@ import { EntidadesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { FiltroEntidadComponent } from './filtro-entidad/filtro-entidad.component';
 
 @Component({
@@ -39,13 +40,15 @@ export default class EntidadesComponent {
   }
 
   getParams() {
-      this.route.queryParams.subscribe(params => { 
-        this.loading = true
-        let tipoUbigeo = ''
-        if (Object.keys(params).length > 0) {        
+      this.route.queryParams
+        .pipe(
+          filter(params => Object.keys(params).length > 0),
+          distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+        )
+        .subscribe( params => {
+          this.loading = true
+          const tipoUbigeo = params['tipoUbigeo'] ?? ''
           let campo = params['campo'] ?? 'entidadId'
-          tipoUbigeo = params['tipoUbigeo'] ?? ''
-  
           this.pagination.columnSort = campo
           this.pagination.currentPage = params['pagina']
           this.pagination.pageSize = params['cantidad']
@@ -54,10 +57,9 @@ export default class EntidadesComponent {
           setParamsToObject(params, this.pagination, 'entidad')
           setParamsToObject(params, this.pagination, 'ubigeo')          
           setParamsToObject(params, this.pagination, 'tipoEntidad')     
-          setParamsToObject(params, this.pagination, 'tipoUbigeo')          
-        }
-        setTimeout(() => this.obtenerEntidadesService(tipoUbigeo), 500);
-      })
+          setParamsToObject(params, this.pagination, 'tipoUbigeo') 
+          this.obtenerEntidadesService(tipoUbigeo)
+        })
     }
 
   obtenerEntidadesService(tipo:string){
@@ -86,8 +88,8 @@ export default class EntidadesComponent {
       filtros = JSON.parse(filtrosSaved)
       filtros.save = false      
       localStorage.setItem('filtrosEntidades', JSON.stringify(filtros))
-    }
-    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
+    }    
+    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })    
   }
 
   saveFilters(save: boolean){
@@ -120,7 +122,7 @@ export default class EntidadesComponent {
     this.paramsNavigate(params)
   }
 
-  paramsNavigate(queryParams: Params){    
+  paramsNavigate(queryParams: Params){ 
     this.router.navigate(
       [],
       {

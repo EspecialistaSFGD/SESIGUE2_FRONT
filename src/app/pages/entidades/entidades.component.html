@@ -60,4 +60,4 @@
   </ng-template>
 </div>
 
-<app-filtro-entidad [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="openFilters = false" (save)="saveFilters($event)" (filters)="generateFilters($event)" />
+<app-filtro-entidad *ngIf="openFilters" [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="openFilters = false" (save)="saveFilters($event)" (filters)="generateFilters($event)" />
