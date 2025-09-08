@@ -114,6 +114,7 @@ export class AsistenciasTecnicasService {
     formData.append('clasificacion', asistenciaTecnica.clasificacion)
     formData.append('tema', asistenciaTecnica.tema)
     formData.append('comentarios', asistenciaTecnica.comentarios)
+    formData.append('acuerdos', asistenciaTecnica.acuerdos)
     formData.append('code', `${asistenciaTecnica.code}`)
     formData.append('evidenciaReunion', asistenciaTecnica.evidenciaReunion)
     formData.append('evidenciaAsistencia', asistenciaTecnica.evidenciaAsistencia)

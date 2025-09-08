@@ -59,6 +59,7 @@ export interface AsistenciaTecnicaResponse {
   nombreEspacio: string,
   tema: string,
   comentarios: string,
+  acuerdos: string,
   evidenciaReunion: string,
   evidenciaAsistencia: string,
   estado?: boolean,

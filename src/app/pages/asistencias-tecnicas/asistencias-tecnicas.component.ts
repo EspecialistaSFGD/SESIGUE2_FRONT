@@ -128,6 +128,8 @@ export default class AsistenciasTecnicasComponent {
         this.setPaginationValueToParams(params, 'eventoId')
         this.setPaginationValueToParams(params, 'fechaInicio')
         this.setPaginationValueToParams(params, 'fechaFin')
+        this.setPaginationValueToParams(params, 'tipoAtencion')
+        this.setPaginationValueToParams(params, 'ubigeo')
      
         this.obtenerAsistenciasTecnicas()
       }

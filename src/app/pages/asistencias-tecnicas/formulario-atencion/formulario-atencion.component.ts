@@ -39,6 +39,7 @@ export class FormularioAtencionComponent {
   mancomunidadSlug:string[] = ['MM','MR']
   temaCount = 1500
   comentariosCount = 900
+  acuerdosCount = 900
   esMancomunidad: boolean = false
   esRegional: boolean = false
   fileListMeet: NzUploadFile[] = [];
@@ -138,6 +139,7 @@ export class FormularioAtencionComponent {
     tema: [{ value: '', disabled: false }, Validators.required],
     validado: [false],
     comentarios: [''],
+    acuerdos: [''],
     evidenciaReunion: [''],
     evidenciaAsistencia: [''],
     congresistas: this.fb.array([]),

@@ -1,6 +1,6 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <div class="grid grid-cols-1">
-  <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="Header" nzShowSizeChanger nzSize="small"
+  <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderAtencion" nzShowSizeChanger nzSize="small"
     [nzData]="asistenciasTecnicas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!"
     (nzQueryParams)="onQueryParamsChange($event)">
@@ -74,7 +74,7 @@
     </tbody>
   </nz-table>
   
-  <ng-template #Header>
+  <ng-template #HeaderAtencion>
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados ({{pagination.total}})</p>
       <div class="flex gap-2">
@@ -98,7 +98,7 @@
         }
 
           @if(atencionActions.new){
-            <div class="flex items-center gap-1 py-1 px-3 rounded border text-white" [ngClass]="!this.permisosPCM && !this.evento() ? 'border-slate-200 bg-slate-200' : 'cursor-pointer border-sky-700 bg-sky-700 hover:bg-sky-800 hover:border-sky-700'"  (click)="!this.permisosPCM && !this.evento() ? null : crearAsistenciaTecnica()">
+            <div class="flex items-center gap-1 py-1 px-3 rounded border text-white" [ngClass]="!this.permisosPCM && !this.evento() ? 'border-slate-200 bg-slate-200' : 'cursor-pointer border-sky-700 bg-sky-700 hover:bg-sky-800 hover:border-sky-700'"  (click)="crearAsistenciaTecnica()">
               <i class="pi pi-plus" style="font-size: 0.75rem"></i>
               <span class="hidden md:flex">Nueva atención</span>
             </div>
