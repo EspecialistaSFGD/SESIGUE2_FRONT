@@ -149,7 +149,7 @@ export class FiltroEntidadComponent {
       this.timeout = setTimeout(function () {
         if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {          
           $this.pagination[nameControl] = codigoValue          
-          // $this.generateFilters()
+          $this.generateFilters()
         }
       }, 500);      
     } else {

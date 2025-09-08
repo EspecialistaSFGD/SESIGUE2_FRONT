@@ -43,12 +43,12 @@ export class FiltrosAtencionComponent {
   private timeout: any;
 
   formFilters: FormGroup = this.fb.group({
-    codigo: [''],
-    fechaInicio: [''],
-    fechaFin: [''],
-    tipoEntidad: [''],
-    tipoAtencion: [''],
-    ubigeo: [''],
+    codigo: [null],
+    fechaInicio: [null],
+    fechaFin: [null],
+    tipoEntidad: [null],
+    tipoAtencion: [null],
+    ubigeo: [null],
     departamento: [null],
     provincia: [{ value: null, disabled: true }],
     distrito: [{ value: null, disabled: true }],
@@ -67,7 +67,6 @@ export class FiltrosAtencionComponent {
   }
 
   setTipoAtencion(){
-    const tiposCopy = [...this.tipos ]
     const newTipos: ItemEnum[] = []
     this.tipos.filter( item => {
       newTipos.push({ value: item.value.toLowerCase(), text: capitalize(item.text)! })
@@ -96,21 +95,42 @@ export class FiltrosAtencionComponent {
     this.sectoresService.getAllSectors().subscribe(resp => this.sectores.set(resp.data))
   }
 
-  changeCodigo(event: any){
-    const codigoControl = this.formFilters.get('codigo')
+  // changeCodigo(event: any){
+  //   const codigoControl = this.formFilters.get('codigo')
+  //   const codigoValue = codigoControl?.value
+
+  //   if(codigoValue){
+  //     clearTimeout(this.timeout);
+  //     var $this = this;
+  //     this.timeout = setTimeout(function () {
+  //       if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {          
+  //         $this.pagination.codigo = codigoValue          
+  //         $this.generateFilters()
+  //       }
+  //     }, 500);
+  //   } else {      
+  //     delete this.pagination.codigo
+  //     this.generateFilters()
+  //   }
+  // }
+
+  changeControl(event: any, control:string){
+    const codigoControl = this.formFilters.get(control)
     const codigoValue = codigoControl?.value
 
+    const nameControl = control as keyof Pagination;
     if(codigoValue){
       clearTimeout(this.timeout);
       var $this = this;
       this.timeout = setTimeout(function () {
         if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {          
-          $this.pagination.codigo = codigoValue          
+          $this.pagination[nameControl] = codigoValue          
           $this.generateFilters()
         }
-      }, 500);
-    } else {      
-      delete this.pagination.codigo
+      }, 500);      
+    } else {
+      codigoControl?.patchValue(null)
+      delete this.pagination[nameControl]      
       this.generateFilters()
     }
   }
@@ -181,7 +201,7 @@ export class FiltrosAtencionComponent {
   }
 
   changeTipoAtencion(){
-    const tipoAtencionControl = this.formFilters.get('tipoAtencion')
+    // const tipoAtencionControl = this.formFilters.get('tipoAtencion')
     // const tipoAtencion = tipoAtencionControl?.value.toLowerCase()
     // tipoAtencionControl?.setValue(tipoAtencion)
     this.generateFilters()
@@ -250,11 +270,11 @@ export class FiltrosAtencionComponent {
 
   generateFilters(){
     const formValue = { ...this.formFilters.value }
-    if(this.permisosPCM){
-      delete this.pagination.tipoPerfil
-    } else {
-      this.pagination.tipoPerfil = '1'
-    }
+    // if(this.permisosPCM){
+    //   delete this.pagination.tipoPerfil
+    // } else {
+    //   this.pagination.tipoPerfil = '1'
+    // }
     this.filters.emit(formValue)
   }
 

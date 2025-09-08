@@ -206,15 +206,34 @@ export default class AsistenciasTecnicasComponent {
     return text
   }
 
+  // onQueryParamsChange(params: NzTableQueryParams): void {
+  //   const sortsNames = ['ascend', 'descend']
+  //   const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+  //   const qtySorts = params.sort.reduce((total, item) => {
+  //     return sortsNames.includes(item.value!) ? total + 1 : total
+  //   }, 0)
+  //   const ordenar = sorts?.value!.slice(0, -3)
+  //   this.paramsNavigate({ pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar })
+  // }
+
   onQueryParamsChange(params: NzTableQueryParams): void {
     const sortsNames = ['ascend', 'descend']
     const sorts = params.sort.find(item => sortsNames.includes(item.value!))
-    const qtySorts = params.sort.reduce((total, item) => {
+    params.sort.reduce((total, item) => {
       return sortsNames.includes(item.value!) ? total + 1 : total
     }, 0)
+    const campo = sorts?.key
     const ordenar = sorts?.value!.slice(0, -3)
-    this.paramsNavigate({ pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar })
+    const filtrosSaved = localStorage.getItem('filtrosAtenciones');
+    let filtros:any = {}
+    if(filtrosSaved){
+      filtros = JSON.parse(filtrosSaved)
+      filtros.save = false      
+      localStorage.setItem('filtrosAtenciones', JSON.stringify(filtros))
+    }    
+    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })    
   }
+
 
   saveFilters(save: boolean){    
     if(save){
@@ -236,12 +255,6 @@ export default class AsistenciasTecnicasComponent {
   
       localStorage.setItem('filtrosEntidades', JSON.stringify(pagination));
     }
-  }
-
-  generateFilters(pagination: Pagination){
-    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito','tipoEntidad','unidadOrganica','especialista']
-    const params = deleteKeysToObject(pagination, paramsInvalid)
-    this.paramsNavigate(params)
   }
 
   validarAtencion(atencion: AsistenciaTecnicaResponse){
@@ -292,29 +305,36 @@ export default class AsistenciasTecnicasComponent {
   //   this.filtrosVisible = visible
   // }
 
-  filtersToDrawer(paginationFilters: Pagination){    
-    paginationFilters.perfil = this.perfilAuth;
-    if(!this.permisosPCM){
-      paginationFilters.sectorId = this.sectorAuth
-    } else {
-      if(this.perfilAuth == 12){
-        const usuarioId = localStorage.getItem('codigoUsuario')!
-        this.paginationFilter.usuarioId = usuarioId        
-      } else {
-        delete paginationFilters.usuarioId
-      }
-    }
-    
-    this.paginationFilter = paginationFilters
-    
-    const eventoId = paginationFilters.eventoId ? paginationFilters.eventoId : null
-    const fechaInicio = paginationFilters.fechaInicio ? paginationFilters.fechaInicio : null
-    const fechaFin = paginationFilters.fechaFin ? paginationFilters.fechaFin : null
-    const sectorId = paginationFilters.sectorId ? paginationFilters.sectorId : null
-    const codigo = paginationFilters.codigo ? paginationFilters.codigo : null
-    
-    this.paramsNavigate({ eventoId, fechaInicio, fechaFin, codigo })
+  generateFilters(pagination: Pagination){
+    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito','tipoEntidad','unidadOrganica','especialista']
+    const params = deleteKeysToObject(pagination, paramsInvalid)
+
+    this.paramsNavigate(params)
   }
+
+  // filtersToDrawer(paginationFilters: Pagination){    
+  //   paginationFilters.perfil = this.perfilAuth;
+  //   if(!this.permisosPCM){
+  //     paginationFilters.sectorId = this.sectorAuth
+  //   } else {
+  //     if(this.perfilAuth == 12){
+  //       const usuarioId = localStorage.getItem('codigoUsuario')!
+  //       this.paginationFilter.usuarioId = usuarioId        
+  //     } else {
+  //       delete paginationFilters.usuarioId
+  //     }
+  //   }
+    
+  //   this.paginationFilter = paginationFilters
+    
+  //   const eventoId = paginationFilters.eventoId ? paginationFilters.eventoId : null
+  //   const fechaInicio = paginationFilters.fechaInicio ? paginationFilters.fechaInicio : null
+  //   const fechaFin = paginationFilters.fechaFin ? paginationFilters.fechaFin : null
+  //   const sectorId = paginationFilters.sectorId ? paginationFilters.sectorId : null
+  //   const codigo = paginationFilters.codigo ? paginationFilters.codigo : null
+    
+  //   this.paramsNavigate({ eventoId, fechaInicio, fechaFin, codigo })
+  // }
 
   paramsNavigate(queryParams: Params){
     this.router.navigate(
