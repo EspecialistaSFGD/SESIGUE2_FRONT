@@ -92,9 +92,7 @@ export default class EntidadesComponent {
     this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })    
   }
 
-  saveFilters(save: boolean){
-    console.log(this.pagination);
-    
+  saveFilters(save: boolean){    
     if(save){
       const pagination: any = { ...this.pagination };
       pagination.pagina = pagination.currentPage

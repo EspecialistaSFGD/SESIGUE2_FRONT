@@ -57,8 +57,6 @@ export class FiltroEntidadComponent {
     const tipoEntidad = pagination!.tipoEntidad
     const ubigeo = pagination!.ubigeo
 
-    console.log(pagination);
-
     if(ubigeo && tipoEntidad == 'ubigeo'){
       const ubigeoLen = ubigeo.length
       if(ubigeoLen >= 2){
@@ -70,7 +68,9 @@ export class FiltroEntidadComponent {
       if(ubigeoLen == 6) {
         pagination.distrito = ubigeo
       }
-    } 
+    } else if(ubigeo && tipoEntidad != 'ubigeo'){
+      this.esUbigeo = false
+    }
     
     this.formEntidadFilters.reset(pagination)
     this.setFormControl()
@@ -94,6 +94,9 @@ export class FiltroEntidadComponent {
       if (ubigeoLen == 6){
         this.setControlEnable('distrito')
       }
+    } else if(ubigeo && tipoEntidad != 'ubigeo'){
+      this.setControlEnable('tipoMancomunidad')
+      this.setControlEnable('mancomunidad')
     }
   }
 
@@ -101,7 +104,10 @@ export class FiltroEntidadComponent {
     this.obtenerDepartamentoService()
     const pagination = { ...this.pagination }
     const tipoEntidad = pagination!.tipoEntidad
+    const tipoUbigeo = pagination!.tipoUbigeo
     const ubigeo = pagination!.ubigeo
+    const tipoMancomunidadControl = this.formEntidadFilters.get('tipoMancomunidad')
+    const mancomunidadControl = this.formEntidadFilters.get('mancomunidad')
     const departamentoControl = this.formEntidadFilters.get('departamento')
     const provinciaControl = this.formEntidadFilters.get('provincia')
     const distritoControl = this.formEntidadFilters.get('distrito')
@@ -119,6 +125,10 @@ export class FiltroEntidadComponent {
       if (ubigeoLen == 6){
         distritoControl?.setValue(ubigeo)
       }
+    } else if(ubigeo && tipoEntidad != 'ubigeo'){
+      tipoMancomunidadControl?.setValue(tipoUbigeo)
+      mancomunidadControl?.setValue(ubigeo)
+      this.obtenerMancomunidadService(tipoUbigeo)
     }
   }
 
