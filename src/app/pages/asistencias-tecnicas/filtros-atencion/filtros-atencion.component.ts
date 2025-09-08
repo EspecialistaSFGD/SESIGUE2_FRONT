@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { getDateFormat } from '@core/helpers';
+import { capitalizeFirst } from '@antv/g2/lib/utils/helper';
+import { capitalize, getDateFormat } from '@core/helpers';
 import { EventoResponse, ItemEnum, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EventosService, SectoresService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
@@ -18,7 +19,7 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 export class FiltrosAtencionComponent {
   @Input() visible: boolean = false
   @Input() tipos!: ItemEnum[]
-  @Input() paginationFilters: Pagination = {}
+  @Input() pagination: Pagination = {}
   @Input() permisosPCM: boolean = false
   @Output() visibleDrawer = new EventEmitter()
   @Output() filters = new EventEmitter<Pagination>()
@@ -40,14 +41,6 @@ export class FiltrosAtencionComponent {
   private ubigeosService = inject(UbigeosService)
 
   private timeout: any;
-  pagination: Pagination = {
-    code: 0,
-    columnSort: 'fechaRegistro',
-    typeSort: 'ASC',
-    pageSize: 10,
-    currentPage: 1,
-    total: 0
-  }
 
   formFilters: FormGroup = this.fb.group({
     codigo: [''],
@@ -66,16 +59,22 @@ export class FiltrosAtencionComponent {
   })
 
   ngOnInit(): void {
+    this.setTipoAtencion()
     this.getAllTipoEntidades()
     this.obtenerServiciosEventos()
     this.obtenerServicioSectores()
     this.obtenerDepartamentoService()
   }
 
-  // changeVisibleDrawer(visible: boolean){
-  //   this.visibleDrawer.emit(visible)
-  // }
-
+  setTipoAtencion(){
+    const tiposCopy = [...this.tipos ]
+    const newTipos: ItemEnum[] = []
+    this.tipos.filter( item => {
+      newTipos.push({ value: item.value.toLowerCase(), text: capitalize(item.text)! })
+    })
+    this.tipos = newTipos.filter( item => this.permisosPCM ? item.value.toLowerCase() != 'atencion' :  item.value.toLowerCase() == 'atencion' )
+  }
+  
   getAllTipoEntidades() {    
     this.pagination.columnSort = 'nombre'
     this.tipoEntidadService.getAllTipoEntidades(this.pagination)
@@ -106,12 +105,12 @@ export class FiltrosAtencionComponent {
       var $this = this;
       this.timeout = setTimeout(function () {
         if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {          
-          $this.paginationFilters.codigo = codigoValue          
+          $this.pagination.codigo = codigoValue          
           $this.generateFilters()
         }
       }, 500);
     } else {      
-      delete this.paginationFilters.codigo
+      delete this.pagination.codigo
       this.generateFilters()
     }
   }
@@ -119,9 +118,9 @@ export class FiltrosAtencionComponent {
   changefechaInicio(){
     const fechaInicioValue = this.formFilters.get('fechaInicio')?.value    
     if(fechaInicioValue){      
-      this.paginationFilters.fechaInicio = getDateFormat(fechaInicioValue)
+      this.pagination.fechaInicio = getDateFormat(fechaInicioValue)
     } else {
-      delete this.paginationFilters.fechaInicio
+      delete this.pagination.fechaInicio
     }
     this.generateFilters()
   }
@@ -129,9 +128,9 @@ export class FiltrosAtencionComponent {
   changeFechaFin(){
     const fechaFinValue = this.formFilters.get('fechaFin')?.value
     if(fechaFinValue){
-      this.paginationFilters.fechaFin = getDateFormat(fechaFinValue)
+      this.pagination.fechaFin = getDateFormat(fechaFinValue)
     } else {
-      delete this.paginationFilters.fechaFin
+      delete this.pagination.fechaFin
     }      
     this.generateFilters()
   }
@@ -152,15 +151,15 @@ export class FiltrosAtencionComponent {
       evento?.abreviatura.toLowerCase() == 'poi' ? sectorControl?.disable() : sectorControl?.enable()
       evento?.abreviatura.toLowerCase() == 'poi' ? sectorControl?.setValue(null) : sectorControl?.setValue(sectorControl?.value)
       if(evento?.abreviatura.toLowerCase() != 'poi'){
-        delete this.paginationFilters.fechaInicio
-        delete this.paginationFilters.fechaFin
+        delete this.pagination.fechaInicio
+        delete this.pagination.fechaFin
       } else {
-        delete this.paginationFilters.sectorId
+        delete this.pagination.sectorId
       }
 
-      this.paginationFilters.eventoId = eventoValue
+      this.pagination.eventoId = eventoValue
     } else {
-      delete this.paginationFilters.eventoId
+      delete this.pagination.eventoId
     }
     
     this.generateFilters()
@@ -169,9 +168,9 @@ export class FiltrosAtencionComponent {
   changeSector(){
     const sectorValue = this.formFilters.get('sectorId')?.value
     if(sectorValue){
-      this.paginationFilters.sectorId = sectorValue
+      this.pagination.sectorId = sectorValue
     } else {
-      delete this.paginationFilters.sectorId
+      delete this.pagination.sectorId
     }
     
     this.generateFilters()
@@ -179,6 +178,13 @@ export class FiltrosAtencionComponent {
 
   obtenerDepartamentoService(){
     this.ubigeosService.getDepartments().subscribe( resp => this.departamentos.set(resp.data))
+  }
+
+  changeTipoAtencion(){
+    const tipoAtencionControl = this.formFilters.get('tipoAtencion')
+    // const tipoAtencion = tipoAtencionControl?.value.toLowerCase()
+    // tipoAtencionControl?.setValue(tipoAtencion)
+    this.generateFilters()
   }
 
   changeDepartamento(){
@@ -189,13 +195,17 @@ export class FiltrosAtencionComponent {
     const distritoControl = this.formFilters.get('distrito')
     if(departamento){
       this.obtenerProvinciaService(departamento)
+      ubigeoControl?.setValue(departamento)
       provinciaControl?.enable()
     } else {
+      ubigeoControl?.reset
       provinciaControl?.enable()
+      provinciaControl?.reset()
+      delete this.pagination.ubigeo
     }
     distritoControl?.disable()
     distritoControl?.reset()
-    // this.generateFilters()
+    this.generateFilters()
   }
 
   obtenerProvinciaService(departamento: string){
@@ -219,6 +229,7 @@ export class FiltrosAtencionComponent {
     }
     ubigeoControl?.setValue(ubigeo)
     distritoControl?.reset()
+    this.generateFilters()
   }
 
   obtenerDistritosService(provincia: string){    
@@ -234,16 +245,17 @@ export class FiltrosAtencionComponent {
 
     let ubigeo = distritoValue ? distritoValue : provinciaValue.slice(0,4)
     ubigeoControl?.setValue(ubigeo)
+    this.generateFilters()
   }
 
   generateFilters(){
+    const formValue = { ...this.formFilters.value }
     if(this.permisosPCM){
-      delete this.paginationFilters.tipoPerfil
+      delete this.pagination.tipoPerfil
     } else {
-      this.paginationFilters.tipoPerfil = '1'
+      this.pagination.tipoPerfil = '1'
     }
-     
-    this.filters.emit(this.paginationFilters)
+    this.filters.emit(formValue)
   }
 
   cleanParams(){

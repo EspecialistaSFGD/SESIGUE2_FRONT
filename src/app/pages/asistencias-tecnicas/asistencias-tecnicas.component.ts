@@ -5,7 +5,7 @@ import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, Asisten
 import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { FormGroup } from '@angular/forms';
-import { convertEnumToObject, obtenerPermisosBotones } from '@core/helpers';
+import { convertEnumToObject, deleteKeysToObject, obtenerPermisosBotones } from '@core/helpers';
 import { EventosService } from '@core/services/eventos.service';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -214,6 +214,34 @@ export default class AsistenciasTecnicasComponent {
     }, 0)
     const ordenar = sorts?.value!.slice(0, -3)
     this.paramsNavigate({ pagina: params.pageIndex, cantidad: params.pageSize, campo: sorts?.key, ordenar })
+  }
+
+  saveFilters(save: boolean){    
+    if(save){
+      const pagination: any = { ...this.pagination };
+      pagination.pagina = pagination.currentPage
+      pagination.cantidad = pagination.pageSize
+      pagination.save = true
+      if(pagination.columnSort != 'entidadId' &&  pagination.typeSort != 'ASC' ){
+        pagination.campo = pagination.columnSort
+        pagination.ordenar = pagination.typeSort
+      }
+  
+      delete pagination.currentPage
+      delete pagination.pageSize
+      delete pagination.columnSort
+      delete pagination.typeSort
+      delete pagination.code
+      delete pagination.total
+  
+      localStorage.setItem('filtrosEntidades', JSON.stringify(pagination));
+    }
+  }
+
+  generateFilters(pagination: Pagination){
+    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito','tipoEntidad','unidadOrganica','especialista']
+    const params = deleteKeysToObject(pagination, paramsInvalid)
+    this.paramsNavigate(params)
   }
 
   validarAtencion(atencion: AsistenciaTecnicaResponse){
