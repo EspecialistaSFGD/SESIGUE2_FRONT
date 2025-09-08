@@ -24,7 +24,7 @@
           <td nzAlign="center">{{entidad.ubigeo_oficial}}</td>
           <td nzAlign="center">{{entidad.departamento}}</td>
           <td nzAlign="center">{{entidad.provincia}}</td>
-          <td nzAlign="center">{{entidad.distrito}}</td>
+          <td nzAlign="center">{{esSsfgd ? entidad.distrito : entidad.distritoMef}}</td>
           <td nzAlign="center"> <p class="w-full" nz-tooltip [nzTooltipTitle]="entidad.nombre">{{entidad.entidadTipoSlug}}</p></td>
           <td nzAlign="center">{{entidad.dnAutoridad}}</td>
           <td nzAlign="center">{{entidad.nombreAutoridad}} {{entidad.apellidosAutoridad}}</td>
@@ -32,7 +32,7 @@
           <td nzAlign="center">{{entidad.sexoAutoridad}}</td>
           <td nzRight nzAlign="center">
             <div class="flex justify-center">
-                <a [routerLink]="[entidad.entidadId]" class="font-bold text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
+                <a *ngIf="esSsfgd" [routerLink]="[entidad.entidadId]" class="font-bold text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
                   <i class="pi pi-eye" style="font-size: 0.85rem"></i>
                 </a>
             </div>

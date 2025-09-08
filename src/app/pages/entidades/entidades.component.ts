@@ -9,6 +9,7 @@ import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { FiltroEntidadComponent } from './filtro-entidad/filtro-entidad.component';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-entidades',
@@ -21,11 +22,15 @@ export default class EntidadesComponent {
 
   loading: boolean = false
   openFilters: boolean = false
+  perfilAuth: number = 0
+  permisosPCM: boolean = false
+  esSsfgd:boolean = false
   entidades = signal<EntidadResponse[]>([])
 
   private entidadService = inject(EntidadesService)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
+  private authStore = inject(AuthService)
 
   pagination: Pagination = {
     columnSort: 'entidadId',
@@ -36,7 +41,20 @@ export default class EntidadesComponent {
   }
 
   ngOnInit(): void {
+    this.getPermisos()
     this.getParams()
+  }
+
+  getPermisos(){    
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = this.getPermisosPCM()
+  }
+
+  getPermisosPCM(){
+    const profilePCM = [11,12,23]
+    const ssfgdPCM = [11,12,23]
+    this.esSsfgd = ssfgdPCM.includes(this.perfilAuth)
+    return profilePCM.includes(this.perfilAuth)
   }
 
   getParams() {
