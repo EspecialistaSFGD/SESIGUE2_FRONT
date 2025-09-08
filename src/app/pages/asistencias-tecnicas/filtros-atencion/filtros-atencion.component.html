@@ -97,11 +97,16 @@
 	</form>
 
 	<ng-template #footerFilter>
-		<div class="flex justify-end gap-2">
-			<!-- <button nz-button nzType="primary" (click)="changeExport()">
-				<span nz-icon nzType="file-excel"></span>
-				<span class="button-text">Exportar</span>
-			  </button> -->
-		</div>
+    <div class="flex justify-end gap-2">
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white" (click)="cleanParams()">
+          <i class="pi pi-filter-slash" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Limpiar filtros</span>
+        </div>
+
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 bg-sky-700 text-white hover:bg-sky-800" (click)="changeVisibleDrawer(false)">
+          <i class="pi pi-save" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Buscar filtros</span>
+        </div>
+    </div>
 	</ng-template>
 </nz-drawer>

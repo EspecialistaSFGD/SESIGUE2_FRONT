@@ -23,6 +23,7 @@ export class FiltrosAtencionComponent {
   @Output() visibleDrawer = new EventEmitter()
   @Output() filters = new EventEmitter<Pagination>()
   @Output() export = new EventEmitter<boolean>()
+  @Output() save = new EventEmitter<boolean>()
   
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   public eventos = signal<EventoResponse[]>([])
@@ -71,9 +72,9 @@ export class FiltrosAtencionComponent {
     this.obtenerDepartamentoService()
   }
 
-  changeVisibleDrawer(visible: boolean){
-    this.visibleDrawer.emit(visible)
-  }
+  // changeVisibleDrawer(visible: boolean){
+  //   this.visibleDrawer.emit(visible)
+  // }
 
   getAllTipoEntidades() {    
     this.pagination.columnSort = 'nombre'
@@ -243,6 +244,18 @@ export class FiltrosAtencionComponent {
     }
      
     this.filters.emit(this.paginationFilters)
+  }
+
+  cleanParams(){
+    localStorage.removeItem('filtrosAtenciones');
+    this.formFilters.reset()
+    this.generateFilters()
+    this.changeVisibleDrawer(false,false)
+  }
+
+  changeVisibleDrawer(visible: boolean, save: boolean = true){
+    this.save.emit(save) 
+    this.visibleDrawer.emit(visible)
   }
 
   changeExport(){

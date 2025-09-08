@@ -3,7 +3,7 @@ import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges }
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EntidadTipoEnum, EntidadTipoMancomunidad } from '@core/enums';
 import { convertEnumToObject } from '@core/helpers';
-import { EntidadResponse, ItemEnum, Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AsistenciasTecnicasTipos, EntidadResponse, ItemEnum, Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -30,6 +30,7 @@ export class FiltroEntidadComponent {
   @Output() save = new EventEmitter<boolean>()
   @Output() export = new EventEmitter<boolean>()
 
+  tipoAtencion: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasTipos)
   mancomunidades = signal<EntidadResponse[]>([])
   departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])

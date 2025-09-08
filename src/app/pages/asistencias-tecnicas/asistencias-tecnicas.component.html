@@ -78,7 +78,33 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados ({{pagination.total}})</p>
       <div class="flex gap-2">
-        @if(atencionActions.goals){
+        <div class="flex gap-2">
+          @if (atencionActions.report) {
+            <div class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white"  (click)="filtrosVisible = true">
+              <i class="pi pi-filter" style="font-size: 0.75rem"></i>
+              <span class="hidden md:flex">Filtros</span>
+            </div>
+
+            <div class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white" (click)="reporteExcelAtenciones()">
+              <i class="pi" [ngClass]="{ 'pi-spin pi-spinner' : loadingExport, 'pi-file-excel' : !loadingExport }" style="font-size: 0.75rem"></i>
+              <span class="hidden md:flex">Exportar</span>
+            </div>
+          }
+          @if(atencionActions.goals){
+          <a [routerLink]="['/atenciones/metas']" class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white"  (click)="filtrosVisible = true">
+            <i class="pi pi-chart-line" style="font-size: 0.75rem"></i>
+            <span class="hidden md:flex">Metas</span>
+          </a>
+        }
+
+          @if(atencionActions.new){
+            <div class="flex items-center gap-1 py-1 px-3 rounded border text-white" [ngClass]="!this.permisosPCM && !this.evento() ? 'border-slate-200 bg-slate-200' : 'cursor-pointer border-sky-700 bg-sky-700 hover:bg-sky-800 hover:border-sky-700'"  (click)="!this.permisosPCM && !this.evento() ? null : crearAsistenciaTecnica()">
+              <i class="pi pi-plus" style="font-size: 0.75rem"></i>
+              <span class="hidden md:flex">Nueva atención</span>
+            </div>
+          }
+        </div>
+        <!-- @if(atencionActions.goals){
           <a [routerLink]="['/atenciones/metas']" nz-button nzType="default">
             <span nz-icon nzType="rise"></span>
             <span class="button-text">Metas</span>
@@ -99,10 +125,10 @@
             <span nz-icon nzType="plus" nzTheme="outline"></span>
             <span class="button-text">Nueva Atención</span>
           </button>
-        }
+        } -->
       </div>
     </div>
   </ng-template>
 </div>
 
-<app-filtros-atencion [visible]="filtrosVisible" [paginationFilters]="paginationFilter" [permisosPCM]="permisosPCM" (visibleDrawer)="changeDrawerFilters(false)" (filters)="filtersToDrawer($event)" (export)="reporteExcelAtenciones()" [tipos]="tipos"/>
+<app-filtros-atencion [visible]="filtrosVisible" [paginationFilters]="paginationFilter" [permisosPCM]="permisosPCM" (visibleDrawer)="filtrosVisible = false" (filters)="filtersToDrawer($event)" (export)="reporteExcelAtenciones()" [tipos]="tipos"/>

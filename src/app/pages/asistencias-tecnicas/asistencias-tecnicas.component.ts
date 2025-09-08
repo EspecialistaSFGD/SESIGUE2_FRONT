@@ -64,7 +64,7 @@ export default class AsistenciasTecnicasComponent {
 
   confirmModal?: NzModalRef;
   tipos: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasTipos)
-  modalidaades: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasModalidad)
+  modalidades: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasModalidad)
   clasificaciones: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasClasificacion)
   public orientaciones: OrientacionAtencion[] = [
     { orientacionId: 1, nombre: 'Actividad' },
@@ -197,7 +197,7 @@ export default class AsistenciasTecnicasComponent {
       const existeTipo = this.tipos.find(item => item.value.toLowerCase() == value)
       text = existeTipo ? existeTipo.text : value
     } else if (kind == 'modalidad') {
-      const existeModalidad = this.modalidaades.find(item => item.value.toLowerCase() == value)
+      const existeModalidad = this.modalidades.find(item => item.value.toLowerCase() == value)
       text = existeModalidad ? existeModalidad.text : value
     } else if (kind == 'clasificacion') {
       const existeClasificacion = this.clasificaciones.find(item => item.value.toLowerCase() == value)
@@ -260,9 +260,9 @@ export default class AsistenciasTecnicasComponent {
     }
   }
 
-  changeDrawerFilters(visible: boolean) {
-    this.filtrosVisible = visible
-  }
+  // changeDrawerFilters(visible: boolean) {
+  //   this.filtrosVisible = visible
+  // }
 
   filtersToDrawer(paginationFilters: Pagination){    
     paginationFilters.perfil = this.perfilAuth;
@@ -340,7 +340,7 @@ export default class AsistenciasTecnicasComponent {
       nzData: {
         atencion: this.asistenciaTecnica,
         tipos: this.tipos,
-        modalidades: this.modalidaades,
+        modalidades: this.modalidades,
         clasificaciones: this.clasificaciones,
         orientaciones: this.orientaciones,
         departamentos: this.departamentos(),

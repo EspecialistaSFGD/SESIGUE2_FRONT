@@ -10,6 +10,7 @@ export enum AsistenciasTecnicasTipos {
   ASESORAMIENTO = 'asesoramiento',
   ASISTENCIA = 'asistencia técnica',
   COORDINACION = 'coordinación',
+  CAPACITACION = 'capacitación',
   ATENCION = 'atención',
   DOCUMENTO = 'documento'
 }
