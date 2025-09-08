@@ -672,6 +672,9 @@ export class FormularioAtencionComponent {
     distritoControl?.disable()
     distritoControl?.reset()
     autoridadControl?.reset()
+    if(!tipoValue){
+      autoridadControl?.disable()
+    }
   }
 
   obtenerTipoEntidad(tipoId: number){
@@ -685,23 +688,18 @@ export class FormularioAtencionComponent {
     const departamento = this.formAtencion.get('departamento')?.value
     const provinciaControl = this.formAtencion.get('provincia')
     const distritoControl = this.formAtencion.get('distrito')
-    let ubigeo = null 
-    
+    let ubigeo = null
+
     departamento ? autoridadControl?.enable() : autoridadControl?.disable()
     if(departamento){
       ubigeo = `${departamento}0000`
-      if(!this.esRegional){
-        this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
-        // ubigeoControl?.setValue(ubigeo)
-        this.obtenerProvinciasService(departamento)
-
-        if(tipoEntidadControl?.value){
-          provinciaControl?.enable()
-        }
-
-        
-        this.obtenerEntidadPorUbigeoService(ubigeo)
+      this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
+      if(!this.esRegional){}
+      this.obtenerProvinciasService(departamento)
+      if(tipoEntidadControl?.value){
+        provinciaControl?.enable()
       }
+      this.obtenerEntidadPorUbigeoService(ubigeo)
     } else {
       this.ubigeoTipo = UbigeoTipoEnum.PAIS
       provinciaControl?.disable()
@@ -851,8 +849,7 @@ export class FormularioAtencionComponent {
       autoridad ? nombreControl?.disable() : nombreControl?.enable()
       autoridad ? cargoControl?.disable() : cargoControl?.enable()
     }
-
-  
+    
     if(consultarAlcalde && autoridad == true && ubigeo){
       this.obtenerAlcaldePorUbigeo()
     }
@@ -1268,6 +1265,8 @@ export class FormularioAtencionComponent {
       }
       if (control == 'tema') {
         this.temaCount = qty - value.length;
+      } else if(control == 'acuerdos') {
+        this.acuerdosCount = qty - value.length
       } else {
         this.comentariosCount = qty - value.length;
       }
