@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { getDateFormat } from '@core/helpers';
-import { EventoResponse, ItemEnum, Pagination, SectorResponse, TipoEntidadResponse } from '@core/interfaces';
-import { EventosService, SectoresService, TipoEntidadesService } from '@core/services';
+import { EventoResponse, ItemEnum, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { EventosService, SectoresService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -27,12 +27,16 @@ export class FiltrosAtencionComponent {
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   public eventos = signal<EventoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
+  departamentos = signal<UbigeoDepartmentResponse[]>([])
+  provincias = signal<UbigeoProvinciaResponse[]>([])
+  distritos = signal<UbigeoDistritoResponse[]>([])
 
   private fb = inject(FormBuilder)
   private tipoEntidadService = inject(TipoEntidadesService)
   private eventosService = inject(EventosService)
   private sectoresService = inject(SectoresService)
   private validatorsService = inject(ValidatorService)
+  private ubigeosService = inject(UbigeosService)
 
   private timeout: any;
   pagination: Pagination = {
@@ -50,10 +54,10 @@ export class FiltrosAtencionComponent {
     fechaFin: [''],
     tipoEntidad: [''],
     tipoAtencion: [''],
-    departameno: [''],
-    provincia: [''],
-    distrito: [''],
     ubigeo: [''],
+    departamento: [null],
+    provincia: [{ value: null, disabled: true }],
+    distrito: [{ value: null, disabled: true }],
     sectorId: [null],
     eventoId: [null],
     unidadOrganica: [''],
@@ -64,6 +68,7 @@ export class FiltrosAtencionComponent {
     this.getAllTipoEntidades()
     this.obtenerServiciosEventos()
     this.obtenerServicioSectores()
+    this.obtenerDepartamentoService()
   }
 
   changeVisibleDrawer(visible: boolean){
@@ -88,10 +93,7 @@ export class FiltrosAtencionComponent {
   }
 
   obtenerServicioSectores() {
-    this.sectoresService.getAllSectors()
-      .subscribe(resp => {        
-        this.sectores.set(resp.data)
-      })
+    this.sectoresService.getAllSectors().subscribe(resp => this.sectores.set(resp.data))
   }
 
   changeCodigo(event: any){
@@ -172,6 +174,65 @@ export class FiltrosAtencionComponent {
     }
     
     this.generateFilters()
+  }
+
+  obtenerDepartamentoService(){
+    this.ubigeosService.getDepartments().subscribe( resp => this.departamentos.set(resp.data))
+  }
+
+  changeDepartamento(){
+    const ubigeoControl = this.formFilters.get('ubigeo')
+    const departamentoControl = this.formFilters.get('departamento')
+    const departamento = departamentoControl?.value
+    const provinciaControl = this.formFilters.get('provincia')
+    const distritoControl = this.formFilters.get('distrito')
+    if(departamento){
+      this.obtenerProvinciaService(departamento)
+      provinciaControl?.enable()
+    } else {
+      provinciaControl?.enable()
+    }
+    distritoControl?.disable()
+    distritoControl?.reset()
+    // this.generateFilters()
+  }
+
+  obtenerProvinciaService(departamento: string){
+    this.ubigeosService.getProvinces(departamento).subscribe( resp => this.provincias.set(resp.data))
+  }
+
+  changeProvincia(){
+    const ubigeoControl = this.formFilters.get('ubigeo')
+    const departamentoControl = this.formFilters.get('departamento')
+    const departamentoValue = departamentoControl?.value
+    const provinciaControl = this.formFilters.get('provincia')
+    const provinciaValue = provinciaControl?.value
+    const distritoControl = this.formFilters.get('distrito')
+    let ubigeo = departamentoValue
+    if(provinciaValue){
+      ubigeo = provinciaValue.slice(0,4)
+      this.obtenerDistritosService(`${ubigeo}01`)
+      distritoControl?.enable()
+    } else {
+      distritoControl?.disable()
+    }
+    ubigeoControl?.setValue(ubigeo)
+    distritoControl?.reset()
+  }
+
+  obtenerDistritosService(provincia: string){    
+    this.ubigeosService.getDistricts(provincia) .subscribe( resp => this.distritos.set(resp.data))
+  }
+
+  changeDistrito(){
+    const ubigeoControl = this.formFilters.get('ubigeo')
+    const provinciaControl = this.formFilters.get('provincia')
+    const provinciaValue = provinciaControl?.value
+    const distritoControl = this.formFilters.get('distrito')
+    const distritoValue = distritoControl?.value
+
+    let ubigeo = distritoValue ? distritoValue : provinciaValue.slice(0,4)
+    ubigeoControl?.setValue(ubigeo)
   }
 
   generateFilters(){

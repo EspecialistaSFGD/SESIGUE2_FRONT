@@ -291,6 +291,7 @@ export class FiltroEntidadComponent {
   obtenerProvinciaService(departamento: string){
     this.ubigeosService.getProvinces(departamento).subscribe( resp => this.provincias.set(resp.data))
   }
+
   changeProvincia(){
     const tipoUbigeoControl = this.formEntidadFilters.get('tipoUbigeo')
     const ubigeoControl = this.formEntidadFilters.get('ubigeo')
