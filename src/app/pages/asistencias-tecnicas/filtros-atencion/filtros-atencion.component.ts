@@ -236,7 +236,7 @@ export class FiltrosAtencionComponent {
       ubigeoControl?.setValue(departamento)
       provinciaControl?.enable()
     } else {
-      ubigeoControl?.reset
+      ubigeoControl?.reset()
       provinciaControl?.enable()
       provinciaControl?.reset()
       delete this.pagination.ubigeo

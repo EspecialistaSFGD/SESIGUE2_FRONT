@@ -54,7 +54,7 @@
               </button>
               }
               @if(atencionActions.delete){
-              <button nz-button nzDanger nzType="link" nz-tooltip="{{ !disabledActions(atencion) ? 'Eliminar Atención' : '' }}" (click)="eliminarAsistencia(atencion.asistenciaId!)" [disabled]="disabledActions(atencion)">
+              <button nz-button nzDanger nzType="link" nz-tooltip="{{ !disabledActions(atencion) ? 'Eliminar Atención' : '' }}" (click)="eliminarAsistencia(atencion)" [disabled]="disabledActions(atencion)">
                 <!-- <span nz-icon nzType="delete" nzTheme="outline"></span> -->
                 <i class="pi pi-trash" style="font-size: .85rem;"></i>
               </button>

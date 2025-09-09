@@ -267,14 +267,14 @@ export default class AsistenciasTecnicasComponent {
       })
   }
 
-  eliminarAsistencia(asistenciaId: string) {
+  eliminarAsistencia(asistencia: AsistenciaTecnicaResponse) {
     this.confirmModal = this.modal.confirm({
-      nzTitle: '¿Está seguro de eliminar esta asistencia técnica?',
+      nzTitle: `¿Está seguro de eliminar la asistencia técnica? ${asistencia.codigo}`,
       nzContent: 'Esta acción no se puede deshacer.',
       nzOkText: 'Eliminar',
       nzOkDanger: true,
       nzOnOk: () => {
-        this.asistenciaTecnicaService.deleteAsistenciaTecnica(asistenciaId)
+        this.asistenciaTecnicaService.deleteAsistenciaTecnica(asistencia.asistenciaId!)
           .subscribe(resp => {
             if (resp.success == true) {
               this.obtenerAsistenciasTecnicas()
@@ -285,15 +285,11 @@ export default class AsistenciasTecnicasComponent {
     });
   }
 
-  getAddFormAdded(success: boolean) {
-    if (success) {
-      this.obtenerAsistenciasTecnicas()
-      this.showNzModal = true
-    }
-  }
-
-  // changeDrawerFilters(visible: boolean) {
-  //   this.filtrosVisible = visible
+  // getAddFormAdded(success: boolean) {
+  //   if (success) {
+  //     this.obtenerAsistenciasTecnicas()
+  //     this.showNzModal = true
+  //   }
   // }
 
   generateFilters(pagination: Pagination){
