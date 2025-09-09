@@ -34,7 +34,6 @@ import { FormularioAtencionComponent } from './formulario-atencion/formulario-at
 })
 
 export default class AsistenciasTecnicasComponent {
-  title: string = `Lista de Atenciones`;
   public asistenciasTecnicas = signal<AsistenciaTecnicaResponse[]>([])
   public evento = signal<EventoResponse>({} as EventoResponse)
 
