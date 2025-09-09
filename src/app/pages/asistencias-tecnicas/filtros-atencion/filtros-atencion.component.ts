@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { capitalizeFirst } from '@antv/g2/lib/utils/helper';
 import { capitalize, convertDateStringToDate, getDateFormat } from '@core/helpers';
 import { EventoResponse, ItemEnum, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EventosService, SectoresService, TipoEntidadesService, UbigeosService } from '@core/services';
@@ -62,7 +61,6 @@ export class FiltrosAtencionComponent {
     const pagination = { ...this.pagination }
     const eventoId = pagination.eventoId ? Number(pagination.eventoId) : null
     const sectorId = pagination.sectorId ? Number(pagination.sectorId) : null
-    console.log(pagination);
     const fechaInicio = pagination.fechaInicio ? convertDateStringToDate(pagination.fechaInicio) : null
     const fechaFin = pagination.fechaFin ? convertDateStringToDate(pagination.fechaFin) : null
     
@@ -74,14 +72,6 @@ export class FiltrosAtencionComponent {
     this.obtenerServicioSectores()
     this.obtenerDepartamentoService()
   }
-
-  // ngOnInit(): void {
-  //   this.setTipoAtencion()
-  //   this.getAllTipoEntidades()
-  //   this.obtenerServiciosEventos()
-  //   this.obtenerServicioSectores()
-  //   this.obtenerDepartamentoService()
-  // }
 
   setTipoAtencion(){
     const newTipos: ItemEnum[] = []
@@ -112,25 +102,6 @@ export class FiltrosAtencionComponent {
     this.sectoresService.getAllSectors().subscribe(resp => this.sectores.set(resp.data))
   }
 
-  // changeCodigo(event: any){
-  //   const codigoControl = this.formFilters.get('codigo')
-  //   const codigoValue = codigoControl?.value
-
-  //   if(codigoValue){
-  //     clearTimeout(this.timeout);
-  //     var $this = this;
-  //     this.timeout = setTimeout(function () {
-  //       if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {          
-  //         $this.pagination.codigo = codigoValue          
-  //         $this.generateFilters()
-  //       }
-  //     }, 500);
-  //   } else {      
-  //     delete this.pagination.codigo
-  //     this.generateFilters()
-  //   }
-  // }
-
   changeControl(event: any, control:string){
     const codigoControl = this.formFilters.get(control)
     const codigoValue = codigoControl?.value
@@ -156,7 +127,6 @@ export class FiltrosAtencionComponent {
     const fechaInicioValue = this.formFilters.get('fechaInicio')?.value
 
     if(fechaInicioValue){      
-      // this.pagination.fechaInicio = getDateFormat(fechaInicioValue)
     } else {
       delete this.pagination.fechaInicio
     }
@@ -166,7 +136,6 @@ export class FiltrosAtencionComponent {
   changeFechaFin(){
     const fechaFinValue = this.formFilters.get('fechaFin')?.value
     if(fechaFinValue){
-      // this.pagination.fechaFin = getDateFormat(fechaFinValue)
     } else {
       delete this.pagination.fechaFin
     }      
@@ -219,9 +188,6 @@ export class FiltrosAtencionComponent {
   }
 
   changeTipoAtencion(){
-    // const tipoAtencionControl = this.formFilters.get('tipoAtencion')
-    // const tipoAtencion = tipoAtencionControl?.value.toLowerCase()
-    // tipoAtencionControl?.setValue(tipoAtencion)
     this.generateFilters()
   }
 
@@ -289,13 +255,6 @@ export class FiltrosAtencionComponent {
   generateFilters(){
     const fechaInicioControl = this.formFilters.get('fechaInicio')
     const fechaFinControl = this.formFilters.get('fechaFin')
-    // getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
-    // 01/09/2025
-    // if(this.permisosPCM){
-    //   delete this.pagination.tipoPerfil
-    // } else {
-    //   this.pagination.tipoPerfil = '1'
-    // }
 
     const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value) : null
     const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value) : null
