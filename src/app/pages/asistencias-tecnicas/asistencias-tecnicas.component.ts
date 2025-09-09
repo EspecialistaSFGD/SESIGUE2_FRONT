@@ -126,6 +126,7 @@ export default class AsistenciasTecnicasComponent {
 
         this.setPaginationValueToParams(params, 'codigo')
         this.setPaginationValueToParams(params, 'eventoId')
+        this.setPaginationValueToParams(params, 'sectorId')
         this.setPaginationValueToParams(params, 'fechaInicio')
         this.setPaginationValueToParams(params, 'fechaFin')
         this.setPaginationValueToParams(params, 'tipoAtencion')
@@ -255,7 +256,7 @@ export default class AsistenciasTecnicasComponent {
       delete pagination.code
       delete pagination.total
   
-      localStorage.setItem('filtrosEntidades', JSON.stringify(pagination));
+      localStorage.setItem('filtrosAtenciones', JSON.stringify(pagination));
     }
   }
 

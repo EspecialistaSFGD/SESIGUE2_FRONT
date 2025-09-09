@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { capitalizeFirst } from '@antv/g2/lib/utils/helper';
-import { capitalize, getDateFormat } from '@core/helpers';
+import { capitalize, convertDateStringToDate, getDateFormat } from '@core/helpers';
 import { EventoResponse, ItemEnum, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EventosService, SectoresService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
@@ -58,13 +58,30 @@ export class FiltrosAtencionComponent {
     especialista: [''],
   })
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    const pagination = { ...this.pagination }
+    const eventoId = pagination.eventoId ? Number(pagination.eventoId) : null
+    const sectorId = pagination.sectorId ? Number(pagination.sectorId) : null
+    console.log(pagination);
+    const fechaInicio = pagination.fechaInicio ? convertDateStringToDate(pagination.fechaInicio) : null
+    const fechaFin = pagination.fechaFin ? convertDateStringToDate(pagination.fechaFin) : null
+    
+    
+    this.formFilters.reset({...pagination, eventoId, fechaInicio, fechaFin, sectorId})
     this.setTipoAtencion()
     this.getAllTipoEntidades()
     this.obtenerServiciosEventos()
     this.obtenerServicioSectores()
     this.obtenerDepartamentoService()
   }
+
+  // ngOnInit(): void {
+  //   this.setTipoAtencion()
+  //   this.getAllTipoEntidades()
+  //   this.obtenerServiciosEventos()
+  //   this.obtenerServicioSectores()
+  //   this.obtenerDepartamentoService()
+  // }
 
   setTipoAtencion(){
     const newTipos: ItemEnum[] = []
@@ -136,9 +153,10 @@ export class FiltrosAtencionComponent {
   }
 
   changefechaInicio(){
-    const fechaInicioValue = this.formFilters.get('fechaInicio')?.value    
+    const fechaInicioValue = this.formFilters.get('fechaInicio')?.value
+
     if(fechaInicioValue){      
-      this.pagination.fechaInicio = getDateFormat(fechaInicioValue)
+      // this.pagination.fechaInicio = getDateFormat(fechaInicioValue)
     } else {
       delete this.pagination.fechaInicio
     }
@@ -148,7 +166,7 @@ export class FiltrosAtencionComponent {
   changeFechaFin(){
     const fechaFinValue = this.formFilters.get('fechaFin')?.value
     if(fechaFinValue){
-      this.pagination.fechaFin = getDateFormat(fechaFinValue)
+      // this.pagination.fechaFin = getDateFormat(fechaFinValue)
     } else {
       delete this.pagination.fechaFin
     }      
@@ -269,13 +287,22 @@ export class FiltrosAtencionComponent {
   }
 
   generateFilters(){
-    const formValue = { ...this.formFilters.value }
+    const fechaInicioControl = this.formFilters.get('fechaInicio')
+    const fechaFinControl = this.formFilters.get('fechaFin')
+    // getDateFormat(formMesa.get('fechaCreacion')?.value, 'month')
+    // 01/09/2025
     // if(this.permisosPCM){
     //   delete this.pagination.tipoPerfil
     // } else {
     //   this.pagination.tipoPerfil = '1'
     // }
-    this.filters.emit(formValue)
+
+    const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value) : null
+    const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value) : null
+
+    const formValue = { ...this.formFilters.value }   
+
+    this.filters.emit({...formValue, fechaInicio, fechaFin })
   }
 
   cleanParams(){
