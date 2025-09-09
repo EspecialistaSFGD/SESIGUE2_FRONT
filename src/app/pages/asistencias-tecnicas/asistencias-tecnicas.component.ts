@@ -55,7 +55,7 @@ export default class AsistenciasTecnicasComponent {
   sectorAuth: number = 0
   filtrosVisible: boolean = false
   loadingExport: boolean = false
-  loadingData: boolean = false
+  loading: boolean = false
   permisosPCM: boolean = false
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
@@ -109,10 +109,10 @@ export default class AsistenciasTecnicasComponent {
   }
 
   getParams() {
-    this.loadingData = true
+    this.loading = true
     this.route.queryParams.subscribe(params => {
       if (Object.keys(params).length > 0) {
-        this.loadingData = false
+        this.loading = false
 
         let campo = params['campo'] ?? 'fechaAtencion'
 
@@ -152,10 +152,10 @@ export default class AsistenciasTecnicasComponent {
   }
 
   obtenerAsistenciasTecnicas() {  
-    this.loadingData = true
+    this.loading = true
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas({...this.pagination })
       .subscribe(resp => {                
-        this.loadingData = false
+        this.loading = false
         if (resp.success == true) {
           this.asistenciasTecnicas.set(resp.data)
           const { pageIndex, pageSize, total } = resp.info!
@@ -198,21 +198,41 @@ export default class AsistenciasTecnicasComponent {
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
+    // const sortsNames = ['ascend', 'descend']
+    // const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+    // params.sort.reduce((total, item) => {
+    //   return sortsNames.includes(item.value!) ? total + 1 : total
+    // }, 0)
+    // const campo = sorts?.key
+    // const ordenar = sorts?.value!.slice(0, -3)
+    // const filtrosSaved = localStorage.getItem('filtrosAtenciones');
+    // let filtros:any = {}
+    // if(filtrosSaved){
+    //   filtros = JSON.parse(filtrosSaved)
+    //   filtros.save = false      
+    //   localStorage.setItem('filtrosAtenciones', JSON.stringify(filtros))
+    // }    
+    // this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
     const sortsNames = ['ascend', 'descend']
     const sorts = params.sort.find(item => sortsNames.includes(item.value!))
-    params.sort.reduce((total, item) => {
+    const qtySorts = params.sort.reduce((total, item) => {
       return sortsNames.includes(item.value!) ? total + 1 : total
     }, 0)
     const campo = sorts?.key
     const ordenar = sorts?.value!.slice(0, -3)
     const filtrosSaved = localStorage.getItem('filtrosAtenciones');
+    console.log(this.pagination);
+    
     let filtros:any = {}
     if(filtrosSaved){
       filtros = JSON.parse(filtrosSaved)
       filtros.save = false      
       localStorage.setItem('filtrosAtenciones', JSON.stringify(filtros))
-    }    
-    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })    
+    }
+    console.log('params query');
+    // console.log(filtros);
+    
+    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })   
   }
 
 

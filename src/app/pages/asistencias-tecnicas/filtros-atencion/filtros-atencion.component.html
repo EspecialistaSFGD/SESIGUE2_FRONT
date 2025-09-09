@@ -56,20 +56,21 @@
             placeholder="Seleccionar sector"
             (onChange)="changeSector()"/>
         </div>
+        
+        <div class="flex flex-col">
+          <label for="departamento">Tipo de atención</label>
+          <p-dropdown 
+          [options]="tipos"
+          formControlName="tipoAtencion"
+          optionLabel="text"
+          optionValue="value"
+          [showClear]="true" 
+          placeholder="Seleccionar tipo de atencion"
+          (onChange)="changeTipoAtencion()">
+          </p-dropdown>
+        </div>
       }
 
-      <div class="flex flex-col">
-        <label for="departamento">Tipo de atención</label>
-        <p-dropdown 
-        [options]="tipos"
-        formControlName="tipoAtencion"
-        optionLabel="text"
-        optionValue="value"
-        [showClear]="true" 
-        placeholder="Seleccionar tipo de atencion"
-        (onChange)="changeTipoAtencion()">
-        </p-dropdown>
-      </div>
 
       <div class="flex flex-col">
         <label for="departamento">Departamento</label>

@@ -1,7 +1,7 @@
 <app-page-header [title]="title.toUpperCase()" backUrl="panel" />
 <div class="grid grid-cols-1">
   <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderAtencion" nzShowSizeChanger nzSize="small"
-    [nzData]="asistenciasTecnicas()" [nzFrontPagination]="false" [nzLoading]="loadingData" [nzTotal]="pagination.total!"
+    [nzData]="asistenciasTecnicas()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!"
     (nzQueryParams)="onQueryParamsChange($event)">
     <thead>

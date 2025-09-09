@@ -16,14 +16,23 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
   styles: ``
 })
 export class FiltrosAtencionComponent {
-  @Input() visible: boolean = false
+  // @Input() visible: boolean = false
   @Input() tipos!: ItemEnum[]
-  @Input() pagination: Pagination = {}
+  // @Input() pagination: Pagination = {}
   @Input() permisosPCM: boolean = false
+
+  // @Output() visibleDrawer = new EventEmitter()
+  // @Output() filters = new EventEmitter<Pagination>()
+  // @Output() export = new EventEmitter<boolean>()
+  // @Output() save = new EventEmitter<boolean>()
+
+  @Input() visible: boolean = false
+  @Input() pagination: any = {}
+
+  @Output() filters = new EventEmitter<Pagination>();
   @Output() visibleDrawer = new EventEmitter()
-  @Output() filters = new EventEmitter<Pagination>()
-  @Output() export = new EventEmitter<boolean>()
   @Output() save = new EventEmitter<boolean>()
+  @Output() export = new EventEmitter<boolean>()
   
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   public eventos = signal<EventoResponse[]>([])
@@ -63,14 +72,43 @@ export class FiltrosAtencionComponent {
     const sectorId = pagination.sectorId ? Number(pagination.sectorId) : null
     const fechaInicio = pagination.fechaInicio ? convertDateStringToDate(pagination.fechaInicio) : null
     const fechaFin = pagination.fechaFin ? convertDateStringToDate(pagination.fechaFin) : null
+
+    const ubigeo = this.pagination.ubigeo
+    const ubigeoLen = ubigeo ? ubigeo.length : 0
+    const departamento = ubigeo && ubigeoLen >= 2 ? ubigeo.slice(0,2) : null
+    const provincia = ubigeo && ubigeoLen >= 4 ? `${ubigeo.slice(0,4)}01` : null
+    const distrito = ubigeo && ubigeoLen == 6 ? ubigeo : null
     
-    
-    this.formFilters.reset({...pagination, eventoId, fechaInicio, fechaFin, sectorId})
+    this.formFilters.reset({...pagination, eventoId, fechaInicio, fechaFin, sectorId, departamento, provincia, distrito})
+    this.getFormUbigeoService()
     this.setTipoAtencion()
     this.getAllTipoEntidades()
     this.obtenerServiciosEventos()
     this.obtenerServicioSectores()
     this.obtenerDepartamentoService()
+  }
+
+  getFormUbigeoService(){
+    const ubigeo = this.pagination.ubigeo
+    if(ubigeo){
+      const ubigeoLen = ubigeo.length
+      if(ubigeoLen >= 2){
+        this.obtenerProvinciaService(ubigeo.slice(0,2))
+      } 
+      if(ubigeoLen >= 4) {
+        this.setControlEnable('provincia')
+        this.setControlEnable('distrito')
+        this.obtenerDistritosService(ubigeo.slice(0,4))
+      }
+      if(ubigeoLen == 6) {
+        this.setControlEnable('distrito')
+      }
+    }
+  }
+
+  setControlEnable(control:string, enable: boolean = true){
+    const formControl = this.formFilters.get(control)
+    enable ? formControl?.enable() : formControl?.disable()
   }
 
   setTipoAtencion(){
