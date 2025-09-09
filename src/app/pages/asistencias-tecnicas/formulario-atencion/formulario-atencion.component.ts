@@ -47,7 +47,8 @@ export class FormularioAtencionComponent {
   cuiClasificacion: boolean = false
   
   evento = signal<EventoResponse>(this.dataAtention.evento)
-  departamentos = signal<UbigeoDepartmentResponse[]>(this.dataAtention.departamentos)
+  // departamentos = signal<UbigeoDepartmentResponse[]>(this.dataAtention.departamentos)
+  departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])
   distritos = signal<UbigeoDistritoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
@@ -153,6 +154,7 @@ export class FormularioAtencionComponent {
     this.setPermisosPCM()
     this.setTipoAtencion()
     this.setModalidades()
+    this.obtenerDepartamentos()
     this.obtenerTipoEntidadesService()
     this.obtenerEspaciosService()
     this.obtenerNivelesGobiernoService()
@@ -361,6 +363,10 @@ export class FormularioAtencionComponent {
 
   setModalidades(){
     this.modalidades = this.modalidades.filter( item => item.text != AsistenciasTecnicasModalidad.DOCUMENTO )    
+  }
+
+  obtenerDepartamentos(){
+    this.ubigeoService.getDepartments().subscribe(resp => this.departamentos.set(resp.data))
   }
 
   obtenerLugaresService() {

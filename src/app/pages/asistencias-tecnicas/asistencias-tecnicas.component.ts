@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, OrientacionAtencion, Pagination, UbigeoDepartmentResponse } from '@core/interfaces';
-import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService, UbigeosService } from '@core/services';
-import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { FormGroup } from '@angular/forms';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { convertEnumToObject, deleteKeysToObject, obtenerPermisosBotones } from '@core/helpers';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, OrientacionAtencion, Pagination } from '@core/interfaces';
+import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService } from '@core/services';
 import { EventosService } from '@core/services/eventos.service';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -36,7 +36,6 @@ import { FormularioAtencionComponent } from './formulario-atencion/formulario-at
 export default class AsistenciasTecnicasComponent {
   title: string = `Lista de Atenciones`;
   public asistenciasTecnicas = signal<AsistenciaTecnicaResponse[]>([])
-  public departamentos = signal<UbigeoDepartmentResponse[]>([])
   public evento = signal<EventoResponse>({} as EventoResponse)
 
   pagination: Pagination = {
@@ -77,7 +76,6 @@ export default class AsistenciasTecnicasComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private asistenciaTecnicaService = inject(AsistenciasTecnicasService)
-  private ubigeoService = inject(UbigeosService)
   private authStore = inject(AuthService)
   public eventosService = inject(EventosService)
   private utilesService = inject(UtilesService);
@@ -95,7 +93,6 @@ export default class AsistenciasTecnicasComponent {
     this.permisosPCM = this.setPermisosPCM()
     this.obtenerEventos()
     this.getPermissions()
-    this.obtenerDepartamentos()
     this.getParams()
   }
 
@@ -169,15 +166,6 @@ export default class AsistenciasTecnicasComponent {
           this.pagination.currentPage = 1
           this.pagination.pageSize = 10
           this.pagination.total = 0
-        }
-      })
-  }
-
-  obtenerDepartamentos() {
-    this.ubigeoService.getDepartments()
-      .subscribe(resp => {
-        if (resp.success == true) {
-          this.departamentos.set(resp.data)
         }
       })
   }
@@ -394,7 +382,6 @@ export default class AsistenciasTecnicasComponent {
         modalidades: this.modalidades,
         clasificaciones: this.clasificaciones,
         orientaciones: this.orientaciones,
-        departamentos: this.departamentos(),
         evento: this.evento(),
         create,
         authUser: this.authStore.usuarioAuth()
