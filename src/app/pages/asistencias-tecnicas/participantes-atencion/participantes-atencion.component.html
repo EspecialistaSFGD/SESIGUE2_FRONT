@@ -1,0 +1,32 @@
+<div class="flex flex-col bg-white border border-b-0 border-solid border-grey-200">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-solid border-grey-200">
+        <div class="flex flex-col">
+            <h5 class="m-0 text-base font-semibold">Participantes</h5>
+            Resultados: {{pagination.total}}
+        </div>
+        <!-- <div class="rounded border border-sky-700 text-sky-700 px-3 py-2 cursor-pointer hover:bg-sky-700 hover:text-white">
+            Nuevo integrante
+        </div> -->
+    </div>
+    <div class="w-full flex border-solid">
+        <nz-table nzSize="small" [nzData]="participantes()"
+            [nzFrontPagination]="false" [nzShowPagination]="pagination.total! > 5"
+            [nzLoading]="loading" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
+            [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+            <thead>
+                <tr>
+                    <th nzAlign="center">Tipo</th>
+                    <th nzAlign="center">Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(participante of participantes(); track $index){
+                <tr>
+                    <td nzAlign="center">{{participante.nombreNivelGobierno}}</td>
+                    <td nzAlign="center">{{participante.cantidad}}</td>
+                <tr>
+                }
+            </tbody>
+        </nz-table>
+    </div>
+</div>

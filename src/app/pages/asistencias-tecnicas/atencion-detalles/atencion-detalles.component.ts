@@ -5,11 +5,12 @@ import { AsistenciaTecnicaResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, AuthService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AtencionDetalleComponent } from './atencion-detalle/atencion-detalle.component';
+import { ParticipantesAtencionComponent } from '../participantes-atencion/participantes-atencion.component';
 
 @Component({
   selector: 'app-atencion-detalles',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, AtencionDetalleComponent],
+  imports: [CommonModule, RouterModule, NgZorroModule, AtencionDetalleComponent, ParticipantesAtencionComponent],
   templateUrl: './atencion-detalles.component.html',
   styles: ``
 })
@@ -41,13 +42,7 @@ export default class AtencionDetallesComponent {
   obtenerAtencionService(){
     this.asistenciaTecnicaService.obtenerAsistenciaTecnica(this.asistenciaTecnicaId.toString())
       .subscribe( resp => {
-        if(resp.success){
-          console.log(resp);
-          
-          this.asistenciaTecnica = resp.data
-        } else {
-          this.router.navigate(['/atenciones']);
-        }
+        resp.success ? this.asistenciaTecnica = resp.data : this.router.navigate(['/atenciones']);
       })
   }
 

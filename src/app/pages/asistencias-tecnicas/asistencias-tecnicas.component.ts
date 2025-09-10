@@ -220,17 +220,13 @@ export default class AsistenciasTecnicasComponent {
     const campo = sorts?.key
     const ordenar = sorts?.value!.slice(0, -3)
     const filtrosSaved = localStorage.getItem('filtrosAtenciones');
-    console.log(this.pagination);
-    
+
     let filtros:any = {}
     if(filtrosSaved){
       filtros = JSON.parse(filtrosSaved)
       filtros.save = false      
       localStorage.setItem('filtrosAtenciones', JSON.stringify(filtros))
     }
-    console.log('params query');
-    // console.log(filtros);
-    
     this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })   
   }
 
