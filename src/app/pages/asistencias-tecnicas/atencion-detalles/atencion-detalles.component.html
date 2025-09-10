@@ -4,4 +4,4 @@
 	</nz-page-header-title>
 </nz-page-header>
 
-{{asistenciaTecnica | json}}
+<app-atencion-detalle *ngIf="asistenciaTecnica" [asistenciaTecnica]="asistenciaTecnica" />

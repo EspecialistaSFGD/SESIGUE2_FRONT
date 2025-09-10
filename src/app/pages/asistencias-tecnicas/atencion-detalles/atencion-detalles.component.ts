@@ -4,15 +4,16 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AsistenciaTecnicaResponse } from '@core/interfaces';
 import { AsistenciasTecnicasService, AuthService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { AtencionDetalleComponent } from './atencion-detalle/atencion-detalle.component';
 
 @Component({
-  selector: 'app-atencion-detalle',
+  selector: 'app-atencion-detalles',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule],
-  templateUrl: './atencion-detalle.component.html',
+  imports: [CommonModule, RouterModule, NgZorroModule, AtencionDetalleComponent],
+  templateUrl: './atencion-detalles.component.html',
   styles: ``
 })
-export default class AtencionDetalleComponent {
+export default class AtencionDetallesComponent {
   asistenciaTecnicaId: number = 0
   asistenciaTecnica: AsistenciaTecnicaResponse = {} as AsistenciaTecnicaResponse
   
@@ -20,7 +21,6 @@ export default class AtencionDetalleComponent {
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private authStore = inject(AuthService)
-
 
   ngOnInit(): void {
     this.verificarAtencion()
