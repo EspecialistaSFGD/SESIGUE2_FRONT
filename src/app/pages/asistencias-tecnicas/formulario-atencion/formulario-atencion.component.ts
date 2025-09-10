@@ -930,7 +930,7 @@ export class FormularioAtencionComponent {
   }
 
   obtenerAsistenteService(dni: string){
-    const evento = Number(this.evento().eventoId!)
+    const evento = this.permisosPCM ? 0 : Number(this.evento().eventoId!)
     const ubigeoControl = this.formAtencion.get('ubigeo')
     const autoridadControl = this.formAtencion.get('autoridad')
 

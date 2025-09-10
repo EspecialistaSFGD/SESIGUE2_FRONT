@@ -393,10 +393,18 @@ export default class AsistenciasTecnicasComponent {
 
             const unidadIdControl = formAtencion.get('unidadId')
             const orientacionIdControl = formAtencion.get('orientacionId')
+            const dniAutoridadControl = formAtencion.get('dniAutoridad')
+            const contactoAutoridadControl = formAtencion.get('contactoAutoridad')
+
             const unidadId = unidadIdControl?.value
             const orientacionId = orientacionIdControl?.value
+            const dni = dniAutoridadControl?.value
+            const contacto = contactoAutoridadControl?.value
+
             unidadIdControl?.setValue(unidadId ?? '')
             orientacionIdControl?.setValue(orientacionId ?? '')
+            dniAutoridadControl?.setValue(dni ?? '')
+            contactoAutoridadControl?.setValue(contacto ?? '')
 
             if(create){
               this.crearAtencion(formAtencion)

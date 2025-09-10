@@ -27,10 +27,13 @@ export class AsistenciasTecnicasService {
     return this.http.get<AsistenciaTecnicaResponses>(`${this.urlAsistenciaTecnica}/ObtenerAtencion/${asistenciaId}`, { headers })
   }
 
-  obtenerAsistente(numeroDocumento:string, eventoId: number){
+  obtenerAsistente(numeroDocumento:string, eventoId: number = 0){
     let params = new HttpParams()
       .append('numeroDocumento', numeroDocumento)
-      .append('eventoId', eventoId )
+
+    if(eventoId != 0){
+      params = params.append('eventoId', eventoId )
+    }
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<AsistentesAtencionResponse>(`${this.urlAsistenciaTecnica}/ObtenerAsistente`, { headers, params })
   }
