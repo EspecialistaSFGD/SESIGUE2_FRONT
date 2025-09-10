@@ -6,11 +6,12 @@ import { AsistenciasTecnicasService, AuthService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AtencionDetalleComponent } from './atencion-detalle/atencion-detalle.component';
 import { ParticipantesAtencionComponent } from '../participantes-atencion/participantes-atencion.component';
+import { AgendasAtencionComponent } from '../agendas-atencion/agendas-atencion.component';
 
 @Component({
   selector: 'app-atencion-detalles',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, AtencionDetalleComponent, ParticipantesAtencionComponent],
+  imports: [CommonModule, RouterModule, NgZorroModule, AtencionDetalleComponent, ParticipantesAtencionComponent, AgendasAtencionComponent],
   templateUrl: './atencion-detalles.component.html',
   styles: ``
 })

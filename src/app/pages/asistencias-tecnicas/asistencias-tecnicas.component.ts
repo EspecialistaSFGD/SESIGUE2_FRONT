@@ -39,7 +39,7 @@ export default class AsistenciasTecnicasComponent {
 
   pagination: Pagination = {
     code: 0,
-    columnSort: 'fechaAtencion',
+    columnSort: 'asistenciaId',
     typeSort: 'ASC',
     pageSize: 10,
     currentPage: 1,
@@ -113,7 +113,7 @@ export default class AsistenciasTecnicasComponent {
       if (Object.keys(params).length > 0) {
         this.loading = false
 
-        let campo = params['campo'] ?? 'fechaAtencion'
+        let campo = params['campo'] ?? 'asistenciaId'
 
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']

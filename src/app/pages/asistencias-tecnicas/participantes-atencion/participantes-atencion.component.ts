@@ -31,7 +31,6 @@ export class ParticipantesAtencionComponent {
   private asistenciaTecnicaParticipanteService = inject(AsistenciaTecnicaParticipantesService)
 
   obtenerParticipantes() {
-    console.log('verificando asistente');
     this.loading = true
     this.asistenciaTecnicaParticipanteService.getAllParticipantes(this.asistenciaTecnica.asistenciaId!, this.pagination)
       .subscribe(resp => {        

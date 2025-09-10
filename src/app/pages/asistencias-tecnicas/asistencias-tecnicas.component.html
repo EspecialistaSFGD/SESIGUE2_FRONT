@@ -44,10 +44,8 @@
         <td nzAlign="center">{{atencion.clasificacion | titlecase}}</td>
         <td nzRight>
           <div class="w-full flex justify-center">
-            <a [routerLink]="[atencion.asistenciaId]">
-              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
-                 <i class="pi pi-eye" style="font-size: .85rem;"></i>
-              </button>
+            <a *ngIf="permisosPCM" [routerLink]="[atencion.asistenciaId]" class="p-1 text-sky-700 hover:text-sky-800">
+                <i class="pi pi-eye" style="font-size: .85rem;"></i>
             </a>
             @if(atencionActions.edit){
             <button nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !disabledActions(atencion)  ? 'Actualizar Atención' : '' }}" [disabled]="disabledActions(atencion)">

@@ -16,6 +16,7 @@ export enum AsistenciasTecnicasTipos {
   COORDINACION = 'coordinación',
   CAPACITACION = 'capacitación',
   ATENCION = 'atención',
+  VISITA = 'visita',
   DOCUMENTO = 'documento'
 }
 
