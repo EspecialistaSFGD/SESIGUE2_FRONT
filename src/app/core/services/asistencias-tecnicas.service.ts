@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@environments/environment';
-import { AsistenciaTecnicaResponse, AsistenciasTecnicasResponse, AsistentesAtencionResponse } from '@core/interfaces/asistencia-tecnica.interface';
+import { AsistenciaTecnicaResponse, AsistenciaTecnicaResponses, AsistenciasTecnicasResponse, AsistentesAtencionResponse } from '@core/interfaces/asistencia-tecnica.interface';
 import { Pagination } from '@core/interfaces/pagination.interface';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
@@ -20,6 +20,11 @@ export class AsistenciasTecnicasService {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<AsistenciasTecnicasResponse>(`${this.urlAsistenciaTecnica}/ListarAsistenciasTecnicas`, { headers, params })
+  }
+
+  obtenerAsistenciaTecnica(asistenciaId: string){
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<AsistenciaTecnicaResponses>(`${this.urlAsistenciaTecnica}/ObtenerAtencion/${asistenciaId}`, { headers })
   }
 
   obtenerAsistente(numeroDocumento:string, eventoId: number){

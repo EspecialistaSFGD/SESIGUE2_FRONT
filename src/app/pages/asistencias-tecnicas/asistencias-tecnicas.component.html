@@ -20,9 +20,7 @@
         <th nzWidth="80px" nzAlign="center" nzColumnKey="autoridad" [nzSortFn]="true">Autoridad</th>
         <th nzWidth="150px" nzAlign="center" nzColumnKey="espacio" [nzSortFn]="true">Espacio</th>
         <th nzWidth="100px" nzAlign="center" nzColumnKey="clasificacion" [nzSortFn]="true">Clasificación</th>
-        @if(atencionActions.edit || atencionActions.delete || atencionActions.validate){
-          <th nzRight nzWidth="100px" nzAlign="center">Acciones</th>
-        }
+        <th nzRight nzWidth="100px" nzAlign="center">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -44,31 +42,34 @@
         <td nzAlign="center">{{atencion.participaAutoridad }}</td>
         <td nzAlign="center">{{atencion.espacio| titlecase }}</td>
         <td nzAlign="center">{{atencion.clasificacion | titlecase}}</td>
-        @if(atencionActions.edit || atencionActions.delete || atencionActions.validate){
-          <td nzRight>
-            <div class="w-full flex justify-center">
-              @if(atencionActions.edit){
-              <button nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !disabledActions(atencion)  ? 'Actualizar Atención' : '' }}" [disabled]="disabledActions(atencion)">
-                <!-- <span nz-icon nzType="edit" nzTheme="outline"></span> -->
-                 <i class="pi pi-pencil" style="font-size: .85rem;"></i>
+        <td nzRight>
+          <div class="w-full flex justify-center">
+            <a [routerLink]="[atencion.asistenciaId]">
+              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
+                 <i class="pi pi-eye" style="font-size: .85rem;"></i>
               </button>
-              }
-              @if(atencionActions.delete){
-              <button nz-button nzDanger nzType="link" nz-tooltip="{{ !disabledActions(atencion) ? 'Eliminar Atención' : '' }}" (click)="eliminarAsistencia(atencion)" [disabled]="disabledActions(atencion)">
-                <!-- <span nz-icon nzType="delete" nzTheme="outline"></span> -->
-                <i class="pi pi-trash" style="font-size: .85rem;"></i>
+            </a>
+            @if(atencionActions.edit){
+            <button nz-button nzType="link" (click)="updatedAsistencia(atencion)" nz-tooltip="{{ !disabledActions(atencion)  ? 'Actualizar Atención' : '' }}" [disabled]="disabledActions(atencion)">
+              <!-- <span nz-icon nzType="edit" nzTheme="outline"></span> -->
+               <i class="pi pi-pencil" style="font-size: .85rem;"></i>
+            </button>
+            }
+            @if(atencionActions.delete){
+            <button nz-button nzDanger nzType="link" nz-tooltip="{{ !disabledActions(atencion) ? 'Eliminar Atención' : '' }}" (click)="eliminarAsistencia(atencion)" [disabled]="disabledActions(atencion)">
+              <!-- <span nz-icon nzType="delete" nzTheme="outline"></span> -->
+              <i class="pi pi-trash" style="font-size: .85rem;"></i>
+            </button>
+            }
+            @if(atencionActions.validate){
+              <button nz-button nzType="link" nz-tooltip="{{ esDocumento(atencion) && !atencion.validado ? 'Validar Atención' : '' }}" (click)="validarAtencion(atencion)"
+                [disabled]="!esDocumento(atencion) || atencion.validado">
+                <!-- <span nz-icon nzType="check" nzTheme="outline"></span> -->
+                <i class="pi pi-check" style="font-size: .85rem;"></i>
               </button>
-              }
-              @if(atencionActions.validate){
-                <button nz-button nzType="link" nz-tooltip="{{ esDocumento(atencion) && !atencion.validado ? 'Validar Atención' : '' }}" (click)="validarAtencion(atencion)"
-                  [disabled]="!esDocumento(atencion) || atencion.validado">
-                  <!-- <span nz-icon nzType="check" nzTheme="outline"></span> -->
-                  <i class="pi pi-check" style="font-size: .85rem;"></i>
-                </button>
-              }
-            </div>
-          </td>
-        }
+            }
+          </div>
+        </td>
       </tr>
       }
     </tbody>
