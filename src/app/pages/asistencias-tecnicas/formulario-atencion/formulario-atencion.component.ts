@@ -39,6 +39,7 @@ export class FormularioAtencionComponent {
   mancomunidadSlug:string[] = ['MM','MR']
   temaCount = 1500
   comentariosCount = 900
+  acuerdosCount = 900
   esMancomunidad: boolean = false
   esRegional: boolean = false
   fileListMeet: NzUploadFile[] = [];
@@ -46,7 +47,8 @@ export class FormularioAtencionComponent {
   cuiClasificacion: boolean = false
   
   evento = signal<EventoResponse>(this.dataAtention.evento)
-  departamentos = signal<UbigeoDepartmentResponse[]>(this.dataAtention.departamentos)
+  // departamentos = signal<UbigeoDepartmentResponse[]>(this.dataAtention.departamentos)
+  departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])
   distritos = signal<UbigeoDistritoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
@@ -138,6 +140,7 @@ export class FormularioAtencionComponent {
     tema: [{ value: '', disabled: false }, Validators.required],
     validado: [false],
     comentarios: [''],
+    acuerdos: [''],
     evidenciaReunion: [''],
     evidenciaAsistencia: [''],
     congresistas: this.fb.array([]),
@@ -151,6 +154,7 @@ export class FormularioAtencionComponent {
     this.setPermisosPCM()
     this.setTipoAtencion()
     this.setModalidades()
+    this.obtenerDepartamentos()
     this.obtenerTipoEntidadesService()
     this.obtenerEspaciosService()
     this.obtenerNivelesGobiernoService()
@@ -359,6 +363,10 @@ export class FormularioAtencionComponent {
 
   setModalidades(){
     this.modalidades = this.modalidades.filter( item => item.text != AsistenciasTecnicasModalidad.DOCUMENTO )    
+  }
+
+  obtenerDepartamentos(){
+    this.ubigeoService.getDepartments().subscribe(resp => this.departamentos.set(resp.data))
   }
 
   obtenerLugaresService() {
@@ -670,6 +678,9 @@ export class FormularioAtencionComponent {
     distritoControl?.disable()
     distritoControl?.reset()
     autoridadControl?.reset()
+    if(!tipoValue){
+      autoridadControl?.disable()
+    }
   }
 
   obtenerTipoEntidad(tipoId: number){
@@ -683,23 +694,18 @@ export class FormularioAtencionComponent {
     const departamento = this.formAtencion.get('departamento')?.value
     const provinciaControl = this.formAtencion.get('provincia')
     const distritoControl = this.formAtencion.get('distrito')
-    let ubigeo = null 
-    
+    let ubigeo = null
+
     departamento ? autoridadControl?.enable() : autoridadControl?.disable()
     if(departamento){
       ubigeo = `${departamento}0000`
-      if(!this.esRegional){
-        this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
-        // ubigeoControl?.setValue(ubigeo)
-        this.obtenerProvinciasService(departamento)
-
-        if(tipoEntidadControl?.value){
-          provinciaControl?.enable()
-        }
-
-        
-        this.obtenerEntidadPorUbigeoService(ubigeo)
+      this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
+      if(!this.esRegional){}
+      this.obtenerProvinciasService(departamento)
+      if(tipoEntidadControl?.value){
+        provinciaControl?.enable()
       }
+      this.obtenerEntidadPorUbigeoService(ubigeo)
     } else {
       this.ubigeoTipo = UbigeoTipoEnum.PAIS
       provinciaControl?.disable()
@@ -849,8 +855,7 @@ export class FormularioAtencionComponent {
       autoridad ? nombreControl?.disable() : nombreControl?.enable()
       autoridad ? cargoControl?.disable() : cargoControl?.enable()
     }
-
-  
+    
     if(consultarAlcalde && autoridad == true && ubigeo){
       this.obtenerAlcaldePorUbigeo()
     }
@@ -925,7 +930,7 @@ export class FormularioAtencionComponent {
   }
 
   obtenerAsistenteService(dni: string){
-    const evento = Number(this.evento().eventoId!)
+    const evento = this.permisosPCM ? 0 : Number(this.evento().eventoId!)
     const ubigeoControl = this.formAtencion.get('ubigeo')
     const autoridadControl = this.formAtencion.get('autoridad')
 
@@ -1266,6 +1271,8 @@ export class FormularioAtencionComponent {
       }
       if (control == 'tema') {
         this.temaCount = qty - value.length;
+      } else if(control == 'acuerdos') {
+        this.acuerdosCount = qty - value.length
       } else {
         this.comentariosCount = qty - value.length;
       }

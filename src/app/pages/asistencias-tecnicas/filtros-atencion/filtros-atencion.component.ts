@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { getDateFormat } from '@core/helpers';
-import { EventoResponse, ItemEnum, Pagination, SectorResponse, TipoEntidadResponse } from '@core/interfaces';
-import { EventosService, SectoresService, TipoEntidadesService } from '@core/services';
+import { capitalize, convertDateStringToDate, getDateFormat } from '@core/helpers';
+import { EventoResponse, ItemEnum, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { EventosService, SectoresService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -16,60 +16,109 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
   styles: ``
 })
 export class FiltrosAtencionComponent {
-  @Input() visible: boolean = false
+  // @Input() visible: boolean = false
   @Input() tipos!: ItemEnum[]
-  @Input() paginationFilters: Pagination = {}
+  // @Input() pagination: Pagination = {}
   @Input() permisosPCM: boolean = false
+
+  // @Output() visibleDrawer = new EventEmitter()
+  // @Output() filters = new EventEmitter<Pagination>()
+  // @Output() export = new EventEmitter<boolean>()
+  // @Output() save = new EventEmitter<boolean>()
+
+  @Input() visible: boolean = false
+  @Input() pagination: any = {}
+
+  @Output() filters = new EventEmitter<Pagination>();
   @Output() visibleDrawer = new EventEmitter()
-  @Output() filters = new EventEmitter<Pagination>()
+  @Output() save = new EventEmitter<boolean>()
   @Output() export = new EventEmitter<boolean>()
   
   public tipoEntidades = signal<TipoEntidadResponse[]>([])
   public eventos = signal<EventoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
+  departamentos = signal<UbigeoDepartmentResponse[]>([])
+  provincias = signal<UbigeoProvinciaResponse[]>([])
+  distritos = signal<UbigeoDistritoResponse[]>([])
 
   private fb = inject(FormBuilder)
   private tipoEntidadService = inject(TipoEntidadesService)
   private eventosService = inject(EventosService)
   private sectoresService = inject(SectoresService)
   private validatorsService = inject(ValidatorService)
+  private ubigeosService = inject(UbigeosService)
 
   private timeout: any;
-  pagination: Pagination = {
-    code: 0,
-    columnSort: 'fechaRegistro',
-    typeSort: 'ASC',
-    pageSize: 10,
-    currentPage: 1,
-    total: 0
-  }
 
   formFilters: FormGroup = this.fb.group({
-    codigo: [''],
-    fechaInicio: [''],
-    fechaFin: [''],
-    tipoEntidad: [''],
-    tipoAtencion: [''],
-    departameno: [''],
-    provincia: [''],
-    distrito: [''],
-    ubigeo: [''],
+    codigo: [null],
+    fechaInicio: [null],
+    fechaFin: [null],
+    tipoEntidad: [null],
+    tipoAtencion: [null],
+    ubigeo: [null],
+    departamento: [null],
+    provincia: [{ value: null, disabled: true }],
+    distrito: [{ value: null, disabled: true }],
     sectorId: [null],
     eventoId: [null],
     unidadOrganica: [''],
     especialista: [''],
   })
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    const pagination = { ...this.pagination }
+    const eventoId = pagination.eventoId ? Number(pagination.eventoId) : null
+    const sectorId = pagination.sectorId ? Number(pagination.sectorId) : null
+    const fechaInicio = pagination.fechaInicio ? convertDateStringToDate(pagination.fechaInicio) : null
+    const fechaFin = pagination.fechaFin ? convertDateStringToDate(pagination.fechaFin) : null
+
+    const ubigeo = this.pagination.ubigeo
+    const ubigeoLen = ubigeo ? ubigeo.length : 0
+    const departamento = ubigeo && ubigeoLen >= 2 ? ubigeo.slice(0,2) : null
+    const provincia = ubigeo && ubigeoLen >= 4 ? `${ubigeo.slice(0,4)}01` : null
+    const distrito = ubigeo && ubigeoLen == 6 ? ubigeo : null
+    
+    this.formFilters.reset({...pagination, eventoId, fechaInicio, fechaFin, sectorId, departamento, provincia, distrito})
+    this.getFormUbigeoService()
+    this.setTipoAtencion()
     this.getAllTipoEntidades()
     this.obtenerServiciosEventos()
     this.obtenerServicioSectores()
+    this.obtenerDepartamentoService()
   }
 
-  changeVisibleDrawer(visible: boolean){
-    this.visibleDrawer.emit(visible)
+  getFormUbigeoService(){
+    const ubigeo = this.pagination.ubigeo
+    if(ubigeo){
+      const ubigeoLen = ubigeo.length
+      if(ubigeoLen >= 2){
+        this.obtenerProvinciaService(ubigeo.slice(0,2))
+      } 
+      if(ubigeoLen >= 4) {
+        this.setControlEnable('provincia')
+        this.setControlEnable('distrito')
+        this.obtenerDistritosService(ubigeo.slice(0,4))
+      }
+      if(ubigeoLen == 6) {
+        this.setControlEnable('distrito')
+      }
+    }
   }
 
+  setControlEnable(control:string, enable: boolean = true){
+    const formControl = this.formFilters.get(control)
+    enable ? formControl?.enable() : formControl?.disable()
+  }
+
+  setTipoAtencion(){
+    const newTipos: ItemEnum[] = []
+    this.tipos.filter( item => {
+      newTipos.push({ value: item.value.toLowerCase(), text: capitalize(item.text)! })
+    })
+    this.tipos = newTipos.filter( item => this.permisosPCM ? item.value.toLowerCase() != 'atencion' :  item.value.toLowerCase() == 'atencion' )
+  }
+  
   getAllTipoEntidades() {    
     this.pagination.columnSort = 'nombre'
     this.tipoEntidadService.getAllTipoEntidades(this.pagination)
@@ -88,37 +137,36 @@ export class FiltrosAtencionComponent {
   }
 
   obtenerServicioSectores() {
-    this.sectoresService.getAllSectors()
-      .subscribe(resp => {        
-        this.sectores.set(resp.data)
-      })
+    this.sectoresService.getAllSectors().subscribe(resp => this.sectores.set(resp.data))
   }
 
-  changeCodigo(event: any){
-    const codigoControl = this.formFilters.get('codigo')
+  changeControl(event: any, control:string){
+    const codigoControl = this.formFilters.get(control)
     const codigoValue = codigoControl?.value
 
+    const nameControl = control as keyof Pagination;
     if(codigoValue){
       clearTimeout(this.timeout);
       var $this = this;
       this.timeout = setTimeout(function () {
         if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoValue.length > 0) {          
-          $this.paginationFilters.codigo = codigoValue          
+          $this.pagination[nameControl] = codigoValue          
           $this.generateFilters()
         }
-      }, 500);
-    } else {      
-      delete this.paginationFilters.codigo
+      }, 500);      
+    } else {
+      codigoControl?.patchValue(null)
+      delete this.pagination[nameControl]      
       this.generateFilters()
     }
   }
 
   changefechaInicio(){
-    const fechaInicioValue = this.formFilters.get('fechaInicio')?.value    
+    const fechaInicioValue = this.formFilters.get('fechaInicio')?.value
+
     if(fechaInicioValue){      
-      this.paginationFilters.fechaInicio = getDateFormat(fechaInicioValue)
     } else {
-      delete this.paginationFilters.fechaInicio
+      delete this.pagination.fechaInicio
     }
     this.generateFilters()
   }
@@ -126,9 +174,8 @@ export class FiltrosAtencionComponent {
   changeFechaFin(){
     const fechaFinValue = this.formFilters.get('fechaFin')?.value
     if(fechaFinValue){
-      this.paginationFilters.fechaFin = getDateFormat(fechaFinValue)
     } else {
-      delete this.paginationFilters.fechaFin
+      delete this.pagination.fechaFin
     }      
     this.generateFilters()
   }
@@ -149,15 +196,15 @@ export class FiltrosAtencionComponent {
       evento?.abreviatura.toLowerCase() == 'poi' ? sectorControl?.disable() : sectorControl?.enable()
       evento?.abreviatura.toLowerCase() == 'poi' ? sectorControl?.setValue(null) : sectorControl?.setValue(sectorControl?.value)
       if(evento?.abreviatura.toLowerCase() != 'poi'){
-        delete this.paginationFilters.fechaInicio
-        delete this.paginationFilters.fechaFin
+        delete this.pagination.fechaInicio
+        delete this.pagination.fechaFin
       } else {
-        delete this.paginationFilters.sectorId
+        delete this.pagination.sectorId
       }
 
-      this.paginationFilters.eventoId = eventoValue
+      this.pagination.eventoId = eventoValue
     } else {
-      delete this.paginationFilters.eventoId
+      delete this.pagination.eventoId
     }
     
     this.generateFilters()
@@ -166,22 +213,105 @@ export class FiltrosAtencionComponent {
   changeSector(){
     const sectorValue = this.formFilters.get('sectorId')?.value
     if(sectorValue){
-      this.paginationFilters.sectorId = sectorValue
+      this.pagination.sectorId = sectorValue
     } else {
-      delete this.paginationFilters.sectorId
+      delete this.pagination.sectorId
     }
     
     this.generateFilters()
   }
 
-  generateFilters(){
-    if(this.permisosPCM){
-      delete this.paginationFilters.tipoPerfil
+  obtenerDepartamentoService(){
+    this.ubigeosService.getDepartments().subscribe( resp => this.departamentos.set(resp.data))
+  }
+
+  changeTipoAtencion(){
+    this.generateFilters()
+  }
+
+  changeDepartamento(){
+    const ubigeoControl = this.formFilters.get('ubigeo')
+    const departamentoControl = this.formFilters.get('departamento')
+    const departamento = departamentoControl?.value
+    const provinciaControl = this.formFilters.get('provincia')
+    const distritoControl = this.formFilters.get('distrito')
+    if(departamento){
+      this.obtenerProvinciaService(departamento)
+      ubigeoControl?.setValue(departamento)
+      provinciaControl?.enable()
     } else {
-      this.paginationFilters.tipoPerfil = '1'
+      ubigeoControl?.reset()
+      provinciaControl?.enable()
+      provinciaControl?.reset()
+      delete this.pagination.ubigeo
     }
-     
-    this.filters.emit(this.paginationFilters)
+    distritoControl?.disable()
+    distritoControl?.reset()
+    this.generateFilters()
+  }
+
+  obtenerProvinciaService(departamento: string){
+    this.ubigeosService.getProvinces(departamento).subscribe( resp => this.provincias.set(resp.data))
+  }
+
+  changeProvincia(){
+    const ubigeoControl = this.formFilters.get('ubigeo')
+    const departamentoControl = this.formFilters.get('departamento')
+    const departamentoValue = departamentoControl?.value
+    const provinciaControl = this.formFilters.get('provincia')
+    const provinciaValue = provinciaControl?.value
+    const distritoControl = this.formFilters.get('distrito')
+    let ubigeo = departamentoValue
+    if(provinciaValue){
+      ubigeo = provinciaValue.slice(0,4)
+      this.obtenerDistritosService(`${ubigeo}01`)
+      distritoControl?.enable()
+    } else {
+      distritoControl?.disable()
+    }
+    ubigeoControl?.setValue(ubigeo)
+    distritoControl?.reset()
+    this.generateFilters()
+  }
+
+  obtenerDistritosService(provincia: string){    
+    this.ubigeosService.getDistricts(provincia) .subscribe( resp => this.distritos.set(resp.data))
+  }
+
+  changeDistrito(){
+    const ubigeoControl = this.formFilters.get('ubigeo')
+    const provinciaControl = this.formFilters.get('provincia')
+    const provinciaValue = provinciaControl?.value
+    const distritoControl = this.formFilters.get('distrito')
+    const distritoValue = distritoControl?.value
+
+    let ubigeo = distritoValue ? distritoValue : provinciaValue.slice(0,4)
+    ubigeoControl?.setValue(ubigeo)
+    this.generateFilters()
+  }
+
+  generateFilters(){
+    const fechaInicioControl = this.formFilters.get('fechaInicio')
+    const fechaFinControl = this.formFilters.get('fechaFin')
+
+    const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value) : null
+    const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value) : null
+
+    const formValue = { ...this.formFilters.value }   
+
+    this.filters.emit({...formValue, fechaInicio, fechaFin })
+  }
+
+  cleanParams(){
+    localStorage.removeItem('filtrosAtenciones');
+    this.formFilters.reset()
+    this.generateFilters()
+    this.changeVisibleDrawer(false,false)
+  }
+
+  changeVisibleDrawer(visible: boolean, save: boolean = true){
+    this.save.emit(save) 
+    this.visibleDrawer.emit(visible)
   }
 
   changeExport(){

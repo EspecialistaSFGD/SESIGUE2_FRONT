@@ -33,3 +33,7 @@ export const deleteKeysToObject = (object: any, keysDelete: string[]) => {
 
   return filteredPagination
 }
+
+export const deleteKeyNullToObject = (object: any) => {
+  return Object.fromEntries(Object.entries(object).filter(([_, v]) => v !== null && v !== undefined && v !== ''));
+}

@@ -6,11 +6,17 @@ export interface AsistenciasTecnicasResponse extends DataResponses {
   data: AsistenciaTecnicaResponse[],
 }
 
+export interface AsistenciaTecnicaResponses extends DataResponses {
+  data: AsistenciaTecnicaResponse,
+}
+
 export enum AsistenciasTecnicasTipos {
   ASESORAMIENTO = 'asesoramiento',
   ASISTENCIA = 'asistencia técnica',
   COORDINACION = 'coordinación',
+  CAPACITACION = 'capacitación',
   ATENCION = 'atención',
+  VISITA = 'visita',
   DOCUMENTO = 'documento'
 }
 
@@ -58,6 +64,7 @@ export interface AsistenciaTecnicaResponse {
   nombreEspacio: string,
   tema: string,
   comentarios: string,
+  acuerdos: string,
   evidenciaReunion: string,
   evidenciaAsistencia: string,
   estado?: boolean,

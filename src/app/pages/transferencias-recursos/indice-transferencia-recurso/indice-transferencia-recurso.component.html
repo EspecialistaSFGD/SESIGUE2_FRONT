@@ -24,9 +24,11 @@
 	</div>
 </form>
 
-@if(!data.success){
+@if(reNewFile){
 	<div class="grid pt-6 gap-2">
 		<h5 class="text-base font-semibold">Revisa las siguientes filas del archivo adjunto</h5>
+		<!-- <P>Para verificar el nombre correcto ya sea del departamento, provincia y/o distrito, <a [routerLink]="['entidades']" target="_blank" class="text-base font-bold text-sky-700 hover:text-sky-800 hover:underline"> click aquí</a></P> -->
+		<p>Para verificar el nombre correcto ya sea del departamento, provincia y/o distrito, <span class="text-base font-bold text-sky-700 hover:text-sky-800 hover:underline">ir a menu/entidades</span></p>
 		<nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" nzShowSizeChanger nzSize="small"
 		[nzData]="data.recursosIndices" [nzFrontPagination]="false">
 		<thead>

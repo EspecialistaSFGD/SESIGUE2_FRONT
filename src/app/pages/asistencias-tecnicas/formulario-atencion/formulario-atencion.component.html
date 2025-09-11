@@ -449,10 +449,10 @@
 		}
 
 		@if(!esDocumento){
-			<div class="flex flex-col" [ngClass]="{ 'col-span-2' : permisosPCM }">
+			<div class="flex flex-col">
 				<label for="comentarios">@if(!permisosPCM){ Orientación } @else { Comentarios }</label>
 				<textarea class="form-control" id="comentarios" formControlName="comentarios"
-					(keyup)="caracteresContador('comentarios',900)" placeholder="Ingrese el comentario aquí"
+					(keyup)="caracteresContador('comentarios',900)" [placeholder]="permisosPCM ? 'Ingrese el comentario aquí' : 'Ingrese la orientación aqui'"
 					rows="2"></textarea>
 				<div class="flex justify-between">
 					<div class="w-full text-danger" *ngIf="alertMessageError('comentarios')">
@@ -461,6 +461,20 @@
 					{{comentariosCount}}</div>
 				</div>
 			</div>
+			@if(permisosPCM){
+				<div class="flex flex-col">
+				<label for="acuerdos">Acuerdos</label>
+				<textarea class="form-control" id="acuerdos" formControlName="acuerdos"
+					(keyup)="caracteresContador('acuerdos',900)" placeholder="Ingrese el acuerdo aquí"
+					rows="2"></textarea>
+				<div class="flex justify-between">
+					<div class="w-full text-danger" *ngIf="alertMessageError('acuerdos')">
+					{{msgErrorControl('acuerdos','acuerdos')}}</div>
+					<div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : acuerdosCount < 20 }">
+					{{acuerdosCount}}</div>
+				</div>
+			</div>				
+			}
 		}
 	</div>
 

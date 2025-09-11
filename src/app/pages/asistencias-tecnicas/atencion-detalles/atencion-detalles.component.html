@@ -1,0 +1,12 @@
+<nz-page-header nzBackIcon [nzGhost]="false" (nzBack)="onBack()">
+	<nz-page-header-title>
+		Detalle de Atención {{asistenciaTecnica.codigo}}
+	</nz-page-header-title>
+</nz-page-header>
+
+<app-atencion-detalle *ngIf="asistenciaTecnica" [asistenciaTecnica]="asistenciaTecnica" />
+
+<div  *ngIf="asistenciaTecnica.asistenciaId" class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+	<app-participantes-atencion [asistenciaTecnica]="asistenciaTecnica" />
+	<app-agendas-atencion [asistenciaTecnica]="asistenciaTecnica" />
+</div>
