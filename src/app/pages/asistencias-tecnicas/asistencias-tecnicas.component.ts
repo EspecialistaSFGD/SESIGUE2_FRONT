@@ -3,8 +3,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { convertEnumToObject, deleteKeysToObject, obtenerPermisosBotones } from '@core/helpers';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, OrientacionAtencion, Pagination } from '@core/interfaces';
-import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService } from '@core/services';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, AsistenteResponse, AutoridadResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, JneAutoridadesResponses, JneAutoridadParams, JneAutoridadResponse, OrientacionAtencion, Pagination } from '@core/interfaces';
+import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, AsistentesService, AutoridadesService, CongresistasService, JneService } from '@core/services';
 import { EventosService } from '@core/services/eventos.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -17,6 +17,8 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
+import { JneAutoridadTipoEnum } from '@core/enums';
+import { catchError, forkJoin, of, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -59,6 +61,7 @@ export default class AsistenciasTecnicasComponent {
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
   showNzModal: boolean = false
+  autoridad: AutoridadResponse = {} as AutoridadResponse
 
   confirmModal?: NzModalRef;
   tipos: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasTipos)
@@ -83,6 +86,9 @@ export default class AsistenciasTecnicasComponent {
   private asistenciaTecnicaParticipanteService = inject(AsistenciaTecnicaParticipantesService)
   private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
   private messageService = inject(NzMessageService)
+  private jneService = inject(JneService)
+  private asistenteService = inject(AsistentesService)
+  private autoridadService = inject(AutoridadesService)
 
   public navigationAuth = computed(() => this.authStore.navigationAuth())
 
@@ -96,8 +102,8 @@ export default class AsistenciasTecnicasComponent {
   }
 
   setPermisosPCM(){
-    const profilePCM = [11,12,23]
-    return profilePCM.includes(this.perfilAuth)
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    return JSON.parse(permisosStorage) ?? false
   }
   
 
@@ -336,7 +342,7 @@ export default class AsistenciasTecnicasComponent {
     this.atencionFormModal(true)
   }
 
-  atencionFormModal(create: boolean): void{       
+  atencionFormModal(create: boolean): void{
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const codigoAtencion = create ? '' : this.asistenciaTecnica.codigo
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
@@ -391,20 +397,38 @@ export default class AsistenciasTecnicasComponent {
             formAtencion.get('sectorId')?.setValue(sectorId)
             formAtencion.get('validado')?.setValue(false)
 
+            const autoridadControl = formAtencion.get('autoridad')
             const unidadIdControl = formAtencion.get('unidadId')
             const orientacionIdControl = formAtencion.get('orientacionId')
             const dniAutoridadControl = formAtencion.get('dniAutoridad')
             const contactoAutoridadControl = formAtencion.get('contactoAutoridad')
+            const comentariosControl = formAtencion.get('comentarios')
+            const acuerdosControl = formAtencion.get('acuerdos')
+            const entidadIdControl = formAtencion.get('entidadId')
+            const tipoUbigeoControl = formAtencion.get('tipoUbigeo')
+            const ubigeoJneControl = formAtencion.get('ubigeoJne')
+            const tipoUbigeo = tipoUbigeoControl?.value
+            const ubigeoJne = ubigeoJneControl?.value
 
+            const entidadId = entidadIdControl?.value
             const unidadId = unidadIdControl?.value
             const orientacionId = orientacionIdControl?.value
             const dni = dniAutoridadControl?.value
             const contacto = contactoAutoridadControl?.value
+            const comentarios = comentariosControl?.value
+            const acuerdos = acuerdosControl?.value
 
             unidadIdControl?.setValue(unidadId ?? '')
             orientacionIdControl?.setValue(orientacionId ?? '')
             dniAutoridadControl?.setValue(dni ?? '')
             contactoAutoridadControl?.setValue(contacto ?? '')
+            comentariosControl?.setValue(comentarios ?? '')
+            acuerdosControl?.setValue(acuerdos ?? '')
+            
+            if(autoridadControl?.value == true){
+              const paramsJne:JneAutoridadParams = { tipo: tipoUbigeo, ubigeo: ubigeoJne }
+              this.validarAutoridadJne(paramsJne, entidadId)
+            }
 
             if(create){
               this.crearAtencion(formAtencion)
@@ -415,6 +439,98 @@ export default class AsistenciasTecnicasComponent {
         }
       ]
     })
+  }
+
+  validarAutoridadJne(paramsJne: JneAutoridadParams, entidadId: string){
+    const paginationAsistente:Pagination = { columnSort: 'asistenteId', typeSort: 'ASC', pageSize: 1, currentPage: 1 }
+    this.jneService.obtenerAutoridades(paramsJne)
+      .pipe(
+        switchMap( autoridadJneResp => 
+          forkJoin({
+            autoridadJneDniResp: this.jneService.obtenerAutoridadPorDni(this.obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad),
+            asistenteResp: this.asistenteService.ListarAsistentes({ ...paginationAsistente, dni: this.obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad })
+          })
+          .pipe(
+            tap(({ autoridadJneDniResp, asistenteResp }) => {
+              const autoridadJne = this.obtenerAutoridadJne(autoridadJneResp.data)
+              const autoridadDni = autoridadJneDniResp.data
+              const asistente = asistenteResp.data[0]
+
+              let sexo = '';
+              if(autoridadDni.sexo){
+                sexo = autoridadDni.sexo == "1" ? "M" : "F"
+              }
+
+              const autoridad:AutoridadResponse = {
+                entidadId,
+                cargo: autoridadDni.cargo,
+                foto: autoridadDni.rutaFoto,
+                partidoPolitico: autoridadDni.organizacionPolitica,
+                vigente: true,
+                dni: autoridadDni.documentoIdentidad,
+                nombres: autoridadDni.nombres,
+                apellidos: `${autoridadDni.apellidoPaterno} ${autoridadDni.apellidoMaterno}`,
+                sexo
+              }
+
+              const asistenteBody: AsistenteResponse = {
+                dni: autoridadJne.documentoIdentidad,
+                nombres: autoridadJne.nombres,
+                apellidos: `${autoridadJne.apellidoPaterno} ${autoridadJne.apellidoMaterno}`,
+                telefono: '',
+                email: '',
+                sexo
+              }
+
+              if(asistente){
+                this.asistenteService.actualizarAsistente({...asistenteBody, asistenteId: asistente.asistenteId})
+                  .subscribe( resp => {});
+
+                const paginationAutoridad: Pagination = {
+                  entidadId: Number(entidadId),
+                  asistenteId: asistente.asistenteId!,
+                  columnSort: 'autoridadId',
+                  typeSort: 'ASC',
+                  currentPage: 1,
+                  pageSize: 1
+                }
+                this.autoridadService.listarAutoridad(paginationAutoridad)
+                  .subscribe( resp => {
+                    if(resp.data.length > 0){
+                      const autoridadSelected = resp.data.find( item => item.vigente == true)
+                      this.autoridadService.actualizarAutoridad({...autoridad, autoridadId: autoridadSelected?.autoridadId})
+                        .subscribe( resp => {})
+                    } else {
+                      this.autoridadService.registarAutoridad(autoridad)
+                        .subscribe(resp => {})
+                    }
+                  })
+              } else {
+                this.asistenteService.registarAsistente(asistenteBody)
+                  .subscribe( resp => {
+                    if(resp.success == true){                    
+                      this.autoridadService.registarAutoridad(autoridad)
+                        .subscribe(resp => {})
+                    }
+                  })
+              }
+              
+            })
+          )
+        ),
+        catchError(err => {
+          return of({ error: 'ERROR EN LA CONSULTA JNE' })
+        })
+      )
+      .subscribe({
+        // next: data => this.orders = data, // aquí guardamos las órdenes en la variable del componente
+        error: err => console.error(err)
+      })
+  }
+
+  obtenerAutoridadJne(autoridades: JneAutoridadResponse[]): JneAutoridadResponse{
+    const cargosAutoridad = ['GOBERNADOR','ALCALDE']
+    return autoridades.find(item => cargosAutoridad.includes(item.cargo.split(' ')[0]))!
   }
 
   crearAtencion(atencion: FormGroup){

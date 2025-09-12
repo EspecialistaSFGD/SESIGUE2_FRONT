@@ -123,6 +123,8 @@ export class FormularioAtencionComponent {
     provinciaNombre: [''],
     distrito: [{ value: '', disabled: true }],
     distritoNombre: [''],
+    tipoUbigeo: [''],
+    ubigeoJne: [''],
     ubigeo: [''],
     entidad: [{ value: '', disabled: true }],
     entidadSlug: [null],
@@ -165,8 +167,10 @@ export class FormularioAtencionComponent {
   }
 
   setPermisosPCM(){
-    const profilePCM = [11,12,23]
-    this.permisosPCM = profilePCM.includes(this.authUser.codigoPerfil)
+    // const profilePCM = [11,12,23]
+    // this.permisosPCM = profilePCM.includes(this.authUser.codigoPerfil)
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+   this.permisosPCM = JSON.parse(permisosStorage) ?? false
   }
 
   setFormAtention(){    
@@ -1026,6 +1030,8 @@ export class FormularioAtencionComponent {
     const dniControl = this.formAtencion.get('dniAutoridad')
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
+    const tipoUbigeoControl = this.formAtencion.get('tipoUbigeo')
+    const ubigeoJneControl = this.formAtencion.get('ubigeoJne')
 
     let ubigeo = ''
     let tipo = JneAutoridadTipoEnum.DISTRITO
@@ -1048,6 +1054,9 @@ export class FormularioAtencionComponent {
       ubigeo = ubigeoDistrito.slice(-2) == '01' ? `${ubigeoDistrito.slice(0, 4)}00` : ubigeoDistrito
       tipo = ubigeoDistrito.slice(-2) == '01' ? JneAutoridadTipoEnum.PROVINCIA : JneAutoridadTipoEnum.DISTRITO
     }
+
+    tipoUbigeoControl?.setValue(tipo)
+    ubigeoJneControl?.setValue(ubigeo)
 
     const tipocargo = tipo == JneAutoridadTipoEnum.REGION ? 'GOBERNADOR' : 'ALCALDE'
 

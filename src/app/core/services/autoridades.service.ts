@@ -1,29 +1,29 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '@environments/environment';
-import { HelpersService } from './helpers.service';
 import { Pagination } from '@core/interfaces';
-import { AsistenteResponse, AsistenteResponses, AsistentesResponses } from '@core/interfaces/asistente.interface';
+import { AutoridadesResponses, AutoridadResponse, AutoridadResponses } from '@core/interfaces/autoridad.interface';
+import { environment } from '@environments/environment';
 import { catchError, map, Observable, of, tap } from 'rxjs';
+import { HelpersService } from './helpers.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AsistentesService {
-  private urlAsistentes: string = `${environment.api}/Asistente`
-  
+export class AutoridadesService {
+  private urlAutoridades: string = `${environment.api}/Autoridad`
+    
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  ListarAsistentes(pagination: Pagination): Observable<AsistentesResponses> {
+  listarAutoridad(pagination: Pagination): Observable<AutoridadesResponses> {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<AsistentesResponses>(`${this.urlAsistentes}/ListarAsistentes`, { headers, params })
+    return this.http.get<AutoridadesResponses>(`${this.urlAutoridades}/ListarAutoridades`, { headers, params })
   }
 
-  registarAsistente(asistente: AsistenteResponse) {
+  registarAutoridad(autoridad: AutoridadResponse) {
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.post<AsistenteResponses>(`${this.urlAsistentes}/RegistrarAsistente`, asistente, { headers })
+    return this.http.post<AutoridadResponses>(`${this.urlAutoridades}/RegistrarAutoridad`, autoridad, { headers })
       .pipe(
         tap(resp => {
           return resp
@@ -33,9 +33,9 @@ export class AsistentesService {
       )
   }
 
-  actualizarAsistente(asistente: AsistenteResponse){
+  actualizarAutoridad(autoridad: AutoridadResponse){
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.put<AsistenteResponses>(`${this.urlAsistentes}/ActualizarAsistente/${asistente.asistenteId}`, asistente, { headers })
+    return this.http.put<AutoridadResponses>(`${this.urlAutoridades}/ActualizarAutoridad/${autoridad.autoridadId}`, autoridad, { headers })
       .pipe(
         tap(resp => {
           return resp

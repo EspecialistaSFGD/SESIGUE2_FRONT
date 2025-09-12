@@ -180,6 +180,7 @@ export class AuthService {
 
             localStorage.setItem('menus', JSON.stringify(data.menus));
             localStorage.setItem('permisos', JSON.stringify(data.permisos));
+            localStorage.setItem('permisosPcm', JSON.stringify(data.permisosPcm));
 
             this.#usuario.update((v) => ({ ...v, permisos: data.permisos }));
             this.#usuario.update((v) => ({ ...v, isAuthenticated: true }));
@@ -711,6 +712,7 @@ export class AuthService {
     localStorage.removeItem('descripcionTipo');
     localStorage.removeItem('descripcionSector');
     localStorage.removeItem('permisos');
+    localStorage.removeItem('permisosPcm');
     localStorage.removeItem('departamento');
     localStorage.removeItem('provincia');
     localStorage.removeItem('distrito');

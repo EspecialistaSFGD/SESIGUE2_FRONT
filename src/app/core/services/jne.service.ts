@@ -24,7 +24,7 @@ export class JneService {
 
   obtenerAutoridadPorDni(dni: string ): Observable<JneAutoridadResponses> {
     let params = new HttpParams();
-    params = params.append('tipo', dni);
+    params = params.append('dni', dni);
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<JneAutoridadResponses>(`${this.urlJne}/ObtenerAutoridadPorDni`, { headers, params })
   }
