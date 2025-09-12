@@ -54,6 +54,7 @@ export interface AsistenciaTecnicaResponse {
   nombreAutoridad: string,
   cargoAutoridad: string,
   contactoAutoridad: string,
+  partidoPolitico?: string,
   congresista: boolean,
   dniCongresista: string,
   nombreCongresista: string,

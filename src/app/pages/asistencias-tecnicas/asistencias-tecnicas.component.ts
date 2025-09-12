@@ -343,7 +343,6 @@ export default class AsistenciasTecnicasComponent {
   }
 
   atencionFormModal(create: boolean): void{
-    // this.validarAutoridadJne({tipo: JneAutoridadTipoEnum.DISTRITO, ubigeo: '030402'}, '372')
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const codigoAtencion = create ? '' : this.asistenciaTecnica.codigo
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
@@ -403,6 +402,8 @@ export default class AsistenciasTecnicasComponent {
             const orientacionIdControl = formAtencion.get('orientacionId')
             const dniAutoridadControl = formAtencion.get('dniAutoridad')
             const contactoAutoridadControl = formAtencion.get('contactoAutoridad')
+            const comentariosControl = formAtencion.get('comentarios')
+            const acuerdosControl = formAtencion.get('acuerdos')
             const entidadIdControl = formAtencion.get('entidadId')
             const tipoUbigeoControl = formAtencion.get('tipoUbigeo')
             const ubigeoJneControl = formAtencion.get('ubigeoJne')
@@ -414,15 +415,18 @@ export default class AsistenciasTecnicasComponent {
             const orientacionId = orientacionIdControl?.value
             const dni = dniAutoridadControl?.value
             const contacto = contactoAutoridadControl?.value
+            const comentarios = comentariosControl?.value
+            const acuerdos = acuerdosControl?.value
 
             unidadIdControl?.setValue(unidadId ?? '')
             orientacionIdControl?.setValue(orientacionId ?? '')
             dniAutoridadControl?.setValue(dni ?? '')
             contactoAutoridadControl?.setValue(contacto ?? '')
-
-            const paramsJne:JneAutoridadParams = { tipo: tipoUbigeo, ubigeo: ubigeoJne }
+            comentariosControl?.setValue(comentarios ?? '')
+            acuerdosControl?.setValue(acuerdos ?? '')
             
             if(autoridadControl?.value == true){
+              const paramsJne:JneAutoridadParams = { tipo: tipoUbigeo, ubigeo: ubigeoJne }
               this.validarAutoridadJne(paramsJne, entidadId)
             }
 
@@ -492,9 +496,8 @@ export default class AsistenciasTecnicasComponent {
                 }
                 this.autoridadService.listarAutoridad(paginationAutoridad)
                   .subscribe( resp => {
-                    const autoridadResp = resp.data
-                    if(autoridadResp){
-                      const autoridadSelected = autoridadResp.find( item => item.vigente == true)
+                    if(resp.data.length > 0){
+                      const autoridadSelected = resp.data.find( item => item.vigente == true)
                       this.autoridadService.actualizarAutoridad({...autoridad, autoridadId: autoridadSelected?.autoridadId})
                         .subscribe( resp => {})
                     } else {

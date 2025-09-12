@@ -1055,7 +1055,7 @@ export class FormularioAtencionComponent {
       tipo = ubigeoDistrito.slice(-2) == '01' ? JneAutoridadTipoEnum.PROVINCIA : JneAutoridadTipoEnum.DISTRITO
     }
 
-    tipoUbigeoControl?.setValue(this.ubigeoTipo)
+    tipoUbigeoControl?.setValue(tipo)
     ubigeoJneControl?.setValue(ubigeo)
 
     const tipocargo = tipo == JneAutoridadTipoEnum.REGION ? 'GOBERNADOR' : 'ALCALDE'
