@@ -13,7 +13,7 @@ export interface AsistenteResponse {
 	dni: string,
 	nombres: string,
 	apellidos: string,
-	telefono: string,
+	telefono?: string,
 	sexo: string,
-	email: string,
+	email?: string,
 }

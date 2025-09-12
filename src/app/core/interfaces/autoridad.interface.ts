@@ -16,6 +16,6 @@ export interface AutoridadResponse extends AsistenteResponse {
     foto: string,
     partidoPolitico: string,
     vigente: boolean,
-    fechaInicia: boolean,
-    fechaCese: boolean,
+    fechaInicia?: string,
+    fechaCese?: string,
 }

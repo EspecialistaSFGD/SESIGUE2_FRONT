@@ -3,8 +3,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { convertEnumToObject, deleteKeysToObject, obtenerPermisosBotones } from '@core/helpers';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, OrientacionAtencion, Pagination } from '@core/interfaces';
-import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, CongresistasService } from '@core/services';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, AutoridadResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, JneAutoridadesResponses, JneAutoridadParams, JneAutoridadResponse, OrientacionAtencion, Pagination } from '@core/interfaces';
+import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, AsistentesService, AutoridadesService, CongresistasService, JneService } from '@core/services';
 import { EventosService } from '@core/services/eventos.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -17,6 +17,8 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
+import { JneAutoridadTipoEnum } from '@core/enums';
+import { catchError, forkJoin, of, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -59,6 +61,7 @@ export default class AsistenciasTecnicasComponent {
   asistenciaTecnica!: AsistenciaTecnicaResponse
   create: boolean = true
   showNzModal: boolean = false
+  autoridad: AutoridadResponse = {} as AutoridadResponse
 
   confirmModal?: NzModalRef;
   tipos: ItemEnum[] = convertEnumToObject(AsistenciasTecnicasTipos)
@@ -83,6 +86,9 @@ export default class AsistenciasTecnicasComponent {
   private asistenciaTecnicaParticipanteService = inject(AsistenciaTecnicaParticipantesService)
   private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
   private messageService = inject(NzMessageService)
+  private jneService = inject(JneService)
+  private asistenteService = inject(AsistentesService)
+  private autoridadService = inject(AutoridadesService)
 
   public navigationAuth = computed(() => this.authStore.navigationAuth())
 
@@ -336,7 +342,8 @@ export default class AsistenciasTecnicasComponent {
     this.atencionFormModal(true)
   }
 
-  atencionFormModal(create: boolean): void{       
+  atencionFormModal(create: boolean): void{
+    this.validarAutoridadJne({tipo: JneAutoridadTipoEnum.DISTRITO, ubigeo: '030402'}, '372')
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const codigoAtencion = create ? '' : this.asistenciaTecnica.codigo
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
@@ -395,7 +402,13 @@ export default class AsistenciasTecnicasComponent {
             const orientacionIdControl = formAtencion.get('orientacionId')
             const dniAutoridadControl = formAtencion.get('dniAutoridad')
             const contactoAutoridadControl = formAtencion.get('contactoAutoridad')
+            const entidadIdControl = formAtencion.get('entidadId')
+            const tipoUbigeoControl = formAtencion.get('tipoUbigeo')
+            const ubigeoJneControl = formAtencion.get('ubigeoJne')
+            const tipoUbigeo = tipoUbigeoControl?.value
+            const ubigeoJne = ubigeoJneControl?.value
 
+            const entidadId = entidadIdControl?.value
             const unidadId = unidadIdControl?.value
             const orientacionId = orientacionIdControl?.value
             const dni = dniAutoridadControl?.value
@@ -406,15 +419,107 @@ export default class AsistenciasTecnicasComponent {
             dniAutoridadControl?.setValue(dni ?? '')
             contactoAutoridadControl?.setValue(contacto ?? '')
 
-            if(create){
-              this.crearAtencion(formAtencion)
-            } else  {
-              this.actualizarAtencion(formAtencion)
-            }
+            const paramsJne:JneAutoridadParams = { tipo: tipoUbigeo, ubigeo: ubigeoJne }
+            this.validarAutoridadJne(paramsJne, entidadId)
+
+            // if(create){
+            //   this.crearAtencion(formAtencion)
+            // } else  {
+            //   this.actualizarAtencion(formAtencion)
+            // }
           }
         }
       ]
     })
+  }
+
+  validarAutoridadJne(paramsJne: JneAutoridadParams, entidadId: string){
+    const paginationAsistente:Pagination = { columnSort: 'asistenteId', typeSort: 'ASC', pageSize: 1, currentPage: 1 }
+    this.jneService.obtenerAutoridades({tipo: JneAutoridadTipoEnum.DISTRITO, ubigeo: '030402'})
+      .pipe(
+        switchMap( autoridadJneResp => 
+          forkJoin({
+            autoridadJneDniResp: this.jneService.obtenerAutoridadPorDni(this.obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad),
+            asistenteResp: this.asistenteService.ListarAsistentes({ ...paginationAsistente, dni: this.obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad })
+          })
+          .pipe(
+            tap(({ autoridadJneDniResp, asistenteResp }) => {
+              const autoridadJne = this.obtenerAutoridadJne(autoridadJneResp.data)
+              const autoridadDni = autoridadJneDniResp.data
+              const asistente = asistenteResp.data[0]
+
+              console.log('AUTORIDAD JNE', autoridadJne);
+              console.log('AUTORIDAD DNI', autoridadDni);
+              console.log('ASISTENTE', asistente);
+
+              let sexo = '';
+              if(autoridadDni.sexo){
+                sexo = autoridadDni.sexo == "1" ? "M" : "F"
+              }
+              const autoridad:AutoridadResponse = {
+                entidadId,
+                cargo: autoridadDni.cargo,
+                foto: autoridadDni.rutaFoto,
+                partidoPolitico: autoridadDni.organizacionPolitica,
+                vigente: true,
+                dni: autoridadDni.documentoIdentidad,
+                nombres: autoridadDni.nombres,
+                apellidos: `${autoridadDni.apellidoPaterno} ${autoridadDni.apellidoMaterno}`,
+                sexo
+              }
+
+              console.log('AUTORIDAD PARAMS: ', autoridad);
+              
+
+              if(asistente){
+                console.log('HAY ASISTENTE');
+                
+              } else {
+                console.log('NO HAY ASISTENTE');
+
+              }
+              
+            })
+          )
+
+          // autoridadJneResp => this.asistenteService.ListarAsistentes({ ...paginationAsistente, dni: this.obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad })
+          //   .pipe(
+          //     tap( asistenteResp => {
+          //       const autoridadJne = this.obtenerAutoridadJne(autoridadJneResp.data)
+          //       const asistente = asistenteResp.data
+          //       if(asistente){
+          //         // const autoridad:AutoridadResponse = {
+          //         //   entidadId,
+          //         //   cargo: autoridadJne.cargo,
+          //         //   foto: `https://declara.jne.gob.pe/Assets/Fotos-HojaVida/${autoridadJne.hojaVidaId}.jpg`,
+          //         //   partidoPolitico: autoridadJne.organizacionPolitica,
+          //         //   vigente: true,
+          //         //   dni: autoridadJne.documentoIdentidad,
+          //         //   nombres: autoridadJne.nombres,
+          //         //   apellidos: `${autoridadJne.apellidoPaterno} ${autoridadJne.apellidoMaterno}`,
+          //         //   sexo: 
+          //         // }
+          //       }
+          //       console.log('AUTORIDAD JNE: ', autoridadJne);
+          //       console.log('ASISTENTE: ', asistente);
+                
+          //     })
+          //   )
+        ),
+        catchError(err => {
+          console.log(('ERROR EN JNE'));
+          return of({ error: 'ERROR EN LA CONSULTA JNE' })
+        })
+      )
+      .subscribe({
+        // next: data => this.orders = data, // aquí guardamos las órdenes en la variable del componente
+        error: err => console.error(err)
+      })
+  }
+
+  obtenerAutoridadJne(autoridades: JneAutoridadResponse[]): JneAutoridadResponse{
+    const cargosAutoridad = ['GOBERNADOR','ALCALDE']
+    return autoridades.find(item => cargosAutoridad.includes(item.cargo.split(' ')[0]))!
   }
 
   crearAtencion(atencion: FormGroup){
