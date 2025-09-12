@@ -102,8 +102,8 @@ export default class AsistenciasTecnicasComponent {
   }
 
   setPermisosPCM(){
-    const profilePCM = [11,12,23]
-    return profilePCM.includes(this.perfilAuth)
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    return JSON.parse(permisosStorage) ?? false
   }
   
 
