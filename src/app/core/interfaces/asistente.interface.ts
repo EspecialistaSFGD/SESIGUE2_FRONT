@@ -4,6 +4,10 @@ export interface AsistentesResponses extends DataResponses {
 	data: AsistenteResponse[],
 }
 
+export interface AsistenteResponses extends DataResponses {
+	data: AsistenteResponse,
+}
+
 export interface AsistenteResponse {
 	asistenteId?: string,
 	dni: string,
