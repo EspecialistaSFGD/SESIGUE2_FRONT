@@ -167,8 +167,10 @@ export class FormularioAtencionComponent {
   }
 
   setPermisosPCM(){
-    const profilePCM = [11,12,23]
-    this.permisosPCM = profilePCM.includes(this.authUser.codigoPerfil)
+    // const profilePCM = [11,12,23]
+    // this.permisosPCM = profilePCM.includes(this.authUser.codigoPerfil)
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+   this.permisosPCM = JSON.parse(permisosStorage) ?? false
   }
 
   setFormAtention(){    
