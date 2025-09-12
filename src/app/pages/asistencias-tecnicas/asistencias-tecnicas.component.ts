@@ -482,7 +482,7 @@ export default class AsistenciasTecnicasComponent {
                 sexo
               }
 
-              if(asistente){
+              if(asistente){                
                 this.asistenteService.actualizarAsistente({...asistenteBody, asistenteId: asistente.asistenteId})
                   .subscribe( resp => {});
 
@@ -496,20 +496,22 @@ export default class AsistenciasTecnicasComponent {
                 }
                 this.autoridadService.listarAutoridad(paginationAutoridad)
                   .subscribe( resp => {
+
                     if(resp.data.length > 0){
                       const autoridadSelected = resp.data.find( item => item.vigente == true)
                       this.autoridadService.actualizarAutoridad({...autoridad, autoridadId: autoridadSelected?.autoridadId})
                         .subscribe( resp => {})
                     } else {
-                      this.autoridadService.registarAutoridad(autoridad)
+                      this.autoridadService.registarAutoridad({...autoridad, asistenteId: asistente.asistenteId})
                         .subscribe(resp => {})
                     }
                   })
               } else {
                 this.asistenteService.registarAsistente(asistenteBody)
                   .subscribe( resp => {
-                    if(resp.success == true){                    
-                      this.autoridadService.registarAutoridad(autoridad)
+                    if(resp.success == true){
+                      const asistentResp = resp.data
+                      this.autoridadService.registarAutoridad({...autoridad, asistenteId: asistentResp.asistenteId})
                         .subscribe(resp => {})
                     }
                   })
