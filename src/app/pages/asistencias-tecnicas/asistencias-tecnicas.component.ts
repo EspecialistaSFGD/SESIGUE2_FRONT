@@ -3,7 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { convertEnumToObject, deleteKeysToObject, obtenerPermisosBotones } from '@core/helpers';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, AutoridadResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, JneAutoridadesResponses, JneAutoridadParams, JneAutoridadResponse, OrientacionAtencion, Pagination } from '@core/interfaces';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, AsistenteResponse, AutoridadResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, JneAutoridadesResponses, JneAutoridadParams, JneAutoridadResponse, OrientacionAtencion, Pagination } from '@core/interfaces';
 import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, AsistentesService, AutoridadesService, CongresistasService, JneService } from '@core/services';
 import { EventosService } from '@core/services/eventos.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -343,7 +343,7 @@ export default class AsistenciasTecnicasComponent {
   }
 
   atencionFormModal(create: boolean): void{
-    this.validarAutoridadJne({tipo: JneAutoridadTipoEnum.DISTRITO, ubigeo: '030402'}, '372')
+    // this.validarAutoridadJne({tipo: JneAutoridadTipoEnum.DISTRITO, ubigeo: '030402'}, '372')
     const evento = this.permisosPCM ? '' : `: ${this.evento()?.nombre}`
     const codigoAtencion = create ? '' : this.asistenciaTecnica.codigo
     const action = `${create ? 'Crear' : 'Actualizar' } atención`
@@ -398,6 +398,7 @@ export default class AsistenciasTecnicasComponent {
             formAtencion.get('sectorId')?.setValue(sectorId)
             formAtencion.get('validado')?.setValue(false)
 
+            const autoridadControl = formAtencion.get('autoridad')
             const unidadIdControl = formAtencion.get('unidadId')
             const orientacionIdControl = formAtencion.get('orientacionId')
             const dniAutoridadControl = formAtencion.get('dniAutoridad')
@@ -420,13 +421,16 @@ export default class AsistenciasTecnicasComponent {
             contactoAutoridadControl?.setValue(contacto ?? '')
 
             const paramsJne:JneAutoridadParams = { tipo: tipoUbigeo, ubigeo: ubigeoJne }
-            this.validarAutoridadJne(paramsJne, entidadId)
+            
+            if(autoridadControl?.value == true){
+              this.validarAutoridadJne(paramsJne, entidadId)
+            }
 
-            // if(create){
-            //   this.crearAtencion(formAtencion)
-            // } else  {
-            //   this.actualizarAtencion(formAtencion)
-            // }
+            if(create){
+              this.crearAtencion(formAtencion)
+            } else  {
+              this.actualizarAtencion(formAtencion)
+            }
           }
         }
       ]
@@ -435,7 +439,7 @@ export default class AsistenciasTecnicasComponent {
 
   validarAutoridadJne(paramsJne: JneAutoridadParams, entidadId: string){
     const paginationAsistente:Pagination = { columnSort: 'asistenteId', typeSort: 'ASC', pageSize: 1, currentPage: 1 }
-    this.jneService.obtenerAutoridades({tipo: JneAutoridadTipoEnum.DISTRITO, ubigeo: '030402'})
+    this.jneService.obtenerAutoridades(paramsJne)
       .pipe(
         switchMap( autoridadJneResp => 
           forkJoin({
@@ -448,14 +452,11 @@ export default class AsistenciasTecnicasComponent {
               const autoridadDni = autoridadJneDniResp.data
               const asistente = asistenteResp.data[0]
 
-              console.log('AUTORIDAD JNE', autoridadJne);
-              console.log('AUTORIDAD DNI', autoridadDni);
-              console.log('ASISTENTE', asistente);
-
               let sexo = '';
               if(autoridadDni.sexo){
                 sexo = autoridadDni.sexo == "1" ? "M" : "F"
               }
+
               const autoridad:AutoridadResponse = {
                 entidadId,
                 cargo: autoridadDni.cargo,
@@ -468,46 +469,53 @@ export default class AsistenciasTecnicasComponent {
                 sexo
               }
 
-              console.log('AUTORIDAD PARAMS: ', autoridad);
-              
+              const asistenteBody: AsistenteResponse = {
+                dni: autoridadJne.documentoIdentidad,
+                nombres: autoridadJne.nombres,
+                apellidos: `${autoridadJne.apellidoPaterno} ${autoridadJne.apellidoMaterno}`,
+                telefono: '',
+                email: '',
+                sexo
+              }
 
               if(asistente){
-                console.log('HAY ASISTENTE');
-                
-              } else {
-                console.log('NO HAY ASISTENTE');
+                this.asistenteService.actualizarAsistente({...asistenteBody, asistenteId: asistente.asistenteId})
+                  .subscribe( resp => {});
 
+                const paginationAutoridad: Pagination = {
+                  entidadId: Number(entidadId),
+                  asistenteId: asistente.asistenteId!,
+                  columnSort: 'autoridadId',
+                  typeSort: 'ASC',
+                  currentPage: 1,
+                  pageSize: 1
+                }
+                this.autoridadService.listarAutoridad(paginationAutoridad)
+                  .subscribe( resp => {
+                    const autoridadResp = resp.data
+                    if(autoridadResp){
+                      const autoridadSelected = autoridadResp.find( item => item.vigente == true)
+                      this.autoridadService.actualizarAutoridad({...autoridad, autoridadId: autoridadSelected?.autoridadId})
+                        .subscribe( resp => {})
+                    } else {
+                      this.autoridadService.registarAutoridad(autoridad)
+                        .subscribe(resp => {})
+                    }
+                  })
+              } else {
+                this.asistenteService.registarAsistente(asistenteBody)
+                  .subscribe( resp => {
+                    if(resp.success == true){                    
+                      this.autoridadService.registarAutoridad(autoridad)
+                        .subscribe(resp => {})
+                    }
+                  })
               }
               
             })
           )
-
-          // autoridadJneResp => this.asistenteService.ListarAsistentes({ ...paginationAsistente, dni: this.obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad })
-          //   .pipe(
-          //     tap( asistenteResp => {
-          //       const autoridadJne = this.obtenerAutoridadJne(autoridadJneResp.data)
-          //       const asistente = asistenteResp.data
-          //       if(asistente){
-          //         // const autoridad:AutoridadResponse = {
-          //         //   entidadId,
-          //         //   cargo: autoridadJne.cargo,
-          //         //   foto: `https://declara.jne.gob.pe/Assets/Fotos-HojaVida/${autoridadJne.hojaVidaId}.jpg`,
-          //         //   partidoPolitico: autoridadJne.organizacionPolitica,
-          //         //   vigente: true,
-          //         //   dni: autoridadJne.documentoIdentidad,
-          //         //   nombres: autoridadJne.nombres,
-          //         //   apellidos: `${autoridadJne.apellidoPaterno} ${autoridadJne.apellidoMaterno}`,
-          //         //   sexo: 
-          //         // }
-          //       }
-          //       console.log('AUTORIDAD JNE: ', autoridadJne);
-          //       console.log('ASISTENTE: ', asistente);
-                
-          //     })
-          //   )
         ),
         catchError(err => {
-          console.log(('ERROR EN JNE'));
           return of({ error: 'ERROR EN LA CONSULTA JNE' })
         })
       )

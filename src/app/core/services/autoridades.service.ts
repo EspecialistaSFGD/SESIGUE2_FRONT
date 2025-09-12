@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { AutoridadResponse, AutoridadResponses } from '@core/interfaces/autoridad.interface';
+import { Pagination } from '@core/interfaces';
+import { AutoridadesResponses, AutoridadResponse, AutoridadResponses } from '@core/interfaces/autoridad.interface';
 import { environment } from '@environments/environment';
-import { catchError, map, of, tap } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
 
 @Injectable({
@@ -13,6 +14,12 @@ export class AutoridadesService {
     
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
+
+  listarAutoridad(pagination: Pagination): Observable<AutoridadesResponses> {
+    const params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<AutoridadesResponses>(`${this.urlAutoridades}/ListarAutoridades`, { headers, params })
+  }
 
   registarAutoridad(autoridad: AutoridadResponse) {
     const headers = this.helpersServices.getAutorizationToken()
