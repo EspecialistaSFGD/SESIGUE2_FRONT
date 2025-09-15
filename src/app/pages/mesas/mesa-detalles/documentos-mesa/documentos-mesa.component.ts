@@ -55,8 +55,9 @@ export class DocumentosMesaComponent {
   }
 
   setPermisosPCM(){
-    const profilePCM = [11,12,23]
-    return profilePCM.includes(this.perfilAuth)
+    // const profilePCM = [11,12,23]
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    return JSON.parse(permisosStorage) ?? false
   }
   
   getPermissions() {

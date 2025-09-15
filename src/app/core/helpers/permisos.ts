@@ -21,6 +21,7 @@ export const obtenerPermisosBotones = (botones: UsuarioPermisos[]) => {
 }
 
 export const permisosPCM = (perfilAuth: number) => {
-	const profilePCM = [11,12,23]
-    return profilePCM.includes(perfilAuth)
+	// const profilePCM = [11,12,23]
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    return JSON.parse(permisosStorage) ?? false
 }

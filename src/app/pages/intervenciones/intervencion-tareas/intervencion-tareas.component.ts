@@ -63,8 +63,10 @@ export default class IntervencionTareasComponent {
     this.sectorAuth = Number(localStorage.getItem('codigoSector') || 0)
     this.usuarioId = Number(localStorage.getItem('codigoUsuario') || 0)
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
-    const profilePCM = [11,12,23]
-    return profilePCM.includes(this.perfilAuth)
+
+    // const profilePCM = [11,12,23]
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    return JSON.parse(permisosStorage) ?? false
   }
 
   getPermissions() {
