@@ -51,10 +51,12 @@ export default class EntidadesComponent {
   }
 
   getPermisosPCM(){
-    const profilePCM = [11,12,23]
+    // const profilePCM = [11,12,23]
     const ssfgdPCM = [11,12,23]
     this.esSsfgd = ssfgdPCM.includes(this.perfilAuth)
-    return profilePCM.includes(this.perfilAuth)
+
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    return JSON.parse(permisosStorage) ?? false
   }
 
   getParams() {
