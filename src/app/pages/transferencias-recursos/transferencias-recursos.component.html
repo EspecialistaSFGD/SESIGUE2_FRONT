@@ -26,29 +26,29 @@
           <td nzAlign="center">{{recurso.uit * 100}}%</td>
           <td nzAlign="center">{{recurso.monto | numero : 2 }}</td>
           <td nzAlign="center">
-            <app-boton-descargar *ngIf="recurso.archivoIndice" [rutaArchivo]="recurso.archivoIndice" [icono]="'pi-file-excel'" [titulo]="'Descargar Indice'" />
+            <app-boton-descargar *ngIf="recursosActions.upload && recurso.archivoIndice" [rutaArchivo]="recurso.archivoIndice" [icono]="'pi-file-excel'" [titulo]="'Descargar Indice'" />
           </td>
           <td nzAlign="center">
-            <app-boton-descargar *ngIf="recurso.archivoProyeccion" [rutaArchivo]="recurso.archivoProyeccion" [titulo]="'Descargar oficio'"  />
+            <app-boton-descargar *ngIf="recursosActions.upload && recurso.archivoProyeccion" [rutaArchivo]="recurso.archivoProyeccion" [titulo]="'Descargar oficio'"  />
           </td>
           <td nzAlign="center">
-            <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Descargar archivo MOV" (click)="generarMov(recurso.recursoId! )">
+            <div *ngIf="recursosActions.download" class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Descargar archivo MOV" (click)="generarMov(recurso.recursoId! )">
               <i class="pi pi-file-export" style="font-size: 0.75rem"></i>
             </div>
           </td>
           <td nzRight nzAlign="center">
             <div class="flex justify-center">
-              <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Agregar nuevo indice" (click)="agregarTransferenciaIndice(recurso)">
+              <div *ngIf="recursosActions.upload" class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Agregar nuevo indice" (click)="agregarTransferenciaIndice(recurso)">
                 <i class="pi pi-percentage" style="font-size: 0.75rem"></i>
               </div>
-              <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Agregar nueva proyección" (click)="agregarTransferenciaIndice(recurso,false)">
+              <div *ngIf="recursosActions.upload" class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Agregar nueva proyección" (click)="agregarTransferenciaIndice(recurso,false)">
                 <i class="pi pi-chart-line" style="font-size: 0.75rem"></i>
               </div>
-              <a [routerLink]="[recurso.recursoId]">
+              <!-- <a *ngIf="recursosActions.view" [routerLink]="[recurso.recursoId]">
                 <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
                   <span nz-icon nzType="eye" nzTheme="outline"></span>
                 </button>
-              </a>
+              </a> -->
             </div>
           </td>
         </tr>
@@ -60,12 +60,12 @@
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
 
-        <div class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white" (click)="openFilters = true">
+        <div *ngIf="recursosActions.report" class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white" (click)="openFilters = true">
           <i class="pi pi-filter" style="font-size: 0.75rem"></i>
           <span class="hidden md:flex">Filtros</span>
         </div>
 
-        <app-boton-descargar [rutaArchivo]="formatoIndice" [label]="'Formato indice'" [titulo]="'Descargar el formato de indices'" />
+        <app-boton-descargar *ngIf="recursosActions.download" [rutaArchivo]="formatoIndice" [label]="'Formato indice'" [titulo]="'Descargar el formato de indices'" />
       </div>
     </div>
   </ng-template>
