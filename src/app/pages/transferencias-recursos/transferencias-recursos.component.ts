@@ -80,10 +80,10 @@ export default class TransferenciasRecursosComponent {
   }
 
   getPermissions() {
-      const navigation = this.authStore.navigationAuth()!
-      const transferenciaRecursos = navigation.find(nav => nav.descripcionItem == 'Transferencia Recursos')
-      this.recursosActions = obtenerPermisosBotones(transferenciaRecursos!.botones!)   
-    }
+    const navigation = this.authStore.navigationAuth()!
+    const transferenciaRecursos = navigation.find(nav => nav.descripcionItem == 'Transferencia Recursos')
+    this.recursosActions = obtenerPermisosBotones(transferenciaRecursos!.botones!)   
+  }
 
   obtenerRecursos(){
     this.transferenciaRecurso.ListarTransferenciasRecurso({...this.pagination })
