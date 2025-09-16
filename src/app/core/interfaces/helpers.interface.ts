@@ -40,6 +40,7 @@ export interface ButtonsActions {
   comment?: boolean
   unvalidate?: boolean
   reactivate?: boolean
+  servicejne?: boolean
 }
 
 export interface Filters {

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { deleteKeysToObject, obtenerAutoridadJne, setParamsToObject } from '@core/helpers';
-import { AsistenteResponse, AutoridadResponse, EntidadResponse, JneAutoridadParams, Pagination } from '@core/interfaces';
+import { deleteKeysToObject, obtenerAutoridadJne, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
+import { AsistenteResponse, AutoridadResponse, ButtonsActions, EntidadResponse, JneAutoridadParams, Pagination } from '@core/interfaces';
 import { AsistentesService, AutoridadesService, EntidadesService, JneService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -27,8 +27,10 @@ export default class EntidadesComponent {
   openFilters: boolean = false
   perfilAuth: number = 0
   permisosPCM: boolean = false
-  esSsfgd:boolean = false
+  esAdmin:boolean = false
   entidades = signal<EntidadResponse[]>([])
+
+  entidadesActions: ButtonsActions = {}
 
   private entidadService = inject(EntidadesService)
   private router = inject(Router)
@@ -47,8 +49,15 @@ export default class EntidadesComponent {
   }
 
   ngOnInit(): void {
+    this.getPermissions()
     this.getPermisos()
     this.getParams()
+  }
+
+  getPermissions() {
+    const navigation = this.authStore.navigationAuth()!
+    const transferenciaRecursos = navigation.find(nav => nav.descripcionItem == 'Entidades')
+    this.entidadesActions = obtenerPermisosBotones(transferenciaRecursos!.botones!)   
   }
 
   getPermisos(){    
@@ -58,8 +67,8 @@ export default class EntidadesComponent {
 
   getPermisosPCM(){
     // const profilePCM = [11,12,23]
-    const ssfgdPCM = [11,12,23]
-    this.esSsfgd = ssfgdPCM.includes(this.perfilAuth)
+    const ssfgdPCM = [11]
+    this.esAdmin = ssfgdPCM.includes(this.perfilAuth)
 
     const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
     return JSON.parse(permisosStorage) ?? false

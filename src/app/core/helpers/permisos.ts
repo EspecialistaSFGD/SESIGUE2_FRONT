@@ -12,9 +12,11 @@ export const obtenerPermisosBotones = (botones: UsuarioPermisos[]) => {
 			case 'Meta': permisos.goals = true; break;
 			case 'Ver': permisos.view = true; break;
 			case 'Comentar': permisos.comment = true; break;
+			case 'Subir': permisos.upload = true; break;
 			case 'Descargar': permisos.download = true; break;
 			case 'Invalidar': permisos.unvalidate = true; break;
 			case 'Reactivar': permisos.reactivate = true; break;
+			case 'ServicioJne': permisos.servicejne = true; break;
 		}
 	})
 	return permisos;
