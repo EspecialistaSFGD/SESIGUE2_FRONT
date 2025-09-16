@@ -22,11 +22,11 @@
     <tbody>
       @for(entidad of entidades(); track $index){
         <tr>
-          <td nzAlign="center">{{entidad.ubigeo_oficial}}</td>
+          <td nzAlign="center"><p class="w-full" nz-tooltip [nzTooltipTitle]="esAdmin ? tooltipUbigeo : null" [nzTooltipTitleContext]="{ entidad: entidad }">{{entidad.ubigeo_oficial}}</p></td>
           <td nzAlign="center">{{entidad.departamento}}</td>
           <td nzAlign="center">{{entidad.provincia}}</td>
-          <td nzAlign="center">{{esSsfgd ? entidad.distrito : entidad.distritoMef}}</td>
-          <td nzAlign="center"> <p class="w-full" nz-tooltip [nzTooltipTitle]="entidad.nombre">{{entidad.entidadTipoSlug}}</p></td>
+          <td nzAlign="center"><p class="w-full" nz-tooltip [nzTooltipTitle]="esAdmin ? tooltipDistrito : null" [nzTooltipTitleContext]="{ entidad: entidad }">{{esAdmin ? entidad.distrito : entidad.distritoMef}}</p></td>
+          <td nzAlign="center"><p class="w-full" nz-tooltip [nzTooltipTitle]="entidad.nombre">{{entidad.entidadTipoSlug}}</p></td>
           <td nzAlign="center">{{entidad.partidoPolitico}}</td>
           <td nzAlign="center">{{entidad.dnAutoridad}}</td>
           <td nzAlign="center">{{entidad.nombreAutoridad}} {{entidad.apellidosAutoridad}}</td>
@@ -46,6 +46,20 @@
         }
     </tbody>
   </nz-table>
+  <ng-template #tooltipUbigeo let-entidad="entidad">
+		<div>
+			<div><strong>Ubigeo: </strong> {{entidad.ubigeo}}</div>
+			<div><strong>Ubigeo Oficial: </strong> {{entidad.ubigeo_oficial}}</div>
+			<div><strong>Ubigeo JNE: </strong> {{entidad.ubigeo_jne}}</div>
+		</div>
+	</ng-template>
+
+  <ng-template #tooltipDistrito let-entidad="entidad">
+		<div>
+			<div><strong>Distrito: </strong> {{entidad.distrito}}</div>
+			<div><strong>Distrito MEF: </strong> {{entidad.distritoMef}}</div>
+		</div>
+	</ng-template>
   
   <ng-template #HeaderEntidades>
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">

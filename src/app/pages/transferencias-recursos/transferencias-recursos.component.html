@@ -11,9 +11,9 @@
         <th nzWidth="'100px'" nzAlign="center" >Fecha</th>
         <th nzWidth="'100px'" nzAlign="center">UIT</th>
         <th nzWidth="'100px'" nzAlign="center">Monto</th>
-        <th nzWidth="'100px'" nzAlign="center">Indice</th>
-        <th nzWidth="'100px'" nzAlign="center">Oficio</th>
-        <th nzWidth="'100px'" nzAlign="center">MOV</th>
+        <th *ngIf="recursosActions.upload" nzWidth="'100px'" nzAlign="center">Indice</th>
+        <th *ngIf="recursosActions.upload" nzWidth="'100px'" nzAlign="center">Oficio</th>
+        <th *ngIf="recursosActions.download" nzWidth="'100px'" nzAlign="center">MOV</th>
         <th nzRight nzWidth="'100px'" nzAlign="center"></th>
       </tr>
     </thead>
@@ -25,14 +25,14 @@
           <td nzAlign="center">{{recurso.fechaPublicacion}}</td>
           <td nzAlign="center">{{recurso.uit * 100}}%</td>
           <td nzAlign="center">{{recurso.monto | numero : 2 }}</td>
-          <td nzAlign="center">
-            <app-boton-descargar *ngIf="recursosActions.upload && recurso.archivoIndice" [rutaArchivo]="recurso.archivoIndice" [icono]="'pi-file-excel'" [titulo]="'Descargar Indice'" />
+          <td *ngIf="recursosActions.upload " nzAlign="center">
+            <app-boton-descargar *ngIf="recurso.archivoIndice" [rutaArchivo]="recurso.archivoIndice" [icono]="'pi-file-excel'" [titulo]="'Descargar Indice'" />
           </td>
-          <td nzAlign="center">
-            <app-boton-descargar *ngIf="recursosActions.upload && recurso.archivoProyeccion" [rutaArchivo]="recurso.archivoProyeccion" [titulo]="'Descargar oficio'"  />
+          <td *ngIf="recursosActions.upload " nzAlign="center">
+            <app-boton-descargar *ngIf="recurso.archivoProyeccion" [rutaArchivo]="recurso.archivoProyeccion" [titulo]="'Descargar oficio'"  />
           </td>
-          <td nzAlign="center">
-            <div *ngIf="recursosActions.download" class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Descargar archivo MOV" (click)="generarMov(recurso.recursoId! )">
+          <td *ngIf="recursosActions.download" nzAlign="center">
+            <div class="py-1 px-2 rounded cursor-pointer text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Descargar archivo MOV" (click)="generarMov(recurso.recursoId! )">
               <i class="pi pi-file-export" style="font-size: 0.75rem"></i>
             </div>
           </td>

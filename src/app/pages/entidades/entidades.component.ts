@@ -27,7 +27,7 @@ export default class EntidadesComponent {
   openFilters: boolean = false
   perfilAuth: number = 0
   permisosPCM: boolean = false
-  esSsfgd:boolean = false
+  esAdmin:boolean = false
   entidades = signal<EntidadResponse[]>([])
 
   entidadesActions: ButtonsActions = {}
@@ -67,8 +67,8 @@ export default class EntidadesComponent {
 
   getPermisosPCM(){
     // const profilePCM = [11,12,23]
-    const ssfgdPCM = [11,12,23]
-    this.esSsfgd = ssfgdPCM.includes(this.perfilAuth)
+    const ssfgdPCM = [11]
+    this.esAdmin = ssfgdPCM.includes(this.perfilAuth)
 
     const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
     return JSON.parse(permisosStorage) ?? false
