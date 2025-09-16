@@ -56,6 +56,7 @@ export default class IntervencionTareasComponent {
 
   ngOnInit(): void {    
     this.permisosPCM = this.setPermisosPCM()
+    this.getPermissions()
     this.obtenerIntervencionTareasService()
   }
   
@@ -70,16 +71,13 @@ export default class IntervencionTareasComponent {
   }
 
   getPermissions() {
-      // const navigation  = this.authStore.navigationAuth()!
-      const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
-      const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'intervenciones')
-      this.tareaActions = obtenerPermisosBotones(menu!.botones!)
-      const navLevel =  menu!.children!
-  
-      // this.permisosAgenda = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa agenda') ? true : false
-      // this.permisosIntegrantes = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa integrantes') ? true : false
-      // this.permisosDocumentos = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'mesa documentos') ? true : false
+    const navigation = this.authStore.navigationAuth()!
+    const transferenciaRecursos = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'intervenciones')
+    if(transferenciaRecursos?.children){
+      const navTarea = transferenciaRecursos?.children.find((nav) => nav.descripcionItem!.toLowerCase() == 'intervencion tarea')
+      this.tareaActions = obtenerPermisosBotones(navTarea!.botones!) 
     }
+  }
 
   obtenerIntervencionTareasService(){
     this.loadingTareas = true
