@@ -45,10 +45,14 @@ export class TransferenciaRecursoService {
   //     )
   // }
 
-  GenerarMov(transferenciaId:string, pagination: Pagination) {
-    const params = this.helpersServices.setParams(pagination)
+  GenerarMov(recursos:string[], pagination: Pagination) {
+    let params = this.helpersServices.setParams(pagination)
+    for (let recursoId of recursos) {
+      params = params.append('recursoId[]', `${recursoId}`);
+    }
+
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<ExportResponses>(`${this.urlTransferenciaRecurso}/GenerarMov/${transferenciaId}`, { headers, params })
+    return this.http.get<ExportResponses>(`${this.urlTransferenciaRecurso}/GenerarMov`, { headers, params })
   }
 
   private generateFormData(transferenciaIndice: TransferenciaRecursoData): FormData {

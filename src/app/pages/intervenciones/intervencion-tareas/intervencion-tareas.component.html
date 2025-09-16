@@ -66,7 +66,7 @@
               <p class="text-sm">Resultados {{pagination.total}}</p>
           </div>
 
-          <button *ngIf="visibleBotonNuevaTarea()" nz-button nzType="primary" (click)="agregarTarea()" [disabled]="disabledBotonNuevo()">
+          <button *ngIf="tareaActions.new" nz-button nzType="primary" (click)="agregarTarea()" [disabled]="disabledBotonNuevo() && visibleBotonNuevaTarea()">
               <span nz-icon nzType="plus" nzTheme="outline"></span>
               <span class="button-text">Nueva Tarea</span>
           </button>

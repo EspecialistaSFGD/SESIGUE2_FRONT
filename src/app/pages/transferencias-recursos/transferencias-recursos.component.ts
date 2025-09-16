@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { ButtonsActions, FileResponse, Pagination, TransferenciaRecursoData, TransferenciaRecursoResponse } from '@core/interfaces';
+import { ButtonsActions, FileResponse, Pagination, TransferenciaRecursoData, TransferenciaRecursoMov, TransferenciaRecursoResponse } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -35,6 +35,7 @@ export default class TransferenciasRecursosComponent {
   openFilters: boolean = false
 
   recursosActions: ButtonsActions = {}
+  transferenciasRecursoMov: TransferenciaRecursoMov[] = []
 
   transferenciasRecursos = signal<TransferenciaRecursoResponse[]>([])
   
@@ -85,6 +86,16 @@ export default class TransferenciasRecursosComponent {
     this.recursosActions = obtenerPermisosBotones(transferenciaRecursos!.botones!)   
   }
 
+  SeleccionarRecurso(recursoId:string){
+    const index = this.transferenciasRecursoMov.findIndex( item => item.recursoId === recursoId)
+    index  !== -1 ? this.transferenciasRecursoMov.splice(index, 1) : this.transferenciasRecursoMov.push({ recursoId })
+  }
+
+  generarMovLista(){
+    const recursos = this.transferenciasRecursoMov.map(item => item.recursoId);
+    this.generarMov(recursos)
+  }
+
   obtenerRecursos(){
     this.transferenciaRecurso.ListarTransferenciasRecurso({...this.pagination })
       .subscribe( resp => {
@@ -123,8 +134,10 @@ export default class TransferenciasRecursosComponent {
       );
     }
 
-  generarMov(transferenciaId: string){
-    this.transferenciaRecurso.GenerarMov(transferenciaId,this.pagination)
+  generarMov(recursos: string[]){
+    const usuarioId = localStorage.getItem('codigoUsuario') ?? ''
+    const paginationMov: Pagination = { usuarioId }
+    this.transferenciaRecurso.GenerarMov(recursos,paginationMov)
       .subscribe( resp => {
         if(resp.data){
           this.generarDescarga(resp.data);
