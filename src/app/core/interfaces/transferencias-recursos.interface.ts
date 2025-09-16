@@ -51,3 +51,7 @@ export interface TransferenciaRecursoIndiceData {
   total: string,
   estado: boolean
 }
+
+export interface TransferenciaRecursoMov {
+  recursoId: string
+}
