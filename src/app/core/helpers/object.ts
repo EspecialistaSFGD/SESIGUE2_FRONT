@@ -1,5 +1,5 @@
 import { Params } from "@angular/router"
-import { ItemEnum } from "@core/interfaces"
+import { ItemEnum, JneAutoridadResponse } from "@core/interfaces"
 
 export const convertEnumToObject = <E extends Record<string, string>>(enumType: E, replace: boolean = false): ItemEnum[] => {
   return Object.entries(enumType).map(([value, text]) => ({ value: replace ? value.replace(/_/g, ' ') : value, text: replace ? text.replace(/_/g, ' ') : text }))
@@ -36,4 +36,9 @@ export const deleteKeysToObject = (object: any, keysDelete: string[]) => {
 
 export const deleteKeyNullToObject = (object: any) => {
   return Object.fromEntries(Object.entries(object).filter(([_, v]) => v !== null && v !== undefined && v !== ''));
+}
+
+export const obtenerAutoridadJne = (autoridades: JneAutoridadResponse[]) =>{
+  const cargosAutoridad = ['GOBERNADOR','ALCALDE']
+  return autoridades.find(item => cargosAutoridad.includes(item.cargo.split(' ')[0]))!
 }

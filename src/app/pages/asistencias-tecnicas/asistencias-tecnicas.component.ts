@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { convertEnumToObject, deleteKeysToObject, obtenerPermisosBotones } from '@core/helpers';
+import { convertEnumToObject, deleteKeysToObject, obtenerAutoridadJne, obtenerPermisosBotones } from '@core/helpers';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, AsistenteResponse, AutoridadResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, JneAutoridadesResponses, JneAutoridadParams, JneAutoridadResponse, OrientacionAtencion, Pagination } from '@core/interfaces';
 import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, AsistentesService, AutoridadesService, CongresistasService, JneService } from '@core/services';
 import { EventosService } from '@core/services/eventos.service';
@@ -447,12 +447,12 @@ export default class AsistenciasTecnicasComponent {
       .pipe(
         switchMap( autoridadJneResp => 
           forkJoin({
-            autoridadJneDniResp: this.jneService.obtenerAutoridadPorDni(this.obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad),
-            asistenteResp: this.asistenteService.ListarAsistentes({ ...paginationAsistente, dni: this.obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad })
+            autoridadJneDniResp: this.jneService.obtenerAutoridadPorDni(obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad),
+            asistenteResp: this.asistenteService.ListarAsistentes({ ...paginationAsistente, dni: obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad })
           })
           .pipe(
             tap(({ autoridadJneDniResp, asistenteResp }) => {
-              const autoridadJne = this.obtenerAutoridadJne(autoridadJneResp.data)
+              const autoridadJne = obtenerAutoridadJne(autoridadJneResp.data)
               const autoridadDni = autoridadJneDniResp.data
               const asistente = asistenteResp.data[0]
 
@@ -530,10 +530,10 @@ export default class AsistenciasTecnicasComponent {
       })
   }
 
-  obtenerAutoridadJne(autoridades: JneAutoridadResponse[]): JneAutoridadResponse{
-    const cargosAutoridad = ['GOBERNADOR','ALCALDE']
-    return autoridades.find(item => cargosAutoridad.includes(item.cargo.split(' ')[0]))!
-  }
+  // obtenerAutoridadJne(autoridades: JneAutoridadResponse[]): JneAutoridadResponse{
+  //   const cargosAutoridad = ['GOBERNADOR','ALCALDE']
+  //   return autoridades.find(item => cargosAutoridad.includes(item.cargo.split(' ')[0]))!
+  // }
 
   crearAtencion(atencion: FormGroup){
     const formValues = atencion!.getRawValue()

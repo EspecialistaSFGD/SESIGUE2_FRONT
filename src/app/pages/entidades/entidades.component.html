@@ -10,7 +10,7 @@
         <th nzWidth="100px" nzAlign="center">Provincia</th>
         <th nzWidth="100px" nzAlign="center">Distrito</th>
         <th nzWidth="120px" nzAlign="center">Entidad</th>
-        <th nzWidth="80px" nzAlign="center">Partido Politico</th>
+        <th nzWidth="120px" nzAlign="center">Partido Politico</th>
         <th nzWidth="80px" nzAlign="center">DNI</th>
         <th nzWidth="120px" nzAlign="center">Nombres</th>
         <th nzWidth="120px" nzAlign="center">Cargo</th>
@@ -27,17 +27,20 @@
           <td nzAlign="center">{{entidad.provincia}}</td>
           <td nzAlign="center">{{esSsfgd ? entidad.distrito : entidad.distritoMef}}</td>
           <td nzAlign="center"> <p class="w-full" nz-tooltip [nzTooltipTitle]="entidad.nombre">{{entidad.entidadTipoSlug}}</p></td>
-          <td nzAlign="center"></td>
+          <td nzAlign="center">{{entidad.partidoPolitico}}</td>
           <td nzAlign="center">{{entidad.dnAutoridad}}</td>
           <td nzAlign="center">{{entidad.nombreAutoridad}} {{entidad.apellidosAutoridad}}</td>
           <td nzAlign="center">{{entidad.cargoAutoridad}}</td>
           <td nzAlign="center">{{entidad.sexoAutoridad}}</td>
           <td nzRight nzAlign="center">
-            <!-- <div class="flex justify-center">
-                <a *ngIf="esSsfgd" [routerLink]="[entidad.entidadId]" class="font-bold text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
-                  <i class="pi pi-eye" style="font-size: 0.85rem"></i>
-                </a>
-            </div> -->
+            <div class="flex justify-center">
+              <div class="p-1 cursor-pointer font-bold text-sky-700 hover:text-sky-800" nz-tooltip [nzTooltipTitle]="'Actualizar autoridad de ' + entidad.nombre" (click)="obtenerAutoridadJne(entidad)">
+               <i class="pi pi-building-columns" style="font-size: .85rem;"></i>
+             </div>
+              <a *ngIf="esSsfgd" [routerLink]="[entidad.entidadId]" class="py-1 px-2 font-bold text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
+                <i class="pi pi-eye" style="font-size: 0.85rem"></i>
+              </a>
+            </div>
           </td>
         </tr>
         }

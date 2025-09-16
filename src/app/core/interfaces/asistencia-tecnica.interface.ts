@@ -71,6 +71,7 @@ export interface AsistenciaTecnicaResponse {
   estado?: boolean,
   validado?: boolean,
   sector?: string,
+  responsable?: string,
   unidadOrganica?: string,
   tipoEntidad?: string,
   tipoEntidadSlug?: string,
