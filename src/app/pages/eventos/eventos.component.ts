@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { EventoResponse, Pagination } from '@core/interfaces';
+import { EventoResponse, Pagination, TipoEventoResponse } from '@core/interfaces';
 import { EventosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -31,6 +31,7 @@ export default class EventosComponent {
   }
 
   eventos = signal<EventoResponse[]>([])
+  tipoEventos = signal<TipoEventoResponse[]>([])
 
   private eventoService = inject(EventosService)
   private router = inject(Router);
@@ -48,7 +49,8 @@ export default class EventosComponent {
       )
       .subscribe( params => {
         this.loading = true
-        const tipoUbigeo = params['tipoUbigeo'] ?? ''
+        const estado = params['estado'] ?? ''
+        const tipoEspacioId = params['tipoEspacioId'] ?? ''
         let campo = params['campo'] ?? 'eventoId'
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
@@ -57,14 +59,16 @@ export default class EventosComponent {
         
         setParamsToObject(params, this.pagination, 'nombre')
         setParamsToObject(params, this.pagination, 'estado')          
-        setParamsToObject(params, this.pagination, 'tipoEvento')
-        this.obtenerEventoService()
+        setParamsToObject(params, this.pagination, 'tipoEventoId')
+        this.obtenerEventoService(estado,tipoEspacioId)
       })
   }
 
-  obtenerEventoService(){
+  obtenerEventoService(estados: string, tipoEspacioId: string){
     this.loading = true
-    this.eventoService.ListarEventos(this.pagination)
+    const tipoEspacio = tipoEspacioId ? [tipoEspacioId] : []
+    const estado = estados ? [estados] : []    
+    this.eventoService.ListarEventos(this.pagination,estado,tipoEspacio)
       .subscribe( resp => {
         this.eventos.set(resp.data)
         this.pagination.total = resp.info?.total
@@ -80,12 +84,12 @@ export default class EventosComponent {
     }, 0)
     const campo = sorts?.key
     const ordenar = sorts?.value!.slice(0, -3)
-    const filtrosSaved = localStorage.getItem('filtrosEntidades');
+    const filtrosSaved = localStorage.getItem('filtrosEventos');
     let filtros:any = {}
     if(filtrosSaved){
       filtros = JSON.parse(filtrosSaved)
       filtros.save = false      
-      localStorage.setItem('filtrosEntidades', JSON.stringify(filtros))
+      localStorage.setItem('filtrosEventos', JSON.stringify(filtros))
     }    
     this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })    
   }

@@ -5,6 +5,30 @@
             <label for="nombre">Evento</label>
             <input type="text" class="form-control" id="nombre" placeholder="Evento aqui" formControlName="nombre" (keyup)="changeControl($event,'nombre')"/>
         </div>
+
+        <div class="flex flex-col">
+            <label for="tipoEspacioId">Tipo de espacio</label>
+            <p-dropdown 
+            [options]="tipoEventos()"
+            formControlName="tipoEspacioId"
+            optionLabel="descripcionTipoEvento"
+            optionValue="codigoTipoEvento"
+            [showClear]="true" 
+            placeholder="Seleccionar tipo de espacio"
+            (onChange)="changeSelect()"/>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="estado">Estado</label>
+            <p-dropdown 
+            [options]="estados"
+            formControlName="estado"
+            optionLabel="value"
+            optionValue="text"
+            [showClear]="true" 
+            placeholder="Seleccionar estado"
+            (onChange)="changeSelect()"/>
+        </div>
     </form>
 </nz-drawer>
 

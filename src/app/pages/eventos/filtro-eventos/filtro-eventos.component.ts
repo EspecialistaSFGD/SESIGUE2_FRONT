@@ -1,14 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Pagination } from '@core/interfaces';
+import { EventoEstadoEnum } from '@core/enums';
+import { convertEnumToObject } from '@core/helpers';
+import { ItemEnum, Pagination, TipoEventoResponse } from '@core/interfaces';
+import { TipoEventosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
 @Component({
   selector: 'app-filtro-eventos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgZorroModule],
+  imports: [CommonModule, ReactiveFormsModule, NgZorroModule, PrimeNgModule],
   templateUrl: './filtro-eventos.component.html',
   styles: ``
 })
@@ -22,15 +26,30 @@ export class FiltroEventosComponent {
   @Output() export = new EventEmitter<boolean>()
 
   private timeout: any;
+  estados: ItemEnum[] = convertEnumToObject(EventoEstadoEnum)
+
+  tipoEventos = signal<TipoEventoResponse[]>([])
 
   private fb = inject(FormBuilder)
   private validatorsService = inject(ValidatorService)
+  private tipoEventosServices = inject(TipoEventosService)
 
   formEventoFilters:FormGroup = this.fb.group({
     nombre: [ null ],
     estado: [ null ],
-    tipoEntidad: [ null ],
+    tipoEspacioId: [ null ],
   })
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.estados);
+    
+    this.obtenerServicioTipoEspacio()
+  }
+
+  obtenerServicioTipoEspacio() {
+    const pagination: Pagination = { code: 0, columnSort: 'codigoTipoEvento', typeSort: 'DESC', pageSize: 10, currentPage: 1, total: 0}
+    this.tipoEventosServices.getAllTipoEvento(pagination).subscribe(resp => this.tipoEventos.set(resp.data))
+  }
 
   changeVisibleDrawer(visible: boolean, save: boolean = true){
     this.save.emit(save) 
@@ -68,5 +87,9 @@ export class FiltroEventosComponent {
   generateFilters(){ 
     const formValue = { ...this.formEventoFilters.value }
     this.filters.emit(formValue)
+  }
+
+  changeSelect(){
+    this.generateFilters()
   }
 }
