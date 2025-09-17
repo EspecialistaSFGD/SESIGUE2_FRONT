@@ -10,7 +10,7 @@
         <th>Evento</th>
         <th nzWidth="100px" nzAlign="center" >Fecha inicia</th>
         <th nzWidth="100px" nzAlign="center" >Fecha culmina</th>
-        <th nzWidth="120px" nzAlign="center">Tipo de espacios</th>
+        <th nzWidth="120px" nzAlign="center">Tipo de espacio</th>
         <th nzWidth="80px" nzAlign="center">Verifica asistente</th>
         <th nzRight nzWidth="112px" nzAlign="center"></th>
       </tr>
@@ -72,3 +72,5 @@
     </div>
   </ng-template>
 </div>
+
+<app-filtro-eventos *ngIf="openFilters"  [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" (save)="saveFilters($event)" />
