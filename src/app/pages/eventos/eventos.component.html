@@ -5,9 +5,9 @@
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
       <tr>
-        <th nzWidth="160px" nzAlign="center" nzColumnKey="vigente" [nzSortFn]="true">Estado</th>
+        <th nzWidth="80px" nzAlign="center" nzColumnKey="vigente" [nzSortFn]="true">Estado</th>
         <th nzWidth="120px" nzAlign="center">Código</th>
-        <th>Evento</th>
+        <th nzWidth="340px">Evento</th>
         <th nzWidth="100px" nzAlign="center" >Fecha inicia</th>
         <th nzWidth="100px" nzAlign="center" >Fecha culmina</th>
         <th nzWidth="120px" nzAlign="center">Tipo de espacio</th>
@@ -20,7 +20,7 @@
       @for(evento of eventos(); track $index){
         <tr>
           <td nzAlign="center">
-              <app-estado-tag [estado]="evento.vigente" class="w-full flex justify-center"/>
+              <app-estado-tag nz-tooltip [nzTooltipTitle]="evento.vigente | uppercase" [estado]="evento.vigente" class="w-full flex justify-center"/>
         </td>
           <td nzAlign="center">{{evento.abreviatura}}</td>
           <td>{{evento.nombre}}</td>
@@ -73,4 +73,4 @@
   </ng-template>
 </div>
 
-<app-filtro-eventos *ngIf="openFilters"  [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" (save)="saveFilters($event)" />
+<app-filtro-eventos *ngIf="openFilters"  [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" />

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EventoEstadoEnum } from '@core/enums';
-import { convertEnumToObject } from '@core/helpers';
+import { convertEnumToObject, deleteKeyNullToObject, saveFilterStorage } from '@core/helpers';
 import { ItemEnum, Pagination, TipoEventoResponse } from '@core/interfaces';
 import { TipoEventosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
@@ -22,8 +22,6 @@ export class FiltroEventosComponent {
 
   @Output() filters = new EventEmitter<Pagination>();
   @Output() visibleDrawer = new EventEmitter()
-  @Output() save = new EventEmitter<boolean>()
-  @Output() export = new EventEmitter<boolean>()
 
   private timeout: any;
   estados: ItemEnum[] = convertEnumToObject(EventoEstadoEnum)
@@ -41,8 +39,10 @@ export class FiltroEventosComponent {
   })
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.estados);
+    const pagination = { ...this.pagination }
+    pagination.tipoEspacioId = pagination.tipoEspacioId ? Number(pagination.tipoEspacioId) : null
     
+    this.formEventoFilters.reset(pagination)
     this.obtenerServicioTipoEspacio()
   }
 
@@ -51,9 +51,14 @@ export class FiltroEventosComponent {
     this.tipoEventosServices.getAllTipoEvento(pagination).subscribe(resp => this.tipoEventos.set(resp.data))
   }
 
-  changeVisibleDrawer(visible: boolean, save: boolean = true){
-    this.save.emit(save) 
-    this.visibleDrawer.emit(visible)
+  changeVisibleDrawer(){    
+    this.visibleDrawer.emit(false)
+  }
+
+  saveFilter(){
+    const pagination = deleteKeyNullToObject(this.formEventoFilters.value)
+    saveFilterStorage(pagination,'filtrosEventos','eventoId','DESC')
+    this.changeVisibleDrawer()
   }
 
   changeControl(event: any, control:string){
@@ -81,15 +86,15 @@ export class FiltroEventosComponent {
     localStorage.removeItem('filtrosEventos');
     this.formEventoFilters.reset()
     this.generateFilters()
-    this.changeVisibleDrawer(false,false)
-  }
-
-  generateFilters(){ 
-    const formValue = { ...this.formEventoFilters.value }
-    this.filters.emit(formValue)
+    this.changeVisibleDrawer()
   }
 
   changeSelect(){
     this.generateFilters()
+  }
+
+  generateFilters(){ 
+    const formValue = { ...this.formEventoFilters.value }    
+    this.filters.emit(formValue)
   }
 }

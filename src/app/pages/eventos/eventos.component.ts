@@ -59,7 +59,8 @@ export default class EventosComponent {
         
         setParamsToObject(params, this.pagination, 'nombre')
         setParamsToObject(params, this.pagination, 'estado')          
-        setParamsToObject(params, this.pagination, 'tipoEventoId')
+        setParamsToObject(params, this.pagination, 'tipoEspacioId')
+
         this.obtenerEventoService(estado,tipoEspacioId)
       })
   }
@@ -79,15 +80,16 @@ export default class EventosComponent {
   onQueryParamsChange(params: NzTableQueryParams): void {
     const sortsNames = ['ascend', 'descend']
     const sorts = params.sort.find(item => sortsNames.includes(item.value!))
-    const qtySorts = params.sort.reduce((total, item) => {
+    params.sort.reduce((total, item) => {
       return sortsNames.includes(item.value!) ? total + 1 : total
     }, 0)
+
     const campo = sorts?.key
     const ordenar = sorts?.value!.slice(0, -3)
-    const filtrosSaved = localStorage.getItem('filtrosEventos');
+    const filterStorageExist = localStorage.getItem('filtrosEventos');
     let filtros:any = {}
-    if(filtrosSaved){
-      filtros = JSON.parse(filtrosSaved)
+    if(filterStorageExist){      
+      filtros = JSON.parse(filterStorageExist)
       filtros.save = false      
       localStorage.setItem('filtrosEventos', JSON.stringify(filtros))
     }    
@@ -98,28 +100,6 @@ export default class EventosComponent {
     const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total']
     const params = deleteKeysToObject(pagination, paramsInvalid)
     this.paramsNavigate(params)
-  }
-
-  saveFilters(save: boolean){
-    if(save){
-      const pagination: any = { ...this.pagination };
-      pagination.pagina = pagination.currentPage
-      pagination.cantidad = pagination.pageSize
-      pagination.save = true
-      if(pagination.columnSort != 'eventoId' &&  pagination.typeSort != 'DESC' ){
-        pagination.campo = pagination.columnSort
-        pagination.ordenar = pagination.typeSort
-      }
-  
-      delete pagination.currentPage
-      delete pagination.pageSize
-      delete pagination.columnSort
-      delete pagination.typeSort
-      delete pagination.code
-      delete pagination.total
-  
-      localStorage.setItem('filtrosEventos', JSON.stringify(pagination));
-    }
   }
   
   paramsNavigate(queryParams: Params){    
