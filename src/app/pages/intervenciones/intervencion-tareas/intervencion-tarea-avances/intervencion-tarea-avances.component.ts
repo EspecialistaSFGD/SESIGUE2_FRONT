@@ -3,7 +3,7 @@ import { Component, EventEmitter, inject, Input, Output, signal } from '@angular
 import { ReactiveFormsModule } from '@angular/forms';
 import { IntervencionTareaAvanceEstadoRegistroEnum, IntervencionTareaEstadoRegistroEnum } from '@core/enums';
 import { convertDateStringToDate, convertEnumToObject, getDateFormat } from '@core/helpers';
-import { IntervencionEspacioResponse, IntervencionTareaAvanceResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
+import { ButtonsActions, IntervencionEspacioResponse, IntervencionTareaAvanceResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
 import { IntervencionTareaAvanceService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -55,6 +55,8 @@ export default class IntervencionTareaAvancesComponent {
     currentPage: 1,
     total: 0
   }
+  
+  tareaAvanceActions: ButtonsActions = {}
 
   intervencionTareasAvances = signal<IntervencionTareaAvanceResponse[]>([])
 
@@ -74,8 +76,10 @@ export default class IntervencionTareaAvancesComponent {
     this.sectorAuth = Number(localStorage.getItem('codigoSector') || 0)
     this.usuarioId = Number(localStorage.getItem('codigoUsuario') || 0)
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
-    const profilePCM = [11,12,23]
-    return profilePCM.includes(this.perfilAuth)
+
+    // const profilePCM = [11,12,23]
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    return JSON.parse(permisosStorage) ?? false
   }
 
   verificarResponsable(){

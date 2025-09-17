@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { FileResponse, Pagination, TransferenciaRecursoData, TransferenciaRecursoResponse } from '@core/interfaces';
+import { ButtonsActions, FileResponse, Pagination, TransferenciaRecursoData, TransferenciaRecursoMov, TransferenciaRecursoResponse } from '@core/interfaces';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -12,10 +12,11 @@ import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
-import { deleteKeysToObject, getDateFormat, setParamsToObject } from '@core/helpers';
+import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { MessageService } from 'primeng/api';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { FiltroTransferenciaRecursoComponent } from './filtro-transferencia-recurso/filtro-transferencia-recurso.component';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-transferencias-recursos',
@@ -33,6 +34,9 @@ export default class TransferenciasRecursosComponent {
   modalRef: NzModalRef | null = null
   openFilters: boolean = false
 
+  recursosActions: ButtonsActions = {}
+  transferenciasRecursoMov: TransferenciaRecursoMov[] = []
+
   transferenciasRecursos = signal<TransferenciaRecursoResponse[]>([])
   
   pagination: Pagination = {
@@ -47,12 +51,14 @@ export default class TransferenciasRecursosComponent {
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private modal = inject(NzModalService) 
-  private utilesService = inject(UtilesService);
+  private utilesService = inject(UtilesService)
   private messageService = inject(MessageService)
+  private authStore = inject(AuthService)
 
   ngOnInit(): void {
     // this.obtenerRecursos()
     this.getParams()
+    this.getPermissions()
   }
 
   getParams() {
@@ -72,6 +78,22 @@ export default class TransferenciasRecursosComponent {
       }
       setTimeout(() => this.obtenerRecursos(), 500);
     })
+  }
+
+  getPermissions() {
+    const navigation = this.authStore.navigationAuth()!
+    const transferenciaRecursos = navigation.find(nav => nav.descripcionItem == 'Transferencia Recursos')
+    this.recursosActions = obtenerPermisosBotones(transferenciaRecursos!.botones!)   
+  }
+
+  SeleccionarRecurso(recursoId:string){
+    const index = this.transferenciasRecursoMov.findIndex( item => item.recursoId === recursoId)
+    index  !== -1 ? this.transferenciasRecursoMov.splice(index, 1) : this.transferenciasRecursoMov.push({ recursoId })
+  }
+
+  generarMovLista(){
+    const recursos = this.transferenciasRecursoMov.map(item => item.recursoId);
+    this.generarMov(recursos)
   }
 
   obtenerRecursos(){
@@ -112,8 +134,10 @@ export default class TransferenciasRecursosComponent {
       );
     }
 
-  generarMov(transferenciaId: string){
-    this.transferenciaRecurso.GenerarMov(transferenciaId,this.pagination)
+  generarMov(recursos: string[]){
+    const usuarioId = localStorage.getItem('codigoUsuario') ?? ''
+    const paginationMov: Pagination = { usuarioId }
+    this.transferenciaRecurso.GenerarMov(recursos,paginationMov)
       .subscribe( resp => {
         if(resp.data){
           this.generarDescarga(resp.data);

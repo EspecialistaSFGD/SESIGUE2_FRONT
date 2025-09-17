@@ -7,7 +7,7 @@
       <tr>
         <th nzWidth="42px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
         <th nzWidth="32px" nzAlign="center" nzColumnKey="codigo" [nzSortFn]="true">Codigo</th>
-        <th nzLeft nzWidth="100px">Mesa</th>
+        <th nzWidth="100px">Mesa</th>
         <th nzWidth="32px" nzAlign="center" nzColumnKey="sectorId" [nzSortFn]="true">Sector</th>
         <th nzWidth="64px" nzAlign="center" nzColumnKey="secretariaTecnicaId" [nzSortFn]="true">Secretaría Técnica</th>
         <th nzWidth="32px" nzAlign="center">Fecha de Creación</th>
@@ -15,7 +15,7 @@
         <th nzWidth="24px" nzAlign="center">Resolución</th>
         <th nzWidth="24px" nzAlign="center">Sesión</th>
         <th nzWidth="24px" nzAlign="center">AM</th>
-        <th nzWidth="80px" *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center"></th>
+        <th nzRight nzWidth="80px" *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center"></th>
       </tr>
     </thead>
     
@@ -48,7 +48,7 @@
               <app-boton-descargar [rutaArchivo]="mesa.am" [titulo]="'Descargar ultima AM'"></app-boton-descargar>
             }
           </td>
-          <td *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center">
+          <td nzRight *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center">
               <a *ngIf="mesasActions.view" [routerLink]="['/mesas', mesa.mesaId]">
                 <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
                   <span nz-icon nzType="eye" nzTheme="outline"></span>

@@ -1,0 +1,30 @@
+<div class="flex flex-col bg-white border border-b-0 border-solid border-grey-200">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-solid border-grey-200">
+        <div class="flex flex-col">
+            <h5 class="m-0 text-base font-semibold">Agendas</h5>
+            Resultados: {{pagination.total}}
+        </div>
+    </div>
+    <div class="w-full flex border-solid">
+        <nz-table nzSize="small" [nzData]="agendas()"
+            [nzFrontPagination]="false" [nzShowPagination]="pagination.total! > 5"
+            [nzLoading]="loading" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
+            [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+            <thead>
+                <tr>
+                    <th nzAlign="center">Clasificación</th>
+                    <th nzAlign="center">Código</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(participante of agendas(); track $index){
+                <tr>
+                    <td nzAlign="center">{{participante.nombreClasificacion}}</td>
+                    <td nzAlign="center">{{participante.cui}}</td>
+                <tr>
+                }
+            </tbody>
+        </nz-table>
+    </div>
+</div>
+

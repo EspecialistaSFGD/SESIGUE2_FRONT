@@ -5,7 +5,7 @@
 
       <div class="flex flex-col">
         <label for="codigo">Código de atención</label>
-        <input type="text" class="form-control" id="codigo" placeholder="Codigo de atención" formControlName="codigo" (keyup)="changeCodigo($event)" />
+        <input type="text" class="form-control" id="codigo" placeholder="Codigo de atención" formControlName="codigo" (keyup)="changeControl($event,'codigo')" />
       </div>
 
       <div class="flex flex-col">
@@ -56,16 +56,71 @@
             placeholder="Seleccionar sector"
             (onChange)="changeSector()"/>
         </div>
+        
+        <div class="flex flex-col">
+          <label for="departamento">Tipo de atención</label>
+          <p-dropdown 
+          [options]="tipos"
+          formControlName="tipoAtencion"
+          optionLabel="text"
+          optionValue="value"
+          [showClear]="true" 
+          placeholder="Seleccionar tipo de atencion"
+          (onChange)="changeTipoAtencion()">
+          </p-dropdown>
+        </div>
       }
+
+
+      <div class="flex flex-col">
+        <label for="departamento">Departamento</label>
+        <p-dropdown 
+        [options]="departamentos()"
+        formControlName="departamento"
+        optionLabel="departamento"
+        optionValue="departamentoId"
+        [showClear]="true" 
+        placeholder="Seleccionar departamento"
+        (onChange)="changeDepartamento()"/>
+      </div>
+
+      <div class="flex flex-col">
+        <label for="nombre">Provincia</label>
+        <p-dropdown 
+        [options]="provincias()"
+        formControlName="provincia"
+        optionLabel="provincia"
+        optionValue="provinciaId"
+        [showClear]="true" 
+        placeholder="Seleccionar provincia"
+        (onChange)="changeProvincia()"/>
+      </div>
+
+      <div  class="flex flex-col">
+        <label for="nombre">Distrito</label>
+        <p-dropdown 
+        [options]="distritos()"
+        formControlName="distrito"
+        optionLabel="distrito"
+        optionValue="distritoId"
+        [showClear]="true" 
+        placeholder="Seleccionar distrito"
+        (onChange)="changeDistrito()"/>
+      </div>
 		</div>
 	</form>
 
 	<ng-template #footerFilter>
-		<div class="flex justify-end gap-2">
-			<button nz-button nzType="primary" (click)="changeExport()">
-				<span nz-icon nzType="file-excel"></span>
-				<span class="button-text">Exportar</span>
-			  </button>
-		</div>
+    <div class="flex justify-end gap-2">
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white" (click)="cleanParams()">
+          <i class="pi pi-filter-slash" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Limpiar filtros</span>
+        </div>
+
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 bg-sky-700 text-white hover:bg-sky-800" (click)="changeVisibleDrawer(false)">
+          <i class="pi pi-save" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Buscar filtros</span>
+        </div>
+    </div>
 	</ng-template>
 </nz-drawer>

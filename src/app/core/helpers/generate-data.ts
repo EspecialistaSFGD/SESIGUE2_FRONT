@@ -16,3 +16,9 @@ export const generateBase64ToArrayBuffer = (base64: any) => {
   export const generateMillesAndDecimal = (number: number, decimal: number = 0) => {
 	return number.toFixed(decimal).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
+
+  export const capitalize = (text: string) => {
+	if (!text) return '';
+  	return text.charAt(0).toUpperCase() + text.slice(1);
+	return 
+  }

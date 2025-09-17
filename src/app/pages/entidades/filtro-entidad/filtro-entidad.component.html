@@ -1,0 +1,89 @@
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="'400px'" [nzClosable]="true" [nzVisible]="visible"
+	nzTitle="Filtrar los resultados" [nzFooter]="footerFilter" (nzOnClose)="changeVisibleDrawer(false, false)">
+    <form *nzDrawerContent [formGroup]="formEntidadFilters" nz-form nzLayout="vertical" autocomplete="off" class="flex flex-col w-full gap-3">
+        <div class="flex flex-col">
+            <label for="entidad">Entidad</label>
+            <input type="text" class="form-control" id="entidad" placeholder="entidad aqui" formControlName="entidad" (keyup)="changeControl($event,'entidad')"/>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="tipo">Tipo</label>
+            <nz-radio-group class="radio-form-control" formControlName="tipoEntidad" (ngModelChange)="changeTipo()">
+				@for (tipo of tipos; track $index){
+				<label nz-radio [nzValue]="tipo.value.toLowerCase()">{{tipo.text | titlecase}}</label>
+				}
+			</nz-radio-group>
+        </div>
+
+        <div *ngIf="!esUbigeo" class="flex flex-col">
+            <label for="tipo">Tipo de mancomunidad</label>
+            <nz-radio-group class="radio-form-control" formControlName="tipoMancomunidad" (ngModelChange)="changeTipoMancomunidad()">
+				@for (tipo of tipoMancomunidades; track $index){
+				<label nz-radio [nzValue]="tipo.value.toUpperCase()">{{tipo.text | titlecase}}</label>
+				}
+			</nz-radio-group>
+        </div>
+
+        <div *ngIf="!esUbigeo" class="flex flex-col">
+            <label for="departamento">Mancomunidad</label>
+            <p-dropdown 
+                [options]="mancomunidades()"
+                formControlName="mancomunidad"
+                optionLabel="entidadTipoSlug"
+                optionValue="ubigeo"
+                [showClear]="true" 
+                placeholder="Seleccionar mancomunidad"
+                (onChange)="changeMancomunidad()"/>
+        </div>
+
+        <div *ngIf="esUbigeo" class="flex flex-col">
+            <label for="departamento">Departamento</label>
+            <p-dropdown 
+                [options]="departamentos()"
+                formControlName="departamento"
+                optionLabel="departamento"
+                optionValue="departamentoId"
+                [showClear]="true" 
+                placeholder="Seleccionar departamento"
+                (onChange)="changeDepartamento()"/>
+        </div>
+
+        <div *ngIf="esUbigeo" class="flex flex-col">
+            <label for="nombre">Provincia</label>
+            <p-dropdown 
+            [options]="provincias()"
+            formControlName="provincia"
+            optionLabel="provincia"
+            optionValue="provinciaId"
+            [showClear]="true" 
+            placeholder="Seleccionar provincia"
+            (onChange)="changeProvincia()"/>
+        </div>
+
+        <div *ngIf="esUbigeo" class="flex flex-col">
+            <label for="nombre">Distrito</label>
+            <p-dropdown 
+            [options]="distritos()"
+            formControlName="distrito"
+            optionLabel="distrito"
+            optionValue="distritoId"
+            [showClear]="true" 
+            placeholder="Seleccionar distrito"
+            (onChange)="changeDistrito()"/>
+        </div>
+    </form>
+</nz-drawer>
+
+<ng-template #footerFilter>
+    <div class="flex justify-end gap-2">
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white" (click)="cleanParams()">
+          <i class="pi pi-filter-slash" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Limpiar filtros</span>
+        </div>
+
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 bg-sky-700 text-white hover:bg-sky-800" (click)="changeVisibleDrawer(false)">
+          <i class="pi pi-save" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Buscar filtros</span>
+        </div>
+    </div>
+</ng-template>

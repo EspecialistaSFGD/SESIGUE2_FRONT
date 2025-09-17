@@ -22,7 +22,11 @@ export class IndiceTransferenciaRecursoComponent {
   @Input()
   set data(value: TransferenciaRecursoIndiceFormData) {
     this._data = value;
+    
     if (!value.success) {
+      console.log(value);
+      console.log(value.success);
+      this.reNewFile = true
       this.resetFile = true;
       this.getFiles({ exist: false, file: undefined });
     }
@@ -36,8 +40,9 @@ export class IndiceTransferenciaRecursoComponent {
   private validatorSevice = inject(ValidatorService)
   
   resetFile: boolean = false
-  indice: boolean = this.data.indice
+  reNewFile: boolean = false
 
+  indice: boolean = this.data.indice
   formIndice: FormGroup = this.fb.group({
     monto: [ '' ],
     fecha: [ '', Validators.required ],
@@ -64,6 +69,7 @@ export class IndiceTransferenciaRecursoComponent {
 
   getFiles(dataFile: DataFile) {
     if (dataFile.exist) {
+      this.reNewFile = false
       this.formIndice.patchValue({ archivo: dataFile.file! })
 
       const reader = new FileReader()
