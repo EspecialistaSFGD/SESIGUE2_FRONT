@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { EventoResponse, Pagination } from '@core/interfaces';
 import { EventosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { EstadoTagComponent } from '@shared/estado-tag/estado-tag.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -19,6 +18,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 export default class EventosComponent {
   loading: boolean = false
   openFilters: boolean = false
+  loadingExport: boolean = false
   pagination: Pagination = {
     columnSort: 'eventoId',
     typeSort: 'DESC',

@@ -1,4 +1,4 @@
-<app-page-header [title]="'Eventos'" backUrl="panel" />
+<app-page-header [title]="'Espacios'" backUrl="panel" />
 <div class="grid grid-cols-1">
   <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="Headereventos" nzShowSizeChanger nzSize="small"
     [nzData]="eventos()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
@@ -10,7 +10,7 @@
         <th>Evento</th>
         <th nzWidth="100px" nzAlign="center" >Fecha inicia</th>
         <th nzWidth="100px" nzAlign="center" >Fecha culmina</th>
-        <th nzWidth="120px" nzAlign="center">Espacio</th>
+        <th nzWidth="120px" nzAlign="center">Tipo de espacios</th>
         <th nzWidth="80px" nzAlign="center">Verifica asistente</th>
         <th nzRight nzWidth="112px" nzAlign="center"></th>
       </tr>
@@ -54,15 +54,20 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
-        <button nz-button nzType="default" (click)="openFilters = true">
-          <span nz-icon nzType="filter"></span>
-          <span class="button-text">Filtros</span>
-        </button>
+        <div class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white"  (click)="openFilters = true">
+            <i class="pi pi-filter" style="font-size: 0.75rem"></i>
+            <span class="hidden md:flex">Filtros</span>
+        </div>
+
+        <div class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white">
+            <i class="pi" [ngClass]="{ 'pi-spin pi-spinner' : loadingExport, 'pi-file-excel' : !loadingExport }" style="font-size: 0.75rem"></i>
+            <span class="hidden md:flex">Exportar</span>
+        </div>
   
-        <button nz-button nzType="primary" (click)="crearEvento()">
-          <span nz-icon nzType="plus" nzTheme="outline"></span>
-          <span class="button-text">Nueva evento</span>
-        </button>
+        <div class="flex items-center gap-1 py-1 px-3 rounded border text-white cursor-pointer border-sky-700 bg-sky-700 hover:bg-sky-800 hover:border-sky-700" (click)="crearEvento()">
+              <i class="pi pi-plus" style="font-size: 0.75rem"></i>
+              <span class="hidden md:flex">Nuevo evento</span>
+            </div>
       </div>
     </div>
   </ng-template>

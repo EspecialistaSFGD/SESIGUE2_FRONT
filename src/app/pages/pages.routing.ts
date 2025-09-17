@@ -15,6 +15,6 @@ export const PAGES_ROUTES: Routes = [
   { path: 'hitos', loadChildren: () => import('./hitos/hitos.routes').then(r => r.HITOS_ROUTES) },
   { path: 'transferencias_recursos', loadChildren: () => import('./transferencias-recursos/transferencias-recursos.routes').then(r => r.TRANSFERENCIAS_RECURSOS_ROUTES) },
   { path: 'entidades', loadChildren: () => import('./entidades/entidades.routes').then(r => r.ENTIDADES_ROUTES) },
-  { path: 'eventos', loadChildren: () => import('./eventos/eventos.routes').then(r => r.EVENTOS_ROUTES) },
+  { path: 'espacios', loadChildren: () => import('./eventos/eventos.routes').then(r => r.EVENTOS_ROUTES) },
   { path: '**', redirectTo: 'panel', pathMatch: 'full' },
 ];
