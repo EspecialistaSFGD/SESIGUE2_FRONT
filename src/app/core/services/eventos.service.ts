@@ -12,6 +12,18 @@ export class EventosService {
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
+  ListarEventos(pagination: Pagination, vigentes: string[] = [], codigoTipoEventos: string[] = []){
+    let params = this.helpersServices.setParams(pagination)
+    for (let vigente of vigentes) {
+      params = params.append('vigentes[]', `${vigente}`);
+    }
+    for (let codigoTipoEvento of codigoTipoEventos) {
+      params = params.append('codigoTipoEvento[]', `${codigoTipoEvento}`);
+    }
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<EventosResponses>(`${this.urlEvento}/ListarEventos`, { headers, params })
+  }
+
   getAllEventos(codigoTipoEvento: number[] | null = null, estado: number = 1, vigentes: number[] = [1, 2, 3], pagination: Pagination) {
     const sort = pagination.typeSort == 'desc' ? 'descend' : 'ascend'
     let params = new HttpParams()

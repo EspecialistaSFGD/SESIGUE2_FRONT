@@ -19,4 +19,6 @@ export interface EventoResponse {
 	rowNumber?: string,
 	verificaAsistentes: boolean,
 	fechaFinEvento?: Date,
+	codigoTipoEvento?: string,
+	tipoEvento?: string,
 }

@@ -1,4 +1,5 @@
-<span class="inline-flex items-center justify-center gap-1 px-2 rounded border" [ngClass]="'' + getThemeState().color ">
-    <span nz-icon [nzType]="getThemeState().icono" nzTheme="outline"></span>
-    <div class="text-xs">{{ estado | uppercase }}</div>    
+<span class="inline-flex items-center justify-center gap-1 px-1 rounded border" [ngClass]="'' + getThemeState().color ">
+    <!-- <span nz-icon [nzType]="getThemeState().icono" nzTheme="outline"></span> -->
+     <i class="pi pi-{{getThemeState().icono}}" style="font-size: .75rem;"></i>
+    <div class="text-xs hidden md:flex">{{ estado | uppercase }}</div>    
 </span>
