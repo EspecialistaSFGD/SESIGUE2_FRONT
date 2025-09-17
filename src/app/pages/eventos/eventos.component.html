@@ -5,11 +5,11 @@
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
       <tr>
-        <th nzWidth="140px" nzAlign="center" nzColumnKey="vigente" [nzSortFn]="true">Estado</th>
-        <th nzWidth="100px" nzAlign="center">Código</th>
+        <th nzWidth="160px" nzAlign="center" nzColumnKey="vigente" [nzSortFn]="true">Estado</th>
+        <th nzWidth="120px" nzAlign="center">Código</th>
         <th>Evento</th>
-        <th nzWidth="100px" nzAlign="center" >Fecha Inicia</th>
-        <th nzWidth="100px" nzAlign="center" >fecha Culmina</th>
+        <th nzWidth="100px" nzAlign="center" >Fecha inicia</th>
+        <th nzWidth="100px" nzAlign="center" >Fecha culmina</th>
         <th nzWidth="120px" nzAlign="center">Espacio</th>
         <th nzWidth="80px" nzAlign="center">Verifica asistente</th>
         <th nzRight nzWidth="112px" nzAlign="center"></th>
@@ -20,9 +20,7 @@
       @for(evento of eventos(); track $index){
         <tr>
           <td nzAlign="center">
-            <!-- {{evento.vigente | uppercase}} -->
-            <!-- <p-message severity="success">se</p-message> -->
-             <app-estado-tag [estado]="evento.vigente" />
+              <app-estado-tag [estado]="evento.vigente" class="w-full flex justify-center"/>
         </td>
           <td nzAlign="center">{{evento.abreviatura}}</td>
           <td>{{evento.nombre}}</td>
