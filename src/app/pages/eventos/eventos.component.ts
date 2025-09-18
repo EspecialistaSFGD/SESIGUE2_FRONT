@@ -155,6 +155,9 @@ export default class EventosComponent {
             const fechaFinEvento = getDateFormat(formEvento.get('fechaFinEvento')?.value, 'month')
 
             const body:EventoResponse = { ...formEvento.value, fechaEvento, fechaFinEvento }
+            if(!create){
+              body.eventoId = evento.eventoId
+            }
             create ? this.crearEventoService(body) : this.actualizarEventoService(body)
           }
         }
@@ -163,7 +166,6 @@ export default class EventosComponent {
   }
 
   crearEventoService(evento: EventoResponse){
-    console.log(evento);
     this.eventoService.registrarEvento(evento)
       .subscribe( resp => {        
         if(resp.success){
@@ -177,7 +179,15 @@ export default class EventosComponent {
   }
   
   actualizarEventoService(evento: EventoResponse){
-    console.log('ACTUALIZANDO EVENTO');
-
+    this.eventoService.actualizarEvento(evento)
+      .subscribe( resp => {        
+        if(resp.success){
+          this.messageService.add({ severity: 'success', summary: 'Evento Actualizado', detail: resp.message });
+          this.obtenerEventoService('','')
+          this.modal.closeAll();
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
+        }
+      })
   }
 }

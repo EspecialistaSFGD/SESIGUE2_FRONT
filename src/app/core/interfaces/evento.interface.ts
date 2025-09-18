@@ -23,7 +23,7 @@ export interface EventoResponse {
 	descripcionEstado: string,
 	rowNumber?: string,
 	verificaAsistentes: boolean,
-	fechaFinEvento?: Date,
+	fechaFinEvento?: string,
 	codigoTipoEvento?: string,
 	tipoEvento?: string,
 }

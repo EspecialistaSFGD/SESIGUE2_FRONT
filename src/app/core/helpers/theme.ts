@@ -14,8 +14,8 @@ export const themeProgressBarPercente = (value: number): string => {
 
 export const themeState = (state: string) => {
   let theme: ColorEstados = {
-    color: 'bg-amber-100 border-amber-400 text-amber-600',
-    icono: 'sync'
+    color: 'bg-gray-100 border-gray-400 text-gray-600',
+    icono: 'clock'
   }
   switch (state) {
     case 'culminado':
@@ -35,7 +35,7 @@ export const themeState = (state: string) => {
       theme.color = 'bg-blue-100 border-blue-400 text-blue-600'
       theme.icono = 'thumbs-up'
       break;
-    case 'pendiente':
+    case 'iniciado':
       theme.color = 'bg-amber-100 border-amber-400 text-amber-600'
       theme.icono = 'exclamation-circle'
       break;

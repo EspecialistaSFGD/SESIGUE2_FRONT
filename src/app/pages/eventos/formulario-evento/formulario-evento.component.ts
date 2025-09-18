@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventoEstadoEnum } from '@core/enums';
-import { convertEnumToObject, typeErrorControl } from '@core/helpers';
+import { convertDateStringToDate, convertEnumToObject, typeErrorControl } from '@core/helpers';
 import { DataModalEvento, EventoResponse, ItemEnum, Pagination, SubTipoResponse, TipoEventoResponse } from '@core/interfaces';
 import { SubTipoService, TipoEventosService } from '@core/services';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -42,6 +42,13 @@ export class FormularioEventoComponent {
   })
 
   ngOnInit(): void {
+   this.estados = this.estados.map(item => ({ ...item, text: item.value.toLowerCase() }))    
+    if(!this.create){
+      const evento = this.evento()
+      const fechaEvento = convertDateStringToDate(evento.fechaEvento!)
+      const fechaFinEvento = convertDateStringToDate(evento.fechaFinEvento!)
+      this.formEvento.reset({...evento, fechaEvento, fechaFinEvento})
+    }
     this.obtenerSubTiposService()
     this.obtenerServicioTipoEspacio()
   }

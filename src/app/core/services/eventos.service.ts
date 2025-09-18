@@ -42,6 +42,18 @@ export class EventosService {
       )
   }
 
+  actualizarEvento(evento: EventoResponse){
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.put<EventoResponses>(`${this.urlEvento}/ActualizarEvento/${evento.eventoId}`, evento, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
+  }
+
   getAllEventos(codigoTipoEvento: number[] | null = null, estado: number = 1, vigentes: number[] = [1, 2, 3], pagination: Pagination) {
     const sort = pagination.typeSort == 'desc' ? 'descend' : 'ascend'
     let params = new HttpParams()
