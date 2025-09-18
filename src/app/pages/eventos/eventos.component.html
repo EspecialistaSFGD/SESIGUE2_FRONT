@@ -38,7 +38,7 @@
               <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Actualizar evento" (click)="eventoFormModal(evento,false)">
                 <i class="pi pi-pencil" style="font-size: .85rem;"></i>
               </button>
-              <button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar evento">
+              <button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar evento" (click)="eliminarEvento(evento)">
                 <i class="pi pi-trash" style="font-size: .85rem;"></i>
               </button>
               <a [routerLink]="[evento.eventoId]">

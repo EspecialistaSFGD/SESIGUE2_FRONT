@@ -10,7 +10,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltroEventosComponent } from './filtro-eventos/filtro-eventos.component';
 import { deleteKeysToObject, getDateFormat, setParamsToObject } from '@core/helpers';
 import { distinctUntilChanged, filter } from 'rxjs';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioEventoComponent } from './formulario-evento/formulario-evento.component';
 import { MessageService } from 'primeng/api';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -37,6 +37,7 @@ export default class EventosComponent {
 
   eventos = signal<EventoResponse[]>([])
   tipoEventos = signal<TipoEventoResponse[]>([])
+  confirmModal?: NzModalRef;
 
   private eventoService = inject(EventosService)
   private router = inject(Router);
@@ -185,6 +186,29 @@ export default class EventosComponent {
           this.messageService.add({ severity: 'success', summary: 'Evento Actualizado', detail: resp.message });
           this.obtenerEventoService('','')
           this.modal.closeAll();
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
+        }
+      })
+  }
+
+  eliminarEvento(evento: EventoResponse){
+    this.confirmModal = this.modal.confirm({
+      nzTitle: `¿Está seguro de eliminar en evento? ${evento.abreviatura}`,
+      nzContent: 'Esta acción no se puede deshacer.',
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      nzOnOk: () => this.eliminarEventoService(evento.eventoId!),
+      nzCancelText: 'Cancelar',
+    });
+  }
+  
+  eliminarEventoService(eventoId: string){
+    this.eventoService.eliminarEvento(eventoId)
+      .subscribe(resp => {
+        if (resp.success == true) {
+          this.obtenerEventoService('','')
+          this.messageService.add({ severity: 'success', summary: 'Evento Eliminado', detail: resp.message });
         } else {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
         }
