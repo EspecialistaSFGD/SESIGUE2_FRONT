@@ -18,11 +18,17 @@ export interface EventoResponse {
 	descripcionVigente?: string,
 	orden?: string,
 	subTipo: string,
+	subTipoId: string,
 	estado: string,
 	descripcionEstado: string,
 	rowNumber?: string,
 	verificaAsistentes: boolean,
-	fechaFinEvento?: Date,
+	fechaFinEvento?: string,
 	codigoTipoEvento?: string,
 	tipoEvento?: string,
+}
+
+export interface DataModalEvento{
+  create: boolean,
+  evento: EventoResponse
 }

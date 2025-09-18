@@ -100,6 +100,6 @@
   </ng-template>
 </div>
 
-<app-filtro-mesas [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="changeVisibleDrawer($event)" (filters)="generateFilters($event)" (export)="reporteMesas()" (save)="saveFilters($event)" />
+<app-filtro-mesas *ngIf="openFilters" [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="changeVisibleDrawer($event)" (filters)="generateFilters($event)" (export)="reporteMesas()" (save)="saveFilters($event)" />
 
 

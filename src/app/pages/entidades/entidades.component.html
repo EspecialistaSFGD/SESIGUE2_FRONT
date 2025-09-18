@@ -34,7 +34,7 @@
           <td nzAlign="center">{{entidad.sexoAutoridad}}</td>
           <td nzRight nzAlign="center">
             <div class="flex justify-center">
-              <div *ngIf="entidadesActions.servicejne" class="p-1 cursor-pointer font-bold text-sky-700 hover:text-sky-800" nz-tooltip [nzTooltipTitle]="'Actualizar autoridad de ' + entidad.nombre" (click)="obtenerAutoridadJne(entidad)">
+              <div *ngIf="entidadesActions.servicejne" class="p-1 cursor-pointer font-bold text-sky-700 hover:text-sky-800" nz-tooltip [nzTooltipTitle]="'Actualizar según JNE de ' + entidad.nombre" (click)="obtenerAutoridadJne(entidad)">
                 <i class="pi pi-building-columns" style="font-size: .85rem;"></i>
               </div>
               <a *ngIf="entidadesActions.view" [routerLink]="[entidad.entidadId]" class="py-1 px-2 font-bold text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
