@@ -12,7 +12,7 @@
         <th nzWidth="100px" nzAlign="center" >Fecha culmina</th>
         <th nzWidth="120px" nzAlign="center">Tipo de espacio</th>
         <th nzWidth="80px" nzAlign="center">Verifica asistente</th>
-        <th nzRight nzWidth="112px" nzAlign="center"></th>
+        <th nzRight nzWidth="120px" nzAlign="center"></th>
       </tr>
     </thead>
     
@@ -33,13 +33,13 @@
             </div>
         </td>
           <td nzRight nzAlign="center">
-              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Actualizar evento">
+              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Actualizar evento" [disabled]="true">
                 <i class="pi pi-pencil" style="font-size: .85rem;"></i>
               </button>
-              <button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar evento">
+              <button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar evento" [disabled]="true">
                 <i class="pi pi-trash" style="font-size: .85rem;"></i>
               </button>
-              <a [routerLink]="[evento]">
+              <a [routerLink]="[evento.eventoId]">
                 <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
                   <span nz-icon nzType="eye" nzTheme="outline"></span>
                 </button>
