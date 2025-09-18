@@ -13,7 +13,7 @@
         </div>
 
         <div class="flex flex-col">
-            <label for="fechaEvento">Fecha de inicio de evento</label>
+            <label for="fechaEvento">Fecha de inicio</label>
             <p-calendar 
             formControlName="fechaEvento"
             [iconDisplay]="'input'" 
@@ -22,11 +22,11 @@
             dateFormat="dd/mm/yy"
             inputId="icondisplay" 
             (onSelect)="validateDate('fechaEvento')"/>
-            <div class="w-full text-danger" *ngIf="alertMessageError('fechaEvento')">{{msgErrorControl('fechaEvento','Fecha de evento')}}</div>
+            <div class="w-full text-danger" *ngIf="alertMessageError('fechaEvento')">{{msgErrorControl('fechaEvento','Fecha de inicio')}}</div>
         </div>
 
         <div class="flex flex-col">
-            <label for="fechaFinEvento">Fecha de fin de evento</label>
+            <label for="fechaFinEvento">Fecha de fin</label>
             <p-calendar 
             formControlName="fechaFinEvento"
             [iconDisplay]="'input'" 
@@ -35,7 +35,7 @@
             dateFormat="dd/mm/yy"
             inputId="icondisplay" 
             (onSelect)="validateDate('fechaFinEvento')"/>
-            <div class="w-full text-danger" *ngIf="alertMessageError('fechaFinEvento')">{{msgErrorControl('fechaFinEvento','Fecha de fin de evento')}}</div>
+            <div class="w-full text-danger" *ngIf="alertMessageError('fechaFinEvento')">{{msgErrorControl('fechaFinEvento','Fecha de fin')}}</div>
         </div>
 
         <div class="flex flex-col">
@@ -52,13 +52,19 @@
 
         <div class="flex flex-col">
             <label for="subTipoId">Tipo</label>
-            <!-- <input type="text" class="form-control" id="abreviatura" placeholder="Código aquí" formControlName="abreviatura"> -->
+             <p-dropdown 
+            [options]="subTipos()"
+            formControlName="subTipoId"
+            optionLabel="descripcionSubTipo"
+            optionValue="codigoSubTipo"
+            [showClear]="true" 
+            placeholder="Seleccionar tipo"/>
             <div class="w-full text-danger" *ngIf="alertMessageError('subTipoId')">{{msgErrorControl('subTipoId','Tipo')}}</div>
         </div>
 
         <div class="flex flex-col">
             <label for="codigoTipoEvento">Tipo de espacio</label>
-             <p-dropdown 
+            <p-dropdown 
             [options]="tipoEventos()"
             formControlName="codigoTipoEvento"
             optionLabel="descripcionTipoEvento"
@@ -70,8 +76,7 @@
 
         <div class="flex flex-col">
             <label for="verificaAsistentes">Verifica asistente</label>
-            <!-- <input type="text" class="form-control" id="abreviatura" placeholder="Código aquí" formControlName="abreviatura"> -->
-             <p-inputSwitch formControlName="verificaAsistentes" (onChange)="changeAsistente()" class="mt-1"/>
+             <p-inputSwitch formControlName="verificaAsistentes" class="mt-1"/>
             <div class="w-full text-danger" *ngIf="alertMessageError('verificaAsistentes')">{{msgErrorControl('verificaAsistentes','verifica asistente')}}</div>
         </div>
     </div>

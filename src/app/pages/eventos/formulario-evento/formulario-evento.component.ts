@@ -3,8 +3,8 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventoEstadoEnum } from '@core/enums';
 import { convertEnumToObject, typeErrorControl } from '@core/helpers';
-import { DataModalEvento, EventoResponse, ItemEnum, Pagination, TipoEventoResponse } from '@core/interfaces';
-import { TipoEventosService } from '@core/services';
+import { DataModalEvento, EventoResponse, ItemEnum, Pagination, SubTipoResponse, TipoEventoResponse } from '@core/interfaces';
+import { SubTipoService, TipoEventosService } from '@core/services';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
@@ -22,9 +22,12 @@ export class FormularioEventoComponent {
   create: boolean = this.dataEvento.create
   evento = signal<EventoResponse>(this.dataEvento.evento)
   estados: ItemEnum[] = convertEnumToObject(EventoEstadoEnum)
+
+  subTipos = signal<SubTipoResponse[]>([])
   tipoEventos = signal<TipoEventoResponse[]>([])
   
   private fb = inject(FormBuilder)
+  private subTiposService = inject(SubTipoService)
   private tipoEventosServices = inject(TipoEventosService)
 
   formEvento:FormGroup = this.fb.group({
@@ -39,6 +42,7 @@ export class FormularioEventoComponent {
   })
 
   ngOnInit(): void {
+    this.obtenerSubTiposService()
     this.obtenerServicioTipoEspacio()
   }
 
@@ -53,8 +57,13 @@ export class FormularioEventoComponent {
     return typeErrorControl(text, errors)
   }
 
+  obtenerSubTiposService(){
+    const pagination: Pagination = { columnSort: 'codigoSubTipo', typeSort: 'DESC', pageSize: 50, currentPage: 1 }
+    this.subTiposService.ListarSubTipo(pagination).subscribe(resp => this.subTipos.set(resp.data))
+  }
+
   obtenerServicioTipoEspacio() {
-    const pagination: Pagination = { code: 0, columnSort: 'codigoTipoEvento', typeSort: 'DESC', pageSize: 10, currentPage: 1, total: 0}
+    const pagination: Pagination = { columnSort: 'codigoTipoEvento', typeSort: 'DESC', pageSize: 50, currentPage: 1 }
     this.tipoEventosServices.getAllTipoEvento(pagination).subscribe(resp => this.tipoEventos.set(resp.data))
   }
 
@@ -68,24 +77,17 @@ export class FormularioEventoComponent {
     const fechaVigencia = new Date(fechaVigenciaValue);
 
     if(control == 'fechaEvento'){
-      if (fechaCreacionValue && fechaVigenciaValue && fechaCreacion >= fechaVigencia) {
-        fechaEventoControl?.setErrors({ ...fechaEventoControl.errors, msgBack: 'La fecha de creación debe ser menor que la fecha de vigencia.' });
+      if (fechaCreacionValue && fechaVigenciaValue && fechaCreacion > fechaVigencia) {
+        fechaEventoControl?.setErrors({ ...fechaEventoControl.errors, msgBack: 'La fecha de inicio debe ser menor o igual que la fecha de fin.' });
       } else {
         fechaFinEventoControl?.setErrors(null)
       }
     } else if(control == 'fechaFinEvento'){
-      if (fechaCreacionValue && fechaVigenciaValue && fechaVigencia <= fechaCreacion) {
-        fechaFinEventoControl?.setErrors({ ...fechaFinEventoControl.errors, msgBack: 'La fecha de vigencia debe ser mayor que la fecha de creación.' });
+      if (fechaCreacionValue && fechaVigenciaValue && fechaVigencia < fechaCreacion) {
+        fechaFinEventoControl?.setErrors({ ...fechaFinEventoControl.errors, msgBack: 'La fecha de fin debe ser mayor que la fecha de inicio.' });
       } else {
         fechaEventoControl?.setErrors(null)
       }
     }
-  }
-
-  changeAsistente(){
-    const asistenteControl = this.formEvento.get('verificaAsistentes')
-    const asistente = asistenteControl?.value
-    console.log(asistente);
-    
   }
 }
