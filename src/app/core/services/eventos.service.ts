@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { EventosResponses, Pagination } from '@core/interfaces';
+import { EventoResponses, EventosResponses, Pagination } from '@core/interfaces';
 import { environment } from '@environments/environment';
+import { Observable } from 'rxjs';
 import { HelpersService } from './helpers.service';
 
 @Injectable({
@@ -11,6 +12,23 @@ export class EventosService {
   private urlEvento: string = `${environment.api}/Evento`
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
+
+  ListarEventos(pagination: Pagination, estados: string[] = [], tipoEspacioId: string[] = []){
+    let params = this.helpersServices.setParams(pagination)
+    for (let estado of estados) {
+      params = params.append('estado[]', `${estado}`);
+    }
+    for (let tipo of tipoEspacioId) {
+      params = params.append('tipoEvento[]', `${tipo}`);
+    }
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<EventosResponses>(`${this.urlEvento}/ListarEventos`, { headers, params })
+  }
+
+  obtenerEvento(eventoId: string): Observable<EventoResponses> {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<EventoResponses>(`${this.urlEvento}/ObtenerEvento/${eventoId}`, { headers })
+  }
 
   getAllEventos(codigoTipoEvento: number[] | null = null, estado: number = 1, vigentes: number[] = [1, 2, 3], pagination: Pagination) {
     const sort = pagination.typeSort == 'desc' ? 'descend' : 'ascend'

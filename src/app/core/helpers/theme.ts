@@ -14,17 +14,30 @@ export const themeProgressBarPercente = (value: number): string => {
 
 export const themeState = (state: string) => {
   let theme: ColorEstados = {
-    color: 'bg-amber-200 border-amber-400 text-amber-600',
+    color: 'bg-amber-100 border-amber-400 text-amber-600',
     icono: 'sync'
   }
   switch (state) {
-    case 'cerrado':
-      theme.color = 'bg-green-200 border-green-400 text-green-600',
+    case 'culminado':
+      theme.color = 'bg-green-100 border-green-400 text-green-600',
       theme.icono = 'check-circle';
       break;
+    case 'cerrado':
+      theme.color = 'bg-green-100 border-green-400 text-green-600',
+      theme.icono = 'times';
+      break;
+    case 'proceso':
+    case 'en proceso':
+      theme.color = 'bg-sky-100 border-sky-400 text-sky-600',
+      theme.icono = 'cog';
+      break;
     case 'seguimiento':
-      theme.color = 'bg-blue-200 border-blue-400 text-blue-600'
-      theme.icono = 'like'
+      theme.color = 'bg-blue-100 border-blue-400 text-blue-600'
+      theme.icono = 'thumbs-up'
+      break;
+    case 'pendiente':
+      theme.color = 'bg-amber-100 border-amber-400 text-amber-600'
+      theme.icono = 'exclamation-circle'
       break;
   }
   return theme
