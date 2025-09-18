@@ -1,0 +1,78 @@
+<form [formGroup]="formEvento" autocomplete="off">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="flex flex-col col-span-2">
+            <label for="nombre">Nombre</label>
+            <input type="text" class="form-control" id="nombre" placeholder="Nombre aquí" formControlName="nombre">
+            <div class="w-full text-danger" *ngIf="alertMessageError('nombre')">{{msgErrorControl('nombre','Nombre')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="abreviatura">Código</label>
+            <input type="text" class="form-control" id="abreviatura" placeholder="Código aquí" formControlName="abreviatura">
+            <div class="w-full text-danger" *ngIf="alertMessageError('abreviatura')">{{msgErrorControl('abreviatura','Código')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="fechaEvento">Fecha de inicio de evento</label>
+            <p-calendar 
+            formControlName="fechaEvento"
+            [iconDisplay]="'input'" 
+            [showIcon]="true"
+            [showButtonBar]="true"
+            dateFormat="dd/mm/yy"
+            inputId="icondisplay" 
+            (onSelect)="validateDate('fechaEvento')"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('fechaEvento')">{{msgErrorControl('fechaEvento','Fecha de evento')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="fechaFinEvento">Fecha de fin de evento</label>
+            <p-calendar 
+            formControlName="fechaFinEvento"
+            [iconDisplay]="'input'" 
+            [showIcon]="true"
+            [showButtonBar]="true"
+            dateFormat="dd/mm/yy"
+            inputId="icondisplay" 
+            (onSelect)="validateDate('fechaFinEvento')"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('fechaFinEvento')">{{msgErrorControl('fechaFinEvento','Fecha de fin de evento')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="vigente">Estado</label>
+            <p-dropdown 
+            [options]="estados"
+            formControlName="vigente"
+            optionLabel="value"
+            optionValue="text"
+            [showClear]="true" 
+            placeholder="Seleccionar estado"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('vigente')">{{msgErrorControl('vigente','Estado')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="subTipoId">Tipo</label>
+            <!-- <input type="text" class="form-control" id="abreviatura" placeholder="Código aquí" formControlName="abreviatura"> -->
+            <div class="w-full text-danger" *ngIf="alertMessageError('subTipoId')">{{msgErrorControl('subTipoId','Tipo')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="codigoTipoEvento">Tipo de espacio</label>
+             <p-dropdown 
+            [options]="tipoEventos()"
+            formControlName="codigoTipoEvento"
+            optionLabel="descripcionTipoEvento"
+            optionValue="codigoTipoEvento"
+            [showClear]="true" 
+            placeholder="Seleccionar tipo de espacio"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('codigoTipoEvento')">{{msgErrorControl('codigoTipoEvento','Tipo de espacio')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="verificaAsistentes">Verifica asistente</label>
+            <!-- <input type="text" class="form-control" id="abreviatura" placeholder="Código aquí" formControlName="abreviatura"> -->
+             <p-inputSwitch formControlName="verificaAsistentes" (onChange)="changeAsistente()" class="mt-1"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('verificaAsistentes')">{{msgErrorControl('verificaAsistentes','verifica asistente')}}</div>
+        </div>
+    </div>
+</form>

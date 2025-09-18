@@ -10,7 +10,8 @@
         <th nzWidth="340px">Evento</th>
         <th nzWidth="100px" nzAlign="center" >Fecha inicia</th>
         <th nzWidth="100px" nzAlign="center" >Fecha culmina</th>
-        <th nzWidth="120px" nzAlign="center">Tipo de espacio</th>
+        <th nzWidth="100px" nzAlign="center">Sub tipo</th>
+        <th nzWidth="120px" nzAlign="center">Tipo</th>
         <th nzWidth="80px" nzAlign="center">Verifica asistente</th>
         <th nzRight nzWidth="120px" nzAlign="center"></th>
       </tr>
@@ -26,6 +27,7 @@
           <td>{{evento.nombre}}</td>
           <td nzAlign="center">{{evento.fechaEvento}}</td>
           <td nzAlign="center">{{evento.fechaFinEvento}}</td>
+          <td nzAlign="center">{{evento.subTipo}}</td>
           <td nzAlign="center">{{evento.tipoEvento}}</td>
           <td nzAlign="center">
             <div nz-tooltip [nzTooltipTitle]="evento.verificaAsistentes ? 'Si verifica asistentes' : 'No verficia asistentes'" [ngClass]="evento.verificaAsistentes ? 'text-green-600' : 'text-slate-200'">
@@ -33,10 +35,10 @@
             </div>
         </td>
           <td nzRight nzAlign="center">
-              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Actualizar evento" [disabled]="true">
+              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Actualizar evento" (click)="eventoFormModal(evento,false)">
                 <i class="pi pi-pencil" style="font-size: .85rem;"></i>
               </button>
-              <button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar evento" [disabled]="true">
+              <button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar evento">
                 <i class="pi pi-trash" style="font-size: .85rem;"></i>
               </button>
               <a [routerLink]="[evento.eventoId]">

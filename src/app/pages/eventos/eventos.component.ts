@@ -10,6 +10,8 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltroEventosComponent } from './filtro-eventos/filtro-eventos.component';
 import { deleteKeysToObject, setParamsToObject } from '@core/helpers';
 import { distinctUntilChanged, filter } from 'rxjs';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { FormularioEventoComponent } from './formulario-evento/formulario-evento.component';
 
 @Component({
   selector: 'app-eventos',
@@ -36,6 +38,7 @@ export default class EventosComponent {
   private eventoService = inject(EventosService)
   private router = inject(Router);
   private route = inject(ActivatedRoute)
+  private modal = inject(NzModalService);
 
   ngOnInit(): void {
     this.getParams()
@@ -114,6 +117,31 @@ export default class EventosComponent {
   }
 
   crearEvento(){
+    const evento:  EventoResponse = {} as EventoResponse
+    this.eventoFormModal(evento)
+  }
 
+  eventoFormModal(evento: EventoResponse, create: boolean = true){
+    const action = `${create ? 'Crear' : 'Actualizar' } Espacio`
+    this.modal.create<FormularioEventoComponent>({
+      nzTitle: `${action.toUpperCase()}`,
+      nzWidth: '50%',
+      nzMaskClosable: false,
+      nzContent: FormularioEventoComponent,
+      nzData: { create, evento },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: action,
+          type: 'primary',
+          onClick: (componentResponse) => {
+          }
+        }
+      ]
+    })
   }
 }
