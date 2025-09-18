@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { EventoResponses, EventosResponses, Pagination } from '@core/interfaces';
+import { EventoResponse, EventoResponses, EventosResponses, Pagination } from '@core/interfaces';
 import { environment } from '@environments/environment';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
 
 @Injectable({
@@ -28,6 +28,18 @@ export class EventosService {
   obtenerEvento(eventoId: string): Observable<EventoResponses> {
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<EventoResponses>(`${this.urlEvento}/ObtenerEvento/${eventoId}`, { headers })
+  }
+
+  registrarEvento(evento: EventoResponse){
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.post<EventoResponses>(`${this.urlEvento}/RegistrarEvento`, evento, { headers })
+      .pipe(
+        tap(resp => {
+          return resp
+        }),
+        map(valid => valid),
+        catchError(err => of(err))
+      )
   }
 
   getAllEventos(codigoTipoEvento: number[] | null = null, estado: number = 1, vigentes: number[] = [1, 2, 3], pagination: Pagination) {

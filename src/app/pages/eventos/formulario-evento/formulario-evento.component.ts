@@ -35,10 +35,10 @@ export class FormularioEventoComponent {
     abreviatura: [null, Validators.required],
     fechaEvento: [ null, Validators.required ],
     fechaFinEvento: [ null, Validators.required ],
-    vigente: [ null, Validators.required ],
+    vigente: [ EventoEstadoEnum.INICIADO, Validators.required ],
     subTipoId: [ null, Validators.required ],
     codigoTipoEvento: [ null, Validators.required ],
-    verificaAsistentes: [ null, Validators.required ],
+    verificaAsistentes: [ true, Validators.required ],
   })
 
   ngOnInit(): void {

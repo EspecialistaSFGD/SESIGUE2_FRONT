@@ -39,15 +39,17 @@
         </div>
 
         <div class="flex flex-col">
-            <label for="vigente">Estado</label>
-            <p-dropdown 
-            [options]="estados"
-            formControlName="vigente"
-            optionLabel="value"
-            optionValue="text"
-            [showClear]="true" 
-            placeholder="Seleccionar estado"/>
-            <div class="w-full text-danger" *ngIf="alertMessageError('vigente')">{{msgErrorControl('vigente','Estado')}}</div>
+            @if(!create){
+                <label for="vigente">Estado</label>
+                <p-dropdown 
+                [options]="estados"
+                formControlName="vigente"
+                optionLabel="value"
+                optionValue="text"
+                [showClear]="true" 
+                placeholder="Seleccionar estado"/>
+                <div class="w-full text-danger" *ngIf="alertMessageError('vigente')">{{msgErrorControl('vigente','Estado')}}</div>
+            }
         </div>
 
         <div class="flex flex-col">

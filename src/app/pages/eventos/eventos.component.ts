@@ -8,15 +8,18 @@ import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header
 import { EstadoTagComponent } from '@shared/estado-tag/estado-tag.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltroEventosComponent } from './filtro-eventos/filtro-eventos.component';
-import { deleteKeysToObject, setParamsToObject } from '@core/helpers';
+import { deleteKeysToObject, getDateFormat, setParamsToObject } from '@core/helpers';
 import { distinctUntilChanged, filter } from 'rxjs';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioEventoComponent } from './formulario-evento/formulario-evento.component';
+import { MessageService } from 'primeng/api';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
 @Component({
   selector: 'app-eventos',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, RouterModule, NgZorroModule, EstadoTagComponent, FiltroEventosComponent],
+  imports: [CommonModule, PageHeaderComponent, RouterModule, NgZorroModule, PrimeNgModule, EstadoTagComponent, FiltroEventosComponent],
+  providers: [MessageService],
   templateUrl: './eventos.component.html',
   styles: ``
 })
@@ -39,6 +42,7 @@ export default class EventosComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private modal = inject(NzModalService);
+  private messageService = inject(MessageService)
 
   ngOnInit(): void {
     this.getParams()
@@ -139,9 +143,41 @@ export default class EventosComponent {
           label: action,
           type: 'primary',
           onClick: (componentResponse) => {
+            const formEvento = componentResponse!.formEvento
+           
+            if (formEvento.invalid) {
+              const invalidFields = Object.keys(formEvento.controls).filter(field => formEvento.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formEvento.markAllAsTouched();
+            }
+
+            const fechaEvento = getDateFormat(formEvento.get('fechaEvento')?.value, 'month')
+            const fechaFinEvento = getDateFormat(formEvento.get('fechaFinEvento')?.value, 'month')
+
+            const body:EventoResponse = { ...formEvento.value, fechaEvento, fechaFinEvento }
+            create ? this.crearEventoService(body) : this.actualizarEventoService(body)
           }
         }
       ]
     })
+  }
+
+  crearEventoService(evento: EventoResponse){
+    console.log(evento);
+    this.eventoService.registrarEvento(evento)
+      .subscribe( resp => {        
+        if(resp.success){
+          this.messageService.add({ severity: 'success', summary: 'Evento registrado', detail: resp.message });
+          this.obtenerEventoService('','')
+          this.modal.closeAll();
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
+        }
+      })
+  }
+  
+  actualizarEventoService(evento: EventoResponse){
+    console.log('ACTUALIZANDO EVENTO');
+
   }
 }

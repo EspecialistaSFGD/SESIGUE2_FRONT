@@ -75,4 +75,6 @@
   </ng-template>
 </div>
 
+<p-toast />
+
 <app-filtro-eventos *ngIf="openFilters"  [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" />
