@@ -14,6 +14,8 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioEventoComponent } from './formulario-evento/formulario-evento.component';
 import { MessageService } from 'primeng/api';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { UtilesService } from '@libs/shared/services/utiles.service';
+import saveAs from 'file-saver';
 
 @Component({
   selector: 'app-eventos',
@@ -27,6 +29,7 @@ export default class EventosComponent {
   loading: boolean = false
   openFilters: boolean = false
   loadingExport: boolean = false
+
   pagination: Pagination = {
     columnSort: 'eventoId',
     typeSort: 'DESC',
@@ -34,6 +37,9 @@ export default class EventosComponent {
     currentPage: 1,
     total: 0
   }
+
+  estadosFilters:string = ''
+  tipoEspacioIdFilters:string = ''
 
   eventos = signal<EventoResponse[]>([])
   tipoEventos = signal<TipoEventoResponse[]>([])
@@ -44,6 +50,7 @@ export default class EventosComponent {
   private route = inject(ActivatedRoute)
   private modal = inject(NzModalService);
   private messageService = inject(MessageService)
+  private utilesService = inject(UtilesService);
 
   ngOnInit(): void {
     this.getParams()
@@ -57,8 +64,10 @@ export default class EventosComponent {
       )
       .subscribe( params => {
         this.loading = true
-        const estado = params['estado'] ?? ''
-        const tipoEspacioId = params['tipoEspacioId'] ?? ''
+        // const estado = params['estado'] ?? ''
+        // const tipoEspacioId = params['tipoEspacioId'] ?? ''
+        this.estadosFilters = params['estado'] ?? null
+        this.tipoEspacioIdFilters = params['tipoEspacioId'] ?? null
         let campo = params['campo'] ?? 'eventoId'
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
@@ -69,14 +78,14 @@ export default class EventosComponent {
         setParamsToObject(params, this.pagination, 'estado')          
         setParamsToObject(params, this.pagination, 'tipoEspacioId')
 
-        this.obtenerEventoService(estado,tipoEspacioId)
+        this.obtenerEventoService()
       })
   }
 
-  obtenerEventoService(estados: string, tipoEspacioId: string){
+  obtenerEventoService(){
     this.loading = true
-    const tipoEspacio = tipoEspacioId ? [tipoEspacioId] : []
-    const estado = estados ? [estados] : []    
+    const tipoEspacio = this.tipoEspacioIdFilters ? [this.tipoEspacioIdFilters] : []
+    const estado = this.estadosFilters ? [this.estadosFilters] : []    
     this.eventoService.ListarEventos(this.pagination,estado,tipoEspacio)
       .subscribe( resp => {
         this.eventos.set(resp.data)
@@ -119,6 +128,29 @@ export default class EventosComponent {
         queryParamsHandling: 'merge',
       }
     );
+  }
+
+  reporteEventos(){
+    this.loadingExport = true;
+
+    const tipoEspacio = this.tipoEspacioIdFilters ? [this.tipoEspacioIdFilters] : []
+    const estado = this.estadosFilters ? [this.estadosFilters] : []  
+    this.eventoService.reporteEventos(this.pagination,estado,tipoEspacio)
+      .subscribe(resp => {
+        this.loadingExport = false
+        if(resp.success){
+          const reporte = resp.data;
+          this.generarExcel(reporte.archivo, reporte.nombreArchivo);
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
+        }
+      })
+  }
+
+  generarExcel(archivo: any, nombreArchivo: string): void {
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
   }
 
   crearEvento(){
@@ -171,7 +203,7 @@ export default class EventosComponent {
       .subscribe( resp => {        
         if(resp.success){
           this.messageService.add({ severity: 'success', summary: 'Evento registrado', detail: resp.message });
-          this.obtenerEventoService('','')
+          this.obtenerEventoService()
           this.modal.closeAll();
         } else {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
@@ -184,7 +216,7 @@ export default class EventosComponent {
       .subscribe( resp => {        
         if(resp.success){
           this.messageService.add({ severity: 'success', summary: 'Evento Actualizado', detail: resp.message });
-          this.obtenerEventoService('','')
+          this.obtenerEventoService()
           this.modal.closeAll();
         } else {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
@@ -207,7 +239,7 @@ export default class EventosComponent {
     this.eventoService.eliminarEvento(eventoId)
       .subscribe(resp => {
         if (resp.success == true) {
-          this.obtenerEventoService('','')
+          this.obtenerEventoService()
           this.messageService.add({ severity: 'success', summary: 'Evento Eliminado', detail: resp.message });
         } else {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
