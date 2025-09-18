@@ -4,6 +4,10 @@ export interface EventosResponses extends DataResponses {
 	data: EventoResponse[],
 }
 
+export interface EventoResponses extends DataResponses {
+	data: EventoResponse,
+}
+
 export interface EventoResponse {
 	eventoId?: string,
 	nombre: string,

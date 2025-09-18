@@ -1,1 +1,36 @@
-
+<div class="grid grid-cols-1 md:grid-cols-4 bg-white py-4 gap-2 md:gap-0">
+	<div class="flex col-span-2 lg:col-span-1 border border-gray-200">
+		<div class="flex items-center min-w-[124px] lg:min-w-[120px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Tipo de espacio</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-gray-200">{{evento.tipoEvento}}</div>
+	</div>
+	<div class="flex col-span-2 lg:col-span-1 border border-gray-200">
+		<div class="flex items-center min-w-[124px] lg:min-w-[120px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Código</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-gray-200">{{evento.abreviatura}}</div>
+	</div>
+	<div class="flex col-span-2 lg:col-span-2 border border-gray-200">
+		<div class="flex items-center min-w-[124px] lg:min-w-[120px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Evento</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-gray-200">{{evento.nombre}}</div>
+	</div>
+	<div class="flex col-span-2 lg:col-span-1 border border-gray-200">
+		<div class="flex items-center min-w-[124px] lg:min-w-[120px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Fecha inicia</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-gray-200">{{evento.fechaEvento}}</div>
+	</div>
+	<div class="flex col-span-2 lg:col-span-1 border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[124px] lg:min-w-[120px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Fecha fin</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-gray-200">{{evento.fechaFinEvento}}</div>
+	</div>
+	<div class="flex col-span-2 lg:col-span-1 border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[124px] lg:min-w-[120px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Estado</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-gray-200">
+            <app-estado-tag nz-tooltip [nzTooltipTitle]="evento.vigente | uppercase" [estado]="evento.vigente"/>
+        </div>
+	</div>
+	<div class="flex col-span-2 lg:col-span-1 border border-gray-200 border-t-0">
+		<div class="flex items-center min-w-[124px] lg:min-w-[120px] pl-2 pr-4 py-1 font-semibold bg-gray-100">Verifica asistente</div>
+		<div class="w-full flex items-center  px-2 py-1 border-l border-gray-200">
+            <div nz-tooltip [nzTooltipTitle]="evento.verificaAsistentes ? 'Si verifica asistentes' : 'No verficia asistentes'" [ngClass]="evento.verificaAsistentes ? 'text-green-600' : 'text-slate-200'">
+                <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+            </div>
+        </div>
+	</div>
+</div>
