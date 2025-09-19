@@ -1,0 +1,80 @@
+<app-page-header [title]="'Espacios'" backUrl="panel" />
+<div class="grid grid-cols-1">
+  <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="Headereventos" nzShowSizeChanger nzSize="small"
+    [nzData]="eventos()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+      <tr>
+        <th nzWidth="80px" nzAlign="center" nzColumnKey="vigente" [nzSortFn]="true">Estado</th>
+        <th nzWidth="120px" nzAlign="center">Código</th>
+        <th nzWidth="340px">Evento</th>
+        <th nzWidth="100px" nzAlign="center" >Fecha inicia</th>
+        <th nzWidth="100px" nzAlign="center" >Fecha culmina</th>
+        <th nzWidth="100px" nzAlign="center">Tipo</th>
+        <th nzWidth="120px" nzAlign="center">Tipo de espacio</th>
+        <th nzWidth="80px" nzAlign="center">Verifica asistente</th>
+        <th nzRight nzWidth="120px" nzAlign="center"></th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      @for(evento of eventos(); track $index){
+        <tr>
+          <td nzAlign="center">
+              <app-estado-tag nz-tooltip [nzTooltipTitle]="evento.vigente | uppercase" [estado]="evento.vigente" class="w-full flex justify-center"/>
+        </td>
+          <td nzAlign="center">{{evento.abreviatura}}</td>
+          <td>{{evento.nombre}}</td>
+          <td nzAlign="center">{{evento.fechaEvento}}</td>
+          <td nzAlign="center">{{evento.fechaFinEvento}}</td>
+          <td nzAlign="center">{{evento.subTipo}}</td>
+          <td nzAlign="center">{{evento.tipoEvento}}</td>
+          <td nzAlign="center">
+            <div nz-tooltip [nzTooltipTitle]="evento.verificaAsistentes ? 'Si verifica asistentes' : 'No verficia asistentes'" [ngClass]="evento.verificaAsistentes ? 'text-green-600' : 'text-slate-200'">
+                <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+            </div>
+        </td>
+          <td nzRight nzAlign="center">
+              <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Actualizar evento" (click)="eventoFormModal(evento,false)">
+                <i class="pi pi-pencil" style="font-size: .85rem;"></i>
+              </button>
+              <button nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Eliminar evento" (click)="eliminarEvento(evento)">
+                <i class="pi pi-trash" style="font-size: .85rem;"></i>
+              </button>
+              <a [routerLink]="[evento.eventoId]">
+                <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
+                  <span nz-icon nzType="eye" nzTheme="outline"></span>
+                </button>
+              </a>
+          </td>
+        </tr>
+        }
+    </tbody>
+  </nz-table>
+  
+  <ng-template #Headereventos>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+      <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+      <div class="flex gap-2">
+        <div class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white"  (click)="openFilters = true">
+            <i class="pi pi-filter" style="font-size: 0.75rem"></i>
+            <span class="hidden md:flex">Filtros</span>
+        </div>
+
+        <div class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white" (click)="reporteEventos()">
+            <i class="pi" [ngClass]="{ 'pi-spin pi-spinner' : loadingExport, 'pi-file-excel' : !loadingExport }" style="font-size: 0.75rem"></i>
+            <span class="hidden md:flex">Exportar</span>
+        </div>
+  
+        <div class="flex items-center gap-1 py-1 px-3 rounded border text-white cursor-pointer border-sky-700 bg-sky-700 hover:bg-sky-800 hover:border-sky-700" (click)="crearEvento()">
+              <i class="pi pi-plus" style="font-size: 0.75rem"></i>
+              <span class="hidden md:flex">Nuevo evento</span>
+            </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<p-toast />
+
+<app-filtro-eventos *ngIf="openFilters"  [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" />
