@@ -1,28 +1,29 @@
-<div class="flex flex-col gap-5">
+<!-- <div class="flex flex-col gap-5"> -->
+<div class="grid grid-cols-1">
   <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderTareas" nzShowSizeChanger nzSize="small"
     [nzData]="intervencionTareas()" [nzFrontPagination]="false" [nzLoading]="loadingTareas" [nzTotal]="pagination.total!" [nzShowPagination]="pagination.total! > 5"
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!">
     <thead>
       <tr>
         <th nzWidth="10px" nzAlign="center"></th>
-        <th nzWidth="20px" nzAlign="center"nzColumnKey="codigoIntervencion" [nzSortFn]="true">Codigo</th>
-        <th nzLeft nzWidth="80px" nzColumnKey="tarea" [nzSortFn]="true">Tarea</th>
-        <th nzWidth="36px" nzAlign="center">Fase</th>
-        <th nzWidth="36px" nzAlign="center">Etapa</th>
-        <th nzWidth="36px" nzAlign="center">Hito</th>
-        <th nzWidth="24px" nzAlign="center" nzColumnKey="responsableId" [nzSortFn]="true">Responsable</th>
-        <th nzWidth="64px" nzAlign="center">Entidad</th>
-        <th nzWidth="20px" nzAlign="center">Plazo</th>
-        <th nzWidth="24px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
-        <th nzWidth="24px" nzAlign="center">Comentario</th>
-        <th nzRight nzWidth="40px" nzAlign="center" [nzWidth]="'80px'"></th>
+        <th nzWidth="80px" nzAlign="center"nzColumnKey="codigoIntervencion" [nzSortFn]="true">Codigo</th>
+        <th nzWidth="300px" nzColumnKey="tarea" [nzSortFn]="true">Tarea</th>
+        <th nzWidth="100px" nzAlign="center">Fase</th>
+        <th nzWidth="106px" nzAlign="center">Etapa</th>
+        <th nzWidth="106px" nzAlign="center">Hito</th>
+        <th nzWidth="80px" nzAlign="center" nzColumnKey="responsableId" [nzSortFn]="true">Responsable</th>
+        <th nzWidth="140px" nzAlign="center">Entidad</th>
+        <th nzWidth="80px" nzAlign="center">Plazo</th>
+        <th nzWidth="100px" nzAlign="center" nzColumnKey="estadoRegistro" [nzSortFn]="true">Estado</th>
+        <th nzWidth="140px" nzAlign="center">Comentario</th>
+        <th nzRight nzWidth="100px" nzAlign="center" [nzWidth]="'80px'"></th>
       </tr>
     </thead>
     
     <tbody>
       @for(tarea of intervencionTareas(); track $index){
         <tr>
-          <td nzAlign="center"><app-icono-validado [validado]="tarea.validado!" /></td>
+          <td nzAlign="center"><app-icono-validado [validado]="tarea.validado!" class="flex justify-center"/></td>
           <td nzAlign="center">
             <p class="font-bold" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null" [ngClass]="{ 'cursor-pointer' : tarea.validado }">{{tarea.codigo}}</p>
           </td>
@@ -38,21 +39,17 @@
           <td nzAlign="center">{{obtenerEstadoRegistro(tarea.estadoRegistroNombre!) | replace : '_' : ' ' }}</td>
           <td nzAlign="center">{{permisosPCM ? tarea.comentario : tarea.comentarioSd }}</td>
           <td nzAlign="center"  nzRight>
-            <button *ngIf="!esResponsable(tarea)" nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!disabledValidar(tarea) ? 'Actualizar tarea' : ''" [disabled]="disabledValidar(tarea)" (click)="actualizarTarea(tarea.intervencionTareaId!)">
-              <span nz-icon nzType="edit" nzTheme="outline"></span>
-            </button>
-            <button *ngIf="!esResponsable(tarea)" nz-button nzDanger nzType="link" [nz-tooltip]="!disabledValidar(tarea) ? 'Eliminar tarea' : ''" [disabled]="disabledValidar(tarea)" (click)="eliminarTarea(tarea)">
-              <span nz-icon nzType="delete" nzTheme="outline"></span>
-            </button>
-            <button nz-button nzType="link" [nz-tooltip]="!tarea.validado && visibleBotonNuevaTarea() ? 'Comentar tarea' : ''" [disabled]="tarea.validado || !visibleBotonNuevaTarea()" (click)="comentarTarea(tarea)">
-              <span nz-icon nzType="comment" nzTheme="outline"></span>
-            </button>
-            <button nz-button nzType="link" [nz-tooltip]="tarea.validado ? 'Ver Avances' : ''" [disabled]="!tarea.validado" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null">
-              <span nz-icon nzType="eye" nzTheme="outline"></span>
-            </button>
-            <button nz-button nzType="link" nz-tooltip [nzTooltipTitle]="!disabledValidar(tarea) ? 'Validar tarea' : ''" [disabled]="disabledValidar(tarea)">
-              <span nz-icon [ngClass]="{ 'text-green-500' : !disabledValidar(tarea) }" (click)="validarTarea(tarea)" nzType="check-circle" nzTheme="outline"></span>
-            </button>
+            <div class="flex justify-center">
+              <app-boton [link]="true" [icono]="'comments'" [disabled]="tarea.validado || !disabledBotonNuevo()" [tooltip]="!tarea.validado && disabledBotonNuevo() ? 'Comentar tarea' : ''" (click)="!tarea.validado && disabledBotonNuevo() ? comentarTarea(tarea) : null"/>
+
+              <app-boton [link]="true" [icono]="'check-circle'" [color]="'green'" [stepColor]="500" [disabled]="disabledValidar(tarea)" [tooltip]="!disabledValidar(tarea) ? 'Validar tarea' : ''" (click)="validarTarea(tarea)"/>
+
+              <app-boton [link]="true" [icono]="'eye'" [disabled]="!tarea.validado" [tooltip]="tarea.validado ? 'Ver Avances' : ''" (click)="tarea.validado ? obtenerTareaAvances(tarea) : null"/>
+
+              <app-boton *ngIf="!esResponsable(tarea)" [link]="true" [icono]="'pencil'" [disabled]="disabledValidar(tarea)" [tooltip]="!disabledValidar(tarea) ? 'Actualizar tarea' : ''" (click)="!disabledValidar(tarea) ? actualizarTarea(tarea.intervencionTareaId!) : null"/>
+
+              <app-boton *ngIf="!esResponsable(tarea)" [link]="true" [icono]="'trash'" [color]="'red'" [stepColor]="500" [disabled]="disabledValidar(tarea)" [tooltip]="!disabledValidar(tarea) ? 'Eliminar tarea' : ''"  (click)="!disabledValidar(tarea) ? eliminarTarea(tarea) : null"/>
+            </div>
           </td>
         </tr>
         }
@@ -65,11 +62,12 @@
               <p class="font-semibold text-base">Gestión de tareas</p>
               <p class="text-sm">Resultados {{pagination.total}}</p>
           </div>
+          <div class="flex gap-2">
+            <app-boton [icono]="'sync'" [outline]="true" [tooltip]="'Actualizar tareas'" (click)="actualizarListaTareas(true)" class="flex"/>
 
-          <button *ngIf="tareaActions.new" nz-button nzType="primary" (click)="agregarTarea()" [disabled]="disabledBotonNuevo() && visibleBotonNuevaTarea()">
-              <span nz-icon nzType="plus" nzTheme="outline"></span>
-              <span class="button-text">Nueva Tarea</span>
-          </button>
+            <app-boton *ngIf="tareaActions.new" [icono]="'plus'" [texto]="'Nueva Tarea'" [disabled]="disabledBotonNuevo()" [tooltip]="disabledBotonNuevo() ? '' : 'Agregar nueva tarea'" (click)="disabledBotonNuevo() ? null : agregarTarea()"/>
+          </div>
+
       </div>
   </ng-template>
   
