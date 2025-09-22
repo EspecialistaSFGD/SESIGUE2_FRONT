@@ -701,30 +701,31 @@ export class AuthService {
   }
 
   removerLocalStorage(): void {
-    localStorage.removeItem('nombreTrabajador');
-    localStorage.removeItem('token');
-    localStorage.removeItem('refresh');
-    localStorage.removeItem('perfil');
-    localStorage.removeItem('menus');
-    localStorage.removeItem('codigoUsuario');
-    localStorage.removeItem('codigoPerfil');
-    localStorage.removeItem('trabajador');
-    localStorage.removeItem('descripcionTipo');
-    localStorage.removeItem('descripcionSector');
-    localStorage.removeItem('permisos');
-    localStorage.removeItem('permisosPcm');
-    localStorage.removeItem('departamento');
-    localStorage.removeItem('provincia');
-    localStorage.removeItem('distrito');
-    localStorage.removeItem('nivel');
-    localStorage.removeItem('subTipo');
-    localStorage.removeItem('codigoSector');
-    localStorage.removeItem('sector');
-    localStorage.removeItem('acuerdosParams');
-    localStorage.removeItem('pedidosParams');
-    localStorage.removeItem('hitosParams');
-    localStorage.removeItem('codigoNivel');
-    localStorage.removeItem('codigoSubTipo');
+    // localStorage.removeItem('nombreTrabajador');
+    // localStorage.removeItem('token');
+    // localStorage.removeItem('refresh');
+    // localStorage.removeItem('perfil');
+    // localStorage.removeItem('menus');
+    // localStorage.removeItem('codigoUsuario');
+    // localStorage.removeItem('codigoPerfil');
+    // localStorage.removeItem('trabajador');
+    // localStorage.removeItem('descripcionTipo');
+    // localStorage.removeItem('descripcionSector');
+    // localStorage.removeItem('permisos');
+    // localStorage.removeItem('permisosPcm');
+    // localStorage.removeItem('departamento');
+    // localStorage.removeItem('provincia');
+    // localStorage.removeItem('distrito');
+    // localStorage.removeItem('nivel');
+    // localStorage.removeItem('subTipo');
+    // localStorage.removeItem('codigoSector');
+    // localStorage.removeItem('sector');
+    // localStorage.removeItem('acuerdosParams');
+    // localStorage.removeItem('pedidosParams');
+    // localStorage.removeItem('hitosParams');
+    // localStorage.removeItem('codigoNivel');
+    // localStorage.removeItem('codigoSubTipo');
+    localStorage.clear();
 
     this.#usuario.set({
       usuario: null,

@@ -12,11 +12,12 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaComponent } from './formulario-Intervencion-tarea/formulario-intervencion-tarea.component';
 import IntervencionTareaAvancesComponent from './intervencion-tarea-avances/intervencion-tarea-avances.component';
 import { IconoValidadoComponent } from '@shared/icons/icono-validado/icono-validado.component';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 
 @Component({
   selector: 'app-intervencion-tareas',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, IntervencionTareaAvancesComponent, PipesModule, IconoValidadoComponent ],
+  imports: [CommonModule, NgZorroModule, IntervencionTareaAvancesComponent, PipesModule, IconoValidadoComponent, BotonComponent ],
   templateUrl: './intervencion-tareas.component.html',
   styles: ``
 })
@@ -46,7 +47,8 @@ export default class IntervencionTareasComponent {
     total: 0
   }
 
-  intervencionTarea: IntervencionTareaResponse | null = null
+  // intervencionTarea: IntervencionTareaResponse | null = null
+  intervencionTarea: IntervencionTareaResponse = {} as IntervencionTareaResponse
   
   intervencionTareas = signal<IntervencionTareaResponse[]>([])
 
@@ -70,14 +72,20 @@ export default class IntervencionTareasComponent {
   }
 
   getPermissions() {
-    const navigation = this.authStore.navigationAuth()!
-    const transferenciaRecursos = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'intervencion tarea')
-    this.tareaActions = obtenerPermisosBotones(transferenciaRecursos!.botones!)
+    const navStorage = localStorage.getItem('menus') ?? ''
+    // const navigation = this.authStore.navigationAuth()!
+    const navigation = JSON.parse(navStorage)
+    const intervencionesNav = navigation.find((nav:any) => nav.descripcionItem.toLowerCase() == 'intervenciones')
+    if(intervencionesNav && intervencionesNav.children.length > 0){
+      const intervencionTareaNav = intervencionesNav.children.find((nav:any) => nav.descripcionItem.toLowerCase() == 'intervencion tarea')
+      this.tareaActions = intervencionTareaNav ? obtenerPermisosBotones(intervencionTareaNav!.botones!) : {}
+      
+    }
   }
 
   obtenerIntervencionTareasService(){
     this.loadingTareas = true
-    this.botonNuevoActivo = true
+    // this.botonNuevoActivo = true
     const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId
   
     this.intervencionTareasServices.ListarIntervencionTareas({...this.pagination, intervencionEspacioId})
@@ -87,8 +95,12 @@ export default class IntervencionTareasComponent {
         this.pagination.total = resp.info?.total
    
         resp.data.map( item => {
+          // if(item.estadoRegistroNombre != IntervencionTareaEstadoRegistroEnum.CULMINADO){
+          //   this.botonNuevoActivo = false
+          //   return
+          // }
           if(item.estadoRegistroNombre != IntervencionTareaEstadoRegistroEnum.CULMINADO){
-            this.botonNuevoActivo = false
+            this.botonNuevoActivo = true
             return
           }
         })
@@ -111,30 +123,19 @@ export default class IntervencionTareasComponent {
     return nivelGobiernoAuth === 'GN' ? tarea.responsableId == sectorAuth : tarea.responsableId == entidad
   }
 
+  //TODO: ELIMINAR ESTA FUNCION
   visibleBotonNuevaTarea(){
     return Number(this.intervencionEspacio.sectorId!) === this.sectorAuth || this.permisosPCM
   }
 
   disabledBotonNuevo(){
-    // let disabled = !this.botonNuevoActivo
-    // if(this.permisosPCM){
-    //   disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
-    // }
-    
-    // let disabled = this.permisosPCM  ? false : true
-    // if(this.permisosPCM){
-      //   disabled = !this.botonNuevoActivo && !(this.intervencionTareas().length == 0)
-      // }
-    const cantidadTareas = this.intervencionTareas().length == 0
-    // let disabled = cantidadTareas ? !this.permisosPCM  : !this.botonNuevoActivo
-    let disabled = true
-    if(this.permisosPCM){
-      disabled = !cantidadTareas
-    } else {
-      disabled = !this.botonNuevoActivo
+    const cantidadTareas = this.intervencionTareas().length
+    let disabled = this.permisosPCM ? true : this.botonNuevoActivo
+
+    if(cantidadTareas == 0){
+      disabled = !this.permisosPCM
     }
 
-    
     return disabled
   }
 
