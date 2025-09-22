@@ -1,0 +1,7 @@
+<nz-page-header nzBackIcon [nzGhost]="false" (nzBack)="onBack()">
+	<nz-page-header-title>Agenda del evento</nz-page-header-title>
+</nz-page-header>
+
+<app-evento-detalle *ngIf="evento.eventoId" [evento]="evento" [esSsfgd]="esSsfgd" />
+
+

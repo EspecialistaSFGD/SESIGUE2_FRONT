@@ -1,36 +1,35 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EventoResponse } from '@core/interfaces';
 import { EventosService } from '@core/services';
-import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
 import { AuthService } from '@libs/services/auth/auth.service';
-import { EventoDetalleComponent } from './evento-detalle/evento-detalle.component';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 
 @Component({
-  selector: 'app-evento-detalles',
+  selector: 'app-agendas-evento',
   standalone: true,
-  imports: [CommonModule, RouterModule, EventoDetalleComponent, NgZorroModule],
-  templateUrl: './evento-detalles.component.html',
+  imports: [CommonModule, EventoDetalleComponent, NgZorroModule],
+  templateUrl: './agendas-evento.component.html',
   styles: ``
 })
-export default class EventoDetallesComponent {
-
-  esSsfgd:boolean = false
-  eventoId:number = 0
-
+export default class AgendasEventoComponent {
   evento: EventoResponse = {} as EventoResponse
 
+  eventoId:number = 0
+  esSsfgd:boolean = false
+  
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private authStore = inject(AuthService)
   private eventoService = inject(EventosService)
 
   ngOnInit(): void {
+    this.getPermisosPCM()
     this.verificarEvento()
   }
-
-
+  
   getPermisosPCM(){
     const perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
     const ssfgdPCM = [11,12,23]
@@ -60,6 +59,6 @@ export default class EventoDetallesComponent {
   }
 
   onBack(){
-    this.router.navigate(['/eventos'])
+    this.router.navigate(['/eventos/', this.evento.eventoId])
   }
 }
