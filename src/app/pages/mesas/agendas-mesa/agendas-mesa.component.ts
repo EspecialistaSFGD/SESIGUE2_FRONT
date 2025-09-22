@@ -302,15 +302,15 @@ export default class AgendasMesaComponent {
   }
 
   crearIntervencion(){
-    // this.obtenerMesaIntegrantesService(true)
-    // this.obtenerMesaIntegrantesService(false)
-    // setTimeout(() => {
-    //   this.intervencionEspacioForm(true)
-    // }, 100);
-    this.intervencionEspacioForm(true)
+    const intervencionEspacio: IntervencionEspacioResponse = {} as IntervencionEspacioResponse
+    intervencionEspacio.origen = '1'
+    intervencionEspacio.interaccionId = this.mesaId.toString()
+    intervencionEspacio.eventoId = this.mesa().eventoId!.toString()
+    intervencionEspacio.tipoEventoId = this.mesa().tipoEventoId
+    this.intervencionEspacioForm(intervencionEspacio)
   }
 
-  intervencionEspacioForm(create: boolean){
+  intervencionEspacioForm(intervencionEspacio: IntervencionEspacioResponse, create: boolean = true){
     const action = `${create ? 'Crear' : 'Actualizar' } Intervencion`
     this.modal.create<FormularioIntervencionComponent>({
       nzTitle: `${action.toUpperCase()}`,
@@ -319,6 +319,7 @@ export default class AgendasMesaComponent {
       nzData: {
         create,
         origen: { origen: 'mesas', interaccionId: this.mesaId.toString(), eventoId: this.mesa().eventoId },
+        intervencionEspacio,
         sectores: this.sectores,
         ubigeos: this.ubigeos
       },
@@ -339,13 +340,14 @@ export default class AgendasMesaComponent {
               console.error('Invalid fields:', invalidFields);
               return formIntervencionEspacio.markAllAsTouched();
             }
-
-            const origen = formIntervencionEspacio.get('origen')?.value.toLowerCase()            
-            const intervencionEspacio: IntervencionEspacioResponse = {...formIntervencionEspacio.getRawValue(), origen }
+               
+            const origen = 'mesas'
+            const bodyIntervencionEspacio: IntervencionEspacioResponse = {...formIntervencionEspacio.getRawValue(), origen }
             const usuarioId = localStorage.getItem('codigoUsuario')!
+            bodyIntervencionEspacio.usuarioIdRegistro = usuarioId
+
             if(create){
-              intervencionEspacio.usuarioIdRegistro = usuarioId
-              this.registrarIntervencionEspacio(intervencionEspacio)
+              this.registrarIntervencionEspacio(bodyIntervencionEspacio)
             }
           }
         }

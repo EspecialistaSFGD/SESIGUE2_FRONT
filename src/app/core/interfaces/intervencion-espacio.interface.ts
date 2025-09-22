@@ -88,6 +88,7 @@ export interface IntervencionEspacioOriginResponse {
 export interface DataModalIntervencion {
 	create: boolean
 	origen: IntervencionEspacioOriginResponse,
+	intervencionEspacio: IntervencionEspacioResponse
 	sectores: number[],
 	ubigeos: string[]
 }

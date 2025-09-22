@@ -6,7 +6,7 @@
             [options]="origenes"
             formControlName="origen"
             optionLabel="value"
-            optionValue="value"
+            optionValue="text"
             [showClear]="true" 
             placeholder="Seleccionar origen"
             (onChange)="obtenerTipo()"/>
@@ -140,7 +140,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border border-cyan-50 bg-cyan-50 rounded">
+    <div *ngIf="esMesa" class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border border-cyan-50 bg-cyan-50 rounded">
         <div class="w-full flex flex-col">
             <label nzFor="inicioIntervencionFaseId">Fase inicial</label>
             <p-dropdown 
@@ -180,7 +180,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border border-teal-50 bg-teal-50 rounded">
+    <div *ngIf="esMesa" class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border border-teal-50 bg-teal-50 rounded">
 		<div class="w-full flex flex-col">
 			<label nzFor="objetivoIntervencionFaseId">Fase objetivo</label>
 			<p-dropdown 

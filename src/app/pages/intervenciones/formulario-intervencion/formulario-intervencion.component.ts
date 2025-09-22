@@ -21,8 +21,12 @@ export class FormularioIntervencionComponent {
 
   create: boolean = this.dataIntervencionTarea.create
   origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
+  intervencionEspacio: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.intervencionEspacio
   sectoresValidos: number[] = this.dataIntervencionTarea.sectores
   ubigeosValidos: string[] = this.dataIntervencionTarea.ubigeos
+
+  esAcuerdo: boolean = false
+  esMesa: boolean = false
 
   pagination: Pagination = {
     columnSort: 'nombre',
@@ -94,19 +98,18 @@ export class FormularioIntervencionComponent {
     objetivoIntervencionHitoId: [ { value: '', disabled: true }, Validators.required ],
   })
 
-  ngOnInit(): void {
-    const origen = this.origenes.find( item => item.value.toLowerCase() == this.origen.origen.toLowerCase())
+  ngOnInit(): void {    
+    this.esAcuerdo = Number(this.intervencionEspacio.origen) == 0
+    this.esMesa = Number(this.intervencionEspacio.origen) == 1
     
-    this.formIntervencionEspacio.get('origen')?.setValue(origen?.value.toUpperCase())
-    this.formIntervencionEspacio.get('interaccionId')?.setValue(this.origen.interaccionId)
-    this.formIntervencionEspacio.get('eventoId')?.setValue(this.origen.eventoId)
+    const eventoId = this.origen.eventoId ? parseInt(this.intervencionEspacio.eventoId) : null
+    
+    this.formIntervencionEspacio.reset({...this.intervencionEspacio, eventoId})
 
     this.obtenerTipoEventoServices()
+    this.obtenerEventosServices()
     this.obtenerSectoresServices()
     this.obtenerDepartamentoServices()
-    // this.obtenerIntervencionFaseService()
-    // this.obtenerIntervencionFaseService(false)
-    // this.obtenerEventosServices() 
   }
 
   alertMessageError(control: string) {
@@ -122,24 +125,13 @@ export class FormularioIntervencionComponent {
 
   obtenerTipoEventoServices(){
     const paginationTipoEvento: Pagination = { columnSort: 'codigoTipoEvento', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
-    this.tiposEventosService.getAllTipoEvento(paginationTipoEvento)
-      .subscribe( resp => {
-        this.tiposEventos.set(resp.data)
-        const origen = this.origen.origen.slice(0, -1);
-        const tipoEvento = resp.data.find( item => item.descripcionTipoEvento.toLowerCase() == origen.toLowerCase())
-        this.formIntervencionEspacio.get('tipoEventoId')?.setValue(tipoEvento?.codigoTipoEvento)
-        this.obtenerEventosServices()
-      })
+    this.tiposEventosService.getAllTipoEvento(paginationTipoEvento).subscribe( resp => this.tiposEventos.set(resp.data))
   }
 
   obtenerEventosServices(){
     const tipoEventoId = this.formIntervencionEspacio.get('tipoEventoId')?.value
     const paginationTipoEvento: Pagination = { columnSort: 'eventoId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
     this.eventosService.getAllEventos([tipoEventoId], 1, [1, 2, 3], paginationTipoEvento).subscribe( resp => this.eventos.set(resp.data))
-  }
-
-  obtenerIntegrantesMesas(){
-
   }
 
   obtenerSectoresServices(){
@@ -152,7 +144,7 @@ export class FormularioIntervencionComponent {
 
   obtenerIntervencionFaseService(inicial: boolean, tipoIntervencion: number){
     this.intervencionFaseService.ListarIntervencionFases(this.pagination)
-      .subscribe( resp => inicial ? this.fasesInicial.set(resp.data.filter(item => Number(item.tipoIntervencion) == tipoIntervencion )) : this.fasesObjetivo.set(resp.data) )
+      .subscribe( resp => inicial ? this.fasesInicial.set(resp.data.filter(item => Number(item.tipoIntervencion) == tipoIntervencion )) : this.fasesObjetivo.set(resp.data.filter(item => Number(item.tipoIntervencion) == tipoIntervencion )) )
   }
 
   obtenerTipo(){
@@ -160,14 +152,13 @@ export class FormularioIntervencionComponent {
     const subTipoControl = this.formIntervencionEspacio.get('subTipoIntervencion')
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
     if(tipoValue){
-      const subTipos = this.subTipos.filter( item => item.tipoId == tipoValue)
+      const subTipos = this.subTipos.filter( item => item.tipoId == tipoValue)      
       this.intervencionSubTipos.set(subTipos)
       this.setFasesdeTipo(tipoValue)
     } else {
       this.intervencionSubTipos.set([])
       subTipoControl?.reset()
     }
-
     tipoValue ? subTipoControl?.enable() : subTipoControl?.disable()
     codigoIntervencionControl?.reset()
     codigoIntervencionControl?.disable()
