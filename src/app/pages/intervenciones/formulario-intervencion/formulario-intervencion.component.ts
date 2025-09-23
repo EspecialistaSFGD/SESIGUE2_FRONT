@@ -3,7 +3,7 @@ import { Component, inject, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { convertEnumToObject, typeErrorControl } from '@core/helpers';
-import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -21,7 +21,7 @@ export class FormularioIntervencionComponent {
 
   create: boolean = this.dataIntervencionTarea.create
   origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
-  intervencionEspacio: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.intervencionEspacio
+  intervencionEspacio: IntervencionEspacioResponse = this.dataIntervencionTarea.intervencionEspacio
   sectoresValidos: number[] = this.dataIntervencionTarea.sectores
   ubigeosValidos: string[] = this.dataIntervencionTarea.ubigeos
 
@@ -106,10 +106,28 @@ export class FormularioIntervencionComponent {
     
     this.formIntervencionEspacio.reset({...this.intervencionEspacio, eventoId})
 
+    this.setFormValues()
+
+
+    console.log(this.intervencionEspacio);
+    console.log(this.formIntervencionEspacio.value);
+    
+
     this.obtenerTipoEventoServices()
     this.obtenerEventosServices()
     this.obtenerSectoresServices()
     this.obtenerDepartamentoServices()
+  }
+
+  setFormValues(){
+    const tipoInverscionControl = this.formIntervencionEspacio.get('tipoIntervencion')
+    const subTipoControl = this.formIntervencionEspacio.get('subTipoIntervencion')
+    const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    
+    this.esAcuerdo ? tipoInverscionControl?.disable() : tipoInverscionControl?.enable()
+    if(this.esAcuerdo){ 
+      this.obtenerTipo()
+    }
   }
 
   alertMessageError(control: string) {
@@ -159,6 +177,7 @@ export class FormularioIntervencionComponent {
       this.intervencionSubTipos.set([])
       subTipoControl?.reset()
     }
+
     tipoValue ? subTipoControl?.enable() : subTipoControl?.disable()
     codigoIntervencionControl?.reset()
     codigoIntervencionControl?.disable()

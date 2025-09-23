@@ -110,8 +110,10 @@ export default class AgendasEventoComponent {
   crearIntervencion(){
     let intervencionEspacio: IntervencionEspacioResponse = {} as IntervencionEspacioResponse
     intervencionEspacio.origen = '0'
-    intervencionEspacio.interaccionId = this.eventoId.toString()
     intervencionEspacio.eventoId = this.eventoId.toString()
+    intervencionEspacio.tipoEventoId = this.evento.codigoTipoEvento!
+    intervencionEspacio.tipoIntervencion = '1'  // Proyecto
+    
     this.intervencionEspacioFormModal(intervencionEspacio)
   }
 
