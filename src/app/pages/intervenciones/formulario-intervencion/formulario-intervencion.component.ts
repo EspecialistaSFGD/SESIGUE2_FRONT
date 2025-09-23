@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, SimpleChanges } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { convertEnumToObject, typeErrorControl } from '@core/helpers';
 import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
+import { EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, PedidosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
@@ -75,6 +75,7 @@ export class FormularioIntervencionComponent {
   private tiposEventosService = inject(TipoEventosService)
   private eventosService = inject(EventosService)
   private validatorsService = inject(ValidatorService)
+  private pedidoService = inject(PedidosService)
 
   formIntervencionEspacio: FormGroup = this.fb.group({
     origen: [ { value: '', disabled: true }, Validators.required ],
@@ -108,11 +109,6 @@ export class FormularioIntervencionComponent {
 
     this.setFormValues()
 
-
-    console.log(this.intervencionEspacio);
-    console.log(this.formIntervencionEspacio.value);
-    
-
     this.obtenerTipoEventoServices()
     this.obtenerEventosServices()
     this.obtenerSectoresServices()
@@ -120,10 +116,7 @@ export class FormularioIntervencionComponent {
   }
 
   setFormValues(){
-    const tipoInverscionControl = this.formIntervencionEspacio.get('tipoIntervencion')
-    const subTipoControl = this.formIntervencionEspacio.get('subTipoIntervencion')
-    const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
-    
+    const tipoInverscionControl = this.formIntervencionEspacio.get('tipoIntervencion')    
     this.esAcuerdo ? tipoInverscionControl?.disable() : tipoInverscionControl?.enable()
     if(this.esAcuerdo){ 
       this.obtenerTipo()
@@ -227,6 +220,27 @@ export class FormularioIntervencionComponent {
     }
     codigoIntervencionControl?.reset()
     subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()    
+  }
+
+  changeCodigoIntervencion(){
+    if(this.esAcuerdo){
+      this.obtenerCuiAcuerdo()
+    }
+  }
+
+  obtenerCuiAcuerdo(){
+    const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const cui = codigoIntervencionControl?.value
+    if(cui && cui.length == 7){
+      this.pedidoService.ListarPedidos({ cui, piCurrentPage: 1, piPageSize: 1, columnSort: 'prioridadID', typeSort: 'ASC' })
+        .subscribe( resp => {
+          if(resp.data.length > 0){
+            const pedido = resp.data[0]
+            console.log(pedido);
+            
+          }
+        })
+    }    
   }
 
   obtenerSector(){

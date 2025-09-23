@@ -67,7 +67,7 @@
             <label class="w-full" for="codigoIntervencion">
                 Código de intervención
             </label>
-            <input type="text" class="form-control" id="codigoIntervencion" formControlName="codigoIntervencion">
+            <input type="text" class="form-control" id="codigoIntervencion" formControlName="codigoIntervencion" (keyup)="changeCodigoIntervencion()">
             <div class="w-full text-danger" *ngIf="alertMessageError('codigoIntervencion')">{{msgErrorControl('codigoIntervencion','Código')}}</div>
         </div>
     </div>

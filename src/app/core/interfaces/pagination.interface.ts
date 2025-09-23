@@ -10,6 +10,8 @@ export interface Pagination {
   typeSort?: string,
   pageSize?: number,
   currentPage?: number,
+  piCurrentPage?: number,
+  piPageSize?: number,
   codigo?: string,
   fechaInicio?: string,
   fechaFin?: string,
