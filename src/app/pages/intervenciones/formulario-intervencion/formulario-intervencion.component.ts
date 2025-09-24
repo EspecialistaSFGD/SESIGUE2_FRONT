@@ -106,6 +106,9 @@ export class FormularioIntervencionComponent {
     const eventoId = this.origen.eventoId ? parseInt(this.intervencionEspacio.eventoId) : null
     
     this.formIntervencionEspacio.reset({...this.intervencionEspacio, eventoId})
+    if(this.esAcuerdo){
+      this.formIntervencionEspacio.get('sectorId')?.disable()
+    }
 
     this.setFormValues()
 
@@ -146,7 +149,8 @@ export class FormularioIntervencionComponent {
   }
 
   obtenerSectoresServices(){
-    this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID)))))  
+    const paginationSector: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
+    this.sectorService.listarSectores(paginationSector).subscribe( resp => this.sectores.set(this.esMesa ? resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID))) : resp.data))  
   }
 
   obtenerDepartamentoServices(){    
@@ -230,6 +234,7 @@ export class FormularioIntervencionComponent {
 
   obtenerCuiAcuerdo(){
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const entidadSectorControl = this.formIntervencionEspacio.get('entidadSectorId')
     const sectorIdControl = this.formIntervencionEspacio.get('sectorId')
     const cui = codigoIntervencionControl?.value    
     if(cui && cui.length == 7){
@@ -239,7 +244,7 @@ export class FormularioIntervencionComponent {
             const pedido = resp.data[0]
             console.log(pedido);
             sectorIdControl?.setValue(pedido.sectorId ?? null)
-            this.obtenerEntidadSector()
+            this.obtenerSector()
           }
         })
     }    
