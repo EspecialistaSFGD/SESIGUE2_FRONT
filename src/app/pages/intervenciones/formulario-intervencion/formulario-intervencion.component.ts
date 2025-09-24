@@ -230,14 +230,16 @@ export class FormularioIntervencionComponent {
 
   obtenerCuiAcuerdo(){
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
-    const cui = codigoIntervencionControl?.value
+    const sectorIdControl = this.formIntervencionEspacio.get('sectorId')
+    const cui = codigoIntervencionControl?.value    
     if(cui && cui.length == 7){
-      this.pedidoService.ListarPedidos({ cui, piCurrentPage: 1, piPageSize: 1, columnSort: 'prioridadID', typeSort: 'ASC' })
+      this.pedidoService.ListarPedidos({ cui, columnSort: 'prioridadID', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
         .subscribe( resp => {
           if(resp.data.length > 0){
             const pedido = resp.data[0]
             console.log(pedido);
-            
+            sectorIdControl?.setValue(pedido.sectorId ?? null)
+            this.obtenerEntidadSector()
           }
         })
     }    
@@ -254,6 +256,11 @@ export class FormularioIntervencionComponent {
       entidadSectorControl?.reset()
     }
   }
+
+  // obtenerSectoresServices()
+  // {
+  //   this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID)))))  
+  // }
 
   obtenerEntidadSector(){
     const sectorId = this.formIntervencionEspacio.get('sectorId')?.value
