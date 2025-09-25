@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventoResponse, IntervencionEspacioResponse, Pagination } from '@core/interfaces';
-import { EventosService, IntervencionEspacioService } from '@core/services';
+import { EventoResponse, EventoSectorResponse, IntervencionEspacioResponse, Pagination } from '@core/interfaces';
+import { EventoSectoresService, EventosService, IntervencionEspacioService } from '@core/services';
 import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -22,6 +22,7 @@ export default class AgendasEventoComponent {
   evento: EventoResponse = {} as EventoResponse
   
   intervencionesEspacios = signal<IntervencionEspacioResponse[]>([])
+  eventosSectores = signal<EventoSectorResponse[]>([])
 
   eventoId:number = 0
   esSsfgd:boolean = false
@@ -42,11 +43,13 @@ export default class AgendasEventoComponent {
   private authStore = inject(AuthService)
   private eventoService = inject(EventosService)
   private intervencionEspaciosServices = inject(IntervencionEspacioService)
+  private eventoSectorService = inject(EventoSectoresService)
   private modal = inject(NzModalService);
 
   ngOnInit(): void {
     this.getPermisosPCM()
     this.verificarEvento()
+    this.obtenerEventoSectoresServices()
 
     setTimeout(() => {
       this.obtenerIntervencionEspacioService()
@@ -79,6 +82,11 @@ export default class AgendasEventoComponent {
       .subscribe( resp => {        
         resp.success ? this.evento = resp.data : this.router.navigate(['/eventos'])
       })
+  }
+
+  obtenerEventoSectoresServices(){
+    const paginationEventoSector:Pagination = { eventoId: this.eventoId.toString(), columnSort: 'eventoSectorId', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
+    this.eventoSectorService.listarEventoSectores(paginationEventoSector).subscribe( resp => this.eventosSectores.set(resp.data))
   }
 
   onBack(){
@@ -127,7 +135,7 @@ export default class AgendasEventoComponent {
             create,
             origen: { origen: 'acuerdos', interaccionId: this.eventoId.toString(), eventoId: this.eventoId.toString() },
             intervencionEspacio,
-            sectores: [],
+            sectores: this.eventosSectores().map(item => item.sectorId),
             ubigeos: []
           },
           nzFooter: [

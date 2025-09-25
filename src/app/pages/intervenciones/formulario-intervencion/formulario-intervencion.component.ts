@@ -108,9 +108,6 @@ export class FormularioIntervencionComponent {
     const eventoId = this.origen.eventoId ? parseInt(this.intervencionEspacio.eventoId) : null
     
     this.formIntervencionEspacio.reset({...this.intervencionEspacio, eventoId})
-    if(this.esAcuerdo){
-      this.formIntervencionEspacio.get('sectorId')?.disable()
-    }
 
     this.setFormValues()
 
@@ -152,11 +149,11 @@ export class FormularioIntervencionComponent {
 
   obtenerSectoresServices(){
     const paginationSector: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
-    this.sectorService.listarSectores(paginationSector).subscribe( resp => this.sectores.set(this.esMesa ? resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID))) : resp.data))  
+    this.sectorService.listarSectores(paginationSector).subscribe( resp => this.sectores.set(this.sectoresValidos.length > 0 ? resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID))) : resp.data))  
   }
 
-  obtenerDepartamentoServices(){    
-    this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(resp.data.filter( item => this.ubigeosValidos.includes(item.departamentoId)))) 
+  obtenerDepartamentoServices(){
+    this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(this.ubigeosValidos.length > 0 ? resp.data.filter( item => this.ubigeosValidos.includes(item.departamentoId)) : resp.data)) 
   }
 
   obtenerIntervencionFaseService(inicial: boolean, tipoIntervencion: number){
