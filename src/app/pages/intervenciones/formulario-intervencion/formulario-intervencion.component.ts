@@ -91,6 +91,8 @@ export class FormularioIntervencionComponent {
     distrito: [{ value: '', disabled: true }],
     entidadUbigeoId: [ '', Validators.required ],
     interaccionId: [ '', Validators.required ],
+    pedido: [{ value: '', disabled: true }],
+    interaccion: [{ value: '', disabled: true }],
     inicioIntervencionFaseId: [ { value: '', disabled: true }, Validators.required ],
     inicioIntervencionEtapaId: [ { value: '', disabled: true }, Validators.required ],
     inicioIntervencionHitoId: [ { value: '', disabled: true }, Validators.required ],
@@ -242,7 +244,6 @@ export class FormularioIntervencionComponent {
         .subscribe( resp => {
           if(resp.data.length > 0){
             const pedido = resp.data[0]
-            console.log(pedido);
             sectorIdControl?.setValue(pedido.sectorId ?? null)
             this.obtenerSector()
           }

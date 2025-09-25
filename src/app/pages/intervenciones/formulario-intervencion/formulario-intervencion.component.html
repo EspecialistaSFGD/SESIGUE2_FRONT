@@ -26,7 +26,7 @@
         </div>
 
         <div class="flex flex-col">
-            <label class="w-full" for="interaccionId">Espacio</label>
+            <label class="w-full" for="eventoId">Espacio</label>
             <p-dropdown 
             [options]="eventos()"
             formControlName="eventoId"
@@ -35,6 +35,28 @@
             [showClear]="true" 
             placeholder="Seleccionar evento"/>
             <div class="w-full text-danger" *ngIf="alertMessageError('eventoId')">{{msgErrorControl('eventoId','evento')}}</div>
+        </div>
+
+        <div *ngIf="esAcuerdo" class="flex flex-col">
+            <label class="w-full" for="interaccionId">
+                Codigo de acuerdo
+            </label>
+            <input type="text" class="form-control" id="interaccionId" formControlName="interaccionId" (keyup)="changeCodigoIntervencion()">
+            <div class="w-full text-danger" *ngIf="alertMessageError('interaccionId')">{{msgErrorControl('interaccionId','Código de acuerdo')}}</div>
+        </div>
+
+        <div *ngIf="esAcuerdo" class="flex flex-col">
+            <label class="w-full" for="pedido">
+                Pedido
+            </label>
+            <input type="text" class="form-control" id="pedido" formControlName="pedido">
+        </div>
+
+        <div *ngIf="esAcuerdo" class="flex flex-col">
+            <label class="w-full" for="interaccion">
+                Acuerdo
+            </label>
+            <input type="text" class="form-control" id="interaccion" formControlName="interaccion">
         </div>
 
         <div class="flex flex-col">
@@ -63,7 +85,7 @@
             <div class="w-full text-danger" *ngIf="alertMessageError('subTipoIntervencion')">{{msgErrorControl('subTipoIntervencion','Sub tipo')}}</div>
         </div>
 
-        <div class="flex flex-col">
+        <div class="w-full flex flex-col">
             <label class="w-full" for="codigoIntervencion">
                 Código de intervención
             </label>
