@@ -4,21 +4,25 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { convertEnumToObject, typeErrorControl } from '@core/helpers';
 import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, PedidosService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
+import { AcuerdosService, EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-formulario-intervencion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule],
+  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule, NgZorroModule],
+  providers: [MessageService],
   templateUrl: './formulario-intervencion.component.html',
   styles: ``
 })
 export class FormularioIntervencionComponent {
   readonly dataIntervencionTarea: DataModalIntervencion = inject(NZ_MODAL_DATA);
 
+  loadingInteraccion: boolean = false
   create: boolean = this.dataIntervencionTarea.create
   origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
   intervencionEspacio: IntervencionEspacioResponse = this.dataIntervencionTarea.intervencionEspacio
@@ -75,7 +79,8 @@ export class FormularioIntervencionComponent {
   private tiposEventosService = inject(TipoEventosService)
   private eventosService = inject(EventosService)
   private validatorsService = inject(ValidatorService)
-  private pedidoService = inject(PedidosService)
+  private acuerdoService = inject(AcuerdosService)
+  private messageService = inject(MessageService)
 
   formIntervencionEspacio: FormGroup = this.fb.group({
     origen: [ { value: '', disabled: true }, Validators.required ],
@@ -91,7 +96,9 @@ export class FormularioIntervencionComponent {
     distrito: [{ value: '', disabled: true }],
     entidadUbigeoId: [ '', Validators.required ],
     interaccionId: [ '', Validators.required ],
+    codigoAcuerdo: [''],
     pedido: [{ value: '', disabled: true }],
+    acuerdo: [{ value: '', disabled: true }],
     interaccion: [{ value: '', disabled: true }],
     inicioIntervencionFaseId: [ { value: '', disabled: true }, Validators.required ],
     inicioIntervencionEtapaId: [ { value: '', disabled: true }, Validators.required ],
@@ -122,6 +129,9 @@ export class FormularioIntervencionComponent {
     this.esAcuerdo ? tipoInverscionControl?.disable() : tipoInverscionControl?.enable()
     if(this.esAcuerdo){ 
       this.obtenerTipo()
+      this.formIntervencionEspacio.get('inicioIntervencionFaseId')?.setValue('0')
+      this.formIntervencionEspacio.get('objetivoIntervencionFaseId')?.setValue('0')
+      this.formIntervencionEspacio.get('codigoAcuerdo')?.setValidators([Validators.required])
     }
   }
 
@@ -225,27 +235,42 @@ export class FormularioIntervencionComponent {
     subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()    
   }
 
-  changeCodigoIntervencion(){
-    if(this.esAcuerdo){
-      this.obtenerCuiAcuerdo()
-    }
-  }
+  obtenerCodigoAcuerdo(){
+    const interaccionIdControl = this.formIntervencionEspacio.get('interaccionId')
+    const codigoAcuerdoControl = this.formIntervencionEspacio.get('codigoAcuerdo')
+    const pedidoControl = this.formIntervencionEspacio.get('pedido')
+    const acuerdoControl = this.formIntervencionEspacio.get('acuerdo')
+    const codigo = codigoAcuerdoControl?.value    
 
-  obtenerCuiAcuerdo(){
-    const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
-    const entidadSectorControl = this.formIntervencionEspacio.get('entidadSectorId')
-    const sectorIdControl = this.formIntervencionEspacio.get('sectorId')
-    const cui = codigoIntervencionControl?.value    
-    if(cui && cui.length == 7){
-      this.pedidoService.ListarPedidos({ cui, columnSort: 'prioridadID', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
-        .subscribe( resp => {
+    if(codigo && codigo.length > 0){
+      this.loadingInteraccion = true
+      this.acuerdoService.listarAcuerdos({ codigo, columnSort: 'acuerdoId', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
+        .subscribe( resp => {        
           if(resp.data.length > 0){
-            const pedido = resp.data[0]
-            sectorIdControl?.setValue(pedido.sectorId ?? null)
-            this.obtenerSector()
-          }
+            const acuerdo = resp.data[0]
+            this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });       
+            interaccionIdControl?.setValue(acuerdo.acuerdoID)
+            acuerdoControl?.setValue(acuerdo.acuerdo)
+            pedidoControl?.setValue(acuerdo.aspectoCriticoResolver)
+          } else {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });  
+            codigoAcuerdoControl.reset()
+            interaccionIdControl?.setValue(null)
+            pedidoControl?.setValue(null)
+            acuerdoControl?.setValue(null)
+          }          
+          this.loadingInteraccion = false
         })
-    }    
+    }
+    
+    // this.pedidoService.ListarPedidos({ cui, columnSort: 'prioridadID', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
+    //   .subscribe( resp => {
+    //     if(resp.data.length > 0){
+    //       const pedido = resp.data[0]
+    //       sectorIdControl?.setValue(pedido.sectorId ?? null)
+    //       this.obtenerSector()
+    //     }
+    //   }) 
   }
 
   obtenerSector(){
