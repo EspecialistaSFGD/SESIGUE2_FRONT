@@ -318,7 +318,7 @@ export default class AgendasMesaComponent {
       nzContent: FormularioIntervencionComponent,
       nzData: {
         create,
-        origen: { origen: 'mesas', interaccionId: this.mesaId.toString(), eventoId: this.mesa().eventoId },
+        // origen: { origen: 'mesas', interaccionId: this.mesaId.toString(), eventoId: this.mesa().eventoId },
         intervencionEspacio,
         sectores: this.sectores,
         ubigeos: this.ubigeos

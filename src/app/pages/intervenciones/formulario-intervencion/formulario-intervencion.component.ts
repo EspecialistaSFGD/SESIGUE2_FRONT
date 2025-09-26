@@ -24,7 +24,7 @@ export class FormularioIntervencionComponent {
 
   loadingInteraccion: boolean = false
   create: boolean = this.dataIntervencionTarea.create
-  origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
+  // origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
   intervencionEspacio: IntervencionEspacioResponse = this.dataIntervencionTarea.intervencionEspacio
   sectoresValidos: number[] = this.dataIntervencionTarea.sectores
   ubigeosValidos: string[] = this.dataIntervencionTarea.ubigeos
@@ -112,7 +112,7 @@ export class FormularioIntervencionComponent {
     this.esAcuerdo = Number(this.intervencionEspacio.origen) == 0
     this.esMesa = Number(this.intervencionEspacio.origen) == 1
     
-    const eventoId = this.origen.eventoId ? parseInt(this.intervencionEspacio.eventoId) : null
+    const eventoId = this.intervencionEspacio.eventoId ? parseInt(this.intervencionEspacio.eventoId) : null
     
     this.formIntervencionEspacio.reset({...this.intervencionEspacio, eventoId})
 
@@ -152,9 +152,15 @@ export class FormularioIntervencionComponent {
   }
 
   obtenerEventosServices(){
-    const tipoEventoId = this.formIntervencionEspacio.get('tipoEventoId')?.value
-    const paginationTipoEvento: Pagination = { columnSort: 'eventoId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
-    this.eventosService.getAllEventos([tipoEventoId], 1, [1, 2, 3], paginationTipoEvento).subscribe( resp => this.eventos.set(resp.data))
+    // const tipoEventoId = this.formIntervencionEspacio.get('tipoEventoId')?.value
+    const paginationTipoEvento: Pagination = { estados: [], tipoEspaciosId: [], columnSort: 'eventoId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
+
+    
+
+    
+
+    // this.eventosService.ListarEventos()
+    // this.eventosService.getAllEventos([tipoEventoId], 1, [1, 2, 3], paginationTipoEvento).subscribe( resp => this.eventos.set(resp.data))
   }
 
   obtenerSectoresServices(){

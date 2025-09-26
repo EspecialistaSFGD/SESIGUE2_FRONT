@@ -125,7 +125,7 @@ export default class AgendasEventoComponent {
     this.intervencionEspacioFormModal(intervencionEspacio)
   }
 
-  intervencionEspacioFormModal(intervencionEspacio: IntervencionEspacioResponse, create: boolean = true){
+  intervencionEspacioFormModal(intervencionEspacio: IntervencionEspacioResponse, create: boolean = true){    
     const action = `${create ? 'Crear' : 'Actualizar' } Intervencion`
         this.modal.create<FormularioIntervencionComponent>({
           nzTitle: `${action.toUpperCase()}`,
@@ -133,7 +133,7 @@ export default class AgendasEventoComponent {
           nzContent: FormularioIntervencionComponent,
           nzData: {
             create,
-            origen: { origen: 'acuerdos', interaccionId: this.eventoId.toString(), eventoId: this.eventoId.toString() },
+            // origen: { origen: 'acuerdos', interaccionId: this.eventoId.toString(), eventoId: this.eventoId.toString() },
             intervencionEspacio,
             sectores: this.eventosSectores().map(item => item.sectorId),
             ubigeos: []
