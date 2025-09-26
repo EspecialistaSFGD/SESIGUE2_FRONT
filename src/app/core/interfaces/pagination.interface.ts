@@ -32,6 +32,7 @@ export interface Pagination {
   vigentes?: string[],
   estados?: string[],
   tipoEspaciosId?: string[],
+  tipoEventosId?: string[],
   nivelGobiernoId?: string,
   total?: number,
   estado?: string,

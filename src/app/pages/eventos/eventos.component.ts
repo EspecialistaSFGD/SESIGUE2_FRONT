@@ -84,9 +84,9 @@ export default class EventosComponent {
 
   obtenerEventoService(){
     this.loading = true
-    const tipoEspacio = this.tipoEspacioIdFilters ? [this.tipoEspacioIdFilters] : []
-    const estado = this.estadosFilters ? [this.estadosFilters] : []    
-    this.eventoService.ListarEventos(this.pagination,estado,tipoEspacio)
+    const tipoEventosId = this.tipoEspacioIdFilters ? [this.tipoEspacioIdFilters] : []
+    const estados = this.estadosFilters ? [this.estadosFilters] : []
+    this.eventoService.ListarEventos({...this.pagination, tipoEventosId, estados})
       .subscribe( resp => {
         this.eventos.set(resp.data)
         this.pagination.total = resp.info?.total
