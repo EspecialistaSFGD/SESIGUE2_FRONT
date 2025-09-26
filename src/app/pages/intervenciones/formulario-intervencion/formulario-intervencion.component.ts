@@ -8,13 +8,14 @@ import { AcuerdosService, EntidadesService, EventosService, IntervencionEtapaSer
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { ProgressSpinerComponent } from '@shared/progress-spiner/progress-spiner.component';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-formulario-intervencion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule, NgZorroModule],
+  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule, NgZorroModule, ProgressSpinerComponent],
   providers: [MessageService],
   templateUrl: './formulario-intervencion.component.html',
   styles: ``
@@ -31,6 +32,7 @@ export class FormularioIntervencionComponent {
 
   esAcuerdo: boolean = false
   esMesa: boolean = false
+  private timeout: any;
 
   pagination: Pagination = {
     columnSort: 'nombre',
@@ -58,6 +60,7 @@ export class FormularioIntervencionComponent {
   tiposEventos = signal<TipoEventoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   sectorEntidades = signal<EntidadResponse[]>([])
+  evento: EventoResponse = {} as EventoResponse
   eventos = signal<EventoResponse[]>([])
   departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])
@@ -85,6 +88,7 @@ export class FormularioIntervencionComponent {
   formIntervencionEspacio: FormGroup = this.fb.group({
     origen: [ { value: '', disabled: true }, Validators.required ],
     tipoEventoId: [ { value: '', disabled: true }, Validators.required ],
+    evento: [{ value: '', disabled: true }],
     eventoId: [ { value: '', disabled: true }, Validators.required],
     tipoIntervencion: [ '', Validators.required ],
     subTipoIntervencion: [ { value: '', disabled: true }, Validators.required ],
@@ -119,7 +123,7 @@ export class FormularioIntervencionComponent {
     this.setFormValues()
 
     this.obtenerTipoEventoServices()
-    this.obtenerEventosServices()
+    this.obtenerEventoServices()
     this.obtenerSectoresServices()
     this.obtenerDepartamentoServices()
   }
@@ -151,16 +155,17 @@ export class FormularioIntervencionComponent {
     this.tiposEventosService.getAllTipoEvento(paginationTipoEvento).subscribe( resp => this.tiposEventos.set(resp.data))
   }
 
-  obtenerEventosServices(){
-    // const tipoEventoId = this.formIntervencionEspacio.get('tipoEventoId')?.value
-    const paginationTipoEvento: Pagination = { estados: [], tipoEspaciosId: [], columnSort: 'eventoId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
+  obtenerEventoServices(){
+    const eventoIdControl = this.formIntervencionEspacio.get('eventoId')
+    const eventoControl = this.formIntervencionEspacio.get('evento')
+    this.eventosService.obtenerEvento(this.intervencionEspacio.eventoId).subscribe(resp => {
+      if(resp.data){
+        this.evento = resp.data
+        eventoIdControl?.setValue(this.evento ? this.evento.eventoId! : null)
+        eventoControl?.setValue(this.evento ? this.evento.abreviatura : null)
+      }
+    })
 
-    
-
-    
-
-    // this.eventosService.ListarEventos()
-    // this.eventosService.getAllEventos([tipoEventoId], 1, [1, 2, 3], paginationTipoEvento).subscribe( resp => this.eventos.set(resp.data))
   }
 
   obtenerSectoresServices(){
@@ -241,17 +246,34 @@ export class FormularioIntervencionComponent {
     subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()    
   }
 
+  changeControl(event: any){
+    const codigoAcuerdoControl = this.formIntervencionEspacio.get('codigoAcuerdo')
+    const codigoAcuerdoValue = codigoAcuerdoControl?.value
+
+    if(codigoAcuerdoValue){
+      clearTimeout(this.timeout);
+      var $this = this;
+      this.timeout = setTimeout(function () {
+        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoAcuerdoValue.length > 0) {     
+          $this.obtenerCodigoAcuerdo()
+        }
+      }, 500);    
+    }
+  }
+
   obtenerCodigoAcuerdo(){
     const interaccionIdControl = this.formIntervencionEspacio.get('interaccionId')
     const codigoAcuerdoControl = this.formIntervencionEspacio.get('codigoAcuerdo')
     const pedidoControl = this.formIntervencionEspacio.get('pedido')
     const acuerdoControl = this.formIntervencionEspacio.get('acuerdo')
-    const codigo = codigoAcuerdoControl?.value    
+    const codigoAcuerdo = codigoAcuerdoControl?.value    
 
-    if(codigo && codigo.length > 0){
+    if(codigoAcuerdo && codigoAcuerdo.length > 0){
       this.loadingInteraccion = true
+      const codigo = `${this.evento.abreviatura}-${codigoAcuerdo}`
       this.acuerdoService.listarAcuerdos({ codigo, columnSort: 'acuerdoId', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
-        .subscribe( resp => {        
+        .subscribe( resp => {    
+          this.loadingInteraccion = false          
           if(resp.data.length > 0){
             const acuerdo = resp.data[0]
             this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });       
@@ -259,24 +281,13 @@ export class FormularioIntervencionComponent {
             acuerdoControl?.setValue(acuerdo.acuerdo)
             pedidoControl?.setValue(acuerdo.aspectoCriticoResolver)
           } else {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });  
-            codigoAcuerdoControl.reset()
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
             interaccionIdControl?.setValue(null)
             pedidoControl?.setValue(null)
             acuerdoControl?.setValue(null)
           }          
-          this.loadingInteraccion = false
         })
     }
-    
-    // this.pedidoService.ListarPedidos({ cui, columnSort: 'prioridadID', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
-    //   .subscribe( resp => {
-    //     if(resp.data.length > 0){
-    //       const pedido = resp.data[0]
-    //       sectorIdControl?.setValue(pedido.sectorId ?? null)
-    //       this.obtenerSector()
-    //     }
-    //   }) 
   }
 
   obtenerSector(){
