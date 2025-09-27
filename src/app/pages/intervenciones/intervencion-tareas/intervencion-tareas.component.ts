@@ -36,6 +36,7 @@ export default class IntervencionTareasComponent {
   usuarioId: number = 0
   permisosPCM: boolean = false
   perfilAuth: number = 0
+  verAvances: boolean = false
 
   estadosRegistros: ItemEnum[] = convertEnumToObject(IntervencionTareaEstadoRegistroEnum)
   
@@ -305,12 +306,15 @@ export default class IntervencionTareasComponent {
   }
 
   obtenerTareaAvances(intervencionTarea: IntervencionTareaResponse){
+    this.verAvances = false
+    this.verAvances = true
     this.tareaId = Number(intervencionTarea.intervencionTareaId)
     this.listarAvances = true
     this.intervencionTarea = intervencionTarea
   }
 
   actualizarListaTareas(actualiza: boolean){
+    this.verAvances = false
     this.obtenerIntervencionTareasService()
     this.obtenerIntervencionTareaService(this.tareaId.toString())
   }

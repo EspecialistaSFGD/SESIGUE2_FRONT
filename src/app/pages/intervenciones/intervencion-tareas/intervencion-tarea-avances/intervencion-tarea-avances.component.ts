@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IntervencionTareaAvanceEstadoRegistroEnum, IntervencionTareaEstadoRegistroEnum } from '@core/enums';
 import { convertDateStringToDate, convertEnumToObject, getDateFormat } from '@core/helpers';
@@ -64,6 +64,14 @@ export default class IntervencionTareaAvancesComponent {
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.verificarResponsable()
+  }
+
+  ngOnDestroy(): void {
+    this.verificarResponsable()
+  }
+
 
   verificarTareaAvances(){    
     this.tareaProyectoCulminado = this.intervencionTarea?.estadoRegistroNombre?.toLowerCase() == IntervencionTareaEstadoRegistroEnum.PROYECTO_CULMINADO
@@ -83,9 +91,7 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   verificarResponsable(){
-    // const nivelGobiernoAuth = localStorage.getItem('descripcionTipo')!
     const entidad = localStorage.getItem('entidad')!    
-    // this.esResponsable = nivelGobiernoAuth === 'GN' ? Number(this.intervencionTarea!.responsableId) == this.sectorAuth : this.intervencionTarea!.responsableId == entidad
     this.esResponsable = Number(this.intervencionTarea!.entidadId) == Number(entidad)
   }
 

@@ -1,3 +1,10 @@
-<app-page-header [title]="'Detalles de Espacio'" backUrl="eventos" />
+ <nz-page-header nzBackIcon [nzGhost]="false" (nzBack)="onBack()">
+	<nz-page-header-title>Detalle de Espacio</nz-page-header-title>
+	<nz-page-header-extra>
+		<a [routerLink]="['agenda']" class="px-4 py-2 rounded border border-sky-700 bg-sky-700 text-white hover:border-sky-900 hover:bg-sky-900 hover:text-white">
+			VER AGENDA / CARTERA
+		</a>
+	</nz-page-header-extra>
+</nz-page-header>
 
 <app-evento-detalle [evento]="evento" [esSsfgd]="esSsfgd" />
