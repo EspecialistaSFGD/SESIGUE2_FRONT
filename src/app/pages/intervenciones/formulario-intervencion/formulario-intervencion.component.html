@@ -116,13 +116,18 @@
             <label class="w-full" for="codigoIntervencion">
                 Código de intervención
             </label>
-            <input type="text" class="form-control" id="codigoIntervencion" formControlName="codigoIntervencion">
+            <input type="text" class="form-control" id="codigoIntervencion" formControlName="codigoIntervencion" (keyup)="changeCodigoIntervencion($event)">
             <div class="w-full text-danger" *ngIf="alertMessageError('codigoIntervencion')">{{msgErrorControl('codigoIntervencion','Código')}}</div>
         </div>
     </div>
 
     <div class="flex flex-col col-span-3">
-        <label class="w-full" for="descripcion">Descripción</label>
+        <label class="w-full" for="descripcion">
+            Descripción
+            @if (formIntervencionEspacio.get('descripcion')?.value) {
+                <span nz-icon nzType="info-circle" [nz-tooltip]="formIntervencionEspacio.get('descripcion')?.value"></span>
+            }
+        </label>
         <input type="text" class="form-control" id="descripcion" formControlName="descripcion">
         <div class="w-full text-danger" *ngIf="alertMessageError('descripcion')">{{msgErrorControl('descripcion','Descripcion')}}</div>
     </div>

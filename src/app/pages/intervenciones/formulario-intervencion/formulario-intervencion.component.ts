@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { convertEnumToObject, typeErrorControl } from '@core/helpers';
 import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { AcuerdosService, EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
+import { AcuerdosService, EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, IntervencionService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -83,9 +83,11 @@ export class FormularioIntervencionComponent {
   private eventosService = inject(EventosService)
   private validatorsService = inject(ValidatorService)
   private acuerdoService = inject(AcuerdosService)
+  private intervencionService = inject(IntervencionService)
   private messageService = inject(MessageService)
 
   formIntervencionEspacio: FormGroup = this.fb.group({
+    intervencionId: [ { value: 0, disabled: true }, Validators.required ],
     origen: [ { value: '', disabled: true }, Validators.required ],
     tipoEventoId: [ { value: '', disabled: true }, Validators.required ],
     evento: [{ value: '', disabled: true }],
@@ -321,6 +323,39 @@ export class FormularioIntervencionComponent {
           }          
         })
     }
+  }
+
+  changeCodigoIntervencion(event: any){
+    const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const codigoIntervencionControlValue = codigoIntervencionControl?.value
+
+    if(codigoIntervencionControlValue){
+      clearTimeout(this.timeout);
+      var $this = this;
+      this.timeout = setTimeout(function () {
+        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoIntervencionControlValue.length > 0) {     
+          $this.obtenerIntervencionService()
+        }
+      }, 500);    
+    }
+  }
+
+  obtenerIntervencionService(){
+    const intervencionIdControl = this.formIntervencionEspacio.get('intervencionId')
+    const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const descripcionControl = this.formIntervencionEspacio.get('descripcion')
+    const cui = codigoIntervencionControl?.value
+    console.log(cui);
+
+    const paginationIntervencion: Pagination = { cui, columnSort: 'intervencionId', typeSort: 'ASC', currentPage: 1, pageSize: 1 }
+    this.intervencionService.ListarIntervenciones(paginationIntervencion)
+      .subscribe( resp => {
+        console.log(resp.data);
+        const intervencion = resp.data.length > 0 ? resp.data[0] : null
+        descripcionControl?.setValue( intervencion ? intervencion.nombreProyecto : null)
+        intervencionIdControl?.setValue( intervencion ? intervencion.intervencionId : 0)
+      })
+  
   }
 
   obtenerSector(){
