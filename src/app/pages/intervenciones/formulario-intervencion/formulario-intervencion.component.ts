@@ -95,6 +95,7 @@ export class FormularioIntervencionComponent {
     codigoIntervencion: [ { value: '', disabled: true }, Validators.required ],
     sectorId: [ '', Validators.required ],
     entidadSectorId: [ { value: '', disabled: true }, Validators.required ],
+    descripcion: [{ value: '', disabled: true }],
     departamento: ['', Validators.required ],
     provincia: [{ value: '', disabled: true }],
     distrito: [{ value: '', disabled: true }],
@@ -130,12 +131,15 @@ export class FormularioIntervencionComponent {
 
   setFormValues(){
     const tipoInverscionControl = this.formIntervencionEspacio.get('tipoIntervencion')    
+    const subTipoIntervencionControl = this.formIntervencionEspacio.get('subTipoIntervencion')    
     this.esAcuerdo ? tipoInverscionControl?.disable() : tipoInverscionControl?.enable()
     if(this.esAcuerdo){ 
       this.obtenerTipo()
+      // this.formIntervencionEspacio.get('subTipoIntervencion')?.setValue()
       this.formIntervencionEspacio.get('inicioIntervencionFaseId')?.setValue('0')
       this.formIntervencionEspacio.get('objetivoIntervencionFaseId')?.setValue('0')
       this.formIntervencionEspacio.get('codigoAcuerdo')?.setValidators([Validators.required])
+
     }
   }
 
@@ -186,20 +190,25 @@ export class FormularioIntervencionComponent {
     const tipoValue = this.formIntervencionEspacio.get('tipoIntervencion')?.value
     const subTipoControl = this.formIntervencionEspacio.get('subTipoIntervencion')
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const descripcionControl = this.formIntervencionEspacio.get('descripcion')
+
     if(tipoValue){
       const subTipos = this.subTipos.filter( item => item.tipoId == tipoValue)      
       this.intervencionSubTipos.set(subTipos)
+      subTipoControl?.setValue(subTipos[0].subTipoId)
       this.setFasesdeTipo(tipoValue)
+      this.obtenerSubTipo()
+      // codigoIntervencionControl?.enable()
     } else {
       this.intervencionSubTipos.set([])
+      codigoIntervencionControl?.disable()
+      descripcionControl!.disable()
       subTipoControl?.reset()
     }
-
     tipoValue ? subTipoControl?.enable() : subTipoControl?.disable()
     codigoIntervencionControl?.reset()
-    codigoIntervencionControl?.disable()
   }
-
+  
   setFasesdeTipo(tipo: number){
     this.obtenerIntervencionFaseService(true,tipo)
     this.obtenerIntervencionFaseService(false,tipo)
@@ -229,21 +238,45 @@ export class FormularioIntervencionComponent {
   obtenerSubTipo(){
     const subTipoValue = this.formIntervencionEspacio.get('subTipoIntervencion')?.value
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const descripcionControl = this.formIntervencionEspacio.get('descripcion')
+   
     if(subTipoValue){
       const subTipo: IntervencionEspacioSubTipo = this.subTipos.find( item => item.subTipoId == subTipoValue)!
-      switch (subTipo.subTipo) {
-        case 'CUI': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)]); break;
-        case 'IDEA': codigoIntervencionControl?.clearValidators(); break;
-        // case 'IDEA': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sixNumberPattern)]); break;
-        case 'RCC': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)]); break;
-        case 'ACTIVIDAD': codigoIntervencionControl?.clearValidators(); break;
+      switch (subTipo.subTipo.toUpperCase()) {
+        case 'CUI':
+          codigoIntervencionControl?.enable() 
+          codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)])
+          descripcionControl?.clearValidators()
+          descripcionControl?.disable()
+        break;
+        case 'IDEA':
+          codigoIntervencionControl?.enable() 
+          codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sixNumberPattern)])
+          descripcionControl?.setValidators([Validators.required])
+          descripcionControl?.enable()
+        break;
+        case 'RCC':
+          codigoIntervencionControl?.enable() 
+          codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)])
+          descripcionControl?.clearValidators()
+          descripcionControl?.disable()
+        break;
+        case 'ACTIVIDAD':
+          descripcionControl?.setValidators([Validators.required])
+          codigoIntervencionControl?.clearValidators()
+          codigoIntervencionControl?.disable()
+          descripcionControl?.enable()
+        break;
         // case 'ACTIVIDAD': codigoIntervencionControl?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(7), Validators.pattern(this.validatorsService.startFiveNumberPattern)]); break;
       }
+      // this.setDisabledCodigoIntervencion()
     } else {
       codigoIntervencionControl?.clearValidators();
+      descripcionControl?.clearValidators();
     }
     codigoIntervencionControl?.reset()
-    subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()    
+    descripcionControl?.reset()
+    // subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()    
   }
 
   changeControl(event: any){

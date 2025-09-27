@@ -46,6 +46,7 @@
         <div *ngIf="esAcuerdo" class="flex flex-col">
             <label class="w-full" for="codigoAcuerdo">
                 Codigo de acuerdo
+                <span nz-icon nzType="info-circle" [nz-tooltip]="tooltipCodigoAcuerdo"></span>
             </label>
             <input type="text" class="form-control" id="codigoAcuerdo" formControlName="codigoAcuerdo" placeholder="Ingresa el numero del código aquí" (keyup)="changeControl($event)">
             <!-- <div class="flex">
@@ -118,6 +119,12 @@
             <input type="text" class="form-control" id="codigoIntervencion" formControlName="codigoIntervencion">
             <div class="w-full text-danger" *ngIf="alertMessageError('codigoIntervencion')">{{msgErrorControl('codigoIntervencion','Código')}}</div>
         </div>
+    </div>
+
+    <div class="flex flex-col col-span-3">
+        <label class="w-full" for="descripcion">Descripción</label>
+        <input type="text" class="form-control" id="descripcion" formControlName="descripcion">
+        <div class="w-full text-danger" *ngIf="alertMessageError('descripcion')">{{msgErrorControl('descripcion','Descripcion')}}</div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 bg-white gap-4">
@@ -267,5 +274,13 @@
 			<div class="text-danger" *ngIf="alertMessageError('objetivoIntervencionHitoId')">{{msgErrorControl('objetivoIntervencionHitoId','Hito objetivo')}}</div>
 		</div>
 	</div>
+
+    <ng-template #tooltipCodigoAcuerdo>
+        <div>
+            <div>Debe ingresar solo el número del codigo.</div>
+            <div> Ejemplo: del codigo <strong>{{evento.abreviatura}}-0001</strong> , solo ingresa <strong>0001</strong></div>
+        </div>
+    </ng-template>
 </form>
+
 <p-toast />
