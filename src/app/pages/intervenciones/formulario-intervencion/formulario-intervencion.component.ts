@@ -1,28 +1,38 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, SimpleChanges } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { convertEnumToObject, typeErrorControl } from '@core/helpers';
-import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
+import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AcuerdosService, EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, IntervencionService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { ProgressSpinerComponent } from '@shared/progress-spiner/progress-spiner.component';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-formulario-intervencion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule],
+  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule, NgZorroModule, ProgressSpinerComponent],
+  providers: [MessageService],
   templateUrl: './formulario-intervencion.component.html',
   styles: ``
 })
 export class FormularioIntervencionComponent {
   readonly dataIntervencionTarea: DataModalIntervencion = inject(NZ_MODAL_DATA);
 
+  loadingInteraccion: boolean = false
   create: boolean = this.dataIntervencionTarea.create
-  origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
+  // origen: IntervencionEspacioOriginResponse = this.dataIntervencionTarea.origen
+  intervencionEspacio: IntervencionEspacioResponse = this.dataIntervencionTarea.intervencionEspacio
   sectoresValidos: number[] = this.dataIntervencionTarea.sectores
   ubigeosValidos: string[] = this.dataIntervencionTarea.ubigeos
+
+  esAcuerdo: boolean = false
+  esMesa: boolean = false
+  private timeout: any;
 
   pagination: Pagination = {
     columnSort: 'nombre',
@@ -30,6 +40,8 @@ export class FormularioIntervencionComponent {
     pageSize: 100,
     currentPage: 1
   }
+
+  labeldescripcion:string = 'Descripción'
 
   origenes: ItemEnum[] = convertEnumToObject(IntervencionEspacioOrigenEnum)
 
@@ -50,6 +62,7 @@ export class FormularioIntervencionComponent {
   tiposEventos = signal<TipoEventoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   sectorEntidades = signal<EntidadResponse[]>([])
+  evento: EventoResponse = {} as EventoResponse
   eventos = signal<EventoResponse[]>([])
   departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])
@@ -71,21 +84,31 @@ export class FormularioIntervencionComponent {
   private tiposEventosService = inject(TipoEventosService)
   private eventosService = inject(EventosService)
   private validatorsService = inject(ValidatorService)
+  private acuerdoService = inject(AcuerdosService)
+  private intervencionService = inject(IntervencionService)
+  private messageService = inject(MessageService)
 
   formIntervencionEspacio: FormGroup = this.fb.group({
+    intervencionId: [ { value: 0, disabled: true }, Validators.required ],
     origen: [ { value: '', disabled: true }, Validators.required ],
     tipoEventoId: [ { value: '', disabled: true }, Validators.required ],
+    evento: [{ value: '', disabled: true }],
     eventoId: [ { value: '', disabled: true }, Validators.required],
     tipoIntervencion: [ '', Validators.required ],
     subTipoIntervencion: [ { value: '', disabled: true }, Validators.required ],
     codigoIntervencion: [ { value: '', disabled: true }, Validators.required ],
     sectorId: [ '', Validators.required ],
     entidadSectorId: [ { value: '', disabled: true }, Validators.required ],
+    descripcion: [{ value: '', disabled: true }],
     departamento: ['', Validators.required ],
     provincia: [{ value: '', disabled: true }],
     distrito: [{ value: '', disabled: true }],
     entidadUbigeoId: [ '', Validators.required ],
     interaccionId: [ '', Validators.required ],
+    codigoAcuerdo: [''],
+    pedido: [{ value: '', disabled: true }],
+    acuerdo: [{ value: '', disabled: true }],
+    interaccion: [{ value: '', disabled: true }],
     inicioIntervencionFaseId: [ { value: '', disabled: true }, Validators.required ],
     inicioIntervencionEtapaId: [ { value: '', disabled: true }, Validators.required ],
     inicioIntervencionHitoId: [ { value: '', disabled: true }, Validators.required ],
@@ -94,19 +117,34 @@ export class FormularioIntervencionComponent {
     objetivoIntervencionHitoId: [ { value: '', disabled: true }, Validators.required ],
   })
 
-  ngOnInit(): void {
-    const origen = this.origenes.find( item => item.value.toLowerCase() == this.origen.origen.toLowerCase())
+  ngOnInit(): void {    
+    this.esAcuerdo = Number(this.intervencionEspacio.origen) == 0
+    this.esMesa = Number(this.intervencionEspacio.origen) == 1
     
-    this.formIntervencionEspacio.get('origen')?.setValue(origen?.value.toUpperCase())
-    this.formIntervencionEspacio.get('interaccionId')?.setValue(this.origen.interaccionId)
-    this.formIntervencionEspacio.get('eventoId')?.setValue(this.origen.eventoId)
+    const eventoId = this.intervencionEspacio.eventoId ? parseInt(this.intervencionEspacio.eventoId) : null
+    
+    this.formIntervencionEspacio.reset({...this.intervencionEspacio, eventoId})
+
+    this.setFormValues()
 
     this.obtenerTipoEventoServices()
+    this.obtenerEventoServices()
     this.obtenerSectoresServices()
     this.obtenerDepartamentoServices()
-    // this.obtenerIntervencionFaseService()
-    // this.obtenerIntervencionFaseService(false)
-    // this.obtenerEventosServices() 
+  }
+
+  setFormValues(){
+    const tipoInverscionControl = this.formIntervencionEspacio.get('tipoIntervencion')    
+    const subTipoIntervencionControl = this.formIntervencionEspacio.get('subTipoIntervencion')    
+    this.esAcuerdo ? tipoInverscionControl?.disable() : tipoInverscionControl?.enable()
+    if(this.esAcuerdo){ 
+      this.obtenerTipo()
+      // this.formIntervencionEspacio.get('subTipoIntervencion')?.setValue()
+      this.formIntervencionEspacio.get('inicioIntervencionFaseId')?.setValue('0')
+      this.formIntervencionEspacio.get('objetivoIntervencionFaseId')?.setValue('0')
+      this.formIntervencionEspacio.get('codigoAcuerdo')?.setValidators([Validators.required])
+
+    }
   }
 
   alertMessageError(control: string) {
@@ -122,57 +160,62 @@ export class FormularioIntervencionComponent {
 
   obtenerTipoEventoServices(){
     const paginationTipoEvento: Pagination = { columnSort: 'codigoTipoEvento', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
-    this.tiposEventosService.getAllTipoEvento(paginationTipoEvento)
-      .subscribe( resp => {
-        this.tiposEventos.set(resp.data)
-        const origen = this.origen.origen.slice(0, -1);
-        const tipoEvento = resp.data.find( item => item.descripcionTipoEvento.toLowerCase() == origen.toLowerCase())
-        this.formIntervencionEspacio.get('tipoEventoId')?.setValue(tipoEvento?.codigoTipoEvento)
-        this.obtenerEventosServices()
-      })
+    this.tiposEventosService.getAllTipoEvento(paginationTipoEvento).subscribe( resp => this.tiposEventos.set(resp.data))
   }
 
-  obtenerEventosServices(){
-    const tipoEventoId = this.formIntervencionEspacio.get('tipoEventoId')?.value
-    const paginationTipoEvento: Pagination = { columnSort: 'eventoId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
-    this.eventosService.getAllEventos([tipoEventoId], 1, [1, 2, 3], paginationTipoEvento).subscribe( resp => this.eventos.set(resp.data))
-  }
-
-  obtenerIntegrantesMesas(){
+  obtenerEventoServices(){
+    const eventoIdControl = this.formIntervencionEspacio.get('eventoId')
+    const eventoControl = this.formIntervencionEspacio.get('evento')
+    this.eventosService.obtenerEvento(this.intervencionEspacio.eventoId).subscribe(resp => {
+      if(resp.data){
+        this.evento = resp.data
+        eventoIdControl?.setValue(this.evento ? this.evento.eventoId! : null)
+        eventoControl?.setValue(this.evento ? this.evento.abreviatura : null)
+      }
+    })
 
   }
 
   obtenerSectoresServices(){
-    this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID)))))  
+    const paginationSector: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
+    this.sectorService.listarSectores(paginationSector).subscribe( resp => this.sectores.set(this.sectoresValidos.length > 0 ? resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID))) : resp.data))  
   }
 
-  obtenerDepartamentoServices(){    
-    this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(resp.data.filter( item => this.ubigeosValidos.includes(item.departamentoId)))) 
+  obtenerDepartamentoServices(){
+    this.ubigeoService.getDepartments().subscribe( resp => this.departamentos.set(this.ubigeosValidos.length > 0 ? resp.data.filter( item => this.ubigeosValidos.includes(item.departamentoId)) : resp.data)) 
   }
 
   obtenerIntervencionFaseService(inicial: boolean, tipoIntervencion: number){
     this.intervencionFaseService.ListarIntervencionFases(this.pagination)
-      .subscribe( resp => inicial ? this.fasesInicial.set(resp.data.filter(item => Number(item.tipoIntervencion) == tipoIntervencion )) : this.fasesObjetivo.set(resp.data) )
+      .subscribe( resp => inicial ? this.fasesInicial.set(resp.data.filter(item => Number(item.tipoIntervencion) == tipoIntervencion )) : this.fasesObjetivo.set(resp.data.filter(item => Number(item.tipoIntervencion) == tipoIntervencion )) )
   }
 
   obtenerTipo(){
     const tipoValue = this.formIntervencionEspacio.get('tipoIntervencion')?.value
     const subTipoControl = this.formIntervencionEspacio.get('subTipoIntervencion')
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const descripcionControl = this.formIntervencionEspacio.get('descripcion')
+
     if(tipoValue){
-      const subTipos = this.subTipos.filter( item => item.tipoId == tipoValue)
+      const intervencionTipos = this.intervencionTipos.find( item => item.tipoId == tipoValue)!
+      this.labeldescripcion = intervencionTipos.tipo.toUpperCase() == 'PROYECTO' ? 'Nombre de proyecto' : 'Descripción de actividad ó acuerdo'
+      
+      const subTipos = this.subTipos.filter( item => item.tipoId == tipoValue)      
       this.intervencionSubTipos.set(subTipos)
+      subTipoControl?.setValue(subTipos[0].subTipoId)
       this.setFasesdeTipo(tipoValue)
+      this.obtenerSubTipo()
     } else {
       this.intervencionSubTipos.set([])
+      codigoIntervencionControl?.disable()
+      descripcionControl!.disable()
       subTipoControl?.reset()
+      this.labeldescripcion = 'Descripción'
     }
-
     tipoValue ? subTipoControl?.enable() : subTipoControl?.disable()
     codigoIntervencionControl?.reset()
-    codigoIntervencionControl?.disable()
   }
-
+  
   setFasesdeTipo(tipo: number){
     this.obtenerIntervencionFaseService(true,tipo)
     this.obtenerIntervencionFaseService(false,tipo)
@@ -202,21 +245,134 @@ export class FormularioIntervencionComponent {
   obtenerSubTipo(){
     const subTipoValue = this.formIntervencionEspacio.get('subTipoIntervencion')?.value
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const descripcionControl = this.formIntervencionEspacio.get('descripcion')
+   
     if(subTipoValue){
       const subTipo: IntervencionEspacioSubTipo = this.subTipos.find( item => item.subTipoId == subTipoValue)!
-      switch (subTipo.subTipo) {
-        case 'CUI': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)]); break;
-        case 'IDEA': codigoIntervencionControl?.clearValidators(); break;
-        // case 'IDEA': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sixNumberPattern)]); break;
-        case 'RCC': codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)]); break;
-        case 'ACTIVIDAD': codigoIntervencionControl?.clearValidators(); break;
+      switch (subTipo.subTipo.toUpperCase()) {
+        case 'CUI':
+          codigoIntervencionControl?.enable() 
+          codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)])
+          descripcionControl?.clearValidators()
+          descripcionControl?.disable()
+        break;
+        case 'IDEA':
+          codigoIntervencionControl?.enable() 
+          codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sixNumberPattern)])
+          descripcionControl?.setValidators([Validators.required])
+          descripcionControl?.enable()
+        break;
+        case 'RCC':
+          codigoIntervencionControl?.enable() 
+          codigoIntervencionControl?.setValidators([Validators.required, Validators.pattern(this.validatorsService.sevenNumberPattern)])
+          descripcionControl?.clearValidators()
+          descripcionControl?.disable()
+        break;
+        case 'ACTIVIDAD':
+          descripcionControl?.setValidators([Validators.required])
+          codigoIntervencionControl?.clearValidators()
+          codigoIntervencionControl?.disable()
+          descripcionControl?.enable()
+        break;
         // case 'ACTIVIDAD': codigoIntervencionControl?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(7), Validators.pattern(this.validatorsService.startFiveNumberPattern)]); break;
       }
+      // this.setDisabledCodigoIntervencion()
     } else {
       codigoIntervencionControl?.clearValidators();
+      descripcionControl?.clearValidators();
     }
     codigoIntervencionControl?.reset()
-    subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()    
+    descripcionControl?.reset()
+    // subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()    
+  }
+
+  changeControl(event: any){
+    const codigoAcuerdoControl = this.formIntervencionEspacio.get('codigoAcuerdo')
+    const codigoAcuerdoValue = codigoAcuerdoControl?.value
+
+    if(codigoAcuerdoValue){
+      clearTimeout(this.timeout);
+      var $this = this;
+      this.timeout = setTimeout(function () {
+        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoAcuerdoValue.length > 0) {     
+          $this.obtenerCodigoAcuerdo()
+        }
+      }, 500);    
+    }
+  }
+
+  obtenerCodigoAcuerdo(){
+    const interaccionIdControl = this.formIntervencionEspacio.get('interaccionId')
+    const codigoAcuerdoControl = this.formIntervencionEspacio.get('codigoAcuerdo')
+    const pedidoControl = this.formIntervencionEspacio.get('pedido')
+    const acuerdoControl = this.formIntervencionEspacio.get('acuerdo')
+    const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const descripcionControl = this.formIntervencionEspacio.get('descripcion')
+    const codigoAcuerdo = codigoAcuerdoControl?.value    
+
+    if(codigoAcuerdo && codigoAcuerdo.length > 0){
+      this.loadingInteraccion = true
+      const codigo = `${this.evento.abreviatura}-${codigoAcuerdo}`
+      this.acuerdoService.listarAcuerdos({ codigo, columnSort: 'acuerdoId', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
+        .subscribe( resp => {    
+          this.loadingInteraccion = false          
+          if(resp.data.length > 0){
+            const acuerdo = resp.data[0]
+            this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });       
+            interaccionIdControl?.setValue(acuerdo.acuerdoID)
+            acuerdoControl?.setValue(acuerdo.acuerdo)
+            pedidoControl?.setValue(acuerdo.aspectoCriticoResolver)
+            codigoIntervencionControl?.setValue(acuerdo.cuis ?? null)
+            acuerdo.cuis ? codigoIntervencionControl?.disable() : codigoIntervencionControl?.enable()
+            if(acuerdo.cuis){
+              this.obtenerIntervencionService()
+            } else {
+              descripcionControl?.setValue(null)
+              descripcionControl?.enable()
+            }
+          } else {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
+            interaccionIdControl?.setValue(null)
+            pedidoControl?.setValue(null)
+            acuerdoControl?.setValue(null)
+            codigoIntervencionControl?.setValue(null)
+            codigoIntervencionControl?.enable()
+            descripcionControl?.setValue(null)
+            descripcionControl?.enable()
+          }          
+        })
+    }
+  }
+
+  changeCodigoIntervencion(event: any){
+    const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const codigoIntervencionControlValue = codigoIntervencionControl?.value
+
+    if(codigoIntervencionControlValue){
+      clearTimeout(this.timeout);
+      var $this = this;
+      this.timeout = setTimeout(function () {
+        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoIntervencionControlValue.length > 0) {     
+          $this.obtenerIntervencionService()
+        }
+      }, 500);    
+    }
+  }
+
+  obtenerIntervencionService(){
+    const intervencionIdControl = this.formIntervencionEspacio.get('intervencionId')
+    const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const descripcionControl = this.formIntervencionEspacio.get('descripcion')
+    const cui = codigoIntervencionControl?.value
+
+    const paginationIntervencion: Pagination = { cui, columnSort: 'intervencionId', typeSort: 'ASC', currentPage: 1, pageSize: 1 }
+    this.intervencionService.ListarIntervenciones(paginationIntervencion)
+      .subscribe( resp => {
+        const intervencion = resp.data.length > 0 ? resp.data[0] : null
+        descripcionControl?.setValue( intervencion ? intervencion.nombreProyecto : null)
+        intervencionIdControl?.setValue( intervencion ? intervencion.intervencionId : 0)
+        intervencion ? descripcionControl?.disable() : descripcionControl?.enable()
+      })
   }
 
   obtenerSector(){
@@ -230,6 +386,11 @@ export class FormularioIntervencionComponent {
       entidadSectorControl?.reset()
     }
   }
+
+  // obtenerSectoresServices()
+  // {
+  //   this.sectorService.getAllSectors().subscribe( resp => this.sectores.set(resp.data.filter( item => this.sectoresValidos.includes(Number(item.grupoID)))))  
+  // }
 
   obtenerEntidadSector(){
     const sectorId = this.formIntervencionEspacio.get('sectorId')?.value

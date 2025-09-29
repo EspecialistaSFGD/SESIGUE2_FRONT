@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
-import { EventoDetalleComponent } from './evento-detalle/evento-detalle.component';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '@libs/services/auth/auth.service';
-import { EventosService } from '@core/services';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EventoResponse } from '@core/interfaces';
+import { EventosService } from '@core/services';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { EventoDetalleComponent } from './evento-detalle/evento-detalle.component';
 
 @Component({
   selector: 'app-evento-detalles',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, EventoDetalleComponent],
+  imports: [CommonModule, RouterModule, EventoDetalleComponent, NgZorroModule],
   templateUrl: './evento-detalles.component.html',
   styles: ``
 })
@@ -49,17 +49,17 @@ export default class EventoDetallesComponent {
     }
 
     this.eventoId = entidadIdNumber
-    this.obtenerEntidadService()
+    this.obtenerEventoService()
   }
 
-  obtenerEntidadService(){
-    console.log(this.eventoId);
-    
+  obtenerEventoService(){    
     this.eventoService.obtenerEvento(this.eventoId.toString())
-      .subscribe( resp => {
-        console.log(resp);
-        
+      .subscribe( resp => {        
         resp.success ? this.evento = resp.data : this.router.navigate(['/eventos'])
       })
+  }
+
+  onBack(){
+    this.router.navigate(['/eventos'])
   }
 }

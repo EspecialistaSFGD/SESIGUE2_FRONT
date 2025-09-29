@@ -1,10 +1,8 @@
 <nz-page-header nzBackIcon [nzGhost]="false" (nzBack)="onBack()">
-	<nz-page-header-title>{{title}}</nz-page-header-title>
+	<nz-page-header-title>Agenda del evento</nz-page-header-title>
 </nz-page-header>
 
-@if(mesa().mesaId){
-	<app-mesa-detalle [mesa]="mesa()" [action]="false"/>
-}
+<app-evento-detalle *ngIf="evento.eventoId" [evento]="evento" [esSsfgd]="esSsfgd" />
 
 <div class="grid grid-cols-1">
 	<nz-table #basicTable [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="headerUbigeos" [nzData]="intervencionesEspacios()"
@@ -25,8 +23,7 @@
 				<th nzAlign="center" nzWidth="100px">Dev Acum</th>
 				<th nzAlign="center" nzWidth="100px">PIM</th>
 				<th nzAlign="center" nzWidth="100px">DEV</th>
-				<th nzAlign="center" nzWidth="250px" nzColumnKey="inicioIntervencionHitoId" [nzSortFn]="true">Hito Inicial</th>
-				<th *ngIf="mesasAgendaActions.view || mesasAgendaActions.comment || mesasAgendaActions.delete" nzRight nzWidth="100px" nzAlign="center">Situación</th>
+				<th nzRight nzWidth="100px" nzAlign="center">Situación</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -48,16 +45,9 @@
 				  <td nzAlign="center">{{intervencionEspacio.devAcumulado! | numero : 0}}</td>
 				  <td nzAlign="center">{{intervencionEspacio.pim! | numero : 0}}</td>
 				  <td nzAlign="center">{{intervencionEspacio.devengado! | numero : 0}}</td>
-				  <td nzAlign="center" nz-tooltip [nzTooltipTitle]=" mesasAgendaActions.comment ? intervencionEspacio.resumen : null">
-					{{intervencionEspacio.inicioIntervencionFase}} <br> {{intervencionEspacio.inicioIntervencionEtapa}} <br> {{intervencionEspacio.inicioIntervencionHito}}
-					</td>
 				  <td nzRight nzAlign="center">
 					<div class="flex justify-center">
-						<app-boton *ngIf="mesasAgendaActions.comment" [link]="true" [icono]="'comments'" [tooltip]="'Agregar resumen'" (click)="comentarIntervencion(intervencionEspacio)"/>
-
-						<app-boton *ngIf="mesasAgendaActions.view" [link]="true" [icono]="'eye'" [tooltip]="'Ver intervención'" (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)"/>
-
-						<app-boton *ngIf="mesasAgendaActions.delete" [link]="true" [icono]="'trash'" [color]="'red'" [stepColor]="500" [disabled]="estadoEliminarIntervencionEspacio(intervencionEspacio)" [tooltip]="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? 'Eliminar intervención' : ''"  (click)="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? eliminarIntervencion(intervencionEspacio) : null"/>
+						<app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar intervención'" [link]="true" (click)="eliminarIntervencion(intervencionEspacio)" />
 					</div>
 				  </td>
 				<tr>
@@ -70,22 +60,16 @@
 	<div class="ant-table-header flex flex-col md:flex-row justify-between items-center">
 		<div class="flex gap-4">
 			<div class="mb-2 sm:mb-0">Resultados {{pagination.total}}</div>
-			<div *ngIf="fechaSincronizacion" >Fecha de sincronizacion: {{fechaSincronizacion}}</div>
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
-			<div *ngIf="mesasAgendaActions.new && permisosPCM" class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-red-700 border-red-700 text-white hover:bg-red-900" (click)="procesarIntervencion()">
-				<span nz-icon nzType="sync" nzTheme="outline"></span>
-				Procesar
-			</div>
-			<button *ngIf="mesasAgendaActions.report" nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteIntervencion()">
-				<span nz-icon nzType="file-excel"></span>
-				<span class="button-text">Exportar</span>
-			</button>
-			<div *ngIf="mesasAgendaActions.new" class="flex gap-1 py-1 px-4 border rounded cursor-pointer bg-sky-700 border-sky-700 text-white hover:bg-sky-900"  (click)="crearIntervencion()">
-				<span nz-icon nzType="plus" nzTheme="outline"></span>
-				Nueva intervencion
-			</div>
+			<app-boton [color]="'red'" [stepColor]="700" [icono]="'sync'" [texto]="'Procesar'" [loading]="loadingProcessing" (click)="procesarIntervencion()"/>
+
+			<app-boton  [icono]="'filter'" tooltip="{{'Exportar intervenciones del evento: ' + evento.nombre}}" [texto]="'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
+
+			<app-boton [icono]="'plus'" tooltip="Agregar nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearIntervencion()"/>
 		</div>
 	  </div>
 </ng-template>
+
+

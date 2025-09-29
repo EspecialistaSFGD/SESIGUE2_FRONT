@@ -18,6 +18,7 @@ export class BotonComponent {
   @Input() link: boolean = false
   @Input() outline: boolean = false
   @Input() disabled: boolean = false
+  @Input() loading: boolean = false
 
   get claseColor(){
     return[this.setColor()]
