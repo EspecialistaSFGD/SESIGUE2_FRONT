@@ -8,3 +8,7 @@
 </nz-page-header>
 
 <app-evento-detalle [evento]="evento" [esSsfgd]="esSsfgd" />
+
+<div *ngIf="evento.eventoId" class="grid grid-cols-1 md:grid-cols-2">
+	<app-evento-sectores [evento]="evento" [esSsfgd]="esSsfgd" />
+</div>

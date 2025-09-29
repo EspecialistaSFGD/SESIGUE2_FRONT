@@ -56,7 +56,7 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
-        <div class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white"  (click)="openFilters = true">
+        <!-- <div class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white"  (click)="openFilters = true">
             <i class="pi pi-filter" style="font-size: 0.75rem"></i>
             <span class="hidden md:flex">Filtros</span>
         </div>
@@ -69,7 +69,12 @@
         <div class="flex items-center gap-1 py-1 px-3 rounded border text-white cursor-pointer border-sky-700 bg-sky-700 hover:bg-sky-800 hover:border-sky-700" (click)="crearEvento()">
               <i class="pi pi-plus" style="font-size: 0.75rem"></i>
               <span class="hidden md:flex">Nuevo evento</span>
-            </div>
+            </div> -->
+            <app-boton  [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+
+            <app-boton  [icono]="'file-excel'" tooltip="Exportar Espacios" [texto]="'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteEventos()"/>
+
+            <app-boton [icono]="'plus'" tooltip="Agregar nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearEvento()"/>
       </div>
     </div>
   </ng-template>

@@ -16,11 +16,12 @@ import { MessageService } from 'primeng/api';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 
 @Component({
   selector: 'app-eventos',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, RouterModule, NgZorroModule, PrimeNgModule, EstadoTagComponent, FiltroEventosComponent],
+  imports: [CommonModule, PageHeaderComponent, RouterModule, NgZorroModule, PrimeNgModule, EstadoTagComponent, FiltroEventosComponent, BotonComponent],
   providers: [MessageService],
   templateUrl: './eventos.component.html',
   styles: ``
