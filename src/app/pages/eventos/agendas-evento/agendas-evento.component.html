@@ -46,15 +46,9 @@
 				  <td nzAlign="center">{{intervencionEspacio.pim! | numero : 0}}</td>
 				  <td nzAlign="center">{{intervencionEspacio.devengado! | numero : 0}}</td>
 				  <td nzRight nzAlign="center">
-					  <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención" (click)="intervencionDetalle(intervencionEspacio)">
-						<span nz-icon nzType="eye" nzTheme="outline"></span>
-					</button>
-					<button nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar resumen" (click)="comentarIntervencion(intervencionEspacio)">
-						<span nz-icon nzType="comment" nzTheme="outline"></span>
-					</button>
-					<button nz-button nzDanger nzType="link" [nz-tooltip]="'Eliminar intervención'" (click)="eliminarIntervencion(intervencionEspacio)">
-						<span nz-icon nzType="delete" nzTheme="outline"></span>
-					</button>
+					<div class="flex justify-center">
+						<app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar intervención'" [link]="true" (click)="eliminarIntervencion(intervencionEspacio)" />
+					</div>
 				  </td>
 				<tr>
 			}

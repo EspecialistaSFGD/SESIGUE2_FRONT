@@ -10,11 +10,12 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 
 @Component({
   selector: 'app-agendas-evento',
   standalone: true,
-  imports: [CommonModule, PipesModule, EventoDetalleComponent, NgZorroModule],
+  imports: [CommonModule, PipesModule, EventoDetalleComponent, NgZorroModule, BotonComponent],
   templateUrl: './agendas-evento.component.html',
   styles: ``
 })
@@ -33,8 +34,7 @@ export default class AgendasEventoComponent {
     columnSort: 'fechaRegistro',
     typeSort: 'DESC',
     pageSize: 10,
-    origenId: '0',
-    interaccionId: `${this.eventoId}`,
+    origenId: '0',    
     currentPage: 1
   }
   
@@ -50,10 +50,6 @@ export default class AgendasEventoComponent {
     this.getPermisosPCM()
     this.verificarEvento()
     this.obtenerEventoSectoresServices()
-
-    setTimeout(() => {
-      this.obtenerIntervencionEspacioService()
-    }, 100);
   }
   
   getPermisosPCM(){
@@ -80,7 +76,11 @@ export default class AgendasEventoComponent {
   obtenerEventoService(){    
     this.eventoService.obtenerEvento(this.eventoId.toString())
       .subscribe( resp => {        
+        this.pagination.eventoId = `${this.eventoId}`,
         resp.success ? this.evento = resp.data : this.router.navigate(['/eventos'])
+        if(resp.data){
+          this.obtenerIntervencionEspacioService()
+        }
       })
   }
 
@@ -189,6 +189,24 @@ export default class AgendasEventoComponent {
   }
 
   eliminarIntervencion(intervencionEspacio: IntervencionEspacioResponse){
+    this.modal.confirm({
+      nzTitle: `Eliminar tarea`,
+      nzContent: `¿Está seguro de que desea eliminar la tarea ${intervencionEspacio.codigoIntervencion}?`,
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.eliminarIntervencionService(intervencionEspacio.intervencionEspacioId!)
+      },
+      nzCancelText: 'Cancelar'
+    });
+  }
 
+  eliminarIntervencionService(intervencionEspacioId:string){
+    this.intervencionEspaciosServices.eliminarIntervencionEspacio(intervencionEspacioId)
+      .subscribe( resp => {
+        if(resp.success){
+          this.obtenerIntervencionEspacioService()
+        }
+      })
   }
 }

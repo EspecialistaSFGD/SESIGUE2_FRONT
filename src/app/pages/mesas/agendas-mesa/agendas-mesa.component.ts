@@ -1,25 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { obtenerPermisosBotones } from '@core/helpers';
 import { ButtonsActions, IntervencionEspacioResponse, MesaResponse, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { IntervencionEspacioService, MesaIntegrantesService, MesasService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { AuthService } from '@libs/services/auth/auth.service';
 import { UtilesService } from '@libs/shared/services/utiles.service';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
 import { SharedModule } from '@shared/shared.module';
 import saveAs from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 import { MesaDetalleComponent } from '../mesa-detalles/mesa-detalle/mesa-detalle.component';
-import { AuthService } from '@libs/services/auth/auth.service';
-import { obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'app-agendas-mesa',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule, MesaDetalleComponent],
+  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule, MesaDetalleComponent, BotonComponent],
   templateUrl: './agendas-mesa.component.html',
   styles: ``
 })

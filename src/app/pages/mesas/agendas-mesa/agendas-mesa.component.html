@@ -52,15 +52,13 @@
 					{{intervencionEspacio.inicioIntervencionFase}} <br> {{intervencionEspacio.inicioIntervencionEtapa}} <br> {{intervencionEspacio.inicioIntervencionHito}}
 					</td>
 				  <td nzRight nzAlign="center">
-					  <button *ngIf="mesasAgendaActions.view" nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver intervención" (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)">
-						<span nz-icon nzType="eye" nzTheme="outline"></span>
-					</button>
-					<button *ngIf="mesasAgendaActions.comment" nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar resumen" (click)="comentarIntervencion(intervencionEspacio)">
-						<span nz-icon nzType="comment" nzTheme="outline"></span>
-					</button>
-					<button *ngIf="mesasAgendaActions.delete" nz-button nzDanger nzType="link" [nz-tooltip]="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? 'Eliminar intervención' : ''" (click)="eliminarIntervencion(intervencionEspacio)" [disabled]="estadoEliminarIntervencionEspacio(intervencionEspacio)">
-						<span nz-icon nzType="delete" nzTheme="outline"></span>
-					</button>
+					<div class="flex justify-center">
+						<app-boton *ngIf="mesasAgendaActions.comment" [link]="true" [icono]="'comments'" [tooltip]="'Agregar resumen'" (click)="comentarIntervencion(intervencionEspacio)"/>
+
+						<app-boton *ngIf="mesasAgendaActions.view" [link]="true" [icono]="'eye'" [tooltip]="'Ver intervención'" (click)="intervencionDetalle(intervencionEspacio.intervencionEspacioId!)"/>
+
+						<app-boton *ngIf="mesasAgendaActions.delete" [link]="true" [icono]="'trash'" [color]="'red'" [stepColor]="500" [disabled]="estadoEliminarIntervencionEspacio(intervencionEspacio)" [tooltip]="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? 'Eliminar intervención' : ''"  (click)="!estadoEliminarIntervencionEspacio(intervencionEspacio) ? eliminarIntervencion(intervencionEspacio) : null"/>
+					</div>
 				  </td>
 				<tr>
 			}
