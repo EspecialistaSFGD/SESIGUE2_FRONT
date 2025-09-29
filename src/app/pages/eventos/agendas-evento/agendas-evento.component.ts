@@ -155,21 +155,29 @@ export default class AgendasEventoComponent {
                   console.error('Invalid fields:', invalidFields);
                   return formIntervencionEspacio.markAllAsTouched();
                 }
-    
-                const origen = 'acuerdos'   
-                const bodyIntervencionEspacio: IntervencionEspacioResponse = {...formIntervencionEspacio.getRawValue(), origen }
-                const usuarioId = localStorage.getItem('codigoUsuario')!
-                bodyIntervencionEspacio.usuarioIdRegistro = usuarioId
 
-                console.log(bodyIntervencionEspacio);
-                
+                const origen = 'acuerdos'   
+                const inicioIntervencionFaseId = null
+                const objetivoIntervencionFaseId = null
+                const usuarioIdRegistro = localStorage.getItem('codigoUsuario')!
+                const bodyIntervencionEspacio: IntervencionEspacioResponse = {...formIntervencionEspacio.getRawValue(), origen, inicioIntervencionFaseId, objetivoIntervencionFaseId, usuarioIdRegistro  }
                 if(create){
-                  console.log('crear');
+                  this.registrarIntervencionEspacio(bodyIntervencionEspacio)
                 }
               }
             }
           ]
         })
+  }
+
+  registrarIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse) {
+    this.intervencionEspaciosServices.registrarIntervencionEspacio(intervencionEspacio)
+      .subscribe(resp => {
+        if (resp.success) {
+          this.obtenerIntervencionEspacioService()
+          this.modal.closeAll()
+        }
+      });
   }
 
   intervencionDetalle(intervencionEspacio: IntervencionEspacioResponse){

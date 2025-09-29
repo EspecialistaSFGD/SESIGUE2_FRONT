@@ -49,12 +49,6 @@
                 <span nz-icon nzType="info-circle" [nz-tooltip]="tooltipCodigoAcuerdo"></span>
             </label>
             <input type="text" class="form-control" id="codigoAcuerdo" formControlName="codigoAcuerdo" placeholder="Ingresa el numero del código aquí" (keyup)="changeControl($event)">
-            <!-- <div class="flex">
-                <input type="text" class="form-control rounded-r-[0px]" id="codigoAcuerdo" formControlName="codigoAcuerdo">
-                <div class="py-2 px-3 cursor-pointer border border-slate-300 rounded-r bg-slate-100 hover:bg-sky-700 hover:text-white" (click)="obtenerCodigoAcuerdo()">
-                    <i class="pi pi-search" style="font-size: 0.85rem"></i>
-                </div>
-            </div> -->
             <div class="w-full text-danger" *ngIf="alertMessageError('codigoAcuerdo')">{{msgErrorControl('codigoAcuerdo','Código de acuerdo')}}</div>
         </div>
 
@@ -123,7 +117,7 @@
 
     <div class="flex flex-col col-span-3">
         <label class="w-full" for="descripcion">
-            Descripción
+            {{labeldescripcion}}
             @if (formIntervencionEspacio.get('descripcion')?.value) {
                 <span nz-icon nzType="info-circle" [nz-tooltip]="formIntervencionEspacio.get('descripcion')?.value"></span>
             }

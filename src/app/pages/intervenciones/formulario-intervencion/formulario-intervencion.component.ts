@@ -41,6 +41,8 @@ export class FormularioIntervencionComponent {
     currentPage: 1
   }
 
+  labeldescripcion:string = 'Descripción'
+
   origenes: ItemEnum[] = convertEnumToObject(IntervencionEspacioOrigenEnum)
 
   intervencionTipos: IntervencionEspacioTipo[] = [
@@ -195,6 +197,11 @@ export class FormularioIntervencionComponent {
     const descripcionControl = this.formIntervencionEspacio.get('descripcion')
 
     if(tipoValue){
+      const intervencionTipos = this.intervencionTipos.find( item => item.tipoId == tipoValue)!
+      this.labeldescripcion = intervencionTipos.tipo.toUpperCase() == 'PROYECTO' ? 'Nombre de proyecto' : 'Descripción de actividad ó acuerdo'
+      console.log(intervencionTipos);
+      console.log(this.labeldescripcion);
+      
       const subTipos = this.subTipos.filter( item => item.tipoId == tipoValue)      
       this.intervencionSubTipos.set(subTipos)
       subTipoControl?.setValue(subTipos[0].subTipoId)
@@ -206,6 +213,7 @@ export class FormularioIntervencionComponent {
       codigoIntervencionControl?.disable()
       descripcionControl!.disable()
       subTipoControl?.reset()
+      this.labeldescripcion = 'Descripción'
     }
     tipoValue ? subTipoControl?.enable() : subTipoControl?.disable()
     codigoIntervencionControl?.reset()
@@ -301,6 +309,8 @@ export class FormularioIntervencionComponent {
     const codigoAcuerdoControl = this.formIntervencionEspacio.get('codigoAcuerdo')
     const pedidoControl = this.formIntervencionEspacio.get('pedido')
     const acuerdoControl = this.formIntervencionEspacio.get('acuerdo')
+    const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
+    const descripcionControl = this.formIntervencionEspacio.get('descripcion')
     const codigoAcuerdo = codigoAcuerdoControl?.value    
 
     if(codigoAcuerdo && codigoAcuerdo.length > 0){
@@ -315,11 +325,23 @@ export class FormularioIntervencionComponent {
             interaccionIdControl?.setValue(acuerdo.acuerdoID)
             acuerdoControl?.setValue(acuerdo.acuerdo)
             pedidoControl?.setValue(acuerdo.aspectoCriticoResolver)
+            codigoIntervencionControl?.setValue(acuerdo.cuis ?? null)
+            acuerdo.cuis ? codigoIntervencionControl?.disable() : codigoIntervencionControl?.enable()
+            if(acuerdo.cuis){
+              this.obtenerIntervencionService()
+            } else {
+              descripcionControl?.setValue(null)
+              descripcionControl?.enable()
+            }
           } else {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
             interaccionIdControl?.setValue(null)
             pedidoControl?.setValue(null)
             acuerdoControl?.setValue(null)
+            codigoIntervencionControl?.setValue(null)
+            codigoIntervencionControl?.enable()
+            descripcionControl?.setValue(null)
+            descripcionControl?.enable()
           }          
         })
     }
@@ -345,17 +367,15 @@ export class FormularioIntervencionComponent {
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
     const descripcionControl = this.formIntervencionEspacio.get('descripcion')
     const cui = codigoIntervencionControl?.value
-    console.log(cui);
 
     const paginationIntervencion: Pagination = { cui, columnSort: 'intervencionId', typeSort: 'ASC', currentPage: 1, pageSize: 1 }
     this.intervencionService.ListarIntervenciones(paginationIntervencion)
       .subscribe( resp => {
-        console.log(resp.data);
         const intervencion = resp.data.length > 0 ? resp.data[0] : null
         descripcionControl?.setValue( intervencion ? intervencion.nombreProyecto : null)
         intervencionIdControl?.setValue( intervencion ? intervencion.intervencionId : 0)
+        intervencion ? descripcionControl?.disable() : descripcionControl?.enable()
       })
-  
   }
 
   obtenerSector(){
