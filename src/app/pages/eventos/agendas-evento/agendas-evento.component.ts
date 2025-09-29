@@ -2,15 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventoResponse, EventoSectorResponse, IntervencionEspacioResponse, Pagination } from '@core/interfaces';
-import { EventoSectoresService, EventosService, IntervencionEspacioService } from '@core/services';
-import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
-import { AuthService } from '@libs/services/auth/auth.service';
-import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { PipesModule } from '@core/pipes/pipes.module';
-import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { EventoSectoresService, EventosService, IntervencionEspacioService } from '@core/services';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { UtilesService } from '@libs/shared/services/utiles.service';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
+import saveAs from 'file-saver';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
+import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
 
 @Component({
   selector: 'app-agendas-evento',
@@ -29,6 +31,7 @@ export default class AgendasEventoComponent {
   esSsfgd:boolean = false
   loading = false
   loadingExport = false
+  loadingProcessing = false
 
   pagination: Pagination = {
     columnSort: 'fechaRegistro',
@@ -44,6 +47,7 @@ export default class AgendasEventoComponent {
   private eventoService = inject(EventosService)
   private intervencionEspaciosServices = inject(IntervencionEspacioService)
   private eventoSectorService = inject(EventoSectoresService)
+  private utilesService = inject(UtilesService);
   private modal = inject(NzModalService);
 
   ngOnInit(): void {
@@ -108,11 +112,31 @@ export default class AgendasEventoComponent {
   }
 
   procesarIntervencion(){
-
+    this.loadingProcessing = true
+    const pagination:Pagination = { origenId: '0', eventoId: this.eventoId.toString() }
+    this.intervencionEspaciosServices.procesarIntervencionEspacio(pagination)
+      .subscribe( resp => {
+        this.loadingProcessing = false
+        this.obtenerIntervencionEspacioService()
+      })
   }
 
   reporteIntervencion(){
+    this.loadingExport = true;
+    this.intervencionEspaciosServices.reporteIntervencionEspacios(this.pagination)
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+        }
+        this.loadingExport = false
+      })
+  }
 
+  generarExcel(archivo: any, nombreArchivo: string): void {
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
   }
 
   crearIntervencion(){
@@ -178,14 +202,6 @@ export default class AgendasEventoComponent {
           this.modal.closeAll()
         }
       });
-  }
-
-  intervencionDetalle(intervencionEspacio: IntervencionEspacioResponse){
-
-  }
-
-  comentarIntervencion(intervencionEspacio: IntervencionEspacioResponse){
-
   }
 
   eliminarIntervencion(intervencionEspacio: IntervencionEspacioResponse){

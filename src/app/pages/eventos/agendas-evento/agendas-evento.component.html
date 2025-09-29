@@ -63,14 +63,10 @@
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
-			<div class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-red-700 border-red-700 text-white hover:bg-red-900" (click)="procesarIntervencion()">
-				<span nz-icon nzType="sync" nzTheme="outline"></span>
-				Procesar
-			</div>
-			<button nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteIntervencion()">
-				<span nz-icon nzType="file-excel"></span>
-				<span class="button-text">Exportar</span>
-			</button>
+			<app-boton [color]="'red'" [stepColor]="700" [icono]="'sync'" [texto]="'Procesar'" [loading]="loadingProcessing" (click)="procesarIntervencion()"/>
+
+			<app-boton  [icono]="'filter'" tooltip="{{'Exportar intervenciones del evento: ' + evento.nombre}}" [texto]="'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
+
 			<div class="flex gap-1 py-1 px-4 border rounded cursor-pointer bg-sky-700 border-sky-700 text-white hover:bg-sky-900"  (click)="crearIntervencion()">
 				<span nz-icon nzType="plus" nzTheme="outline"></span>
 				Nueva intervencion
