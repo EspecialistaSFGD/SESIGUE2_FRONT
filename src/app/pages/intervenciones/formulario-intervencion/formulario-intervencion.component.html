@@ -6,7 +6,7 @@
             [options]="origenes"
             formControlName="origen"
             optionLabel="value"
-            optionValue="value"
+            optionValue="text"
             [showClear]="true" 
             placeholder="Seleccionar origen"
             (onChange)="obtenerTipo()"/>
@@ -25,8 +25,8 @@
             <div class="w-full text-danger" *ngIf="alertMessageError('tipoEventoId')">{{msgErrorControl('tipoEventoId','tipo evento')}}</div>
         </div>
 
-        <div class="flex flex-col">
-            <label class="w-full" for="interaccionId">Espacio</label>
+        <!-- <div class="flex flex-col">
+            <label class="w-full" for="eventoId">Espacio</label>
             <p-dropdown 
             [options]="eventos()"
             formControlName="eventoId"
@@ -35,6 +35,49 @@
             [showClear]="true" 
             placeholder="Seleccionar evento"/>
             <div class="w-full text-danger" *ngIf="alertMessageError('eventoId')">{{msgErrorControl('eventoId','evento')}}</div>
+        </div> -->
+
+        <div class="flex flex-col">
+            <label class="w-full" for="evento">Espacio</label>
+            <input type="text" class="form-control" id="evento" formControlName="evento">
+            <div class="w-full text-danger" *ngIf="alertMessageError('eventoId')">{{msgErrorControl('eventoId','Evento')}}</div>
+        </div>
+
+        <div *ngIf="esAcuerdo" class="flex flex-col">
+            <label class="w-full" for="codigoAcuerdo">
+                Codigo de acuerdo
+                <span nz-icon nzType="info-circle" [nz-tooltip]="tooltipCodigoAcuerdo"></span>
+            </label>
+            <input type="text" class="form-control" id="codigoAcuerdo" formControlName="codigoAcuerdo" placeholder="Ingresa el numero del código aquí" (keyup)="changeControl($event)">
+            <div class="w-full text-danger" *ngIf="alertMessageError('codigoAcuerdo')">{{msgErrorControl('codigoAcuerdo','Código de acuerdo')}}</div>
+        </div>
+
+        <div *ngIf="esAcuerdo" class="flex flex-col">
+            <label class="w-full" for="pedido">
+                Pedido
+                @if (formIntervencionEspacio.get('pedido')?.value) {
+                    <span nz-icon nzType="info-circle" [nz-tooltip]="formIntervencionEspacio.get('pedido')?.value"></span>
+                }
+            </label>
+            <div class="relative">
+                <input type="text" class="form-control" id="pedido" formControlName="pedido">
+                <div class="absolute right-1 top-1"><app-progress-spiner [loading]="loadingInteraccion" /></div>
+            </div>
+            <div class="w-full text-danger" *ngIf="alertMessageError('interaccionId')">{{msgErrorControl('interaccionId','Pedido')}}</div>
+        </div>
+
+        <div *ngIf="esAcuerdo" class="flex flex-col">
+            <label class="w-full" for="acuerdo">
+                Acuerdo
+                @if (formIntervencionEspacio.get('acuerdo')?.value) {
+                    <span nz-icon nzType="info-circle" [nz-tooltip]="formIntervencionEspacio.get('acuerdo')?.value"></span>
+                }
+            </label>
+            <div class="relative">
+                <input type="text" class="form-control" id="acuerdo" formControlName="acuerdo">
+                <div class="absolute right-1 top-1"><app-progress-spiner [loading]="loadingInteraccion" /></div>
+            </div>
+            <div class="w-full text-danger" *ngIf="alertMessageError('interaccionId')">{{msgErrorControl('interaccionId','Acuerdo')}}</div>
         </div>
 
         <div class="flex flex-col">
@@ -63,13 +106,24 @@
             <div class="w-full text-danger" *ngIf="alertMessageError('subTipoIntervencion')">{{msgErrorControl('subTipoIntervencion','Sub tipo')}}</div>
         </div>
 
-        <div class="flex flex-col">
+        <div class="w-full flex flex-col">
             <label class="w-full" for="codigoIntervencion">
                 Código de intervención
             </label>
-            <input type="text" class="form-control" id="codigoIntervencion" formControlName="codigoIntervencion">
+            <input type="text" class="form-control" id="codigoIntervencion" formControlName="codigoIntervencion" (keyup)="changeCodigoIntervencion($event)">
             <div class="w-full text-danger" *ngIf="alertMessageError('codigoIntervencion')">{{msgErrorControl('codigoIntervencion','Código')}}</div>
         </div>
+    </div>
+
+    <div class="flex flex-col col-span-3">
+        <label class="w-full" for="descripcion">
+            {{labeldescripcion}}
+            @if (formIntervencionEspacio.get('descripcion')?.value) {
+                <span nz-icon nzType="info-circle" [nz-tooltip]="formIntervencionEspacio.get('descripcion')?.value"></span>
+            }
+        </label>
+        <input type="text" class="form-control" id="descripcion" formControlName="descripcion">
+        <div class="w-full text-danger" *ngIf="alertMessageError('descripcion')">{{msgErrorControl('descripcion','Descripcion')}}</div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 bg-white gap-4">
@@ -140,7 +194,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border border-cyan-50 bg-cyan-50 rounded">
+    <div *ngIf="esMesa" class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border border-cyan-50 bg-cyan-50 rounded">
         <div class="w-full flex flex-col">
             <label nzFor="inicioIntervencionFaseId">Fase inicial</label>
             <p-dropdown 
@@ -180,7 +234,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border border-teal-50 bg-teal-50 rounded">
+    <div *ngIf="esMesa" class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border border-teal-50 bg-teal-50 rounded">
 		<div class="w-full flex flex-col">
 			<label nzFor="objetivoIntervencionFaseId">Fase objetivo</label>
 			<p-dropdown 
@@ -220,4 +274,12 @@
 		</div>
 	</div>
 
+    <ng-template #tooltipCodigoAcuerdo>
+        <div>
+            <div>Debe ingresar solo el número del codigo.</div>
+            <div> Ejemplo: del codigo <strong>{{evento.abreviatura}}-0001</strong> , solo ingresa <strong>0001</strong></div>
+        </div>
+    </ng-template>
 </form>
+
+<p-toast />

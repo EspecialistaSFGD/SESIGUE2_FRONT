@@ -1,1 +1,4 @@
-<span class="text-2xl" nz-icon nzType="check-circle" nzTheme="twotone" [nzTwotoneColor]="validado ? '#52c41a' : '#e5e7eb'" nz-tooltip [nzTooltipTitle]="validado ? 'Validado' : ''" ></span>
+<!-- <span class="text-2xl" nz-icon nzType="check-circle" nzTheme="twotone" [nzTwotoneColor]="validado ? '#52c41a' : '#e5e7eb'" nz-tooltip [nzTooltipTitle]="validado ? 'Validado' : ''" ></span> -->
+ <div class=" border-2 w-[24px] h-[24px] rounded-full" [ngClass]="validado ? 'bg-lime-50 border-lime-500 text-lime-500' : 'bg-slate-50 border-slate-300 text-slate-300'" nz-tooltip [nzTooltipTitle]="validado ? 'Validado' : ''" >
+    <i class="pi pi-check" style="font-size: 0.75rem"></i>
+ </div>

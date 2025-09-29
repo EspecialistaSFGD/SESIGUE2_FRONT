@@ -42,7 +42,7 @@ export class SectoresStore {
       .append('grupoId', `${grupoId}`)
       .append('tipo', `${tipo}`);
 
-    this.http.get<ResponseModel>(`${environment.api}/Sector`, { params }).subscribe(
+    this.http.get<ResponseModel>(`${environment.api}/Sector/ListarSector`, { params }).subscribe(
       {
         next: (v: ResponseModel) => {
           const res: SectorModel[] = v.data;
@@ -71,7 +71,7 @@ export class SectoresStore {
       .append('tipo', `${tipo}`)
       .append('slug', slug);
 
-    this.http.get<ResponseModel>(`${environment.api}/Sector`, { params }).subscribe(
+    this.http.get<ResponseModel>(`${environment.api}/Sector/ListarSector`, { params }).subscribe(
       {
         next: (v: ResponseModel) => {
           const res: SectorModel[] = v.data;

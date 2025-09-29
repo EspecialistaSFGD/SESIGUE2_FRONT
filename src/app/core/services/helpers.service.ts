@@ -16,7 +16,14 @@ export class HelpersService {
     let httpParams = new HttpParams();
     const params = Object.entries(pagination).map(([key, value]) => { return { key, value } })
     for (let param of params) {
-      httpParams = httpParams.append(param.key, param.value);
+      // httpParams = httpParams.append(param.key, param.value);
+      if (Array.isArray(param.value)) {
+        param.value.forEach((value: any) => {
+           httpParams = httpParams.append(`${param.key}[]`, value);
+        })
+      } else {
+         httpParams = httpParams.append(param.key, param.value);
+      }
     }
     if (httpParams.has('code')) {
       const userCode = Number(localStorage.getItem('codigoUsuario')) ?? 0
