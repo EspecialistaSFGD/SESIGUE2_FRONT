@@ -199,15 +199,12 @@ export class FormularioIntervencionComponent {
     if(tipoValue){
       const intervencionTipos = this.intervencionTipos.find( item => item.tipoId == tipoValue)!
       this.labeldescripcion = intervencionTipos.tipo.toUpperCase() == 'PROYECTO' ? 'Nombre de proyecto' : 'Descripción de actividad ó acuerdo'
-      console.log(intervencionTipos);
-      console.log(this.labeldescripcion);
       
       const subTipos = this.subTipos.filter( item => item.tipoId == tipoValue)      
       this.intervencionSubTipos.set(subTipos)
       subTipoControl?.setValue(subTipos[0].subTipoId)
       this.setFasesdeTipo(tipoValue)
       this.obtenerSubTipo()
-      // codigoIntervencionControl?.enable()
     } else {
       this.intervencionSubTipos.set([])
       codigoIntervencionControl?.disable()

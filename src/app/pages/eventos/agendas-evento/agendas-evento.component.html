@@ -67,10 +67,7 @@
 
 			<app-boton  [icono]="'filter'" tooltip="{{'Exportar intervenciones del evento: ' + evento.nombre}}" [texto]="'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
 
-			<div class="flex gap-1 py-1 px-4 border rounded cursor-pointer bg-sky-700 border-sky-700 text-white hover:bg-sky-900"  (click)="crearIntervencion()">
-				<span nz-icon nzType="plus" nzTheme="outline"></span>
-				Nueva intervencion
-			</div>
+			<app-boton [icono]="'plus'" tooltip="Agregar nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearIntervencion()"/>
 		</div>
 	  </div>
 </ng-template>
