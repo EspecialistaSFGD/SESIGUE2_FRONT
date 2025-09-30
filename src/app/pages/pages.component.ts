@@ -51,7 +51,6 @@ export class PagesComponent implements OnInit, AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
   public isSiderCollapsed = localStorage.getItem('isSiderCollapsed') === 'true' ? true : false;
 
-  leave:boolean = false
   menuItems: MenuModel[] = [];
   pageTitle: string | undefined;
   descripcionTipo: string | undefined;
