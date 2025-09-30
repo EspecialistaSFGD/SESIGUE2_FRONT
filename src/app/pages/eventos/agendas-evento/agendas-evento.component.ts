@@ -13,16 +13,18 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
+import { IntervencionDetalleComponent } from '../../intervenciones/intervencion-detalles/intervencion-detalle/intervencion-detalle.component';
 
 @Component({
   selector: 'app-agendas-evento',
   standalone: true,
-  imports: [CommonModule, PipesModule, EventoDetalleComponent, NgZorroModule, BotonComponent],
+  imports: [CommonModule, PipesModule, EventoDetalleComponent, NgZorroModule, BotonComponent, IntervencionDetalleComponent],
   templateUrl: './agendas-evento.component.html',
   styles: ``
 })
 export default class AgendasEventoComponent {
   evento: EventoResponse = {} as EventoResponse
+  intervencionEspacio: IntervencionEspacioResponse = {} as IntervencionEspacioResponse
   
   intervencionesEspacios = signal<IntervencionEspacioResponse[]>([])
   eventosSectores = signal<EventoSectorResponse[]>([])
@@ -36,7 +38,7 @@ export default class AgendasEventoComponent {
   pagination: Pagination = {
     columnSort: 'fechaRegistro',
     typeSort: 'DESC',
-    pageSize: 10,
+    pageSize: 5,
     origenId: '0',    
     currentPage: 1
   }
@@ -137,6 +139,10 @@ export default class AgendasEventoComponent {
     const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
     const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, nombreArchivo);
+  }
+
+  detalleintervencionEspacio(intervencionEspacio: IntervencionEspacioResponse){
+    this.intervencionEspacio = intervencionEspacio
   }
 
   crearIntervencion(){
