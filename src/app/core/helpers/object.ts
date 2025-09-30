@@ -1,5 +1,6 @@
 import { Params } from "@angular/router"
-import { ItemEnum, JneAutoridadResponse } from "@core/interfaces"
+import { UbigeoTipoEnum } from "@core/enums"
+import { ItemEnum, JneAutoridadResponse, UbigeoTipo } from "@core/interfaces"
 
 export const convertEnumToObject = <E extends Record<string, string>>(enumType: E, replace: boolean = false): ItemEnum[] => {
   return Object.entries(enumType).map(([value, text]) => ({ value: replace ? value.replace(/_/g, ' ') : value, text: replace ? text.replace(/_/g, ' ') : text }))
@@ -41,4 +42,15 @@ export const deleteKeyNullToObject = (object: any) => {
 export const obtenerAutoridadJne = (autoridades: JneAutoridadResponse[]) =>{
   const cargosAutoridad = ['GOBERNADOR','ALCALDE']
   return autoridades.find(item => cargosAutoridad.includes(item.cargo.split(' ')[0]))!
+}
+
+export const obtenerUbigeoTipo = (ubigeo:string): UbigeoTipo => {
+  let tipoUbigeo:UbigeoTipo = {
+    tipo: UbigeoTipoEnum.DEPARTAMENTO,
+    departamento: ubigeo.slice(0,2),
+    provincia: ubigeo.slice(2,4),
+    distrito: ubigeo.slice(4,6),
+  }
+
+  return tipoUbigeo
 }

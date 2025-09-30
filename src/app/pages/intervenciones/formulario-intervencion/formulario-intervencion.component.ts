@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
-import { convertEnumToObject, typeErrorControl } from '@core/helpers';
+import { convertEnumToObject, obtenerUbigeoTipo, typeErrorControl } from '@core/helpers';
 import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AcuerdosService, EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, IntervencionService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
@@ -308,6 +308,7 @@ export class FormularioIntervencionComponent {
     const acuerdoControl = this.formIntervencionEspacio.get('acuerdo')
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
     const descripcionControl = this.formIntervencionEspacio.get('descripcion')
+    const sectorIdControl = this.formIntervencionEspacio.get('sectorId')
     const codigoAcuerdo = codigoAcuerdoControl?.value    
 
     if(codigoAcuerdo && codigoAcuerdo.length > 0){
@@ -318,12 +319,17 @@ export class FormularioIntervencionComponent {
           this.loadingInteraccion = false          
           if(resp.data.length > 0){
             const acuerdo = resp.data[0]
+            console.log(acuerdo);
+            
             this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });       
             interaccionIdControl?.setValue(acuerdo.acuerdoID)
             acuerdoControl?.setValue(acuerdo.acuerdo)
             pedidoControl?.setValue(acuerdo.aspectoCriticoResolver)
             codigoIntervencionControl?.setValue(acuerdo.cuis ?? null)
             acuerdo.cuis ? codigoIntervencionControl?.disable() : codigoIntervencionControl?.enable()
+            sectorIdControl?.setValue(acuerdo.sectorId ?? null)
+            this.obtenerSector()
+            this.setUbigeoForm(acuerdo.ubigeo)
             if(acuerdo.cuis){
               this.obtenerIntervencionService()
             } else {
@@ -339,8 +345,32 @@ export class FormularioIntervencionComponent {
             codigoIntervencionControl?.enable()
             descripcionControl?.setValue(null)
             descripcionControl?.enable()
+            sectorIdControl?.reset()
           }          
         })
+    }
+  }
+
+  setUbigeoForm(ubigeo:string){
+    const departamentoControl = this.formIntervencionEspacio.get('departamento')
+    const provinciaControl = this.formIntervencionEspacio.get('provincia')
+    const distritoControl = this.formIntervencionEspacio.get('distrito')
+
+    if(ubigeo){
+      const tipoUbigeo = obtenerUbigeoTipo(ubigeo)
+
+      // departamentoControl?.setValue(ubigeoDpto);
+      // provinciaControl?.setValue(ubigeoProv);
+      // distritoControl?.setValue(ubigeoDist);
+
+      // departamentoControl?.setValue(ubigeoDpto)
+      // provinciaControl?.setValue(ubigeo.slice(2, 2))
+      // distritoControl?.setValue(ubigeo.slice(4, 2))
+
+      console.log("UBIGEO SET");
+      console.log(ubigeo);
+      console.log("TIPO ", tipoUbigeo);
+      
     }
   }
 
