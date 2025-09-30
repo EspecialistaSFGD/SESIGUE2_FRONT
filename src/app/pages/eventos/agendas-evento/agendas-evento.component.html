@@ -4,6 +4,9 @@
 
 <app-evento-detalle *ngIf="evento.eventoId" [evento]="evento" [esSsfgd]="esSsfgd" />
 
+
+
+
 <div class="grid grid-cols-1">
 	<nz-table #basicTable [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="headerUbigeos" [nzData]="intervencionesEspacios()"
 	[nzFrontPagination]="false" [nzShowPagination]="pagination.total! > 10"

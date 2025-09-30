@@ -142,8 +142,8 @@ export class FormularioIntervencionComponent {
       // this.formIntervencionEspacio.get('subTipoIntervencion')?.setValue()
       this.formIntervencionEspacio.get('inicioIntervencionFaseId')?.setValue('0')
       this.formIntervencionEspacio.get('objetivoIntervencionFaseId')?.setValue('0')
-      this.formIntervencionEspacio.get('codigoAcuerdo')?.setValidators([Validators.required])
-
+      this.formIntervencionEspacio.get('codigoAcuerdo')?.setValidators([Validators.required, Validators.maxLength(4)]);
+      this.formIntervencionEspacio.get('codigoAcuerdo')?.updateValueAndValidity();
     }
   }
 
