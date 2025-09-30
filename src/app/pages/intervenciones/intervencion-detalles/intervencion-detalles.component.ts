@@ -10,10 +10,10 @@ import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { PipesModule } from '@core/pipes/pipes.module';
 
 @Component({
-  selector: 'app-intervencion-detalle',
+  selector: 'app-intervencion-detalles',
   standalone: true,
   imports: [CommonModule, NgZorroModule, IntervencionTareasComponent, PipesModule],
-  templateUrl: './intervencion-detalle.component.html',
+  templateUrl: './intervencion-detalles.component.html',
   styles: ``
 })
 export default class IntervencionDetalleComponent {
