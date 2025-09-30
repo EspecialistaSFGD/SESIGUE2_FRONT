@@ -1,22 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IntervencionEspacioOrigenEnum } from '@core/enums';
+import { convertEnumToObject } from '@core/helpers';
+import { IntervencionEspacioResponse, ItemEnum, Pagination } from '@core/interfaces';
+import { IntervencionEspacioService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import IntervencionTareasComponent from '../intervencion-tareas/intervencion-tareas.component';
-import { ActivatedRoute, Router } from '@angular/router';
-import { IntervencionEspacioService } from '@core/services';
-import { IntervencionEspacioResponse, ItemEnum, Pagination } from '@core/interfaces';
-import { convertEnumToObject } from '@core/helpers';
-import { IntervencionEspacioOrigenEnum } from '@core/enums';
-import { PipesModule } from '@core/pipes/pipes.module';
+import { IntervencionDetalleComponent } from './intervencion-detalle/intervencion-detalle.component';
 
 @Component({
   selector: 'app-intervencion-detalles',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, IntervencionTareasComponent, PipesModule],
+  imports: [CommonModule, NgZorroModule, IntervencionTareasComponent, IntervencionDetalleComponent],
   templateUrl: './intervencion-detalles.component.html',
   styles: ``
 })
-export default class IntervencionDetalleComponent {
+export default class IntervencionDetallesComponent {
   title: string = `Intervención de la mesa`;
 
   origenInteracciones: ItemEnum[] = convertEnumToObject(IntervencionEspacioOrigenEnum)
