@@ -31,7 +31,6 @@ export class EventoSectoresComponent {
 
   ngOnInit(): void {
     this.pagination.eventoId = this.evento.eventoId
-    // this.obtenerEventoSectoresService()
   }
 
   obtenerEventoSectoresService(){
