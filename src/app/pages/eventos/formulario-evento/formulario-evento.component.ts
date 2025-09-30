@@ -45,8 +45,8 @@ export class FormularioEventoComponent {
    this.estados = this.estados.map(item => ({ ...item, text: item.value.toLowerCase() }))    
     if(!this.create){
       const evento = this.evento()
-      const fechaEvento = convertDateStringToDate(evento.fechaEvento!)
-      const fechaFinEvento = convertDateStringToDate(evento.fechaFinEvento!)
+      const fechaEvento = evento.fechaEvento ? convertDateStringToDate(evento.fechaEvento!) : null
+      const fechaFinEvento = evento.fechaFinEvento ? convertDateStringToDate(evento.fechaFinEvento!) : null
       this.formEvento.reset({...evento, fechaEvento, fechaFinEvento})
     }
     this.obtenerSubTiposService()

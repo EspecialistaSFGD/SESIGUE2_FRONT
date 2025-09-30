@@ -159,7 +159,7 @@ export default class EventosComponent {
     this.eventoFormModal(evento)
   }
 
-  eventoFormModal(evento: EventoResponse, create: boolean = true){
+  eventoFormModal(evento: EventoResponse, create: boolean = true){    
     const action = `${create ? 'Crear' : 'Actualizar' } Espacio`
     this.modal.create<FormularioEventoComponent>({
       nzTitle: `${action.toUpperCase()}`,
