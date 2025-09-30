@@ -22,15 +22,7 @@ export default class IntervencionDetallesComponent {
   origenInteracciones: ItemEnum[] = convertEnumToObject(IntervencionEspacioOrigenEnum)
 
   intervencionEspacioId!: number
-  intervencionEspacio = signal<IntervencionEspacioResponse>({
-    intervencionId: '',
-    eventoId: '',
-    origen: '',
-    interaccionId : '',
-    acuerdoId: '',
-    inicioIntervencionHitoId: '',
-    objetivoIntervencionHitoId: ''
-  })
+  intervencionEspacio: IntervencionEspacioResponse = {} as IntervencionEspacioResponse
 
   private route = inject(ActivatedRoute)
   private router = inject(Router)
@@ -58,7 +50,7 @@ export default class IntervencionDetallesComponent {
     const pagination: Pagination = { origenId: origen?.text, interaccionId: modeloId }
     this.intervencionEspacioService.obtenerIntervencionEspacio(intervencionEspacioId, pagination)
       .subscribe( resp => {        
-        resp.success ? this.intervencionEspacio.set(resp.data) : this.router.navigate(['/panel'])
+        resp.success ? this.intervencionEspacio = resp.data : this.router.navigate(['/panel'])
       })
   }
 }

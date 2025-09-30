@@ -42,19 +42,19 @@
 		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio.nombreIntervencion}}</div>
 	</div>
 
-	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
+	<div *ngIf="esMesa" class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[116px] lg:min-w-[124px] pl-2 pr-4 py-1 font-semibold bg-gray-100 ">Beneficiarios</div>
 		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio.beneficiarios}}</div>
 	</div>
-	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
+	<div *ngIf="esMesa" class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[116px] lg:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-cyan-100 ">Fase Inicial</div>
 		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio.inicioIntervencionFase}}</div>
 	</div>
-	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
+	<div *ngIf="esMesa" class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[116px] lg:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-cyan-100 ">Etapa Inicial</div>
 		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio.inicioIntervencionEtapa}}</div>
 	</div>
-	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
+	<div *ngIf="esMesa" class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
 		<div class="flex items-center min-w-[116px] lg:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-cyan-100 ">Hito Inicial</div>
 		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio.inicioIntervencionHito}}</div>
 	</div>
@@ -64,16 +64,31 @@
 		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio.costoActualizado! | numero : 0}}</div>
 	</div>
 	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
-		<div class="flex items-center min-w-[116px] lg:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-teal-100 ">Fase Objetivo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio.objetivoIntervencionFase}}</div>
+		<div class="flex items-center min-w-[116px] lg:min-w-[160px] pl-2 pr-4 py-1 font-semibold bg-teal-100 ">
+			Fase @if(esAcuerdo){ actual } @if(esMesa){ Objetivo }
+		</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">
+			@if(esAcuerdo){ {{intervencionEspacio.actualIntervencionFase}} }
+			@if(esMesa){ {{intervencionEspacio.objetivoIntervencionFase}} }
+		</div>
 	</div>
 	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
-		<div class="flex items-center min-w-[116px] lg:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-teal-100 ">Etapa Objetivo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio.objetivoIntervencionEtapa}}</div>
+		<div class="flex items-center min-w-[116px] lg:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-teal-100 ">
+			Etapa @if(esAcuerdo){ actual } @if(esMesa){ Objetivo }
+		</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">
+			@if(esAcuerdo){ {{intervencionEspacio.actualIntervencionEtapa}} }
+			@if(esMesa){ {{intervencionEspacio.objetivoIntervencionEtapa}} }
+		</div>
 	</div>
 	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">
-		<div class="flex items-center min-w-[116px] lg:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-teal-100">Hito Objetivo</div>
-		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">{{intervencionEspacio.objetivoIntervencionHito}}</div>
+		<div class="flex items-center min-w-[116px] lg:min-w-[104px] pl-2 pr-4 py-1 font-semibold bg-teal-100">
+			Hito @if(esAcuerdo){ actual } @if(esMesa){ Objetivo }
+		</div>
+		<div class="w-full flex items-center px-2 py-1 border-gray-200 border-l">
+			@if(esAcuerdo){ {{intervencionEspacio.actualIntervencionHito}} }
+			@if(esMesa){ {{intervencionEspacio.objetivoIntervencionHito}} }
+		</div>
 	</div>
 
 	<div class="col-span-2 lg:col-span-1 flex border border-gray-200 border-t-0">

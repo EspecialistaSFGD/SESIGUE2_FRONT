@@ -6,7 +6,7 @@
 
 <div *ngIf="intervencionEspacio.intervencionId" class="flex-flex-col">
 	<div class="text-base font-semibold">Detalles de la intervencion</div>
-	<app-intervencion-detalle [intervencionEspacio]="intervencionEspacio" />
+	<app-intervencion-detalle [intervencionEspacio]="intervencionEspacio" [esAcuerdo]="true" />
 </div>
 
 <div class="grid grid-cols-1">
@@ -28,33 +28,35 @@
 				<th nzAlign="center" nzWidth="100px">Dev Acum</th>
 				<th nzAlign="center" nzWidth="100px">PIM</th>
 				<th nzAlign="center" nzWidth="100px">DEV</th>
-				<th nzRight nzWidth="100px" nzAlign="center">Situación</th>
+				<th nzRight nzWidth="100px" nzAlign="center"></th>
 			</tr>
 		</thead>
 		<tbody>
-			@for(intervencionEspacio of intervencionesEspacios(); track $index){
-				<tr>
-				  <td nzAlign="center">{{intervencionEspacio.sector}}</td>
+			@for(intervencion of intervencionesEspacios(); track $index){
+				<tr [ngClass]="{ 'bg-sky-100' : intervencionEspacio.intervencionId == intervencion.intervencionId}">
+				  <td nzAlign="center">{{intervencion.sector}}</td>
 				  <td nzAlign="center">
-					{{intervencionEspacio.departamento}}
-					{{intervencionEspacio.provincia ? ' / ' + intervencionEspacio.provincia  : '' }}
-					{{intervencionEspacio.distrito ? ' / ' + intervencionEspacio.distrito  : '' }}
+					{{intervencion.departamento}}
+					{{intervencion.provincia ? ' / ' + intervencion.provincia  : '' }}
+					{{intervencion.distrito ? ' / ' + intervencion.distrito  : '' }}
 					</td>
-				  <td nzAlign="center">{{intervencionEspacio.entidadTipo}} {{intervencionEspacio.entidadSlug}}</td>
-				  <td nzAlign="center">{{intervencionEspacio.tipo | uppercase }}</td>
-				  <td nzAlign="center">{{intervencionEspacio.subTipo | uppercase }}</td>
-				  <td nzAlign="center">{{intervencionEspacio.codigoIntervencion}}</td>
-				  <td nzAlign="center">{{intervencionEspacio.nombreIntervencion}}</td>
-				  <td nzAlign="center" class="font-bold">{{intervencionEspacio.fechaSsi}}</td>
-				  <td nzAlign="center">{{intervencionEspacio.costoActualizado! | numero : 0}}</td>
-				  <td nzAlign="center">{{intervencionEspacio.devAcumulado! | numero : 0}}</td>
-				  <td nzAlign="center">{{intervencionEspacio.pim! | numero : 0}}</td>
-				  <td nzAlign="center">{{intervencionEspacio.devengado! | numero : 0}}</td>
-				  <td nzRight nzAlign="center">
+				  <td nzAlign="center">{{intervencion.entidadTipo}} {{intervencion.entidadSlug}}</td>
+				  <td nzAlign="center">{{intervencion.tipo | uppercase }}</td>
+				  <td nzAlign="center">{{intervencion.subTipo | uppercase }}</td>
+				  <td nzAlign="center">{{intervencion.codigoIntervencion}}</td>
+				  <td nzAlign="center">{{intervencion.nombreIntervencion}}</td>
+				  <td nzAlign="center" class="font-bold">{{intervencion.fechaSsi}}</td>
+				  <td nzAlign="center">{{intervencion.costoActualizado! | numero : 0}}</td>
+				  <td nzAlign="center">{{intervencion.devAcumulado! | numero : 0}}</td>
+				  <td nzAlign="center">{{intervencion.pim! | numero : 0}}</td>
+				  <td nzAlign="center">{{intervencion.devengado! | numero : 0}}</td>
+				  <td nzRight nzAlign="center" [ngClass]="{ 'bg-sky-100' : intervencionEspacio.intervencionId == intervencion.intervencionId}">
 					<div class="flex justify-center">
-						<app-boton [icono]="'eye'" [tooltip]="'Detalle de la intervencion'" [link]="true" (click)="detalleintervencionEspacio(intervencionEspacio)" />
+						<app-boton [icono]="'comments'" [tooltip]="'Agregar situación'" [link]="true"/>
 
-						<app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar intervención'" [link]="true" (click)="eliminarIntervencion(intervencionEspacio)" />
+						<app-boton [icono]="'eye'" [tooltip]="'Detalle de la intervencion'" [link]="true" (click)="detalleintervencionEspacio(intervencion)" />
+
+						<app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar intervención'" [link]="true" (click)="eliminarIntervencion(intervencion)" />
 					</div>
 				  </td>
 				<tr>
