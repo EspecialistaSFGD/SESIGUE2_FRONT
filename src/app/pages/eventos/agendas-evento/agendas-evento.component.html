@@ -4,12 +4,14 @@
 
 <app-evento-detalle *ngIf="evento.eventoId" [evento]="evento" [esSsfgd]="esSsfgd" />
 
-
-
+<div *ngIf="intervencionEspacio.intervencionId" class="flex-flex-col">
+	<div class="text-base font-semibold">Detalles de la intervencion</div>
+	<app-intervencion-detalle [intervencionEspacio]="intervencionEspacio" />
+</div>
 
 <div class="grid grid-cols-1">
 	<nz-table #basicTable [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="headerUbigeos" [nzData]="intervencionesEspacios()"
-	[nzFrontPagination]="false" [nzShowPagination]="pagination.total! > 10"
+	[nzFrontPagination]="false" [nzShowPagination]="pagination.total! > 5"
 	[nzLoading]="loading" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
 	[nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
 		<thead>
@@ -50,6 +52,8 @@
 				  <td nzAlign="center">{{intervencionEspacio.devengado! | numero : 0}}</td>
 				  <td nzRight nzAlign="center">
 					<div class="flex justify-center">
+						<app-boton [icono]="'eye'" [tooltip]="'Detalle de la intervencion'" [link]="true" (click)="detalleintervencionEspacio(intervencionEspacio)" />
+
 						<app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar intervención'" [link]="true" (click)="eliminarIntervencion(intervencionEspacio)" />
 					</div>
 				  </td>
