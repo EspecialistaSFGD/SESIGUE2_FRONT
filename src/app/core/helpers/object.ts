@@ -45,12 +45,24 @@ export const obtenerAutoridadJne = (autoridades: JneAutoridadResponse[]) =>{
 }
 
 export const obtenerUbigeoTipo = (ubigeo:string): UbigeoTipo => {
+  
+  const first = ubigeo.slice(0,2)
+  const second = ubigeo.slice(2,4)
+  const thirt = ubigeo.slice(4,6)
+
   let tipoUbigeo:UbigeoTipo = {
-    tipo: UbigeoTipoEnum.DEPARTAMENTO,
-    departamento: ubigeo.slice(0,2),
-    provincia: ubigeo.slice(2,4),
-    distrito: ubigeo.slice(4,6),
+    departamento: first,
   }
+
+  second == '00' ? delete tipoUbigeo.provincia : tipoUbigeo.provincia = `${first}${second}01`
+  thirt == '00' ? delete tipoUbigeo.distrito : tipoUbigeo.distrito = ubigeo
+
+  // if(second != '00'){
+  //   tipoUbigeo.provincia = `${first}${second}01`
+  // }
+  // if(thirt != '00'){
+  //   tipoUbigeo.distrito = `${first}${second}01`
+  // }
 
   return tipoUbigeo
 }

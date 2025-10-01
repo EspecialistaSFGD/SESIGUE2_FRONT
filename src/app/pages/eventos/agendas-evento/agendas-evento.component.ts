@@ -141,7 +141,10 @@ export default class AgendasEventoComponent {
     saveAs(blob, nombreArchivo);
   }
 
-  detalleintervencionEspacio(intervencionEspacio: IntervencionEspacioResponse){
+  intervencionDetalleFormModel(intervencionEspacio: IntervencionEspacioResponse){
+  }
+
+  detalleIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse){
     this.intervencionEspacio = intervencionEspacio
   }
 

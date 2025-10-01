@@ -52,9 +52,9 @@
 				  <td nzAlign="center">{{intervencion.devengado! | numero : 0}}</td>
 				  <td nzRight nzAlign="center" [ngClass]="{ 'bg-sky-100' : intervencionEspacio.intervencionId == intervencion.intervencionId}">
 					<div class="flex justify-center">
-						<app-boton [icono]="'comments'" [tooltip]="'Agregar situación'" [link]="true"/>
+						<app-boton [icono]="'comments'" [tooltip]="'Agregar situación'" [link]="true" (click)="intervencionDetalleFormModel(intervencion)"/>
 
-						<app-boton [icono]="'eye'" [tooltip]="'Detalle de la intervencion'" [link]="true" (click)="detalleintervencionEspacio(intervencion)" />
+						<app-boton [icono]="'eye'" [tooltip]="'Detalle de la intervencion'" [link]="true" (click)="detalleIntervencionEspacio(intervencion)" />
 
 						<app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar intervención'" [link]="true" (click)="eliminarIntervencion(intervencion)" />
 					</div>

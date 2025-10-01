@@ -318,9 +318,7 @@ export class FormularioIntervencionComponent {
         .subscribe( resp => {    
           this.loadingInteraccion = false          
           if(resp.data.length > 0){
-            const acuerdo = resp.data[0]
-            console.log(acuerdo);
-            
+            const acuerdo = resp.data[0]            
             this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });       
             interaccionIdControl?.setValue(acuerdo.acuerdoID)
             acuerdoControl?.setValue(acuerdo.acuerdo)
@@ -358,19 +356,14 @@ export class FormularioIntervencionComponent {
 
     if(ubigeo){
       const tipoUbigeo = obtenerUbigeoTipo(ubigeo)
+      departamentoControl?.setValue(tipoUbigeo.departamento)
+      this.obtenerDepartamento()
 
-      // departamentoControl?.setValue(ubigeoDpto);
-      // provinciaControl?.setValue(ubigeoProv);
-      // distritoControl?.setValue(ubigeoDist);
-
-      // departamentoControl?.setValue(ubigeoDpto)
-      // provinciaControl?.setValue(ubigeo.slice(2, 2))
-      // distritoControl?.setValue(ubigeo.slice(4, 2))
-
-      console.log("UBIGEO SET");
-      console.log(ubigeo);
-      console.log("TIPO ", tipoUbigeo);
-      
+      tipoUbigeo.provincia ? provinciaControl?.setValue(tipoUbigeo.provincia) : provinciaControl?.reset()
+      if(tipoUbigeo.provincia){
+        this.obtenerProvincia()
+      }
+      tipoUbigeo.distrito ? distritoControl?.setValue(tipoUbigeo.distrito) : distritoControl?.reset()
     }
   }
 

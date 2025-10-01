@@ -1,4 +1,4 @@
-import { kindChart, UbigeoTipoEnum } from "@core/enums";
+import { kindChart } from "@core/enums";
 import { PaginationResponse } from "./pagination.interface";
 
 export interface DataResponses {
@@ -122,8 +122,7 @@ export interface DataFile {
 }
 
 export interface UbigeoTipo {
-  tipo:UbigeoTipoEnum,
   departamento: string,
-  provincia: string,
-  distrito: string
+  provincia?: string,
+  distrito?: string
 }
