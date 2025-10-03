@@ -316,7 +316,8 @@ export class FormularioIntervencionComponent {
       this.loadingInteraccion = true
       const codigo = `${this.evento.abreviatura}-${codigoAcuerdo}`
       this.acuerdoService.listarAcuerdos({ codigo, columnSort: 'acuerdoId', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
-        .subscribe( resp => {    
+        .subscribe( resp => {
+          console.log(resp.data)
           this.loadingInteraccion = false          
           if(resp.data.length > 0){
             const acuerdo = resp.data[0]            
@@ -325,10 +326,12 @@ export class FormularioIntervencionComponent {
             acuerdoControl?.setValue(acuerdo.acuerdo)
             pedidoControl?.setValue(acuerdo.aspectoCriticoResolver)
             codigoIntervencionControl?.setValue(acuerdo.cuis ?? null)
-            acuerdo.cuis ? codigoIntervencionControl?.disable() : codigoIntervencionControl?.enable()
             sectorIdControl?.setValue(acuerdo.sectorId ?? null)
             this.obtenerSector()
             this.setUbigeoForm(acuerdo.ubigeo)
+            // descripcionControl?.setValue(null)
+            // descripcionControl?.enable()
+            acuerdo.cuis ? codigoIntervencionControl?.disable() : codigoIntervencionControl?.enable()
             if(acuerdo.cuis){
               // this.obtenerIntervencionService()
               this.verificarIntervencionEspacioService(acuerdo.cuis)
@@ -338,14 +341,14 @@ export class FormularioIntervencionComponent {
             }
           } else {
             // this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
-            interaccionIdControl?.setValue(null)
-            pedidoControl?.setValue(null)
-            acuerdoControl?.setValue(null)
-            codigoIntervencionControl?.setValue(null)
-            codigoIntervencionControl?.enable()
+            // interaccionIdControl?.setValue(null)
+            // pedidoControl?.setValue(null)
+            // acuerdoControl?.setValue(null)
+            // codigoIntervencionControl?.setValue(null)
+            // codigoIntervencionControl?.enable()
             descripcionControl?.setValue(null)
             descripcionControl?.enable()
-            sectorIdControl?.reset()
+            // sectorIdControl?.reset()
           }          
         })
     }
@@ -391,26 +394,23 @@ export class FormularioIntervencionComponent {
     this.intervencionEspacioService.ListarIntervencionEspacios(pagination)
       .subscribe( resp => {
         if(resp.data.length > 0){
-          const intervencionEspacio = resp.data
-          console.log(intervencionEspacio);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: `la intervencion con el codigo ${cui} ya existe` });
-          this.setvalueFormControl('distrito','')
-          this.setvalueFormControl('provincia','')
-          this.setvalueFormControl('departamento','')
-          this.setvalueFormControl('sector','')
-          this.setvalueFormControl('codigoIntervencion','')
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: `La intervencion con el codigo ${cui} ya existe` });
+          console.log("encuentra intervencioon Espacio")
           this.setvalueFormControl('pedido','')
           this.setvalueFormControl('acuerdo','')
+          this.setvalueFormControl('codigoIntervencion','')
+          this.setvalueFormControl('descripcion','')
           this.setvalueFormControl('sectorId','')
-          setInterval(() => this.setvalueFormControl('codigoAcuerdo',''), 200);
-
+          this.setvalueFormControl('distrito','')
+          this.setvalueFormControl('provincia','')
+          this.disableFormControl('entidadSectorId',true)
           this.disableFormControl('distrito',true)
           this.disableFormControl('provincia',true)
+          this.disableFormControl('descripcion',true)
         } else {
+          console.log("no encuentra informacion")
           this.obtenerIntervencionService()
-          // this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });
         }
-
       })
   }
 
@@ -419,7 +419,7 @@ export class FormularioIntervencionComponent {
   }
 
   disableFormControl(control:string, disable: boolean = false){
-    disable ? this.formIntervencionEspacio.disable() : this.formIntervencionEspacio.get(control)?.enable()
+    disable ? this.formIntervencionEspacio.get(control)?.disable() : this.formIntervencionEspacio.get(control)?.enable()
   }
 
   obtenerIntervencionService(){
