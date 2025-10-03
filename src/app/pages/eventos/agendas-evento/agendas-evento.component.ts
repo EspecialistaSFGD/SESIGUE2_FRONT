@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventoResponse, EventoSectorResponse, IntervencionEspacioResponse, Pagination } from '@core/interfaces';
+import { EventoResponse, EventoSectorResponse, IntervencionEspacioResponse, IntervencionSituacionResponse, Pagination } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { EventoSectoresService, EventosService, IntervencionEspacioService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -12,8 +12,9 @@ import saveAs from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
-import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
 import { IntervencionDetalleComponent } from '../../intervenciones/intervencion-detalles/intervencion-detalle/intervencion-detalle.component';
+import { FormSituacionIntervencionComponent } from '../../intervenciones/situaciones-intervencion/form-situacion-intervencion/form-situacion-intervencion.component';
+import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
 
 @Component({
   selector: 'app-agendas-evento',
@@ -142,6 +143,37 @@ export default class AgendasEventoComponent {
   }
 
   intervencionDetalleFormModel(intervencionEspacio: IntervencionEspacioResponse){
+    const create: boolean = true
+    this.modal.create<FormSituacionIntervencionComponent>({
+          nzTitle: `Crear situación`,
+          nzWidth: '60%',
+          nzContent: FormSituacionIntervencionComponent,
+          nzData: { create, intervencionEspacio },
+          nzFooter: [
+            {
+              label: 'Cancelar',
+              type: 'default',
+              onClick: () => this.modal.closeAll(),
+            },
+            {
+              label: 'Crear situación',
+              type: 'primary',
+              onClick: (componentResponse) => {
+                const formIntervencionSituacion = componentResponse!.formIntervencionSituacion
+    
+                if (formIntervencionSituacion.invalid) {
+                  const invalidFields = Object.keys(formIntervencionSituacion.controls).filter(field => formIntervencionSituacion.controls[field].invalid);
+                  console.error('Invalid fields:', invalidFields);
+                  return formIntervencionSituacion.markAllAsTouched();
+                }
+
+                const usuarioRegistraId = localStorage.getItem('codigoUsuario')!
+                const intervencionId = intervencionEspacio.intervencionId
+                // const bodyIntervencionSituacion:IntervencionSituacionResponse = { ...formIntervencionSituacion, usuarioRegistraId, intervencionId }
+              }
+            }
+          ]
+        })
   }
 
   detalleIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse){
