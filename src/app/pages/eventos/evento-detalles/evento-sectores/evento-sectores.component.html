@@ -16,7 +16,7 @@
 				<thead>
 					<tr>
 						<th>Sector</th>
-						<th nzAlign="center">Registros permitidos</th>
+						<th nzAlign="center">Entidad</th>
 						<th nzAlign="center" nzWidth="80px"></th>
 					</tr>
 				</thead>
@@ -24,7 +24,7 @@
 					@for(sector of eventoSectores(); track $index){
 					<tr>
 						<td>{{sector.sector}}</td>
-						<td nzAlign="center">{{sector.cantidadRegistros}}</td>
+						<td nzAlign="center">{{sector.entidad}}</td>
 						<td nzAlign="center"></td>
 					<tr>
 					}

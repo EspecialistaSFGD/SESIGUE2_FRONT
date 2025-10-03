@@ -110,7 +110,6 @@ export interface ColorEstados {
 	icono: string
 }
 
-
 export interface SocialMedia {
   name: string,
   icon: string,
@@ -120,4 +119,10 @@ export interface SocialMedia {
 export interface DataFile {
   exist: boolean,
   file?: File
+}
+
+export interface UbigeoTipo {
+  departamento: string,
+  provincia?: string,
+  distrito?: string
 }

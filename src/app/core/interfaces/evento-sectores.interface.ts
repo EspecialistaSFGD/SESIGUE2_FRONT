@@ -15,4 +15,6 @@ export interface EventoSectorResponse {
     evento: string,
     sectorId: string,
     sector: string,
+    entidadId: string,
+    entidad: string,
 }

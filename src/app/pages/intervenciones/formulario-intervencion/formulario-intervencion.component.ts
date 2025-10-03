@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
-import { convertEnumToObject, typeErrorControl } from '@core/helpers';
+import { convertEnumToObject, obtenerUbigeoTipo, typeErrorControl } from '@core/helpers';
 import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { AcuerdosService, EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, IntervencionService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
+import { AcuerdosService, EntidadesService, EventosService, IntervencionEspacioService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, IntervencionService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -86,6 +86,7 @@ export class FormularioIntervencionComponent {
   private validatorsService = inject(ValidatorService)
   private acuerdoService = inject(AcuerdosService)
   private intervencionService = inject(IntervencionService)
+  private intervencionEspacioService = inject(IntervencionEspacioService)
   private messageService = inject(MessageService)
 
   formIntervencionEspacio: FormGroup = this.fb.group({
@@ -308,39 +309,66 @@ export class FormularioIntervencionComponent {
     const acuerdoControl = this.formIntervencionEspacio.get('acuerdo')
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
     const descripcionControl = this.formIntervencionEspacio.get('descripcion')
+    const sectorIdControl = this.formIntervencionEspacio.get('sectorId')
     const codigoAcuerdo = codigoAcuerdoControl?.value    
 
     if(codigoAcuerdo && codigoAcuerdo.length > 0){
       this.loadingInteraccion = true
       const codigo = `${this.evento.abreviatura}-${codigoAcuerdo}`
       this.acuerdoService.listarAcuerdos({ codigo, columnSort: 'acuerdoId', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
-        .subscribe( resp => {    
+        .subscribe( resp => {
+          console.log(resp.data)
           this.loadingInteraccion = false          
           if(resp.data.length > 0){
-            const acuerdo = resp.data[0]
-            this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });       
+            const acuerdo = resp.data[0]            
+            // this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });
             interaccionIdControl?.setValue(acuerdo.acuerdoID)
             acuerdoControl?.setValue(acuerdo.acuerdo)
             pedidoControl?.setValue(acuerdo.aspectoCriticoResolver)
             codigoIntervencionControl?.setValue(acuerdo.cuis ?? null)
+            sectorIdControl?.setValue(acuerdo.sectorId ?? null)
+            this.obtenerSector()
+            this.setUbigeoForm(acuerdo.ubigeo)
+            // descripcionControl?.setValue(null)
+            // descripcionControl?.enable()
             acuerdo.cuis ? codigoIntervencionControl?.disable() : codigoIntervencionControl?.enable()
             if(acuerdo.cuis){
-              this.obtenerIntervencionService()
+              // this.obtenerIntervencionService()
+              this.verificarIntervencionEspacioService(acuerdo.cuis)
             } else {
               descripcionControl?.setValue(null)
               descripcionControl?.enable()
             }
           } else {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
-            interaccionIdControl?.setValue(null)
-            pedidoControl?.setValue(null)
-            acuerdoControl?.setValue(null)
-            codigoIntervencionControl?.setValue(null)
-            codigoIntervencionControl?.enable()
+            // this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
+            // interaccionIdControl?.setValue(null)
+            // pedidoControl?.setValue(null)
+            // acuerdoControl?.setValue(null)
+            // codigoIntervencionControl?.setValue(null)
+            // codigoIntervencionControl?.enable()
             descripcionControl?.setValue(null)
             descripcionControl?.enable()
+            // sectorIdControl?.reset()
           }          
         })
+    }
+  }
+
+  setUbigeoForm(ubigeo:string){
+    const departamentoControl = this.formIntervencionEspacio.get('departamento')
+    const provinciaControl = this.formIntervencionEspacio.get('provincia')
+    const distritoControl = this.formIntervencionEspacio.get('distrito')
+
+    if(ubigeo){
+      const tipoUbigeo = obtenerUbigeoTipo(ubigeo)
+      departamentoControl?.setValue(tipoUbigeo.departamento)
+      this.obtenerDepartamento()
+
+      tipoUbigeo.provincia ? provinciaControl?.setValue(tipoUbigeo.provincia) : provinciaControl?.reset()
+      if(tipoUbigeo.provincia){
+        this.obtenerProvincia()
+      }
+      tipoUbigeo.distrito ? distritoControl?.setValue(tipoUbigeo.distrito) : distritoControl?.reset()
     }
   }
 
@@ -353,10 +381,45 @@ export class FormularioIntervencionComponent {
       var $this = this;
       this.timeout = setTimeout(function () {
         if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoIntervencionControlValue.length > 0) {     
-          $this.obtenerIntervencionService()
+          // $this.obtenerIntervencionService()
+          $this.verificarIntervencionEspacioService(codigoIntervencionControlValue)
         }
       }, 500);    
     }
+  }
+
+  verificarIntervencionEspacioService(cui: string){
+    const origenId = this.intervencionEspacio.origen
+    const pagination: Pagination = { cui, origenId, columnSort: 'intervencionEspacioId', typeSort: 'DESC', pageSize: 10, currentPage: 1 }
+    this.intervencionEspacioService.ListarIntervencionEspacios(pagination)
+      .subscribe( resp => {
+        if(resp.data.length > 0){
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: `La intervencion con el codigo ${cui} ya existe` });
+          console.log("encuentra intervencioon Espacio")
+          this.setvalueFormControl('pedido','')
+          this.setvalueFormControl('acuerdo','')
+          this.setvalueFormControl('codigoIntervencion','')
+          this.setvalueFormControl('descripcion','')
+          this.setvalueFormControl('sectorId','')
+          this.setvalueFormControl('distrito','')
+          this.setvalueFormControl('provincia','')
+          this.disableFormControl('entidadSectorId',true)
+          this.disableFormControl('distrito',true)
+          this.disableFormControl('provincia',true)
+          this.disableFormControl('descripcion',true)
+        } else {
+          console.log("no encuentra informacion")
+          this.obtenerIntervencionService()
+        }
+      })
+  }
+
+  setvalueFormControl(control:string, value: string = ''){
+    value == '' ? this.formIntervencionEspacio.get(control)?.reset() : this.formIntervencionEspacio.get(control)?.setValue(value)
+  }
+
+  disableFormControl(control:string, disable: boolean = false){
+    disable ? this.formIntervencionEspacio.get(control)?.disable() : this.formIntervencionEspacio.get(control)?.enable()
   }
 
   obtenerIntervencionService(){

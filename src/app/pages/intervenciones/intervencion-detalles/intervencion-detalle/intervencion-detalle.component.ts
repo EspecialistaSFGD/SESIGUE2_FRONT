@@ -12,4 +12,6 @@ import { PipesModule } from '@core/pipes/pipes.module';
 })
 export class IntervencionDetalleComponent {
   @Input() intervencionEspacio: IntervencionEspacioResponse = {} as IntervencionEspacioResponse
+  @Input() esAcuerdo: boolean = false
+  @Input() esMesa: boolean = false
 }
