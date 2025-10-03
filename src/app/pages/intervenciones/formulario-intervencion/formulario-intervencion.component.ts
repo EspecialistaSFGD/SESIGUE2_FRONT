@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { convertEnumToObject, obtenerUbigeoTipo, typeErrorControl } from '@core/helpers';
 import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { AcuerdosService, EntidadesService, EventosService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, IntervencionService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
+import { AcuerdosService, EntidadesService, EventosService, IntervencionEspacioService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, IntervencionService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -86,6 +86,7 @@ export class FormularioIntervencionComponent {
   private validatorsService = inject(ValidatorService)
   private acuerdoService = inject(AcuerdosService)
   private intervencionService = inject(IntervencionService)
+  private intervencionEspacioService = inject(IntervencionEspacioService)
   private messageService = inject(MessageService)
 
   formIntervencionEspacio: FormGroup = this.fb.group({
@@ -319,7 +320,7 @@ export class FormularioIntervencionComponent {
           this.loadingInteraccion = false          
           if(resp.data.length > 0){
             const acuerdo = resp.data[0]            
-            this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });       
+            // this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });
             interaccionIdControl?.setValue(acuerdo.acuerdoID)
             acuerdoControl?.setValue(acuerdo.acuerdo)
             pedidoControl?.setValue(acuerdo.aspectoCriticoResolver)
@@ -329,13 +330,14 @@ export class FormularioIntervencionComponent {
             this.obtenerSector()
             this.setUbigeoForm(acuerdo.ubigeo)
             if(acuerdo.cuis){
-              this.obtenerIntervencionService()
+              // this.obtenerIntervencionService()
+              this.verificarIntervencionEspacioService(acuerdo.cuis)
             } else {
               descripcionControl?.setValue(null)
               descripcionControl?.enable()
             }
           } else {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
+            // this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
             interaccionIdControl?.setValue(null)
             pedidoControl?.setValue(null)
             acuerdoControl?.setValue(null)
@@ -376,10 +378,48 @@ export class FormularioIntervencionComponent {
       var $this = this;
       this.timeout = setTimeout(function () {
         if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoIntervencionControlValue.length > 0) {     
-          $this.obtenerIntervencionService()
+          // $this.obtenerIntervencionService()
+          $this.verificarIntervencionEspacioService(codigoIntervencionControlValue)
         }
       }, 500);    
     }
+  }
+
+  verificarIntervencionEspacioService(cui: string){
+    const origenId = this.intervencionEspacio.origen
+    const pagination: Pagination = { cui, origenId, columnSort: 'intervencionEspacioId', typeSort: 'DESC', pageSize: 10, currentPage: 1 }
+    this.intervencionEspacioService.ListarIntervencionEspacios(pagination)
+      .subscribe( resp => {
+        if(resp.data.length > 0){
+          const intervencionEspacio = resp.data
+          console.log(intervencionEspacio);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: `la intervencion con el codigo ${cui} ya existe` });
+          this.setvalueFormControl('distrito','')
+          this.setvalueFormControl('provincia','')
+          this.setvalueFormControl('departamento','')
+          this.setvalueFormControl('sector','')
+          this.setvalueFormControl('codigoIntervencion','')
+          this.setvalueFormControl('pedido','')
+          this.setvalueFormControl('acuerdo','')
+          this.setvalueFormControl('sectorId','')
+          setInterval(() => this.setvalueFormControl('codigoAcuerdo',''), 200);
+
+          this.disableFormControl('distrito',true)
+          this.disableFormControl('provincia',true)
+        } else {
+          this.obtenerIntervencionService()
+          // this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });
+        }
+
+      })
+  }
+
+  setvalueFormControl(control:string, value: string = ''){
+    value == '' ? this.formIntervencionEspacio.get(control)?.reset() : this.formIntervencionEspacio.get(control)?.setValue(value)
+  }
+
+  disableFormControl(control:string, disable: boolean = false){
+    disable ? this.formIntervencionEspacio.disable() : this.formIntervencionEspacio.get(control)?.enable()
   }
 
   obtenerIntervencionService(){
