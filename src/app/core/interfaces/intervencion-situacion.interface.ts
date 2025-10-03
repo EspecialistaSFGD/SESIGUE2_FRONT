@@ -14,7 +14,7 @@ export interface IntervencionSituacionResponse {
   fecha?: string,
   situacion: string,
   intervencionId: string,
-  usuarioRegistraId?: string,
+  usuarioId?: string,
   intervencionHitoActualId: string,
 }
 
