@@ -143,8 +143,8 @@ export class FormularioIntervencionComponent {
       // this.formIntervencionEspacio.get('subTipoIntervencion')?.setValue()
       this.formIntervencionEspacio.get('inicioIntervencionFaseId')?.setValue('0')
       this.formIntervencionEspacio.get('objetivoIntervencionFaseId')?.setValue('0')
-      this.formIntervencionEspacio.get('codigoAcuerdo')?.setValidators([Validators.required, Validators.maxLength(4)]);
-      this.formIntervencionEspacio.get('codigoAcuerdo')?.updateValueAndValidity();
+      this.formIntervencionEspacio.get('codigoAcuerdo')?.setValidators([Validators.required]);
+      // this.formIntervencionEspacio.get('codigoAcuerdo')?.updateValueAndValidity();
     }
   }
 
@@ -317,11 +317,12 @@ export class FormularioIntervencionComponent {
       const codigo = `${this.evento.abreviatura}-${codigoAcuerdo}`
       this.acuerdoService.listarAcuerdos({ codigo, columnSort: 'acuerdoId', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
         .subscribe( resp => {
-          console.log(resp.data)
+          console.log('FINDING ACUERDO');
+          console.log(resp);
+          
           this.loadingInteraccion = false          
           if(resp.data.length > 0){
             const acuerdo = resp.data[0]            
-            // this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });
             interaccionIdControl?.setValue(acuerdo.acuerdoID)
             acuerdoControl?.setValue(acuerdo.acuerdo)
             pedidoControl?.setValue(acuerdo.aspectoCriticoResolver)
@@ -340,14 +341,26 @@ export class FormularioIntervencionComponent {
               descripcionControl?.enable()
             }
           } else {
-            // this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
             // interaccionIdControl?.setValue(null)
             // pedidoControl?.setValue(null)
             // acuerdoControl?.setValue(null)
             // codigoIntervencionControl?.setValue(null)
             // codigoIntervencionControl?.enable()
-            descripcionControl?.setValue(null)
-            descripcionControl?.enable()
+            // descripcionControl?.setValue(null)
+            // descripcionControl?.enable()
+            this.setvalueFormControl('pedido','')
+            this.setvalueFormControl('acuerdo','')
+            this.setvalueFormControl('codigoIntervencion','')
+            this.setvalueFormControl('descripcion','')
+            this.setvalueFormControl('sectorId','')
+            this.setvalueFormControl('departamento','')
+            this.setvalueFormControl('distrito','')
+            this.setvalueFormControl('provincia','')
+            this.disableFormControl('entidadSectorId',true)
+            this.disableFormControl('distrito',true)
+            this.disableFormControl('provincia',true)
+            this.disableFormControl('descripcion',true)
             // sectorIdControl?.reset()
           }          
         })
@@ -395,12 +408,12 @@ export class FormularioIntervencionComponent {
       .subscribe( resp => {
         if(resp.data.length > 0){
           this.messageService.add({ severity: 'error', summary: 'Error', detail: `La intervencion con el codigo ${cui} ya existe` });
-          console.log("encuentra intervencioon Espacio")
           this.setvalueFormControl('pedido','')
           this.setvalueFormControl('acuerdo','')
           this.setvalueFormControl('codigoIntervencion','')
           this.setvalueFormControl('descripcion','')
           this.setvalueFormControl('sectorId','')
+          this.setvalueFormControl('departamento','')
           this.setvalueFormControl('distrito','')
           this.setvalueFormControl('provincia','')
           this.disableFormControl('entidadSectorId',true)
@@ -408,7 +421,6 @@ export class FormularioIntervencionComponent {
           this.disableFormControl('provincia',true)
           this.disableFormControl('descripcion',true)
         } else {
-          console.log("no encuentra informacion")
           this.obtenerIntervencionService()
         }
       })
