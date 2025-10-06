@@ -18,6 +18,7 @@ import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento
 import { MessageService } from 'primeng/api';
 import { getDateFormat } from '@core/helpers';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { SituacionesIntervencionComponent } from '../../intervenciones/situaciones-intervencion/situaciones-intervencion.component';
 
 @Component({
   selector: 'app-agendas-evento',
@@ -146,6 +147,22 @@ export default class AgendasEventoComponent {
     const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
     const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, nombreArchivo);
+  }
+
+  verSituaciones(intervencionEspacio: IntervencionEspacioResponse){
+    this.modal.create<SituacionesIntervencionComponent>({
+        nzTitle: `Situaciones`,
+        nzWidth: '60%',
+        nzContent: SituacionesIntervencionComponent,
+        nzData: { intervencionEspacio },
+        nzFooter: [
+          {
+            label: 'Cerrar',
+            type: 'default',
+            onClick: () => this.modal.closeAll(),
+          },
+        ]
+      })
   }
 
   intervencionDetalleFormModel(intervencionEspacio: IntervencionEspacioResponse){

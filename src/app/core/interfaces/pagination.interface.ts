@@ -34,6 +34,8 @@ export interface Pagination {
   tipoEspaciosId?: string[],
   tipoEventosId?: string[],
   nivelGobiernoId?: string,
+  intervencionId?: string,
+  intervencionSituacionId?: string,
   total?: number,
   estado?: string,
   dispositivo?: string,

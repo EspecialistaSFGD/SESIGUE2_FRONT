@@ -54,6 +54,8 @@
 					<div class="flex justify-center">
 						<app-boton [icono]="'comments'" [tooltip]="'Agregar situación'" [link]="true" (click)="intervencionDetalleFormModel(intervencion)"/>
 
+						<app-boton [icono]="'list-check'" [tooltip]="'Ver situaciones'" [link]="true" (click)="verSituaciones(intervencion)"/>
+
 						<app-boton [icono]="'eye'" [tooltip]="'Detalle de la intervencion'" [link]="true" (click)="detalleIntervencionEspacio(intervencion)" />
 
 						<app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar intervención'" [link]="true" (click)="eliminarIntervencion(intervencion)" />
