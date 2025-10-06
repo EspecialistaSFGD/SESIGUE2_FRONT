@@ -161,6 +161,7 @@ export class FormularioMesaComponent {
       dni: ['', [Validators.required, Validators.pattern(this.validatorService.DNIPattern)]],
       nombre: ['', Validators.required],
       telefono: ['', Validators.required],
+      email: [''],
       entidad: ['' ],
       esSector: [true, Validators.required],
     })
@@ -179,9 +180,10 @@ export class FormularioMesaComponent {
       dni: [{ value: null, disabled: true }, Validators.required],
       nombre: [{ value: null, disabled: true }, Validators.required],
       telefono: [{ value: null, disabled: true }, Validators.required],
+      email: [{ value: null, disabled: true }],
       cargo: [{ value: null, disabled: true } ],
       loading: [ false ],
-      entidad: [''],
+      entidad: [{ value: null, disabled: true }],
       entidadSlug: [ '' ],
       esSector: [false, Validators.required],
     })
@@ -210,6 +212,7 @@ export class FormularioMesaComponent {
     const dniControl = controlArray.at(index).get('dni');
     const nombreControl = controlArray.at(index).get('nombre');
     const telefonoControl = controlArray.at(index).get('telefono');
+    const emailControl = controlArray.at(index).get('email');
     const cargoControl = controlArray.at(index).get('cargo');
     const loadingControl = controlArray.at(index).get('loading');
     
@@ -220,6 +223,7 @@ export class FormularioMesaComponent {
     dniControl?.reset()
     nombreControl?.reset()
     telefonoControl?.reset()
+    emailControl?.reset()
     cargoControl?.reset()
     
     if(autoridadValue == true && entidadValue){  
@@ -233,6 +237,7 @@ export class FormularioMesaComponent {
     autoridadValue == false ? dniControl?.enable() : dniControl?.disable()
     autoridadValue == false ? nombreControl?.enable() : nombreControl?.disable()
     autoridadValue == false ? telefonoControl?.enable() : telefonoControl?.disable()
+    autoridadValue == false ? emailControl?.enable() : emailControl?.disable()
     autoridadValue == false ? cargoControl?.enable() : cargoControl?.disable()
   }
 
@@ -241,6 +246,7 @@ export class FormularioMesaComponent {
     const dniControl = controlArray.at(index).get('dni');
     const nombreControl = controlArray.at(index).get('nombre');
     const telefonoControl = controlArray.at(index).get('telefono');
+    const emailControl = controlArray.at(index).get('email');
     const alcaldeAsistenteIdControl = controlArray.at(index).get('alcaldeAsistenteId');
 
     const dniValue = dniControl?.value;
@@ -259,6 +265,7 @@ export class FormularioMesaComponent {
     } else {
       nombreControl?.reset();
       telefonoControl?.reset();
+      emailControl?.reset();
       alcaldeAsistenteIdControl?.reset();
     }
   }
@@ -266,6 +273,7 @@ export class FormularioMesaComponent {
   obtenerAsistenteServicio(dni: string, index: number, controlArray: FormArray) {
     const nombreControl = controlArray.at(index).get('nombre');
     const telefonoControl = controlArray.at(index).get('telefono');
+    const emailControl = controlArray.at(index).get('email');
     const alcaldeAsistenteIdControl = controlArray.at(index).get('alcaldeAsistenteId');
     const pagination: Pagination = { dni, columnSort: 'asistenteId', typeSort: 'ASC', pageSize: 10, currentPage: 1 }
     this.asistentesService.ListarAsistentes(pagination)
@@ -273,6 +281,7 @@ export class FormularioMesaComponent {
         const asistente = resp.data[0];
         nombreControl?.setValue(`${asistente.nombres} ${asistente.apellidos}` || '');
         telefonoControl?.setValue(asistente?.telefono || '');
+        emailControl?.setValue(asistente?.email || '');
         alcaldeAsistenteIdControl?.setValue(asistente?.asistenteId || '');
       })
   }

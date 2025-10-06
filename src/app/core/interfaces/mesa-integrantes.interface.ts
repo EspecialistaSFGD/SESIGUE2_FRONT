@@ -24,6 +24,7 @@ export interface MesaIntegranteResponse {
     nombres?: string,
     apellidos?: string,
     telefono?: string,
+    email?: string,
     fechaRegistro?: string,
   }
 

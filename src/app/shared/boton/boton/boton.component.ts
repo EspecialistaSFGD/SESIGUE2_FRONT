@@ -26,7 +26,7 @@ export class BotonComponent {
 
   setColor(){
     let padd = this.link ? 'px-2' : 'px-3'
-    let claseColor = `flex items-center gap-1 py-1 ${padd} rounded border`;
+    let claseColor = `flex items-center gap-1 py-2 ${padd} rounded border`;
     let bg = this.link ? `bg-transparent` : `bg-${this.color}-${this.stepColor} hover:bg-${this.color}-800`
     let border = this.link ? `border-transparent` : `border-${this.color}-${this.stepColor} hover:border-${this.color}-800`
     let text = this.link ? `text-${this.color}-${this.stepColor}` :`text-white`

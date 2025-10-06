@@ -316,6 +316,7 @@ export default class AgendasMesaComponent {
     this.modal.create<FormularioIntervencionComponent>({
       nzTitle: `${action.toUpperCase()}`,
       nzWidth: '50%',
+      nzMaskClosable: false,
       nzContent: FormularioIntervencionComponent,
       nzData: {
         create,

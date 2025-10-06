@@ -139,12 +139,13 @@ export class FormularioIntervencionComponent {
     const subTipoIntervencionControl = this.formIntervencionEspacio.get('subTipoIntervencion')    
     this.esAcuerdo ? tipoInverscionControl?.disable() : tipoInverscionControl?.enable()
     if(this.esAcuerdo){ 
+      
       this.obtenerTipo()
       // this.formIntervencionEspacio.get('subTipoIntervencion')?.setValue()
       this.formIntervencionEspacio.get('inicioIntervencionFaseId')?.setValue('0')
       this.formIntervencionEspacio.get('objetivoIntervencionFaseId')?.setValue('0')
-      this.formIntervencionEspacio.get('codigoAcuerdo')?.setValidators([Validators.required, Validators.maxLength(4)]);
-      this.formIntervencionEspacio.get('codigoAcuerdo')?.updateValueAndValidity();
+      this.formIntervencionEspacio.get('codigoAcuerdo')?.setValidators([Validators.required]);
+      // this.formIntervencionEspacio.get('codigoAcuerdo')?.updateValueAndValidity();
     }
   }
 
@@ -167,11 +168,13 @@ export class FormularioIntervencionComponent {
   obtenerEventoServices(){
     const eventoIdControl = this.formIntervencionEspacio.get('eventoId')
     const eventoControl = this.formIntervencionEspacio.get('evento')
+    const codigoAcuerdoControl = this.formIntervencionEspacio.get('codigoAcuerdo')
     this.eventosService.obtenerEvento(this.intervencionEspacio.eventoId).subscribe(resp => {
       if(resp.data){
         this.evento = resp.data
         eventoIdControl?.setValue(this.evento ? this.evento.eventoId! : null)
         eventoControl?.setValue(this.evento ? this.evento.abreviatura : null)
+        codigoAcuerdoControl?.setValue(this.evento ? `${this.evento.abreviatura}-` : null)
       }
     })
 
@@ -291,11 +294,33 @@ export class FormularioIntervencionComponent {
     const codigoAcuerdoControl = this.formIntervencionEspacio.get('codigoAcuerdo')
     const codigoAcuerdoValue = codigoAcuerdoControl?.value
 
+    const slug = this.evento.abreviatura
+    const startCodigo = `${slug}-`
+    const cantidadSlug = startCodigo.length
+
+    if(codigoAcuerdoValue.length <= cantidadSlug){
+      codigoAcuerdoControl?.setValue(startCodigo)
+      this.setvalueFormControl('pedido','')
+      this.setvalueFormControl('acuerdo','')
+      this.setvalueFormControl('codigoIntervencion','')
+      this.setvalueFormControl('descripcion','')
+      this.setvalueFormControl('sectorId','')
+      this.setvalueFormControl('departamento','')
+      this.setvalueFormControl('distrito','')
+      this.setvalueFormControl('provincia','')
+      this.disableFormControl('entidadSectorId',true)
+      this.disableFormControl('distrito',true)
+      this.disableFormControl('provincia',true)
+      this.disableFormControl('descripcion',true)
+      event.preventDefault();
+      return;
+    }
+
     if(codigoAcuerdoValue){
       clearTimeout(this.timeout);
       var $this = this;
       this.timeout = setTimeout(function () {
-        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoAcuerdoValue.length > 0) {     
+        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoAcuerdoValue.length > cantidadSlug) {
           $this.obtenerCodigoAcuerdo()
         }
       }, 500);    
@@ -314,14 +339,13 @@ export class FormularioIntervencionComponent {
 
     if(codigoAcuerdo && codigoAcuerdo.length > 0){
       this.loadingInteraccion = true
-      const codigo = `${this.evento.abreviatura}-${codigoAcuerdo}`
+      // const codigo = `${this.evento.abreviatura}-${codigoAcuerdo}`
+      const codigo = codigoAcuerdo
       this.acuerdoService.listarAcuerdos({ codigo, columnSort: 'acuerdoId', typeSort: 'ASC', currentPage: 1, pageSize: 1 })
         .subscribe( resp => {
-          console.log(resp.data)
           this.loadingInteraccion = false          
           if(resp.data.length > 0){
             const acuerdo = resp.data[0]            
-            // this.messageService.add({ severity: 'success', summary: 'Acuerdo encontrado', detail: "Se ha encontrado el acuerdo" });
             interaccionIdControl?.setValue(acuerdo.acuerdoID)
             acuerdoControl?.setValue(acuerdo.acuerdo)
             pedidoControl?.setValue(acuerdo.aspectoCriticoResolver)
@@ -340,14 +364,26 @@ export class FormularioIntervencionComponent {
               descripcionControl?.enable()
             }
           } else {
-            // this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: "El acuerdo no existe" });
             // interaccionIdControl?.setValue(null)
             // pedidoControl?.setValue(null)
             // acuerdoControl?.setValue(null)
             // codigoIntervencionControl?.setValue(null)
             // codigoIntervencionControl?.enable()
-            descripcionControl?.setValue(null)
-            descripcionControl?.enable()
+            // descripcionControl?.setValue(null)
+            // descripcionControl?.enable()
+            this.setvalueFormControl('pedido','')
+            this.setvalueFormControl('acuerdo','')
+            this.setvalueFormControl('codigoIntervencion','')
+            this.setvalueFormControl('descripcion','')
+            this.setvalueFormControl('sectorId','')
+            this.setvalueFormControl('departamento','')
+            this.setvalueFormControl('distrito','')
+            this.setvalueFormControl('provincia','')
+            this.disableFormControl('entidadSectorId',true)
+            this.disableFormControl('distrito',true)
+            this.disableFormControl('provincia',true)
+            this.disableFormControl('descripcion',true)
             // sectorIdControl?.reset()
           }          
         })
@@ -395,12 +431,12 @@ export class FormularioIntervencionComponent {
       .subscribe( resp => {
         if(resp.data.length > 0){
           this.messageService.add({ severity: 'error', summary: 'Error', detail: `La intervencion con el codigo ${cui} ya existe` });
-          console.log("encuentra intervencioon Espacio")
           this.setvalueFormControl('pedido','')
           this.setvalueFormControl('acuerdo','')
           this.setvalueFormControl('codigoIntervencion','')
           this.setvalueFormControl('descripcion','')
           this.setvalueFormControl('sectorId','')
+          this.setvalueFormControl('departamento','')
           this.setvalueFormControl('distrito','')
           this.setvalueFormControl('provincia','')
           this.disableFormControl('entidadSectorId',true)
@@ -408,7 +444,6 @@ export class FormularioIntervencionComponent {
           this.disableFormControl('provincia',true)
           this.disableFormControl('descripcion',true)
         } else {
-          console.log("no encuentra informacion")
           this.obtenerIntervencionService()
         }
       })

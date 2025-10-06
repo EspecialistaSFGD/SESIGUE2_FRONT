@@ -18,6 +18,7 @@ import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento
 import { MessageService } from 'primeng/api';
 import { getDateFormat } from '@core/helpers';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { SituacionesIntervencionComponent } from '../../intervenciones/situaciones-intervencion/situaciones-intervencion.component';
 
 @Component({
   selector: 'app-agendas-evento',
@@ -148,11 +149,28 @@ export default class AgendasEventoComponent {
     saveAs(blob, nombreArchivo);
   }
 
+  verSituaciones(intervencionEspacio: IntervencionEspacioResponse){
+    this.modal.create<SituacionesIntervencionComponent>({
+        nzTitle: `Situaciones`,
+        nzWidth: '60%',
+        nzContent: SituacionesIntervencionComponent,
+        nzData: { intervencionEspacio },
+        nzFooter: [
+          {
+            label: 'Cerrar',
+            type: 'default',
+            onClick: () => this.modal.closeAll(),
+          },
+        ]
+      })
+  }
+
   intervencionDetalleFormModel(intervencionEspacio: IntervencionEspacioResponse){
     const create: boolean = true
     this.modal.create<FormSituacionIntervencionComponent>({
           nzTitle: `Crear situación`,
           nzWidth: '60%',
+          nzMaskClosable: false,
           nzContent: FormSituacionIntervencionComponent,
           nzData: { create, intervencionEspacio },
           nzFooter: [
@@ -218,6 +236,7 @@ export default class AgendasEventoComponent {
           nzTitle: `${action.toUpperCase()}`,
           nzWidth: '50%',
           nzContent: FormularioIntervencionComponent,
+          nzMaskClosable: false,
           nzData: {
             create,
             // origen: { origen: 'acuerdos', interaccionId: this.eventoId.toString(), eventoId: this.eventoId.toString() },
