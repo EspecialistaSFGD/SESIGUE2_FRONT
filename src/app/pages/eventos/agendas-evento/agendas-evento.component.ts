@@ -235,6 +235,7 @@ export default class AgendasEventoComponent {
           nzTitle: `${action.toUpperCase()}`,
           nzWidth: '50%',
           nzContent: FormularioIntervencionComponent,
+          nzMaskClosable: false,
           nzData: {
             create,
             // origen: { origen: 'acuerdos', interaccionId: this.eventoId.toString(), eventoId: this.eventoId.toString() },
