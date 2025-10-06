@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { convertEnumToObject, obtenerUbigeoTipo, typeErrorControl } from '@core/helpers';
-import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioOriginResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AcuerdosService, EntidadesService, EventosService, IntervencionEspacioService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, IntervencionService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -212,12 +212,12 @@ export class FormularioIntervencionComponent {
     } else {
       this.intervencionSubTipos.set([])
       codigoIntervencionControl?.disable()
+      codigoIntervencionControl?.reset()
       descripcionControl!.disable()
       subTipoControl?.reset()
       this.labeldescripcion = 'Descripción'
     }
     tipoValue ? subTipoControl?.enable() : subTipoControl?.disable()
-    codigoIntervencionControl?.reset()
   }
   
   setFasesdeTipo(tipo: number){
@@ -243,16 +243,17 @@ export class FormularioIntervencionComponent {
     controlEtapaInicial?.reset()
     controlHitoInicial?.disable()
     controlHitoInicial?.reset()
-
   }
 
   obtenerSubTipo(){
+    const intervencionIdControl = this.formIntervencionEspacio.get('intervencionId')
     const subTipoValue = this.formIntervencionEspacio.get('subTipoIntervencion')?.value
     const codigoIntervencionControl = this.formIntervencionEspacio.get('codigoIntervencion')
     const descripcionControl = this.formIntervencionEspacio.get('descripcion')
    
     if(subTipoValue){
       const subTipo: IntervencionEspacioSubTipo = this.subTipos.find( item => item.subTipoId == subTipoValue)!
+      codigoIntervencionControl?.reset()
       switch (subTipo.subTipo.toUpperCase()) {
         case 'CUI':
           codigoIntervencionControl?.enable() 
@@ -273,6 +274,8 @@ export class FormularioIntervencionComponent {
           descripcionControl?.disable()
         break;
         case 'ACTIVIDAD':
+          codigoIntervencionControl?.setValue('ACT0001')
+          intervencionIdControl?.setValue('0')
           descripcionControl?.setValidators([Validators.required])
           codigoIntervencionControl?.clearValidators()
           codigoIntervencionControl?.disable()
@@ -284,8 +287,8 @@ export class FormularioIntervencionComponent {
     } else {
       codigoIntervencionControl?.clearValidators();
       descripcionControl?.clearValidators();
+      codigoIntervencionControl?.reset()
     }
-    codigoIntervencionControl?.reset()
     descripcionControl?.reset()
     // subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()    
   }
