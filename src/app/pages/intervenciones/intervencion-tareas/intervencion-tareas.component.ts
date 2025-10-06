@@ -175,6 +175,7 @@ export default class IntervencionTareasComponent {
     this.modal.create<FormularioIntervencionTareaComponent>({
       nzTitle: `${action.toUpperCase()} ${codigoTarea}`,
       nzWidth: '50%',
+      nzMaskClosable: false,
       nzContent: FormularioIntervencionTareaComponent,
       nzData: {
         intervencionEspacio: this.intervencionEspacio,

@@ -170,6 +170,7 @@ export default class AgendasEventoComponent {
     this.modal.create<FormSituacionIntervencionComponent>({
           nzTitle: `Crear situación`,
           nzWidth: '60%',
+          nzMaskClosable: false,
           nzContent: FormSituacionIntervencionComponent,
           nzData: { create, intervencionEspacio },
           nzFooter: [

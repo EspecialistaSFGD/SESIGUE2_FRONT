@@ -53,7 +53,8 @@ export class FormularioIntegranteMesaComponent {
     autoridad: [ { value: '', disabled: true }, Validators.required ],
     dni: [ '', Validators.required ],
     nombre: [ { value: '', disabled: true }, Validators.required ],
-    telefono: [ { value: '', disabled: true }, Validators.required ]
+    telefono: [ { value: '', disabled: true }, Validators.required ],
+    email: [ { value: '', disabled: true }]
   })
 
   ngOnInit(): void {    
@@ -146,6 +147,7 @@ export class FormularioIntegranteMesaComponent {
     const dniControl = this.formIntegrante.get('dni');
     const nombreControl = this.formIntegrante.get('nombre');
     const telefonoControl = this.formIntegrante.get('telefono');
+    const emailControl = this.formIntegrante.get('email');
 
     const dniValue = dniControl?.value;
     if(entidadIdValue){
@@ -154,6 +156,7 @@ export class FormularioIntegranteMesaComponent {
         // dniControl?.disable()
         nombreControl?.disable()      
         telefonoControl?.disable()
+        emailControl?.disable()
         setTimeout(() => {
           this.loading = false
           this.obtenerAlcaldeServicio()    
@@ -162,6 +165,7 @@ export class FormularioIntegranteMesaComponent {
         dniControl?.enable()
         nombreControl?.enable()      
         telefonoControl?.enable()
+        emailControl?.enable()
         if(dniValue && dniValue.length == 8){
           this.loading = true
           setTimeout(() => {
@@ -277,6 +281,7 @@ export class FormularioIntegranteMesaComponent {
     const dniControl = this.formIntegrante.get('dni');
     const nombreControl = this.formIntegrante.get('nombre');
     const telefonoControl = this.formIntegrante.get('telefono');
+    const emailControl = this.formIntegrante.get('email');
     const entidadId = entidadIdControl?.value
     const alcaldeAsistenteIdControl = this.formIntegrante.get('alcaldeAsistenteId');
 
@@ -287,6 +292,7 @@ export class FormularioIntegranteMesaComponent {
         dniControl?.setValue(alcalde ? alcalde?.dni : '');
         nombreControl?.setValue(alcalde ? alcalde?.nombre : '');
         telefonoControl?.setValue(alcalde ? alcalde?.telefono : '');
+        // emailControl?.setValue(alcalde ? alcalde?.email : '');
         alcaldeAsistenteIdControl?.setValue(alcalde ? alcalde?.alcaldeId : '');
       })
   }
