@@ -40,7 +40,7 @@
           <td nzAlign="center">{{permisosPCM ? tarea.comentario : tarea.comentarioSd }}</td>
           <td nzAlign="center"  nzRight>
             <div class="flex justify-center">
-              <app-boton [link]="true" [icono]="'comments'" [disabled]="tarea.validado || !disabledBotonNuevo()" [tooltip]="!tarea.validado && disabledBotonNuevo() ? 'Comentar tarea' : ''" (click)="!tarea.validado && disabledBotonNuevo() ? comentarTarea(tarea) : null"/>
+              <app-boton [link]="true" [icono]="'comments'" [disabled]="tarea.validado || !disableNuevoBoton" [tooltip]="!tarea.validado && disableNuevoBoton ? 'Comentar tarea' : ''" (click)="!tarea.validado && disableNuevoBoton ? comentarTarea(tarea) : null"/>
 
               <app-boton [link]="true" [icono]="'check-circle'" [color]="'green'" [stepColor]="500" [disabled]="disabledValidar(tarea)" [tooltip]="!disabledValidar(tarea) ? 'Validar tarea' : ''" (click)="validarTarea(tarea)"/>
 
@@ -65,7 +65,7 @@
           <div class="flex gap-2">
             <app-boton [icono]="'sync'" [outline]="true" [tooltip]="'Actualizar tareas'" (click)="actualizarListaTareas(true)" class="flex"/>
 
-            <app-boton *ngIf="tareaActions.new" [icono]="'plus'" [texto]="'Nueva Tarea'" [disabled]="disabledBotonNuevo()" [tooltip]="disabledBotonNuevo() ? '' : 'Agregar nueva tarea'" (click)="disabledBotonNuevo() ? null : agregarTarea()"/>
+            <app-boton *ngIf="tareaActions.new" [icono]="'plus'" [texto]="'Nueva Tarea'" [disabled]="disableNuevoBoton" [tooltip]="disableNuevoBoton ? '' : 'Agregar nueva tarea'" (click)="disableNuevoBoton ? null : agregarTarea()"/>
           </div>
 
       </div>
