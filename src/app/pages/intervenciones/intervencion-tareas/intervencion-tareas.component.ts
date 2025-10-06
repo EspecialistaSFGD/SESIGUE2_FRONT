@@ -28,6 +28,7 @@ export default class IntervencionTareasComponent {
 
   tareaActions: ButtonsActions = {}
   botonNuevoActivo: boolean = false
+  disableNuevoBoton: boolean = false
   listarAvances: boolean = false
   loadingTareas: boolean =  false
   tareaId: number = 0
@@ -86,7 +87,6 @@ export default class IntervencionTareasComponent {
 
   obtenerIntervencionTareasService(){
     this.loadingTareas = true
-    // this.botonNuevoActivo = true
     const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId
   
     this.intervencionTareasServices.ListarIntervencionTareas({...this.pagination, intervencionEspacioId})
@@ -96,15 +96,12 @@ export default class IntervencionTareasComponent {
         this.pagination.total = resp.info?.total
    
         resp.data.map( item => {
-          // if(item.estadoRegistroNombre != IntervencionTareaEstadoRegistroEnum.CULMINADO){
-          //   this.botonNuevoActivo = false
-          //   return
-          // }
           if(item.estadoRegistroNombre != IntervencionTareaEstadoRegistroEnum.CULMINADO){
             this.botonNuevoActivo = true
             return
           }
         })
+        this.disabledBotonNuevo()
       })
   }
 
@@ -133,11 +130,13 @@ export default class IntervencionTareasComponent {
     const cantidadTareas = this.intervencionTareas().length
     let disabled = this.permisosPCM ? true : this.botonNuevoActivo
 
+    console.log('VERIFICANDO DISABLE DBOTON NUEVO');
+    
+
     if(cantidadTareas == 0){
       disabled = !this.permisosPCM
     }
-
-    return disabled
+    this.disableNuevoBoton = disabled
   }
 
   disabledValidar(tarea:IntervencionTareaResponse){
@@ -317,6 +316,7 @@ export default class IntervencionTareasComponent {
   actualizarListaTareas(actualiza: boolean){
     this.verAvances = false
     this.obtenerIntervencionTareasService()
+    // this.disabledBotonNuevo()
     this.obtenerIntervencionTareaService(this.tareaId.toString())
   }
 
