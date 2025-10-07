@@ -13,6 +13,7 @@
         <th nzWidth="100px" nzAlign="center">Tipo</th>
         <th nzWidth="120px" nzAlign="center">Tipo de espacio</th>
         <th nzWidth="80px" nzAlign="center">Verifica asistente</th>
+        <th nzWidth="80px" nzAlign="center">Primera tarea</th>
         <th nzRight nzWidth="120px" nzAlign="center"></th>
       </tr>
     </thead>
@@ -33,7 +34,12 @@
             <div nz-tooltip [nzTooltipTitle]="evento.verificaAsistentes ? 'Si verifica asistentes' : 'No verficia asistentes'" [ngClass]="evento.verificaAsistentes ? 'text-green-600' : 'text-slate-200'">
                 <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
             </div>
-        </td>
+          </td>
+          <td nzAlign="center">
+            <div nz-tooltip [nzTooltipTitle]="evento.primeraTarea ? 'Inicia Sector' : 'Inicia PCM'" [ngClass]="evento.primeraTarea ? 'text-green-600' : 'text-slate-200'">
+                <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+            </div>
+          </td>
           <td nzRight nzAlign="center">
             <div class="flex justify-center">
               <a [routerLink]="[evento.eventoId]" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">

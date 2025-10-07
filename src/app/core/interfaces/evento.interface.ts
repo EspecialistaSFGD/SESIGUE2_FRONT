@@ -19,13 +19,14 @@ export interface EventoResponse {
 	orden?: string,
 	subTipo: string,
 	subTipoId: string,
-	estado: string,
+	estado: boolean,
 	descripcionEstado: string,
 	rowNumber?: string,
 	verificaAsistentes: boolean,
 	fechaFinEvento?: string,
 	codigoTipoEvento?: string,
 	tipoEvento?: string,
+	primeraTarea?: boolean,
 }
 
 export interface DataModalEvento{
