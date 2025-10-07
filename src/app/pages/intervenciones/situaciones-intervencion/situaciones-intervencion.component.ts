@@ -30,10 +30,6 @@ export class SituacionesIntervencionComponent {
 
   private intervencionSituacionService = inject(IntervencionSituacionService)
 
-  ngOnInit(): void {
-    this.obtenerIntervencionesSituaciones()
-  }
-
   obtenerIntervencionesSituaciones(){
     this.loading = true
     const intervencionId = this.intervencionEspacio.intervencionId
@@ -46,6 +42,8 @@ export class SituacionesIntervencionComponent {
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
-    
+    this.pagination.currentPage = params.pageIndex
+    this.pagination.pageSize = params.pageSize
+    this.obtenerIntervencionesSituaciones()
   }
 }

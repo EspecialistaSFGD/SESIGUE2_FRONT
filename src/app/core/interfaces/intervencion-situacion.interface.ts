@@ -26,7 +26,7 @@ export interface IntervencionSituacionResponse {
 
 export interface DataModalFormIntervencionSituacion {
     create: boolean
-    intervencion: IntervencionResponse
+    intervencionEspacio: IntervencionResponse
 }
 
 export interface DataModalIntervencionSituacion {

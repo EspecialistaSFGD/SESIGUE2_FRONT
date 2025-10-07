@@ -2,15 +2,16 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { DataModalFormIntervencionSituacion, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, IntervencionResponse, Pagination } from '@core/interfaces';
-import { IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService } from '@core/services';
+import { DataModalFormIntervencionSituacion, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, IntervencionResponse, IntervencionSituacionResponse, Pagination } from '@core/interfaces';
+import { IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, IntervencionSituacionService } from '@core/services';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-form-situacion-intervencion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule],
+  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule, NgZorroModule],
   templateUrl: './form-situacion-intervencion.component.html',
   styles: ``
 })
@@ -18,8 +19,9 @@ export class FormSituacionIntervencionComponent {
   readonly dataIntervencionSituacion: DataModalFormIntervencionSituacion = inject(NZ_MODAL_DATA);
 
   create: boolean = this.dataIntervencionSituacion.create
-  intervencion: IntervencionResponse = this.dataIntervencionSituacion.intervencion
+  intervencion: IntervencionResponse = this.dataIntervencionSituacion.intervencionEspacio
 
+  intervencionSituaciones = signal<IntervencionSituacionResponse[]>([])
   fasesActual = signal<IntervencionFaseResponse[]>([])
   etapasActual = signal<IntervencionEtapaResponse[]>([])
   hitosActual = signal<IntervencionHitoResponse[]>([])
@@ -35,6 +37,7 @@ export class FormSituacionIntervencionComponent {
   private intervencionFaseService = inject(IntervencionFaseService)
   private intervencionEtapaService = inject(IntervencionEtapaService)
   private intervencionHitoService = inject(IntervencionHitoService)
+  private intervencionSituacionService = inject(IntervencionSituacionService)
 
   formIntervencionSituacion: FormGroup = this.fb.group({
     situacion: [ '', Validators.required ],
@@ -46,6 +49,7 @@ export class FormSituacionIntervencionComponent {
 
   ngOnInit(): void {
     this.obtenerIntervencionFaseService()
+    this.obtenerIntervencionesSituaciones()
   }
 
   alertMessageError(control: string) {
@@ -62,6 +66,14 @@ export class FormSituacionIntervencionComponent {
   obtenerIntervencionFaseService(){
     this.intervencionFaseService.ListarIntervencionFases(this.pagination).subscribe( resp => this.fasesActual.set(resp.data.filter(item => Number(item.tipoIntervencion) == 1 )) )
   }
+
+  obtenerIntervencionesSituaciones(){
+    const intervencionId = this.intervencion.intervencionId
+
+    const pagination: Pagination = {  intervencionId, columnSort: 'intervencionSituacionId', typeSort: 'DESC', pageSize: 3, currentPage: 1, }
+    this.intervencionSituacionService.ListarIntervencionTareaAvances(pagination).subscribe(resp => this.intervencionSituaciones.set(resp.data))
+  }
+
 
   obtenerFase(){
     const intervencionFaseId = this.formIntervencionSituacion.get('intervencionFaseActualId')?.value

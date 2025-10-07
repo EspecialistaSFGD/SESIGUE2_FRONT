@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IntervencionEspacioOrigenEnum } from '@core/enums';
 import { convertEnumToObject, obtenerUbigeoTipo, typeErrorControl } from '@core/helpers';
-import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { DataModalIntervencion, EntidadResponse, EventoResponse, IntervencionEspacioResponse, IntervencionEspacioSubTipo, IntervencionEspacioTipo, IntervencionEtapaResponse, IntervencionFaseResponse, IntervencionHitoResponse, IntervencionSituacionResponse, ItemEnum, Pagination, SectorResponse, TipoEventoResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AcuerdosService, EntidadesService, EventosService, IntervencionEspacioService, IntervencionEtapaService, IntervencionFaseService, IntervencionHitoService, IntervencionService, SectoresService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -11,11 +11,12 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { ProgressSpinerComponent } from '@shared/progress-spiner/progress-spiner.component';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { MessageService } from 'primeng/api';
+import { SituacionesIntervencionComponent } from '../situaciones-intervencion/situaciones-intervencion.component';
 
 @Component({
   selector: 'app-formulario-intervencion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule, NgZorroModule, ProgressSpinerComponent],
+  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule, NgZorroModule, ProgressSpinerComponent, SituacionesIntervencionComponent],
   providers: [MessageService],
   templateUrl: './formulario-intervencion.component.html',
   styles: ``
@@ -59,6 +60,7 @@ export class FormularioIntervencionComponent {
 
   intervencionSubTipos = signal<IntervencionEspacioSubTipo[]>([])
 
+  intervencionSituaciones = signal<IntervencionSituacionResponse[]>([])
   tiposEventos = signal<TipoEventoResponse[]>([])
   sectores = signal<SectorResponse[]>([])
   sectorEntidades = signal<EntidadResponse[]>([])
@@ -136,7 +138,7 @@ export class FormularioIntervencionComponent {
 
   setFormValues(){
     const tipoInverscionControl = this.formIntervencionEspacio.get('tipoIntervencion')    
-    const subTipoIntervencionControl = this.formIntervencionEspacio.get('subTipoIntervencion')    
+    // const subTipoIntervencionControl = this.formIntervencionEspacio.get('subTipoIntervencion')    
     this.esAcuerdo ? tipoInverscionControl?.disable() : tipoInverscionControl?.enable()
     if(this.esAcuerdo){ 
       
@@ -177,7 +179,6 @@ export class FormularioIntervencionComponent {
         codigoAcuerdoControl?.setValue(this.evento ? `${this.evento.abreviatura}-` : null)
       }
     })
-
   }
 
   obtenerSectoresServices(){
@@ -317,6 +318,15 @@ export class FormularioIntervencionComponent {
       this.disableFormControl('descripcion',true)
       event.preventDefault();
       return;
+    }
+    
+    if(event.key === 'Backspace' || event.key === 'Delete'){
+    } else {
+      const dataValue = codigoAcuerdoValue.split('-')
+      const numeroCodigo = Number(dataValue[ dataValue.length - 1]);
+      
+      const codigoSetFour = numeroCodigo.toString().padStart(4, '0');
+      codigoAcuerdoControl?.setValue(`${startCodigo}${codigoSetFour}`)
     }
 
     if(codigoAcuerdoValue){
