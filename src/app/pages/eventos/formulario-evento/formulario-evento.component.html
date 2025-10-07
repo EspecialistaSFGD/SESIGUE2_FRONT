@@ -38,18 +38,33 @@
             <div class="w-full text-danger" *ngIf="alertMessageError('fechaFinEvento')">{{msgErrorControl('fechaFinEvento','Fecha de fin')}}</div>
         </div>
 
-        <div class="flex flex-col">
-            @if(!create){
-                <label for="vigente">Estado</label>
-                <p-dropdown 
-                [options]="estados"
-                formControlName="vigente"
-                optionLabel="value"
-                optionValue="text"
-                [showClear]="true" 
-                placeholder="Seleccionar estado"/>
-                <div class="w-full text-danger" *ngIf="alertMessageError('vigente')">{{msgErrorControl('vigente','Estado')}}</div>
-            }
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex flex-col">
+                <label for="verificaAsistentes">Verifica asistente</label>
+                 <p-inputSwitch formControlName="verificaAsistentes" class="mt-1"/>
+                <div class="w-full text-danger" *ngIf="alertMessageError('verificaAsistentes')">{{msgErrorControl('verificaAsistentes','verifica asistente')}}</div>
+            </div>
+    
+            <div class="flex flex-col">
+                <label for="primeraTarea">
+                    Primera tarea
+                    <i class="pi pi-info-circle" [nz-tooltip]="tooltipFirstTask"></i>
+                </label>
+                 <p-inputSwitch formControlName="primeraTarea" class="mt-1"/>
+                <div class="w-full text-danger" *ngIf="alertMessageError('primeraTarea')">{{msgErrorControl('primeraTarea','tarea sector')}}</div>
+            </div>
+        </div>
+
+        <div *ngIf="!create" class="flex flex-col">
+            <label for="vigente">Estado</label>
+            <p-dropdown 
+            [options]="estados"
+            formControlName="vigente"
+            optionLabel="value"
+            optionValue="text"
+            [showClear]="true" 
+            placeholder="Seleccionar estado"/>
+            <div class="w-full text-danger" *ngIf="alertMessageError('vigente')">{{msgErrorControl('vigente','Estado')}}</div>
         </div>
 
         <div class="flex flex-col">
@@ -75,11 +90,11 @@
             placeholder="Seleccionar tipo de espacio"/>
             <div class="w-full text-danger" *ngIf="alertMessageError('codigoTipoEvento')">{{msgErrorControl('codigoTipoEvento','Tipo de espacio')}}</div>
         </div>
-
-        <div class="flex flex-col">
-            <label for="verificaAsistentes">Verifica asistente</label>
-             <p-inputSwitch formControlName="verificaAsistentes" class="mt-1"/>
-            <div class="w-full text-danger" *ngIf="alertMessageError('verificaAsistentes')">{{msgErrorControl('verificaAsistentes','verifica asistente')}}</div>
-        </div>
     </div>
+    <ng-template #tooltipFirstTask let-index="index">
+		<div>
+			<div>Para iniciar la tarea como PCM debe estar en <strong>DESACTIVADO</strong></div>
+			<div>Para iniciar la tarea como SECTOR debe estar en <strong>ACTIVADO</strong></div>
+		</div>
+	</ng-template>
 </form>
