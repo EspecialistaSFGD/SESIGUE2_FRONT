@@ -1,4 +1,30 @@
-<form [formGroup]="formIntervencionSituacion" class="flex flex-col gap-3" autocomplete="off">
+<div class="grid grid-cols-1">
+    <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" nzShowSizeChanger nzSize="small" [nzData]="intervencionSituaciones()" [nzShowPagination]="false">
+        <thead>
+        <tr>
+            <th nzLeft nzWidth="100px" nzAlign="center" >Fecha</th>
+            <th nzWidth="340px">Situación</th>
+            <th nzWidth="132px" nzAlign="center" >Fase</th>
+            <th nzWidth="132px" nzAlign="center" >Etapa</th>
+            <th nzWidth="132px" nzAlign="center" >Hito</th>
+        </tr>
+        </thead>
+        
+        <tbody>
+        @for(situacion of intervencionSituaciones(); track $index){
+            <tr>
+            <td nzLeft nzAlign="center">{{situacion.fecha}}</td>
+            <td>{{situacion.situacion}}</td>
+            <td nzAlign="center">{{situacion.intervencionFaseActual}}</td>
+            <td nzAlign="center">{{situacion.intervencionEtapaActual}}</td>
+            <td nzAlign="center">{{situacion.intervencionHitoActual}}</td>
+            </tr>
+            }
+        </tbody>
+    </nz-table>
+</div>
+
+<form [formGroup]="formIntervencionSituacion" class="flex flex-col gap-3 mt-2" autocomplete="off">
     <div class="grid grid-cols-1 md:grid-cols-4 bg-white gap-4">
         <div class="flex flex-col col-span-4">
             <label class="w-full" for="situacion">Situación</label>
