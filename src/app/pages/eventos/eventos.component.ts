@@ -63,7 +63,7 @@ export default class EventosComponent {
 
   getPermissions() {
     const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
-    const eventosNav = navigation.find(nav => nav.descripcionItem.toUpperCase() == 'espacios')
+    const eventosNav = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'espacios')    
     this.eventosActions = eventosNav && eventosNav.botones ? obtenerPermisosBotones(eventosNav!.botones!) : {}
   }
 

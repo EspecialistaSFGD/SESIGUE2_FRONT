@@ -86,7 +86,7 @@ export default class AgendasEventoComponent {
   getPermissions() {
     const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
 
-    const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'eventos')
+    const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'espacios')
     if(menu && menu.botones){
       this.eventosActions = obtenerPermisosBotones(menu!.botones!)
       const navLevel =  menu!.children!
