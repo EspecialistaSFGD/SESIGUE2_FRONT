@@ -122,7 +122,6 @@ export default class AgendasMesaComponent {
     }
   
     getPermissions() {
-      // const navigation  = this.authStore.navigationAuth()!
       const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
       const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'mesas')
       this.mesasActions = obtenerPermisosBotones(menu!.botones!)

@@ -52,13 +52,13 @@
 				  <td nzAlign="center">{{intervencion.devengado! | numero : 0}}</td>
 				  <td nzRight nzAlign="center" [ngClass]="{ 'bg-sky-100' : intervencionEspacio.intervencionId == intervencion.intervencionId}">
 					<div class="flex justify-center">
-						<app-boton [icono]="'comments'" [tooltip]="'Agregar situación'" [link]="true" (click)="intervencionSituacionFormModel(intervencion)"/>
+						<app-boton *ngIf="intervencionSituacionesActions.new" [icono]="'comments'" [tooltip]="'Agregar situación'" [link]="true" (click)="intervencionSituacionFormModel(intervencion)"/>
 
-						<app-boton [icono]="'list-check'" [tooltip]="'Ver situaciones'" [link]="true" (click)="verSituaciones(intervencion)"/>
+						<app-boton *ngIf="intervencionSituacionesActions.view" [icono]="'list-check'" [tooltip]="'Ver situaciones'" [link]="true" (click)="verSituaciones(intervencion)"/>
 
-						<app-boton [icono]="'eye'" [tooltip]="'Detalle de la intervencion'" [link]="true" (click)="detalleIntervencionEspacio(intervencion)" />
+						<app-boton *ngIf="eventosAgendaActions.view" [icono]="'eye'" [tooltip]="'Detalle de la intervencion'" [link]="true" (click)="detalleIntervencionEspacio(intervencion)" />
 
-						<app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar intervención'" [link]="true" (click)="eliminarIntervencion(intervencion)" />
+						<app-boton *ngIf="eventosAgendaActions.delete" [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar intervención'" [link]="true" (click)="eliminarIntervencion(intervencion)" />
 					</div>
 				  </td>
 				<tr>
@@ -74,9 +74,9 @@
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
-			<app-boton  [icono]="'file-excel'" tooltip="{{'Exportar intervenciones del evento: ' + evento.nombre}}" [texto]="loadingExport ? 'Exportando...' : 'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
+			<app-boton *ngIf="eventosAgendaActions.report" [icono]="'file-excel'" tooltip="{{'Exportar intervenciones del evento: ' + evento.nombre}}" [texto]="loadingExport ? 'Exportando...' : 'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
 
-			<app-boton [icono]="'plus'" tooltip="Nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearIntervencion()"/>
+			<app-boton *ngIf="eventosAgendaActions.new" [icono]="'plus'" tooltip="Nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearIntervencion()"/>
 		</div>
 	  </div>
 </ng-template>

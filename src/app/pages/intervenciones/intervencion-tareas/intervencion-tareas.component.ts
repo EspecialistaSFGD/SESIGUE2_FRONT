@@ -81,7 +81,6 @@ export default class IntervencionTareasComponent {
     if(intervencionesNav && intervencionesNav.children.length > 0){
       const intervencionTareaNav = intervencionesNav.children.find((nav:any) => nav.descripcionItem.toLowerCase() == 'intervencion tarea')
       this.tareaActions = intervencionTareaNav ? obtenerPermisosBotones(intervencionTareaNav!.botones!) : {}
-      
     }
   }
 
