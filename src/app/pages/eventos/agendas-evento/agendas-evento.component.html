@@ -74,9 +74,9 @@
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
-			<app-boton  [icono]="'filter'" tooltip="{{'Exportar intervenciones del evento: ' + evento.nombre}}" [texto]="loadingExport ? 'Exportando...' : 'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
+			<app-boton  [icono]="'file-excel'" tooltip="{{'Exportar intervenciones del evento: ' + evento.nombre}}" [texto]="loadingExport ? 'Exportando...' : 'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
 
-			<app-boton [icono]="'plus'" tooltip="Agregar nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearIntervencion()"/>
+			<app-boton [icono]="'plus'" tooltip="Nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearIntervencion()"/>
 		</div>
 	  </div>
 </ng-template>

@@ -62,7 +62,27 @@
       <div class="flex gap-2">
             <app-boton  [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
 
-            <app-boton  [icono]="'file-excel'" tooltip="Exportar Espacios" [texto]="'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteEventos()"/>
+            <!-- <app-boton  [icono]="'file-excel'" tooltip="Exportar Espacios" [texto]="'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteEventos()"/> -->
+            <div class="flex items-center py-1 px-3 gap-2 rounded border cursor-default border-sky-700 text-sky-700" nz-dropdown [nzDropdownMenu]="menu">
+              <div class="w-full flex items-center gap-1">
+                <i class="pi " [ngClass]="loadingExport ? 'pi-spin pi-spinner' : 'pi-file-excel'"></i>
+                {{loadingExport ? 'Exportando...' : 'Exportar'}} 
+              </div>
+              <i class="pi pi-angle-down"></i>
+            </div>
+
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div nz-menu class="p-0">
+              <div nz-menu-item class="flex items-center px-3 py-2 gap-2 text-slate-700 hover:bg-sky-100 hover:text-sky-800" (click)="reporteEventos()">
+                <i class="pi pi-file-excel"></i>
+                Exportar Expacios
+              </div>
+              <div nz-menu-item class="flex items-center px-3 py-2 gap-2 text-slate-700 hover:bg-sky-100 hover:text-sky-800" (click)="reporteIntervencion()">
+                <i class="pi pi-file-excel"></i>
+                Exportar intervenciones
+              </div>
+            </div>
+        </nz-dropdown-menu>
 
             <app-boton [icono]="'plus'" tooltip="Agregar nueva intervencion" [texto]="'Nuevo evento'"  (click)="crearEvento()"/>
       </div>

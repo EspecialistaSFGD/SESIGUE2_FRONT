@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { EventoResponse, Pagination, TipoEventoResponse } from '@core/interfaces';
-import { EventosService } from '@core/services';
+import { EventosService, IntervencionEspacioService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { EstadoTagComponent } from '@shared/estado-tag/estado-tag.component';
@@ -50,7 +50,8 @@ export default class EventosComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private modal = inject(NzModalService);
-  private messageService = inject(MessageService)
+  private intervencionEspaciosServices = inject(IntervencionEspacioService)
+  private messageService = inject(MessageService)  
   private utilesService = inject(UtilesService);
 
   ngOnInit(): void {
@@ -129,6 +130,18 @@ export default class EventosComponent {
         queryParamsHandling: 'merge',
       }
     );
+  }
+
+  reporteIntervencion(){
+    this.loadingExport = true;
+    this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '0' })
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+        }
+        this.loadingExport = false
+      })
   }
 
   reporteEventos(){
