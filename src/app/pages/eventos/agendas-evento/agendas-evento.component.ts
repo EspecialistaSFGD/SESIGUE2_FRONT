@@ -132,8 +132,9 @@ export default class AgendasEventoComponent {
   }
 
   reporteIntervencion(){
+    const eventoId = this.evento.eventoId
     this.loadingExport = true;
-    this.intervencionEspaciosServices.reporteIntervencionEspacios(this.pagination)
+    this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '0', eventoId })
       .subscribe( resp => {
         if(resp.data){
           const data = resp.data;
@@ -165,7 +166,7 @@ export default class AgendasEventoComponent {
       })
   }
 
-  intervencionDetalleFormModel(intervencionEspacio: IntervencionEspacioResponse){
+  intervencionSituacionFormModel(intervencionEspacio: IntervencionEspacioResponse){
     const create: boolean = true
     this.modal.create<FormSituacionIntervencionComponent>({
           nzTitle: `Crear situación`,

@@ -52,7 +52,7 @@
 				  <td nzAlign="center">{{intervencion.devengado! | numero : 0}}</td>
 				  <td nzRight nzAlign="center" [ngClass]="{ 'bg-sky-100' : intervencionEspacio.intervencionId == intervencion.intervencionId}">
 					<div class="flex justify-center">
-						<app-boton [icono]="'comments'" [tooltip]="'Agregar situación'" [link]="true" (click)="intervencionDetalleFormModel(intervencion)"/>
+						<app-boton [icono]="'comments'" [tooltip]="'Agregar situación'" [link]="true" (click)="intervencionSituacionFormModel(intervencion)"/>
 
 						<app-boton [icono]="'list-check'" [tooltip]="'Ver situaciones'" [link]="true" (click)="verSituaciones(intervencion)"/>
 
@@ -74,9 +74,7 @@
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
-			<!-- <app-boton [color]="'red'" [stepColor]="700" [icono]="'sync'" [texto]="'Procesar'" [loading]="loadingProcessing" (click)="procesarIntervencion()"/> -->
-
-			<app-boton  [icono]="'filter'" tooltip="{{'Exportar intervenciones del evento: ' + evento.nombre}}" [texto]="'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
+			<app-boton  [icono]="'filter'" tooltip="{{'Exportar intervenciones del evento: ' + evento.nombre}}" [texto]="loadingExport ? 'Exportando...' : 'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
 
 			<app-boton [icono]="'plus'" tooltip="Agregar nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearIntervencion()"/>
 		</div>
