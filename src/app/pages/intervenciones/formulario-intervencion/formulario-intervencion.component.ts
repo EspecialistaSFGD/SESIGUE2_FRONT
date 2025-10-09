@@ -321,6 +321,8 @@ export class FormularioIntervencionComponent {
     }
     
     if(event.key === 'Backspace' || event.key === 'Delete'){
+      event.preventDefault();
+      return;
     } else {
       const dataValue = codigoAcuerdoValue.split('-')
       const numeroCodigo = Number(dataValue[ dataValue.length - 1]);

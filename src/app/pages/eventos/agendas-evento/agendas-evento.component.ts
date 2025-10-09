@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventoResponse, EventoSectorResponse, IntervencionEspacioResponse, IntervencionSituacionResponse, Pagination } from '@core/interfaces';
+import { ButtonsActions, EventoResponse, EventoSectorResponse, IntervencionEspacioResponse, IntervencionSituacionResponse, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { EventoSectoresService, EventosService, IntervencionEspacioService, IntervencionSituacionService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -16,7 +16,7 @@ import { IntervencionDetalleComponent } from '../../intervenciones/intervencion-
 import { FormSituacionIntervencionComponent } from '../../intervenciones/situaciones-intervencion/form-situacion-intervencion/form-situacion-intervencion.component';
 import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
 import { MessageService } from 'primeng/api';
-import { getDateFormat } from '@core/helpers';
+import { getDateFormat, obtenerPermisosBotones } from '@core/helpers';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { SituacionesIntervencionComponent } from '../../intervenciones/situaciones-intervencion/situaciones-intervencion.component';
 
@@ -34,6 +34,13 @@ export default class AgendasEventoComponent {
   
   intervencionesEspacios = signal<IntervencionEspacioResponse[]>([])
   eventosSectores = signal<EventoSectorResponse[]>([])
+
+  eventosAgendaActions: ButtonsActions = {}
+  intervencionActions: ButtonsActions = {}
+  intervencionSituacionesActions: ButtonsActions = {}
+  eventosActions: ButtonsActions = {}
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
 
   eventoId:number = 0
   esSsfgd:boolean = false
@@ -62,6 +69,7 @@ export default class AgendasEventoComponent {
 
   ngOnInit(): void {
     this.getPermisosPCM()
+    this.getPermissions()
     this.verificarEvento()
     this.obtenerEventoSectoresServices()
   }
@@ -73,6 +81,26 @@ export default class AgendasEventoComponent {
 
     const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
     return JSON.parse(permisosStorage) ?? false
+  }
+
+  getPermissions() {
+    const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
+
+    const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'espacios')
+    if(menu && menu.botones){
+      this.eventosActions = obtenerPermisosBotones(menu!.botones!)
+      const navLevel =  menu!.children!
+      const mesaAgendaNav = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'evento agendas')
+      this.eventosAgendaActions = mesaAgendaNav && mesaAgendaNav.botones ? obtenerPermisosBotones(mesaAgendaNav!.botones!) : {}
+    }
+
+    const intervencionesNav = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'intervenciones')
+    if(intervencionesNav?.botones){
+      this.intervencionActions = obtenerPermisosBotones(intervencionesNav!.botones!)
+      const navIntervencion =  intervencionesNav!.children!
+      const eventoAgendaNav = navIntervencion.find(nav => nav.descripcionItem?.toLowerCase() == 'intervencion situaciones')
+      this.intervencionSituacionesActions = eventoAgendaNav && eventoAgendaNav.botones ? obtenerPermisosBotones(eventoAgendaNav!.botones!) : {}
+    }
   }
 
   verificarEvento(){
@@ -132,8 +160,9 @@ export default class AgendasEventoComponent {
   }
 
   reporteIntervencion(){
+    const eventoId = this.evento.eventoId
     this.loadingExport = true;
-    this.intervencionEspaciosServices.reporteIntervencionEspacios(this.pagination)
+    this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '0', eventoId })
       .subscribe( resp => {
         if(resp.data){
           const data = resp.data;
@@ -165,7 +194,7 @@ export default class AgendasEventoComponent {
       })
   }
 
-  intervencionDetalleFormModel(intervencionEspacio: IntervencionEspacioResponse){
+  intervencionSituacionFormModel(intervencionEspacio: IntervencionEspacioResponse){
     const create: boolean = true
     this.modal.create<FormSituacionIntervencionComponent>({
           nzTitle: `Crear situación`,
