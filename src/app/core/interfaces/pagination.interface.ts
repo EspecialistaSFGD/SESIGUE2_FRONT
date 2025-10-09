@@ -63,6 +63,7 @@ export interface Pagination {
   origenId?: string,
   recursoId?: string,
   interaccionId?: string,
+  tipoIntervencion?: string,
   tipoEventoId?: string,
   entidadUbigeoId?: string  
 }

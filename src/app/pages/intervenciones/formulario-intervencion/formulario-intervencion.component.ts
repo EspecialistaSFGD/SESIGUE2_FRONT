@@ -275,23 +275,30 @@ export class FormularioIntervencionComponent {
           descripcionControl?.disable()
         break;
         case 'ACTIVIDAD':
-          codigoIntervencionControl?.setValue('ACT0001')
+          this.obtenerCodigoActividad()
           intervencionIdControl?.setValue('0')
           descripcionControl?.setValidators([Validators.required])
           codigoIntervencionControl?.clearValidators()
           codigoIntervencionControl?.disable()
           descripcionControl?.enable()
         break;
-        // case 'ACTIVIDAD': codigoIntervencionControl?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(7), Validators.pattern(this.validatorsService.startFiveNumberPattern)]); break;
       }
-      // this.setDisabledCodigoIntervencion()
     } else {
       codigoIntervencionControl?.clearValidators();
       descripcionControl?.clearValidators();
       codigoIntervencionControl?.reset()
     }
     descripcionControl?.reset()
-    // subTipoValue ? codigoIntervencionControl?.enable() : codigoIntervencionControl?.disable()    
+  }
+
+  obtenerCodigoActividad(){
+    const pagination: Pagination = { origenId: '1', interaccionId: this.intervencionEspacio.interaccionId, tipoIntervencion:'2', columnSort: 'intervencionEspacioId', typeSort: 'DESC', pageSize: 10, currentPage: 1,  }
+    this.intervencionEspacioService.ListarIntervencionEspacios(pagination)
+      .subscribe( resp => {
+        const total = resp.info!.total + 1
+        const totalStr = total.toString().padStart(4, '0');
+        this.formIntervencionEspacio.get('codigoIntervencion')?.setValue(`ACT${totalStr}`);
+      })
   }
 
   changeControl(event: any){
