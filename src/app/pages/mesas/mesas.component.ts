@@ -110,7 +110,7 @@ export default class MesasComponent {
   getPermissions() {
     const navigation = this.authStore.navigationAuth()!
     const atenciones = navigation.find(nav => nav.descripcionItem == 'Mesas')
-    this.mesasActions = obtenerPermisosBotones(atenciones!.botones!)    
+    this.mesasActions = atenciones && atenciones.botones ? obtenerPermisosBotones(atenciones!.botones!) : {}
   }
 
   setPermisosPCM(){

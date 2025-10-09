@@ -87,16 +87,20 @@ export default class AgendasEventoComponent {
     const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
 
     const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'eventos')
-    this.eventosActions = obtenerPermisosBotones(menu!.botones!)
-    const navLevel =  menu!.children!
-    const mesaAgendaNav = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'evento agendas')
-    this.eventosAgendaActions = obtenerPermisosBotones(mesaAgendaNav!.botones!)
+    if(menu && menu.botones){
+      this.eventosActions = obtenerPermisosBotones(menu!.botones!)
+      const navLevel =  menu!.children!
+      const mesaAgendaNav = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'evento agendas')
+      this.eventosAgendaActions = mesaAgendaNav && mesaAgendaNav.botones ? obtenerPermisosBotones(mesaAgendaNav!.botones!) : {}
+    }
 
     const intervencionesNav = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'intervenciones')
-    this.intervencionActions = obtenerPermisosBotones(intervencionesNav!.botones!)
-    const navIntervencion =  intervencionesNav!.children!
-    const eventoAgendaNav = navIntervencion.find(nav => nav.descripcionItem?.toLowerCase() == 'intervencion situaciones')
-    this.intervencionSituacionesActions = obtenerPermisosBotones(eventoAgendaNav!.botones!)
+    if(intervencionesNav?.botones){
+      this.intervencionActions = obtenerPermisosBotones(intervencionesNav!.botones!)
+      const navIntervencion =  intervencionesNav!.children!
+      const eventoAgendaNav = navIntervencion.find(nav => nav.descripcionItem?.toLowerCase() == 'intervencion situaciones')
+      this.intervencionSituacionesActions = eventoAgendaNav && eventoAgendaNav.botones ? obtenerPermisosBotones(eventoAgendaNav!.botones!) : {}
+    }
   }
 
   verificarEvento(){

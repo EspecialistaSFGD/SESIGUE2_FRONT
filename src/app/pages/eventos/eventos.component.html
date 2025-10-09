@@ -42,13 +42,13 @@
           </td>
           <td nzRight nzAlign="center">
             <div class="flex justify-center">
-              <a [routerLink]="[evento.eventoId]" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
+              <a *ngIf="eventosActions.view" [routerLink]="[evento.eventoId]" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
                 <i class="pi pi-eye" style="font-size: .85rem;"></i>
               </a>
 
-              <app-boton icono="pencil" [link]="true" tooltip="Actualizar evento" (click)="eventoFormModal(evento,false)"/>
+              <app-boton *ngIf="eventosActions.edit" icono="pencil" [link]="true" tooltip="Actualizar evento" (click)="eventoFormModal(evento,false)"/>
 
-              <app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar evento'" [link]="true" (click)="eliminarEvento(evento)" />
+              <app-boton *ngIf="eventosActions.delete" [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar evento'" [link]="true" (click)="eliminarEvento(evento)" />
             </div>
           </td>
         </tr>
@@ -60,18 +60,16 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
-            <app-boton  [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+          <app-boton *ngIf="eventosActions.report" [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
 
-            <!-- <app-boton  [icono]="'file-excel'" tooltip="Exportar Espacios" [texto]="'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteEventos()"/> -->
-            <div class="flex items-center py-1 px-3 gap-2 rounded border cursor-default border-sky-700 text-sky-700" nz-dropdown [nzDropdownMenu]="menu">
-              <div class="w-full flex items-center gap-1">
-                <i class="pi " [ngClass]="loadingExport ? 'pi-spin pi-spinner' : 'pi-file-excel'"></i>
-                {{loadingExport ? 'Exportando...' : 'Exportar'}} 
-              </div>
-              <i class="pi pi-angle-down"></i>
+          <div *ngIf="eventosActions.report" class="flex items-center py-1 px-3 gap-2 rounded border cursor-default border-sky-700 text-sky-700" nz-dropdown [nzDropdownMenu]="menu">
+            <div class="w-full flex items-center gap-1">
+              <i class="pi " [ngClass]="loadingExport ? 'pi-spin pi-spinner' : 'pi-file-excel'"></i>
+              {{loadingExport ? 'Exportando...' : 'Exportar'}} 
             </div>
-
-            <nz-dropdown-menu #menu="nzDropdownMenu">
+            <i class="pi pi-angle-down"></i>
+          </div>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
             <div nz-menu class="p-0">
               <div nz-menu-item class="flex items-center px-3 py-2 gap-2 text-slate-700 hover:bg-sky-100 hover:text-sky-800" (click)="reporteEventos()">
                 <i class="pi pi-file-excel"></i>
@@ -82,9 +80,9 @@
                 Exportar intervenciones
               </div>
             </div>
-        </nz-dropdown-menu>
+          </nz-dropdown-menu>
 
-            <app-boton [icono]="'plus'" tooltip="Agregar nueva intervencion" [texto]="'Nuevo evento'"  (click)="crearEvento()"/>
+          <app-boton *ngIf="eventosActions.new" [icono]="'plus'" tooltip="Agregar nueva intervencion" [texto]="'Nuevo evento'"  (click)="crearEvento()"/>
       </div>
     </div>
   </ng-template>

@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { EventoResponse, Pagination, TipoEventoResponse } from '@core/interfaces';
+import { ButtonsActions, EventoResponse, Pagination, TipoEventoResponse, UsuarioNavigation } from '@core/interfaces';
 import { EventosService, IntervencionEspacioService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { EstadoTagComponent } from '@shared/estado-tag/estado-tag.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltroEventosComponent } from './filtro-eventos/filtro-eventos.component';
-import { deleteKeysToObject, getDateFormat, setParamsToObject } from '@core/helpers';
+import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { distinctUntilChanged, filter } from 'rxjs';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioEventoComponent } from './formulario-evento/formulario-evento.component';
@@ -30,6 +30,8 @@ export default class EventosComponent {
   loading: boolean = false
   openFilters: boolean = false
   loadingExport: boolean = false
+
+  eventosActions: ButtonsActions = {}
 
   pagination: Pagination = {
     columnSort: 'eventoId',
@@ -56,6 +58,13 @@ export default class EventosComponent {
 
   ngOnInit(): void {
     this.getParams()
+    this.getPermissions()
+  }
+
+  getPermissions() {
+    const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
+    const eventosNav = navigation.find(nav => nav.descripcionItem.toUpperCase() == 'espacios')
+    this.eventosActions = eventosNav && eventosNav.botones ? obtenerPermisosBotones(eventosNav!.botones!) : {}
   }
 
   getParams() {
