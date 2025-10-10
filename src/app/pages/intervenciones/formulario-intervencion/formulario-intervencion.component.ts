@@ -292,7 +292,7 @@ export class FormularioIntervencionComponent {
   }
 
   obtenerCodigoActividad(){
-    const pagination: Pagination = { origenId: '1', interaccionId: this.intervencionEspacio.interaccionId, tipoIntervencion:'2', columnSort: 'intervencionEspacioId', typeSort: 'DESC', pageSize: 10, currentPage: 1,  }
+    const pagination: Pagination = { tipoIntervencion:'2', columnSort: 'intervencionEspacioId', typeSort: 'DESC', pageSize: 10, currentPage: 1,  }
     this.intervencionEspacioService.ListarIntervencionEspacios(pagination)
       .subscribe( resp => {
         const total = resp.info!.total + 1
