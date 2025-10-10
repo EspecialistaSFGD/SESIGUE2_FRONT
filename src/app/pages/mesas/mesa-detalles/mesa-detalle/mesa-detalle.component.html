@@ -30,7 +30,9 @@
 					<app-boton-descargar [rutaArchivo]="resolucion.archivo" [titulo]="'Descargar ' + resolucion.nombre" [active]="false"/>
 				}
 			</div>
-			<div *ngIf="mesasDocumentosActions.new && mesa.resolucion" class="py-1 px-2 border rounded" [ngClass]="{ 'cursor-pointer border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white' : action, 'border-slate-400 text-slate-400' : !action }" nz-tooltip [nzTooltipTitle]=" action ? 'Nueva Ampliación' : ''" (click)="action ? modalCreateFile(2) : null"><span nz-icon nzType="plus" nzTheme="outline"></span></div>
+			<div *ngIf="mesasDocumentosActions.new && mesa.resolucion" class="py-1 px-2 border rounded" [ngClass]="{ 'cursor-pointer border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white' : action, 'border-slate-400 text-slate-400' : !action }" nz-tooltip [nzTooltipTitle]=" action ? 'Nueva Ampliación' : ''" (click)="action ? modalCreateFile(2) : null">
+				<i class="pi pi-plus" style="font-size: 0.75rem"></i>
+			</div>
 		</div>
 	</div>
 	<div class="flex col-span-2 lg:col-span-1 border border-gray-200 border-t-0">
@@ -58,7 +60,9 @@
 			@if (!mesasActions.edit) {
 				{{mesa.cantidadIntervenciones}} @if (mesa.cantidadIntervenciones == 1) { intervención } @else { intervenciones}
 			}
-			<div *ngIf="mesasActions.edit" class="py-1 px-2 border rounded" [ngClass]="{ 'cursor-pointer border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white' : action, 'border-slate-400 text-slate-400' : !action }" nz-tooltip [nzTooltipTitle]="action ? 'Actualizar mesa' : ''" (click)=" action ? actualizarMesa() : null"><span nz-icon nzType="edit" nzTheme="outline"></span></div>
+			<div *ngIf="mesasActions.edit" class="py-1 px-2 border rounded" [ngClass]="{ 'cursor-pointer border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white' : action, 'border-slate-400 text-slate-400' : !action }" nz-tooltip [nzTooltipTitle]="action ? 'Actualizar mesa' : ''" (click)=" action ? actualizarMesa() : null">
+				<i class="pi pi-pencil" style="font-size: 0.75rem"></i>
+			</div>
 		</div>
 	</div>
 </div>
