@@ -41,19 +41,19 @@
             <span nz-icon [nzType]="this.isSiderCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
           </div>
         </div>
-        <div class="flex gap-2 items-center pr-4"> 
-          <div class="relative" (mouseover)="leave = true">
-            <div class="p-2 rounded-full bg-sky-700 text-white font-bold hover:bg-sky-800 cursor-default">
-              {{ authService.nombreTrabajador()! | primeraLetra : 2 }}
-            </div>
-            <div class="absolute z-10 top-full right-0 bg-slate-50 rounded border shadow-md border-slate-200 text-slate-600 w-[264px]" [ngClass]="{ 'flex flex-col' : leave, 'hidden' : !leave }" (mouseout)="leave = false">
+        <div class="flex gap-2 items-center pr-4">
+          <div class="flex items-center justify-center rounded-full bg-sky-700 text-white font-bold hover:bg-sky-800 cursor-default w-[32px] h-[32px]" nz-dropdown [nzDropdownMenu]="dropdownPerfil">
+            {{ authService.nombreTrabajador()! | primeraLetra : 2 }}
+          </div>
+          <nz-dropdown-menu #dropdownPerfil="nzDropdownMenu">
+            <div class="flex flex-col bg-slate-50 rounded border shadow-md border-slate-200 text-slate-600 w-[264px]">
               <div class="flex items-center gap-2 py-2 px-4 font-medium bg-sky-800 text-white rounded-ss rounded-se"><span nz-icon nzType="user" nzTheme="outline"></span> {{authService.nombreTrabajador()! }}</div>
               <div *ngIf="descripcionTipo" class="flex gap-2 py-2 px-4 text-sm font-normal"><span nz-icon nzType="schedule" nzTheme="outline"></span> {{ descripcionTipo }}</div>
               <div *ngIf="descripcionSector" class="flex gap-2 py-2 px-4 font-normal"><span nz-icon nzType="pushpin" nzTheme="outline"></span> {{ descripcionSector }}</div>
               <div *ngIf="authService.departamento()" class="flex gap-2 py-2 px-4 font-normal"><span nz-icon nzType="environment" nzTheme="outline"></span>{{ authService.departamento()?.label }}</div>
               <div class="flex gap-2 py-2 px-4 font-normal cursor-pointer hover:text-sky-700"  (click)="onLogout()"><span nz-icon nzType="poweroff"></span> Cerrar Sesión</div>
             </div>
-          </div>
+        </nz-dropdown-menu>
           <app-theme-switcher [isAbsolute]="false" />
         </div>
       </div>

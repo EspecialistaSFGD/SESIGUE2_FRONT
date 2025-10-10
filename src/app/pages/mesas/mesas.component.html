@@ -49,17 +49,15 @@
             }
           </td>
           <td nzRight *ngIf="mesasActions.view || mesasActions.comment" nzAlign="center">
-              <a *ngIf="mesasActions.view" [routerLink]="['/mesas', mesa.mesaId]">
-                <button nz-button nzType="link" nz-tooltip nzTooltipTitle="Ver detalle">
-                  <span nz-icon nzType="eye" nzTheme="outline"></span>
-                </button>
-              </a>
-              <button *ngIf="mesasActions.comment" nz-button nzType="link" nz-tooltip nzTooltipTitle="Agregar estado resumen" (click)="crearEstadoResumen(mesa, false)">
-                <span nz-icon nzType="comment" nzTheme="outline"></span>
-              </button>
-              <button *ngIf="mesasActions.comment" nz-button nzDanger nzType="link" nz-tooltip nzTooltipTitle="Agregar alerta" (click)="crearEstadoResumen(mesa, true)">
-                <span nz-icon nzType="comment" nzTheme="outline"></span>
-              </button>
+              <div class="flex justify-center">
+                <a [routerLink]="[mesa.mesaId]" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
+                  <i class="pi pi-eye" style="font-size: .85rem;"></i>
+                </a>
+
+                <app-boton icono="comments" [link]="true" tooltip="Agregar estado resumen" (click)="crearEstadoResumen(mesa, false)"/>
+
+                <app-boton icono="comments" [color]="'red'" [stepColor]="500" [link]="true" tooltip="Agregar alerta" (click)="crearEstadoResumen(mesa, true)"/>
+              </div>
           </td>
         </tr>
         }
@@ -70,31 +68,29 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
-        <button *ngIf="mesasActions.report" nz-button nzType="default" (click)="openFilters = true">
-          <span nz-icon nzType="filter"></span>
-          <span class="button-text">Filtros</span>
-        </button>
-  
-        <button *ngIf="mesasActions.report" nz-button nz-dropdown [nzDropdownMenu]="menu" [nzLoading]="loading">
-            <span nz-icon nzType="file-excel" nzTheme="outline"></span>
-            <span class="button-text">Exportar</span>
-            <span nz-icon nzType="down"></span>
-        </button>
+        <app-boton *ngIf="mesasActions.report" [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+
+        <div *ngIf="mesasActions.report" class="flex items-center py-1 px-3 gap-2 rounded border cursor-default border-sky-700 text-sky-700" nz-dropdown [nzDropdownMenu]="menu">
+          <div class="w-full flex items-center gap-1">
+            <i class="pi " [ngClass]="loadingExport ? 'pi-spin pi-spinner' : 'pi-file-excel'"></i>
+            {{loadingExport ? 'Exportando...' : 'Exportar'}} 
+          </div>
+          <i class="pi pi-angle-down"></i>
+        </div>
         <nz-dropdown-menu #menu="nzDropdownMenu">
-            <ul nz-menu>
-                <li nz-menu-item>
-                    <button (click)="reporteMesas()" nz-button nzType="text" type="button">Exportar Mesas</button>
-                </li>
-                <li nz-menu-item>
-                    <button (click)="reporteIntervencion()" nz-button nzType="text" type="button">Exportar intervenciones</button>
-                </li>
-            </ul>
+            <div nz-menu class="p-0">
+              <div nz-menu-item class="flex items-center px-3 py-2 gap-2 text-slate-700 hover:bg-sky-100 hover:text-sky-800" (click)="reporteMesas()">
+                <i class="pi pi-file-excel"></i>
+                Exportar Mesas
+              </div>
+              <div nz-menu-item class="flex items-center px-3 py-2 gap-2 text-slate-700 hover:bg-sky-100 hover:text-sky-800" (click)="reporteIntervencion()">
+                <i class="pi pi-file-excel"></i>
+                Exportar intervenciones
+              </div>
+            </div>
         </nz-dropdown-menu>
-  
-        <button *ngIf="mesasActions.new" nz-button nzType="primary" (click)="crearMesa()">
-          <span nz-icon nzType="plus" nzTheme="outline"></span>
-          <span class="button-text">Nueva mesa</span>
-        </button>
+
+        <app-boton *ngIf="mesasActions.new" [icono]="'plus'" [texto]="'Nueva mesa'" (click)="crearMesa()"/>
       </div>
     </div>
   </ng-template>

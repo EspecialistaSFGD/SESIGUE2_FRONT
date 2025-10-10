@@ -1,0 +1,9 @@
+<nz-page-header nzBackIcon [nzGhost]="false">
+	<nz-page-header-title>{{title}}</nz-page-header-title>
+</nz-page-header>
+
+<app-intervencion-detalle *ngIf="intervencionEspacio.intervencionId" [intervencionEspacio]="intervencionEspacio" [esMesa]="true"/>
+
+@if(intervencionEspacio.intervencionEspacioId){
+	<app-intervencion-tareas [intervencionEspacio]="intervencionEspacio"/>
+}

@@ -122,7 +122,6 @@ export default class AgendasMesaComponent {
     }
   
     getPermissions() {
-      // const navigation  = this.authStore.navigationAuth()!
       const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
       const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'mesas')
       this.mesasActions = obtenerPermisosBotones(menu!.botones!)
@@ -316,6 +315,7 @@ export default class AgendasMesaComponent {
     this.modal.create<FormularioIntervencionComponent>({
       nzTitle: `${action.toUpperCase()}`,
       nzWidth: '50%',
+      nzMaskClosable: false,
       nzContent: FormularioIntervencionComponent,
       nzData: {
         create,

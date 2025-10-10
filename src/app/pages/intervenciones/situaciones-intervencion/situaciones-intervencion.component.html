@@ -1,0 +1,33 @@
+<div class="grid grid-cols-1">
+  <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderSituaciones" nzShowSizeChanger nzSize="small"
+    [nzData]="intervencionSituaciones()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!" [nzShowPagination]="pagination.total! > 5"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+      <tr>
+        <th nzLeft nzWidth="100px" nzAlign="center" >Fecha</th>
+        <th nzWidth="340px">Situación</th>
+        <th nzWidth="132px" nzAlign="center" >Fase</th>
+        <th nzWidth="132px" nzAlign="center" >Etapa</th>
+        <th nzWidth="132px" nzAlign="center" >Hito</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      @for(situacion of intervencionSituaciones(); track $index){
+        <tr>
+          <td nzLeft nzAlign="center">{{situacion.fecha}}</td>
+          <td>{{situacion.situacion}}</td>
+          <td nzAlign="center">{{situacion.intervencionFaseActual}}</td>
+          <td nzAlign="center">{{situacion.intervencionEtapaActual}}</td>
+          <td nzAlign="center">{{situacion.intervencionHitoActual}}</td>
+        </tr>
+        }
+    </tbody>
+  </nz-table>
+  
+  <ng-template #HeaderSituaciones>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+      <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+    </div>
+  </ng-template>
+</div>

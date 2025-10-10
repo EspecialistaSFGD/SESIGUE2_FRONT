@@ -1,0 +1,85 @@
+<form [formGroup]="formIntervencionSituacion" class="flex flex-col gap-3" autocomplete="off">
+    <div class="grid grid-cols-1 md:grid-cols-4 bg-white gap-4">
+        <div class="flex flex-col col-span-4">
+            <label class="w-full" for="situacion">Situación</label>
+             <textarea class="form-control" formControlName="situacion" id="situacion" rows="2"></textarea>
+            <div class="w-full text-danger" *ngIf="alertMessageError('situacion')">{{msgErrorControl('situacion','Situación')}}</div>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="nombre">Fecha</label>
+            <p-calendar 
+            formControlName="fecha"
+            [iconDisplay]="'input'" 
+            [showIcon]="true"
+            [showButtonBar]="true"
+            dateFormat="dd/mm/yy"
+            inputId="icondisplay" />
+            <div class="w-full text-danger" *ngIf="alertMessageError('fecha')">{{msgErrorControl('fecha','Fecha')}}</div>
+        </div>
+
+        <div class="w-full flex flex-col">
+            <label nzFor="intervencionFaseActualId">Fase actual</label>
+            <p-dropdown 
+            [options]="fasesActual()"
+            formControlName="intervencionFaseActualId"
+            optionLabel="nombre"
+            optionValue="intervencionFaseId"
+            [showClear]="true" 
+            placeholder="Seleccionar fase"
+            (onChange)="obtenerFase()"/>
+            <div class="text-danger" *ngIf="alertMessageError('intervencionFaseActualId')">{{msgErrorControl('intervencionFaseActualId','Fase actual')}}</div>
+        </div>
+
+        <div class="w-full flex flex-col">
+            <label nzFor="intervencionEtapaActualId">Etapa actual</label>
+            <p-dropdown 
+            [options]="etapasActual()"
+            formControlName="intervencionEtapaActualId"
+            optionLabel="nombre"
+            optionValue="intervencionEtapaId"
+            [showClear]="true" 
+            placeholder="Seleccionar etapa"
+            (onChange)="obtenerEtapa()"/>
+            <div class="text-danger" *ngIf="alertMessageError('intervencionEtapaActualId')">{{msgErrorControl('intervencionEtapaActualId','Etapa actual')}}</div>
+        </div>
+
+        <div class="w-full flex flex-col">
+            <label nzFor="intervencionHitoActualId">Hito actual</label>
+            <p-dropdown 
+            [options]="hitosActual()"
+            formControlName="intervencionHitoActualId"
+            optionLabel="nombre"
+            optionValue="intervencionHitoId"
+            [showClear]="true" 
+            placeholder="Seleccionar hito"/>
+            <div class="text-danger" *ngIf="alertMessageError('intervencionHitoActualId')">{{msgErrorControl('intervencionHitoActualId','Hito actual')}}</div>
+        </div>
+    </div>
+</form>
+
+<div class="grid grid-cols-1 mt-4">
+    <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" nzShowSizeChanger nzSize="small" [nzData]="intervencionSituaciones()" [nzShowPagination]="false">
+        <thead>
+        <tr>
+            <th nzLeft nzWidth="100px" nzAlign="center" >Fecha</th>
+            <th nzWidth="340px">Situación</th>
+            <th nzWidth="132px" nzAlign="center" >Fase</th>
+            <th nzWidth="132px" nzAlign="center" >Etapa</th>
+            <th nzWidth="132px" nzAlign="center" >Hito</th>
+        </tr>
+        </thead>
+        
+        <tbody>
+        @for(situacion of intervencionSituaciones(); track $index){
+            <tr>
+            <td nzLeft nzAlign="center">{{situacion.fecha}}</td>
+            <td>{{situacion.situacion}}</td>
+            <td nzAlign="center">{{situacion.intervencionFaseActual}}</td>
+            <td nzAlign="center">{{situacion.intervencionEtapaActual}}</td>
+            <td nzAlign="center">{{situacion.intervencionHitoActual}}</td>
+            </tr>
+            }
+        </tbody>
+    </nz-table>
+</div>

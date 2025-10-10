@@ -29,7 +29,7 @@
 						</div>
 						<div class="flex flex-col gap-3" formArrayName="sectores" [ngClass]="{ 'pt-2 pb-3' : sectores.length }">
 							<div class="flex gap-3" *ngFor="let sector of sectores.controls; let i = index" [formGroupName]="i">
-								<div class="w-full grid grid-cols-1 md:grid-cols-6 gap-3">
+								<div class="w-full grid grid-cols-1 md:grid-cols-4 gap-3">
 									<div class="w-full flex flex-col">
 										<label for="sector{{i}}">Sector</label>
 										<p-dropdown 
@@ -43,7 +43,7 @@
 										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('sectores',i,'sectorId')">{{msgErrorControlTwoNivel('sectores',i,'sectorId','sector')}}</div>
 									</div>
 			
-									<div class="w-full flex flex-col col-span-2">
+									<div class="w-full flex flex-col col-span-3">
 										<label for="entidadId">Unidad Organica</label>
 										<p-dropdown 
 										[options]="listaEntidadesSector()[i]"
@@ -71,6 +71,12 @@
 										<label for="telefono">Teléfono titular</label>
 										<input type="text" class="form-control" id="telefono" placeholder="Ingrese el telefono aquí" formControlName="telefono">
 										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('sectores',i,'telefono')">{{msgErrorControlTwoNivel('sectores',i,'telefono','Teléfono')}}</div>
+									</div>
+
+									<div class="flex flex-col">
+										<label for="email">Correo titular</label>
+										<input type="text" class="form-control" id="email" placeholder="Ingrese el correo aquí" formControlName="email">
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('sectores',i,'email')">{{msgErrorControlTwoNivel('sectores',i,'email','Correo')}}</div>
 									</div>
 								</div>
 								<div class="flex flex-col">
@@ -103,99 +109,111 @@
 						</div>
 						<div class="flex flex-col gap-3" formArrayName="ubigeos" [ngClass]="{ 'pt-2 pb-3' : ubigeos.length }">
 							<div class="flex gap-3" *ngFor="let ubigeo of ubigeos.controls; let i = index" [formGroupName]="i">
-								<div class="w-full grid grid-cols-1 md:grid-cols-3 gap-3">
-									<div class="grid grid-cols-1 md:grid-cols-4 gap-3 col-span-2">
-										<div class="flex flex-col">
-											<label for="nombre">Departamento</label>
-											<p-dropdown 
-												[options]="departamentos()"
-												formControlName="departamento"
-												optionLabel="departamento"
-												optionValue="departamentoId"
-												[showClear]="true" 
-												placeholder="Seleccionar departamento"
-												(onChange)="changeDepartamento(i)"/>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'departamento')">{{msgErrorControlTwoNivel('ubigeos',i,'departamento','Departamento')}}</div>
-										</div>
-								
-										<div class="flex flex-col">
-											<label for="nombre">Provincia</label>
-											<p-dropdown 
-											[options]="provincias()[i]"
-											formControlName="provincia"
-											optionLabel="provincia"
-											optionValue="provinciaId"
+								<div class="w-full grid grid-cols-1 md:grid-cols-4 gap-3">
+									<div class="flex flex-col">
+										<label for="nombre">Departamento</label>
+										<p-dropdown 
+											[options]="departamentos()"
+											formControlName="departamento"
+											optionLabel="departamento"
+											optionValue="departamentoId"
 											[showClear]="true" 
-											placeholder="Seleccionar provincia"
-											(onChange)="changeProvincia(i)"/>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'provincia')">{{msgErrorControlTwoNivel('ubigeos',i,'provincia','Provincia')}}</div>
-										</div>
-								
+											placeholder="Seleccionar departamento"
+											(onChange)="changeDepartamento(i)"/>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'departamento')">{{msgErrorControlTwoNivel('ubigeos',i,'departamento','Departamento')}}</div>
+									</div>
+
+									<div class="flex flex-col">
+										<label for="nombre">Provincia</label>
+										<p-dropdown 
+										[options]="provincias()[i]"
+										formControlName="provincia"
+										optionLabel="provincia"
+										optionValue="provinciaId"
+										[showClear]="true" 
+										placeholder="Seleccionar provincia"
+										(onChange)="changeProvincia(i)"/>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'provincia')">{{msgErrorControlTwoNivel('ubigeos',i,'provincia','Provincia')}}</div>
+									</div>
+
+									<div class="flex flex-col">
+										<label for="nombre">Distrito</label>
+										<p-dropdown 
+										[options]="distritos()[i]"
+										formControlName="distrito"
+										optionLabel="distrito"
+										optionValue="distritoId"
+										[showClear]="true" 
+										placeholder="Seleccionar distrito"
+										(onChange)="changeDistrito(i)"/>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'distrito')">{{msgErrorControlTwoNivel('ubigeos',i,'distrito','Distrito')}}</div>
+									</div>
+		
+									<div class="flex flex-col">
+										<label for="entidadSlug">
+											Entidad
+											@if (obtenerControlValue(i,'ubigeos','entidadId')) {
+												<span nz-icon nzType="info-circle" [nz-tooltip]="obtenerControlValue(i,'ubigeos','entidad')"></span>
+											}
+										</label>
+										<input type="text" class="form-control" id="entidadSlug" formControlName="entidadSlug">
+									</div>
+									<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
 										<div class="flex flex-col">
-											<label for="nombre">Distrito</label>
-											<p-dropdown 
-											[options]="distritos()[i]"
-											formControlName="distrito"
-											optionLabel="distrito"
-											optionValue="distritoId"
-											[showClear]="true" 
-											placeholder="Seleccionar distrito"
-											(onChange)="changeDistrito(i)"/>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'distrito')">{{msgErrorControlTwoNivel('ubigeos',i,'distrito','Distrito')}}</div>
+											<label class="mb-1">Autoridad</label>
+											<p-inputSwitch formControlName="autoridad" (onChange)="validarAutoridad(i)"/>
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'autoridad')">{{msgErrorControlTwoNivel('ubigeos',i,'autoridad','Autoridad')}}</div>
 										</div>
 			
-										<div class="flex flex-col">
-											<label for="entidadSlug">
-												Entidad
-												@if (obtenerControlValue(i,'ubigeos','entidadId')) {
-													<span nz-icon nzType="info-circle" [nz-tooltip]="obtenerControlValue(i,'ubigeos','entidad')"></span>
-												}
-											</label>
-											<input type="text" class="form-control" id="entidadSlug" formControlName="entidadSlug">
+										<div class="w-full flex flex-col col-span-2">
+											<label for="dni">DNI</label>
+											<div class="relative">
+												<input type="text" class="form-control" id="dni" placeholder="DNI aquí" formControlName="dni" (keyup)="validarDNI(i,'ubigeos')">
+												<app-progress-spiner [loading]="obtenerControlValue(i,'ubigeos','loading')" />
+											</div>
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'dni')">{{msgErrorControlTwoNivel('ubigeos',i,'dni','DNI')}}</div>
 										</div>
 									</div>
 									
-									<div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-										<div class="flex gap-3 col-span-2">
-											<div class="flex flex-col">
-												<label class="mb-1">Autoridad</label>
-												<p-inputSwitch formControlName="autoridad" (onChange)="validarAutoridad(i)"/>
-												<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'autoridad')">{{msgErrorControlTwoNivel('ubigeos',i,'autoridad','Autoridad')}}</div>
-											</div>
-				
-											<div class="w-full flex flex-col">
-												<label for="dni">DNI</label>
-												<div class="relative">
-													<input type="text" class="form-control" id="dni" placeholder="DNI aquí" formControlName="dni" (keyup)="validarDNI(i,'ubigeos')">
-													<app-progress-spiner [loading]="obtenerControlValue(i,'ubigeos','loading')" />
-												</div>
-												<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'dni')">{{msgErrorControlTwoNivel('ubigeos',i,'dni','DNI')}}</div>
-											</div>
-										</div>
 						
-										<div class="w-full flex flex-col col-span-2">
-											<label for="nombre">
-												Nombre
-												@if (obtenerControlValue(i,'ubigeos','nombre')) {
-													<span nz-icon nzType="info-circle" nz-tooltip="{{obtenerControlValue(i,'ubigeos','cargo')}} {{obtenerControlValue(i,'ubigeos','nombre')}}"></span>
-												}
-											</label>
-											<div class="relative">
-												<input type="text" class="form-control" id="nombre" placeholder="Nombre aquí" formControlName="nombre">
-												<app-progress-spiner [loading]="obtenerControlValue(i,'ubigeos','loading')" />
-											</div>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'nombre')">{{msgErrorControlTwoNivel('ubigeos',i,'nombre','Nombre')}}</div>
+									<div class="w-full flex flex-col">
+										<label for="nombre">
+											Nombre
+											@if (obtenerControlValue(i,'ubigeos','nombre')) {
+												<span nz-icon nzType="info-circle" nz-tooltip="{{obtenerControlValue(i,'ubigeos','cargo')}} {{obtenerControlValue(i,'ubigeos','nombre')}}"></span>
+											}
+										</label>
+										<div class="relative">
+											<input type="text" class="form-control" id="nombre" placeholder="Nombre aquí" formControlName="nombre">
+											<app-progress-spiner [loading]="obtenerControlValue(i,'ubigeos','loading')" />
 										</div>
-						
-										<div class="w-full flex flex-col">
-											<label for="telefono">Teléfono</label>
-											<div class="relative">
-												<input type="text" class="form-control" id="telefono" placeholder="Telefono aquí" formControlName="telefono">
-												<app-progress-spiner [loading]="obtenerControlValue(i,'ubigeos','loading')" />
-											</div>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'telefono')">{{msgErrorControlTwoNivel('ubigeos',i,'telefono','Teléfono')}}</div>
-										</div>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'nombre')">{{msgErrorControlTwoNivel('ubigeos',i,'nombre','Nombre')}}</div>
 									</div>
+
+									<div class="w-full flex flex-col">
+										<label for="telefono">Teléfono</label>
+										<div class="relative">
+											<input type="text" class="form-control" id="telefono" placeholder="Telefono aquí" formControlName="telefono">
+											<app-progress-spiner [loading]="obtenerControlValue(i,'ubigeos','loading')" />
+										</div>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'telefono')">{{msgErrorControlTwoNivel('ubigeos',i,'telefono','Teléfono')}}</div>
+									</div>
+
+									<div class="w-full flex flex-col">
+										<label for="email">Correo</label>
+										<div class="relative">
+											<input type="text" class="form-control" id="email" placeholder="Correo aquí" formControlName="email">
+											<app-progress-spiner [loading]="obtenerControlValue(i,'ubigeos','loading')" />
+										</div>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('ubigeos',i,'email')">{{msgErrorControlTwoNivel('ubigeos',i,'email','Correo')}}</div>
+									</div>
+
+									<!-- <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+										<div class="flex gap-3 col-span-2">
+										</div>
+						
+										
+									</div> -->
 								</div>
 								<div class="flex flex-col">
 									<label class="text-center text-transparent"> Eliminar </label>

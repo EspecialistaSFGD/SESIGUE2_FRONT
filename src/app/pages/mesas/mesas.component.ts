@@ -16,11 +16,13 @@ import saveAs from 'file-saver';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import { FiltroMesasComponent } from './filtro-mesas/filtro-mesas.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { distinctUntilChanged, filter } from 'rxjs';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 
 @Component({
   selector: 'app-mesas',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, PageHeaderComponent, SharedModule, FiltroMesasComponent],
+  imports: [CommonModule, RouterModule, NgZorroModule, PageHeaderComponent, SharedModule, FiltroMesasComponent, BotonComponent],
   templateUrl: './mesas.component.html',
   styles: ``
 })
@@ -79,9 +81,12 @@ export default class MesasComponent {
   }
 
   getParams() {
-    this.route.queryParams.subscribe(params => {
-      this.loading = true
-      if (Object.keys(params).length > 0) {        
+    this.route.queryParams
+      .pipe(
+        filter(params => Object.keys(params).length > 0),
+        distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+      )
+      .subscribe( params => {   
         let campo = params['campo'] ?? 'mesaId'
 
         this.pagination.columnSort = campo
@@ -97,17 +102,15 @@ export default class MesasComponent {
         setParamsToObject(params, this.pagination, 'entidadId')
         setParamsToObject(params, this.pagination, 'ubigeo')
         setParamsToObject(params, this.pagination, 'entidadUbigeoId')        
-      }
-      setTimeout(() => {
+
         this.obtenerMesasService()
-      }, 500);
     })
   }
 
   getPermissions() {
     const navigation = this.authStore.navigationAuth()!
     const atenciones = navigation.find(nav => nav.descripcionItem == 'Mesas')
-    this.mesasActions = obtenerPermisosBotones(atenciones!.botones!)    
+    this.mesasActions = atenciones && atenciones.botones ? obtenerPermisosBotones(atenciones!.botones!) : {}
   }
 
   setPermisosPCM(){
@@ -200,7 +203,7 @@ export default class MesasComponent {
 
   reporteIntervencion(){
     this.loadingExport = true;
-    const pagination: Pagination = { origenId: '1' }
+    this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '1' })
     this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '1' })
       .subscribe( resp => {
         if(resp.data){

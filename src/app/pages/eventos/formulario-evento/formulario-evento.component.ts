@@ -5,13 +5,14 @@ import { EventoEstadoEnum } from '@core/enums';
 import { convertDateStringToDate, convertEnumToObject, typeErrorControl } from '@core/helpers';
 import { DataModalEvento, EventoResponse, ItemEnum, Pagination, SubTipoResponse, TipoEventoResponse } from '@core/interfaces';
 import { SubTipoService, TipoEventosService } from '@core/services';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-formulario-evento',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule],
+  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule, NgZorroModule],
   templateUrl: './formulario-evento.component.html',
   styles: ``
 })
@@ -39,14 +40,15 @@ export class FormularioEventoComponent {
     subTipoId: [ null, Validators.required ],
     codigoTipoEvento: [ null, Validators.required ],
     verificaAsistentes: [ true, Validators.required ],
+    primeraTarea: [ false, Validators.required ],
   })
 
   ngOnInit(): void {
    this.estados = this.estados.map(item => ({ ...item, text: item.value.toLowerCase() }))    
     if(!this.create){
       const evento = this.evento()
-      const fechaEvento = convertDateStringToDate(evento.fechaEvento!)
-      const fechaFinEvento = convertDateStringToDate(evento.fechaFinEvento!)
+      const fechaEvento = evento.fechaEvento ? convertDateStringToDate(evento.fechaEvento!) : null
+      const fechaFinEvento = evento.fechaFinEvento ? convertDateStringToDate(evento.fechaFinEvento!) : null
       this.formEvento.reset({...evento, fechaEvento, fechaFinEvento})
     }
     this.obtenerSubTiposService()

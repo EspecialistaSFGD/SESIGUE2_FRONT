@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventoResponse, EventoSectorResponse, IntervencionEspacioResponse, Pagination } from '@core/interfaces';
+import { ButtonsActions, EventoResponse, EventoSectorResponse, IntervencionEspacioResponse, IntervencionSituacionResponse, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
-import { EventoSectoresService, EventosService, IntervencionEspacioService } from '@core/services';
+import { EventoSectoresService, EventosService, IntervencionEspacioService, IntervencionSituacionService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { UtilesService } from '@libs/shared/services/utiles.service';
@@ -12,20 +12,35 @@ import saveAs from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
+import { IntervencionDetalleComponent } from '../../intervenciones/intervencion-detalles/intervencion-detalle/intervencion-detalle.component';
+import { FormSituacionIntervencionComponent } from '../../intervenciones/situaciones-intervencion/form-situacion-intervencion/form-situacion-intervencion.component';
 import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
+import { MessageService } from 'primeng/api';
+import { getDateFormat, obtenerPermisosBotones } from '@core/helpers';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { SituacionesIntervencionComponent } from '../../intervenciones/situaciones-intervencion/situaciones-intervencion.component';
 
 @Component({
   selector: 'app-agendas-evento',
   standalone: true,
-  imports: [CommonModule, PipesModule, EventoDetalleComponent, NgZorroModule, BotonComponent],
+  imports: [CommonModule, PipesModule, EventoDetalleComponent, NgZorroModule, BotonComponent, IntervencionDetalleComponent, PrimeNgModule],
+  providers: [MessageService],
   templateUrl: './agendas-evento.component.html',
   styles: ``
 })
 export default class AgendasEventoComponent {
   evento: EventoResponse = {} as EventoResponse
+  intervencionEspacio: IntervencionEspacioResponse = {} as IntervencionEspacioResponse
   
   intervencionesEspacios = signal<IntervencionEspacioResponse[]>([])
   eventosSectores = signal<EventoSectorResponse[]>([])
+
+  eventosAgendaActions: ButtonsActions = {}
+  intervencionActions: ButtonsActions = {}
+  intervencionSituacionesActions: ButtonsActions = {}
+  eventosActions: ButtonsActions = {}
+  permisosPCM: boolean = false
+  perfilAuth: number = 0
 
   eventoId:number = 0
   esSsfgd:boolean = false
@@ -36,7 +51,7 @@ export default class AgendasEventoComponent {
   pagination: Pagination = {
     columnSort: 'fechaRegistro',
     typeSort: 'DESC',
-    pageSize: 10,
+    pageSize: 5,
     origenId: '0',    
     currentPage: 1
   }
@@ -46,12 +61,15 @@ export default class AgendasEventoComponent {
   private authStore = inject(AuthService)
   private eventoService = inject(EventosService)
   private intervencionEspaciosServices = inject(IntervencionEspacioService)
+  private intervencionSituacionService = inject(IntervencionSituacionService)
   private eventoSectorService = inject(EventoSectoresService)
   private utilesService = inject(UtilesService);
   private modal = inject(NzModalService);
+  private messageService = inject(MessageService)
 
   ngOnInit(): void {
     this.getPermisosPCM()
+    this.getPermissions()
     this.verificarEvento()
     this.obtenerEventoSectoresServices()
   }
@@ -63,6 +81,26 @@ export default class AgendasEventoComponent {
 
     const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
     return JSON.parse(permisosStorage) ?? false
+  }
+
+  getPermissions() {
+    const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
+
+    const menu = navigation.find((nav) => nav.descripcionItem.toLowerCase() == 'espacios')
+    if(menu && menu.botones){
+      this.eventosActions = obtenerPermisosBotones(menu!.botones!)
+      const navLevel =  menu!.children!
+      const mesaAgendaNav = navLevel.find(nav => nav.descripcionItem?.toLowerCase() == 'evento agendas')
+      this.eventosAgendaActions = mesaAgendaNav && mesaAgendaNav.botones ? obtenerPermisosBotones(mesaAgendaNav!.botones!) : {}
+    }
+
+    const intervencionesNav = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'intervenciones')
+    if(intervencionesNav?.botones){
+      this.intervencionActions = obtenerPermisosBotones(intervencionesNav!.botones!)
+      const navIntervencion =  intervencionesNav!.children!
+      const eventoAgendaNav = navIntervencion.find(nav => nav.descripcionItem?.toLowerCase() == 'intervencion situaciones')
+      this.intervencionSituacionesActions = eventoAgendaNav && eventoAgendaNav.botones ? obtenerPermisosBotones(eventoAgendaNav!.botones!) : {}
+    }
   }
 
   verificarEvento(){
@@ -122,8 +160,9 @@ export default class AgendasEventoComponent {
   }
 
   reporteIntervencion(){
+    const eventoId = this.evento.eventoId
     this.loadingExport = true;
-    this.intervencionEspaciosServices.reporteIntervencionEspacios(this.pagination)
+    this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '0', eventoId })
       .subscribe( resp => {
         if(resp.data){
           const data = resp.data;
@@ -137,6 +176,77 @@ export default class AgendasEventoComponent {
     const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
     const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, nombreArchivo);
+  }
+
+  verSituaciones(intervencionEspacio: IntervencionEspacioResponse){
+    this.modal.create<SituacionesIntervencionComponent>({
+        nzTitle: `Situaciones`,
+        nzWidth: '60%',
+        nzContent: SituacionesIntervencionComponent,
+        nzData: { intervencionEspacio },
+        nzFooter: [
+          {
+            label: 'Cerrar',
+            type: 'default',
+            onClick: () => this.modal.closeAll(),
+          },
+        ]
+      })
+  }
+
+  intervencionSituacionFormModel(intervencionEspacio: IntervencionEspacioResponse){
+    const create: boolean = true
+    this.modal.create<FormSituacionIntervencionComponent>({
+          nzTitle: `Crear situación`,
+          nzWidth: '60%',
+          nzMaskClosable: false,
+          nzContent: FormSituacionIntervencionComponent,
+          nzData: { create, intervencionEspacio },
+          nzFooter: [
+            {
+              label: 'Cancelar',
+              type: 'default',
+              onClick: () => this.modal.closeAll(),
+            },
+            {
+              label: 'Crear situación',
+              type: 'primary',
+              onClick: (componentResponse) => {
+                const formIntervencionSituacion = componentResponse!.formIntervencionSituacion
+    
+                if (formIntervencionSituacion.invalid) {
+                  const invalidFields = Object.keys(formIntervencionSituacion.controls).filter(field => formIntervencionSituacion.controls[field].invalid);
+                  console.error('Invalid fields:', invalidFields);
+                  return formIntervencionSituacion.markAllAsTouched();
+                }
+
+                const usuarioId = localStorage.getItem('codigoUsuario')!
+                const intervencionId = intervencionEspacio.intervencionId
+                const fecha = getDateFormat(formIntervencionSituacion.get('fecha')?.value, 'month')
+                const bodyIntervencionSituacion: IntervencionSituacionResponse = { ...formIntervencionSituacion.value, fecha, usuarioId, intervencionId }
+                if(create){
+                  this.crearIntervencionSituacionService(bodyIntervencionSituacion)
+                }
+              }
+            }
+          ]
+        })
+  }
+
+  crearIntervencionSituacionService(intervencionService: IntervencionSituacionResponse){
+    this.intervencionSituacionService.registarIntervencionTareaAvance(intervencionService)
+      .subscribe( resp => {
+        if(resp.success == true){
+          this.messageService.add({ severity: 'success', summary: 'Situacion guardada', detail: "La situacion se ha guardado con exito" });
+          this.modal.closeAll()
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
+        }
+      })
+  }
+
+  detalleIntervencionEspacio(intervencionEspacio: IntervencionEspacioResponse){
+    this.intervencionEspacio = intervencionEspacio
   }
 
   crearIntervencion(){
@@ -155,6 +265,7 @@ export default class AgendasEventoComponent {
           nzTitle: `${action.toUpperCase()}`,
           nzWidth: '50%',
           nzContent: FormularioIntervencionComponent,
+          nzMaskClosable: false,
           nzData: {
             create,
             // origen: { origen: 'acuerdos', interaccionId: this.eventoId.toString(), eventoId: this.eventoId.toString() },

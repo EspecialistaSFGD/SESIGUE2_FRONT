@@ -74,18 +74,15 @@
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
-			<div *ngIf="mesasAgendaActions.new && permisosPCM" class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-red-700 border-red-700 text-white hover:bg-red-900" (click)="procesarIntervencion()">
-				<span nz-icon nzType="sync" nzTheme="outline"></span>
+			<!-- <div class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-red-700 border-red-700 text-white hover:bg-red-900">
+				<i class="pi pi-sync"></i>
 				Procesar
-			</div>
-			<button *ngIf="mesasAgendaActions.report" nz-button nzType="default" [nzLoading]="loadingExport" (click)="reporteIntervencion()">
-				<span nz-icon nzType="file-excel"></span>
-				<span class="button-text">Exportar</span>
-			</button>
-			<div *ngIf="mesasAgendaActions.new" class="flex gap-1 py-1 px-4 border rounded cursor-pointer bg-sky-700 border-sky-700 text-white hover:bg-sky-900"  (click)="crearIntervencion()">
-				<span nz-icon nzType="plus" nzTheme="outline"></span>
-				Nueva intervencion
-			</div>
+			</div> -->
+			<app-boton *ngIf="mesasAgendaActions.new && permisosPCM" [icono]="'sync'" [color]="'red'" [stepColor]="700" [texto]="'Procesar'"  (click)="procesarIntervencion()"/>
+
+			<app-boton *ngIf="mesasAgendaActions.report" [icono]="'file-excel'" tooltip="{{'Exportar intervenciones de la mesa: ' + mesa().abreviatura}}" [texto]="loadingExport ? 'Exportando...' : 'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
+
+			<app-boton *ngIf="mesasAgendaActions.new" [icono]="'plus'" tooltip="Nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearIntervencion()"/>
 		</div>
 	  </div>
 </ng-template>

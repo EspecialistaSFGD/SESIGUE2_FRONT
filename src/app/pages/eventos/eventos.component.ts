@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { EventoResponse, Pagination, TipoEventoResponse } from '@core/interfaces';
-import { EventosService } from '@core/services';
+import { ButtonsActions, EventoResponse, Pagination, TipoEventoResponse, UsuarioNavigation } from '@core/interfaces';
+import { EventosService, IntervencionEspacioService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { EstadoTagComponent } from '@shared/estado-tag/estado-tag.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltroEventosComponent } from './filtro-eventos/filtro-eventos.component';
-import { deleteKeysToObject, getDateFormat, setParamsToObject } from '@core/helpers';
+import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { distinctUntilChanged, filter } from 'rxjs';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioEventoComponent } from './formulario-evento/formulario-evento.component';
@@ -16,11 +16,12 @@ import { MessageService } from 'primeng/api';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 
 @Component({
   selector: 'app-eventos',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, RouterModule, NgZorroModule, PrimeNgModule, EstadoTagComponent, FiltroEventosComponent],
+  imports: [CommonModule, PageHeaderComponent, RouterModule, NgZorroModule, PrimeNgModule, EstadoTagComponent, FiltroEventosComponent, BotonComponent],
   providers: [MessageService],
   templateUrl: './eventos.component.html',
   styles: ``
@@ -29,6 +30,8 @@ export default class EventosComponent {
   loading: boolean = false
   openFilters: boolean = false
   loadingExport: boolean = false
+
+  eventosActions: ButtonsActions = {}
 
   pagination: Pagination = {
     columnSort: 'eventoId',
@@ -49,11 +52,19 @@ export default class EventosComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private modal = inject(NzModalService);
-  private messageService = inject(MessageService)
+  private intervencionEspaciosServices = inject(IntervencionEspacioService)
+  private messageService = inject(MessageService)  
   private utilesService = inject(UtilesService);
 
   ngOnInit(): void {
     this.getParams()
+    this.getPermissions()
+  }
+
+  getPermissions() {
+    const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
+    const eventosNav = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'espacios')    
+    this.eventosActions = eventosNav && eventosNav.botones ? obtenerPermisosBotones(eventosNav!.botones!) : {}
   }
 
   getParams() {
@@ -130,6 +141,18 @@ export default class EventosComponent {
     );
   }
 
+  reporteIntervencion(){
+    this.loadingExport = true;
+    this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '0' })
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+        }
+        this.loadingExport = false
+      })
+  }
+
   reporteEventos(){
     this.loadingExport = true;
 
@@ -158,7 +181,7 @@ export default class EventosComponent {
     this.eventoFormModal(evento)
   }
 
-  eventoFormModal(evento: EventoResponse, create: boolean = true){
+  eventoFormModal(evento: EventoResponse, create: boolean = true){    
     const action = `${create ? 'Crear' : 'Actualizar' } Espacio`
     this.modal.create<FormularioEventoComponent>({
       nzTitle: `${action.toUpperCase()}`,
