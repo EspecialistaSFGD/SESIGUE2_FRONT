@@ -74,7 +74,11 @@
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
-			<app-boton *ngIf="mesasAgendaActions.new && permisosPCM" [icono]="'sync'" color="red" [stepColor]="700" [texto]="'Procesar'"  (click)="procesarIntervencion()"/>
+			<!-- <div class="flex gap-1 py-1 px-8 border rounded cursor-pointer bg-red-700 border-red-700 text-white hover:bg-red-900">
+				<i class="pi pi-sync"></i>
+				Procesar
+			</div> -->
+			<app-boton *ngIf="mesasAgendaActions.new && permisosPCM" [icono]="'sync'" [color]="'red'" [stepColor]="700" [texto]="'Procesar'"  (click)="procesarIntervencion()"/>
 
 			<app-boton *ngIf="mesasAgendaActions.report" [icono]="'file-excel'" tooltip="{{'Exportar intervenciones de la mesa: ' + mesa().abreviatura}}" [texto]="loadingExport ? 'Exportando...' : 'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
 
