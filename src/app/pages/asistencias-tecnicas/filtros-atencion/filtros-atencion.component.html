@@ -59,7 +59,15 @@
         
         <div class="flex flex-col">
           <label for="departamento">Tipo de atención</label>
-          <p-dropdown 
+          <p-multiSelect
+          [options]="tipos"
+          formControlName="tipos"
+          optionLabel="text"
+          optionValue="value"
+          placeholder="Seleccionar tipos"
+          (onChange)="changeTipoAtencion()"
+          />
+          <!-- <p-dropdown 
           [options]="tipos"
           formControlName="tipoAtencion"
           optionLabel="text"
@@ -67,10 +75,9 @@
           [showClear]="true" 
           placeholder="Seleccionar tipo de atencion"
           (onChange)="changeTipoAtencion()">
-          </p-dropdown>
+          </p-dropdown> -->
         </div>
       }
-
 
       <div class="flex flex-col">
         <label for="departamento">Departamento</label>
@@ -79,7 +86,8 @@
         formControlName="departamento"
         optionLabel="departamento"
         optionValue="departamentoId"
-        [showClear]="true" 
+        [showClear]="true"
+        [filter]="true"
         placeholder="Seleccionar departamento"
         (onChange)="changeDepartamento()"/>
       </div>
