@@ -16,15 +16,9 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
   styles: ``
 })
 export class FiltrosAtencionComponent {
-  // @Input() visible: boolean = false
   @Input() tipos!: ItemEnum[]
-  // @Input() pagination: Pagination = {}
   @Input() permisosPCM: boolean = false
 
-  // @Output() visibleDrawer = new EventEmitter()
-  // @Output() filters = new EventEmitter<Pagination>()
-  // @Output() export = new EventEmitter<boolean>()
-  // @Output() save = new EventEmitter<boolean>()
 
   @Input() visible: boolean = false
   @Input() pagination: any = {}
@@ -55,7 +49,7 @@ export class FiltrosAtencionComponent {
     fechaInicio: [null],
     fechaFin: [null],
     tipoEntidad: [null],
-    tipoAtencion: [null],
+    tipos: [[]],
     ubigeo: [null],
     departamento: [null],
     provincia: [{ value: null, disabled: true }],
@@ -120,11 +114,7 @@ export class FiltrosAtencionComponent {
   }
   
   getAllTipoEntidades() {    
-    this.pagination.columnSort = 'nombre'
-    this.tipoEntidadService.getAllTipoEntidades(this.pagination)
-      .subscribe(resp => {
-        this.tipoEntidades.set(resp.data)
-      })
+    this.tipoEntidadService.getAllTipoEntidades({...this.pagination, columnSort: 'nombre'}).subscribe(resp => this.tipoEntidades.set(resp.data))
   }
 
   obtenerServiciosEventos() {
@@ -297,7 +287,7 @@ export class FiltrosAtencionComponent {
     const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value) : null
     const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value) : null
 
-    const formValue = { ...this.formFilters.value }   
+    const formValue = { ...this.formFilters.value }  
 
     this.filters.emit({...formValue, fechaInicio, fechaFin })
   }

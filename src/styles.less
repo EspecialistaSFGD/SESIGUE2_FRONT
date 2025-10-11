@@ -260,8 +260,66 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
 .text-danger {
     @apply text-rose-500;
 }
+p-multiselect{
+    @apply block border border-gray-400 hover:border-gray-500 rounded-md bg-white text-gray-700 hover:shadow-none focus:shadow-none;
+    .p-multiselect{
+        @apply rounded-md w-full hover:shadow-none focus:shadow-none;
+        .p-multiselect-label-container{
+            @apply w-full text-sm py-2 px-2;
+            .p-multiselect-label{
+                @apply p-0;
+                &.p-placeholder{
+                    @apply text-gray-400;
+                }
+            }
+        }
+        .p-multiselect-panel{
+             @apply border border-solid border-gray-400 rounded-md;
+             .p-multiselect-header{
+                @apply p-2 bg-slate-100;
+                .p-checkbox{
+                    .p-checkbox-box{
+                        @apply border border-slate-400 hover:shadow-none focus:shadow-none;
+                        &.p-highlight{
+                            @apply bg-sky-700 border-sky-700;
+                        }
+                    }
+                }
+
+                .p-multiselect-filter-container{
+                    .p-multiselect-filter{
+                        @apply text-sm py-1 px-3 border border-gray-400 hover:border-gray-500 hover:shadow-none focus:shadow-none;
+                    }
+                }
+             }
+             .p-multiselect-items-wrapper{
+                .p-multiselect-items{
+                    @apply m-0 p-0;
+                    .p-multiselect-item{
+                        @apply p-2 text-sm;
+                        &.p-focus{
+                            @apply bg-slate-100;
+                        }
+                        .p-checkbox{
+                            .p-checkbox-box{
+                                @apply border border-slate-400;
+                                &.p-highlight{
+                                    @apply bg-sky-600 border-sky-600;
+                                }
+                            }
+                        }
+                    }
+                    .p-multiselect-empty-message{
+                        @apply text-sm py-2 px-4 text-gray-400;
+                    }
+                }
+             }
+        }
+    }
+}
 p-dropdown {
     @apply block border border-gray-400 hover:border-gray-500 rounded-md bg-white text-gray-700 hover:shadow-none focus:shadow-none;
+    
     .p-dropdown-clearable, .p-dropdown{
         @apply rounded-md w-full hover:shadow-none focus:shadow-none;
         .p-inputtext{
@@ -285,6 +343,15 @@ p-dropdown {
         }
         .p-dropdown-panel{
             @apply border border-solid border-gray-400 rounded-md;
+            .p-dropdown-header{
+                @apply p-2 bg-slate-100;
+                .p-dropdown-filter{
+                    @apply py-1 px-3 border border-gray-400 hover:border-gray-500 hover:shadow-none focus:shadow-none;
+                }
+                .p-dropdown-filter-icon{
+                    @apply text-base;
+                }
+            }
             .p-dropdown-items{
                 @apply p-0 m-0;
                 .p-dropdown-item {
@@ -295,6 +362,9 @@ p-dropdown {
                 }
                 .p-dropdown-empty-message{
                     @apply px-2 py-1 text-gray-400;
+                }
+                .p-dropdown-empty-message{
+                    @apply text-sm py-2 px-4 text-gray-400;
                 }
             }
         }

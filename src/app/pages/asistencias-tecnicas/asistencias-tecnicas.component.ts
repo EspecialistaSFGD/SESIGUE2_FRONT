@@ -131,7 +131,7 @@ export default class AsistenciasTecnicasComponent {
         this.setPaginationValueToParams(params, 'sectorId')
         this.setPaginationValueToParams(params, 'fechaInicio')
         this.setPaginationValueToParams(params, 'fechaFin')
-        this.setPaginationValueToParams(params, 'tipoAtencion')
+        this.setPaginationValueToParams(params, 'tipos')
         this.setPaginationValueToParams(params, 'ubigeo')
      
         this.obtenerAsistenciasTecnicas()
@@ -157,7 +157,7 @@ export default class AsistenciasTecnicasComponent {
   }
 
   obtenerAsistenciasTecnicas() {  
-    this.loading = true
+    this.loading = true    
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas({...this.pagination })
       .subscribe(resp => {                
         this.loading = false
