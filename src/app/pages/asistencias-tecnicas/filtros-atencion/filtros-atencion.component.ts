@@ -291,14 +291,7 @@ export class FiltrosAtencionComponent {
     const tiposData: string[] = tiposControl?.value
     let tipos = tiposData.length > 0 ? tiposControl?.value : null
 
-    const formValue = { ...this.formFilters.value, fechaInicio, fechaFin, tipos }
-
-    // const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito','tipoEntidad','unidadOrganica','especialista']
-    // const params = deleteKeysToObject(formValue, paramsInvalid)
-    // const pagination = deleteKeyNullToObject(params)
-    // localStorage.setItem('filtrosAtenciones', JSON.stringify(formValue))
-
-    this.filters.emit(formValue)
+    this.filters.emit({...this.formFilters.value, fechaInicio, fechaFin, tipos})
   }
 
   cleanParams(){
