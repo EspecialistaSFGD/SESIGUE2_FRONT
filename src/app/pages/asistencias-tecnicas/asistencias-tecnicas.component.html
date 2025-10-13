@@ -108,4 +108,4 @@
   </ng-template>
 </div>
 
-<app-filtros-atencion *ngIf="filtrosVisible" [visible]="filtrosVisible" [pagination]="pagination" (visibleDrawer)="filtrosVisible = false" [permisosPCM]="permisosPCM" [tipos]="tipos" (save)="saveFilters($event)" (filters)="generateFilters($event)"/>
+<app-filtros-atencion *ngIf="filtrosVisible" [visible]="filtrosVisible" [pagination]="pagination" (visibleDrawer)="filtrosVisible = false" [permisosPCM]="permisosPCM" [tipos]="tipos" (filters)="generateFilters($event)"/>
