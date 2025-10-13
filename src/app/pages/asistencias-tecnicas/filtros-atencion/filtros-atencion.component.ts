@@ -285,8 +285,8 @@ export class FiltrosAtencionComponent {
     const fechaFinControl = this.formFilters.get('fechaFin')
     const tiposControl = this.formFilters.get('tipos')
     
-    const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value,'month') : null
-    const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value,'month') : null
+    const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value) : null
+    const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value) : null
 
     let tipos = null
     if(tiposControl?.value){
@@ -326,8 +326,8 @@ export class FiltrosAtencionComponent {
   saveFilter(){
     const fechaInicioControl = this.formFilters.get('fechaInicio')
     const fechaFinControl = this.formFilters.get('fechaFin')
-     const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value,'month') : null
-    const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value,'month') : null
+     const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value) : null
+    const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value) : null
 
       const pagination = deleteKeyNullToObject(this.formFilters.value)
       saveFilterStorage({...pagination, fechaInicio, fechaFin},'filtrosAtenciones','asistenciaId','DESC')
