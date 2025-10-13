@@ -285,13 +285,26 @@ export class FiltrosAtencionComponent {
     const fechaFinControl = this.formFilters.get('fechaFin')
     const tiposControl = this.formFilters.get('tipos')
     
-    const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value) : null
-    const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value) : null
+    const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value,'month') : null
+    const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value,'month') : null
 
-    const tiposData: string[] = tiposControl?.value
-    let tipos = tiposData.length > 0 ? tiposControl?.value : null
+    let tipos = null
+    if(tiposControl?.value){
+      const tiposData: string[] = tiposControl?.value
+      tipos = tiposData.length > 0 ? tiposControl?.value : null
+    }
 
-    this.filters.emit({...this.formFilters.value, fechaInicio, fechaFin, tipos})
+    // const formValue = { ...this.formFilters.value, fechaInicio, fechaFin, tipos }
+
+    // const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito','tipoEntidad','unidadOrganica','especialista']
+    // const params = deleteKeysToObject(formValue, paramsInvalid)
+    // const pagination = deleteKeyNullToObject(params)
+    // localStorage.setItem('filtrosAtenciones', JSON.stringify(formValue))
+
+    console.log(fechaInicio)
+    console.log(fechaFin)
+
+    this.filters.emit({ ...this.formFilters.value, fechaInicio, fechaFin, tipos })
   }
 
   cleanParams(){
@@ -311,8 +324,13 @@ export class FiltrosAtencionComponent {
   }
 
   saveFilter(){
+    const fechaInicioControl = this.formFilters.get('fechaInicio')
+    const fechaFinControl = this.formFilters.get('fechaFin')
+     const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value,'month') : null
+    const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value,'month') : null
+
       const pagination = deleteKeyNullToObject(this.formFilters.value)
-      saveFilterStorage(pagination,'filtrosAtenciones','asistenciaId','DESC')
+      saveFilterStorage({...pagination, fechaInicio, fechaFin},'filtrosAtenciones','asistenciaId','DESC')
       this.changeVisibleDrawer()
     }
 }
