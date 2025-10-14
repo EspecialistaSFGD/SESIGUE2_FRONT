@@ -187,12 +187,12 @@ export class FiltroIntervencionesComponent {
 
   saveFilter(){
     const pagination = deleteKeyNullToObject(this.formIntervencionFilters.value)
-    saveFilterStorage(pagination,'filtrosIntervenciones','intervencionEspacioId','DESC')
+    saveFilterStorage(pagination,'filtrosMesaIntervenciones','intervencionEspacioId','DESC')
     this.changeVisibleDrawer()
   }
   
   cleanParams(){
-    localStorage.removeItem('filtrosIntervenciones');
+    localStorage.removeItem('filtrosMesaIntervenciones');
     this.formIntervencionFilters.reset()
     this.generateFilters()
     this.changeVisibleDrawer()
@@ -203,9 +203,7 @@ export class FiltroIntervencionesComponent {
   }
 
   generateFilters(){ 
-    const formValue = { ...this.formIntervencionFilters.value }    
-    console.log(formValue);
-    
-    // this.filters.emit(formValue)
+    const formValue = { ...this.formIntervencionFilters.value }  
+    this.filters.emit(formValue)
   }
 }
