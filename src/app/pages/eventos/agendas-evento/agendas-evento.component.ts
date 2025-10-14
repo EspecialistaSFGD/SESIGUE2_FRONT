@@ -41,6 +41,7 @@ export default class AgendasEventoComponent {
   eventosActions: ButtonsActions = {}
   permisosPCM: boolean = false
   perfilAuth: number = 0
+  sectorAuth: number = 0
 
   eventoId:number = 0
   esSsfgd:boolean = false
@@ -68,7 +69,8 @@ export default class AgendasEventoComponent {
   private messageService = inject(MessageService)
 
   ngOnInit(): void {
-    this.getPermisosPCM()
+    // this.getPermisosPCM()
+    this.permisosPCM = this.getPermisosPCM()
     this.getPermissions()
     this.verificarEvento()
     this.obtenerEventoSectoresServices()
@@ -76,6 +78,7 @@ export default class AgendasEventoComponent {
   
   getPermisosPCM(){
     const perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value) ?? 0
     const ssfgdPCM = [11,12,23]
     this.esSsfgd = ssfgdPCM.includes(perfilAuth)
 
@@ -137,7 +140,11 @@ export default class AgendasEventoComponent {
 
   obtenerIntervencionEspacioService(){
     this.loading = true
-    this.intervencionEspaciosServices.ListarIntervencionEspacios({...this.pagination })
+    const pagination: Pagination = { ...this.pagination }
+    if(!this.permisosPCM){
+      pagination.sectorId = this.sectorAuth
+    }
+    this.intervencionEspaciosServices.ListarIntervencionEspacios(pagination)
       .subscribe( resp => {           
         this.loading = false
         this.intervencionesEspacios.set(resp.data)

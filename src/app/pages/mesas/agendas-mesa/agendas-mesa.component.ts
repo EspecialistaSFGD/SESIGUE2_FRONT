@@ -38,6 +38,7 @@ export default class AgendasMesaComponent {
   mesasActions: ButtonsActions = {}
   permisosPCM: boolean = false
   perfilAuth: number = 0
+  sectorAuth: number = 0
 
   fechaSincronizacion: string = ''
 
@@ -74,6 +75,8 @@ export default class AgendasMesaComponent {
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value) ?? 0
+
     this.permisosPCM = this.setPermisosPCM()
     this.getPermissions()
     this.verificarMesa()
@@ -191,7 +194,11 @@ export default class AgendasMesaComponent {
 
   obtenerIntervencionEspacioService(){
     this.loading = true
-    this.intervencionEspaciosServices.ListarIntervencionEspacios({...this.pagination })
+    const pagination: Pagination = { ...this.pagination }
+    if(!this.permisosPCM){
+      pagination.sectorId = this.sectorAuth
+    }
+    this.intervencionEspaciosServices.ListarIntervencionEspacios(pagination)
       .subscribe( resp => {           
         this.loading = false
         this.intervencionesEspacios.set(resp.data)
