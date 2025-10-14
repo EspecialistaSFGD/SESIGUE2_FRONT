@@ -5,6 +5,7 @@ import { EventoResponse, Pagination, SectorResponse, TipoEntidadResponse, TipoEv
 import { EntidadesService, EventosService, SectoresService, TipoEntidadesService, TipoEventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-intervencion-panel-filtros',
@@ -22,6 +23,8 @@ export class IntervencionPanelFiltrosComponent {
 
   private timeout: any;
 
+  sectorAuth: number = 0
+  permisosPcm: boolean = false
   sectores = signal<SectorResponse[]>([])
   tiposEventos = signal<TipoEventoResponse[]>([])
   eventos = signal<EventoResponse[]>([])
@@ -38,6 +41,7 @@ export class IntervencionPanelFiltrosComponent {
   private tipoEntidadService = inject(TipoEntidadesService)
   private entidadService = inject(EntidadesService)
   private validatorService = inject(ValidatorService)
+  private authStore = inject(AuthService)
 
   formFilterPanel: FormGroup = this.fb.group({
     tipoEspacioId: [{ value: null, disabled: true}],
@@ -68,10 +72,26 @@ export class IntervencionPanelFiltrosComponent {
   }
 
   ngOnInit(): void {
+    this.setPermisosPCM()
+    this.setParams()
     this.obtenerSectoresServices()
     this.obtenerDepartamentoServices()
     this.obtenerTipoEventoServices()
     this.obtenerTipoEntidadesService()
+  }
+
+  setPermisosPCM(){
+    this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value) ?? 0
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    this.permisosPcm = JSON.parse(permisosStorage) ?? false
+  }
+
+  setParams(){
+    const sectorIdControl = this.formFilterPanel.get('sectorId')
+    if(!this.permisosPcm){
+      this.formFilterPanel.get('sectorId')?.setValue(this.sectorAuth ?? null)
+      sectorIdControl?.disable()
+    }    
   }
 
   obtenerSectoresServices(){

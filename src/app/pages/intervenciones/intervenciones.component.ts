@@ -12,6 +12,7 @@ import { IntervencionPanelNivelGobiernoComponent } from './intervencionPanel/int
 import { IntervencionPanelSectorComponent } from './intervencionPanel/intervencion-panel-sector/intervencion-panel-sector.component';
 import { IntervencionPanelUbigeoComponent } from './intervencionPanel/intervencion-panel-ubigeo/intervencion-panel-ubigeo.component';
 import { IntervencionPanelFiltrosComponent } from "./intervencionPanel/intervencion-panel-filtros/intervencion-panel-filtros.component";
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-intervenciones',
@@ -23,17 +24,31 @@ import { IntervencionPanelFiltrosComponent } from "./intervencionPanel/intervenc
 export default class IntervencionesComponent {
   title: string = `Intervenciones`;
 
+  sectorAuth: number = 0
+  permisosPcm: boolean = false
+
   pagination: Pagination = { tipoEspacioId: '2' }
   filter = signal<Pagination>({ tipoEspacioId: '2' })
   intervenciones = signal<IntervencionPanel>({})
 
   private intervencionService = inject(IntervencionService)
+  private authStore = inject(AuthService)
 
   ngOnInit(): void {
+    this.setPermisosPCM()
     this.obtenerIntervencionPanelService()
   }
 
+  setPermisosPCM(){
+    this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value) ?? 0
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    this.permisosPcm = JSON.parse(permisosStorage) ?? false
+  }
+
   obtenerIntervencionPanelService(){
+    if(!this.permisosPcm){
+      this.pagination.sectorId = this.sectorAuth
+    }
     this.intervencionService.ListarIntervencionEtapas(this.pagination).subscribe( resp => this.intervenciones.set(resp.data))
   }
 
