@@ -130,7 +130,7 @@ export default class AgendasMesaComponent {
         this.pagination.pageSize = params['cantidad']
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
 
-        setParamsToObject(params, this.pagination, 'codigo')
+        setParamsToObject(params, this.pagination, 'cui')
         setParamsToObject(params, this.pagination, 'ubigeo')
         setParamsToObject(params, this.pagination, 'entidadUbigeoId')
 
