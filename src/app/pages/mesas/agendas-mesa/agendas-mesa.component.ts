@@ -16,11 +16,12 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 import { MesaDetalleComponent } from '../mesa-detalles/mesa-detalle/mesa-detalle.component';
+import { FiltroIntervencionesComponent } from '../../intervenciones/filtro-intervenciones/filtro-intervenciones.component';
 
 @Component({
   selector: 'app-agendas-mesa',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule, MesaDetalleComponent, BotonComponent],
+  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule, MesaDetalleComponent, BotonComponent, FiltroIntervencionesComponent],
   templateUrl: './agendas-mesa.component.html',
   styles: ``
 })
@@ -33,6 +34,7 @@ export default class AgendasMesaComponent {
   sectores:number[] = []
   ubigeos:string[] = []
   loadingExport: boolean = false
+  openFilters: boolean = false
 
   mesasAgendaActions: ButtonsActions = {}
   mesasActions: ButtonsActions = {}

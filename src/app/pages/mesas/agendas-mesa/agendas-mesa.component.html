@@ -80,9 +80,13 @@
 			</div> -->
 			<app-boton *ngIf="mesasAgendaActions.new && permisosPCM" [icono]="'sync'" [color]="'red'" [stepColor]="700" [texto]="'Procesar'"  (click)="procesarIntervencion()"/>
 
+			<app-boton *ngIf="mesasAgendaActions.report" [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+
 			<app-boton *ngIf="mesasAgendaActions.report" [icono]="'file-excel'" tooltip="{{'Exportar intervenciones de la mesa: ' + mesa().abreviatura}}" [texto]="loadingExport ? 'Exportando...' : 'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
 
 			<app-boton *ngIf="mesasAgendaActions.new" [icono]="'plus'" tooltip="Nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearIntervencion()"/>
 		</div>
 	  </div>
 </ng-template>
+
+<app-filtro-intervenciones *ngIf="openFilters" [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" />
