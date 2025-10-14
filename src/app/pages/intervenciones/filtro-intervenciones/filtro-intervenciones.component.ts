@@ -31,7 +31,6 @@ export class FiltroIntervencionesComponent {
   private fb = inject(FormBuilder)
   private validatorsService = inject(ValidatorService)
   private ubigeosService = inject(UbigeosService)
-  private entidadesService = inject(EntidadesService)
 
   formIntervencionFilters:FormGroup = this.fb.group({
     cui: [ null ],
@@ -40,7 +39,6 @@ export class FiltroIntervencionesComponent {
     departamento: [null],
     provincia: [{ value: null, disabled: true }],
     distrito: [{ value: null, disabled: true }],
-    entidadUbigeoId: [null],
     ubigeo: [null]
   })
 
@@ -114,22 +112,19 @@ export class FiltroIntervencionesComponent {
     const provinciaControl = this.formIntervencionFilters.get('provincia')
     const distritoControl = this.formIntervencionFilters.get('distrito')
     const ubigeoControl = this.formIntervencionFilters.get('ubigeo')
-    const entidadUbigeoIdControl = this.formIntervencionFilters.get('entidadUbigeoId')
     let ubigeo = null 
     if(departamentoValue){
-      ubigeo = `${departamentoValue}0000`
+      ubigeo = departamentoValue
       provinciaControl?.enable()
       this.obtenerProvinciaService(departamentoValue)
-      this.obtenerEntidadUbigeoService(ubigeo) 
     } else {
       provinciaControl?.disable()
       provinciaControl?.reset()
-      entidadUbigeoIdControl?.reset()
     }
     ubigeoControl?.setValue(ubigeo)
     distritoControl?.disable()
     distritoControl?.reset()
-    this.filterUbigeoTime()
+    this.generateFilters()
   }
 
   obtenerProvinciaService(departamento: string){
@@ -144,18 +139,18 @@ export class FiltroIntervencionesComponent {
     const distritoControl = this.formIntervencionFilters.get('distrito')
     const ubigeoControl = this.formIntervencionFilters.get('ubigeo')
    
-    let ubigeo = `${departamentoValue}0000`
+    let ubigeo = departamentoValue
     if(provinciaValue){
       distritoControl?.enable()
       ubigeo = provinciaValue
       this.obtenerDistritosService(ubigeo)
+      ubigeo = ubigeo.slice(0,4)
     } else {
       distritoControl?.disable()
       distritoControl?.reset()
     }
-    ubigeoControl?.setValue(ubigeo)
-    this.obtenerEntidadUbigeoService(ubigeo)
-    this.filterUbigeoTime()    
+    ubigeoControl?.setValue(provinciaValue)
+    this.generateFilters()
   }
 
   obtenerDistritosService(provincia: string){
@@ -169,20 +164,9 @@ export class FiltroIntervencionesComponent {
     const ubigeoControl = this.formIntervencionFilters.get('ubigeo')
     const distritoValue = distritoControl?.value
 
-    let ubigeo = distritoValue ? distritoValue : provinciaValue
+    let ubigeo = distritoValue ? distritoValue : provinciaValue.slice(0,4)
     ubigeoControl?.setValue(ubigeo)
-    this.obtenerEntidadUbigeoService(ubigeo)
-    this.filterUbigeoTime()
-  }
-
-  obtenerEntidadUbigeoService(ubigeo: string){
-    const entidadUbigeoIdControl = this.formIntervencionFilters.get('entidadUbigeoId')
-    const pagination: Pagination = { ubigeo, columnSort: 'entidadId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
-    this.entidadesService.listarEntidades(pagination)
-      .subscribe( resp => {
-        const entidad = resp.data[0]
-        entidadUbigeoIdControl?.setValue(entidad ? entidad.entidadId : null)
-      })
+    this.generateFilters()
   }
 
   saveFilter(){
@@ -196,10 +180,6 @@ export class FiltroIntervencionesComponent {
     this.formIntervencionFilters.reset()
     this.generateFilters()
     this.changeVisibleDrawer()
-  }
-
-  filterUbigeoTime(){
-    setTimeout(() => this.generateFilters(), 500);
   }
 
   generateFilters(){ 
