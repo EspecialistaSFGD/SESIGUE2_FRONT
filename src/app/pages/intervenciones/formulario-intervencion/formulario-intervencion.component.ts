@@ -301,13 +301,24 @@ export class FormularioIntervencionComponent {
       })
   }
 
-  changeControl(event: any){
+  changeControl(event: Event){
+    const keyEvent = event as KeyboardEvent;
     const codigoAcuerdoControl = this.formIntervencionEspacio.get('codigoAcuerdo')
     const codigoAcuerdoValue = codigoAcuerdoControl?.value
 
     const slug = this.evento.abreviatura
     const startCodigo = `${slug}-`
     const cantidadSlug = startCodigo.length
+
+    if(((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.key.toLowerCase() === 'c')){
+      event.preventDefault();
+      return;
+    }
+
+    if (event.type === 'copy') {   
+      event.preventDefault();
+      return;
+    }
 
     if(codigoAcuerdoValue.length <= cantidadSlug){
       codigoAcuerdoControl?.setValue(startCodigo)
@@ -327,7 +338,7 @@ export class FormularioIntervencionComponent {
       return;
     }
     
-    if(event.key === 'Backspace' || event.key === 'Delete'){
+    if(keyEvent.key === 'Backspace' || keyEvent.key === 'Delete'){
       event.preventDefault();
       return;
     } else {
@@ -342,7 +353,7 @@ export class FormularioIntervencionComponent {
       clearTimeout(this.timeout);
       var $this = this;
       this.timeout = setTimeout(function () {
-        if ($this.validatorsService.codigoPattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || codigoAcuerdoValue.length > cantidadSlug) {
+        if ($this.validatorsService.codigoPattern.test(keyEvent.key) || keyEvent.key === 'Backspace' || keyEvent.key === 'Delete' || codigoAcuerdoValue.length > cantidadSlug) {
           $this.obtenerCodigoAcuerdo()
         }
       }, 500);    
@@ -528,6 +539,7 @@ export class FormularioIntervencionComponent {
       ubigeo = `${departamento}0000`
       provinciaControl?.enable()
       this.obtenerProvinciaServices(departamento)
+      this.obtenerEntidadService(ubigeo)
     } else {
       provinciaControl?.disable()
       provinciaControl?.reset()
@@ -535,7 +547,6 @@ export class FormularioIntervencionComponent {
 
     distritoControl?.disable()
     distritoControl?.reset()    
-    this.obtenerEntidadService(ubigeo)
   }
 
   obtenerProvinciaServices(departamento: string){
@@ -552,7 +563,7 @@ export class FormularioIntervencionComponent {
       distritoControl?.enable()
       this.obtenerDistritoServices(ubigeo)
     } else {
-      ubigeo = `${departamento.departamentoId}0000`
+      ubigeo = `${departamento}0000`
       distritoControl?.disable()
     }
     this.obtenerEntidadService(ubigeo)
