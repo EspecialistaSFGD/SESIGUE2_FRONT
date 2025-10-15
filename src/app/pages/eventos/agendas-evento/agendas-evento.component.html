@@ -81,6 +81,7 @@
 	  </div>
 </ng-template>
 
-<p-toast />
+<app-filtro-intervenciones *ngIf="openFilters" [visible]="openFilters" [esMesa]="true" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" />
 
+<p-toast />
 

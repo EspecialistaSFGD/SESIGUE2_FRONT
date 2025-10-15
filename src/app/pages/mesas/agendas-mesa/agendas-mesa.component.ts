@@ -178,9 +178,10 @@ export default class AgendasMesaComponent {
   }
 
   generateFilters(pagination: Pagination){
-    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total', 'departamento', 'provincia', 'distrito']
-    const params = deleteKeysToObject(pagination, paramsInvalid)
-    this.paramsNavigate(params)
+    // const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total', 'departamento', 'provincia', 'distrito']
+    // const params = deleteKeysToObject(pagination, paramsInvalid)
+    // this.paramsNavigate(params)
+    this.paramsNavigate(pagination)
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {

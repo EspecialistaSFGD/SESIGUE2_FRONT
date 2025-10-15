@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { deleteKeyNullToObject, saveFilterStorage } from '@core/helpers';
+import { deleteKeyNullToObject, deleteKeysToObject, saveFilterStorage } from '@core/helpers';
 import { Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
@@ -17,6 +17,8 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 })
 export class FiltroIntervencionesComponent {
   @Input() visible: boolean = false
+  @Input() esAcuerdo: boolean = false
+  @Input() esMesa: boolean = false
   @Input() pagination: any = {}
 
   @Output() filters = new EventEmitter<Pagination>();
@@ -171,12 +173,18 @@ export class FiltroIntervencionesComponent {
 
   saveFilter(){
     const pagination = deleteKeyNullToObject(this.formIntervencionFilters.value)
-    saveFilterStorage(pagination,'filtrosMesaIntervenciones','intervencionEspacioId','DESC')
+    let nameFilter = ''
+    if(this.esMesa){ nameFilter = 'filtrosMesaIntervenciones' }
+    if(this.esAcuerdo){ nameFilter = 'filtrosEventoIntervenciones' }
+    saveFilterStorage(pagination,nameFilter,'intervencionEspacioId','DESC')
     this.changeVisibleDrawer()
   }
   
   cleanParams(){
-    localStorage.removeItem('filtrosMesaIntervenciones');
+    let nameFilter = ''
+    if(this.esMesa){ nameFilter = 'filtrosMesaIntervenciones' }
+    if(this.esAcuerdo){ nameFilter = 'filtrosEventoIntervenciones' }
+    localStorage.removeItem(nameFilter);
     this.formIntervencionFilters.reset()
     this.generateFilters()
     this.changeVisibleDrawer()
@@ -184,6 +192,10 @@ export class FiltroIntervencionesComponent {
 
   generateFilters(){ 
     const formValue = { ...this.formIntervencionFilters.value }  
-    this.filters.emit(formValue)
+
+    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total', 'departamento', 'provincia', 'distrito']
+    const params = deleteKeysToObject(formValue, paramsInvalid)
+
+    this.filters.emit(params)
   }
 }
