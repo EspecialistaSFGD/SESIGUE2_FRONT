@@ -175,7 +175,11 @@ export class FiltroIntervencionesComponent {
     const pagination = deleteKeyNullToObject(this.formIntervencionFilters.value)
     let nameFilter = ''
     if(this.esMesa){ nameFilter = 'filtrosMesaIntervenciones' }
-    if(this.esAcuerdo){ nameFilter = 'filtrosEventoIntervenciones' }
+    if(this.esAcuerdo){ nameFilter = 'filtrosEspacioIntervenciones' }
+    console.log(nameFilter);
+    console.log(this.esMesa);
+    console.log(this.esAcuerdo);
+    
     saveFilterStorage(pagination,nameFilter,'intervencionEspacioId','DESC')
     this.changeVisibleDrawer()
   }
@@ -183,7 +187,7 @@ export class FiltroIntervencionesComponent {
   cleanParams(){
     let nameFilter = ''
     if(this.esMesa){ nameFilter = 'filtrosMesaIntervenciones' }
-    if(this.esAcuerdo){ nameFilter = 'filtrosEventoIntervenciones' }
+    if(this.esAcuerdo){ nameFilter = 'filtrosEspacioIntervenciones' }
     localStorage.removeItem(nameFilter);
     this.formIntervencionFilters.reset()
     this.generateFilters()

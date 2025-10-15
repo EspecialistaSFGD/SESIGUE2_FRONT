@@ -89,34 +89,6 @@ export default class AgendasMesaComponent {
   }
 
   getParams() {
-    // this.route.queryParams.subscribe(params => {
-      // this.loading = true
-    //   if (Object.keys(params).length > 0) {        
-    //     let campo = params['campo'] ?? 'intervencionEspacioId'
-
-    //     this.pagination.columnSort = campo
-    //     this.pagination.currentPage = params['pagina']
-    //     this.pagination.pageSize = params['cantidad']
-    //     this.pagination.typeSort = params['ordenar'] ?? 'DESC'
-  
-    //     // setParamsToObject(params, this.pagination, 'codigo')
-    //     // setParamsToObject(params, this.pagination, 'nombre')
-    //     // setParamsToObject(params, this.pagination, 'sectorId')
-    //     // setParamsToObject(params, this.pagination, 'secretariaTecnicaId')
-    //     // setParamsToObject(params, this.pagination, 'sectorEntidadId')
-    //     // setParamsToObject(params, this.pagination, 'entidadId')
-    //     // setParamsToObject(params, this.pagination, 'ubigeo')
-    //     // setParamsToObject(params, this.pagination, 'entidadUbigeoId')
-
-    //     setTimeout(() => {
-    //       this.obtenerMesaIntegrantesService(true)
-    //       this.obtenerMesaIntegrantesService(false)
-    //       this.obtenerIntervencionEspacioService()
-    //     }, 100)
-    //   }
-    // })
-
-
     this.route.queryParams
       .pipe(
         filter(params => Object.keys(params).length > 0),
@@ -132,7 +104,6 @@ export default class AgendasMesaComponent {
 
         setParamsToObject(params, this.pagination, 'cui')
         setParamsToObject(params, this.pagination, 'ubigeo')
-        setParamsToObject(params, this.pagination, 'entidadUbigeoId')
 
         this.obtenerIntervencionEspacioService()
       })

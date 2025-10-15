@@ -16,10 +16,11 @@ import { IntervencionDetalleComponent } from '../../intervenciones/intervencion-
 import { FormSituacionIntervencionComponent } from '../../intervenciones/situaciones-intervencion/form-situacion-intervencion/form-situacion-intervencion.component';
 import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
 import { MessageService } from 'primeng/api';
-import { getDateFormat, obtenerPermisosBotones } from '@core/helpers';
+import { getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { SituacionesIntervencionComponent } from '../../intervenciones/situaciones-intervencion/situaciones-intervencion.component';
 import { FiltroIntervencionesComponent } from '../../intervenciones/filtro-intervenciones/filtro-intervenciones.component';
+import { distinctUntilChanged, filter } from 'rxjs';
 
 @Component({
   selector: 'app-agendas-evento',
@@ -76,7 +77,29 @@ export default class AgendasEventoComponent {
     this.getPermissions()
     this.verificarEvento()
     this.obtenerEventoSectoresServices()
+    this.getParams()
   }
+
+  getParams() {
+      this.route.queryParams
+        .pipe(
+          filter(params => Object.keys(params).length > 0),
+          distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+        )
+        .subscribe( params => {
+          let campo = params['campo'] ?? 'intervencionEspacioId'
+  
+          this.pagination.columnSort = campo
+          this.pagination.currentPage = params['pagina']
+          this.pagination.pageSize = params['cantidad']
+          this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+  
+          setParamsToObject(params, this.pagination, 'cui')
+          setParamsToObject(params, this.pagination, 'ubigeo')
+  
+          this.obtenerIntervencionEspacioService()
+        })
+    }
   
   getPermisosPCM(){
     const perfilAuth = this.authStore.usuarioAuth().codigoPerfil!

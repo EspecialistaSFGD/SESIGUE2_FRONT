@@ -89,4 +89,4 @@
 	  </div>
 </ng-template>
 
-<app-filtro-intervenciones *ngIf="openFilters" [visible]="openFilters" [esMesa]="true" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" />
+<app-filtro-intervenciones *ngIf="openFilters" [visible]="openFilters" [esAcuerdo]="false" [esMesa]="true" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" />
