@@ -133,7 +133,7 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
     }
 }
 .form-control {
-    @apply outline-none border border-solid border-gray-400 w-full px-3 py-2 text-sm hover:border-gray-500 focus:border-gray-500 rounded-md;
+    @apply outline-none border border-solid border-gray-400 w-full px-3 py-2 text-sm hover:border-gray-500 focus:border-gray-500 rounded-md dark:bg-white;
 
     &.ng-invalid.ng-touched {
         @apply border-rose-500 hover:border-rose-500;
@@ -231,11 +231,28 @@ tr.bg-yellow-100 .ant-table-cell-fix-right {
         .p-stepper-header{
             .p-stepper-action{
                 .p-stepper-number{
-                    @apply w-2 h-6 text-center text-white bg-[@primary-color] rounded-full text-sm;
+                    @apply w-4 h-6 text-center border border-[@primary-color] text-white bg-[@primary-color] rounded-full text-sm;
                 }
                 .p-stepper-title{
-                    @apply text-sm;
+                    @apply text-sm text-[@primary-color] font-medium;
                 }
+            }
+            .p-stepper-separator{
+                @apply bg-[@primary-color];
+            }
+
+            &.p-disabled{
+                .p-stepper-action{
+                    .p-stepper-number{
+                        @apply border-slate-400 bg-transparent text-slate-400;
+                    }
+                    .p-stepper-title{
+                        @apply text-slate-400;
+                    }
+                }
+                .p-stepper-separator{
+                @apply bg-slate-200;
+            }
             }
         }
     }
@@ -518,13 +535,18 @@ p-dropdown {
 .accent-pink-500{
     accent-color: @colorBase;
 }
+.p-stepper {
+    .p-stepper-panels{
+        @apply dark:bg-[#1f1f1f];
+    }
+}
 .p-inputnumber{
-    @apply w-full border border-solid border-gray-400 rounded-md;
+    @apply w-full border-none;
     .p-inputtext {
-        @apply outline-none border-l border-r border-solid border-gray-400 text-center w-full px-3 py-2 text-sm hover:border-gray-500 focus:border-gray-500 hover:shadow-none focus:shadow-none;
+        @apply outline-none border-t border-b border-solid border-gray-400 text-center w-full px-3 py-1 text-sm hover:border-gray-500 focus:border-gray-500 hover:shadow-none focus:shadow-none;
     }
     .p-inputnumber-button-down, .p-inputnumber-button-up{
-        @apply w-8 hover:bg-gray-200 hover:shadow-none focus:shadow-none;
+        @apply px-2 border-gray-400 hover:border-gray-500 hover:bg-gray-200 hover:shadow-none focus:shadow-none;
         span {
             @apply text-sm text-[@colorBase];
         }

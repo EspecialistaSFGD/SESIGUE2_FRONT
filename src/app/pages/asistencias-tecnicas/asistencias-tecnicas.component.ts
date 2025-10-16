@@ -114,73 +114,31 @@ export default class AsistenciasTecnicasComponent {
   }
 
   getParams() {
-    this.loading = true
+    // this.loading = true
      this.route.queryParams
-          .pipe(
-            filter(params => Object.keys(params).length > 0),
-            distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
-          )
-          .subscribe( params => {
-            let campo = params['campo'] ?? 'asistenciaId'
+      .pipe(
+        filter(params => Object.keys(params).length > 0),
+        distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+      )
+      .subscribe( params => {
+        let campo = params['campo'] ?? 'asistenciaId'
 
-            this.pagination.columnSort = campo
-            this.pagination.currentPage = params['pagina']
-            this.pagination.pageSize = params['cantidad']
-            this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+        this.pagination.columnSort = campo
+        this.pagination.currentPage = params['pagina']
+        this.pagination.pageSize = params['cantidad']
+        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
 
-            setParamsToObject(params, this.pagination, 'codigo')
-            setParamsToObject(params, this.pagination, 'eventoId')
-            setParamsToObject(params, this.pagination, 'sectorId')
-            setParamsToObject(params, this.pagination, 'fechaInicio')
-            setParamsToObject(params, this.pagination, 'fechaFin')
-            setParamsToObject(params, this.pagination, 'tipos')
-            setParamsToObject(params, this.pagination, 'ubigeo')
+        setParamsToObject(params, this.pagination, 'codigo')
+        setParamsToObject(params, this.pagination, 'eventoId')
+        setParamsToObject(params, this.pagination, 'sectorId')
+        setParamsToObject(params, this.pagination, 'fechaInicio')
+        setParamsToObject(params, this.pagination, 'fechaFin')
+        setParamsToObject(params, this.pagination, 'tipos')
+        setParamsToObject(params, this.pagination, 'ubigeo')
 
-            this.obtenerAsistenciasTecnicas()
-          })
-    // this.route.queryParams.subscribe(params => {
-    //   if (Object.keys(params).length > 0) {
-    //     this.loading = false
-
-    //     let campo = params['campo'] ?? 'asistenciaId'
-
-    //     this.pagination.columnSort = campo
-    //     this.pagination.currentPage = params['pagina']
-    //     this.pagination.pageSize = params['cantidad']
-    //     this.pagination.typeSort = params['ordenar'] ?? 'DESC'
-
-
-    //     setParamsToObject(params, this.pagination, 'codigo')
-    //     setParamsToObject(params, this.pagination, 'eventoId')
-    //     setParamsToObject(params, this.pagination, 'sectorId')
-    //     setParamsToObject(params, this.pagination, 'fechaInicio')
-    //     setParamsToObject(params, this.pagination, 'fechaFin')
-    //     setParamsToObject(params, this.pagination, 'tipos')
-    //     setParamsToObject(params, this.pagination, 'ubigeo')
-
-    //     // this.setPaginationValueToParams(params, 'codigo')
-    //     // this.setPaginationValueToParams(params, 'eventoId')
-    //     // this.setPaginationValueToParams(params, 'sectorId')
-    //     // this.setPaginationValueToParams(params, 'fechaInicio')
-    //     // this.setPaginationValueToParams(params, 'fechaFin')
-    //     // this.setPaginationValueToParams(params, 'tipos')
-    //     // this.setPaginationValueToParams(params, 'ubigeo')
-     
-    //     this.obtenerAsistenciasTecnicas()
-    //   }
-    // });
+        // this.obtenerAsistenciasTecnicas()  
+      })
   }
-
-  // setPaginationValueToParams(params: Params, param: string){
-  //   const keyParam = param as keyof Pagination;
-  //   if(params[param]){
-  //     this.pagination[keyParam] = params[param];
-  //     this.paginationFilter[keyParam] = params[param];
-  //   } else {
-  //     delete this.pagination[keyParam]
-  //     delete this.paginationFilter[keyParam]
-  //   }
-  // }
 
   getPermissions() {
     const navigation = this.authStore.navigationAuth()!

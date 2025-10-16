@@ -3,13 +3,15 @@ import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { JneAutoridadTipoEnum, UbigeoTipoEnum } from '@core/enums';
 import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
-import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, OrientacionAtencion, Pagination, SectorResponse, SSInversionTooltip, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataFile, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, OrientacionAtencion, Pagination, SectorResponse, SSInversionTooltip, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, JneService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { EntidadesStore } from '@libs/shared/stores/entidades.store';
 import { SectoresStore } from '@libs/shared/stores/sectores.store';
+import { BotonUploadComponent } from '@shared/boton/boton-upload/boton-upload.component';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { ProgressSpinerComponent } from '@shared/progress-spiner/progress-spiner.component';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
@@ -17,7 +19,7 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
 @Component({
   selector: 'app-formulario-atencion',
   standalone: true,
-  imports: [ CommonModule, ReactiveFormsModule, NgZorroModule, PrimeNgModule, ProgressSpinerComponent],
+  imports: [ CommonModule, ReactiveFormsModule, NgZorroModule, PrimeNgModule, ProgressSpinerComponent, BotonComponent, BotonUploadComponent],
   templateUrl: './formulario-atencion.component.html',
   styles: ``
 })
@@ -45,6 +47,7 @@ export class FormularioAtencionComponent {
   fileListMeet: NzUploadFile[] = [];
   fileListAttendance: NzUploadFile[] = [];
   cuiClasificacion: boolean = false
+  reNewFile: boolean = false
   
   evento = signal<EventoResponse>(this.dataAtention.evento)
   // departamentos = signal<UbigeoDepartmentResponse[]>(this.dataAtention.departamentos)
@@ -106,6 +109,10 @@ export class FormularioAtencionComponent {
     return this.formAtencion.get('agendas') as FormArray;
   }
 
+  get integrantes(): FormArray {
+    return this.formAtencion.get('integrantes') as FormArray;
+  }
+
   public formAtencion: FormGroup = this.fb.group({
     tipoPerfil: [''],
     tipo: ['', Validators.required],
@@ -147,7 +154,8 @@ export class FormularioAtencionComponent {
     evidenciaAsistencia: [''],
     congresistas: this.fb.array([]),
     participantes: this.fb.array([]),
-    agendas: this.fb.array([])
+    agendas: this.fb.array([]),
+    integrantes: this.fb.array([])
   })
   // cargoAutoridad: ['', [Validators.required, Validators.maxLength(50)]],
 
@@ -167,8 +175,6 @@ export class FormularioAtencionComponent {
   }
 
   setPermisosPCM(){
-    // const profilePCM = [11,12,23]
-    // this.permisosPCM = profilePCM.includes(this.authUser.codigoPerfil)
     const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
    this.permisosPCM = JSON.parse(permisosStorage) ?? false
   }
@@ -242,94 +248,10 @@ export class FormularioAtencionComponent {
     }
   }
 
-  // setFormValue(){    
-  //   const fechaAtencion = !this.create ? new Date(this.atencion.fechaAtencion) : new Date()
-  //   // const tipo = !this.permisosPCM || !this.atencion.tipo ? 'atencion' : this.atencion.tipo
-  //   const tipo = !this.create ? this.atencion.tipo : this.permisosPCM ? '' : 'atencion'
-  //   // const modalidad = !this.permisosPCM || !this.atencion.modalidad ? 'presencial' : this.atencion.modalidad
-  //   const modalidad = !this.create ? this.atencion.modalidad : this.permisosPCM ? '' : 'presencial'
-  //   const sector = !this.permisosPCM || !this.atencion.sectorId ? this.authUser.sector.label : this.atencion.sector
-  //   const sectorId = !this.permisosPCM || !this.atencion.sectorId ? this.authUser.sector.value : this.atencion.sectorId
-  //   const eventoId = this.atencion.eventoId ?? this.evento().eventoId
-  //   const unidadId = this.permisosPCM && !this.atencion.unidadId  ? '' : this.atencion.unidadId
-  //   const orientacionId = this.permisosPCM && !this.atencion.orientacionId  ? '' : this.atencion.orientacionId
-  //   const contactoAutoridad = this.permisosPCM && !this.atencion.contactoAutoridad  ? '' : this.atencion.contactoAutoridad
-  //   this.formAtencion.reset({...this.atencion, tipo, modalidad, sector, sectorId, eventoId, fechaAtencion, validado: false, unidadId, orientacionId, contactoAutoridad})
-       
-  //   if(!this.create){
-  //     const orientacionId = this.formAtencion.get('orientacionId')?.value
-  //     this.cuiClasificacion = orientacionId == 2 || orientacionId == 3 ? true : false
-  //   }
-    
-  //   const lugarControl = this.formAtencion.get('lugarId')
-  //   this.permisosPCM ? lugarControl?.enable() : lugarControl?.disable()
-  //   const especiosControl = this.formAtencion.get('espacioId')
-  //   this.permisosPCM ? especiosControl?.enable() : especiosControl?.disable()
-
-  //   if(!this.permisosPCM){
-  //     this.formAtencion.get('fechaAtencion')?.disable()
-  //     this.formAtencion.get('tipoEntidadId')?.disable()
-  //     this.formAtencion.get('departamento')?.disable()
-  //     // this.formAtencion.get('provincia')?.disable()
-  //     // this.formAtencion.get('distrito')?.disable()
-  //     // this.formAtencion.get('autoridad')?.disable()
-  //     this.formAtencion.get('dniAutoridad')?.enable()
-  //     this.formAtencion.get('dniAutoridad')?.setValidators([ Validators.required, Validators.pattern(this.validatorService.DNIPattern)])
-  //     this.formAtencion.get('orientacionId')?.setValidators([ Validators.required])
-  //     this.formAtencion.get('unidadId')?.setValidators([ Validators.required])
-  //     this.entidadesStore.listarEntidades(0, 1, Number(sectorId));
-  //     this.formAtencion.get('nombreAutoridad')?.disable()
-  //     this.formAtencion.get('cargoAutoridad')?.disable()
-  //     this.formAtencion.get('comentarios')?.setValidators([ Validators.required])
-  //   } else {
-  //     if(this.esDocumento){
-  //       this.formAtencion.get('fechaAtencion')?.disable()
-  //       this.formAtencion.get('lugarId')?.disable()
-  //       this.formAtencion.get('documentoTitulo')?.disable()
-  //       this.formAtencion.get('numeroExpediente')?.disable()
-  //       this.formAtencion.get('espacioId')?.disable()
-  //       this.formAtencion.get('clasificacion')?.disable()
-  //       this.formAtencion.get('tema')?.disable()
-  //       this.formAtencion.get('nombreAutoridad')?.disable()
-  //     } else {
-  //       // const autoridad = this.formAtencion.get('autoridad')
-  //       // this.formularioControlEnable('autoridad')
-  //       // autoridad?.enable()
-  //       // if(autoridad && !this.create){
-  //       //   this.formAtencion.get('dniAutoridad')?.disable()
-  //       //   this.formAtencion.get('nombreAutoridad')?.disable()
-  //       //   this.formAtencion.get('cargoAutoridad')?.disable()
-  //       // } else {
-  //       //   this.formAtencion.get('cargoAutoridad')?.setValidators([Validators.required, Validators.maxLength(50)])
-  //       // }
-  //     }
-  //   }
-
-  //   this.setFormubigeo()
-  //   if(!this.create){
-  //     this.setCongresistasParams()
-  //     this.setParticipantesParams()
-  //     this.setAgendasParams()      
-  //   }   
-  // }
-
   formularioControlEnable(control: string, enable: boolean = true){
     const formularioControl = this.formAtencion.get(control)
     enable ? formularioControl?.enable() : formularioControl?.disable()
   }
-
-  // setFormubigeo(){
-  //   if(!this.create){
-  //     this.formAtencion.get('ubigeo')?.setValue(this.atencion.ubigeo)
-  //     const departamento = this.atencion.ubigeo?.slice(0,2)
-  //     this.formAtencion.get('departamento')?.setValue(departamento)
-  //     this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
-  //     if(this.atencion.tipoEntidadSlug == 'GL'){
-  //       this.ubigeoTipo = UbigeoTipoEnum.PROVINCIA
-  //       this.setUbigeoGL(departamento!, this.atencion.ubigeo!)
-  //     }
-  //   }
-  // }
 
   setUbigeoGL(ubigeoDepartamento: string, ubigeo:string){
     const controlProvincia = this.formAtencion.get('provincia')
@@ -356,7 +278,7 @@ export class FormularioAtencionComponent {
     const tiposExternos:string[] = [AsistenciasTecnicasTipos.ATENCION,AsistenciasTecnicasTipos.DOCUMENTO]
     const tipos:ItemEnum[] =  []    
     this.tipos.map( item => {      
-      if(this.perfilPOIAtencion() && !tiposExternos.includes(item.text)){
+      if(this.permisosPCM && !tiposExternos.includes(item.text)){
         tipos.push(item)
       } else if(!this.permisosPCM && item.value === AsistenciasTecnicasTipos.ATENCION){
         tipos.push(item)
@@ -378,7 +300,7 @@ export class FormularioAtencionComponent {
     this.lugarService.getAllLugares(this.pagination)
       .subscribe(resp => {        
         if (resp.success = true) {
-          const estado = this.perfilPOIAtencion() ? true : false
+          const estado = this.permisosPCM ? true : false
           const lugares: LugarResponse[] = []          
           resp.data.find(item => {
             if (item.estado == estado) {
@@ -420,7 +342,7 @@ export class FormularioAtencionComponent {
     this.espacioService.getAllEspacios({...this.pagination, columnSort: 'nombre', pageSize: 20 })
       .subscribe(resp => {
         if (resp.success = true) {
-          const estado = this.perfilPOIAtencion() ? true : false
+          const estado = this.permisosPCM ? true : false
           const espacios: EspacioResponse[] = []
           resp.data.find(item => {
             if (item.estado == estado) {
@@ -446,29 +368,23 @@ export class FormularioAtencionComponent {
     this.clasificacionService.getAllClasificaciones({...this.pagination, columnSort: 'nombre'})
       .subscribe(resp => {
         if (resp.success = true) {
-          const estado = this.perfilPOIAtencion() ? true : false
+          const estado = this.permisosPCM ? true : false
           const clasificaciones: ClasificacionResponse[] = []
           resp.data.find(item => {
             if (item.estado == estado) {
               clasificaciones.push(item)
             }
-            // if(!item.estado && !this.permisosPCM){
-            //   const agendas = this.formAtencion.get('agendas') as FormArray
-              
-            //   if (agendas.length == 0) {
-            //     this.addAgendadRow()
-            //   }
-            //   agendas.at(0).get('clasificacionId')?.setValue(item.clasificacionId) 
-            // }
           })
           this.agendaClasificaciones.set(clasificaciones)          
         }
       })
   }
 
-  perfilPOIAtencion(){
-    return this.authUser.codigoPerfil === 12 || this.authUser.codigoPerfil === 23
-  }
+  // perfilPOIAtencion(){
+  //   // return this.authUser.codigoPerfil === 12 || this.authUser.codigoPerfil === 23
+  //   const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+  //   return JSON.parse(permisosStorage) ?? false
+  // }
 
   alertMessageError(control: string) {    
     return this.formAtencion.get(control)?.errors && this.formAtencion.get(control)?.touched
@@ -494,6 +410,10 @@ export class FormularioAtencionComponent {
     const errors = levelControl?.errors;
 
     return typeErrorControl(text, errors)
+  }
+
+  generalValidate(){
+    return true
   }
 
   setCongresistasParams() {
@@ -787,7 +707,7 @@ export class FormularioAtencionComponent {
           entidadControl?.setValue(entidad ? entidad.entidadSlug : null)
           entidadSlugControl?.setValue(entidad ? entidad.entidad : null)
           entidadIdControl?.setValue(entidad ? entidad.entidadId : null)
-          if(!this.perfilPOIAtencion()){
+          if(!this.permisosPCM){
             const nivelGobierno = entidad.nivelGobierno ?? null
             const tipoEntidad = this.tipoEntidades().find(item => item.abreviatura.toUpperCase() === nivelGobierno)
             tipoEntidadIdControl?.setValue(tipoEntidad?.tipoId ?? null)
@@ -1107,6 +1027,9 @@ export class FormularioAtencionComponent {
     if (formGroup == 'agendas') {
       this.addAgendadRow()
     }
+    if (formGroup == 'integrantes') {
+      this.addIntegranteRow()
+    }
   }
   
   addAgendadRow() {    
@@ -1121,6 +1044,24 @@ export class FormularioAtencionComponent {
       costoActualizado: ['']
     })
     this.agendas.push(agendaRow)
+  }
+
+  addIntegranteRow(){
+    const integranteRow = this.fb.group({
+      integranteId: [''],
+      dni: [''],
+      nivelGobierno: [null, Validators.required],
+      sectorId: [''],
+      departamentoId: [''],
+      provinciaId: [''],
+      distritoId: [''],
+      entidadId: [null, Validators.required],
+      nombre: [null, Validators.required],
+      cargo: [null, Validators.required],
+      telefono: [null, Validators.required],
+      correo: [null, Validators.required]
+    })
+    this.integrantes.push(integranteRow)
   }
 
   removeItemFormArray(i: number, formGroup: string) {
@@ -1151,6 +1092,8 @@ export class FormularioAtencionComponent {
       } else {
         this.participantes.removeAt(i)
       }
+    } else if (formGroup == 'integrantes') {
+      this.removeIntegranteRow(i)
     } else if (formGroup == 'agendas') {
       if (!this.create) {
         const agendas = this.formAtencion.get('agendas') as FormArray
@@ -1164,6 +1107,21 @@ export class FormularioAtencionComponent {
       } else {
         this.agendas.removeAt(i)
       }
+    }
+  }
+
+  removeIntegranteRow(i:number){
+    if (!this.create) {
+      const integrantes = this.formAtencion.get('integrantes') as FormArray
+      const integrantesId = integrantes.at(i).get('integranteId')?.value
+      // this.asistenciaTecnicaParticipanteService.eliminarParticipante(integrantesId)
+      //   .subscribe(resp => {
+      //     if (resp.success == true) {
+      //       this.participantes.removeAt(i)
+      //     }
+      //   })
+    } else {
+      this.integrantes.removeAt(i)
     }
   }
 
@@ -1214,6 +1172,20 @@ export class FormularioAtencionComponent {
     return { loading, visible, nombre, costoActualizado }
   }
 
+  changeFiles(dataFile: DataFile, control: string) {
+    const controlForm = this.formAtencion.get(control)
+    if (dataFile.exist) {
+      this.reNewFile = false
+      controlForm?.setValue(dataFile.file!)
+
+      const reader = new FileReader()
+      reader.readAsDataURL(dataFile.file!)
+    } else {
+      controlForm?.reset()
+    }
+  }
+  
+  //TODO: ELIMINAR LAS FUNCIONES DE CARGA DE ARCHIVOS
   beforeUploadMeet = (file: NzUploadFile): boolean => {
     const evidenciaReunion = this.formAtencion.get('evidenciaReunion')
     evidenciaReunion?.setValue(file)
@@ -1222,6 +1194,7 @@ export class FormularioAtencionComponent {
     return false;
   };
 
+  //TODO: ELIMINAR LAS FUNCIONES DE CARGA DE ARCHIVOS
   beforeUploadAttendance = (file: NzUploadFile): boolean => {
     const evidenciaAsistencia = this.formAtencion.get('evidenciaAsistencia')
     evidenciaAsistencia?.setValue(file)
