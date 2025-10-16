@@ -114,7 +114,6 @@ export default class AsistenciasTecnicasComponent {
   }
 
   getParams() {
-    // this.loading = true
      this.route.queryParams
       .pipe(
         filter(params => Object.keys(params).length > 0),
@@ -136,7 +135,7 @@ export default class AsistenciasTecnicasComponent {
         setParamsToObject(params, this.pagination, 'tipos')
         setParamsToObject(params, this.pagination, 'ubigeo')
 
-        // this.obtenerAsistenciasTecnicas()  
+        this.obtenerAsistenciasTecnicas()
       })
   }
 

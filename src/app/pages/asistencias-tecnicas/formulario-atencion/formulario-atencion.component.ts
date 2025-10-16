@@ -570,19 +570,23 @@ export class FormularioAtencionComponent {
   obtenerEntidadServiceLista(i:number, ubigeo:string){
     const getControl = this.formAtencion.get('integrantes') as FormArray
 
+    const loadingEntidadControl = getControl.at(i).get('loadingEntidad')
     const entidadIdControl = getControl.at(i).get('entidadId')
+    const entidadControl = getControl.at(i).get('entidad')
+    const entidadSlugControl = getControl.at(i).get('entidadSlug')
     const pagination:Pagination = { tipo: '2', ubigeo }
+    loadingEntidadControl?.setValue(true)
     this.entidadService.obtenerEntidad(pagination).subscribe( resp => {
+      loadingEntidadControl?.setValue(false)
       entidadIdControl?.setValue(resp.data ? resp.data.entidadId : null)
-      console.log(resp.data)
+      entidadControl?.setValue(resp.data ? resp.data.nombre : null)
+      entidadSlugControl?.setValue(resp.data ? `${resp.data.entidadTipo} ${resp.data.entidadSlug}`  : null)
     })
   }
 
-  // perfilPOIAtencion(){
-  //   // return this.authUser.codigoPerfil === 12 || this.authUser.codigoPerfil === 23
-  //   const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
-  //   return JSON.parse(permisosStorage) ?? false
-  // }
+  changeDniList(i:number){
+
+  }
 
   alertMessageError(control: string) {    
     return this.formAtencion.get(control)?.errors && this.formAtencion.get(control)?.touched
@@ -1247,7 +1251,6 @@ export class FormularioAtencionComponent {
   addIntegranteRow(){
     const integranteRow = this.fb.group({
       integranteId: [''],
-      dni: [''],
       nivelGobiernoId: [null, Validators.required],
       tipo: [''],
       esRegional: [''],
@@ -1255,7 +1258,11 @@ export class FormularioAtencionComponent {
       departamento: [''],
       provincia: [''],
       distrito: [''],
+      loadingEntidad: [false],
       entidadId: [null, Validators.required],
+      entidad: [{ value: null, disabled: true }],
+      entidadSlug: [{ value: null, disabled: true }],
+      dni: [''],
       nombre: [null, Validators.required],
       cargo: [null, Validators.required],
       telefono: [null, Validators.required],
