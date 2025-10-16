@@ -338,7 +338,8 @@
 										optionLabel="provincia"
 										optionValue="provinciaId"
 										[showClear]="true"
-										placeholder="Seleccionar provincia"/>
+										placeholder="Seleccionar provincia"
+										(onChange)="changeProvinciaIntegrante(i)"/>
 										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'provincia')">{{msgErrorControlTwoNivel('integrantes',i,'provincia','Provincia')}}</div>
 									}
 								</div>
@@ -351,7 +352,8 @@
 										optionLabel="distrito"
 										optionValue="distritoId"
 										[showClear]="true"
-										placeholder="Seleccionar distrito"/>
+										placeholder="Seleccionar distrito"
+										(onChange)="changeDistritoIntegrante(i)"/>
 										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'distrito')">{{msgErrorControlTwoNivel('integrantes',i,'distrito','Distrito')}}</div>
 								</div>
 

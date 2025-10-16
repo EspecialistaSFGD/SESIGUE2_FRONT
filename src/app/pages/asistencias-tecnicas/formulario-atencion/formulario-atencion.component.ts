@@ -404,26 +404,39 @@ export class FormularioAtencionComponent {
     const getControl = this.formAtencion.get('integrantes') as FormArray
     
     const tipoControl = getControl.at(i).get('tipo')
+    const esRegionalControl = getControl.at(i).get('esRegional')
     const nivelGobiernoControl = getControl.at(i).get('nivelGobiernoId')
     const nivelGobiernoValue = nivelGobiernoControl?.value
     const sectorIdControl = getControl.at(i).get('sectorId')
+    const entidadIdControl = getControl.at(i).get('entidadId')
     const departamentoControl = getControl.at(i).get('departamento')
+    const provinciaControl = getControl.at(i).get('provincia')
+    const distritoControl = getControl.at(i).get('distrito')
+
+    esRegionalControl?.reset()
     if(nivelGobiernoValue){
       const nivelGobierno = this.nivelGobiernos().find(item => item.tipoId === nivelGobiernoValue)
       if(nivelGobierno!.abreviatura.toUpperCase() === 'GN'){
         tipoControl?.setValue(true)
-        departamentoControl?.reset()
         this.obtenerSectoresLista(i)
       } else {
+        esRegionalControl?.setValue(nivelGobierno!.abreviatura.toUpperCase() === 'GR')
         tipoControl?.setValue(false)
         sectorIdControl?.reset()
         this.obtenerDepartamentosServiceLista(i)
+        sectorIdControl?.reset()
       }
+      departamentoControl?.reset()
     } else {
       tipoControl?.reset()
       sectorIdControl?.reset()
       departamentoControl?.reset()
     }
+    provinciaControl?.reset()
+    provinciaControl?.disable()
+    distritoControl?.reset()
+    distritoControl?.disable()
+    entidadIdControl?.disable()
   }
 
   obtenerSectoresLista(i:number){
@@ -478,19 +491,26 @@ export class FormularioAtencionComponent {
     const departamento = getControl.at(i).get('departamento')?.value
     const provinciaControl = getControl.at(i).get('provincia')
     const distritoControl = getControl.at(i).get('distrito')
+    const esRegionalControl = getControl.at(i).get('esRegional')
+    const esRegional = esRegionalControl?.value
 
     if(departamento){
       const ubigeo = `${departamento}0000`
-      provinciaControl?.enable()
-      this.obtenerProvinciasService(departamento)
-      this.obtenerProvinciasServiceLista(1,departamento)
+      if(esRegional){
+        provinciaControl?.disable()
+        provinciaControl?.reset()      
+      } else {
+        provinciaControl?.enable()        
+        this.obtenerProvinciasServiceLista(i,departamento)
+      }
+      this.obtenerEntidadServiceLista(i,ubigeo)
     } else {
       provinciaControl?.disable()
       provinciaControl?.reset()
+      entidadIdControl?.reset()
     }
     distritoControl?.disable()
     distritoControl?.reset()
-    entidadIdControl?.reset()
   }
 
   obtenerProvinciasServiceLista(i:number, departamento:string){
@@ -500,6 +520,61 @@ export class FormularioAtencionComponent {
         copyProvincias[i] = resp.data
         this.listaProvincias.set(copyProvincias)
       }
+    })
+  }
+
+  changeProvinciaIntegrante(i:number){
+    const getControl = this.formAtencion.get('integrantes') as FormArray
+
+    const departamentControl = getControl.at(i).get('departamento')
+    const departamento = departamentControl?.value
+    const provinciaControl = getControl.at(i).get('provincia')
+    const provincia = provinciaControl?.value
+    const distritoControl = getControl.at(i).get('distrito')
+
+    let ubigeo = `${departamento}0000`
+    if(provincia){
+      ubigeo = provincia
+      distritoControl?.enable()
+      this.obtenerDistritosServiceLista(i, provincia)
+    } else {
+      distritoControl?.disable()
+      distritoControl?.reset()
+    }
+    this.obtenerEntidadServiceLista(i,ubigeo)
+  }
+
+  obtenerDistritosServiceLista(i: number, provincia: string){
+    const copyDistritos = [...this.listaDistritos()]
+    this.ubigeoService.getDistricts(provincia)
+      .subscribe( resp => {
+        if(resp.success){
+          copyDistritos[i] = resp.data
+          this.listaDistritos.set(copyDistritos)
+        }
+      })
+  }
+
+  changeDistritoIntegrante(i:number){
+    const getControl = this.formAtencion.get('integrantes') as FormArray
+
+    const provinciaControl = getControl.at(i).get('provincia')
+    const provincia = provinciaControl?.value
+    const distritoControl = getControl.at(i).get('distrito')
+    const distrito = distritoControl?.value
+
+    const ubigeo = distrito ? distrito : provincia
+    this.obtenerEntidadServiceLista(i,ubigeo)
+  }
+
+  obtenerEntidadServiceLista(i:number, ubigeo:string){
+    const getControl = this.formAtencion.get('integrantes') as FormArray
+
+    const entidadIdControl = getControl.at(i).get('entidadId')
+    const pagination:Pagination = { tipo: '2', ubigeo }
+    this.entidadService.obtenerEntidad(pagination).subscribe( resp => {
+      entidadIdControl?.setValue(resp.data ? resp.data.entidadId : null)
+      console.log(resp.data)
     })
   }
 
@@ -1175,6 +1250,7 @@ export class FormularioAtencionComponent {
       dni: [''],
       nivelGobiernoId: [null, Validators.required],
       tipo: [''],
+      esRegional: [''],
       sectorId: [''],
       departamento: [''],
       provincia: [''],
