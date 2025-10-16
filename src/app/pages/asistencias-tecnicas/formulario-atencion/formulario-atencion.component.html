@@ -276,8 +276,85 @@
 							<h5 class="text-sm font-medium">Integrantes de acta</h5>
 							<app-boton icono="plus" texto="Nuevo" tooltip="Agregar nuevo integrante" [outline]="true" (click)="addItemFormArray($event,'integrantes')" />
 						</div>
-						<div class="w-full flex flex-col gap-4 px-4" formArrayName="participantes" [ngClass]="{ 'py-4' : participantes.length }">
-							<div class="grid grid-cols-6 gap-4" *ngFor="let integrantes of integrantes.controls; let i = index" [formGroupName]="i">
+						<div class="w-full flex flex-col gap-4" formArrayName="integrantes" [ngClass]="{ 'py-4' : integrantes.length }">
+							<div class="grid grid-cols-9 gap-4 " *ngFor="let integrantes of integrantes.controls; let i = index" [formGroupName]="i">
+								<div class="flex flex-col col-span-2">
+									<label For="nivelGobiernoId">Nivel de gobierno</label>
+									<p-dropdown
+									[options]="nivelGobiernos()"
+									formControlName="nivelGobiernoId"
+									optionLabel="nombre"
+									optionValue="tipoId"
+									[showClear]="true"
+									placeholder="Seleccionar nivel de gobierno"
+									(onChange)="obtenerNivelGobierno(i)"/>
+									<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'nivelGobiernoId')">{{msgErrorControlTwoNivel('integrantes',i,'nivelGobiernoId','Nivel de gobierno')}}</div>
+								</div>
+
+								<div class="flex flex-col col-span-2">
+									@if(obtenerControlValue(i,'integrantes','tipo') === true){
+										<label For="sectorId">Sector</label>
+										<p-dropdown
+										[options]="listaSectores()[i]"
+										formControlName="sectorId"
+										optionLabel="nombre"
+										optionValue="grupoID"
+										[showClear]="true"
+										placeholder="Seleccionar sector"
+										(onChange)="obtenerSectorIntegrante(i)"/>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'sectorId')">{{msgErrorControlTwoNivel('integrantes',i,'sectorId','Sector')}}</div>
+									}
+									@if(obtenerControlValue(i,'integrantes','tipo') === false){
+										<label For="sectorId">Departamento</label>
+										<p-dropdown
+										[options]="listaDepartamentos()[i]"
+										formControlName="departamento"
+										optionLabel="departamento"
+										optionValue="departamentoId"
+										[showClear]="true"
+										placeholder="Seleccionar departamento"
+										(onChange)="changeDepartamentoIntegrante(i)"/>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'departamento')">{{msgErrorControlTwoNivel('integrantes',i,'departamento','Departamento')}}</div>
+									}
+								</div>
+
+								<div class="flex flex-col" [ngClass]="obtenerControlValue(i,'integrantes','tipo') === false ? 'col-span-2' : 'col-span-4'">
+									@if(obtenerControlValue(i,'integrantes','tipo') === true){
+										<label For="sectorId">Unidad organica</label>
+										<p-dropdown
+										[options]="listaEntidades()[i]"
+										formControlName="entidadId"
+										optionLabel="nombre"
+										optionValue="entidadId"
+										[showClear]="true"
+										placeholder="Seleccionar unidad organica"/>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'entidadId')">{{msgErrorControlTwoNivel('integrantes',i,'entidadId','Unidad organica')}}</div>
+									}
+									@if(obtenerControlValue(i,'integrantes','tipo') === false){
+										<label For="sectorId">Provincia</label>
+										<p-dropdown
+										[options]="listaProvincias()[i]"
+										formControlName="provincia"
+										optionLabel="provincia"
+										optionValue="provinciaId"
+										[showClear]="true"
+										placeholder="Seleccionar provincia"/>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'provincia')">{{msgErrorControlTwoNivel('integrantes',i,'provincia','Provincia')}}</div>
+									}
+								</div>
+
+								<div *ngIf="obtenerControlValue(i,'integrantes','tipo') === false" class="flex flex-col col-span-2">
+									<label For="sectorId">Distrito</label>
+										<p-dropdown
+										[options]="listaDistritos()[i]"
+										formControlName="distrito"
+										optionLabel="distrito"
+										optionValue="distritoId"
+										[showClear]="true"
+										placeholder="Seleccionar distrito"/>
+										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'distrito')">{{msgErrorControlTwoNivel('integrantes',i,'distrito','Distrito')}}</div>
+								</div>
+
 								<!-- <div class="flex flex-col col-span-3">
 									<label>Tipo de participante</label>
 									<p-dropdown

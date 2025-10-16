@@ -4,7 +4,7 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { JneAutoridadTipoEnum, UbigeoTipoEnum } from '@core/enums';
 import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
 import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataFile, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, OrientacionAtencion, Pagination, SectorResponse, SSInversionTooltip, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, JneService, LugaresService, NivelGobiernosService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
+import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, JneService, LugaresService, NivelGobiernosService, SectoresService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -62,6 +62,13 @@ export class FormularioAtencionComponent {
   gobiernoParticipantes = signal<NivelGobiernoResponse[]>([])
   agendaClasificaciones = signal<ClasificacionResponse[]>([])
 
+  nivelGobiernos = signal<TipoEntidadResponse[]>([])
+  listaSectores = signal<SectorResponse[][]>([])
+  listaEntidades = signal<EntidadResponse[][]>([])
+  listaDepartamentos = signal<UbigeoDepartmentResponse[][]>([])
+  listaProvincias = signal<UbigeoProvinciaResponse[][]>([])
+  listaDistritos = signal<UbigeoDistritoResponse[][]>([])
+
   private fb = inject(FormBuilder)
   private congresistaService = inject(CongresistasService)
   private atencionService = inject(AsistenciasTecnicasService)
@@ -78,6 +85,7 @@ export class FormularioAtencionComponent {
   private ubigeoService = inject(UbigeosService)
   private entidadService = inject(EntidadesService)
   private alcaldeService = inject(AlcaldesService)
+  private sectorService = inject(SectoresService)
 
   private jneService = inject(JneService)
 
@@ -334,6 +342,12 @@ export class FormularioAtencionComponent {
             }
           })
           this.tipoEntidades.set(tipoEntidaes)
+
+          if(this.permisosPCM){
+            const nivelGobiernoValidos:string[] = ['GN','GR','GL']
+            const nivelesGobierno = resp.data.filter( item => nivelGobiernoValidos.includes(item.abreviatura))
+            this.nivelGobiernos.set(nivelesGobierno)
+          }
         }
       })
   }
@@ -378,6 +392,115 @@ export class FormularioAtencionComponent {
           this.agendaClasificaciones.set(clasificaciones)          
         }
       })
+  }
+
+  obtenerControlValue(index: number, formGroup: string, control:string){
+    const controlArray = this.formAtencion.get(formGroup) as FormArray;
+    const getControl = controlArray.at(index).get(control);
+    return getControl?.value
+  }
+
+  obtenerNivelGobierno(i:number){
+    const getControl = this.formAtencion.get('integrantes') as FormArray
+    
+    const tipoControl = getControl.at(i).get('tipo')
+    const nivelGobiernoControl = getControl.at(i).get('nivelGobiernoId')
+    const nivelGobiernoValue = nivelGobiernoControl?.value
+    const sectorIdControl = getControl.at(i).get('sectorId')
+    const departamentoControl = getControl.at(i).get('departamento')
+    if(nivelGobiernoValue){
+      const nivelGobierno = this.nivelGobiernos().find(item => item.tipoId === nivelGobiernoValue)
+      if(nivelGobierno!.abreviatura.toUpperCase() === 'GN'){
+        tipoControl?.setValue(true)
+        departamentoControl?.reset()
+        this.obtenerSectoresLista(i)
+      } else {
+        tipoControl?.setValue(false)
+        sectorIdControl?.reset()
+        this.obtenerDepartamentosServiceLista(i)
+      }
+    } else {
+      tipoControl?.reset()
+      sectorIdControl?.reset()
+      departamentoControl?.reset()
+    }
+  }
+
+  obtenerSectoresLista(i:number){
+    const copySectores = [...this.listaSectores()]
+    const pagination: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 10, currentPage: 1 }
+    this.sectorService.listarSectores(pagination).subscribe(resp => {
+      if(resp.success){
+        copySectores[i] = resp.data
+        this.listaSectores.set(copySectores)
+      }
+    })
+  }
+
+  obtenerSectorIntegrante(i:number){
+    const getControl = this.formAtencion.get('integrantes') as FormArray
+    const entidadIdControl = getControl.at(i).get('entidadId')
+    const sectorIdControl = getControl.at(i).get('sectorId')
+    const sectorId = sectorIdControl?.value
+    if(sectorId){
+      entidadIdControl?.enable()
+      this.obtenerEntidadesServiceLista(i,sectorId)
+    } else {
+      entidadIdControl?.reset()
+      entidadIdControl?.disable()
+    }
+  }
+
+  obtenerEntidadesServiceLista(i:number, sectorId:number){
+    const pagination: Pagination = { tipo: '1', sectorId, columnSort: 'entidadId', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
+    const copyEntidades = [...this.listaEntidades()]
+    this.entidadService.listarEntidades(pagination).subscribe(resp => {
+      if(resp.success){
+        copyEntidades[i] = resp.data
+        this.listaEntidades.set(copyEntidades)
+      }
+    })
+  }
+
+  obtenerDepartamentosServiceLista(i:number){
+    const copyDepartamentos = [...this.listaDepartamentos()]
+    this.ubigeoService.getDepartments().subscribe(resp => {
+      if(resp.success){
+        copyDepartamentos[i] = resp.data
+        this.listaDepartamentos.set(copyDepartamentos)
+      }
+    })
+  }
+
+  changeDepartamentoIntegrante(i:number){
+    const getControl = this.formAtencion.get('integrantes') as FormArray
+    const entidadIdControl = getControl.at(i).get('entidadId')
+    const departamento = getControl.at(i).get('departamento')?.value
+    const provinciaControl = getControl.at(i).get('provincia')
+    const distritoControl = getControl.at(i).get('distrito')
+
+    if(departamento){
+      const ubigeo = `${departamento}0000`
+      provinciaControl?.enable()
+      this.obtenerProvinciasService(departamento)
+      this.obtenerProvinciasServiceLista(1,departamento)
+    } else {
+      provinciaControl?.disable()
+      provinciaControl?.reset()
+    }
+    distritoControl?.disable()
+    distritoControl?.reset()
+    entidadIdControl?.reset()
+  }
+
+  obtenerProvinciasServiceLista(i:number, departamento:string){
+    const copyProvincias = [...this.listaProvincias()]
+    this.ubigeoService.getProvinces(departamento).subscribe(resp => {
+      if(resp.success){
+        copyProvincias[i] = resp.data
+        this.listaProvincias.set(copyProvincias)
+      }
+    })
   }
 
   // perfilPOIAtencion(){
@@ -1050,18 +1173,24 @@ export class FormularioAtencionComponent {
     const integranteRow = this.fb.group({
       integranteId: [''],
       dni: [''],
-      nivelGobierno: [null, Validators.required],
+      nivelGobiernoId: [null, Validators.required],
+      tipo: [''],
       sectorId: [''],
-      departamentoId: [''],
-      provinciaId: [''],
-      distritoId: [''],
+      departamento: [''],
+      provincia: [''],
+      distrito: [''],
       entidadId: [null, Validators.required],
       nombre: [null, Validators.required],
       cargo: [null, Validators.required],
       telefono: [null, Validators.required],
       correo: [null, Validators.required]
     })
-    this.integrantes.push(integranteRow)
+    this.integrantes.push(integranteRow)    
+    this.listaSectores.update(sectores => [...sectores, []])
+    this.listaEntidades.update(entidades => [...entidades, []])
+    this.listaDepartamentos.update(departamentos => [...departamentos, []])
+    this.listaProvincias.update(provincias => [...provincias, []])
+    this.listaDistritos.update(distritos => [...distritos, []])
   }
 
   removeItemFormArray(i: number, formGroup: string) {
