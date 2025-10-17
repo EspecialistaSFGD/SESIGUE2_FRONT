@@ -184,6 +184,7 @@ export class FormularioAtencionComponent {
       if(this.create){
         this.formAtencion.get('tipo')?.setValue('atencion')
         this.formAtencion.get('modalidad')?.setValue('presencial')
+      } else {
       }
       this.formAtencion.get('dniAutoridad')?.setValidators([Validators.required])
       this.formAtencion.get('orientacionId')?.setValidators([Validators.required])
@@ -211,13 +212,14 @@ export class FormularioAtencionComponent {
         this.formularioControlEnable('distrito', false)
       }
       this.formularioControlEnable('dniAutoridad')
-      this.formularioControlEnable('espacioId', false)
-    } else {
-      this.formularioControlEnable('autoridad', !this.create)
-      this.formularioControlEnable('dniAutoridad', !this.create && !autoridad)
-      this.formularioControlEnable('nombreAutoridad', !this.create && !autoridad)
-      this.formularioControlEnable('cargoAutoridad', !this.create && !autoridad)
+      this.formularioControlEnable('espacioId', false) 
     }
+
+    this.formularioControlEnable('autoridad', !this.create)
+    this.formularioControlEnable('dniAutoridad', !this.create && !autoridad)
+    this.formularioControlEnable('nombreAutoridad', !this.create && !autoridad)
+    this.formularioControlEnable('cargoAutoridad', !this.create && !autoridad)
+    this.formularioControlEnable('contactoAutoridad', !this.create && !autoridad)
   }
 
   formUbigeoAtencion(){
@@ -790,7 +792,9 @@ export class FormularioAtencionComponent {
           if(!this.perfilPOIAtencion()){
             const nivelGobierno = entidad.nivelGobierno ?? null
             const tipoEntidad = this.tipoEntidades().find(item => item.abreviatura.toUpperCase() === nivelGobierno)
-            tipoEntidadIdControl?.setValue(tipoEntidad?.tipoId ?? null)
+            if(this.evento().verificaAsistentes){
+              tipoEntidadIdControl?.setValue(tipoEntidad?.tipoId ?? null)
+            }
           }
         })
     }
@@ -851,23 +855,35 @@ export class FormularioAtencionComponent {
     const dniControl = this.formAtencion.get('dniAutoridad')
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
+    const contactoControl = this.formAtencion.get('contactoAutoridad')
 
-    const consultarAlcalde = this.permisosPCM ? this.permisosPCM : !this.permisosPCM && !this.evento().verificaAsistentes
+    // const consultarAlcalde = this.permisosPCM ? this.permisosPCM : !this.permisosPCM && !this.evento().verificaAsistentes  
 
-    if(consultarAlcalde){
-      autoridad ? consultarAlcalde ? dniControl?.disable() : dniControl?.enable() : dniControl?.enable()
-      autoridad ? nombreControl?.disable() : nombreControl?.enable()
-      autoridad ? cargoControl?.disable() : cargoControl?.enable()
-    }
-    
-    if(consultarAlcalde && autoridad == true && ubigeo){
-      this.obtenerAlcaldePorUbigeo()
-    }
-    if(consultarAlcalde){
+    // if(this.permisosPCM){
+    //   autoridad ? this.permisosPCM ? dniControl?.disable() : dniControl?.enable() : dniControl?.enable()
+    //   autoridad ? nombreControl?.disable() : nombreControl?.enable()
+    //   autoridad ? cargoControl?.disable() : cargoControl?.enable()
+    // }
+
+    if(autoridad){
+      if(ubigeo){
+        this.obtenerAlcaldePorUbigeo()
+      }
+    } else {   
+      dniControl?.enable()
       dniControl?.reset()
+      nombreControl?.disable()
       nombreControl?.reset()
+      cargoControl?.disable()
       cargoControl?.reset()
+      contactoControl?.disable()
+      contactoControl?.reset()
     }
+    // if(this.permisosPCM && !this.evento().verificaAsistentes){
+    //   dniControl?.reset()
+    //   nombreControl?.reset()
+    //   cargoControl?.reset()
+    // }
 
 
 
@@ -893,20 +909,20 @@ export class FormularioAtencionComponent {
   }
 
   changeDocumentoAutoridad(){
-    const autoridadControl = this.formAtencion.get('autoridad')
-    const autoridad = autoridadControl?.value
+    // const autoridadControl = this.formAtencion.get('autoridad')
+    // const autoridad = autoridadControl?.value
     const dniControl = this.formAtencion.get('dniAutoridad')
     const dniValue = dniControl?.value
-    const nombreControl = this.formAtencion.get('nombreAutoridad')
-    const cargoControl = this.formAtencion.get('cargoAutoridad')
-    const contactoControl = this.formAtencion.get('contactoAutoridad')
-    const ubigeoControl = this.formAtencion.get('ubigeo')
-    const departamentoControl = this.formAtencion.get('departamento')
-    const provinciaControl = this.formAtencion.get('provincia')
-    const distritoControl = this.formAtencion.get('distrito')
-    const entidadControl = this.formAtencion.get('entidad')
-    const entidadIdControl = this.formAtencion.get('entidadId')
-    const entidadSlugControl = this.formAtencion.get('entidadSlug')
+    // const nombreControl = this.formAtencion.get('nombreAutoridad')
+    // const cargoControl = this.formAtencion.get('cargoAutoridad')
+    // const contactoControl = this.formAtencion.get('contactoAutoridad')
+    // const ubigeoControl = this.formAtencion.get('ubigeo')
+    // const departamentoControl = this.formAtencion.get('departamento')
+    // const provinciaControl = this.formAtencion.get('provincia')
+    // const distritoControl = this.formAtencion.get('distrito')
+    // const entidadControl = this.formAtencion.get('entidad')
+    // const entidadIdControl = this.formAtencion.get('entidadId')
+    // const entidadSlugControl = this.formAtencion.get('entidadSlug')
     
     if(dniValue.length > 0){
       dniControl?.setValidators([Validators.pattern(this.validatorService.DNIPattern)]);
@@ -934,7 +950,8 @@ export class FormularioAtencionComponent {
   }
 
   obtenerAsistenteService(dni: string){
-    const evento = this.permisosPCM ? 0 : Number(this.evento().eventoId!)
+    const eventoId = this.evento().verificaAsistentes ? Number(this.evento().eventoId!) : 0
+
     const ubigeoControl = this.formAtencion.get('ubigeo')
     const autoridadControl = this.formAtencion.get('autoridad')
 
@@ -951,39 +968,49 @@ export class FormularioAtencionComponent {
     const contacto = this.formAtencion.get('contactoAutoridad')
     const entidadId = this.formAtencion.get('entidadId')   
     
-    this.atencionService.obtenerAsistente(dni, evento)
+    this.loadingAutoridad = true
+    this.atencionService.obtenerAsistente(dni, eventoId)
       .subscribe( resp => {
+        this.loadingAutoridad = false
         const asistente = resp.data
-
-        nombre?.setValue(asistente ? asistente.nombres : '')
-        cargo?.setValue(asistente ? asistente.cargo : '')
+        
+        nombre?.setValue(asistente ? asistente.nombres : null)
+        cargo?.setValue(asistente ? asistente.cargo : null)
         
         if(this.permisosPCM){
           this.formularioControlEnable('nombreAutoridad', !asistente)
           this.formularioControlEnable('cargoAutoridad', !asistente)
         } else {
-          autoridadControl?.setValue(false)
-          contacto?.enable()
-          this.formularioControlEnable('nombreAutoridad', false)
-          this.formularioControlEnable('cargoAutoridad', false)
+          // autoridadControl?.setValue(false)
           
           if(asistente){
+            contacto?.enable()
+            this.formularioControlEnable('nombreAutoridad', false)
+            this.formularioControlEnable('cargoAutoridad', false)
+            this.formularioControlEnable('contactoAutoridad', false)
             ubigeoControl?.setValue(asistente.ubigeo)
             entidadSlug?.setValue(asistente.entidad)
             entidad?.setValue(asistente.entidad)
             entidadId?.setValue(asistente.entidadId)
             const telefono = asistente.telefono ? `${asistente.telefono} / ` : ''
             contacto?.setValue(`${telefono}${asistente.email}`)
-            this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
+             if(this.evento().verificaAsistentes){
+               this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
+             }
             const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
-            autoridadControl?.setValue(esAutoridad)
+            if(this.evento().verificaAsistentes){
+              autoridadControl?.setValue(esAutoridad)
+            }
           } else {
             contacto?.reset()
-            tipoEntidadId?.reset()
-            departamentoControl?.reset()
-            provinciaControl?.reset()
-            distritoControl?.reset()            
+            this.formularioControlEnable('nombreAutoridad', true)
+            this.formularioControlEnable('cargoAutoridad', true)
+            this.formularioControlEnable('contactoAutoridad', true)
             if(this.evento().verificaAsistentes){
+              tipoEntidadId?.reset()
+              departamentoControl?.reset()
+              provinciaControl?.reset()
+              distritoControl?.reset()            
               dniControl?.setErrors({ msgBack: 'Aún no asiste al evento' });
             }
           }
@@ -1030,6 +1057,7 @@ export class FormularioAtencionComponent {
     const dniControl = this.formAtencion.get('dniAutoridad')
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
+    const contactoControl = this.formAtencion.get('contactoAutoridad')
     const tipoUbigeoControl = this.formAtencion.get('tipoUbigeo')
     const ubigeoJneControl = this.formAtencion.get('ubigeoJne')
 
@@ -1070,7 +1098,9 @@ export class FormularioAtencionComponent {
         const cargo = existeAutoridad ? autoridad?.cargo : null
         dniControl?.setValue(dni) 
         nombreControl?.setValue(nombres) 
-        cargoControl?.setValue(cargo) 
+        cargoControl?.setValue(cargo)
+        dniControl?.disable() 
+        contactoControl?.enable() 
         this.loadingAutoridad = false
       })
   }

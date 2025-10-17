@@ -128,10 +128,7 @@ export default class IntervencionTareasComponent {
   disabledBotonNuevo(){
     const cantidadTareas = this.intervencionTareas().length
     let disabled = this.permisosPCM ? true : this.botonNuevoActivo
-
-    console.log('VERIFICANDO DISABLE DBOTON NUEVO');
-    
-
+   
     if(cantidadTareas == 0){
       disabled = !this.permisosPCM
     }

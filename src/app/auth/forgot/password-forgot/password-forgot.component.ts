@@ -40,7 +40,6 @@ export class PasswordForgotComponent {
   })
 
   ngOnInit(): void {
-    console.log(this.usuarioClave);
   }
     
   alertMessageError(control: string) {
