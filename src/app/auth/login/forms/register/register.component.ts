@@ -108,8 +108,6 @@ export class RegisterComponent {
 
   private executeCuiListing(value: string) {
     this.dni = value;
-    console.log(this.dni);
-
   }
 
   onTelefonoChange(event: Event): void {
@@ -122,10 +120,6 @@ export class RegisterComponent {
 
     telefonoControl?.setValue(value, { emitEvent: false });
     telefonoControl?.updateValueAndValidity();
-
-
-    console.log(telefonoControl?.value);
-
   }
 
   onTipoChange(event: SelectModel): void {
@@ -166,8 +160,6 @@ export class RegisterComponent {
   }
 
   onDepChange(value: SelectModel): void {
-    // console.log(value);
-
     const provControl = this.registerForm.get('prov');
     const entidadControl = this.registerForm.get('entidad');
     const perfilControl = this.registerForm.get('perfil');
@@ -227,7 +219,6 @@ export class RegisterComponent {
     this.registerForm.get('perfil')?.patchValue(`${18}`)    
     this.authService.registrarUsuario(this.registerForm.value).subscribe({
       next: (v) => {
-        console.log(v)
         if (v?.success) {
           if (v.data != 0) {
             this.router.navigate(['/auth'], { queryParams: { action: 'login' } });

@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { IntervencionTareaEstadoRegistroEnum } from '@core/enums';
 import { convertDateStringToDate, convertEnumToObject, getDateFormat, obtenerPermisosBotones } from '@core/helpers';
-import { ButtonsActions, EventoResponse, IntervencionEspacioResponse, IntervencionTareaResponse, ItemEnum, Pagination, UsuarioNavigation } from '@core/interfaces';
+import { ButtonsActions, IntervencionEspacioResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { EventosService, IntervencionTareaService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
+import { IconoValidadoComponent } from '@shared/icons/icono-validado/icono-validado.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaComponent } from './formulario-Intervencion-tarea/formulario-intervencion-tarea.component';
 import IntervencionTareaAvancesComponent from './intervencion-tarea-avances/intervencion-tarea-avances.component';
-import { IconoValidadoComponent } from '@shared/icons/icono-validado/icono-validado.component';
-import { BotonComponent } from '@shared/boton/boton/boton.component';
 
 @Component({
   selector: 'app-intervencion-tareas',
