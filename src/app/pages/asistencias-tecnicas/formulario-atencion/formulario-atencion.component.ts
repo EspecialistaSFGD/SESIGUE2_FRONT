@@ -994,7 +994,9 @@ export class FormularioAtencionComponent {
             entidadId?.setValue(asistente.entidadId)
             const telefono = asistente.telefono ? `${asistente.telefono} / ` : ''
             contacto?.setValue(`${telefono}${asistente.email}`)
-            this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
+             if(this.evento().verificaAsistentes){
+               this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
+             }
             const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
             if(this.evento().verificaAsistentes){
               autoridadControl?.setValue(esAutoridad)
