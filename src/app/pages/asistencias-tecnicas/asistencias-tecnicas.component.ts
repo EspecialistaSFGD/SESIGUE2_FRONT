@@ -134,7 +134,7 @@ export default class AsistenciasTecnicasComponent {
         this.setPaginationValueToParams(params, 'tipoAtencion')
         this.setPaginationValueToParams(params, 'ubigeo')
      
-        // this.obtenerAsistenciasTecnicas()
+        this.obtenerAsistenciasTecnicas()
       }
     });
   }

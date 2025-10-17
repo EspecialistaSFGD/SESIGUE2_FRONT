@@ -184,6 +184,7 @@ export class FormularioAtencionComponent {
       if(this.create){
         this.formAtencion.get('tipo')?.setValue('atencion')
         this.formAtencion.get('modalidad')?.setValue('presencial')
+      } else {
       }
       this.formAtencion.get('dniAutoridad')?.setValidators([Validators.required])
       this.formAtencion.get('orientacionId')?.setValidators([Validators.required])
@@ -211,13 +212,14 @@ export class FormularioAtencionComponent {
         this.formularioControlEnable('distrito', false)
       }
       this.formularioControlEnable('dniAutoridad')
-      this.formularioControlEnable('espacioId', false)
-    } else {
-      this.formularioControlEnable('autoridad', !this.create)
-      this.formularioControlEnable('dniAutoridad', !this.create && !autoridad)
-      this.formularioControlEnable('nombreAutoridad', !this.create && !autoridad)
-      this.formularioControlEnable('cargoAutoridad', !this.create && !autoridad)
+      this.formularioControlEnable('espacioId', false) 
     }
+
+    this.formularioControlEnable('autoridad', !this.create)
+    this.formularioControlEnable('dniAutoridad', !this.create && !autoridad)
+    this.formularioControlEnable('nombreAutoridad', !this.create && !autoridad)
+    this.formularioControlEnable('cargoAutoridad', !this.create && !autoridad)
+    this.formularioControlEnable('contactoAutoridad', !this.create && !autoridad)
   }
 
   formUbigeoAtencion(){
@@ -867,8 +869,7 @@ export class FormularioAtencionComponent {
       if(ubigeo){
         this.obtenerAlcaldePorUbigeo()
       }
-    } else {
-      console.log('no es autoridad');      
+    } else {   
       dniControl?.enable()
       dniControl?.reset()
       nombreControl?.disable()
@@ -972,7 +973,6 @@ export class FormularioAtencionComponent {
       .subscribe( resp => {
         this.loadingAutoridad = false
         const asistente = resp.data
-        console.log(asistente);
         
         nombre?.setValue(asistente ? asistente.nombres : null)
         cargo?.setValue(asistente ? asistente.cargo : null)
