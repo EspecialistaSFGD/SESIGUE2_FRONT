@@ -88,53 +88,6 @@
 						<ng-container *ngTemplateOutlet="controlCargoAutoridad"></ng-container>
 					</div>
 
-					<div class="grid flex-col col-span-4">
-						<div class="border border-solid border-grey-800 dark:border-gray-600">
-							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
-								<h5 class="text-sm font-medium">Congresistas</h5>
-								<app-boton icono="plus" texto="Nuevo" tooltip="Agregar nuevo congresista" [outline]="true" (click)="addItemFormArray($event,'congresistas')" />
-							</div>
-							<div class="flex flex-col gap-4 px-4" formArrayName="congresistas" [ngClass]="{ 'py-4' : congresistas.length }">
-								<div class="grid grid-cols-12 gap-4" *ngFor="let congresista of congresistas.controls; let i = index" [formGroupName]="i">
-									<div class="grid grid-cols-4 gap-4 col-span-11">
-										<div class="flex flex-col">
-											<label>Congresista</label>
-											<nz-radio-group class="radio-form-control" formControlName="congresista"
-												(ngModelChange)="changeCongresista(i)">
-												@for (participa of participar; track $index){
-													<label nz-radio [nzValue]="participa == 'si' ? true : false">{{participa | titlecase}}</label>
-												}
-											</nz-radio-group>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'congresista')"> {{msgErrorControlTwoNivel('congresistas',i,'congresista','Congresista')}} </div>
-										</div>
-
-										<div class="flex flex-col">
-											<label for="dni{{i}}">DNI</label>
-											<input type="text" class="form-control" id="dni{{i}}" placeholder="Ingresa el DNI aquí" formControlName="dni">
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'dni')"> {{msgErrorControlTwoNivel('congresistas',i,'dni','DNI')}}</div>
-										</div>
-
-										<div class="flex flex-col">
-											<label for="nombre{{i}}">Nombre</label>
-											<input type="text" class="form-control" id="nombre{{i}}" placeholder="Ingresa el nombre aquí" formControlName="nombre">
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'nombre')"> {{msgErrorControlTwoNivel('congresistas',i,'nombre','Nombre')}}</div>
-										</div>
-
-										<div class="flex flex-col">
-											<label for="descripcion{{i}}">Descripción</label>
-											<input type="text" class="form-control" id="descripcion{{i}}" formControlName="descripcion">
-										</div>
-									</div>
-									<div class="flex flex-col">
-										<label class="text-center"> Eliminar </label><div class="flex h-full justify-center pt-1">
-											<i class="pi pi-minus-circle cursor-pointer text-3xl text-slate-600 hover:text-sky-700"(click)="removeItemFormArray(i,'congresistas')"></i>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
 					<div class="flex flex-col">
 						<ng-container *ngTemplateOutlet="controlEspacios"></ng-container>
 					</div>
@@ -147,7 +100,7 @@
 						<ng-container *ngTemplateOutlet="controlTema"></ng-container>
 					</div>
 
-					<div class="grid flex-col col-span-2">
+					<!-- <div class="grid flex-col col-span-2">
 						<div class="max-h-max border border-solid border-gray-200 dark:border-gray-600">
 							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
 								<h5 class="text-sm font-medium">Participantes</h5>
@@ -188,7 +141,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 
 					<div class="grid flex-col col-span-2">
 						<div class="max-h-max border border-solid border-gray-200 dark:border-gray-600">
@@ -233,7 +186,217 @@
 							</div>
 						</div>
 					</div>
+				</div>
 
+				<div class="flex pt-6 justify-end">
+					<p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"(onClick)="generalValidate() ? nextCallback.emit() : null" />
+				</div>
+			</ng-template>
+		</p-stepperPanel>
+
+		<p-stepperPanel header="Participantes">
+			<ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
+				<div class="grid grid-cols-1 md:grid-cols-4 bg-white gap-4 dark:bg-[#1f1f1f]">
+					<div class="grid flex-col col-span-4">
+						<div class="border border-solid border-grey-800 dark:border-gray-600">
+							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
+								<h5 class="text-sm font-medium">Congresistas</h5>
+								<app-boton icono="plus" texto="Nuevo" tooltip="Agregar nuevo congresista" [outline]="true" (click)="addItemFormArray($event,'congresistas')" />
+							</div>
+							<div class="flex flex-col gap-4 px-4" formArrayName="congresistas" [ngClass]="{ 'py-4' : congresistas.length }">
+								<div class="grid grid-cols-12 gap-4" *ngFor="let congresista of congresistas.controls; let i = index" [formGroupName]="i">
+									<div class="grid grid-cols-4 gap-4 col-span-11">
+										<div class="flex flex-col">
+											<label>Congresista</label>
+											<nz-radio-group class="radio-form-control" formControlName="congresista"
+												(ngModelChange)="changeCongresista(i)">
+												@for (participa of participar; track $index){
+													<label nz-radio [nzValue]="participa == 'si' ? true : false">{{participa | titlecase}}</label>
+												}
+											</nz-radio-group>
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'congresista')"> {{msgErrorControlTwoNivel('congresistas',i,'congresista','Congresista')}} </div>
+										</div>
+	
+										<div class="flex flex-col">
+											<label for="dni{{i}}">DNI</label>
+											<input type="text" class="form-control" id="dni{{i}}" placeholder="Ingresa el DNI aquí" formControlName="dni">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'dni')"> {{msgErrorControlTwoNivel('congresistas',i,'dni','DNI')}}</div>
+										</div>
+	
+										<div class="flex flex-col">
+											<label for="nombre{{i}}">Nombre</label>
+											<input type="text" class="form-control" id="nombre{{i}}" placeholder="Ingresa el nombre aquí" formControlName="nombre">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('congresistas',i,'nombre')"> {{msgErrorControlTwoNivel('congresistas',i,'nombre','Nombre')}}</div>
+										</div>
+	
+										<div class="flex flex-col">
+											<label for="descripcion{{i}}">Descripción</label>
+											<input type="text" class="form-control" id="descripcion{{i}}" formControlName="descripcion">
+										</div>
+									</div>
+									<div class="flex flex-col">
+										<label class="text-center"> Eliminar </label><div class="flex h-full justify-center pt-1">
+											<i class="pi pi-minus-circle cursor-pointer text-3xl text-slate-600 hover:text-sky-700"(click)="removeItemFormArray(i,'congresistas')"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+	
+					<div class="grid flex-col col-span-4">
+						<div class="max-h-max border border-solid border-gray-200 dark:border-gray-600">
+							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
+								<h5 class="text-sm font-medium">Integrantes de acta</h5>
+								<app-boton icono="plus" texto="Nuevo" tooltip="Agregar nuevo integrante" [outline]="true" (click)="addItemFormArray($event,'integrantes')" />
+							</div>
+							<div class="w-full flex flex-col gap-6" formArrayName="integrantes" [ngClass]="{'py-4' : integrantes.length }">
+								<div class="grid grid-cols-9 gap-4" [ngClass]="{'pt-4 border-t border-gray-200' : i > 0}" *ngFor="let integrantes of integrantes.controls; let i = index" [formGroupName]="i">
+									<div class="col-span-8 grid grid-cols-5 gap-4 pl-4">
+										<div class="flex flex-col">
+											<label For="nivelGobiernoId">Nivel de gobierno</label>
+											<p-dropdown
+											[options]="nivelGobiernos()"
+											formControlName="nivelGobiernoId"
+											optionLabel="nombre"
+											optionValue="tipoId"
+											[showClear]="true"
+											placeholder="Seleccionar nivel de gobierno"
+											(onChange)="obtenerNivelGobierno(i)"/>
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'nivelGobiernoId')">{{msgErrorControlTwoNivel('integrantes',i,'nivelGobiernoId','Nivel de gobierno')}}</div>
+										</div>
+		
+										<div class="flex flex-col">
+											@if(obtenerControlValue(i,'integrantes','tipo') === true){
+												<label For="sectorId">Sector</label>
+												<p-dropdown
+												[options]="listaSectores()[i]"
+												formControlName="sectorId"
+												optionLabel="nombre"
+												optionValue="grupoID"
+												[showClear]="true"
+												placeholder="Seleccionar sector"
+												(onChange)="obtenerSectorIntegrante(i)"/>
+												<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'sectorId')">{{msgErrorControlTwoNivel('integrantes',i,'sectorId','Sector')}}</div>
+											}
+											@if(obtenerControlValue(i,'integrantes','tipo') === false){
+												<label For="departamento">Departamento</label>
+												<p-dropdown
+												[options]="listaDepartamentos()[i]"
+												formControlName="departamento"
+												optionLabel="departamento"
+												optionValue="departamentoId"
+												[showClear]="true"
+												placeholder="Seleccionar departamento"
+												(onChange)="changeDepartamentoIntegrante(i)"/>
+												<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'departamento')">{{msgErrorControlTwoNivel('integrantes',i,'departamento','Departamento')}}</div>
+											}
+										</div>
+		
+										<div class="flex flex-col" [ngClass]="obtenerControlValue(i,'integrantes','tipo') === false ? '' : 'col-span-3'">
+											@if(obtenerControlValue(i,'integrantes','tipo') === true){
+												<label For="entidadId">Unidad organica</label>
+												<p-dropdown
+												[options]="listaEntidades()[i]"
+												formControlName="entidadId"
+												optionLabel="nombre"
+												optionValue="entidadId"
+												[showClear]="true"
+												placeholder="Seleccionar unidad organica"/>
+												<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'entidadId')">{{msgErrorControlTwoNivel('integrantes',i,'entidadId','Unidad organica')}}</div>
+											}
+											@if(obtenerControlValue(i,'integrantes','tipo') === false){
+												<label For="provincia">Provincia</label>
+												<p-dropdown
+												[options]="listaProvincias()[i]"
+												formControlName="provincia"
+												optionLabel="provincia"
+												optionValue="provinciaId"
+												[showClear]="true"
+												placeholder="Seleccionar provincia"
+												(onChange)="changeProvinciaIntegrante(i)"/>
+												<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'provincia')">{{msgErrorControlTwoNivel('integrantes',i,'provincia','Provincia')}}</div>
+											}
+										</div>
+		
+										<div *ngIf="obtenerControlValue(i,'integrantes','tipo') === false" class="flex flex-col">
+											<label For="distrito">Distrito</label>
+												<p-dropdown
+												[options]="listaDistritos()[i]"
+												formControlName="distrito"
+												optionLabel="distrito"
+												optionValue="distritoId"
+												[showClear]="true"
+												placeholder="Seleccionar distrito"
+												(onChange)="changeDistritoIntegrante(i)"/>
+												<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'distrito')">{{msgErrorControlTwoNivel('integrantes',i,'distrito','Distrito')}}</div>
+										</div>
+	
+										<div *ngIf="obtenerControlValue(i,'integrantes','tipo') === false" class="flex flex-col">
+											<label For="entidadSlug">
+												Entidad
+												@if(obtenerControlValue(i,'integrantes','entidadId')){
+													<span nz-icon nzType="info-circle" [nz-tooltip]="obtenerControlValue(i,'integrantes','entidad')"></span>
+												}
+											</label>
+											<div class="relative">
+												<input type="text" id="dni" class="form-control" formControlName="entidadSlug">
+												<div class="absolute right-1 top-1"><app-progress-spiner [loading]="obtenerControlValue(i,'integrantes','loadingEntidad')" /></div>
+											</div>
+										</div>
+	
+										<div class="flex flex-col">
+											<label For="dni">DNI</label>
+											<input type="text" id="dni" class="form-control" placeholder="Ingresa el DNI aquí" formControlName="dni" (keyup)="changeDniList(i)">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'dni')">{{msgErrorControlTwoNivel('integrantes',i,'dni','Dni')}}</div>
+										</div>
+	
+										<div class="flex flex-col">
+											<label For="nombre">Nombre completo</label>
+											<input type="text" id="dni" class="form-control" placeholder="Ingresa el nombre aquí" formControlName="nombre">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'nombre')">{{msgErrorControlTwoNivel('integrantes',i,'nombre','Nombre')}}</div>
+										</div>
+	
+										<div class="flex flex-col">
+											<label For="cargo">Cargo</label>
+											<input type="text" id="cargo" class="form-control" placeholder="Ingresa el cargo aquí" formControlName="cargo">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'cargo')">{{msgErrorControlTwoNivel('integrantes',i,'cargo','Cargo')}}</div>
+										</div>
+	
+										<div class="flex flex-col">
+											<label For="telefono">Telefono</label>
+											<input type="text" id="telefono" class="form-control" placeholder="Ingresa el telefono aquí" formControlName="telefono">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'telefono')">{{msgErrorControlTwoNivel('integrantes',i,'telefono','Telefono')}}</div>
+										</div>
+	
+										<div class="flex flex-col">
+											<label For="correo">Correo</label>
+											<input type="text" id="correo" class="form-control" placeholder="Ingresa el correo aquí" formControlName="correo">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'correo')">{{msgErrorControlTwoNivel('integrantes',i,'correo','Correo')}}</div>
+										</div>
+									</div>
+	
+									<div class="flex flex-col">
+										<label class="text-center">Eliminar</label>
+										<div class="flex h-full justify-center pt-1">
+											<i class="pi pi-minus-circle cursor-pointer text-3xl text-slate-600 hover:text-sky-700"(click)="removeItemFormArray(i,'integrantes')"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="flex pt-4 justify-between">
+					<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+					<p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"(onClick)="generalValidate() ? nextCallback.emit() : null" />
+				</div>
+			</ng-template>			
+		</p-stepperPanel>
+
+		<p-stepperPanel header="Compromisos">
+			<ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
+				<div class="grid grid-cols-1 md:grid-cols-4 bg-white gap-4 dark:bg-[#1f1f1f]">
 					<div class="grid flex-col col-span-2">
 						<label for="comentarios">Comentarios</label>
 						<textarea class="form-control" id="comentarios" formControlName="comentarios" (keyup)="caracteresContador('comentarios',900)" placeholder="Ingrese el comentario aquí" rows="2"></textarea>
@@ -245,7 +408,7 @@
 
 					<div class="grid flex-col col-span-2">
 						<label for="acuerdos">Acuerdos</label>
-						<textarea class="form-control" id="acuerdos" formControlName="acuerdos"(keyup)="caracteresContador('acuerdos',900)" placeholder="Ingrese el acuerdo aquí" rows="2"></textarea>
+						<textarea class="form-control" id="acuerdos" formControlName="acuerdos" (keyup)="caracteresContador('acuerdos',900)" placeholder="Ingrese el acuerdo aquí" rows="2"></textarea>
 						<div class="flex justify-between">
 							<div class="w-full text-danger" *ngIf="alertMessageError('acuerdos')">{{msgErrorControl('acuerdos','acuerdos')}}</div>
 							<div class="w-full text-right" [ngClass]="{ 'text-yellow-600 font-bold' : acuerdosCount < 20 }">{{acuerdosCount}}</div>
@@ -262,157 +425,7 @@
 						<app-boton-upload (files)="changeFiles($event,'evidenciaAsistencia')" name="evidenciaAsistencia" accept=".jpg,.jpeg,.png,.pdf"  />
 					</div>
 				</div>
-
-				<div class="flex pt-6 justify-end">
-					<p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"(onClick)="generalValidate() ? nextCallback.emit() : null" />
-				</div>
-			</ng-template>
-		</p-stepperPanel>
-		<p-stepperPanel header="Integrantes">
-			<ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
-				<div class="grid flex-col col-span-2">
-					<div class="max-h-max border border-solid border-gray-200 dark:border-gray-600">
-						<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
-							<h5 class="text-sm font-medium">Integrantes de acta</h5>
-							<app-boton icono="plus" texto="Nuevo" tooltip="Agregar nuevo integrante" [outline]="true" (click)="addItemFormArray($event,'integrantes')" />
-						</div>
-						<div class="w-full flex flex-col gap-6" formArrayName="integrantes" [ngClass]="{'py-4' : integrantes.length }">
-							<div class="grid grid-cols-9 gap-4" [ngClass]="{'pt-4 border-t border-gray-200' : i > 0}" *ngFor="let integrantes of integrantes.controls; let i = index" [formGroupName]="i">
-								<div class="col-span-8 grid grid-cols-5 gap-4 pl-4">
-									<div class="flex flex-col">
-										<label For="nivelGobiernoId">Nivel de gobierno</label>
-										<p-dropdown
-										[options]="nivelGobiernos()"
-										formControlName="nivelGobiernoId"
-										optionLabel="nombre"
-										optionValue="tipoId"
-										[showClear]="true"
-										placeholder="Seleccionar nivel de gobierno"
-										(onChange)="obtenerNivelGobierno(i)"/>
-										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'nivelGobiernoId')">{{msgErrorControlTwoNivel('integrantes',i,'nivelGobiernoId','Nivel de gobierno')}}</div>
-									</div>
-	
-									<div class="flex flex-col">
-										@if(obtenerControlValue(i,'integrantes','tipo') === true){
-											<label For="sectorId">Sector</label>
-											<p-dropdown
-											[options]="listaSectores()[i]"
-											formControlName="sectorId"
-											optionLabel="nombre"
-											optionValue="grupoID"
-											[showClear]="true"
-											placeholder="Seleccionar sector"
-											(onChange)="obtenerSectorIntegrante(i)"/>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'sectorId')">{{msgErrorControlTwoNivel('integrantes',i,'sectorId','Sector')}}</div>
-										}
-										@if(obtenerControlValue(i,'integrantes','tipo') === false){
-											<label For="departamento">Departamento</label>
-											<p-dropdown
-											[options]="listaDepartamentos()[i]"
-											formControlName="departamento"
-											optionLabel="departamento"
-											optionValue="departamentoId"
-											[showClear]="true"
-											placeholder="Seleccionar departamento"
-											(onChange)="changeDepartamentoIntegrante(i)"/>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'departamento')">{{msgErrorControlTwoNivel('integrantes',i,'departamento','Departamento')}}</div>
-										}
-									</div>
-	
-									<div class="flex flex-col" [ngClass]="obtenerControlValue(i,'integrantes','tipo') === false ? '' : 'col-span-3'">
-										@if(obtenerControlValue(i,'integrantes','tipo') === true){
-											<label For="entidadId">Unidad organica</label>
-											<p-dropdown
-											[options]="listaEntidades()[i]"
-											formControlName="entidadId"
-											optionLabel="nombre"
-											optionValue="entidadId"
-											[showClear]="true"
-											placeholder="Seleccionar unidad organica"/>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'entidadId')">{{msgErrorControlTwoNivel('integrantes',i,'entidadId','Unidad organica')}}</div>
-										}
-										@if(obtenerControlValue(i,'integrantes','tipo') === false){
-											<label For="provincia">Provincia</label>
-											<p-dropdown
-											[options]="listaProvincias()[i]"
-											formControlName="provincia"
-											optionLabel="provincia"
-											optionValue="provinciaId"
-											[showClear]="true"
-											placeholder="Seleccionar provincia"
-											(onChange)="changeProvinciaIntegrante(i)"/>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'provincia')">{{msgErrorControlTwoNivel('integrantes',i,'provincia','Provincia')}}</div>
-										}
-									</div>
-	
-									<div *ngIf="obtenerControlValue(i,'integrantes','tipo') === false" class="flex flex-col">
-										<label For="distrito">Distrito</label>
-											<p-dropdown
-											[options]="listaDistritos()[i]"
-											formControlName="distrito"
-											optionLabel="distrito"
-											optionValue="distritoId"
-											[showClear]="true"
-											placeholder="Seleccionar distrito"
-											(onChange)="changeDistritoIntegrante(i)"/>
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'distrito')">{{msgErrorControlTwoNivel('integrantes',i,'distrito','Distrito')}}</div>
-									</div>
-
-									<div *ngIf="obtenerControlValue(i,'integrantes','tipo') === false" class="flex flex-col">
-										<label For="entidadSlug">
-											Entidad
-											@if(obtenerControlValue(i,'integrantes','entidadId')){
-												<span nz-icon nzType="info-circle" [nz-tooltip]="obtenerControlValue(i,'integrantes','entidad')"></span>
-											}
-										</label>
-										<div class="relative">
-											<input type="text" id="dni" class="form-control" formControlName="entidadSlug">
-											<div class="absolute right-1 top-1"><app-progress-spiner [loading]="obtenerControlValue(i,'integrantes','loadingEntidad')" /></div>
-										</div>
-									</div>
-
-									<div class="flex flex-col">
-										<label For="dni">DNI</label>
-										<input type="text" id="dni" class="form-control" placeholder="Ingresa el DNI aquí" formControlName="dni" (keyup)="changeDniList(i)">
-										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'dni')">{{msgErrorControlTwoNivel('integrantes',i,'dni','Dni')}}</div>
-									</div>
-
-									<div class="flex flex-col">
-										<label For="nombre">Nombre completo</label>
-										<input type="text" id="dni" class="form-control" placeholder="Ingresa el nombre aquí" formControlName="nombre">
-										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'nombre')">{{msgErrorControlTwoNivel('integrantes',i,'nombre','Nombre')}}</div>
-									</div>
-
-									<div class="flex flex-col">
-										<label For="cargo">Cargo</label>
-										<input type="text" id="cargo" class="form-control" placeholder="Ingresa el cargo aquí" formControlName="cargo">
-										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'cargo')">{{msgErrorControlTwoNivel('integrantes',i,'cargo','Cargo')}}</div>
-									</div>
-
-									<div class="flex flex-col">
-										<label For="telefono">Telefono</label>
-										<input type="text" id="telefono" class="form-control" placeholder="Ingresa el telefono aquí" formControlName="telefono">
-										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'telefono')">{{msgErrorControlTwoNivel('integrantes',i,'telefono','Telefono')}}</div>
-									</div>
-
-									<div class="flex flex-col">
-										<label For="correo">Correo</label>
-										<input type="text" id="correo" class="form-control" placeholder="Ingresa el correo aquí" formControlName="correo">
-										<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'correo')">{{msgErrorControlTwoNivel('integrantes',i,'correo','Correo')}}</div>
-									</div>
-								</div>
-
-								<div class="flex flex-col">
-									<label class="text-center">Eliminar</label>
-									<div class="flex h-full justify-center pt-1">
-										<i class="pi pi-minus-circle cursor-pointer text-3xl text-slate-600 hover:text-sky-700"(click)="removeItemFormArray(i,'integrantes')"></i>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="flex pt-4 justify-start">
+				<div class="flex pt-4 justify-between">
 					<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
 				</div>
 			</ng-template>
