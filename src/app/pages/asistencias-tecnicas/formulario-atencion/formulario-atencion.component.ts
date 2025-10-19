@@ -63,11 +63,17 @@ export class FormularioAtencionComponent {
   agendaClasificaciones = signal<ClasificacionResponse[]>([])
 
   nivelGobiernos = signal<TipoEntidadResponse[]>([])
-  listaSectores = signal<SectorResponse[][]>([])
-  listaEntidades = signal<EntidadResponse[][]>([])
-  listaDepartamentos = signal<UbigeoDepartmentResponse[][]>([])
-  listaProvincias = signal<UbigeoProvinciaResponse[][]>([])
-  listaDistritos = signal<UbigeoDistritoResponse[][]>([])
+  listaIntegranteSectores = signal<SectorResponse[][]>([])
+  listaIntegranteEntidades = signal<EntidadResponse[][]>([])
+  listaIntegranteDepartamentos = signal<UbigeoDepartmentResponse[][]>([])
+  listaIntegranteProvincias = signal<UbigeoProvinciaResponse[][]>([])
+  listaIntegranteDistritos = signal<UbigeoDistritoResponse[][]>([])
+
+  listaCompromisoSectores = signal<SectorResponse[][]>([])
+  listaCompromisoEntidades = signal<EntidadResponse[][]>([])
+  listaCompromisoDepartamentos = signal<UbigeoDepartmentResponse[][]>([])
+  listaCompromisoProvincias = signal<UbigeoProvinciaResponse[][]>([])
+  listaCompromisoDistritos = signal<UbigeoDistritoResponse[][]>([])
 
   private fb = inject(FormBuilder)
   private congresistaService = inject(CongresistasService)
@@ -121,6 +127,10 @@ export class FormularioAtencionComponent {
     return this.formAtencion.get('integrantes') as FormArray;
   }
 
+  get compromisos(): FormArray {
+    return this.formAtencion.get('compromisos') as FormArray;
+  }
+
   public formAtencion: FormGroup = this.fb.group({
     tipoPerfil: [''],
     tipo: ['', Validators.required],
@@ -163,7 +173,8 @@ export class FormularioAtencionComponent {
     congresistas: this.fb.array([]),
     participantes: this.fb.array([]),
     agendas: this.fb.array([]),
-    integrantes: this.fb.array([])
+    integrantes: this.fb.array([]),
+    compromisos: this.fb.array([])
   })
   // cargoAutoridad: ['', [Validators.required, Validators.maxLength(50)]],
 
@@ -402,8 +413,8 @@ export class FormularioAtencionComponent {
     return getControl?.value
   }
 
-  obtenerNivelGobierno(i:number){
-    const getControl = this.formAtencion.get('integrantes') as FormArray
+  obtenerNivelGobierno(i:number, control:string){
+    const getControl = this.formAtencion.get(control) as FormArray
     
     const tipoControl = getControl.at(i).get('tipo')
     const esRegionalControl = getControl.at(i).get('esRegional')
@@ -420,12 +431,11 @@ export class FormularioAtencionComponent {
       const nivelGobierno = this.nivelGobiernos().find(item => item.tipoId === nivelGobiernoValue)
       if(nivelGobierno!.abreviatura.toUpperCase() === 'GN'){
         tipoControl?.setValue(true)
-        this.obtenerSectoresLista(i)
+        this.obtenerSectoresLista(i,control)
       } else {
         esRegionalControl?.setValue(nivelGobierno!.abreviatura.toUpperCase() === 'GR')
         tipoControl?.setValue(false)
-        sectorIdControl?.reset()
-        this.obtenerDepartamentosServiceLista(i)
+        this.obtenerDepartamentosServiceLista(i, control)
         sectorIdControl?.reset()
       }
       departamentoControl?.reset()
@@ -441,54 +451,78 @@ export class FormularioAtencionComponent {
     entidadIdControl?.disable()
   }
 
-  obtenerSectoresLista(i:number){
-    const copySectores = [...this.listaSectores()]
+  obtenerSectoresLista(i:number, control:string){
+    let copySectores:any = []
+    switch (control.toLowerCase()) {
+      case 'integrantes': copySectores = [...this.listaIntegranteSectores()]; break;
+      case 'compromisos': copySectores = [...this.listaCompromisoSectores()]; break;
+    }
+    
     const pagination: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 10, currentPage: 1 }
     this.sectorService.listarSectores(pagination).subscribe(resp => {
       if(resp.success){
         copySectores[i] = resp.data
-        this.listaSectores.set(copySectores)
+        switch (control.toLowerCase()) {
+          case 'integrantes': this.listaIntegranteSectores.set(copySectores); break;
+          case 'compromisos': this.listaCompromisoSectores.set(copySectores); break;
+        }
       }
     })
   }
 
-  obtenerSectorIntegrante(i:number){
-    const getControl = this.formAtencion.get('integrantes') as FormArray
+  obtenerSectorIntegrante(i:number, control:string){
+    const getControl = this.formAtencion.get(control) as FormArray
     const entidadIdControl = getControl.at(i).get('entidadId')
     const sectorIdControl = getControl.at(i).get('sectorId')
     const sectorId = sectorIdControl?.value
     if(sectorId){
       entidadIdControl?.enable()
-      this.obtenerEntidadesServiceLista(i,sectorId)
+      this.obtenerEntidadesServiceLista(i,sectorId,control)
     } else {
       entidadIdControl?.reset()
       entidadIdControl?.disable()
     }
   }
 
-  obtenerEntidadesServiceLista(i:number, sectorId:number){
+  obtenerEntidadesServiceLista(i:number, sectorId:number, control:string){
+    let copyEntidades:any = []
+    switch (control.toLowerCase()) {
+      case 'integrantes': copyEntidades = [...this.listaIntegranteEntidades()]; break;
+      case 'compromisos': copyEntidades = [...this.listaCompromisoEntidades()]; break;
+    }
+
     const pagination: Pagination = { tipo: '1', sectorId, columnSort: 'entidadId', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
-    const copyEntidades = [...this.listaEntidades()]
     this.entidadService.listarEntidades(pagination).subscribe(resp => {
       if(resp.success){
         copyEntidades[i] = resp.data
-        this.listaEntidades.set(copyEntidades)
+        switch (control.toLowerCase()) {
+          case 'integrantes': this.listaIntegranteEntidades.set(copyEntidades); break;
+          case 'compromisos': this.listaCompromisoEntidades.set(copyEntidades); break;
+        }
       }
     })
   }
 
-  obtenerDepartamentosServiceLista(i:number){
-    const copyDepartamentos = [...this.listaDepartamentos()]
+  obtenerDepartamentosServiceLista(i:number, control:string){
+    let copyDepartamentos:any = []
+    switch (control.toLowerCase()) {
+      case 'integrantes': copyDepartamentos = [...this.listaIntegranteDepartamentos()]; break;
+      case 'compromisos': copyDepartamentos = [...this.listaCompromisoDepartamentos()]; break;
+    }
+
     this.ubigeoService.getDepartments().subscribe(resp => {
       if(resp.success){
         copyDepartamentos[i] = resp.data
-        this.listaDepartamentos.set(copyDepartamentos)
+        switch (control.toLowerCase()) {
+          case 'integrantes': this.listaIntegranteDepartamentos.set(copyDepartamentos); break;
+          case 'compromisos': this.listaCompromisoDepartamentos.set(copyDepartamentos); break;
+        }
       }
     })
   }
 
-  changeDepartamentoIntegrante(i:number){
-    const getControl = this.formAtencion.get('integrantes') as FormArray
+  changeDepartamentoIntegrante(i:number, control:string){
+    const getControl = this.formAtencion.get(control) as FormArray
     const entidadIdControl = getControl.at(i).get('entidadId')
     const departamento = getControl.at(i).get('departamento')?.value
     const provinciaControl = getControl.at(i).get('provincia')
@@ -503,9 +537,9 @@ export class FormularioAtencionComponent {
         provinciaControl?.reset()      
       } else {
         provinciaControl?.enable()        
-        this.obtenerProvinciasServiceLista(i,departamento)
+        this.obtenerProvinciasServiceLista(i,control,departamento)
       }
-      this.obtenerEntidadServiceLista(i,ubigeo)
+      this.obtenerEntidadServiceLista(i,control,ubigeo)
     } else {
       provinciaControl?.disable()
       provinciaControl?.reset()
@@ -515,18 +549,25 @@ export class FormularioAtencionComponent {
     distritoControl?.reset()
   }
 
-  obtenerProvinciasServiceLista(i:number, departamento:string){
-    const copyProvincias = [...this.listaProvincias()]
+  obtenerProvinciasServiceLista(i:number,control:string,departamento:string){
+    let copyProvincias:any = []
+    switch (control.toLowerCase()) {
+      case 'integrantes': copyProvincias = [...this.listaIntegranteProvincias()]; break;
+      case 'compromisos': copyProvincias = [...this.listaCompromisoProvincias()]; break;
+    }
     this.ubigeoService.getProvinces(departamento).subscribe(resp => {
       if(resp.success){
         copyProvincias[i] = resp.data
-        this.listaProvincias.set(copyProvincias)
+        switch (control.toLowerCase()) {
+          case 'integrantes': this.listaIntegranteProvincias.set(copyProvincias); break;
+          case 'compromisos': this.listaCompromisoProvincias.set(copyProvincias); break;
+        }
       }
     })
   }
 
-  changeProvinciaIntegrante(i:number){
-    const getControl = this.formAtencion.get('integrantes') as FormArray
+  changeProvinciaIntegrante(i:number,control:string){
+    const getControl = this.formAtencion.get(control) as FormArray
 
     const departamentControl = getControl.at(i).get('departamento')
     const departamento = departamentControl?.value
@@ -538,27 +579,34 @@ export class FormularioAtencionComponent {
     if(provincia){
       ubigeo = provincia
       distritoControl?.enable()
-      this.obtenerDistritosServiceLista(i, provincia)
+      this.obtenerDistritosServiceLista(i,control,provincia)
     } else {
       distritoControl?.disable()
       distritoControl?.reset()
     }
-    this.obtenerEntidadServiceLista(i,ubigeo)
+    this.obtenerEntidadServiceLista(i,control,ubigeo)
   }
 
-  obtenerDistritosServiceLista(i: number, provincia: string){
-    const copyDistritos = [...this.listaDistritos()]
+  obtenerDistritosServiceLista(i: number,control:string,provincia: string){
+    let copyDistritos:any = []
+    switch (control.toLowerCase()) {
+      case 'integrantes': copyDistritos = [...this.listaIntegranteDistritos()]; break;
+      case 'compromisos': copyDistritos = [...this.listaCompromisoDistritos()]; break;
+    }
     this.ubigeoService.getDistricts(provincia)
       .subscribe( resp => {
         if(resp.success){
           copyDistritos[i] = resp.data
-          this.listaDistritos.set(copyDistritos)
+          switch (control.toLowerCase()) {
+          case 'integrantes': this.listaIntegranteDistritos.set(copyDistritos); break;
+          case 'compromisos': this.listaCompromisoDistritos.set(copyDistritos); break;
+        }
         }
       })
   }
 
-  changeDistritoIntegrante(i:number){
-    const getControl = this.formAtencion.get('integrantes') as FormArray
+  changeDistritoIntegrante(i:number,control:string){
+    const getControl = this.formAtencion.get(control) as FormArray
 
     const provinciaControl = getControl.at(i).get('provincia')
     const provincia = provinciaControl?.value
@@ -566,11 +614,11 @@ export class FormularioAtencionComponent {
     const distrito = distritoControl?.value
 
     const ubigeo = distrito ? distrito : provincia
-    this.obtenerEntidadServiceLista(i,ubigeo)
+    this.obtenerEntidadServiceLista(i,control,ubigeo)
   }
 
-  obtenerEntidadServiceLista(i:number, ubigeo:string){
-    const getControl = this.formAtencion.get('integrantes') as FormArray
+  obtenerEntidadServiceLista(i:number, control:string, ubigeo:string){
+    const getControl = this.formAtencion.get(control) as FormArray
 
     const loadingEntidadControl = getControl.at(i).get('loadingEntidad')
     const entidadIdControl = getControl.at(i).get('entidadId')
@@ -1262,6 +1310,9 @@ export class FormularioAtencionComponent {
     if (formGroup == 'integrantes') {
       this.addIntegranteRow()
     }
+    if (formGroup == 'compromisos') {
+      this.addIntegranteRow()
+    }
   }
   
   addAgendadRow() {    
@@ -1299,11 +1350,30 @@ export class FormularioAtencionComponent {
       correo: [null, Validators.required]
     })
     this.integrantes.push(integranteRow)    
-    this.listaSectores.update(sectores => [...sectores, []])
-    this.listaEntidades.update(entidades => [...entidades, []])
-    this.listaDepartamentos.update(departamentos => [...departamentos, []])
-    this.listaProvincias.update(provincias => [...provincias, []])
-    this.listaDistritos.update(distritos => [...distritos, []])
+    this.listaIntegranteSectores.update(sectores => [...sectores, []])
+    this.listaIntegranteEntidades.update(entidades => [...entidades, []])
+    this.listaIntegranteDepartamentos.update(departamentos => [...departamentos, []])
+    this.listaIntegranteProvincias.update(provincias => [...provincias, []])
+    this.listaIntegranteDistritos.update(distritos => [...distritos, []])
+  }
+
+  addCompromisoRow(){
+    const compromisoRow = this.fb.group({
+      compromisoId: [''],
+      nivelGobiernoId: [null, Validators.required],
+      tipo: [''],
+      esRegional: [''],
+      departamento: [''],
+      provincia: [''],
+      distrito: [''],
+      loadingEntidad: [false],
+      entidadId: [null, Validators.required],
+      entidad: [{ value: null, disabled: true }],
+      entidadSlug: [{ value: null, disabled: true }],
+      plazo: [null, Validators.required],
+      compromiso: [null, Validators.required]
+    })
+    this.compromisos.push(compromisoRow)   
   }
 
   removeItemFormArray(i: number, formGroup: string) {
@@ -1364,6 +1434,21 @@ export class FormularioAtencionComponent {
       //   })
     } else {
       this.integrantes.removeAt(i)
+    }
+  }
+
+  removeCompromisoRow(i:number){
+    if (!this.create) {
+      const compromisos = this.formAtencion.get('compromisos') as FormArray
+      const compromisoId = compromisos.at(i).get('compromisoId')?.value
+      // this.asistenciaTecnicaParticipanteService.eliminarParticipante(integrantesId)
+      //   .subscribe(resp => {
+      //     if (resp.success == true) {
+      //       this.participantes.removeAt(i)
+      //     }
+      //   })
+    } else {
+      this.compromisos.removeAt(i)
     }
   }
 
