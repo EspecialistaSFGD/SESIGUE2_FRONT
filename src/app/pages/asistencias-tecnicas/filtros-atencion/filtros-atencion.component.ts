@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { capitalize, convertDateStringToDate, getDateFormat } from '@core/helpers';
+import { capitalize, convertDateStringToDate, deleteKeyNullToObject, deleteKeysToObject, getDateFormat, saveFilterStorage } from '@core/helpers';
 import { EventoResponse, ItemEnum, Pagination, SectorResponse, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EventosService, SectoresService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
@@ -16,15 +16,9 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
   styles: ``
 })
 export class FiltrosAtencionComponent {
-  // @Input() visible: boolean = false
   @Input() tipos!: ItemEnum[]
-  // @Input() pagination: Pagination = {}
   @Input() permisosPCM: boolean = false
 
-  // @Output() visibleDrawer = new EventEmitter()
-  // @Output() filters = new EventEmitter<Pagination>()
-  // @Output() export = new EventEmitter<boolean>()
-  // @Output() save = new EventEmitter<boolean>()
 
   @Input() visible: boolean = false
   @Input() pagination: any = {}
@@ -55,7 +49,7 @@ export class FiltrosAtencionComponent {
     fechaInicio: [null],
     fechaFin: [null],
     tipoEntidad: [null],
-    tipoAtencion: [null],
+    tipos: [[]],
     ubigeo: [null],
     departamento: [null],
     provincia: [{ value: null, disabled: true }],
@@ -120,11 +114,7 @@ export class FiltrosAtencionComponent {
   }
   
   getAllTipoEntidades() {    
-    this.pagination.columnSort = 'nombre'
-    this.tipoEntidadService.getAllTipoEntidades(this.pagination)
-      .subscribe(resp => {
-        this.tipoEntidades.set(resp.data)
-      })
+    this.tipoEntidadService.getAllTipoEntidades({...this.pagination, columnSort: 'nombre'}).subscribe(resp => this.tipoEntidades.set(resp.data))
   }
 
   obtenerServiciosEventos() {
@@ -225,7 +215,7 @@ export class FiltrosAtencionComponent {
     this.ubigeosService.getDepartments().subscribe( resp => this.departamentos.set(resp.data))
   }
 
-  changeTipoAtencion(){
+  changeTipo(){
     this.generateFilters()
   }
 
@@ -293,29 +283,54 @@ export class FiltrosAtencionComponent {
   generateFilters(){
     const fechaInicioControl = this.formFilters.get('fechaInicio')
     const fechaFinControl = this.formFilters.get('fechaFin')
-
+    const tiposControl = this.formFilters.get('tipos')
+    
     const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value) : null
     const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value) : null
 
-    const formValue = { ...this.formFilters.value }   
+    let tipos = null
+    if(tiposControl?.value){
+      const tiposData: string[] = tiposControl?.value
+      tipos = tiposData.length > 0 ? tiposControl?.value : null
+    }
 
-    this.filters.emit({...formValue, fechaInicio, fechaFin })
+    // const formValue = { ...this.formFilters.value, fechaInicio, fechaFin, tipos }
+
+    // const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito','tipoEntidad','unidadOrganica','especialista']
+    // const params = deleteKeysToObject(formValue, paramsInvalid)
+    // const pagination = deleteKeyNullToObject(params)
+    // localStorage.setItem('filtrosAtenciones', JSON.stringify(formValue))
+
+    console.log(fechaInicio)
+    console.log(fechaFin)
+
+    this.filters.emit({ ...this.formFilters.value, fechaInicio, fechaFin, tipos })
   }
 
   cleanParams(){
     localStorage.removeItem('filtrosAtenciones');
     this.formFilters.reset()
     this.generateFilters()
-    this.changeVisibleDrawer(false,false)
+    this.changeVisibleDrawer()
   }
 
-  changeVisibleDrawer(visible: boolean, save: boolean = true){
-    this.save.emit(save) 
-    this.visibleDrawer.emit(visible)
+  changeVisibleDrawer(){
+    this.visibleDrawer.emit(false)
   }
 
   changeExport(){
-    this.changeVisibleDrawer(false)
+    this.changeVisibleDrawer()
     this.export.emit(true)
   }
+
+  saveFilter(){
+    const fechaInicioControl = this.formFilters.get('fechaInicio')
+    const fechaFinControl = this.formFilters.get('fechaFin')
+     const fechaInicio = fechaInicioControl?.value ? getDateFormat(fechaInicioControl?.value) : null
+    const fechaFin = fechaFinControl?.value ? getDateFormat(fechaFinControl?.value) : null
+
+      const pagination = deleteKeyNullToObject(this.formFilters.value)
+      saveFilterStorage({...pagination, fechaInicio, fechaFin},'filtrosAtenciones','asistenciaId','DESC')
+      this.changeVisibleDrawer()
+    }
 }

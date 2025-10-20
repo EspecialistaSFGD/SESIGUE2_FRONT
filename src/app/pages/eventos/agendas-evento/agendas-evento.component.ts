@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ButtonsActions, EventoResponse, EventoSectorResponse, IntervencionEspacioResponse, IntervencionSituacionResponse, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { EventoSectoresService, EventosService, IntervencionEspacioService, IntervencionSituacionService } from '@core/services';
@@ -16,14 +16,16 @@ import { IntervencionDetalleComponent } from '../../intervenciones/intervencion-
 import { FormSituacionIntervencionComponent } from '../../intervenciones/situaciones-intervencion/form-situacion-intervencion/form-situacion-intervencion.component';
 import { EventoDetalleComponent } from '../evento-detalles/evento-detalle/evento-detalle.component';
 import { MessageService } from 'primeng/api';
-import { getDateFormat, obtenerPermisosBotones } from '@core/helpers';
+import { getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { SituacionesIntervencionComponent } from '../../intervenciones/situaciones-intervencion/situaciones-intervencion.component';
+import { FiltroIntervencionesComponent } from '../../intervenciones/filtro-intervenciones/filtro-intervenciones.component';
+import { distinctUntilChanged, filter } from 'rxjs';
 
 @Component({
   selector: 'app-agendas-evento',
   standalone: true,
-  imports: [CommonModule, PipesModule, EventoDetalleComponent, NgZorroModule, BotonComponent, IntervencionDetalleComponent, PrimeNgModule],
+  imports: [CommonModule, PipesModule, EventoDetalleComponent, NgZorroModule, BotonComponent, IntervencionDetalleComponent, PrimeNgModule, FiltroIntervencionesComponent],
   providers: [MessageService],
   templateUrl: './agendas-evento.component.html',
   styles: ``
@@ -41,6 +43,8 @@ export default class AgendasEventoComponent {
   eventosActions: ButtonsActions = {}
   permisosPCM: boolean = false
   perfilAuth: number = 0
+  sectorAuth: number = 0
+  openFilters: boolean = false
 
   eventoId:number = 0
   esSsfgd:boolean = false
@@ -68,14 +72,38 @@ export default class AgendasEventoComponent {
   private messageService = inject(MessageService)
 
   ngOnInit(): void {
-    this.getPermisosPCM()
+    // this.getPermisosPCM()
+    this.permisosPCM = this.getPermisosPCM()
     this.getPermissions()
     this.verificarEvento()
     this.obtenerEventoSectoresServices()
+    this.getParams()
   }
+
+  getParams() {
+      this.route.queryParams
+        .pipe(
+          filter(params => Object.keys(params).length > 0),
+          distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+        )
+        .subscribe( params => {
+          let campo = params['campo'] ?? 'intervencionEspacioId'
+  
+          this.pagination.columnSort = campo
+          this.pagination.currentPage = params['pagina']
+          this.pagination.pageSize = params['cantidad']
+          this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+  
+          setParamsToObject(params, this.pagination, 'cui')
+          setParamsToObject(params, this.pagination, 'ubigeo')
+  
+          this.obtenerIntervencionEspacioService()
+        })
+    }
   
   getPermisosPCM(){
     const perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value) ?? 0
     const ssfgdPCM = [11,12,23]
     this.esSsfgd = ssfgdPCM.includes(perfilAuth)
 
@@ -137,7 +165,11 @@ export default class AgendasEventoComponent {
 
   obtenerIntervencionEspacioService(){
     this.loading = true
-    this.intervencionEspaciosServices.ListarIntervencionEspacios({...this.pagination })
+    const pagination: Pagination = { ...this.pagination }
+    if(!this.permisosPCM){
+      pagination.sectorId = this.sectorAuth
+    }
+    this.intervencionEspaciosServices.ListarIntervencionEspacios(pagination)
       .subscribe( resp => {           
         this.loading = false
         this.intervencionesEspacios.set(resp.data)
@@ -145,8 +177,37 @@ export default class AgendasEventoComponent {
       })
   }
 
+  generateFilters(pagination: Pagination){
+    this.paramsNavigate(pagination)
+  }
+
   onQueryParamsChange(params: NzTableQueryParams): void {
-    
+     const sortsNames = ['ascend', 'descend']
+    const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+    const qtySorts = params.sort.reduce((total, item) => {
+      return sortsNames.includes(item.value!) ? total + 1 : total
+    }, 0)
+    const campo = sorts?.key
+    const ordenar = sorts?.value!.slice(0, -3)
+    const filtrosMesas = localStorage.getItem('filtrosEspacioIntervenciones');
+    let filtros:any = {}
+    if(filtrosMesas){
+      filtros = JSON.parse(filtrosMesas)
+      filtros.save = false      
+      localStorage.setItem('filtrosEspacioIntervenciones', JSON.stringify(filtros))
+    }
+    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
+  }
+
+  paramsNavigate(queryParams: Params){    
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: 'merge',
+      }
+    );
   }
 
   procesarIntervencion(){

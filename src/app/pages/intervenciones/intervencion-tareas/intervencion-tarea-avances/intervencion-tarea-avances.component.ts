@@ -91,7 +91,7 @@ export default class IntervencionTareaAvancesComponent {
   }
 
   verificarResponsable(){
-    const entidad = localStorage.getItem('entidad')!    
+    const entidad = localStorage.getItem('entidad')!
     this.esResponsable = Number(this.intervencionTarea!.entidadId) == Number(entidad)
   }
 
@@ -106,17 +106,20 @@ export default class IntervencionTareaAvancesComponent {
       })
   }
 
-  visibleBotonNuevaTarea(){
-    return Number(this.intervencionTarea?.entidadId!) === this.sectorAuth || this.permisosPCM
-  }
+  // visibleBotonNuevaTarea(){
+  //   return Number(this.intervencionTarea?.entidadId!) === this.sectorAuth || this.permisosPCM
+  // }
 
   disabledBotonNuevo(){
-    let disabled = this.tareaProyectoCulminado || this.tareaCulminado
-    if(!disabled && this.primeraTarea){
-      disabled = !this.permisosPCM
+    let culminado = this.tareaProyectoCulminado || this.tareaCulminado
+    console.log('BEFORE', culminado);
+    if(culminado == false && this.esResponsable == true){
+      culminado = false
+    } else {
+      culminado = true
     }
 
-    return disabled
+    return culminado
   }
 
   agregarAvance(){

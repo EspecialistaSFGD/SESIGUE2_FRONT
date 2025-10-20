@@ -18,6 +18,7 @@ export interface Pagination {
   perfil?: number,
   tipoPerfil?: string,
   tipo?: string,
+  tipos?: string[],
   sectorId?: Number,
   sectoresId?: Number[],
   entidadId?:number,

@@ -74,6 +74,8 @@
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-2">
+			<app-boton *ngIf="eventosAgendaActions.report" [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+
 			<app-boton *ngIf="eventosAgendaActions.report" [icono]="'file-excel'" tooltip="{{'Exportar intervenciones del evento: ' + evento.nombre}}" [texto]="loadingExport ? 'Exportando...' : 'Exportar'" [loading]="loadingExport" [outline]="true" (click)="reporteIntervencion()"/>
 
 			<app-boton *ngIf="eventosAgendaActions.new" [icono]="'plus'" tooltip="Nueva intervencion" [texto]="'Nueva Intervencion'"  (click)="crearIntervencion()"/>
@@ -81,6 +83,7 @@
 	  </div>
 </ng-template>
 
-<p-toast />
+<app-filtro-intervenciones *ngIf="openFilters" [visible]="openFilters" [esAcuerdo]="true" [esMesa]="false" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" />
 
+<p-toast />
 

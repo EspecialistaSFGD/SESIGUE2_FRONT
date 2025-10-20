@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { IntervencionTareaEstadoRegistroEnum } from '@core/enums';
 import { convertDateStringToDate, convertEnumToObject, getDateFormat, obtenerPermisosBotones } from '@core/helpers';
-import { ButtonsActions, IntervencionEspacioResponse, IntervencionTareaResponse, ItemEnum, Pagination, UsuarioNavigation } from '@core/interfaces';
+import { ButtonsActions, IntervencionEspacioResponse, IntervencionTareaResponse, ItemEnum, Pagination } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
-import { IntervencionTareaService } from '@core/services';
+import { EventosService, IntervencionTareaService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { FormularioComentarComponent } from '@shared/formulario-comentar/formulario-comentar.component';
+import { IconoValidadoComponent } from '@shared/icons/icono-validado/icono-validado.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioIntervencionTareaComponent } from './formulario-Intervencion-tarea/formulario-intervencion-tarea.component';
 import IntervencionTareaAvancesComponent from './intervencion-tarea-avances/intervencion-tarea-avances.component';
-import { IconoValidadoComponent } from '@shared/icons/icono-validado/icono-validado.component';
-import { BotonComponent } from '@shared/boton/boton/boton.component';
 
 @Component({
   selector: 'app-intervencion-tareas',
@@ -26,6 +26,7 @@ export default class IntervencionTareasComponent {
   title: string = `Tareas`;
   @Input() intervencionEspacio!: IntervencionEspacioResponse
 
+  iniciaTarea: boolean = false
   tareaActions: ButtonsActions = {}
   botonNuevoActivo: boolean = false
   disableNuevoBoton: boolean = false
@@ -55,6 +56,7 @@ export default class IntervencionTareasComponent {
   intervencionTareas = signal<IntervencionTareaResponse[]>([])
 
   private intervencionTareasServices = inject(IntervencionTareaService)
+  private eventoService = inject(EventosService)
   private authStore = inject(AuthService)
   private modal = inject(NzModalService);
 
@@ -84,6 +86,27 @@ export default class IntervencionTareasComponent {
     }
   }
 
+  obtenerEvento(){
+    this.eventoService.obtenerEvento(this.intervencionEspacio.eventoId)
+      .subscribe( resp => {
+        const evento = resp.data
+        if(evento){
+          console.log(evento);
+          const iniciaSector = evento.primeraTarea
+          if(iniciaSector == true){
+            if(this.permisosPCM == false){
+              this.iniciaTarea = true
+            }
+          } else {
+            if(this.permisosPCM == true){
+              this.iniciaTarea = true
+            }
+          }
+        }        
+        this.disabledBotonNuevo()
+      })
+  }
+
   obtenerIntervencionTareasService(){
     this.loadingTareas = true
     const intervencionEspacioId = this.intervencionEspacio.intervencionEspacioId
@@ -100,7 +123,7 @@ export default class IntervencionTareasComponent {
             return
           }
         })
-        this.disabledBotonNuevo()
+        this.obtenerEvento()
       })
   }
 
@@ -121,17 +144,18 @@ export default class IntervencionTareasComponent {
   }
 
   //TODO: ELIMINAR ESTA FUNCION
-  visibleBotonNuevaTarea(){
-    return Number(this.intervencionEspacio.sectorId!) === this.sectorAuth || this.permisosPCM
-  }
+  // visibleBotonNuevaTarea(){
+  //   return Number(this.intervencionEspacio.sectorId!) === this.sectorAuth || this.iniciaTarea
+  // }
 
   disabledBotonNuevo(){
     const cantidadTareas = this.intervencionTareas().length
-    let disabled = this.permisosPCM ? true : this.botonNuevoActivo
-   
-    if(cantidadTareas == 0){
-      disabled = !this.permisosPCM
+    let disabled = !(this.iniciaTarea && !this.botonNuevoActivo)
+
+    if(cantidadTareas == 0){      
+      disabled = !this.iniciaTarea
     }
+    
     this.disableNuevoBoton = disabled
   }
 

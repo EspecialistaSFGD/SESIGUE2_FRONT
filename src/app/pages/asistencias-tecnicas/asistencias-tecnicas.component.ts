@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { convertEnumToObject, deleteKeysToObject, obtenerAutoridadJne, obtenerPermisosBotones } from '@core/helpers';
+import { convertEnumToObject, deleteKeysToObject, obtenerAutoridadJne, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, AsistenteResponse, AutoridadResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, JneAutoridadesResponses, JneAutoridadParams, JneAutoridadResponse, OrientacionAtencion, Pagination } from '@core/interfaces';
 import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, AsistentesService, AutoridadesService, CongresistasService, JneService } from '@core/services';
 import { EventosService } from '@core/services/eventos.service';
@@ -18,7 +18,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FiltrosAtencionComponent } from './filtros-atencion/filtros-atencion.component';
 import { FormularioAtencionComponent } from './formulario-atencion/formulario-atencion.component';
 import { JneAutoridadTipoEnum } from '@core/enums';
-import { catchError, forkJoin, of, switchMap, tap } from 'rxjs';
+import { catchError, distinctUntilChanged, filter, forkJoin, of, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-asistencia-tecnica',
@@ -114,11 +114,12 @@ export default class AsistenciasTecnicasComponent {
   }
 
   getParams() {
-    this.loading = true
-    this.route.queryParams.subscribe(params => {
-      if (Object.keys(params).length > 0) {
-        this.loading = false
-
+     this.route.queryParams
+      .pipe(
+        filter(params => Object.keys(params).length > 0),
+        distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+      )
+      .subscribe( params => {
         let campo = params['campo'] ?? 'asistenciaId'
 
         this.pagination.columnSort = campo
@@ -126,28 +127,16 @@ export default class AsistenciasTecnicasComponent {
         this.pagination.pageSize = params['cantidad']
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
 
-        this.setPaginationValueToParams(params, 'codigo')
-        this.setPaginationValueToParams(params, 'eventoId')
-        this.setPaginationValueToParams(params, 'sectorId')
-        this.setPaginationValueToParams(params, 'fechaInicio')
-        this.setPaginationValueToParams(params, 'fechaFin')
-        this.setPaginationValueToParams(params, 'tipoAtencion')
-        this.setPaginationValueToParams(params, 'ubigeo')
-     
-        this.obtenerAsistenciasTecnicas()
-      }
-    });
-  }
+        setParamsToObject(params, this.pagination, 'codigo')
+        setParamsToObject(params, this.pagination, 'eventoId')
+        setParamsToObject(params, this.pagination, 'sectorId')
+        setParamsToObject(params, this.pagination, 'fechaInicio')
+        setParamsToObject(params, this.pagination, 'fechaFin')
+        setParamsToObject(params, this.pagination, 'tipos')
+        setParamsToObject(params, this.pagination, 'ubigeo')
 
-  setPaginationValueToParams(params: Params, param: string){
-    const keyParam = param as keyof Pagination;
-    if(params[param]){
-      this.pagination[keyParam] = params[param];
-      this.paginationFilter[keyParam] = params[param];
-    } else {
-      delete this.pagination[keyParam]
-      delete this.paginationFilter[keyParam]
-    }
+        this.obtenerAsistenciasTecnicas()
+      })
   }
 
   getPermissions() {
@@ -159,19 +148,10 @@ export default class AsistenciasTecnicasComponent {
   obtenerAsistenciasTecnicas() {  
     this.loading = true
     this.asistenciaTecnicaService.getAllAsistenciasTecnicas({...this.pagination })
-      .subscribe(resp => {                
+      .subscribe(resp => {
         this.loading = false
-        if (resp.success == true) {
-          this.asistenciasTecnicas.set(resp.data)
-          const { pageIndex, pageSize, total } = resp.info!
-          this.pagination.currentPage = pageIndex
-          this.pagination.pageSize = pageSize
-          this.pagination.total = total
-        } else {
-          this.pagination.currentPage = 1
-          this.pagination.pageSize = 10
-          this.pagination.total = 0
-        }
+        this.asistenciasTecnicas.set(resp.data)
+        this.pagination.total = resp.info?.total
       })
   }
 
@@ -203,24 +183,9 @@ export default class AsistenciasTecnicasComponent {
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
-    // const sortsNames = ['ascend', 'descend']
-    // const sorts = params.sort.find(item => sortsNames.includes(item.value!))
-    // params.sort.reduce((total, item) => {
-    //   return sortsNames.includes(item.value!) ? total + 1 : total
-    // }, 0)
-    // const campo = sorts?.key
-    // const ordenar = sorts?.value!.slice(0, -3)
-    // const filtrosSaved = localStorage.getItem('filtrosAtenciones');
-    // let filtros:any = {}
-    // if(filtrosSaved){
-    //   filtros = JSON.parse(filtrosSaved)
-    //   filtros.save = false      
-    //   localStorage.setItem('filtrosAtenciones', JSON.stringify(filtros))
-    // }    
-    // this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
     const sortsNames = ['ascend', 'descend']
     const sorts = params.sort.find(item => sortsNames.includes(item.value!))
-    const qtySorts = params.sort.reduce((total, item) => {
+   params.sort.reduce((total, item) => {
       return sortsNames.includes(item.value!) ? total + 1 : total
     }, 0)
     const campo = sorts?.key
@@ -230,33 +195,11 @@ export default class AsistenciasTecnicasComponent {
     let filtros:any = {}
     if(filtrosSaved){
       filtros = JSON.parse(filtrosSaved)
-      filtros.save = false      
+      filtros.save = false
       localStorage.setItem('filtrosAtenciones', JSON.stringify(filtros))
     }
+    
     this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })   
-  }
-
-
-  saveFilters(save: boolean){    
-    if(save){
-      const pagination: any = { ...this.pagination };
-      pagination.pagina = pagination.currentPage
-      pagination.cantidad = pagination.pageSize
-      pagination.save = true
-      if(pagination.columnSort != 'entidadId' &&  pagination.typeSort != 'ASC' ){
-        pagination.campo = pagination.columnSort
-        pagination.ordenar = pagination.typeSort
-      }
-  
-      delete pagination.currentPage
-      delete pagination.pageSize
-      delete pagination.columnSort
-      delete pagination.typeSort
-      delete pagination.code
-      delete pagination.total
-  
-      localStorage.setItem('filtrosAtenciones', JSON.stringify(pagination));
-    }
   }
 
   validarAtencion(atencion: AsistenciaTecnicaResponse){
@@ -299,7 +242,8 @@ export default class AsistenciasTecnicasComponent {
   generateFilters(pagination: Pagination){
     const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito','tipoEntidad','unidadOrganica','especialista']
     const params = deleteKeysToObject(pagination, paramsInvalid)
-
+    console.log(params);
+    
     this.paramsNavigate(params)
   }
 
@@ -316,7 +260,7 @@ export default class AsistenciasTecnicasComponent {
 
   reporteExcelAtenciones(){
     this.loadingExport = true;
-    this.asistenciaTecnicaService.reporteAtenciones(this.paginationFilter)
+    this.asistenciaTecnicaService.reporteAtenciones(this.pagination)
       .subscribe( resp => {
         if(resp.data){
           const data = resp.data;

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { obtenerPermisosBotones } from '@core/helpers';
+import { deleteKeysToObject, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { ButtonsActions, IntervencionEspacioResponse, MesaResponse, Pagination, UsuarioNavigation } from '@core/interfaces';
 import { PipesModule } from '@core/pipes/pipes.module';
 import { IntervencionEspacioService, MesaIntegrantesService, MesasService } from '@core/services';
@@ -16,11 +16,13 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormularioIntervencionComponent } from '../../intervenciones/formulario-intervencion/formulario-intervencion.component';
 import { MesaDetalleComponent } from '../mesa-detalles/mesa-detalle/mesa-detalle.component';
+import { FiltroIntervencionesComponent } from '../../intervenciones/filtro-intervenciones/filtro-intervenciones.component';
+import { distinctUntilChanged, filter } from 'rxjs';
 
 @Component({
   selector: 'app-agendas-mesa',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule, MesaDetalleComponent, BotonComponent],
+  imports: [CommonModule, RouterModule, NgZorroModule, SharedModule, PipesModule, MesaDetalleComponent, BotonComponent, FiltroIntervencionesComponent],
   templateUrl: './agendas-mesa.component.html',
   styles: ``
 })
@@ -33,11 +35,13 @@ export default class AgendasMesaComponent {
   sectores:number[] = []
   ubigeos:string[] = []
   loadingExport: boolean = false
+  openFilters: boolean = false
 
   mesasAgendaActions: ButtonsActions = {}
   mesasActions: ButtonsActions = {}
   permisosPCM: boolean = false
   perfilAuth: number = 0
+  sectorAuth: number = 0
 
   fechaSincronizacion: string = ''
 
@@ -74,6 +78,8 @@ export default class AgendasMesaComponent {
 
   ngOnInit(): void {
     this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value) ?? 0
+
     this.permisosPCM = this.setPermisosPCM()
     this.getPermissions()
     this.verificarMesa()
@@ -83,32 +89,24 @@ export default class AgendasMesaComponent {
   }
 
   getParams() {
-    this.route.queryParams.subscribe(params => {
-      this.loading = true
-      if (Object.keys(params).length > 0) {        
+    this.route.queryParams
+      .pipe(
+        filter(params => Object.keys(params).length > 0),
+        distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+      )
+      .subscribe( params => {
         let campo = params['campo'] ?? 'intervencionEspacioId'
 
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
         this.pagination.pageSize = params['cantidad']
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
-  
-        // setParamsToObject(params, this.pagination, 'codigo')
-        // setParamsToObject(params, this.pagination, 'nombre')
-        // setParamsToObject(params, this.pagination, 'sectorId')
-        // setParamsToObject(params, this.pagination, 'secretariaTecnicaId')
-        // setParamsToObject(params, this.pagination, 'sectorEntidadId')
-        // setParamsToObject(params, this.pagination, 'entidadId')
-        // setParamsToObject(params, this.pagination, 'ubigeo')
-        // setParamsToObject(params, this.pagination, 'entidadUbigeoId')
 
-        setTimeout(() => {
-          this.obtenerMesaIntegrantesService(true)
-          this.obtenerMesaIntegrantesService(false)
-          this.obtenerIntervencionEspacioService()
-        }, 100)
-      }
-    })
+        setParamsToObject(params, this.pagination, 'cui')
+        setParamsToObject(params, this.pagination, 'ubigeo')
+
+        this.obtenerIntervencionEspacioService()
+      })
   }
     
     setPermisosPCM(){
@@ -150,6 +148,13 @@ export default class AgendasMesaComponent {
       })
   }
 
+  generateFilters(pagination: Pagination){
+    // const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total', 'departamento', 'provincia', 'distrito']
+    // const params = deleteKeysToObject(pagination, paramsInvalid)
+    // this.paramsNavigate(params)
+    this.paramsNavigate(pagination)
+  }
+
   onQueryParamsChange(params: NzTableQueryParams): void {
     const sortsNames = ['ascend', 'descend']
     const sorts = params.sort.find(item => sortsNames.includes(item.value!))
@@ -158,12 +163,12 @@ export default class AgendasMesaComponent {
     }, 0)
     const campo = sorts?.key
     const ordenar = sorts?.value!.slice(0, -3)
-    const filtrosMesas = localStorage.getItem('filtrosMesas');
+    const filtrosMesas = localStorage.getItem('filtrosMesaIntervenciones');
     let filtros:any = {}
     if(filtrosMesas){
       filtros = JSON.parse(filtrosMesas)
       filtros.save = false      
-      localStorage.setItem('filtrosIntervenciones', JSON.stringify(filtros))
+      localStorage.setItem('filtrosMesaIntervenciones', JSON.stringify(filtros))
     }
     this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
   }
@@ -191,7 +196,12 @@ export default class AgendasMesaComponent {
 
   obtenerIntervencionEspacioService(){
     this.loading = true
-    this.intervencionEspaciosServices.ListarIntervencionEspacios({...this.pagination })
+    const pagination: Pagination = { ...this.pagination }
+    if(!this.permisosPCM){
+      pagination.sectorId = this.sectorAuth
+    }
+
+    this.intervencionEspaciosServices.ListarIntervencionEspacios(pagination)
       .subscribe( resp => {           
         this.loading = false
         this.intervencionesEspacios.set(resp.data)
@@ -302,12 +312,21 @@ export default class AgendasMesaComponent {
   }
 
   crearIntervencion(){
+    this.obtenerMesaIntegrantesService(true)
+    this.obtenerMesaIntegrantesService(false)
+
+    // setTimeout(() => {
+    //       this.obtenerMesaIntegrantesService(true)
+    //       this.obtenerMesaIntegrantesService(false)
+    //     }, 100)
+
     const intervencionEspacio: IntervencionEspacioResponse = {} as IntervencionEspacioResponse
     intervencionEspacio.origen = '1'
     intervencionEspacio.interaccionId = this.mesaId.toString()
     intervencionEspacio.eventoId = this.mesa().eventoId!.toString()
     intervencionEspacio.tipoEventoId = this.mesa().tipoEventoId
-    this.intervencionEspacioForm(intervencionEspacio)
+
+    setTimeout(() => this.intervencionEspacioForm(intervencionEspacio), 200);    
   }
 
   intervencionEspacioForm(intervencionEspacio: IntervencionEspacioResponse, create: boolean = true){
@@ -319,7 +338,6 @@ export default class AgendasMesaComponent {
       nzContent: FormularioIntervencionComponent,
       nzData: {
         create,
-        // origen: { origen: 'mesas', interaccionId: this.mesaId.toString(), eventoId: this.mesa().eventoId },
         intervencionEspacio,
         sectores: this.sectores,
         ubigeos: this.ubigeos

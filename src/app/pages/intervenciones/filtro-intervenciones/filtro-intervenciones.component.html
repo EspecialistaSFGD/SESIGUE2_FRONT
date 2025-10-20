@@ -1,0 +1,59 @@
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="'400px'" [nzClosable]="true" [nzVisible]="visible"
+	nzTitle="Filtrar los resultados" [nzFooter]="footerFilter" (nzOnClose)="changeVisibleDrawer()">
+    <form *nzDrawerContent [formGroup]="formIntervencionFilters" nz-form nzLayout="vertical" autocomplete="off" class="flex flex-col w-full gap-3">
+        <div class="flex flex-col">
+            <label for="cui">Código</label>
+            <input type="text" class="form-control" id="cui" placeholder="codigo aqui" formControlName="cui" (keyup)="changeControl($event,'cui')"/>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="departamento">Departamento</label>
+            <p-dropdown 
+            [options]="departamentos()"
+            formControlName="departamento"
+            optionLabel="departamento"
+            optionValue="departamentoId"
+            [showClear]="true" 
+            placeholder="Seleccionar departamento"
+            (onChange)="changeDepartamento()"/>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="nombre">Provincia</label>
+            <p-dropdown 
+            [options]="provincias()"
+            formControlName="provincia"
+            optionLabel="provincia"
+            optionValue="provinciaId"
+            [showClear]="true" 
+            placeholder="Seleccionar provincia"
+            (onChange)="changeProvincia()"/>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="nombre">Distrito</label>
+            <p-dropdown 
+            [options]="distritos()"
+            formControlName="distrito"
+            optionLabel="distrito"
+            optionValue="distritoId"
+            [showClear]="true" 
+            placeholder="Seleccionar distrito"
+            (onChange)="changeDistrito()"/>
+        </div>
+    </form>
+</nz-drawer>
+
+<ng-template #footerFilter>
+    <div class="flex justify-end gap-2">
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white" (click)="cleanParams()">
+          <i class="pi pi-filter-slash" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Limpiar filtros</span>
+        </div>
+
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 bg-sky-700 text-white hover:bg-sky-800" (click)="saveFilter()">
+          <i class="pi pi-save" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Buscar filtros</span>
+        </div>
+    </div>
+</ng-template>

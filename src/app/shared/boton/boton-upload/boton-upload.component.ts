@@ -13,7 +13,7 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
   styles: ``
 })
 export class BotonUploadComponent implements OnChanges {
-  @Input() control!: FormControl
+  // @Input() control!: FormControl
   @Input() titleBoton: string = 'Seleccionar archivo'
   @Input() accept:string = 'image/*'
   @Input() name:string = 'file'
@@ -21,7 +21,7 @@ export class BotonUploadComponent implements OnChanges {
 
   @Output() files = new EventEmitter<DataFile>()
 
-  controlFile!: HTMLInputElement
+  // controlFile!: HTMLInputElement
   nameFile: string = ''
   sizeFile: string = ''
   loaded: boolean = false
@@ -34,7 +34,7 @@ export class BotonUploadComponent implements OnChanges {
 
   previewImage(event: any) {
     const control = event.target
-    this.controlFile = control
+    // this.controlFile = control
 
     const [file] = control.files
     const dataFile: DataFile = { exist: true, file }
@@ -49,7 +49,7 @@ export class BotonUploadComponent implements OnChanges {
   clearImage() {
     const dataFile: DataFile = { exist: false }
     this.files.emit(dataFile)
-    this.controlFile.value = ''
+    // this.controlFile.value = ''
     this.loaded = false
   }
 }

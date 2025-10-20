@@ -54,9 +54,9 @@
                   <i class="pi pi-eye" style="font-size: .85rem;"></i>
                 </a>
 
-                <app-boton icono="comments" [link]="true" tooltip="Agregar estado resumen" (click)="crearEstadoResumen(mesa, false)"/>
+                <app-boton *ngIf="mesasActions.comment" icono="comments" [link]="true" tooltip="Agregar estado resumen" (click)="crearEstadoResumen(mesa, false)"/>
 
-                <app-boton icono="comments" [color]="'red'" [stepColor]="500" [link]="true" tooltip="Agregar alerta" (click)="crearEstadoResumen(mesa, true)"/>
+                <app-boton *ngIf="mesasActions.comment" icono="comments" [color]="'red'" [stepColor]="500" [link]="true" tooltip="Agregar alerta" (click)="crearEstadoResumen(mesa, true)"/>
               </div>
           </td>
         </tr>
