@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { JneAutoridadTipoEnum, UbigeoTipoEnum } from '@core/enums';
 import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
 import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataFile, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, OrientacionAtencion, Pagination, SectorResponse, SSInversionTooltip, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
@@ -665,8 +665,36 @@ export class FormularioAtencionComponent {
   }
 
   generalValidate(){
-    return true
+    const tipoControl = this.formControlValidate(this.formAtencion.get('tipo')!)
+    const fechaAtencionControl = this.formControlValidate(this.formAtencion.get('fechaAtencion')!)
+    const modalidadControl = this.formControlValidate(this.formAtencion.get('modalidad')!)
+    const lugarIdControl = this.formControlValidate(this.formAtencion.get('lugarId')!)
+    const tipoEntidadIdControl = this.formControlValidate(this.formAtencion.get('tipoEntidadId')!)
+    const departamentoControl = this.formControlValidate(this.formAtencion.get('departamento')!)
+    const provinciaControl = this.formControlValidate(this.formAtencion.get('provincia')!)
+    const distritoControl = this.formControlValidate(this.formAtencion.get('distrito')!)
+    const entidadIdControl = this.formControlValidate(this.formAtencion.get('entidadId')!)
+    const autoridadControl = this.formControlValidate(this.formAtencion.get('autoridad')!)
+    const dniAutoridadControl = this.formControlValidate(this.formAtencion.get('dniAutoridad')!)
+    const nombreAutoridadControl = this.formControlValidate(this.formAtencion.get('nombreAutoridad')!)
+    const cargoAutoridadControl = this.formControlValidate(this.formAtencion.get('cargoAutoridad')!)
+    const espacioIdControl = this.formControlValidate(this.formAtencion.get('espacioId')!)
+    const clasificacionControl = this.formControlValidate(this.formAtencion.get('clasificacion')!)
+    const temaControl = this.formControlValidate(this.formAtencion.get('tema')!)
+
+    return tipoControl && fechaAtencionControl && modalidadControl && lugarIdControl && tipoEntidadIdControl &&
+      departamentoControl && provinciaControl && entidadIdControl && autoridadControl && espacioIdControl &&
+      clasificacionControl && temaControl
   }
+
+  formControlValidate(control:AbstractControl ){
+      let valid = true
+      if(!control?.valid){
+        control?.markAsTouched()
+        valid = false
+      }
+      return valid
+    }
 
   setCongresistasParams() {
     this.asistenciaTecnicaCongresistaService.getAllCongresistas(this.atencion.asistenciaId!, {...this.pagination, columnSort: 'congresistaId' })
@@ -1311,7 +1339,7 @@ export class FormularioAtencionComponent {
       this.addIntegranteRow()
     }
     if (formGroup == 'compromisos') {
-      this.addIntegranteRow()
+      this.addCompromisoRow()
     }
   }
   
@@ -1334,8 +1362,8 @@ export class FormularioAtencionComponent {
       integranteId: [''],
       nivelGobiernoId: [null, Validators.required],
       tipo: [''],
-      esRegional: [''],
       sectorId: [''],
+      esRegional: [''],
       departamento: [''],
       provincia: [''],
       distrito: [''],
@@ -1362,6 +1390,7 @@ export class FormularioAtencionComponent {
       compromisoId: [''],
       nivelGobiernoId: [null, Validators.required],
       tipo: [''],
+      sectorId: [''],
       esRegional: [''],
       departamento: [''],
       provincia: [''],
@@ -1373,7 +1402,12 @@ export class FormularioAtencionComponent {
       plazo: [null, Validators.required],
       compromiso: [null, Validators.required]
     })
-    this.compromisos.push(compromisoRow)   
+    this.compromisos.push(compromisoRow)  
+    this.listaCompromisoSectores.update(sectores => [...sectores, []])
+    this.listaCompromisoEntidades.update(entidades => [...entidades, []])
+    this.listaCompromisoDepartamentos.update(departamentos => [...departamentos, []])
+    this.listaCompromisoProvincias.update(provincias => [...provincias, []])
+    this.listaCompromisoDistritos.update(distritos => [...distritos, []]) 
   }
 
   removeItemFormArray(i: number, formGroup: string) {
@@ -1419,6 +1453,8 @@ export class FormularioAtencionComponent {
       } else {
         this.agendas.removeAt(i)
       }
+    } else if (formGroup == 'compromisos') {
+      this.removeCompromisoRow(i)
     }
   }
 

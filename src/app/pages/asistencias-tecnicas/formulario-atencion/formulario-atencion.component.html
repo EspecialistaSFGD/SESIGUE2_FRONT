@@ -100,7 +100,7 @@
 						<ng-container *ngTemplateOutlet="controlTema"></ng-container>
 					</div>
 
-					<!-- <div class="grid flex-col col-span-2">
+					<div class="grid flex-col col-span-2">
 						<div class="max-h-max border border-solid border-gray-200 dark:border-gray-600">
 							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
 								<h5 class="text-sm font-medium">Participantes</h5>
@@ -141,7 +141,7 @@
 								</div>
 							</div>
 						</div>
-					</div> -->
+					</div>
 
 					<div class="grid flex-col col-span-2">
 						<div class="max-h-max border border-solid border-gray-200 dark:border-gray-600">
@@ -244,7 +244,7 @@
 						</div>
 					</div>
 	
-					<div class="grid flex-col col-span-4">
+					<!-- <div class="grid flex-col col-span-4">
 						<div class="border border-solid border-gray-200 dark:border-gray-600">
 							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
 								<h5 class="text-sm font-medium">Integrantes de acta</h5>
@@ -385,7 +385,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
 				<div class="flex pt-4 justify-between">
 					<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
@@ -397,7 +397,7 @@
 		<p-stepperPanel header="Compromisos">
 			<ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
 				<div class="grid grid-cols-1 md:grid-cols-4 bg-white gap-4 dark:bg-[#1f1f1f]">
-					<div class="grid flex-col col-span-4">
+					<!-- <div class="grid flex-col col-span-4">
 						<div class="border border-solid border-gray-200 dark:border-gray-600">
 							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
 								<h5 class="text-sm font-medium">Compromisos de acta</h5>
@@ -504,7 +504,7 @@
 											<div class="text-danger" *ngIf="alertMessageError('plazo')">{{msgErrorControl('plazo','Plazo')}}</div>
 										</div>
 
-										<div class="flex flex-col col-span-3">
+										<div class="flex flex-col col-span-4">
 											<label nzFor="compromiso">Compromiso</label>
 											<input type="text" class="form-control" id="compromiso" placeholder="Ingresa el compromiso aquí" formControlName="compromiso">
 											<div class="text-danger" *ngIf="alertMessageError('compromiso')">{{msgErrorControl('compromiso','Compromiso')}}</div>
@@ -520,7 +520,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 
 					<div class="grid flex-col col-span-2">
 						<label for="comentarios">Comentarios</label>
@@ -1287,8 +1287,7 @@
 			<label nz-radio [nzValue]="clasificacion.value.toLowerCase()">{{ clasificacion.text| titlecase }}</label>
 			}
 		</nz-radio-group>
-		<div class="text-danger" *ngIf="alertMessageError('clasificacion')">
-			{{msgErrorControl('clasificacion','Clasificacion')}}</div>
+		<div class="text-danger" *ngIf="alertMessageError('clasificacion')">{{msgErrorControl('clasificacion','Clasificacion')}}</div>
 	</ng-template>
 
 	<ng-template #controlTema>

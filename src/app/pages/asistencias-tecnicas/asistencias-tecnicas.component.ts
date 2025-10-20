@@ -135,7 +135,7 @@ export default class AsistenciasTecnicasComponent {
         setParamsToObject(params, this.pagination, 'tipos')
         setParamsToObject(params, this.pagination, 'ubigeo')
 
-        this.obtenerAsistenciasTecnicas()
+        // this.obtenerAsistenciasTecnicas()
       })
   }
 
