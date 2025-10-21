@@ -50,6 +50,8 @@ export interface IntervencionEspacioResponse {
 	usuarioIdRegistro?: string,
 	usuarioIdModifica?: string,
 	cantidadTareas?: number,
+	fechaSituacion?: number,
+	situacion?: number,
 	inicioIntervencionHitoId: string,
 	inicioIntervencionHito?: string,
 	inicioIntervencionEtapaId?: string,
