@@ -159,8 +159,8 @@ export default class AgendasEventoComponent {
     this.eventoSectorService.listarEventoSectores(paginationEventoSector).subscribe( resp => this.eventosSectores.set(resp.data))
   }
 
-  onBack(){
-    this.router.navigate(['/eventos/', this.evento.eventoId])
+  onBack(){  
+    this.router.navigate(['eventos', this.eventoId])
   }
 
   obtenerIntervencionEspacioService(){

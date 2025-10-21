@@ -47,7 +47,7 @@
 				  <td nzAlign="center">{{intervencion.subTipo | uppercase }}</td>
 				  <td nzAlign="center">{{intervencion.codigoIntervencion}}</td>
 				  <td nzAlign="center">{{intervencion.nombreIntervencion}}</td>
-				  <td nzAlign="center">{{intervencion.fechaSituacion}} {{intervencion.situacion}}</td>
+				  <td nzAlign="center">{{intervencion.fechaSituacion ? intervencion.fechaSituacion + ': ' : ''}} {{intervencion.situacion}}</td>
 				  <td nzAlign="center">{{intervencion.actualIntervencionFase}} <br> {{intervencion.actualIntervencionEtapa}} <br> {{intervencion.actualIntervencionHito}}</td>
 				  <td nzAlign="center" class="font-bold">{{intervencion.fechaSsi}}</td>
 				  <td nzAlign="center">{{intervencion.costoActualizado! | numero : 0}}</td>
