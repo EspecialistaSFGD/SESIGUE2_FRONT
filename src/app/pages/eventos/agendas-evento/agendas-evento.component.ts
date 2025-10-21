@@ -140,7 +140,7 @@ export default class AgendasEventoComponent {
     }
 
     this.eventoId = entidadIdNumber
-    this.obtenerEventoService()
+    // this.obtenerEventoService()
   }
 
   obtenerEventoService(){    

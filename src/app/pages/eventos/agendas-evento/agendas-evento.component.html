@@ -1,5 +1,5 @@
 <nz-page-header nzBackIcon [nzGhost]="false" (nzBack)="onBack()">
-	<nz-page-header-title>Agenda del evento</nz-page-header-title>
+	<nz-page-header-title>Agenda del espacio</nz-page-header-title>
 </nz-page-header>
 
 <app-evento-detalle *ngIf="evento.eventoId" [evento]="evento" [esSsfgd]="esSsfgd" />
@@ -21,15 +21,15 @@
 				<th nzAlign="center" nzWidth="120px" nzColumnKey="e.entidad" [nzSortFn]="true">Entidad</th>
 				<!-- <th nzAlign="center" nzWidth="100px">Tipo</th> -->
 				<th nzAlign="center" nzWidth="100px">Subtipo</th>
-				<th nzAlign="center" nzWidth="80px">Codigo</th>
-				<th nzAlign="center" nzWidth="350px">Nombre</th>
+				<th nzAlign="center" nzWidth="80px" nzColumnKey="I.codigoIntervencion" [nzSortFn]="true">Codigo</th>
+				<th nzAlign="center" nzWidth="350px" nzColumnKey="I.nomProyecto" [nzSortFn]="true">Nombre</th>
+				<th nzAlign="center" nzWidth="350px">Situación</th>
+				<th nzAlign="center" nzWidth="250px">Hito actual</th>
 				<th nzAlign="center" nzWidth="80px">Fecha SSI</th>
 				<th nzAlign="center" nzWidth="100px">Costo Act.</th>
 				<th nzAlign="center" nzWidth="100px">Dev Acum</th>
 				<th nzAlign="center" nzWidth="100px">PIM</th>
 				<th nzAlign="center" nzWidth="100px">DEV</th>
-				<th nzWidth="250px" nzAlign="center">Situación</th>
-				<th nzWidth="250px" nzAlign="center">Hito actual</th>
 				<th nzRight nzWidth="100px" nzAlign="center"></th>
 			</tr>
 		</thead>
@@ -47,13 +47,13 @@
 				  <td nzAlign="center">{{intervencion.subTipo | uppercase }}</td>
 				  <td nzAlign="center">{{intervencion.codigoIntervencion}}</td>
 				  <td nzAlign="center">{{intervencion.nombreIntervencion}}</td>
+				  <td nzAlign="center">{{intervencion.fechaSituacion}} {{intervencion.situacion}}</td>
+				  <td nzAlign="center">{{intervencion.actualIntervencionFase}} <br> {{intervencion.actualIntervencionEtapa}} <br> {{intervencion.actualIntervencionHito}}</td>
 				  <td nzAlign="center" class="font-bold">{{intervencion.fechaSsi}}</td>
 				  <td nzAlign="center">{{intervencion.costoActualizado! | numero : 0}}</td>
 				  <td nzAlign="center">{{intervencion.devAcumulado! | numero : 0}}</td>
 				  <td nzAlign="center">{{intervencion.pim! | numero : 0}}</td>
 				  <td nzAlign="center">{{intervencion.devengado! | numero : 0}}</td>
-				  <td nzAlign="center">{{intervencionEspacio.fechaSituacion}} {{intervencionEspacio.situacion}}</td>
-				  <td nzAlign="center">{{intervencionEspacio.actualIntervencionFase}} <br> {{intervencionEspacio.actualIntervencionEtapa}} <br> {{intervencionEspacio.actualIntervencionHito}}</td>
 				  <td nzRight nzAlign="center" [ngClass]="{ 'bg-sky-100' : intervencionEspacio.intervencionId == intervencion.intervencionId}">
 					<div class="flex justify-center">
 						<app-boton *ngIf="intervencionSituacionesActions.new" [icono]="'comments'" [tooltip]="'Agregar situación'" [link]="true" (click)="intervencionSituacionFormModel(intervencion)"/>
