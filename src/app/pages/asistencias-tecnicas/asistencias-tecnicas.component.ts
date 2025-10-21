@@ -484,6 +484,7 @@ export default class AsistenciasTecnicasComponent {
     let congresistas = formValues.congresistas
     let participantes = formValues.participantes
     let agendas = formValues.agendas
+    let integrantes = formValues.integrantes
     this.asistenciaTecnicaService.registrarAsistenciaTecnica(formValues)
             .subscribe(resp => {
               if (resp.success == true) {
@@ -527,6 +528,11 @@ export default class AsistenciasTecnicasComponent {
                         if (response == true) {
                         }
                       })
+                  }
+                }
+                if(integrantes.length > 0){
+                  for(let integrante of integrantes){
+                    
                   }
                 }
                 this.modal.closeAll()
