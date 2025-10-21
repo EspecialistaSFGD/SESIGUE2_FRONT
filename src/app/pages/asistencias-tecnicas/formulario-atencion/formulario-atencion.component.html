@@ -244,7 +244,7 @@
 						</div>
 					</div>
 	
-					<div class="grid flex-col col-span-4">
+					<!-- <div class="grid flex-col col-span-4">
 						<div class="border border-solid border-gray-200 dark:border-gray-600">
 							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
 								<h5 class="text-sm font-medium">Integrantes de acta</h5>
@@ -352,9 +352,9 @@
 										</div>
 	
 										<div class="flex flex-col">
-											<label For="nombre">Nombre completo</label>
-											<input type="text" id="nombre" class="form-control" placeholder="Ingresa el nombre aquí" formControlName="nombre">
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'nombre')">{{msgErrorControlTwoNivel('integrantes',i,'nombre','Nombre')}}</div>
+											<label For="nombres">Nombre completo</label>
+											<input type="text" id="nombres" class="form-control" placeholder="Ingresa el nombre aquí" formControlName="nombres">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'nombres')">{{msgErrorControlTwoNivel('integrantes',i,'nombres','Nombre')}}</div>
 										</div>
 	
 										<div class="flex flex-col">
@@ -370,9 +370,9 @@
 										</div>
 	
 										<div class="flex flex-col">
-											<label For="correo">Correo</label>
-											<input type="text" id="correo" class="form-control" placeholder="Ingresa el correo aquí" formControlName="correo">
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'correo')">{{msgErrorControlTwoNivel('integrantes',i,'correo','Correo')}}</div>
+											<label For="email">Correo</label>
+											<input type="text" id="email" class="form-control" placeholder="Ingresa el correo aquí" formControlName="email">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'email')">{{msgErrorControlTwoNivel('integrantes',i,'email','Correo')}}</div>
 										</div>
 									</div>
 	
@@ -385,7 +385,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
 				<div class="flex pt-4 justify-between">
 					<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
@@ -397,7 +397,7 @@
 		<p-stepperPanel header="Compromisos">
 			<ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
 				<div class="grid grid-cols-1 md:grid-cols-4 bg-white gap-4 dark:bg-[#1f1f1f]">
-					<div class="grid flex-col col-span-4">
+					<!-- <div class="grid flex-col col-span-4">
 						<div class="border border-solid border-gray-200 dark:border-gray-600">
 							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
 								<h5 class="text-sm font-medium">Compromisos de acta</h5>
@@ -520,7 +520,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 
 					<div class="grid flex-col col-span-2">
 						<label for="comentarios">Comentarios</label>

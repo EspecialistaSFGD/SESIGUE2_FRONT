@@ -637,11 +637,12 @@ export class FormularioAtencionComponent {
   changeDniList(i:number, control:string){
     const getControl = this.formAtencion.get(control) as FormArray
 
+    const asistenteIdControl = getControl.at(i).get('asistenteId')
     const dniControl = getControl.at(i).get('dni')
     const nombreControl = getControl.at(i).get('nombre')
     const cargoControl = getControl.at(i).get('cargo')
     const telefonoControl = getControl.at(i).get('telefono')
-    const correoControl = getControl.at(i).get('correo')
+    const emailControl = getControl.at(i).get('email')
 
     const dni = dniControl?.value
     dni > 0 ? dniControl?.setValidators([Validators.pattern(this.validatorService.DNIPattern)]) : dniControl?.clearValidators()
@@ -650,10 +651,11 @@ export class FormularioAtencionComponent {
     if(dni.length == 8){
       this.obtenerAsistenteService(dni, control, i)
     } else {
-      nombreControl?.reset()
-      cargoControl?.reset()
-      telefonoControl?.reset()
-      correoControl?.reset()
+      asistenteIdControl?.setValue(null)
+      nombreControl?.setValue(null)
+      cargoControl?.setValue(null)
+      telefonoControl?.setValue(null)
+      emailControl?.setValue(null)
     }
 
   }
@@ -685,27 +687,26 @@ export class FormularioAtencionComponent {
   }
 
   generalValidate():boolean {
-    // const tipoControl = this.formControlValidate(this.formAtencion.get('tipo')!)
-    // const fechaAtencionControl = this.formControlValidate(this.formAtencion.get('fechaAtencion')!)
-    // const modalidadControl = this.formControlValidate(this.formAtencion.get('modalidad')!)
-    // const lugarIdControl = this.formControlValidate(this.formAtencion.get('lugarId')!)
-    // const tipoEntidadIdControl = this.formControlValidate(this.formAtencion.get('tipoEntidadId')!)
-    // const departamentoControl = this.formControlValidate(this.formAtencion.get('departamento')!)
-    // const provinciaControl = this.formControlValidate(this.formAtencion.get('provincia')!)
-    // const distritoControl = this.formControlValidate(this.formAtencion.get('distrito')!)
-    // const entidadIdControl = this.formControlValidate(this.formAtencion.get('entidadId')!)
-    // const autoridadControl = this.formControlValidate(this.formAtencion.get('autoridad')!)
-    // const dniAutoridadControl = this.formControlValidate(this.formAtencion.get('dniAutoridad')!)
-    // const nombreAutoridadControl = this.formControlValidate(this.formAtencion.get('nombreAutoridad')!)
-    // const cargoAutoridadControl = this.formControlValidate(this.formAtencion.get('cargoAutoridad')!)
-    // const espacioIdControl = this.formControlValidate(this.formAtencion.get('espacioId')!)
-    // const clasificacionControl = this.formControlValidate(this.formAtencion.get('clasificacion')!)
-    // const temaControl = this.formControlValidate(this.formAtencion.get('tema')!)
+    const tipoControl = this.formControlValidate(this.formAtencion.get('tipo')!)
+    const fechaAtencionControl = this.formControlValidate(this.formAtencion.get('fechaAtencion')!)
+    const modalidadControl = this.formControlValidate(this.formAtencion.get('modalidad')!)
+    const lugarIdControl = this.formControlValidate(this.formAtencion.get('lugarId')!)
+    const tipoEntidadIdControl = this.formControlValidate(this.formAtencion.get('tipoEntidadId')!)
+    const departamentoControl = this.formControlValidate(this.formAtencion.get('departamento')!)
+    const provinciaControl = this.formControlValidate(this.formAtencion.get('provincia')!)
+    const distritoControl = this.formControlValidate(this.formAtencion.get('distrito')!)
+    const entidadIdControl = this.formControlValidate(this.formAtencion.get('entidadId')!)
+    const autoridadControl = this.formControlValidate(this.formAtencion.get('autoridad')!)
+    const dniAutoridadControl = this.formControlValidate(this.formAtencion.get('dniAutoridad')!)
+    const nombreAutoridadControl = this.formControlValidate(this.formAtencion.get('nombreAutoridad')!)
+    const cargoAutoridadControl = this.formControlValidate(this.formAtencion.get('cargoAutoridad')!)
+    const espacioIdControl = this.formControlValidate(this.formAtencion.get('espacioId')!)
+    const clasificacionControl = this.formControlValidate(this.formAtencion.get('clasificacion')!)
+    const temaControl = this.formControlValidate(this.formAtencion.get('tema')!)
 
-    // return tipoControl && fechaAtencionControl && modalidadControl && lugarIdControl && tipoEntidadIdControl &&
-    //   departamentoControl && provinciaControl && entidadIdControl && autoridadControl && espacioIdControl &&
-    //   clasificacionControl && temaControl
-    return true;
+    return tipoControl && fechaAtencionControl && modalidadControl && lugarIdControl && tipoEntidadIdControl &&
+      departamentoControl && provinciaControl && entidadIdControl && autoridadControl && espacioIdControl &&
+      clasificacionControl && temaControl
   }
 
   formControlValidate(control:AbstractControl ){
@@ -1202,13 +1203,13 @@ export class FormularioAtencionComponent {
           } else {
             const getControl = this.formAtencion.get(control) as FormArray
             getControl.at(i).get('asistenteId')?.setValue(null)
-            getControl.at(i).get('nombre')?.enable()
-            getControl.at(i).get('nombre')?.setValue(null)
+            getControl.at(i).get('nombres')?.enable()
+            getControl.at(i).get('nombres')?.setValue(null)
             getControl.at(i).get('cargo')?.enable()
             getControl.at(i).get('cargo')?.setValue(null)
             getControl.at(i).get('telefono')?.enable()
             getControl.at(i).get('telefono')?.setValue(null)
-            getControl.at(i).get('correo')?.setValue(null)
+            getControl.at(i).get('email')?.setValue(null)
           }
         }
 
@@ -1276,12 +1277,12 @@ export class FormularioAtencionComponent {
     const getControl = this.formAtencion.get(control) as FormArray
     getControl.at(i).get('loadingAsistente')?.setValue(false)
     getControl.at(i).get('asistenteId')?.setValue(asistente.asistenteId)
-    getControl.at(i).get('nombre')?.disable()
-    getControl.at(i).get('nombre')?.setValue(asistente.nombres)
+    getControl.at(i).get('nombres')?.disable()
+    getControl.at(i).get('nombres')?.setValue(asistente.nombres)
     getControl.at(i).get('cargo')?.disable()
     getControl.at(i).get('cargo')?.setValue(asistente.cargo)
     getControl.at(i).get('telefono')?.setValue(asistente.telefono)
-    getControl.at(i).get('correo')?.setValue(asistente.email)
+    getControl.at(i).get('email')?.setValue(asistente.email)
   }
 
   setUbigeoToAsistente(ubigeo: string, entidadTipo: string){
@@ -1426,11 +1427,12 @@ export class FormularioAtencionComponent {
       entidadId: [null, Validators.required],
       entidad: [{ value: null, disabled: true }],
       entidadSlug: [{ value: null, disabled: true }],
+      asistenteId: [null],
       dni: [''],
-      nombre: [null, Validators.required],
+      nombres: [null, Validators.required],
       cargo: [null, Validators.required],
       telefono: [null, Validators.required],
-      correo: [null, Validators.required]
+      email: [null, Validators.required]
     })
     this.integrantes.push(integranteRow)    
     this.listaIntegranteSectores.update(sectores => [...sectores, []])
