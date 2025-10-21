@@ -347,13 +347,13 @@
 	
 										<div class="flex flex-col">
 											<label For="dni">DNI</label>
-											<input type="text" id="dni" class="form-control" placeholder="Ingresa el DNI aquí" formControlName="dni" (keyup)="changeDniList(i)">
+											<input type="text" id="dni" class="form-control" placeholder="Ingresa el DNI aquí" formControlName="dni" (keyup)="changeDniList(i,'integrantes')">
 											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'dni')">{{msgErrorControlTwoNivel('integrantes',i,'dni','Dni')}}</div>
 										</div>
 	
 										<div class="flex flex-col">
 											<label For="nombre">Nombre completo</label>
-											<input type="text" id="dni" class="form-control" placeholder="Ingresa el nombre aquí" formControlName="nombre">
+											<input type="text" id="nombre" class="form-control" placeholder="Ingresa el nombre aquí" formControlName="nombre">
 											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'nombre')">{{msgErrorControlTwoNivel('integrantes',i,'nombre','Nombre')}}</div>
 										</div>
 	
@@ -390,7 +390,7 @@
 				<div class="flex pt-4 justify-between">
 					<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
 					<p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"(onClick)="generalValidate() ? nextCallback.emit() : null" />
-				</div>
+				</div>	
 			</ng-template>			
 		</p-stepperPanel>
 
@@ -493,7 +493,7 @@
 												}
 											</label>
 											<div class="relative">
-												<input type="text" id="dni" class="form-control" formControlName="entidadSlug">
+												<input type="text" id="entidadSlug" class="form-control" formControlName="entidadSlug">
 												<div class="absolute right-1 top-1"><app-progress-spiner [loading]="obtenerControlValue(i,'compromisos','loadingEntidad')" /></div>
 											</div>
 										</div>

@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { JneAutoridadTipoEnum, UbigeoTipoEnum } from '@core/enums';
 import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
-import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, ClasificacionResponse, DataFile, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, OrientacionAtencion, Pagination, SectorResponse, SSInversionTooltip, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, AsistenteAtencionResponse, ClasificacionResponse, DataFile, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, OrientacionAtencion, Pagination, SectorResponse, SSInversionTooltip, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, JneService, LugaresService, NivelGobiernosService, SectoresService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -44,8 +44,8 @@ export class FormularioAtencionComponent {
   acuerdosCount = 900
   esMancomunidad: boolean = false
   esRegional: boolean = false
-  fileListMeet: NzUploadFile[] = [];
-  fileListAttendance: NzUploadFile[] = [];
+  // fileListMeet: NzUploadFile[] = [];
+  // fileListAttendance: NzUploadFile[] = [];
   cuiClasificacion: boolean = false
   reNewFile: boolean = false
   
@@ -634,7 +634,27 @@ export class FormularioAtencionComponent {
     })
   }
 
-  changeDniList(i:number){
+  changeDniList(i:number, control:string){
+    const getControl = this.formAtencion.get(control) as FormArray
+
+    const dniControl = getControl.at(i).get('dni')
+    const nombreControl = getControl.at(i).get('nombre')
+    const cargoControl = getControl.at(i).get('cargo')
+    const telefonoControl = getControl.at(i).get('telefono')
+    const correoControl = getControl.at(i).get('correo')
+
+    const dni = dniControl?.value
+    dni > 0 ? dniControl?.setValidators([Validators.pattern(this.validatorService.DNIPattern)]) : dniControl?.clearValidators()
+    dniControl?.updateValueAndValidity();
+
+    if(dni.length == 8){
+      this.obtenerAsistenteService(dni, control, i)
+    } else {
+      nombreControl?.reset()
+      cargoControl?.reset()
+      telefonoControl?.reset()
+      correoControl?.reset()
+    }
 
   }
 
@@ -664,27 +684,28 @@ export class FormularioAtencionComponent {
     return typeErrorControl(text, errors)
   }
 
-  generalValidate(){
-    const tipoControl = this.formControlValidate(this.formAtencion.get('tipo')!)
-    const fechaAtencionControl = this.formControlValidate(this.formAtencion.get('fechaAtencion')!)
-    const modalidadControl = this.formControlValidate(this.formAtencion.get('modalidad')!)
-    const lugarIdControl = this.formControlValidate(this.formAtencion.get('lugarId')!)
-    const tipoEntidadIdControl = this.formControlValidate(this.formAtencion.get('tipoEntidadId')!)
-    const departamentoControl = this.formControlValidate(this.formAtencion.get('departamento')!)
-    const provinciaControl = this.formControlValidate(this.formAtencion.get('provincia')!)
-    const distritoControl = this.formControlValidate(this.formAtencion.get('distrito')!)
-    const entidadIdControl = this.formControlValidate(this.formAtencion.get('entidadId')!)
-    const autoridadControl = this.formControlValidate(this.formAtencion.get('autoridad')!)
-    const dniAutoridadControl = this.formControlValidate(this.formAtencion.get('dniAutoridad')!)
-    const nombreAutoridadControl = this.formControlValidate(this.formAtencion.get('nombreAutoridad')!)
-    const cargoAutoridadControl = this.formControlValidate(this.formAtencion.get('cargoAutoridad')!)
-    const espacioIdControl = this.formControlValidate(this.formAtencion.get('espacioId')!)
-    const clasificacionControl = this.formControlValidate(this.formAtencion.get('clasificacion')!)
-    const temaControl = this.formControlValidate(this.formAtencion.get('tema')!)
+  generalValidate():boolean {
+    // const tipoControl = this.formControlValidate(this.formAtencion.get('tipo')!)
+    // const fechaAtencionControl = this.formControlValidate(this.formAtencion.get('fechaAtencion')!)
+    // const modalidadControl = this.formControlValidate(this.formAtencion.get('modalidad')!)
+    // const lugarIdControl = this.formControlValidate(this.formAtencion.get('lugarId')!)
+    // const tipoEntidadIdControl = this.formControlValidate(this.formAtencion.get('tipoEntidadId')!)
+    // const departamentoControl = this.formControlValidate(this.formAtencion.get('departamento')!)
+    // const provinciaControl = this.formControlValidate(this.formAtencion.get('provincia')!)
+    // const distritoControl = this.formControlValidate(this.formAtencion.get('distrito')!)
+    // const entidadIdControl = this.formControlValidate(this.formAtencion.get('entidadId')!)
+    // const autoridadControl = this.formControlValidate(this.formAtencion.get('autoridad')!)
+    // const dniAutoridadControl = this.formControlValidate(this.formAtencion.get('dniAutoridad')!)
+    // const nombreAutoridadControl = this.formControlValidate(this.formAtencion.get('nombreAutoridad')!)
+    // const cargoAutoridadControl = this.formControlValidate(this.formAtencion.get('cargoAutoridad')!)
+    // const espacioIdControl = this.formControlValidate(this.formAtencion.get('espacioId')!)
+    // const clasificacionControl = this.formControlValidate(this.formAtencion.get('clasificacion')!)
+    // const temaControl = this.formControlValidate(this.formAtencion.get('tema')!)
 
-    return tipoControl && fechaAtencionControl && modalidadControl && lugarIdControl && tipoEntidadIdControl &&
-      departamentoControl && provinciaControl && entidadIdControl && autoridadControl && espacioIdControl &&
-      clasificacionControl && temaControl
+    // return tipoControl && fechaAtencionControl && modalidadControl && lugarIdControl && tipoEntidadIdControl &&
+    //   departamentoControl && provinciaControl && entidadIdControl && autoridadControl && espacioIdControl &&
+    //   clasificacionControl && temaControl
+    return true;
   }
 
   formControlValidate(control:AbstractControl ){
@@ -1147,86 +1168,120 @@ export class FormularioAtencionComponent {
     }
   }
 
-  obtenerAsistenteService(dni: string){
+  obtenerAsistenteService(dni: string, control:string = '', i:number = 0){
     const eventoId = this.evento().verificaAsistentes ? Number(this.evento().eventoId!) : 0
 
-    const ubigeoControl = this.formAtencion.get('ubigeo')
-    const autoridadControl = this.formAtencion.get('autoridad')
-
-    const tipoEntidadId = this.formAtencion.get('tipoEntidadId')
-    const departamentoControl = this.formAtencion.get('departamento')
-    const provinciaControl = this.formAtencion.get('provincia')
-    const distritoControl = this.formAtencion.get('distrito')
-    
-    const entidad = this.formAtencion.get('entidad')
-    const entidadSlug = this.formAtencion.get('entidadSlug')
-    const dniControl = this.formAtencion.get('dniAutoridad');
-    const nombre = this.formAtencion.get('nombreAutoridad')
-    const cargo = this.formAtencion.get('cargoAutoridad')
-    const contacto = this.formAtencion.get('contactoAutoridad')
-    const entidadId = this.formAtencion.get('entidadId')   
-    
-    this.loadingAutoridad = true
+    if(control === ''){
+      this.loadingAutoridad = true
+    } else {
+      const getControl = this.formAtencion.get(control) as FormArray
+      getControl.at(i).get('loadingAsistente')?.setValue(true)
+    }
     this.atencionService.obtenerAsistente(dni, eventoId)
       .subscribe( resp => {
-        this.loadingAutoridad = false
-        const asistente = resp.data
-        
-        nombre?.setValue(asistente ? asistente.nombres : null)
-        cargo?.setValue(asistente ? asistente.cargo : null)
-        
-        if(this.permisosPCM){
-          this.formularioControlEnable('nombreAutoridad', !asistente)
-          this.formularioControlEnable('cargoAutoridad', !asistente)
+        const asistente = resp.data        
+        if(asistente){
+          control === '' ? this.setAsistenteFormulario(asistente) : this.setAsistenteFormularioLista(asistente,control,i);
         } else {
-          // autoridadControl?.setValue(false)
-          
-          if(asistente){
-            contacto?.enable()
-            this.formularioControlEnable('nombreAutoridad', false)
-            this.formularioControlEnable('cargoAutoridad', false)
-            this.formularioControlEnable('contactoAutoridad', false)
-            ubigeoControl?.setValue(asistente.ubigeo)
-            entidadSlug?.setValue(asistente.entidad)
-            entidad?.setValue(asistente.entidad)
-            entidadId?.setValue(asistente.entidadId)
-            const telefono = asistente.telefono ? `${asistente.telefono} / ` : ''
-            contacto?.setValue(`${telefono}${asistente.email}`)
-             if(this.evento().verificaAsistentes){
-               this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
-             }
-            const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
+          if(control === ''){
+            this.loadingAutoridad = false
+            this.formAtencion.get('asistenteId')?.setValue(null)
+            this.formAtencion.get('nombreAutoridad')?.enable()
+            this.formAtencion.get('nombreAutoridad')?.setValue(null)
+            this.formAtencion.get('cargoAutoridad')?.enable()
+            this.formAtencion.get('cargoAutoridad')?.setValue(null)
+            this.formAtencion.get('contactoAutoridad')?.setValue(null)
+            this.formAtencion.get('entidadId')?.setValue(null)
             if(this.evento().verificaAsistentes){
-              autoridadControl?.setValue(esAutoridad)
+              this.formAtencion.get('tipoEntidadId')?.setValue(null)
+              this.formAtencion.get('departamento')?.setValue(null)
+              this.formAtencion.get('provincia')?.setValue(null)
+              this.formAtencion.get('distrito')?.setValue(null)           
+              this.formAtencion.get('dniAutoridad')?.setErrors({ msgBack: 'Aún no asiste al evento' });
             }
           } else {
-            contacto?.reset()
-            this.formularioControlEnable('nombreAutoridad', true)
-            this.formularioControlEnable('cargoAutoridad', true)
-            this.formularioControlEnable('contactoAutoridad', true)
-            if(this.evento().verificaAsistentes){
-              tipoEntidadId?.reset()
-              departamentoControl?.reset()
-              provinciaControl?.reset()
-              distritoControl?.reset()            
-              dniControl?.setErrors({ msgBack: 'Aún no asiste al evento' });
-            }
+            const getControl = this.formAtencion.get(control) as FormArray
+            getControl.at(i).get('asistenteId')?.setValue(null)
+            getControl.at(i).get('nombre')?.enable()
+            getControl.at(i).get('nombre')?.setValue(null)
+            getControl.at(i).get('cargo')?.enable()
+            getControl.at(i).get('cargo')?.setValue(null)
+            getControl.at(i).get('telefono')?.enable()
+            getControl.at(i).get('telefono')?.setValue(null)
+            getControl.at(i).get('correo')?.setValue(null)
           }
         }
 
-        // if(asistente){
-        //   const telefono = asistente.telefono ? `${asistente.telefono} / ` : ''
-        //   contacto?.setValue(`${telefono} ${asistente.email}`)
-        //   this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
+        // nombre?.setValue(asistente ? asistente.nombres : null)
+        // cargo?.setValue(asistente ? asistente.cargo : null)
+        
+        // if(this.permisosPCM){
+        //   this.formularioControlEnable('nombreAutoridad', !asistente)
+        //   this.formularioControlEnable('cargoAutoridad', !asistente)
         // } else {
-        //   contacto?.reset()
-        //   tipoEntidadId?.reset()
-        //   departamentoControl?.reset()
-        //   provinciaControl?.reset()
-        //   distritoControl?.reset()
-        //   dniControl?.setErrors({ msgBack: 'Aún no asiste al evento' });
+        //   if(asistente){
+        //     contacto?.enable()
+        //     this.formularioControlEnable('nombreAutoridad', false)
+        //     this.formularioControlEnable('cargoAutoridad', false)
+        //     this.formularioControlEnable('contactoAutoridad', false)
+        //     ubigeoControl?.setValue(asistente.ubigeo)
+        //     entidadSlug?.setValue(asistente.entidad)
+        //     entidad?.setValue(asistente.entidad)
+        //     entidadId?.setValue(asistente.entidadId)
+        //     const telefono = asistente.telefono ? `${asistente.telefono} / ` : ''
+        //     contacto?.setValue(`${telefono}${asistente.email}`)
+        //      if(this.evento().verificaAsistentes){
+        //        this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
+        //      }
+        //     const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
+        //     if(this.evento().verificaAsistentes){
+        //       autoridadControl?.setValue(esAutoridad)
+        //     }
+        //   } else {
+        //     contacto?.reset()
+        //     this.formularioControlEnable('nombreAutoridad', true)
+        //     this.formularioControlEnable('cargoAutoridad', true)
+        //     this.formularioControlEnable('contactoAutoridad', true)
+        //     if(this.evento().verificaAsistentes){
+        //       tipoEntidadId?.reset()
+        //       departamentoControl?.reset()
+        //       provinciaControl?.reset()
+        //       distritoControl?.reset()            
+        //       dniControl?.setErrors({ msgBack: 'Aún no asiste al evento' });
+        //     }
+        //   }
         // }
       })
+  }
+
+  setAsistenteFormulario(asistente: AsistenteAtencionResponse){
+    
+    this.loadingAutoridad = false
+    this.formAtencion.get('asistenteId')?.setValue(asistente.asistenteId)
+    this.formAtencion.get('nombreAutoridad')?.setValue(asistente.nombres)
+    this.formAtencion.get('cargoAutoridad')?.setValue(asistente.cargo)
+    this.formAtencion.get('contactoAutoridad')?.setValue(`${asistente.telefono ? `${asistente.telefono} / ` : ''}${asistente.email}`)
+    this.formAtencion.get('ubigeo')?.setValue(asistente.ubigeo)
+    this.formAtencion.get('entidadId')?.setValue(asistente.entidadId)
+    this.formAtencion.get('entidad')?.setValue(asistente.entidad)
+    this.formAtencion.get('entidadSlug')?.setValue(asistente.entidad)
+    if(this.evento().verificaAsistentes){
+      this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
+      const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
+      this.formAtencion.get('autoridad')?.setValue(esAutoridad)
+    }
+  }
+
+  setAsistenteFormularioLista(asistente: AsistenteAtencionResponse, control:string, i:number){
+    const getControl = this.formAtencion.get(control) as FormArray
+    getControl.at(i).get('loadingAsistente')?.setValue(false)
+    getControl.at(i).get('asistenteId')?.setValue(asistente.asistenteId)
+    getControl.at(i).get('nombre')?.disable()
+    getControl.at(i).get('nombre')?.setValue(asistente.nombres)
+    getControl.at(i).get('cargo')?.disable()
+    getControl.at(i).get('cargo')?.setValue(asistente.cargo)
+    getControl.at(i).get('telefono')?.setValue(asistente.telefono)
+    getControl.at(i).get('correo')?.setValue(asistente.email)
   }
 
   setUbigeoToAsistente(ubigeo: string, entidadTipo: string){
@@ -1549,22 +1604,22 @@ export class FormularioAtencionComponent {
   }
   
   //TODO: ELIMINAR LAS FUNCIONES DE CARGA DE ARCHIVOS
-  beforeUploadMeet = (file: NzUploadFile): boolean => {
-    const evidenciaReunion = this.formAtencion.get('evidenciaReunion')
-    evidenciaReunion?.setValue(file)
-    this.fileListMeet = []
-    this.fileListMeet = this.fileListMeet.concat(file);
-    return false;
-  };
+  // beforeUploadMeet = (file: NzUploadFile): boolean => {
+  //   const evidenciaReunion = this.formAtencion.get('evidenciaReunion')
+  //   evidenciaReunion?.setValue(file)
+  //   this.fileListMeet = []
+  //   this.fileListMeet = this.fileListMeet.concat(file);
+  //   return false;
+  // };
 
   //TODO: ELIMINAR LAS FUNCIONES DE CARGA DE ARCHIVOS
-  beforeUploadAttendance = (file: NzUploadFile): boolean => {
-    const evidenciaAsistencia = this.formAtencion.get('evidenciaAsistencia')
-    evidenciaAsistencia?.setValue(file)
-    this.fileListAttendance = []
-    this.fileListAttendance = this.fileListAttendance.concat(file);
-    return false;
-  };
+  // beforeUploadAttendance = (file: NzUploadFile): boolean => {
+  //   const evidenciaAsistencia = this.formAtencion.get('evidenciaAsistencia')
+  //   evidenciaAsistencia?.setValue(file)
+  //   this.fileListAttendance = []
+  //   this.fileListAttendance = this.fileListAttendance.concat(file);
+  //   return false;
+  // };
 
   changeTipoInversion(){
     const orientacionId = this.formAtencion.get('orientacionId')?.value
