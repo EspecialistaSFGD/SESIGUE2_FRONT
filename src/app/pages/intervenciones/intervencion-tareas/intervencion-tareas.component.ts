@@ -193,7 +193,7 @@ export default class IntervencionTareasComponent {
     const codigoTarea = create ? '' : this.intervencionTarea!.codigo
     this.modal.create<FormularioIntervencionTareaComponent>({
       nzTitle: `${action.toUpperCase()} ${codigoTarea}`,
-      nzWidth: '50%',
+      nzWidth: '60%',
       nzMaskClosable: false,
       nzContent: FormularioIntervencionTareaComponent,
       nzData: {

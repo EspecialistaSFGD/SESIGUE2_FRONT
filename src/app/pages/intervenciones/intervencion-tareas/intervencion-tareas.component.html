@@ -65,7 +65,8 @@
           <div class="flex gap-2">
             <app-boton [icono]="'sync'" [outline]="true" [tooltip]="'Actualizar tareas'" (click)="actualizarListaTareas(true)" class="flex"/>
 
-            <app-boton *ngIf="tareaActions.new" [icono]="'plus'" [texto]="'Nueva Tarea'" [disabled]="disableNuevoBoton" [tooltip]="disableNuevoBoton ? '' : 'Agregar nueva tarea'" (click)="disableNuevoBoton ? null : agregarTarea()"/>
+            <!-- <app-boton *ngIf="tareaActions.new" [icono]="'plus'" [texto]="'Nueva Tarea'" [disabled]="disableNuevoBoton" [tooltip]="disableNuevoBoton ? '' : 'Agregar nueva tarea'" (click)="disableNuevoBoton ? null : agregarTarea()"/> -->
+            <app-boton *ngIf="tareaActions.new" [icono]="'plus'" [texto]="'Nueva Tarea'" tooltip="Agregar nueva tarea" (click)="agregarTarea()"/>
           </div>
 
       </div>
