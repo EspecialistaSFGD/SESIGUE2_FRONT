@@ -12,8 +12,8 @@ export interface AsistenteResponse {
 	asistenteId?: string,
 	dni: string,
 	nombres: string,
-	apellidos: string,
+	apellidos?: string,
 	telefono?: string,
-	sexo: string,
+	sexo?: string,
 	email?: string,
 }

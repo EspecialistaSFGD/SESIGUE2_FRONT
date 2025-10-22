@@ -16,7 +16,7 @@
 				<th nzAlign="center" nzWidth="80px">Sector</th>
 				<th nzAlign="center" nzWidth="120px">Ubicación</th>
 				<th nzAlign="center" nzWidth="120px" nzColumnKey="e.entidad" [nzSortFn]="true">Entidad</th>
-				<th nzAlign="center" nzWidth="100px">Tipo</th>
+				<!-- <th nzAlign="center" nzWidth="100px">Tipo</th> -->
 				<th nzAlign="center" nzWidth="100px">Subtipo</th>
 				<th nzAlign="center" nzWidth="80px">Codigo</th>
 				<th nzAlign="center" nzWidth="350px">Nombre</th>
@@ -39,7 +39,7 @@
 					{{intervencionEspacio.distrito ? ' / ' + intervencionEspacio.distrito  : '' }}
 					</td>
 				  <td nzAlign="center">{{intervencionEspacio.entidadTipo}} {{intervencionEspacio.entidadSlug}}</td>
-				  <td nzAlign="center">{{intervencionEspacio.tipo | uppercase }}</td>
+				  <!-- <td nzAlign="center">{{intervencionEspacio.tipo | uppercase }}</td> -->
 				  <td nzAlign="center">{{intervencionEspacio.subTipo | uppercase }}</td>
 				  <td nzAlign="center">{{intervencionEspacio.codigoIntervencion}}</td>
 				  <td nzAlign="center">{{intervencionEspacio.nombreIntervencion}}</td>

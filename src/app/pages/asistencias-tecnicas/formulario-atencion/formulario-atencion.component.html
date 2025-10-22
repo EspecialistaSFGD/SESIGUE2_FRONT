@@ -100,7 +100,7 @@
 						<ng-container *ngTemplateOutlet="controlTema"></ng-container>
 					</div>
 
-					<!-- <div class="grid flex-col col-span-2">
+					<div class="grid flex-col col-span-2">
 						<div class="max-h-max border border-solid border-gray-200 dark:border-gray-600">
 							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
 								<h5 class="text-sm font-medium">Participantes</h5>
@@ -141,7 +141,7 @@
 								</div>
 							</div>
 						</div>
-					</div> -->
+					</div>
 
 					<div class="grid flex-col col-span-2">
 						<div class="max-h-max border border-solid border-gray-200 dark:border-gray-600">
@@ -244,7 +244,7 @@
 						</div>
 					</div>
 	
-					<div class="grid flex-col col-span-4">
+					<!-- <div class="grid flex-col col-span-4">
 						<div class="border border-solid border-gray-200 dark:border-gray-600">
 							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
 								<h5 class="text-sm font-medium">Integrantes de acta</h5>
@@ -347,14 +347,14 @@
 	
 										<div class="flex flex-col">
 											<label For="dni">DNI</label>
-											<input type="text" id="dni" class="form-control" placeholder="Ingresa el DNI aquí" formControlName="dni" (keyup)="changeDniList(i)">
+											<input type="text" id="dni" class="form-control" placeholder="Ingresa el DNI aquí" formControlName="dni" (keyup)="changeDniList(i,'integrantes')">
 											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'dni')">{{msgErrorControlTwoNivel('integrantes',i,'dni','Dni')}}</div>
 										</div>
 	
 										<div class="flex flex-col">
-											<label For="nombre">Nombre completo</label>
-											<input type="text" id="dni" class="form-control" placeholder="Ingresa el nombre aquí" formControlName="nombre">
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'nombre')">{{msgErrorControlTwoNivel('integrantes',i,'nombre','Nombre')}}</div>
+											<label For="nombres">Nombre completo</label>
+											<input type="text" id="nombres" class="form-control" placeholder="Ingresa el nombre aquí" formControlName="nombres">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'nombres')">{{msgErrorControlTwoNivel('integrantes',i,'nombres','Nombre')}}</div>
 										</div>
 	
 										<div class="flex flex-col">
@@ -370,9 +370,9 @@
 										</div>
 	
 										<div class="flex flex-col">
-											<label For="correo">Correo</label>
-											<input type="text" id="correo" class="form-control" placeholder="Ingresa el correo aquí" formControlName="correo">
-											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'correo')">{{msgErrorControlTwoNivel('integrantes',i,'correo','Correo')}}</div>
+											<label For="email">Correo</label>
+											<input type="text" id="email" class="form-control" placeholder="Ingresa el correo aquí" formControlName="email">
+											<div class="text-danger" *ngIf="alertMessageErrorTwoNivel('integrantes',i,'email')">{{msgErrorControlTwoNivel('integrantes',i,'email','Correo')}}</div>
 										</div>
 									</div>
 	
@@ -385,23 +385,23 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
 				<div class="flex pt-4 justify-between">
 					<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
 					<p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"(onClick)="generalValidate() ? nextCallback.emit() : null" />
-				</div>
+				</div>	
 			</ng-template>			
 		</p-stepperPanel>
 
 		<p-stepperPanel header="Compromisos">
 			<ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
 				<div class="grid grid-cols-1 md:grid-cols-4 bg-white gap-4 dark:bg-[#1f1f1f]">
-					<div class="grid flex-col col-span-4">
+					<!-- <div class="grid flex-col col-span-4">
 						<div class="border border-solid border-gray-200 dark:border-gray-600">
 							<div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-900 ">
 								<h5 class="text-sm font-medium">Compromisos de acta</h5>
-								<app-boton icono="plus" texto="Nuevo" tooltip="Agregar nuevo integrante" [outline]="true" (click)="addItemFormArray($event,'compromisos')" />
+								<app-boton icono="plus" texto="Nuevo" tooltip="Agregar nuevo compromiso" [outline]="true" (click)="addItemFormArray($event,'compromisos')" />
 							</div>
 							<div class="w-full flex flex-col gap-6" formArrayName="compromisos" [ngClass]="{'py-4' : compromisos.length }">
 								<div class="grid grid-cols-9 gap-4" [ngClass]="{'pt-4 border-t border-gray-200' : i > 0}" *ngFor="let compromisos of compromisos.controls; let i = index" [formGroupName]="i">
@@ -493,7 +493,7 @@
 												}
 											</label>
 											<div class="relative">
-												<input type="text" id="dni" class="form-control" formControlName="entidadSlug">
+												<input type="text" id="entidadSlug" class="form-control" formControlName="entidadSlug">
 												<div class="absolute right-1 top-1"><app-progress-spiner [loading]="obtenerControlValue(i,'compromisos','loadingEntidad')" /></div>
 											</div>
 										</div>
@@ -504,7 +504,7 @@
 											<div class="text-danger" *ngIf="alertMessageError('plazo')">{{msgErrorControl('plazo','Plazo')}}</div>
 										</div>
 
-										<div class="flex flex-col col-span-3">
+										<div class="flex flex-col col-span-4">
 											<label nzFor="compromiso">Compromiso</label>
 											<input type="text" class="form-control" id="compromiso" placeholder="Ingresa el compromiso aquí" formControlName="compromiso">
 											<div class="text-danger" *ngIf="alertMessageError('compromiso')">{{msgErrorControl('compromiso','Compromiso')}}</div>
@@ -520,7 +520,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 
 					<div class="grid flex-col col-span-2">
 						<label for="comentarios">Comentarios</label>
@@ -1287,8 +1287,7 @@
 			<label nz-radio [nzValue]="clasificacion.value.toLowerCase()">{{ clasificacion.text| titlecase }}</label>
 			}
 		</nz-radio-group>
-		<div class="text-danger" *ngIf="alertMessageError('clasificacion')">
-			{{msgErrorControl('clasificacion','Clasificacion')}}</div>
+		<div class="text-danger" *ngIf="alertMessageError('clasificacion')">{{msgErrorControl('clasificacion','Clasificacion')}}</div>
 	</ng-template>
 
 	<ng-template #controlTema>

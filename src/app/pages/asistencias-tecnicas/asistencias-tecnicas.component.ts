@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { convertEnumToObject, deleteKeysToObject, obtenerAutoridadJne, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
-import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, AsistenteResponse, AutoridadResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, JneAutoridadesResponses, JneAutoridadParams, JneAutoridadResponse, OrientacionAtencion, Pagination } from '@core/interfaces';
-import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, AsistentesService, AutoridadesService, CongresistasService, JneService } from '@core/services';
+import { convertEnumToObject, deleteKeysToObject, getDateFormat, obtenerAutoridadJne, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
+import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCompromisoResponse, AsistenciaTecnicaCompromisosResponses, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaIntegranteResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, AsistenteResponse, AutoridadResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, JneAutoridadesResponses, JneAutoridadParams, JneAutoridadResponse, OrientacionAtencion, Pagination } from '@core/interfaces';
+import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCompromisosService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaIntegrantesService, AsistenciaTecnicaParticipantesService, AsistentesService, AutoridadesService, CongresistasService, JneService } from '@core/services';
 import { EventosService } from '@core/services/eventos.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -85,6 +85,8 @@ export default class AsistenciasTecnicasComponent {
   private asistenciaTecnicaCongresistaService = inject(AsistenciaTecnicaCongresistasService)
   private asistenciaTecnicaParticipanteService = inject(AsistenciaTecnicaParticipantesService)
   private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
+  private asistenciaTecnicaIntegranteService = inject(AsistenciaTecnicaIntegrantesService)
+  private asistenciaTecnicaCompromisoService = inject(AsistenciaTecnicaCompromisosService)
   private messageService = inject(NzMessageService)
   private jneService = inject(JneService)
   private asistenteService = inject(AsistentesService)
@@ -484,6 +486,8 @@ export default class AsistenciasTecnicasComponent {
     let congresistas = formValues.congresistas
     let participantes = formValues.participantes
     let agendas = formValues.agendas
+    let integrantes = formValues.integrantes
+    let compromisos = formValues.compromisos
     this.asistenciaTecnicaService.registrarAsistenciaTecnica(formValues)
             .subscribe(resp => {
               if (resp.success == true) {
@@ -529,6 +533,27 @@ export default class AsistenciasTecnicasComponent {
                       })
                   }
                 }
+                if(integrantes.length > 0){
+                  for(let integrante of integrantes){
+                    const asistente: AsistenteResponse = { dni: integrante.dni, nombres: integrante.nombres, telefono: integrante.telefono, email: integrante.email}
+                    if(integrante.asistenteId){
+                      this.asistenteService.actualizarAsistente({...asistente, asistenteId: integrante.asistenteId}).subscribe( resp => {})
+                      this.agregarAsistenciaTecnicaIntegrante(asistencia, integrante.asistenteId, integrante)
+                    } else {
+                      this.asistenteService.registarAsistente(asistente).subscribe( resp => {
+                        if(resp.success == true){
+                          const asistenteId = resp.data.asistenteId;
+                          this.agregarAsistenciaTecnicaIntegrante(asistencia, asistenteId, integrante)
+                        }
+                      })
+                    }
+                  }
+                }
+                if(compromisos.length > 0){
+                  for(let compromiso of compromisos){
+                    this.agregarAsistenciaTecnicaCompromiso(asistencia, compromiso)
+                  }
+                }
                 this.modal.closeAll()
                 this.messageService.create('success', 'Se ha registrado con exito');
                 this.obtenerAsistenciasTecnicas()
@@ -537,6 +562,24 @@ export default class AsistenciasTecnicasComponent {
               }
             })
     
+  }
+
+  actualizarAsistente(asistente: AsistenteResponse){
+    this.asistenteService.actualizarAsistente(asistente).subscribe( resp => {})
+  }
+
+  agregarAsistenciaTecnicaIntegrante(asistenciaTecnicaId: string, asistenteId: string, integrante: AsistenciaTecnicaIntegranteResponse){
+    this.asistenciaTecnicaIntegranteService.registrarIntegrante({ ...integrante, asistenciaTecnicaId, asistenteId }).subscribe(response => {})
+  }
+
+  actualizarAsistenciaTecnicaIntegrante(asistenciaTecnicaId: string, asistenteId: string, integrante: AsistenciaTecnicaIntegranteResponse){
+    this.asistenciaTecnicaIntegranteService.registrarIntegrante({ ...integrante, asistenciaTecnicaId, asistenteId }).subscribe( resp => {})
+  }
+
+  agregarAsistenciaTecnicaCompromiso( asistenciaTecnicaId: string, compromiso: AsistenciaTecnicaCompromisoResponse){
+    const fecha = new Date(compromiso.plazo!)
+     const plazo = getDateFormat(fecha, 'month')
+    this.asistenciaTecnicaCompromisoService.registrarCompromiso({ ...compromiso, asistenciaTecnicaId, plazo }).subscribe( resp => {})
   }
 
   actualizarAtencion(atencion: FormGroup){
