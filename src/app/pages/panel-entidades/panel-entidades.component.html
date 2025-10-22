@@ -1,0 +1,5 @@
+<nz-page-header nzBackIcon [nzGhost]="false">
+	<nz-page-header-title>Entidades</nz-page-header-title>
+</nz-page-header>
+
+<app-filtro-panel-entidades [pagination]="pagination" (filterPagination)="getFilterPagination($event)" />
