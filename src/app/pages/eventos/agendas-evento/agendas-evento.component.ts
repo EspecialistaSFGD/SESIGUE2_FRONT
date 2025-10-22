@@ -165,7 +165,8 @@ export default class AgendasEventoComponent {
 
   obtenerIntervencionEspacioService(){
     this.loading = true
-    const pagination: Pagination = { ...this.pagination }
+    const eventoId = this.eventoId.toString()
+    const pagination: Pagination = { ...this.pagination, eventoId }
     if(!this.permisosPCM){
       pagination.sectorId = this.sectorAuth
     }
@@ -221,7 +222,7 @@ export default class AgendasEventoComponent {
   }
 
   reporteIntervencion(){
-    const eventoId = this.evento.eventoId
+    const eventoId = this.eventoId.toString()
     this.loadingExport = true;
     this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '0', eventoId })
       .subscribe( resp => {
