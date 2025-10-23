@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { EntidadesPanelResponse, Pagination } from '@core/interfaces';
 import { EntidadesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -19,6 +19,7 @@ import { UbigeoPanelEntidadesComponent } from './ubigeo-panel-entidades/ubigeo-p
 export default class PanelEntidadesComponent {
 
   pagination: Pagination = {}
+  filter = signal<Pagination>({})
 
   panelEntidades: EntidadesPanelResponse = {
     ubigeos: [],
@@ -40,5 +41,14 @@ export default class PanelEntidadesComponent {
 
   obtenerPanelEntidadesService(){
     this.entidadService.PanelEntidad(this.pagination).subscribe( resp => this.panelEntidades = resp.data)
+  }
+
+  obtenerUbigeo(ubigeo: string){
+    // this.pagination.ubigeo = ubigeo
+    this.filter.update( f => ({
+      ...f,
+      ubigeo
+    }))
+    this.obtenerPanelEntidadesService()
   }
 }

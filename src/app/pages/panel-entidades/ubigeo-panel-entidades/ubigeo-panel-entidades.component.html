@@ -1,7 +1,7 @@
 <app-card [titulo]="'Departamento'" class="flex h-full" [px]="'px-1'" [py]="'py-1'">
     <ng-template #content>
         <!-- 200px -->
-        <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '454px', x: '100%' }"
+        <nz-table nzSize="small" nzTemplateMode [nzScroll]="{ y: '474px', x: '100%' }"
                 class="custom-table">
                 <thead>
                     <tr>
@@ -12,7 +12,7 @@
                 </thead>
                 <tbody>
                     @for(panel of panelUbigeos; track $index){
-                    <tr>
+                    <tr class="cursor-pointer" (click)="obtenerUbigeo(panel.ubigeo!)">
                         <td>{{panel.nombre}}</td>
                         <td nzAlign="center">{{panel.numero}}</td>
                         <td nzRight nzAlign="center">

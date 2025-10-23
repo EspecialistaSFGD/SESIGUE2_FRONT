@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { getDateFormat } from '@core/helpers';
 import { Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
@@ -16,6 +16,7 @@ import { AuthService } from '@libs/services/auth/auth.service';
 })
 export class FiltroPanelEntidadesComponent {
   @Input() pagination!: Pagination
+  @Input() filter!: Pagination
 
   @Output() filterPagination = new EventEmitter<Pagination>()
 
@@ -41,9 +42,24 @@ export class FiltroPanelEntidadesComponent {
     distrito: [null]
   })
 
+  ngOnChanges(changes: SimpleChanges): void {    
+    if(changes['filter']){
+      this.formFilterPanelEntidades.reset({...this.filter})
+      this.setFormValue()
+    }
+  }
+
   ngOnInit(): void {
     this.getPermisosPCM()
     this.obtenerServicioDepartamentos()
+  }
+
+  setFormValue(){
+    if(this.filter.ubigeo){
+      const departamento = this.filter.ubigeo.slice(0,2)
+      this.formFilterPanelEntidades.get('departamento')?.setValue(departamento)
+      this.obtenerProvinciasService(departamento)
+    }
   }
 
   getPermisosPCM(){

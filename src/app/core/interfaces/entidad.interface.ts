@@ -40,13 +40,18 @@ export interface EntidadesPanelResponses extends DataResponses {
 }
 
 export interface EntidadesPanelResponse {
-  ubigeos: EntidadPanelResponse[],
+  ubigeos: EntidadPanelResponseUbigeo[],
   mesas: EntidadPanelResponse[],
   eventos: EntidadPanelResponse[],
 }
 
 export interface EntidadPanelResponse {
+  id?: string,
   nombre?: string,
   numero?: number,
   porcentaje?: number,
+}
+
+export interface EntidadPanelResponseUbigeo extends EntidadPanelResponse {
+  ubigeo?: string
 }
