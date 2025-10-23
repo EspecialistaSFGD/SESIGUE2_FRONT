@@ -44,7 +44,6 @@ export default class PanelEntidadesComponent {
   }
 
   obtenerUbigeo(ubigeo: string){
-    // this.pagination.ubigeo = ubigeo
     this.filter.update( f => ({
       ...f,
       ubigeo

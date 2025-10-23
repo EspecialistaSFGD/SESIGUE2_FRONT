@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-2">
     <app-card [titulo]="'Departamento'">
         <ng-template #content>
-            <app-geo-map [dataSet]="dataTopoJson" />
+            <app-geo-map [dataSet]="dataTopoJson" (ubigeo)="obtenerUbigeo($event)" />
         </ng-template>
     </app-card>
 </div>

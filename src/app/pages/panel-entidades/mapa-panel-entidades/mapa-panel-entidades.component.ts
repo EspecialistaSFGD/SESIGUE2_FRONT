@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { departamentosTopoJSON } from '@core/helpers';
 import { EntidadPanelResponse, GeoTopoJson, UbigeoTopoJson } from '@core/interfaces';
 import { CardComponent } from '@shared/card/card.component';
@@ -14,19 +14,20 @@ import { GeoMapComponent } from '@shared/geo-map/geo-map.component';
 })
 export class MapaPanelEntidadesComponent {
   @Input() panelUbigeos: EntidadPanelResponse[] = [];
+  @Output() ubigeo = new EventEmitter<string>()
 
   dataTopoJson: UbigeoTopoJson[] = departamentosTopoJSON()
   geoTopoJson: GeoTopoJson = { geo: 'departamentos', ubigeo: 'departamentos' }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.setIntervencionUbigeo()
+    this.getEntidadUbigeo()
   }
 
   ngOnDestroy(): void {
-    this.setIntervencionUbigeo()
+    this.getEntidadUbigeo()
   }
 
-  setIntervencionUbigeo(){
+  getEntidadUbigeo(){
     const newData: UbigeoTopoJson[] = [ ...this.dataTopoJson ]
       for(let data of newData){
       const ubigeos = this.panelUbigeos.find(item => item.nombre == data.nombre)
@@ -36,5 +37,9 @@ export class MapaPanelEntidadesComponent {
     }
 
     this.dataTopoJson = newData
+  }
+
+  obtenerUbigeo(ubigeo: string){
+    this.ubigeo.emit(ubigeo)
   }
 }

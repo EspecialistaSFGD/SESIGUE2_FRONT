@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart } from '@antv/g2';
 import { departamentosTopoJSON, themeProgressBarPercente } from '@core/helpers';
 import { GeoTopoJson, UbigeoTopoJson } from '@core/interfaces';
@@ -15,6 +15,8 @@ export class GeoMapComponent  {
   @Input() dataSet: UbigeoTopoJson[] = departamentosTopoJSON()
   @Input() geoTopoJson: GeoTopoJson = { geo: 'departamentos', ubigeo: 'departamentos' }
   @Input() codigo: number = 1 // 1 - Departamento, 2 - Provincia, 3 - Distrito
+
+  @Output() ubigeo = new EventEmitter<string>()
 
 
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
@@ -94,5 +96,7 @@ export class GeoMapComponent  {
 
   private eventGeoMap(evt: any): void {
     const { data } = evt;
+    const ubigeo = data?.data?.properties?.ubigeo;
+    this.ubigeo.emit(ubigeo);
   }
 }
