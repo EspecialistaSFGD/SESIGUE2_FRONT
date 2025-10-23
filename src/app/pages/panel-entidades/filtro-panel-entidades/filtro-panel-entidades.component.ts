@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { getDateFormat } from '@core/helpers';
 import { Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { UbigeosService } from '@core/services';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -18,8 +19,10 @@ export class FiltroPanelEntidadesComponent {
 
   @Output() filterPagination = new EventEmitter<Pagination>()
 
+  copyPagination: Pagination = {}
   sectorAuth: number = 0
   permisosPcm: boolean = false
+  defaultDate: Date = new Date()
 
   private timeout: any;
   
@@ -32,13 +35,16 @@ export class FiltroPanelEntidadesComponent {
   private ubigeoService = inject(UbigeosService)
 
   formFilterPanelEntidades:FormGroup = this.fb.group({
-    fechaDesde: [null],
-    fechaHasta: [null],
-    ubigeo: [null],
+    fecha: [[]],
     departamento: [null],
     provincia: [null],
     distrito: [null]
   })
+
+  ngOnInit(): void {
+    this.getPermisosPCM()
+    this.obtenerServicioDepartamentos()
+  }
 
   getPermisosPCM(){
     this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value) ?? 0
@@ -46,26 +52,45 @@ export class FiltroPanelEntidadesComponent {
     this.permisosPcm = JSON.parse(permisosStorage) ?? false
   }
 
+  obtenerServicioDepartamentos() {
+    this.ubigeoService.getDepartments().subscribe(resp => this.departamentos.set(resp.data))
+  }
+
+  abrirFechas() {
+    const selectedDates: Date[] = this.formFilterPanelEntidades.get('fecha')?.value || [];
+    if (selectedDates.length > 0) {
+      this.defaultDate = new Date(selectedDates[0]);
+    }
+  }
+
+  obtenerfecha(){
+    const selectedDates: Date[] = this.formFilterPanelEntidades.get('fecha')?.value || [];
+    const [fechaInicio, fechaFin] = selectedDates;
+    // fechaInicio ? this.copyPagination.fechaInicio = getDateFormat(fechaInicio, 'month') : delete this.copyPagination.fechaInicio
+    // fechaFin ? this.copyPagination.fechaFin = getDateFormat(fechaFin, 'month') : delete this.copyPagination.fechaFin
+    if(fechaInicio && fechaFin){
+      this.setPagination()
+    }
+  }
+
   obtenerDepartamento(){
     const departamento = this.formFilterPanelEntidades.get('departamento')?.value
     const provinciaControl = this.formFilterPanelEntidades.get('provincia')
     const distritoControl = this.formFilterPanelEntidades.get('distrito')
-    const ubigeoControl = this.formFilterPanelEntidades.get('ubigeo')
+    
     if(departamento){
       const ubigeo = `${departamento}0000`
       provinciaControl?.enable()
       this.obtenerProvinciasService(departamento)
-       ubigeoControl?.setValue(ubigeo)
+       this.copyPagination.ubigeo = ubigeo
     } else {
-      delete this.pagination.ubigeo
+      delete this.copyPagination.ubigeo
       provinciaControl?.disable()
       provinciaControl?.reset()
-      ubigeoControl?.setValue(null)
-      this.setPagination()
     }
-    
     distritoControl?.disable()
     distritoControl?.reset()
+    this.setPagination()    
   }
 
   obtenerProvinciasService(departamento: string) {
@@ -74,7 +99,7 @@ export class FiltroPanelEntidadesComponent {
 
   obtenerProvincia(){
     const departamento = this.formFilterPanelEntidades.get('departamento')?.value
-    let ubigeo = `${departamento.departamentoId}0000`
+    let ubigeo = `${departamento}0000`
     const provincia = this.formFilterPanelEntidades.get('provincia')?.value
     const distritoControl = this.formFilterPanelEntidades.get('distrito')  
     if(provincia){
@@ -84,7 +109,8 @@ export class FiltroPanelEntidadesComponent {
     } else {
       distritoControl?.disable()
     }
-    this.formFilterPanelEntidades.get('ubigeo')?.setValue(ubigeo)
+    this.copyPagination.ubigeo = ubigeo
+    this.setPagination()
   }
 
   obtenerDistritosService(provincia: string) {
@@ -95,10 +121,17 @@ export class FiltroPanelEntidadesComponent {
     const provinciaValue = this.formFilterPanelEntidades.get('provincia')?.value
     const distritoValue = this.formFilterPanelEntidades.get('distrito')?.value
     const ubigeo = distritoValue ? distritoValue : provinciaValue
-    this.formFilterPanelEntidades.get('ubigeo')?.setValue(ubigeo)
+    this.copyPagination.ubigeo = ubigeo
+    this.setPagination()
   }
 
   setPagination(){
-    this.filterPagination.emit(this.pagination)
+    const selectedDates: Date[] = this.formFilterPanelEntidades.get('fecha')?.value || [];
+    const [fechaInicio, fechaFin] = selectedDates;
+
+    fechaInicio ? this.copyPagination.fechaInicio = getDateFormat(fechaInicio, 'month') : delete this.copyPagination.fechaInicio
+    fechaFin ? this.copyPagination.fechaFin = getDateFormat(fechaFin, 'month') : delete this.copyPagination.fechaFin
+
+    this.filterPagination.emit(this.copyPagination)
   }
 }
