@@ -47,6 +47,6 @@ export interface EntidadesPanelResponse {
 
 export interface EntidadPanelResponse {
   nombre?: string,
-  numero?: string,
-  porcentaje?: string,
+  numero?: number,
+  porcentaje?: number,
 }
