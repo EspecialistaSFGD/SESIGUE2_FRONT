@@ -1,1 +1,8 @@
-<p>mapa-panel-entidades works!</p>
+<div class="flex flex-col gap-2">
+    <app-card [titulo]="'Departamento'">
+        <ng-template #content>
+            <app-geo-map [dataSet]="dataTopoJson" />
+        </ng-template>
+    </app-card>
+</div>
+
