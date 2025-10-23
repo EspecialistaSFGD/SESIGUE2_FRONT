@@ -2,12 +2,12 @@ import { Component, Input } from '@angular/core';
 import { Pagination } from '@core/interfaces';
 
 @Component({
-  selector: 'app-mapa-panel-entidades',
+  selector: 'app-ubigeo-panel-entidades',
   standalone: true,
   imports: [],
-  templateUrl: './mapa-panel-entidades.component.html',
+  templateUrl: './ubigeo-panel-entidades.component.html',
   styles: ``
 })
-export class MapaPanelEntidadesComponent {
+export class UbigeoPanelEntidadesComponent {
   @Input() pagination: Pagination = {};
 }

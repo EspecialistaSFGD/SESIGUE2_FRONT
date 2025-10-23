@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Pagination } from '@core/interfaces';
 
 @Component({
   selector: 'app-eventos-panel-entidades',
@@ -8,5 +9,5 @@ import { Component } from '@angular/core';
   styles: ``
 })
 export class EventosPanelEntidadesComponent {
-
+  @Input() pagination: Pagination = {}
 }
