@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Pagination } from '@core/interfaces';
+import { EntidadPanelResponse } from '@core/interfaces';
 
 @Component({
   selector: 'app-eventos-panel-entidades',
@@ -9,5 +9,5 @@ import { Pagination } from '@core/interfaces';
   styles: ``
 })
 export class EventosPanelEntidadesComponent {
-  @Input() pagination: Pagination = {}
+  @Input() panelEventos: EntidadPanelResponse[] = [];
 }

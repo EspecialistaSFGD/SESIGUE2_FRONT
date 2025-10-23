@@ -35,7 +35,7 @@ export interface EntidadResponse {
 }
 
 
-export interface EntidadesPanelResponse extends DataResponses {
+export interface EntidadesPanelResponses extends DataResponses {
   data: EntidadesPanelResponse,
 }
 
@@ -46,7 +46,7 @@ export interface EntidadesPanelResponse {
 }
 
 export interface EntidadPanelResponse {
-  nombre: string,
-  numero: string,
-  porcentaje: string,
+  nombre?: string,
+  numero?: string,
+  porcentaje?: string,
 }

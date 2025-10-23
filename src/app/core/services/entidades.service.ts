@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Pagination } from '@core/interfaces';
-import { EntidadResponses, EntidadesResponses } from '@core/interfaces/entidad.interface';
+import { EntidadResponses, EntidadesPanelResponses, EntidadesResponses } from '@core/interfaces/entidad.interface';
 import { environment } from '@environments/environment';
 import { Observable } from 'rxjs';
 import { HelpersService } from './helpers.service';
@@ -46,5 +46,11 @@ export class EntidadesService {
     params = params.append('tipo', tipo) 
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<EntidadesResponses>(`${this.urlEntidad}/ListarMancomunidades`, { headers, params })
+  }
+
+  PanelEntidad(pagination: Pagination): Observable<EntidadesPanelResponses> {
+    let params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<EntidadesPanelResponses>(`${this.urlEntidad}/PanelEntidad`, { headers, params })
   }
 }
