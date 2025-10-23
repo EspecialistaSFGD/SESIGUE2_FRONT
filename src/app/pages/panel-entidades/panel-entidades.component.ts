@@ -34,7 +34,6 @@ export default class PanelEntidadesComponent {
 
   getFilterPagination(pagination: Pagination){
     this.pagination = pagination
-    console.log(pagination);
     
     this.obtenerPanelEntidadesService()
   }
