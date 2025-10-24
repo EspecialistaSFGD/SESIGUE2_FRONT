@@ -1,4 +1,4 @@
-<form  [formGroup]="formFilterPanelEntidades" class="bg-punche-blue-50 grid grid-cols-1 md:grid-cols-4 gap-4 p-4">
+<form  [formGroup]="formFilterPanelEntidades" class="bg-punche-blue-50 grid grid-cols-1 md:grid-cols-5 gap-4 p-4">
     <div class="flex flex-col">
         <label class="font-bold text-sm xl:text-base" for="nombre">Rango de fechas</label>
         <p-calendar 
@@ -16,6 +16,15 @@
     </div>
 
     <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Nivel de gobierno</label>
+        <nz-radio-group class="radio-form-control mt-1" formControlName="nivelGobierno" (ngModelChange)="obtenerNivelGobierno()">
+            @for (nivel of nivelGobiernos; track $index){
+            <label nz-radio [nzValue]="$index">{{nivel | uppercase}}</label>
+            }
+        </nz-radio-group>
+    </div>
+
+    <div class="flex flex-col">
         <label class="font-bold text-sm xl:text-base" for="nombre">Departamento</label>
         <p-dropdown 
             [options]="departamentos()"
@@ -26,7 +35,7 @@
             placeholder="Seleccionar departamento"
             (onChange)="obtenerDepartamento()"/>
     </div>
-
+    <!-- [ngClass]="{ 'hidden' : !formFilterPanelEntidades.get('departamento')?.value }" -->
     <div class="flex flex-col" [ngClass]="{ 'hidden' : !formFilterPanelEntidades.get('departamento')?.value }">
         <label class="font-bold text-sm xl:text-base" for="nombre">Provincia</label>
         <p-dropdown 
@@ -39,6 +48,7 @@
         (onChange)="obtenerProvincia()"/>
     </div>
 
+     <!-- [ngClass]="{ 'hidden' : !formFilterPanelEntidades.get('provincia')?.value }" -->
     <div class="flex flex-col" [ngClass]="{ 'hidden' : !formFilterPanelEntidades.get('provincia')?.value }">
         <label class="font-bold text-sm xl:text-base" for="nombre">Distrito</label>
         <p-dropdown 

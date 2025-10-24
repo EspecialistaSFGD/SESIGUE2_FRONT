@@ -4,13 +4,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { getDateFormat } from '@core/helpers';
 import { Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { UbigeosService } from '@core/services';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-filtro-panel-entidades',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule],
+  imports: [CommonModule, ReactiveFormsModule, PrimeNgModule, NgZorroModule],
   templateUrl: './filtro-panel-entidades.component.html',
   styles: ``
 })
@@ -24,6 +25,8 @@ export class FiltroPanelEntidadesComponent {
   sectorAuth: number = 0
   permisosPcm: boolean = false
   defaultDate: Date = new Date()
+  esProvincia: boolean = false
+  esDistrito: boolean = false
 
   private timeout: any;
   
@@ -31,12 +34,15 @@ export class FiltroPanelEntidadesComponent {
   provincias = signal<UbigeoProvinciaResponse[]>([])
   distritos = signal<UbigeoDistritoResponse[]>([])
 
+  nivelGobiernos:string[] = ['GR','GL','Ambos']
+
   private authStore = inject(AuthService)
   private fb = inject(FormBuilder)
   private ubigeoService = inject(UbigeosService)
 
   formFilterPanelEntidades:FormGroup = this.fb.group({
     fecha: [[]],
+    nivelGobierno: [null],
     departamento: [null],
     provincia: [null],
     distrito: [null]
@@ -89,10 +95,29 @@ export class FiltroPanelEntidadesComponent {
     }
   }
 
+  obtenerNivelGobierno(){
+    const nivelGobiernoControl = this.formFilterPanelEntidades.get('nivelGobierno')
+    const nivelGobierno = nivelGobiernoControl?.value
+    console.log(nivelGobierno);
+    
+    // this.esGobiernoLocal = nivelGobierno === 1
+    // this.setPagination()
+    switch (nivelGobierno) {
+      case 0:
+        // this.esDistrito = false
+        // delete this.copyPagination.nivelGobierno
+        break;
+    }
+  }
+
   obtenerDepartamento(){
+    const nivelGobiernoControl = this.formFilterPanelEntidades.get('nivelGobierno')
+    const nivelGobierno = nivelGobiernoControl?.value
     const departamento = this.formFilterPanelEntidades.get('departamento')?.value
     const provinciaControl = this.formFilterPanelEntidades.get('provincia')
     const distritoControl = this.formFilterPanelEntidades.get('distrito')
+
+    nivelGobierno ? this.copyPagination.nivelGobierno = nivelGobierno : delete this.copyPagination.nivelGobierno
     
     if(departamento){
       const ubigeo = `${departamento}0000`
