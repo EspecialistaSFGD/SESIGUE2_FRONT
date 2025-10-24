@@ -25,8 +25,8 @@ export class FiltroPanelEntidadesComponent {
   sectorAuth: number = 0
   permisosPcm: boolean = false
   defaultDate: Date = new Date()
+  esDepartamento: boolean = false
   esProvincia: boolean = false
-  esDistrito: boolean = false
 
   private timeout: any;
   
@@ -43,7 +43,7 @@ export class FiltroPanelEntidadesComponent {
   formFilterPanelEntidades:FormGroup = this.fb.group({
     fecha: [[]],
     nivelGobierno: [null],
-    departamento: [null],
+    departamento: [{ value: null, disabled: true }],
     provincia: [null],
     distrito: [null]
   })
@@ -98,16 +98,18 @@ export class FiltroPanelEntidadesComponent {
   obtenerNivelGobierno(){
     const nivelGobiernoControl = this.formFilterPanelEntidades.get('nivelGobierno')
     const nivelGobierno = nivelGobiernoControl?.value
-    console.log(nivelGobierno);
+    const departamentoControl = this.formFilterPanelEntidades.get('departamento')
+    const provinciaControl = this.formFilterPanelEntidades.get('provincia')
+    const distritoControl = this.formFilterPanelEntidades.get('distrito')
     
-    // this.esGobiernoLocal = nivelGobierno === 1
-    // this.setPagination()
-    switch (nivelGobierno) {
-      case 0:
-        // this.esDistrito = false
-        // delete this.copyPagination.nivelGobierno
-        break;
-    }
+    departamentoControl?.enable()
+    provinciaControl?.reset()
+    distritoControl?.reset()
+
+    this.esDepartamento = false
+    this.esProvincia = false
+
+    this. obtenerDepartamento()
   }
 
   obtenerDepartamento(){
@@ -117,18 +119,21 @@ export class FiltroPanelEntidadesComponent {
     const provinciaControl = this.formFilterPanelEntidades.get('provincia')
     const distritoControl = this.formFilterPanelEntidades.get('distrito')
 
-    nivelGobierno ? this.copyPagination.nivelGobierno = nivelGobierno : delete this.copyPagination.nivelGobierno
-    
     if(departamento){
       const ubigeo = `${departamento}0000`
       provinciaControl?.enable()
       this.obtenerProvinciasService(departamento)
        this.copyPagination.ubigeo = ubigeo
+       nivelGobierno === 1 ? this.esDepartamento = true : this.esDepartamento = false
+       this.copyPagination.nivelGobierno = nivelGobierno
     } else {
       delete this.copyPagination.ubigeo
       provinciaControl?.disable()
       provinciaControl?.reset()
+      delete this.copyPagination.nivelGobierno
+      this.esDepartamento = false
     }
+    this.esProvincia = false
     distritoControl?.disable()
     distritoControl?.reset()
     this.setPagination()    
@@ -144,10 +149,13 @@ export class FiltroPanelEntidadesComponent {
     const provincia = this.formFilterPanelEntidades.get('provincia')?.value
     const distritoControl = this.formFilterPanelEntidades.get('distrito')  
     if(provincia){
+      this.esProvincia = true
       ubigeo = provincia
       distritoControl?.enable()
       this.obtenerDistritosService(ubigeo)
     } else {
+      this.esProvincia = false
+      this.esDepartamento = true
       distritoControl?.disable()
     }
     this.copyPagination.ubigeo = ubigeo
