@@ -244,8 +244,6 @@ export default class AsistenciasTecnicasComponent {
   generateFilters(pagination: Pagination){
     const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito','tipoEntidad','unidadOrganica','especialista']
     const params = deleteKeysToObject(pagination, paramsInvalid)
-    console.log(params);
-    
     this.paramsNavigate(params)
   }
 

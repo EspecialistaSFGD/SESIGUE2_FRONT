@@ -152,7 +152,7 @@ export class FormularioAtencionComponent {
     ubigeoJne: [''],
     ubigeo: [''],
     entidad: [{ value: '', disabled: true }],
-    entidadSlug: [null],
+    entidadSlug: [{ value: '', disabled: true }],
     autoridad: [{ value: '', disabled: true }, Validators.required],
     dniAutoridad: [{ value: '', disabled: true }],
     nombreAutoridad: [{ value: '', disabled: true }, Validators.required],
@@ -1006,12 +1006,14 @@ export class FormularioAtencionComponent {
       this.entidadService.obtenerEntidad({ ubigeo, tipo })
         .subscribe( resp => {
           const entidad = resp.data
-          entidadControl?.setValue(entidad ? entidad.entidadSlug : null)
-          entidadSlugControl?.setValue(entidad ? entidad.entidad : null)
+          
+          entidadControl?.setValue(entidad ? entidad.nombre : null)
+          entidadSlugControl?.setValue(entidad ? `${entidad.entidadTipo} ${entidad.entidadSlug}` : null)
           entidadIdControl?.setValue(entidad ? entidad.entidadId : null)
           if(!this.permisosPCM){
             const nivelGobierno = entidad.nivelGobierno ?? null
             const tipoEntidad = this.tipoEntidades().find(item => item.abreviatura.toUpperCase() === nivelGobierno)
+            // tipoEntidadIdControl?.setValue(tipoEntidad?.tipoId ?? null)
             if(this.evento().verificaAsistentes){
               tipoEntidadIdControl?.setValue(tipoEntidad?.tipoId ?? null)
             }
@@ -1033,7 +1035,7 @@ export class FormularioAtencionComponent {
     this.ubigeoTipo == UbigeoTipoEnum.PAIS;
     if(mancomunidad){
       const entidad = this.mancomunidades().find(item => item.entidadId == mancomunidad)
-      entidadControl?.setValue(entidad!.entidad)
+      entidadControl?.setValue(entidad!.nombre)
       const ubigeo = entidad!.ubigeo_oficial
       const firstUbigeo = ubigeo.slice(0,2)
       const lastUbigeo = ubigeo.slice(-2)
@@ -1086,7 +1088,7 @@ export class FormularioAtencionComponent {
     // }
 
     if(autoridad){
-      if(ubigeo){
+      if(ubigeo){        
         this.obtenerAlcaldePorUbigeo()
       }
     } else {   
@@ -1192,7 +1194,9 @@ export class FormularioAtencionComponent {
             this.formAtencion.get('cargoAutoridad')?.enable()
             this.formAtencion.get('cargoAutoridad')?.setValue(null)
             this.formAtencion.get('contactoAutoridad')?.setValue(null)
-            this.formAtencion.get('entidadId')?.setValue(null)
+            if(!this.esMancomunidad){
+              this.formAtencion.get('entidadId')?.setValue(null)
+            }
             if(this.evento().verificaAsistentes){
               this.formAtencion.get('tipoEntidadId')?.setValue(null)
               this.formAtencion.get('departamento')?.setValue(null)
@@ -1256,17 +1260,18 @@ export class FormularioAtencionComponent {
   }
 
   setAsistenteFormulario(asistente: AsistenteAtencionResponse){
-    
     this.loadingAutoridad = false
     this.formAtencion.get('asistenteId')?.setValue(asistente.asistenteId)
     this.formAtencion.get('nombreAutoridad')?.setValue(asistente.nombres)
     this.formAtencion.get('cargoAutoridad')?.setValue(asistente.cargo)
     this.formAtencion.get('contactoAutoridad')?.setValue(`${asistente.telefono ? `${asistente.telefono} / ` : ''}${asistente.email}`)
-    this.formAtencion.get('ubigeo')?.setValue(asistente.ubigeo)
-    this.formAtencion.get('entidadId')?.setValue(asistente.entidadId)
-    this.formAtencion.get('entidad')?.setValue(asistente.entidad)
-    this.formAtencion.get('entidadSlug')?.setValue(asistente.entidad)
+    if(!this.esMancomunidad){
+    }
     if(this.evento().verificaAsistentes){
+      this.formAtencion.get('ubigeo')?.setValue(asistente.ubigeo)
+      this.formAtencion.get('entidadId')?.setValue(asistente.entidadId)
+      this.formAtencion.get('entidad')?.setValue(asistente.entidad)
+      this.formAtencion.get('entidadSlug')?.setValue(asistente.entidad)
       this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
       const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
       this.formAtencion.get('autoridad')?.setValue(esAutoridad)
