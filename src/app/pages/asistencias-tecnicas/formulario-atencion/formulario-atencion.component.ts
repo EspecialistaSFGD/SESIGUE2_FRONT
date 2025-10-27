@@ -1195,7 +1195,7 @@ export class FormularioAtencionComponent {
             this.formAtencion.get('cargoAutoridad')?.setValue(null)
             this.formAtencion.get('contactoAutoridad')?.setValue(null)
             if(!this.esMancomunidad){
-              this.formAtencion.get('entidadId')?.setValue(null)
+              // this.formAtencion.get('entidadId')?.setValue(null)
             }
             if(this.evento().verificaAsistentes){
               this.formAtencion.get('tipoEntidadId')?.setValue(null)
