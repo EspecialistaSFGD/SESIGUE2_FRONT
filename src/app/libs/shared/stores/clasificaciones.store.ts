@@ -35,7 +35,7 @@ export class ClasificacionesStore {
             .append('grupoId', `${grupoId}`)
             .append('tipo', `${tipo}`);
 
-        this.http.get<ResponseModel>(`${environment.api}/Sector`, { params }).subscribe(
+        this.http.get<ResponseModel>(`${environment.api}/Sector/ListarSector`, { params }).subscribe(
             {
                 next: (v: ResponseModel) => {
                     const res: ClasificacionAcuerdoModel[] = v.data;
