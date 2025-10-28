@@ -17,11 +17,19 @@
 
     <div class="flex flex-col">
         <label class="font-bold text-sm xl:text-base" for="nombre">Nivel de gobierno</label>
-        <nz-radio-group class="radio-form-control mt-1" formControlName="nivelGobierno" (ngModelChange)="obtenerNivelGobierno()">
+        <!-- <nz-radio-group class="radio-form-control mt-1" formControlName="nivelGobierno" (ngModelChange)="obtenerNivelGobierno()">
             @for (nivel of nivelGobiernos; track $index){
             <label nz-radio [nzValue]="$index">{{nivel | uppercase}}</label>
             }
-        </nz-radio-group>
+        </nz-radio-group> -->
+        <p-dropdown 
+            [options]="nivelGobiernos"
+            formControlName="nivelGobierno"
+            optionLabel="text"
+            optionValue="value"
+            [showClear]="true" 
+            placeholder="Seleccionar departamento"
+            (onChange)="obtenerNivelGobierno()"/>
     </div>
 
     <div class="flex flex-col">
@@ -35,7 +43,7 @@
             placeholder="Seleccionar departamento"
             (onChange)="obtenerDepartamento()"/>
     </div>
-    <!-- [ngClass]="{ 'hidden' : !formFilterPanelEntidades.get('departamento')?.value }" -->
+
     <div class="flex flex-col" [ngClass]="{ 'hidden' : !esDepartamento }">
         <label class="font-bold text-sm xl:text-base" for="nombre">Provincia</label>
         <p-dropdown 
@@ -48,7 +56,6 @@
         (onChange)="obtenerProvincia()"/>
     </div>
 
-     <!-- [ngClass]="{ 'hidden' : !formFilterPanelEntidades.get('provincia')?.value }" -->
     <div class="flex flex-col" [ngClass]="{ 'hidden' : !esProvincia }">
         <label class="font-bold text-sm xl:text-base" for="nombre">Distrito</label>
         <p-dropdown 
