@@ -69,7 +69,7 @@ export class FiltrosUsuarioComponent {
     this.obtenerSectoresService()
     this.obtenerDepartamentosService()
     this.setParamsForm()
-    
+
     if(!this.permisosPCM && this.nivelAuth){
       const departamentoControl = this.formFilters.get('departamento')
       departamentoControl?.enable()
@@ -89,7 +89,6 @@ export class FiltrosUsuarioComponent {
     const departamentoControl = this.formFilters.get('departamento')
     const provinciaControl = this.formFilters.get('provincia')
     const distritoControl = this.formFilters.get('distrito')
-    console.log(pagination);
     
     if(pagination.ubigeo){
       const ubigeo = obtenerUbigeoTipo(pagination.ubigeo)
