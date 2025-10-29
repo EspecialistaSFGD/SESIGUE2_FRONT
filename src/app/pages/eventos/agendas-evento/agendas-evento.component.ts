@@ -94,7 +94,9 @@ export default class AgendasEventoComponent {
           this.pagination.pageSize = params['cantidad']
           this.pagination.typeSort = params['ordenar'] ?? 'DESC'
   
+          setParamsToObject(params, this.pagination, 'nombre')
           setParamsToObject(params, this.pagination, 'cui')
+          setParamsToObject(params, this.pagination, 'sectorId')
           setParamsToObject(params, this.pagination, 'ubigeo')
   
           this.obtenerIntervencionEspacioService()

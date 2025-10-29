@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { getDateFormat } from '@core/helpers';
-import { ItemEnum, Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { UbigeosService } from '@core/services';
+import { ItemEnum, Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { SectoresService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { AuthService } from '@libs/services/auth/auth.service';
@@ -30,6 +30,8 @@ export class FiltroPanelEntidadesComponent {
 
   private timeout: any;
   
+  
+  sectores = signal<SectorResponse[]>([])
   departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])
   distritos = signal<UbigeoDistritoResponse[]>([])
@@ -44,9 +46,11 @@ export class FiltroPanelEntidadesComponent {
   private authStore = inject(AuthService)
   private fb = inject(FormBuilder)
   private ubigeoService = inject(UbigeosService)
+  private sectoresService = inject(SectoresService)
 
   formFilterPanelEntidades:FormGroup = this.fb.group({
     fecha: [[]],
+    sectorId: [null],
     nivelGobierno: [null],
     departamento: [{ value: null, disabled: true }],
     provincia: [null],
@@ -62,6 +66,7 @@ export class FiltroPanelEntidadesComponent {
 
   ngOnInit(): void {
     this.getPermisosPCM()
+    this.obtenerSectoresService()
     this.obtenerServicioDepartamentos()
   }
 
@@ -77,6 +82,11 @@ export class FiltroPanelEntidadesComponent {
     this.sectorAuth = Number(this.authStore.usuarioAuth().sector!.value) ?? 0
     const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
     this.permisosPcm = JSON.parse(permisosStorage) ?? false
+  }
+
+  obtenerSectoresService(){
+    const pagination: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
+    this.sectoresService.listarSectores(pagination).subscribe( resp => this.sectores.set(resp.data))
   }
 
   obtenerServicioDepartamentos() {
@@ -119,6 +129,13 @@ export class FiltroPanelEntidadesComponent {
     }
     provinciaControl?.reset()
     distritoControl?.reset()
+  }
+
+  changeSector(){
+    const sectorIdControl = this.formFilterPanelEntidades.get('sectorId')
+    const sectorId = sectorIdControl?.value
+    sectorId ? this.copyPagination.sectorId = sectorId : delete this.copyPagination.sectorId
+    this.setPagination()
   }
 
   obtenerDepartamento(){

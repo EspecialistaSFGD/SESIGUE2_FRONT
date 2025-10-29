@@ -33,6 +33,18 @@
     </div>
 
     <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Sectores</label>
+        <p-dropdown 
+        [options]="sectores()"
+        formControlName="sectorId"
+        optionLabel="nombre"
+        optionValue="grupoID"
+        [showClear]="true"
+        placeholder="Seleccionar sector"
+        (onChange)="changeSector()"/>
+    </div>
+
+    <div class="flex flex-col">
         <label class="font-bold text-sm xl:text-base" for="nombre">Departamento</label>
         <p-dropdown 
             [options]="departamentos()"

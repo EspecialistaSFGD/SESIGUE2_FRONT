@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { deleteKeyNullToObject, deleteKeysToObject, saveFilterStorage } from '@core/helpers';
-import { Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { EntidadesService, UbigeosService } from '@core/services';
+import { Pagination, SectorResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { EntidadesService, SectoresService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -26,17 +26,21 @@ export class FiltroIntervencionesComponent {
 
   private timeout: any;
 
+  sectores = signal<SectorResponse[]>([])
   departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])
   distritos = signal<UbigeoDistritoResponse[]>([])
 
   private fb = inject(FormBuilder)
   private validatorsService = inject(ValidatorService)
+  private sectoresService = inject(SectoresService)
   private ubigeosService = inject(UbigeosService)
 
   formIntervencionFilters:FormGroup = this.fb.group({
     cui: [ null ],
+    nombre: [ null ],
     estado: [ null ],
+    sectorId: [ null ],
     tipoEspacioId: [ null ],
     departamento: [null],
     provincia: [{ value: null, disabled: true }],
@@ -46,7 +50,9 @@ export class FiltroIntervencionesComponent {
 
   ngOnChanges(changes: SimpleChanges): void {
     const pagination = { ...this.pagination }
+    pagination.sectorId = pagination.sectorId ? Number(pagination.sectorId) : null
     this.formIntervencionFilters.reset(pagination)
+    this.obtenerSectoresService()
     this.obtenerDepartamentoService()
     this.setParams()
   }
@@ -79,6 +85,11 @@ export class FiltroIntervencionesComponent {
     }
   }
 
+  obtenerSectoresService(){
+    const pagination: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
+    this.sectoresService.listarSectores(pagination).subscribe( resp => this.sectores.set(resp.data))
+  }
+
   obtenerDepartamentoService(){
     this.ubigeosService.getDepartments().subscribe( resp => this.departamentos.set(resp.data))
   }
@@ -106,6 +117,10 @@ export class FiltroIntervencionesComponent {
       delete this.pagination[nameControl]      
       this.generateFilters()
     }
+  }
+
+  changeSector(){
+    this.generateFilters()
   }
 
   changeDepartamento(){
