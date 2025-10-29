@@ -6,16 +6,16 @@
 	  <thead>
 		<tr>
 			@if (perfilAuth == 11) {
-				<th nzLeft nzWidth="'80px'" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">DNI</th>
+				<th nzLeft nzWidth="80px" nzAlign="center" nzColumnKey="estado" [nzSortFn]="true">DNI</th>
 			}
-		<th	nzLeft nzWidth="'100px'" nzAlign="center">Nombre</th>
-		  <th nzWidth="'120px'" nzAlign="center">Correo</th>
-		  <th nzWidth="'100px'" nzAlign="center">Entidad</th>
-		  <th nzWidth="'100px'" nzAlign="center">Departamento</th>
-		  <th nzWidth="'100px'" nzAlign="center">Provincia</th>
-		  <th nzWidth="'100px'" nzAlign="center">Distrito</th>
-		  <th nzWidth="'100px'" nzAlign="center">Perfil</th>
-		  <th nzWidth="'100px'" nzAlign="center">Telefono</th>
+		<th	nzLeft nzWidth="140px" nzAlign="center">Nombre</th>
+		  <th nzWidth="120px" nzAlign="center">Correo</th>
+		  <th nzWidth="120px" nzAlign="center">Entidad</th>
+		  <th nzWidth="100px" nzAlign="center">Departamento</th>
+		  <th nzWidth="100px" nzAlign="center">Provincia</th>
+		  <th nzWidth="100px" nzAlign="center">Distrito</th>
+		  <th nzWidth="100px" nzAlign="center">Perfil</th>
+		  <th nzWidth="90px" nzAlign="center">Telefono</th>
 		</tr>
 	  </thead>
 	  
@@ -41,40 +41,36 @@
 		<ng-template #HeaderUser>
 			<div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
 				<p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
-				@if (usuarioPermisos.report) {
-					<div class="flex gap-2">
-						<button nz-button nzType="default" (click)="openFilter = true">
-							<span nz-icon nzType="filter"></span>
-							<span class="button-text">Filtros</span>
-						</button>
-		
-						<button nz-button nz-dropdown [nzDropdownMenu]="selectExport" nzType="default" [nzLoading]="loadingExport">
-							<span nz-icon nzType="file-excel"></span>
-							<span class="button-text">Descargar</span>
-						</button>
-						<nz-dropdown-menu #selectExport="nzDropdownMenu">
-							<ul nz-menu>
-								@if ((!permisosPCM && !nivelAuth) || permisosPCM) {
-									<li nz-menu-item>
-										<button nz-button nzType="text" (click)="reporteUsuarios('sector')" type="button">Sectores</button>
-									</li>
-								}
-								@if ((!permisosPCM && nivelAuth) || permisosPCM) {
-									<li nz-menu-item>
-										<button nz-button nzType="text" (click)="reporteUsuarios('gore')" type="button">Gores</button>
-									</li>
-								}
-								@if (permisosPCM) {
-									<li nz-menu-item>
-										<button nz-button nzType="text" (click)="reporteUsuarios('todos')" type="button">Todos</button>
-									</li>
-								}
-							</ul>
-						</nz-dropdown-menu>
+				<div class="flex gap-2">
+					<app-boton *ngIf="usuarioPermisos.report" [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilter = true"/>
+
+					<div *ngIf="usuarioPermisos.report" class="flex items-center py-1 px-3 gap-2 rounded border cursor-default border-sky-700 text-sky-700" nz-dropdown [nzDropdownMenu]="menu">
+						<div class="w-full flex items-center gap-1">
+						<i class="pi " [ngClass]="loadingExport ? 'pi-spin pi-spinner' : 'pi-file-excel'"></i>
+						{{loadingExport ? 'Exportando...' : 'Exportar'}} 
+						</div>
+						<i class="pi pi-angle-down"></i>
 					</div>
-				}
+					<nz-dropdown-menu #menu="nzDropdownMenu">
+						<div nz-menu class="p-0">
+							<div *ngIf="(!permisosPCM && !nivelAuth) || permisosPCM" nz-menu-item class="flex items-center px-3 py-2 gap-2 text-slate-700 hover:bg-sky-100 hover:text-sky-800" (click)="reporteUsuarios('sector')">
+								<i class="pi pi-file-excel"></i>
+								Exportar Sectores
+							</div>
+							<div *ngIf="(!permisosPCM && nivelAuth) || permisosPCM" nz-menu-item class="flex items-center px-3 py-2 gap-2 text-slate-700 hover:bg-sky-100 hover:text-sky-800" (click)="reporteUsuarios('gore')">
+								<i class="pi pi-file-excel"></i>
+								Exportar Gores
+							</div>
+							<div *ngIf="permisosPCM" nz-menu-item class="flex items-center px-3 py-2 gap-2 text-slate-700 hover:bg-sky-100 hover:text-sky-800" (click)="reporteUsuarios('todos')">
+								<i class="pi pi-file-excel"></i>
+								Exportar todos
+							</div>
+						</div>
+					</nz-dropdown-menu>
+				</div>
 			</div>
 		</ng-template>
 </div>
 
-	<app-filtros-usuario [visible]="openFilter" [sectores]="sectores()" [departamentos]="departamentos()" [perfiles]="perfiles()" [permisosPCM]="permisosPCM" [nivelAuth]="nivelAuth" (visibleDrawer)="openFilter = false" (filters)="getFilterDrawer($event)" (export)="exportToFilters()"></app-filtros-usuario>
+<!-- <app-filtros-usuario [visible]="openFilter" [sectores]="sectores()" [departamentos]="departamentos()" [perfiles]="perfiles()" [permisosPCM]="permisosPCM" [nivelAuth]="nivelAuth" (visibleDrawer)="openFilter = false" (filters)="getFilterDrawer($event)" (export)="exportToFilters()"></app-filtros-usuario> -->
+<app-filtros-usuario [visible]="openFilter" [perfiles]="perfiles()" [permisosPCM]="permisosPCM" [nivelAuth]="nivelAuth" (visibleDrawer)="openFilter = false" (filters)="getFilterDrawer($event)" (export)="exportToFilters()"></app-filtros-usuario>

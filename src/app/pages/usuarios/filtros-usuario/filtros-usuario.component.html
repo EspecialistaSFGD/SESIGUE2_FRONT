@@ -35,7 +35,7 @@
 			<div class="flex flex-col">
 				<label>Sectores</label>
 				<p-dropdown 
-				[options]="sectores"
+				[options]="sectores()"
 				formControlName="sectorId"
 				optionLabel="nombre"
 				optionValue="grupoID"
@@ -49,7 +49,7 @@
 			<div class="flex flex-col">
 			  <label for="departamento">Departamentos</label>
 			  <p-dropdown 
-			  [options]="departamentos" 
+			  [options]="departamentos()" 
 			  formControlName="departamento"
 			  optionLabel="departamento"
 			  optionValue="departamentoId"

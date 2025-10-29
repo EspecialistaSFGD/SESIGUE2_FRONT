@@ -12,11 +12,12 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { PerfilesService, SectoresService, UbigeosService } from '@core/services';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { obtenerPermisosBotones, permisosPCM } from '@core/helpers';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, PageHeaderComponent, FiltrosUsuarioComponent],
+  imports: [CommonModule, NgZorroModule, PageHeaderComponent, FiltrosUsuarioComponent, BotonComponent],
   templateUrl: './usuarios.component.html',
   styles: ``
 })
@@ -62,8 +63,8 @@ export default class UsuariosComponent {
     this.nivelAuth = tipoStorage == 'GN'
     this.permisosPCM = permisosPCM(this.perfilAuth)
     this.getPermissions()
-    this.obtenerSectoresService()
-    this.obtenerDepartamentosService()
+    // this.obtenerSectoresService()
+    // this.obtenerDepartamentosService()
     this.obtenePerfilesService()
     this.getParams()
   }
@@ -118,21 +119,21 @@ export default class UsuariosComponent {
       })
   }
 
-  obtenerDepartamentosService(){
-    this.ubigeoService.getDepartments()
-      .subscribe(resp => {
-        this.departamentos.set(resp.data) 
-      })
-  }
+  // obtenerDepartamentosService(){
+  //   this.ubigeoService.getDepartments()
+  //     .subscribe(resp => {
+  //       this.departamentos.set(resp.data) 
+  //     })
+  // }
 
-  obtenerSectoresService(){
-    this.sectoresService.getAllSectors(0, 2)
-      .subscribe( resp => {
-        this.sectores.set(resp.data)
-        this.pagination.total = resp.info?.total
-      }
-    )
-  }
+  // obtenerSectoresService(){
+  //   this.sectoresService.getAllSectors(0, 2)
+  //     .subscribe( resp => {
+  //       this.sectores.set(resp.data)
+  //       this.pagination.total = resp.info?.total
+  //     }
+  //   )
+  // }
 
   obtenerUsuariosService(){    
     this.loadingData = true
