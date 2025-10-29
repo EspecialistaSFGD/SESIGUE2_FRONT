@@ -33,3 +33,25 @@ export interface EntidadResponse {
   cargoAutoridad?: string,
   sexoAutoridad?: string,
 }
+
+
+export interface EntidadesPanelResponses extends DataResponses {
+  data: EntidadesPanelResponse,
+}
+
+export interface EntidadesPanelResponse {
+  ubigeos: EntidadPanelResponseUbigeo[],
+  mesas: EntidadPanelResponse[],
+  eventos: EntidadPanelResponse[],
+}
+
+export interface EntidadPanelResponse {
+  id?: string,
+  nombre?: string,
+  numero?: number,
+  porcentaje?: number,
+}
+
+export interface EntidadPanelResponseUbigeo extends EntidadPanelResponse {
+  ubigeo?: string
+}

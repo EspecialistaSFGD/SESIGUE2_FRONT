@@ -1,0 +1,82 @@
+<form  [formGroup]="formFilterPanelEntidades" class="bg-punche-blue-50 grid grid-cols-1 md:grid-cols-6 gap-4 p-4">
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Rango de fechas</label>
+        <p-calendar 
+        formControlName="fecha"
+        [iconDisplay]="'input'" 
+        [showIcon]="true"
+        [showButtonBar]="true"
+        selectionMode="range"
+        [numberOfMonths]="2"
+        dateFormat="dd/mm/yy"
+        inputId="icondisplay"
+        [defaultDate]="defaultDate"
+        (onShow)="abrirFechas()"
+        (onSelect)="obtenerfecha()"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Nivel de gobierno</label>
+        <!-- <nz-radio-group class="radio-form-control mt-1" formControlName="nivelGobierno" (ngModelChange)="obtenerNivelGobierno()">
+            @for (nivel of nivelGobiernos; track $index){
+            <label nz-radio [nzValue]="$index">{{nivel | uppercase}}</label>
+            }
+        </nz-radio-group> -->
+        <p-dropdown 
+            [options]="nivelGobiernos"
+            formControlName="nivelGobierno"
+            optionLabel="text"
+            optionValue="value"
+            [showClear]="true" 
+            placeholder="Seleccionar departamento"
+            (onChange)="obtenerNivelGobierno()"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Sectores</label>
+        <p-dropdown 
+        [options]="sectores()"
+        formControlName="sectorId"
+        optionLabel="nombre"
+        optionValue="grupoID"
+        [showClear]="true"
+        placeholder="Seleccionar sector"
+        (onChange)="changeSector()"/>
+    </div>
+
+    <div class="flex flex-col">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Departamento</label>
+        <p-dropdown 
+            [options]="departamentos()"
+            formControlName="departamento"
+            optionLabel="departamento"
+            optionValue="departamentoId"
+            [showClear]="true" 
+            placeholder="Seleccionar departamento"
+            (onChange)="obtenerDepartamento()"/>
+    </div>
+
+    <div class="flex flex-col" [ngClass]="{ 'hidden' : !esDepartamento }">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Provincia</label>
+        <p-dropdown 
+        [options]="provincias()"
+        formControlName="provincia"
+        optionLabel="provincia"
+        optionValue="provinciaId"
+        [showClear]="true" 
+        placeholder="Seleccionar provincia"
+        (onChange)="obtenerProvincia()"/>
+    </div>
+
+    <div class="flex flex-col" [ngClass]="{ 'hidden' : !esProvincia }">
+        <label class="font-bold text-sm xl:text-base" for="nombre">Distrito</label>
+        <p-dropdown 
+        [options]="distritos()"
+        formControlName="distrito"
+        optionLabel="distrito"
+        optionValue="distritoId"
+        [showClear]="true" 
+        placeholder="Seleccionar distrito"
+        (onChange)="obtenerDistrito()"/>
+    </div>
+</form>

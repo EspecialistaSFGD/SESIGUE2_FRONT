@@ -94,7 +94,9 @@ export default class AgendasEventoComponent {
           this.pagination.pageSize = params['cantidad']
           this.pagination.typeSort = params['ordenar'] ?? 'DESC'
   
+          setParamsToObject(params, this.pagination, 'nombre')
           setParamsToObject(params, this.pagination, 'cui')
+          setParamsToObject(params, this.pagination, 'sectorId')
           setParamsToObject(params, this.pagination, 'ubigeo')
   
           this.obtenerIntervencionEspacioService()
@@ -165,7 +167,8 @@ export default class AgendasEventoComponent {
 
   obtenerIntervencionEspacioService(){
     this.loading = true
-    const pagination: Pagination = { ...this.pagination }
+    const eventoId = this.eventoId.toString()
+    const pagination: Pagination = { ...this.pagination, eventoId }
     if(!this.permisosPCM){
       pagination.sectorId = this.sectorAuth
     }
@@ -221,9 +224,14 @@ export default class AgendasEventoComponent {
   }
 
   reporteIntervencion(){
-    const eventoId = this.evento.eventoId
     this.loadingExport = true;
-    this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '0', eventoId })
+    // const eventoId = this.eventoId.toString()
+    const eventoId = this.eventoId.toString()
+    const pagination: Pagination = { ...this.pagination, eventoId }
+    if(!this.permisosPCM){
+      pagination.sectorId = this.sectorAuth
+    }
+    this.intervencionEspaciosServices.reporteIntervencionEspacios(pagination)
       .subscribe( resp => {
         if(resp.data){
           const data = resp.data;
