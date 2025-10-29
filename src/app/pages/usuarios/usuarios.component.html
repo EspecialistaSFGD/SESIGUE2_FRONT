@@ -73,4 +73,4 @@
 </div>
 
 <!-- <app-filtros-usuario [visible]="openFilter" [sectores]="sectores()" [departamentos]="departamentos()" [perfiles]="perfiles()" [permisosPCM]="permisosPCM" [nivelAuth]="nivelAuth" (visibleDrawer)="openFilter = false" (filters)="getFilterDrawer($event)" (export)="exportToFilters()"></app-filtros-usuario> -->
-<app-filtros-usuario [visible]="openFilter" [perfiles]="perfiles()" [permisosPCM]="permisosPCM" [nivelAuth]="nivelAuth" (visibleDrawer)="openFilter = false" (filters)="getFilterDrawer($event)" (export)="exportToFilters()"></app-filtros-usuario>
+<app-filtros-usuario [visible]="openFilter" [pagination]="pagination" [permisosPCM]="permisosPCM" [nivelAuth]="nivelAuth" (visibleDrawer)="openFilter = false" (filters)="generateFilters($event)"></app-filtros-usuario>

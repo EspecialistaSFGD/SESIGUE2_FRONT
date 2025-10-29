@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ButtonsActions, Pagination, PerfilResponse, SectorResponse, UbigeoDepartmentResponse, UsuarioResponse } from '@core/interfaces';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { deleteKeysToObject, obtenerPermisosBotones, permisosPCM } from '@core/helpers';
+import { ButtonsActions, Pagination, UsuarioResponse } from '@core/interfaces';
 import { UsuariosService } from '@core/services/usuarios.service';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
-import { FiltrosUsuarioComponent } from './filtros-usuario/filtros-usuario.component';
-import saveAs from 'file-saver';
-import { UtilesService } from '@libs/shared/services/utiles.service';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { PerfilesService, SectoresService, UbigeosService } from '@core/services';
 import { AuthService } from '@libs/services/auth/auth.service';
-import { obtenerPermisosBotones, permisosPCM } from '@core/helpers';
+import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { UtilesService } from '@libs/shared/services/utiles.service';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
+import saveAs from 'file-saver';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { distinctUntilChanged, filter } from 'rxjs';
+import { FiltrosUsuarioComponent } from './filtros-usuario/filtros-usuario.component';
 
 @Component({
   selector: 'app-usuarios',
@@ -43,17 +43,11 @@ export default class UsuariosComponent {
   usuarioPermisos: ButtonsActions = {}
 
   usuarios = signal<UsuarioResponse[]>([])
-  sectores = signal<SectorResponse[]>([])
-  departamentos = signal<UbigeoDepartmentResponse[]>([])
-  perfiles = signal<PerfilResponse[]>([])
 
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private usuariosService = inject(UsuariosService)
   private utilesService = inject(UtilesService);
-  private sectoresService = inject(SectoresService)
-  private ubigeoService = inject(UbigeosService)
-  private perfilesService = inject(PerfilesService)
   
     private authStore = inject(AuthService)
 
@@ -63,9 +57,6 @@ export default class UsuariosComponent {
     this.nivelAuth = tipoStorage == 'GN'
     this.permisosPCM = permisosPCM(this.perfilAuth)
     this.getPermissions()
-    // this.obtenerSectoresService()
-    // this.obtenerDepartamentosService()
-    this.obtenePerfilesService()
     this.getParams()
   }
 
@@ -76,8 +67,12 @@ export default class UsuariosComponent {
     }
 
   getParams() {
-    this.route.queryParams.subscribe((params: Params) => {
-      if (Object.keys(params).length > 0) {
+    this.route.queryParams
+      .pipe(
+        filter(params => Object.keys(params).length > 0),
+        distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+      )
+      .subscribe( params => {
         let columnSort = params['campo'] ?? 'nombresPersona'
         this.pagination.columnSort = columnSort
         this.pagination.currentPage = Number(params['pagina'])
@@ -85,13 +80,14 @@ export default class UsuariosComponent {
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
 
         this.setPaginationValueToParams(params, 'documentoNumero')
+        this.setPaginationValueToParams(params, 'perfil')
+        this.setPaginationValueToParams(params, 'tipo')
         this.setPaginationValueToParams(params, 'sectorId')
         this.setPaginationValueToParams(params, 'entidadId')
-        this.setPaginationValueToParams(params, 'perfil')
-        
+        this.setPaginationValueToParams(params, 'ubigeo')
+
         this.obtenerUsuariosService()
-      }
-    });
+      })
   }
 
   setPaginationValueToParams(params: Params, param: string){
@@ -104,36 +100,6 @@ export default class UsuariosComponent {
         delete this.paginationFilter[keyParam]
       }
     }
-
-
-  obtenePerfilesService(){
-    const paginationPerfil: Pagination = {
-      columnSort: 'descripcionPerfil',
-      typeSort: 'ASC',
-      pageSize: 50,
-      currentPage: 1
-    }
-    this.perfilesService.listarPerfiles(paginationPerfil)
-      .subscribe( resp => {
-        this.perfiles.set(resp.data)
-      })
-  }
-
-  // obtenerDepartamentosService(){
-  //   this.ubigeoService.getDepartments()
-  //     .subscribe(resp => {
-  //       this.departamentos.set(resp.data) 
-  //     })
-  // }
-
-  // obtenerSectoresService(){
-  //   this.sectoresService.getAllSectors(0, 2)
-  //     .subscribe( resp => {
-  //       this.sectores.set(resp.data)
-  //       this.pagination.total = resp.info?.total
-  //     }
-  //   )
-  // }
 
   obtenerUsuariosService(){    
     this.loadingData = true
@@ -166,26 +132,38 @@ export default class UsuariosComponent {
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
-    const { pageSize, pageIndex } = params;
-    this.paramsNavigate({ pagina: pageIndex, cantidad: pageSize });
-  }
+    const sortsNames = ['ascend', 'descend']
+    const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+    params.sort.reduce((total, item) => {
+      return sortsNames.includes(item.value!) ? total + 1 : total
+    }, 0)
 
-  getFilterDrawer(pagination: Pagination){
-    const documentoNumero = pagination.documentoNumero ? pagination.documentoNumero : null
-    const sectorId = pagination.sectorId ? pagination.sectorId : null
-    const ubigeo = pagination.ubigeo ? pagination.ubigeo : null
-    const entidadId = pagination.entidadId ? pagination.entidadId : null
-    const perfil = pagination.perfil ? pagination.perfil : null
-    this.paramsNavigate({documentoNumero, sectorId, ubigeo, entidadId, perfil})
-  }
-
-  exportToFilters(){
-    let report = 'todos'
-    if(!this.permisosPCM){
-      report = this.nivelAuth ? 'gore' : 'sector'
+    const campo = sorts?.key
+    const ordenar = sorts?.value!.slice(0, -3)
+    const filterStorageExist = localStorage.getItem('filtrosPuntosFocales');
+    let filtros:any = {}
+    if(filterStorageExist){      
+      filtros = JSON.parse(filterStorageExist)
+      filtros.save = false      
+      localStorage.setItem('filtrosPuntosFocales', JSON.stringify(filtros))
     }    
-    this.reporteUsuarios(report)
+    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
   }
+
+  // getFilterDrawer(pagination: Pagination){
+  //   const documentoNumero = pagination.documentoNumero ? pagination.documentoNumero : null
+  //   const sectorId = pagination.sectorId ? pagination.sectorId : null
+  //   const ubigeo = pagination.ubigeo ? pagination.ubigeo : null
+  //   const entidadId = pagination.entidadId ? pagination.entidadId : null
+  //   const perfil = pagination.perfil ? pagination.perfil : null
+  //   this.paramsNavigate({documentoNumero, sectorId, ubigeo, entidadId, perfil})
+  // }
+
+  generateFilters(pagination: Pagination){
+      // const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total','departamento','provincia','distrito']
+      // const params = deleteKeysToObject(pagination, paramsInvalid)
+      this.paramsNavigate(pagination)
+    }
 
   paramsNavigate(queryParams: Params){
     this.router.navigate(
