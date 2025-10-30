@@ -16,7 +16,8 @@
     <tbody>
         @for(acceso of accesos(); track $index){
             <tr>
-                <td>{{acceso.menu}}</td>
+                <!-- <td><div [ngClass]="{ 'font-medium' : acceso.menuVisible, 'pl-3' : !acceso.menuVisible}">{{acceso.menu}}</div></td> -->
+                <td><div [ngClass]="acceso.menuPadreId == '0' ? 'font-medium' : 'pl-3'">{{acceso.menu}}</div></td>
                 <td nzAlign="center"><span [nz-tooltip]="acceso.menuParametros ? acceso.menuParametros : ''">{{acceso.menuUrl}}</span></td>
                 <td nzAlign="center"><span nz-icon [nzType]="acceso.menuIcono!" nzTheme="outline"></span></td>
                 <td nzAlign="center">
@@ -25,7 +26,6 @@
                     </div>
 
                 </td>
-                <!-- <td nzAlign="center">{{acceso.menuParametros}}</td> -->
                 <td nzAlign="center">
                     <div nz-tooltip [nzTooltipTitle]="acceso.menuVisible ? 'El menu es visible' : 'No es visible el menu'" [ngClass]="acceso.menuVisible ? 'text-green-600' : 'text-slate-200'">
                         <i class="pi pi-check-circle" style="font-size: .85rem;"></i>

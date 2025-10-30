@@ -21,7 +21,7 @@ export class AccesosPerfilComponent {
   openFilters: boolean = false
 
   pagination: Pagination = {
-    columnSort: 'codigoAcceso',
+    columnSort: 'M.ordenItem',
     typeSort: 'ASC',
     pageSize: 10,
     currentPage: 1,
