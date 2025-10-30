@@ -16,22 +16,26 @@
     <tbody>
         @for(acceso of accesos(); track $index){
             <tr>
-                <!-- <td><div [ngClass]="{ 'font-medium' : acceso.menuVisible, 'pl-3' : !acceso.menuVisible}">{{acceso.menu}}</div></td> -->
                 <td><div [ngClass]="acceso.menuPadreId == '0' ? 'font-medium' : 'pl-3'">{{acceso.menu}}</div></td>
-                <td nzAlign="center"><span [nz-tooltip]="acceso.menuParametros ? acceso.menuParametros : ''">{{acceso.menuUrl}}</span></td>
+                <td nzAlign="center"><div [nz-tooltip]="acceso.menuParametros ? acceso.menuParametros : ''">{{acceso.menuUrl}}</div></td>
                 <td nzAlign="center"><span nz-icon [nzType]="acceso.menuIcono!" nzTheme="outline"></span></td>
                 <td nzAlign="center">
-                    <div nz-tooltip [nzTooltipTitle]="acceso.menuExterno ? 'El menu es externo' : 'No es externo el menu'" [ngClass]="acceso.menuExterno ? 'text-green-600' : 'text-slate-200'">
+                    <div [nz-tooltip]="acceso.menuExterno ? 'El menu es externo' : 'No es externo el menu'" [ngClass]="acceso.menuExterno ? 'text-green-600' : 'text-slate-200'">
                         <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
                     </div>
-
                 </td>
                 <td nzAlign="center">
-                    <div nz-tooltip [nzTooltipTitle]="acceso.menuVisible ? 'El menu es visible' : 'No es visible el menu'" [ngClass]="acceso.menuVisible ? 'text-green-600' : 'text-slate-200'">
+                    <div [nz-tooltip]="acceso.menuVisible ? 'El menu es visible' : 'No es visible el menu'" [ngClass]="acceso.menuVisible ? 'text-green-600' : 'text-slate-200'">
                         <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
                     </div>  
                 </td>
-                <td nzAlign="center"></td>
+                <td nzAlign="center">
+                    <div class="flex justify-center">
+                        <a [routerLink]="[acceso.accesoId]" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip="Ver detalle">
+                            <i class="pi pi-eye" style="font-size: .85rem;"></i>
+                        </a>
+                    </div>
+                </td>
             </tr>
         }
     </tbody>

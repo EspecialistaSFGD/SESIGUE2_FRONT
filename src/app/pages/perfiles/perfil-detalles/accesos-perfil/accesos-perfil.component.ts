@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Pagination, PerfilResponse } from '@core/interfaces';
 import { AccesoResponse } from '@core/interfaces/acceso.interface';
 import { AccesosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'app-accesos-perfil',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, BotonComponent],
+  imports: [CommonModule, PrimeNgModule, NgZorroModule, BotonComponent],
   templateUrl: './accesos-perfil.component.html',
   styles: ``
 })
@@ -30,6 +32,8 @@ export class AccesosPerfilComponent {
 
   accesos = signal<AccesoResponse[]>([])
 
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
   private accesoService = inject(AccesosService)
 
   ngOnInit(): void {
