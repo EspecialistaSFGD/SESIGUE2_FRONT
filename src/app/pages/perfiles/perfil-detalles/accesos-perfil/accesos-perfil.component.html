@@ -1,0 +1,49 @@
+<div class="grid grid-cols-1">
+  <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="headerPerfil" nzShowSizeChanger nzSize="small"
+    [nzData]="accesos()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+      <tr>
+        <th nzWidth="100px">Menu</th>
+        <th nzWidth="100px" nzAlign="center">URL</th>
+        <th nzWidth="100px" nzAlign="center">Icono</th>
+        <th nzWidth="100px" nzAlign="center">Externo</th>
+        <th nzWidth="100px" nzAlign="center">Visible</th>
+        <th nzRight nzWidth="120px" nzAlign="center"></th>
+      </tr>
+    </thead>
+    
+    <tbody>
+        @for(acceso of accesos(); track $index){
+            <tr>
+                <td>{{acceso.menu}}</td>
+                <td nzAlign="center"><span [nz-tooltip]="acceso.menuParametros ? acceso.menuParametros : ''">{{acceso.menuUrl}}</span></td>
+                <td nzAlign="center"><span nz-icon [nzType]="acceso.menuIcono!" nzTheme="outline"></span></td>
+                <td nzAlign="center">
+                    <div nz-tooltip [nzTooltipTitle]="acceso.menuExterno ? 'El menu es externo' : 'No es externo el menu'" [ngClass]="acceso.menuExterno ? 'text-green-600' : 'text-slate-200'">
+                        <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+                    </div>
+
+                </td>
+                <!-- <td nzAlign="center">{{acceso.menuParametros}}</td> -->
+                <td nzAlign="center">
+                    <div nz-tooltip [nzTooltipTitle]="acceso.menuVisible ? 'El menu es visible' : 'No es visible el menu'" [ngClass]="acceso.menuVisible ? 'text-green-600' : 'text-slate-200'">
+                        <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+                    </div>  
+                </td>
+                <td nzAlign="center"></td>
+            </tr>
+        }
+    </tbody>
+</nz-table>
+<ng-template #headerPerfil>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+        <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+        <div class="flex gap-2">
+            <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+
+            <app-boton [icono]="'plus'" tooltip="Agregar nuevo acceso" [texto]="'Nuevo acceso'"/>
+        </div>
+    </div>
+</ng-template>
+</div>

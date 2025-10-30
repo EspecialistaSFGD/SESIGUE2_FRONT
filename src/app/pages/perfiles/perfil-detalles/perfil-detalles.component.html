@@ -5,3 +5,7 @@
 </nz-page-header>
 
 <app-perfil-detalle *ngIf="perfil.perfilId" [perfil]="perfil" />
+
+<div *ngIf="perfil.perfilId" class="grid grid-cols-1 md:grid-cols-1">
+	<app-accesos-perfil [perfil]="perfil"  />
+</div>
