@@ -1,0 +1,7 @@
+<nz-page-header nzBackIcon [nzGhost]="false" (nzBack)="onBack()">
+	<nz-page-header-title>
+		Detalle de Acceso
+	</nz-page-header-title>
+</nz-page-header>
+
+<app-acceso-detalle-perfil *ngIf="acceso.accesoId" [perfil]="perfil" [acceso]="acceso" />

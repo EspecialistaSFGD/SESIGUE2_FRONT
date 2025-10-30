@@ -4,7 +4,7 @@ import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Pagination } from '@core/interfaces';
 import { Observable } from 'rxjs';
-import { AccesosResponses } from '@core/interfaces/acceso.interface';
+import { AccesoResponses, AccesosResponses } from '@core/interfaces/acceso.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -18,5 +18,10 @@ export class AccesosService {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<AccesosResponses>(`${this.urlSector}/ListarAccesos`, { headers, params })
+  }
+
+  obtenerAcceso(accesoId: string): Observable<AccesoResponses> {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<AccesoResponses>(`${this.urlSector}/ObtenerAcceso/${accesoId}`, { headers })
   }
 }

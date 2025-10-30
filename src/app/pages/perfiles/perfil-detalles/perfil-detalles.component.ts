@@ -27,14 +27,14 @@ export default class PerfilDetallesComponent {
   }
 
   verificarPerfil(){
-    const entidadId = this.route.snapshot.params['id'];
-    const entidadIdNumber = Number(entidadId);
-    if (isNaN(entidadIdNumber)) {
+    const perfilId = this.route.snapshot.params['id'];
+    const perfilIdNumber = Number(perfilId);
+    if (isNaN(perfilIdNumber)) {
       this.router.navigate(['perfiles']);
       return;
     }
 
-    this.perfilId = entidadIdNumber
+    this.perfilId = perfilIdNumber
     this.obtenerPerfilService()
   }
   
