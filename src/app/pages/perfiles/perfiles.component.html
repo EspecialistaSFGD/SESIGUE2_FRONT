@@ -1,0 +1,35 @@
+<app-page-header [title]="'Perfiles'" backUrl="panel" />
+<div class="grid grid-cols-1">
+    <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="Headereventos" nzShowSizeChanger nzSize="small"
+    [nzData]="perfiles()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+        <thead>
+        <tr>
+            <th nzWidth="80px" nzAlign="center" nzColumnKey="vigente" [nzSortFn]="true">Estado</th>
+            <th nzWidth="120px" nzAlign="center">Código</th>
+            <th nzWidth="340px">Espacio</th>
+            <th nzWidth="100px" nzAlign="center" >Fecha inicia</th>
+            <th nzWidth="100px" nzAlign="center" >Fecha culmina</th>
+            <th nzWidth="100px" nzAlign="center">Tipo</th>
+            <th nzWidth="120px" nzAlign="center">Tipo de espacio</th>
+            <th nzWidth="80px" nzAlign="center">Verifica asistente</th>
+            <th nzWidth="80px" nzAlign="center">Primera tarea</th>
+            <th nzRight nzWidth="120px" nzAlign="center"></th>
+        </tr>
+        </thead>
+        
+        <tbody>
+        </tbody>
+    </nz-table>
+
+    <ng-template #Headereventos>
+        <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+        <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+        <div class="flex gap-2">
+            <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+
+            <app-boton [icono]="'plus'" tooltip="Agregar nueva intervencion" [texto]="'Nuevo evento'"/>
+        </div>
+        </div>
+    </ng-template>
+</div>
