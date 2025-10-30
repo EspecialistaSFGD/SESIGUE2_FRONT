@@ -1,12 +1,54 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PerfilResponse } from '@core/interfaces';
+import { AuthService, PerfilesService } from '@core/services';
+import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PerfilDetalleComponent } from './perfil-detalle/perfil-detalle.component';
 
 @Component({
   selector: 'app-perfil-detalles',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, NgZorroModule, PerfilDetalleComponent],
   templateUrl: './perfil-detalles.component.html',
   styles: ``
 })
 export default class PerfilDetallesComponent {
+  perfilId:number = 0
+  perfil: PerfilResponse = {} as PerfilResponse
 
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
+  private authStore = inject(AuthService)
+  private perfilService = inject(PerfilesService)
+
+  ngOnInit(): void {
+    this.verificarPerfil()
+  }
+
+
+  verificarPerfil(){
+    const entidadId = this.route.snapshot.params['id'];
+    const entidadIdNumber = Number(entidadId);
+    if (isNaN(entidadIdNumber)) {
+      this.router.navigate(['perfiles']);
+      return;
+    }
+
+    this.perfilId = entidadIdNumber
+    this.obtenerPerfilService()
+  }
+  
+  obtenerPerfilService(){
+    console.log(this.perfilId);
+    
+    this.perfilService.obtenerPerfil(this.perfilId.toString())
+      .subscribe( resp => {
+        resp.success ? this.perfil = resp.data : this.router.navigate(['perfiles'])
+      })
+  }
+
+  onBack(){
+    this.router.navigate(['perfiles'])
+  }
 }

@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Pagination } from '@core/interfaces';
-import { PerfilesResponses } from '@core/interfaces/perfil.interface';
+import { PerfilesResponses, PerfilResponses } from '@core/interfaces/perfil.interface';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -18,5 +18,10 @@ export class PerfilesService {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<PerfilesResponses>(`${this.urlLugar}/ListarPerfiles`, { headers, params })
+  }
+
+  obtenerPerfil(perfilId: string): Observable<PerfilResponses> {
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<PerfilResponses>(`${this.urlLugar}/ObtenerPerfil/${perfilId}`, { headers })
   }
 }

@@ -47,6 +47,12 @@ export default class PerfilesComponent {
         distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
       )
       .subscribe( params => {
+        let campo = params['campo'] ?? 'codigoPerfil'
+        this.pagination.columnSort = campo
+        this.pagination.currentPage = params['pagina']
+        this.pagination.pageSize = params['cantidad']
+        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+
         this.obtenerPerfiles()
       })
   }

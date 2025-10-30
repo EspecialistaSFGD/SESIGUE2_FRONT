@@ -5,20 +5,29 @@
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
         <tr>
-            <th nzWidth="80px" nzAlign="center" nzColumnKey="vigente" [nzSortFn]="true">Estado</th>
-            <th nzWidth="120px" nzAlign="center">Código</th>
-            <th nzWidth="340px">Espacio</th>
-            <th nzWidth="100px" nzAlign="center" >Fecha inicia</th>
-            <th nzWidth="100px" nzAlign="center" >Fecha culmina</th>
-            <th nzWidth="100px" nzAlign="center">Tipo</th>
-            <th nzWidth="120px" nzAlign="center">Tipo de espacio</th>
-            <th nzWidth="80px" nzAlign="center">Verifica asistente</th>
-            <th nzWidth="80px" nzAlign="center">Primera tarea</th>
-            <th nzRight nzWidth="120px" nzAlign="center"></th>
+            <th nzWidth="140px">Perfil</th>
+            <th nzWidth="90px" nzAlign="center">SubTipo</th>
+            <th nzWidth="90px" nzAlign="center" >Subtipo código</th>
+            <th nzWidth="100px" nzAlign="center">Nivel</th>
+            <th nzRight nzWidth="100px" nzAlign="center"></th>
         </tr>
-        </thead>
-        
+        </thead>        
         <tbody>
+            @for (perfil of perfiles(); track $index) {
+                 <tr>
+                     <td><span [nz-tooltip]="perfil.descripcion">{{perfil.nombre}}</span></td>
+                     <td nzAlign="center">{{perfil.subTipo}}</td>
+                     <td nzAlign="center">{{perfil.subTipoCodigo}}</td>
+                     <td nzAlign="center">{{perfil.nivel}}</td>
+                     <td nzAlign="center">
+                        <div class="flex justify-center">
+                            <a [routerLink]="[perfil.perfilId]" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
+                                <i class="pi pi-eye" style="font-size: .85rem;"></i>
+                            </a>
+                        </div>
+                     </td>
+                 </tr>
+            }
         </tbody>
     </nz-table>
 
@@ -26,9 +35,9 @@
         <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
         <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
         <div class="flex gap-2">
-            <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+            <!-- <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true"/> -->
 
-            <app-boton [icono]="'plus'" tooltip="Agregar nueva intervencion" [texto]="'Nuevo evento'"/>
+            <!-- <app-boton [icono]="'plus'" tooltip="Agregar nuevo perfil" [texto]="'Nuevo perfil'"/> -->
         </div>
         </div>
     </ng-template>

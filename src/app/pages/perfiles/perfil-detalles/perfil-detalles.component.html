@@ -1,1 +1,7 @@
-<p>perfil-detalles works!</p>
+<nz-page-header nzBackIcon [nzGhost]="false" (nzBack)="onBack()">
+	<nz-page-header-title>
+		Detalle de Perfil
+	</nz-page-header-title>
+</nz-page-header>
+
+<app-perfil-detalle *ngIf="perfil.perfilId" [perfil]="perfil" />
