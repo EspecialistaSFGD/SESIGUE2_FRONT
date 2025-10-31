@@ -5,11 +5,12 @@ import { AccesoResponse, PerfilResponse } from '@core/interfaces';
 import { AccesosService, PerfilesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AccesoDetallePerfilComponent } from './acceso-detalle-perfil/acceso-detalle-perfil.component';
+import { AccesoDetalleAccesoPerfilComponent } from './acceso-detalle-acceso-perfil/acceso-detalle-acceso-perfil.component';
 
 @Component({
   selector: 'app-acceso-detalles-perfil',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, AccesoDetallePerfilComponent],
+  imports: [CommonModule, NgZorroModule, AccesoDetallePerfilComponent, AccesoDetalleAccesoPerfilComponent],
   templateUrl: './acceso-detalles-perfil.component.html',
   styles: ``
 })

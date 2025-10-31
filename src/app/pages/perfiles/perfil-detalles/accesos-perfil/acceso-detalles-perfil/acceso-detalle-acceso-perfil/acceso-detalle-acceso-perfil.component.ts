@@ -1,47 +1,45 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Pagination, PerfilResponse } from '@core/interfaces';
-import { AccesoResponse } from '@core/interfaces/acceso.interface';
-import { AccesosService } from '@core/services';
+import { AccesoDetalleResponse, AccesoResponse, Pagination } from '@core/interfaces';
+import { AccesoDetalleService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 @Component({
-  selector: 'app-accesos-perfil',
+  selector: 'app-acceso-detalle-acceso-perfil',
   standalone: true,
-  imports: [CommonModule, PrimeNgModule, NgZorroModule, BotonComponent],
-  templateUrl: './accesos-perfil.component.html',
+  imports: [CommonModule, NgZorroModule, BotonComponent],
+  templateUrl: './acceso-detalle-acceso-perfil.component.html',
   styles: ``
 })
-export class AccesosPerfilComponent {
-  @Input() perfil: PerfilResponse = {} as PerfilResponse
+export class AccesoDetalleAccesoPerfilComponent {
+  @Input() acceso: AccesoResponse = {} as AccesoResponse
 
   loading: boolean = false
   openFilters: boolean = false
 
   pagination: Pagination = {
-    columnSort: 'M.ordenItem',
+    columnSort: 'codigoAccesoDetalle',
     typeSort: 'ASC',
     pageSize: 10,
     currentPage: 1,
     total: 0
   }
 
-  accesos = signal<AccesoResponse[]>([])
+  accesoDetalles = signal<AccesoDetalleResponse[]>([])
 
   private router = inject(Router)
   private route = inject(ActivatedRoute)
-  private accesoService = inject(AccesosService)
+  private accesoDetalleService = inject(AccesoDetalleService)
 
-  obtenerAccesosServices(){
+  obtenerAccesoDetallesServices(){
     this.loading = true
-    this.accesoService.ListarAccesos({...this.pagination, perfilId: this.perfil.perfilId})
+    this.accesoDetalleService.ListarAccesoDetalle({...this.pagination, accesoId: this.acceso.accesoId})
       .subscribe( resp => {
         this.loading = false
-        this.accesos.set(resp.data)
+        this.accesoDetalles.set(resp.data)
         this.pagination.total = resp.info?.total
       })
   }
@@ -55,15 +53,15 @@ export class AccesosPerfilComponent {
 
     const campo = sorts?.key
     const ordenar = sorts?.value!.slice(0, -3)
-    const filterStorageExist = localStorage.getItem('filtrosAccesos');
+    const filterStorageExist = localStorage.getItem('filtrosAccesoDetalles');
     let filtros:Pagination = this.pagination
     if(filterStorageExist){      
       filtros = JSON.parse(filterStorageExist)
       filtros.save = false      
-      localStorage.setItem('filtrosAccesos', JSON.stringify(filtros))
+      localStorage.setItem('filtrosAccesoDetalles', JSON.stringify(filtros))
     }
-    
+
     this.pagination = {...filtros, currentPage: params.pageIndex, pageSize: params.pageSize }
-    this.obtenerAccesosServices()
+    this.obtenerAccesoDetallesServices()
   }
 }

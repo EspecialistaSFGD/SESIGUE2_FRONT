@@ -70,6 +70,7 @@ export interface Pagination {
   tipoIntervencion?: string,
   tipoEventoId?: string,
   entidadUbigeoId?: string  
+  accesoId?: string  
 }
 
 export interface PaginationPanel {
