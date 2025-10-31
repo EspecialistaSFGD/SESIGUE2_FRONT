@@ -18,7 +18,7 @@
             <tr>
                 <td><div [ngClass]="acceso.menuPadreId == '0' ? 'font-medium' : 'pl-3'">{{acceso.menu}}</div></td>
                 <td nzAlign="center"><div [nz-tooltip]="acceso.menuParametros ? acceso.menuParametros : ''">{{acceso.menuUrl}}</div></td>
-                <td nzAlign="center"><span nz-icon [nzType]="acceso.menuIcono!" nzTheme="outline"></span></td>
+                <td nzAlign="center"><span nz-icon class="text-sky-900" [nzType]="acceso.menuIcono!" nzTheme="outline"></span></td>
                 <td nzAlign="center">
                     <div [nz-tooltip]="acceso.menuExterno ? 'El menu es externo' : 'No es externo el menu'" [ngClass]="acceso.menuExterno ? 'text-green-600' : 'text-slate-200'">
                         <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
