@@ -17,6 +17,7 @@
                 <td nzAlign="center"><span nz-icon class="text-sky-900" [nzType]="detalle.botonIcono!" nzTheme="outline"></span></td>
                 <td nzAlign="center">
                     <div class="flex justify-center">
+                        <app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar boton'" [link]="true"/>
                     </div>
                 </td>
             </tr>
@@ -27,9 +28,9 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
         <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
         <div class="flex gap-2">
-            <!-- <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+            <!-- <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/> -->
 
-            <app-boton [icono]="'plus'" tooltip="Agregar nuevo detalle" [texto]="'Nuevo detALLE'"/> -->
+            <app-boton [icono]="'plus'" tooltip="Agregar boton" [texto]="'Agregar Boton'" (click)="agregarBoton()"/>
         </div>
     </div>
 </ng-template>

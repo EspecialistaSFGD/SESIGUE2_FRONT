@@ -6,6 +6,8 @@ import { AccesoDetalleService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { FormularioBotonesComponent } from '../../../../../botones/formulario-botones/formulario-botones.component';
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-acceso-detalle-acceso-perfil',
@@ -33,6 +35,7 @@ export class AccesoDetalleAccesoPerfilComponent {
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private accesoDetalleService = inject(AccesoDetalleService)
+  private modal = inject(NzModalService);
 
   obtenerAccesoDetallesServices(){
     this.loading = true
@@ -64,4 +67,34 @@ export class AccesoDetalleAccesoPerfilComponent {
     this.pagination = {...filtros, currentPage: params.pageIndex, pageSize: params.pageSize }
     this.obtenerAccesoDetallesServices()
   }
+
+  agregarBoton(){
+    this.botonFormModal(true)
+  }
+
+  botonFormModal(create: boolean): void{
+      const action = `${create ? 'Agregar' : 'Actualizar' } boton`
+      this.modal.create<FormularioBotonesComponent>({
+        nzTitle: `${action.toUpperCase()}`,
+        // nzWidth: '75%',
+        nzMaskClosable: false,
+        nzContent: FormularioBotonesComponent,
+        nzData: {
+          create,
+        },
+        nzFooter: [
+          {
+            label: 'Cancelar',
+            type: 'default',
+            onClick: () => this.modal.closeAll(),
+          },
+          {
+            label: action,
+            type: 'primary',
+            onClick: (componentResponse) => {
+            }
+          }
+        ]
+      })
+    }
 }
