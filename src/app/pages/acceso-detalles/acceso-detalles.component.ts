@@ -7,9 +7,9 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { distinctUntilChanged, filter } from 'rxjs';
-import { AccesoDetalleComponent } from '../accesos/accesoDetalles/acceso-detalle/acceso-detalle.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FormularioAccesoDetalleComponent } from './formulario-acceso-detalle/formulario-acceso-detalle.component';
+import { AccesoDetalleComponent } from '../accesos/acceso-detalles/acceso-detalle/acceso-detalle.component';
 
 @Component({
   selector: 'app-acceso-detalles',
