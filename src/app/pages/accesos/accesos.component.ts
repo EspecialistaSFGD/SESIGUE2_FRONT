@@ -52,9 +52,7 @@ export default class AccesosComponent {
 
     this.perfilId = perfilIdNumber
     this.obtenerPerfilService()
-    setTimeout(() => {
-      this.getParams()
-    });
+    setTimeout(() => this.getParams())
   }
 
   obtenerPerfilService(){    
@@ -65,15 +63,15 @@ export default class AccesosComponent {
   }
 
   getParams() {
-      this.route.queryParams
-        .pipe(
-          filter(params => Object.keys(params).length > 0),
-          distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
-        )
-        .subscribe( params => {          
-          this.obtenerAccesosServices()
-      })
-    }
+    this.route.queryParams
+      .pipe(
+        filter(params => Object.keys(params).length > 0),
+        distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+      )
+      .subscribe( params => {          
+        this.obtenerAccesosServices()
+    })
+  }
 
   obtenerAccesosServices(){
     this.loading = true
@@ -103,7 +101,6 @@ export default class AccesosComponent {
     }
     
     this.pagination = {...filtros, currentPage: params.pageIndex, pageSize: params.pageSize }
-    this.obtenerAccesosServices()
   }
 
   onBack(){
