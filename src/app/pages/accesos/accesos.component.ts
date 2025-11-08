@@ -6,6 +6,7 @@ import { AccesosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { distinctUntilChanged, filter } from 'rxjs';
 
 @Component({
   selector: 'app-accesos',
@@ -14,8 +15,9 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
   templateUrl: './accesos.component.html',
   styles: ``
 })
-export class AccesosComponent {
-  @Input() perfil: PerfilResponse = {} as PerfilResponse
+export default class AccesosComponent {
+  // perfil: PerfilResponse = {} as PerfilResponse
+  perfilId:number = 0
   
   loading: boolean = false
   openFilters: boolean = false
@@ -34,14 +36,59 @@ export class AccesosComponent {
   private route = inject(ActivatedRoute)
   private accesoService = inject(AccesosService)
 
+
+  ngOnInit(): void {
+    
+    this.verificarPerfil()
+  }
+
+  verificarPerfil(){
+    const perfilId = this.route.snapshot.queryParams['perfil'];
+    const perfilIdNumber = Number(perfilId);
+    if (isNaN(perfilIdNumber)) {
+      this.router.navigate(['/panel']);
+      return;
+    }
+
+    this.perfilId = perfilIdNumber
+
+    // this.mesaId = mesaIdNumber
+    this.obtenerPerfilService()
+    // this.getParams()
+  }
+
+  obtenerPerfilService(){    
+    // this.mesaServices.obtenerMesa(this.mesaId.toString())
+    //   .subscribe( resp => {
+    //     if(resp.success){
+    //       this.mesa.set(resp.data)
+    //     } else {
+    //       this.router.navigate(['/mesas']);
+    //     }
+    //   })
+  }
+
+  getParams() {
+      this.route.queryParams
+        .pipe(
+          filter(params => Object.keys(params).length > 0),
+          distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+        )
+        .subscribe( params => {
+          console.log(('params'));
+          
+          // this.obtenerMesasService()
+      })
+    }
+
   obtenerAccesosServices(){
     this.loading = true
-    this.accesoService.ListarAccesos({...this.pagination, perfilId: this.perfil.perfilId})
-      .subscribe( resp => {
-        this.loading = false
-        this.accesos.set(resp.data)
-        this.pagination.total = resp.info?.total
-      })
+    // this.accesoService.ListarAccesos({...this.pagination, perfilId: this.perfil.perfilId})
+    //   .subscribe( resp => {
+    //     this.loading = false
+    //     this.accesos.set(resp.data)
+    //     this.pagination.total = resp.info?.total
+    //   })
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {

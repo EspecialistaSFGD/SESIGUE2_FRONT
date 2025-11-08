@@ -18,5 +18,6 @@ export const PAGES_ROUTES: Routes = [
   { path: 'eventos', loadChildren: () => import('./eventos/eventos.routes').then(r => r.EVENTOS_ROUTES) },
   { path: 'panel_entidades', loadComponent: () => import('./panel-entidades/panel-entidades.component') },
   { path: 'perfiles', loadChildren: () => import('./perfiles/perfiles.routes').then(r => r.PERFILES_ROUTES) },
+  { path: 'accesos', loadChildren: () => import('./accesos/accesos.routes').then(r => r.ACCESOS_ROUTES) },
   { path: '**', redirectTo: 'panel', pathMatch: 'full' },
 ];

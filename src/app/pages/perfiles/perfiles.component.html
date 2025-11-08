@@ -21,7 +21,7 @@
                      <td nzAlign="center">{{perfil.nivel}}</td>
                      <td nzAlign="center">
                         <div class="flex justify-center">
-                            <a [routerLink]="[perfil.perfilId]" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
+                            <a [routerLink]="['/accesos']" [queryParams]="{ perfil: perfil.perfilId }" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
                                 <i class="pi pi-eye" style="font-size: .85rem;"></i>
                             </a>
                         </div>
