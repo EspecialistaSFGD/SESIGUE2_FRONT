@@ -7,11 +7,14 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { distinctUntilChanged, filter } from 'rxjs';
+import { AccesoDetalleComponent } from '../accesos/accesoDetalles/acceso-detalle/acceso-detalle.component';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { FormularioAccesoDetalleComponent } from './formulario-acceso-detalle/formulario-acceso-detalle.component';
 
 @Component({
   selector: 'app-acceso-detalles',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, BotonComponent],
+  imports: [CommonModule, NgZorroModule, BotonComponent, AccesoDetalleComponent],
   templateUrl: './acceso-detalles.component.html',
   styles: ``
 })
@@ -36,6 +39,7 @@ export default class AccesoDetallesComponent {
   private route = inject(ActivatedRoute)
   private accesoService = inject(AccesosService)
   private accesoDetalleService = inject(AccesoDetalleService)
+  private modal = inject(NzModalService)
 
   ngOnInit(): void {
     this.verificarAcceso()
@@ -56,7 +60,7 @@ export default class AccesoDetallesComponent {
 
   obtenerAccesoService(){
     this.accesoService.obtenerAcceso(this.accesoId.toString())
-      .subscribe( resp => {
+      .subscribe( resp => {     
         resp.success ? this.acceso = resp.data : this.router.navigate(['acceso',this.acceso.perfilId])
       })
   }
@@ -108,27 +112,27 @@ export default class AccesoDetallesComponent {
 
   botonFormModal(create: boolean): void{
     const action = `${create ? 'Agregar' : 'Actualizar' } boton`
-    // this.modal.create<FormularioBotonesComponent>({
-    //   nzTitle: `${action.toUpperCase()}`,
-    //   nzMaskClosable: false,
-    //   nzContent: FormularioBotonesComponent,
-    //   nzData: {
-    //     create,
-    //   },
-    //   nzFooter: [
-    //     {
-    //       label: 'Cancelar',
-    //       type: 'default',
-    //       onClick: () => this.modal.closeAll(),
-    //     },
-    //     {
-    //       label: action,
-    //       type: 'primary',
-    //       onClick: (componentResponse) => {
-    //       }
-    //     }
-    //   ]
-    // })
+    this.modal.create<FormularioAccesoDetalleComponent>({
+      nzTitle: `${action.toUpperCase()}`,
+      nzMaskClosable: false,
+      nzContent: FormularioAccesoDetalleComponent,
+      nzData: {
+        create,
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: action,
+          type: 'primary',
+          onClick: (componentResponse) => {
+          }
+        }
+      ]
+    })
   }
 
   onBack(){

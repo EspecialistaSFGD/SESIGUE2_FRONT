@@ -4,6 +4,7 @@
 	</nz-page-header-title>
 </nz-page-header>
 
+<app-acceso-detalle *ngIf="accesoId" [acceso]="acceso" />
 
 <div class="grid grid-cols-1">
   <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="headerPerfil" nzShowSizeChanger nzSize="small"
