@@ -16,8 +16,11 @@ export class AccesoDetalleComponent {
 
   private perfilService = inject(PerfilesService)
 
+
   ngOnChanges(changes: SimpleChanges): void {
-    this.obtenerPerfil()
+    if(this.acceso.accesoId){
+      this.obtenerPerfil()
+    }
   }
 
   obtenerPerfil(){    
