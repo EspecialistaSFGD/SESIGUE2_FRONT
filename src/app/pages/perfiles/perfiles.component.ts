@@ -60,8 +60,6 @@ export default class PerfilesComponent {
   obtenerPerfiles(){
     this.perfilService.listarPerfiles(this.pagination)
       .subscribe( resp => {
-        console.log(resp.data);
-        
         this.perfiles.set(resp.data)
         this.pagination.total = resp.info?.total
       })

@@ -1,5 +1,12 @@
-<div class="w-full">contenido de muestra</div>
-<!-- <div class="grid grid-cols-1">
+<nz-page-header nzBackIcon [nzGhost]="false" (nzBack)="onBack()">
+	<nz-page-header-title>
+		Accesos
+	</nz-page-header-title>
+</nz-page-header>
+
+<app-perfil-detalle *ngIf="perfilId" [perfil]="perfil" />
+
+<div class="grid grid-cols-1">
   <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="headerPerfil" nzShowSizeChanger nzSize="small"
     [nzData]="accesos()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
@@ -32,7 +39,7 @@
                 </td>
                 <td nzAlign="center">
                     <div class="flex justify-center">
-                        <a [routerLink]="['accesos', acceso.accesoId]" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip="Ver detalle">
+                        <a [routerLink]="['/accesoDetalles', acceso.accesoId]" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip="Ver detalle">
                             <i class="pi pi-eye" style="font-size: .85rem;"></i>
                         </a>
                     </div>
@@ -48,4 +55,4 @@
         </div>
     </div>
 </ng-template>
-</div> -->
+</div>

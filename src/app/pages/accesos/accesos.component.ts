@@ -2,21 +2,22 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccesoResponse, Pagination, PerfilResponse } from '@core/interfaces';
-import { AccesosService } from '@core/services';
+import { AccesosService, PerfilesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { distinctUntilChanged, filter } from 'rxjs';
+import { PerfilDetalleComponent } from '../perfiles/perfil-detalles/perfil-detalle/perfil-detalle.component';
 
 @Component({
   selector: 'app-accesos',
   standalone: true,
-  imports: [CommonModule, PrimeNgModule, NgZorroModule],
+  imports: [CommonModule, PrimeNgModule, NgZorroModule, PerfilDetalleComponent],
   templateUrl: './accesos.component.html',
   styles: ``
 })
 export default class AccesosComponent {
-  // perfil: PerfilResponse = {} as PerfilResponse
+  perfil:PerfilResponse = {} as PerfilResponse
   perfilId:number = 0
   
   loading: boolean = false
@@ -34,11 +35,10 @@ export default class AccesosComponent {
 
   private router = inject(Router)
   private route = inject(ActivatedRoute)
+  private perfilService = inject(PerfilesService)
   private accesoService = inject(AccesosService)
 
-
   ngOnInit(): void {
-    
     this.verificarPerfil()
   }
 
@@ -51,21 +51,17 @@ export default class AccesosComponent {
     }
 
     this.perfilId = perfilIdNumber
-
-    // this.mesaId = mesaIdNumber
     this.obtenerPerfilService()
-    // this.getParams()
+    setTimeout(() => {
+      this.getParams()
+    });
   }
 
   obtenerPerfilService(){    
-    // this.mesaServices.obtenerMesa(this.mesaId.toString())
-    //   .subscribe( resp => {
-    //     if(resp.success){
-    //       this.mesa.set(resp.data)
-    //     } else {
-    //       this.router.navigate(['/mesas']);
-    //     }
-    //   })
+    this.perfilService.obtenerPerfil(this.perfilId.toString())
+      .subscribe( resp => {
+        resp.success ? this.perfil = resp.data : this.router.navigate(['/panel']);
+      })
   }
 
   getParams() {
@@ -74,21 +70,19 @@ export default class AccesosComponent {
           filter(params => Object.keys(params).length > 0),
           distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
         )
-        .subscribe( params => {
-          console.log(('params'));
-          
-          // this.obtenerMesasService()
+        .subscribe( params => {          
+          this.obtenerAccesosServices()
       })
     }
 
   obtenerAccesosServices(){
     this.loading = true
-    // this.accesoService.ListarAccesos({...this.pagination, perfilId: this.perfil.perfilId})
-    //   .subscribe( resp => {
-    //     this.loading = false
-    //     this.accesos.set(resp.data)
-    //     this.pagination.total = resp.info?.total
-    //   })
+    this.accesoService.ListarAccesos({...this.pagination, perfilId: this.perfilId.toString()})
+      .subscribe( resp => {
+        this.loading = false
+        this.accesos.set(resp.data)
+        this.pagination.total = resp.info?.total
+      })
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
@@ -110,5 +104,9 @@ export default class AccesosComponent {
     
     this.pagination = {...filtros, currentPage: params.pageIndex, pageSize: params.pageSize }
     this.obtenerAccesosServices()
+  }
+
+  onBack(){
+    this.router.navigate(['perfiles'])
   }
 }
