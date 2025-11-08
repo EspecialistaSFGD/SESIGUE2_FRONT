@@ -272,7 +272,7 @@ export class PedidoDetalleComponent {
       nzOkText: 'Eliminar',
       nzOkDanger: true,
       nzOnOk: () => {
-        this.acuerdosService.eliminarAcuerdo(acuerdo);
+        this.acuerdosService.eliminarAcuerdo(acuerdo,true);
       },
     });
   }

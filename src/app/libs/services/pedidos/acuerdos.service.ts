@@ -363,7 +363,7 @@ export class AcuerdosService {
         });
     }
 
-    eliminarAcuerdo(acuerdo: AcuerdoPedidoModel): Promise<ResponseModel> {
+    eliminarAcuerdo(acuerdo: AcuerdoPedidoModel, desdePedidos: boolean = false): Promise<ResponseModel> {
         if (acuerdo.acuerdoId === null || acuerdo.acuerdoId === undefined) {
             return new Promise((resolve, reject) => {
                 this.msg.error('No se ha seleccionado un acuerdo para eliminar');
@@ -373,14 +373,16 @@ export class AcuerdosService {
 
         const ots: AcuerdoPedidoModel = {} as AcuerdoPedidoModel;
         ots.acuerdoId = acuerdo.acuerdoId;
-        ots.accesoId = this.authService.getCodigoUsuario();
+        // ots.accesoId = this.authService.getCodigoUsuario();
+        ots.accesoId = Number(localStorage.getItem('codigoUsuario')) || 0
 
+        const tipoEspacio = desdePedidos ? 'pedidos' : null
         return new Promise((resolve, reject) => {
 
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/EliminarAcuerdo`, ots).subscribe({
                 next: (data) => {
                     this.msg.success(data.message);
-                    this.listarAcuerdosPorPedido(acuerdo.prioridadId);
+                    this.listarAcuerdosPorPedido(acuerdo.prioridadId, 1, 10, 'acuerdoID', 'descend', tipoEspacio);
                     resolve(data);
                 },
                 error: (e) => {
