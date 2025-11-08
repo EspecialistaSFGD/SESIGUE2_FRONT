@@ -227,7 +227,7 @@ export class AcuerdosService {
         });
     }
 
-    agregarAcuerdo(acuerdo: AcuerdoPedidoModel): Promise<ResponseModel> {
+    agregarAcuerdo(acuerdo: AcuerdoPedidoModel, desdePedidos: boolean = false): Promise<ResponseModel> {
         const ots: AcuerdoPedidoModel = {} as AcuerdoPedidoModel;
         ots.prioridadId = acuerdo.prioridadId;
         if (acuerdo.acuerdoId) ots.acuerdoId = acuerdo.acuerdoId;
@@ -250,11 +250,13 @@ export class AcuerdosService {
             }
         }
 
+        const tipoEspacio = desdePedidos ? 'pedidos' : null
+
         return new Promise((resolve, reject) => {
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/RegistrarAcuerdo`, ots).subscribe({
                 next: (data) => {
                     this.msg.success(data.message);
-                    this.listarAcuerdosPorPedido(acuerdo.prioridadId);
+                    this.listarAcuerdosPorPedido(acuerdo.prioridadId, 1, 10, 'acuerdoID', 'descend',tipoEspacio);
                     resolve(data);
                 },
                 error: (e) => {
@@ -318,7 +320,7 @@ export class AcuerdosService {
         });
     }
 
-    convertirAcuerdo(acuerdo: AcuerdoPedidoModel): Promise<ResponseModel> {
+    convertirAcuerdo(acuerdo: AcuerdoPedidoModel, desdePedidos: boolean = false): Promise<ResponseModel> {
         if (acuerdo.acuerdoModificado === null || acuerdo.acuerdoModificado === undefined) {
             return new Promise((resolve, reject) => {
                 this.msg.error('No se ha ingresado un acuerdo para convertir');
@@ -345,11 +347,12 @@ export class AcuerdosService {
         if (acuerdo.pre_acuerdo) ots.pre_acuerdo = acuerdo.pre_acuerdo;
         if (acuerdo.eventoId) ots.eventoId = acuerdo.eventoId;     
 
+        const tipoEspacio = desdePedidos ? 'pedidos' : null
         return new Promise((resolve, reject) => {
             this.http.post<ResponseModel>(`${environment.api}/Acuerdo/ConvertirPreAcuerdo`, ots).subscribe({
                 next: (data) => {
                     this.msg.success(data.message);
-                    this.listarAcuerdosPorPedido(acuerdo.prioridadId);
+                    this.listarAcuerdosPorPedido(acuerdo.prioridadId, 1, 10, 'acuerdoID', 'descend', tipoEspacio);
                     resolve(data);
                 },
                 error: (e) => {

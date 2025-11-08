@@ -237,11 +237,11 @@ export class PedidoDetalleComponent {
           type: 'primary',
           onClick: (componentInstance) => {
             if (accion === 'CONVERT') {
-              return this.acuerdosService.convertirAcuerdo(componentInstance!.acuerdoForm.value).then(() => {
+              return this.acuerdosService.convertirAcuerdo(componentInstance!.acuerdoForm.value, true).then(() => {
                 this.modal.closeAll();
               });
             } else {
-              return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value).then(() => {
+              return this.acuerdosService.agregarAcuerdo(componentInstance!.acuerdoForm.value, true).then(() => {
                 this.modal.closeAll();
               });
             }
