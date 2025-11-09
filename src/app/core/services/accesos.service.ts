@@ -3,25 +3,25 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
 import { Pagination } from '@core/interfaces';
-import { PerfilesResponses, PerfilResponses } from '@core/interfaces/perfil.interface';
 import { Observable } from 'rxjs';
+import { AccesoResponses, AccesosResponses } from '@core/interfaces/acceso.interface';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PerfilesService {
-  private urlLugar: string = `${environment.api}/Perfil`
+export class AccesosService {
+  private urlSector: string = `${environment.api}/Acceso`
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  listarPerfiles(pagination: Pagination): Observable<PerfilesResponses> {
+  ListarAccesos(pagination: Pagination): Observable<AccesosResponses> {
     const params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<PerfilesResponses>(`${this.urlLugar}/ListarPerfiles`, { headers, params })
+    return this.http.get<AccesosResponses>(`${this.urlSector}/ListarAccesos`, { headers, params })
   }
 
-  obtenerPerfil(perfilId: string): Observable<PerfilResponses> {
+  obtenerAcceso(accesoId: string): Observable<AccesoResponses> {
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.get<PerfilResponses>(`${this.urlLugar}/ObtenerPerfil/${perfilId}`, { headers })
+    return this.http.get<AccesoResponses>(`${this.urlSector}/ObtenerAcceso/${accesoId}`, { headers })
   }
 }

@@ -705,7 +705,7 @@ export class FormularioAtencionComponent {
     const temaControl = this.formControlValidate(this.formAtencion.get('tema')!)
 
     return tipoControl && fechaAtencionControl && modalidadControl && lugarIdControl && tipoEntidadIdControl &&
-      departamentoControl && provinciaControl && entidadIdControl && autoridadControl && espacioIdControl &&
+      departamentoControl && entidadIdControl && autoridadControl && espacioIdControl &&
       clasificacionControl && temaControl
   }
 

@@ -1,0 +1,13 @@
+<form [formGroup]="formBoton" autocomplete="off" class="grid grid-cols-1 gap-4">
+    <div class="flex flex-col">
+        <label for="botonId">Botones</label>
+        <p-dropdown 
+        [options]="botones()"
+        formControlName="botonId"
+        optionLabel="nombre"
+        optionValue="botonId"
+        [showClear]="true" 
+        placeholder="Seleccionar boton"/>
+        <div class="w-full text-danger" *ngIf="alertMessageError('botonId')">{{msgErrorControl('botonId','Boton')}}</div>
+    </div>
+</form>
