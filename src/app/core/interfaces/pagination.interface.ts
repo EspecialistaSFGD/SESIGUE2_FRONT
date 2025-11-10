@@ -63,6 +63,7 @@ export interface Pagination {
   telefono?: string,
   sexo?: string,
   nombre?: string,
+  modulo?: string,
   esSector?: string
   origenId?: string,
   recursoId?: string,
