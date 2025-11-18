@@ -386,7 +386,7 @@ export class ReportesService extends BaseHttpService {
     }
   }
 
-  descargarReporteAcuerdos(tipoReporte: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend', grupos: number[] | null = null, tipoEspacio: string | null = null, espacios: number[] | null = null, ubigeo: string | null = null, cui: string | null = null, estados: number[] | null = null, clasificaciones: number[] | null = null, tipo: number | null = null, preAcuerdo: number | null = null): Promise<ResponseModel> {
+  descargarReporteAcuerdos(tipoReporte: ReporteType, pageIndex: number = 1, pageSize: number = 0, sortField: string = 'PrioridadId', sortOrder: string = 'descend', grupos: number[] | null = null, tipoEspacio: string | null = null, espacios: number[] | null = null, ubigeo: string | null = null, cui: string | null = null, estados: number[] | null = null, clasificaciones: number[] | null = null, tipo: number | null = null, preAcuerdo: number | null = null, tipoModulo: string | null = null): Promise<ResponseModel> {
     let params = new HttpParams()
       .append('piCurrentPage', pageIndex)
       .append('piPageSize', pageSize)
@@ -426,7 +426,6 @@ export class ReportesService extends BaseHttpService {
     this.#reportesResult.update((state) => ({ ...state, isLoading: true }));
 
     let nombreReporte: string = '';
-
     switch (tipoReporte) {
       case 'PEDIDO':
         nombreReporte = 'PrioridadAcuerdo';
@@ -439,6 +438,8 @@ export class ReportesService extends BaseHttpService {
         nombreReporte = 'HIto';
         break;
     }
+
+    params = tipoModulo ? params.append('modulo', tipoModulo) : params
 
     return new Promise((resolve, reject) => {
 

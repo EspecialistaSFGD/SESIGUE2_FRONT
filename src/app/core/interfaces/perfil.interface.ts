@@ -4,9 +4,17 @@ export interface PerfilesResponses extends DataResponses {
   data: PerfilResponse[]
 }
 
+export interface PerfilResponses extends DataResponses {
+  data: PerfilResponse
+}
+
 export interface PerfilResponse {
-  codigoPerfil: string,
-  descripcionPerfil: string,
-  codigoNivel: string,
-  codigoSubTipo: string
+  perfilId?: string,
+  nombre: string,
+  descripcion: string,
+  nivelId: string,
+  nivel?: string,
+  subTipoId: string,
+  subTipo?: string,
+  subTipoCodigo?: string,
 }

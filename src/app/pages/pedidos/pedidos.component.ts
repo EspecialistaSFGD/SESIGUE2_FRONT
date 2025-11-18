@@ -941,13 +941,14 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
     this.loading = true
     const esPreacuerdo = tipo === 'ACUERDO' && preAcuerdo ? 1 : 0
+    const modulo = tipo === 'ACUERDO' ? 'pedidos' : null
 
     let sortField = 'prioridadID'
     switch (tipo) {
       case 'ACUERDO': sortField = 'acuerdoId'; break;
       case 'HITO': sortField = 'hitoId'; break;
     }
-    this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, 0, sortField, this.sortOrder, sectores, tipoEspacio, espacios, ubigeo, cui, null, null, null, esPreacuerdo)
+    this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, 0, sortField, this.sortOrder, sectores, tipoEspacio, espacios, ubigeo, cui, null, null, null, esPreacuerdo, modulo)
       .then((res) => {
         if (res.success == true) {
           this.generarExcel(res.data.archivo, res.data.nombreArchivo);

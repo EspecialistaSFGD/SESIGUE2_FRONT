@@ -97,10 +97,7 @@
         }
 
           @if(atencionActions.new){
-            <div class="flex items-center gap-1 py-1 px-3 rounded border text-white" [ngClass]="!this.permisosPCM && !this.evento() ? 'border-slate-200 bg-slate-200' : 'cursor-pointer border-sky-700 bg-sky-700 hover:bg-sky-800 hover:border-sky-700'"  (click)="!this.permisosPCM && !this.evento() ? null : crearAsistenciaTecnica()">
-              <i class="pi pi-plus" style="font-size: 0.75rem"></i>
-              <span class="hidden md:flex">Nueva atención</span>
-            </div>
+            <app-boton  [icono]="'plus'" [texto]="'Nueva Atención'" [disabled]="!this.permisosPCM && !this.evento()" (click)="!this.permisosPCM && !this.evento() ? null : crearAsistenciaTecnica()"/>
           }
         </div>
       </div>

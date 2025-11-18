@@ -118,12 +118,10 @@ export class FiltrosAtencionComponent {
   }
 
   obtenerServiciosEventos() {
-    const vigenteId = this.permisosPCM ? [2,3,4] : [2,3]
-    const tipoEvento = this.permisosPCM ? [8,9] : [8]
-    this.eventosService.getAllEventos(tipoEvento, 1, vigenteId, {...this.pagination, columnSort: 'eventoId', pageSize: 100, typeSort: 'DESC'})
-      .subscribe(resp => {
-        this.eventos.set(resp.data)
-      })
+    const pagination: Pagination = {columnSort: 'eventoId', typeSort: 'DESC', pageSize: 100, currentPage: 1 }
+    pagination.vigentes = this.permisosPCM ? ['2','3','4'] : ['2','3']
+    pagination.tipoEventosId = this.permisosPCM ? ['2','3','8','9'] : ['2','3','8']
+    this.eventosService.ListarEventos(pagination).subscribe(resp => this.eventos.set(resp.data))
   }
 
   obtenerServicioSectores() {
@@ -300,9 +298,6 @@ export class FiltrosAtencionComponent {
     // const params = deleteKeysToObject(formValue, paramsInvalid)
     // const pagination = deleteKeyNullToObject(params)
     // localStorage.setItem('filtrosAtenciones', JSON.stringify(formValue))
-
-    console.log(fechaInicio)
-    console.log(fechaFin)
 
     this.filters.emit({ ...this.formFilters.value, fechaInicio, fechaFin, tipos })
   }

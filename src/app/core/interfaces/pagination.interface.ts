@@ -15,6 +15,7 @@ export interface Pagination {
   codigo?: string,
   fechaInicio?: string,
   fechaFin?: string,
+  perfilId?: string,
   perfil?: number,
   tipoPerfil?: string,
   tipo?: string,
@@ -52,6 +53,7 @@ export interface Pagination {
   intervencionEspacioId?: string,
   intervencionTareaId?: string,
   faseId?: string,
+  save?: boolean,
   etapaId?: string
   alcaldeId?: string,
   asistenteId?: string,
@@ -61,6 +63,7 @@ export interface Pagination {
   telefono?: string,
   sexo?: string,
   nombre?: string,
+  modulo?: string,
   esSector?: string
   origenId?: string,
   recursoId?: string,
@@ -68,6 +71,7 @@ export interface Pagination {
   tipoIntervencion?: string,
   tipoEventoId?: string,
   entidadUbigeoId?: string  
+  accesoId?: string  
 }
 
 export interface PaginationPanel {

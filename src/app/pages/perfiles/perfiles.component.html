@@ -1,0 +1,44 @@
+<app-page-header [title]="'Perfiles'" backUrl="panel" />
+<div class="grid grid-cols-1">
+    <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="Headereventos" nzShowSizeChanger nzSize="small"
+    [nzData]="perfiles()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+        <thead>
+        <tr>
+            <th nzWidth="140px">Perfil</th>
+            <th nzWidth="90px" nzAlign="center">SubTipo</th>
+            <th nzWidth="90px" nzAlign="center" >Subtipo código</th>
+            <th nzWidth="100px" nzAlign="center">Nivel</th>
+            <th nzRight nzWidth="100px" nzAlign="center"></th>
+        </tr>
+        </thead>        
+        <tbody>
+            @for (perfil of perfiles(); track $index) {
+                 <tr>
+                     <td><span [nz-tooltip]="perfil.descripcion">{{perfil.nombre}}</span></td>
+                     <td nzAlign="center">{{perfil.subTipo}}</td>
+                     <td nzAlign="center">{{perfil.subTipoCodigo}}</td>
+                     <td nzAlign="center">{{perfil.nivel}}</td>
+                     <td nzAlign="center">
+                        <div class="flex justify-center">
+                            <a [routerLink]="['/accesos']" [queryParams]="{ perfil: perfil.perfilId }" class="py-1 px-2 text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
+                                <i class="pi pi-eye" style="font-size: .85rem;"></i>
+                            </a>
+                        </div>
+                     </td>
+                 </tr>
+            }
+        </tbody>
+    </nz-table>
+
+    <ng-template #Headereventos>
+        <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+        <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+        <div class="flex gap-2">
+            <!-- <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true"/> -->
+
+            <!-- <app-boton [icono]="'plus'" tooltip="Agregar nuevo perfil" [texto]="'Nuevo perfil'"/> -->
+        </div>
+        </div>
+    </ng-template>
+</div>

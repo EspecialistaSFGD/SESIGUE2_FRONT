@@ -11,7 +11,7 @@
             <input type="text" class="form-control" id="nombre" placeholder="nombre aqui" formControlName="nombre" (keyup)="changeControl($event,'nombre')"/>
         </div>
 
-        <div *ngIf="esAcuerdo" class="flex flex-col">
+        <div *ngIf="esAcuerdo || permisosPCM" class="flex flex-col">
             <label>Sectores</label>
             <p-dropdown 
             [options]="sectores()"

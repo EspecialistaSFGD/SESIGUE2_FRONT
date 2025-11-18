@@ -117,7 +117,7 @@ export class FormularioIntervencionTareaComponent {
   }
 
   obtenerIntervencionFaseService(){
-    this.intervencionFaseService.ListarIntervencionFases(this.pagination).subscribe( resp => this.intervencionFases.set(resp.data.filter( item => item.tipoIntervencion == this.intervencionEspacio().tipoIntervencion && item.intervencionFaseId! >= this.intervencionEspacio().inicioIntervencionFaseId! )))
+    this.intervencionFaseService.ListarIntervencionFases(this.pagination).subscribe( resp => this.intervencionFases.set(resp.data.filter( item => item.tipoIntervencion == this.intervencionEspacio().tipoIntervencion )))
   }
 
   alertMessageError(control: string) {
@@ -201,7 +201,7 @@ export class FormularioIntervencionTareaComponent {
 
   obtenerIntervencionEtapaService(){
     const faseId = this.formIntervencionTarea.get('intervencionFaseId')?.value
-    this.intervencionEtapaService.ListarIntervencionEtapas({...this.pagination, faseId}).subscribe( resp => this.intervencionEtapas.set(resp.data.filter( item => item.intervencionEtapaId! >= this.intervencionEspacio().inicioIntervencionEtapaId! )))
+    this.intervencionEtapaService.ListarIntervencionEtapas({...this.pagination, faseId}).subscribe( resp => this.intervencionEtapas.set(resp.data))
   }
 
   obtenerIntervencionHito(){
@@ -218,6 +218,6 @@ export class FormularioIntervencionTareaComponent {
 
   obtenerIntervencionHitoService(){
     const etapaId = this.formIntervencionTarea.get('intervencionEtapaId')?.value    
-    this.intervencionHitoService.ListarIntervencionHitos({...this.pagination, etapaId }).subscribe( resp => this.intervencionHitos.set(resp.data.filter( item => item.intervencionHitoId! >= this.intervencionEspacio().inicioIntervencionHitoId! )))
+    this.intervencionHitoService.ListarIntervencionHitos({...this.pagination, etapaId }).subscribe( resp => this.intervencionHitos.set(resp.data))
   }
 }
