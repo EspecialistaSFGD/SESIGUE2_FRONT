@@ -13,9 +13,9 @@
 	[nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
 		<thead>
 			<tr>
-				<th nzAlign="center" nzWidth="80px">Sector</th>
+				<th nzAlign="center" nzWidth="80px" nzColumnKey="S.grupoID" [nzSortFn]="true">Sector</th>
 				<th nzAlign="center" nzWidth="120px">Ubicación</th>
-				<th nzAlign="center" nzWidth="120px" nzColumnKey="e.entidad" [nzSortFn]="true">Entidad</th>
+				<th nzAlign="center" nzWidth="120px" nzColumnKey="E.entidad" [nzSortFn]="true">Entidad</th>
 				<!-- <th nzAlign="center" nzWidth="100px">Tipo</th> -->
 				<th nzAlign="center" nzWidth="100px">Subtipo</th>
 				<th nzAlign="center" nzWidth="80px">Codigo</th>

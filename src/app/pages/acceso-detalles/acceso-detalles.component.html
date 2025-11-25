@@ -1,0 +1,45 @@
+<nz-page-header nzBackIcon [nzGhost]="false" (nzBack)="onBack()">
+	<nz-page-header-title>
+		Acceso detalles
+	</nz-page-header-title>
+</nz-page-header>
+
+<app-acceso-detalle *ngIf="accesoId" [acceso]="acceso" />
+
+<div class="grid grid-cols-1">
+  <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="headerPerfil" nzShowSizeChanger nzSize="small"
+    [nzData]="accesoDetalles()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+      <tr>
+        <th nzWidth="100px">Boton</th>
+        <th nzWidth="100px" nzAlign="center">Icono</th>
+        <th nzRight nzWidth="120px" nzAlign="center"></th>
+      </tr>
+    </thead>
+    
+    <tbody>
+        @for(detalle of accesoDetalles(); track $index){
+            <tr>
+                <td>{{detalle.boton}}</td>
+                <td nzAlign="center"><span nz-icon class="text-sky-900" [nzType]="detalle.botonIcono!" nzTheme="outline"></span></td>
+                <td nzAlign="center">
+                    <div class="flex justify-center">
+                        <app-boton [icono]="'trash'" [color]="'red'" [stepColor]="500" [tooltip]="'Eliminar boton'" [link]="true"/>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</nz-table>
+<ng-template #headerPerfil>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+        <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+        <div class="flex gap-2">
+            <!-- <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/> -->
+
+            <!-- <app-boton [icono]="'plus'" tooltip="Agregar boton" [texto]="'Agregar Boton'" (click)="agregarBoton()"/> -->
+        </div>
+    </div>
+</ng-template>
+</div>

@@ -104,6 +104,7 @@ export default class AgendasMesaComponent {
 
         setParamsToObject(params, this.pagination, 'cui')
         setParamsToObject(params, this.pagination, 'ubigeo')
+        setParamsToObject(params, this.pagination, 'sectorId')
 
         this.obtenerIntervencionEspacioService()
       })

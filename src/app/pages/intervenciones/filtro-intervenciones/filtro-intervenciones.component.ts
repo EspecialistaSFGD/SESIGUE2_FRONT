@@ -21,6 +21,8 @@ export class FiltroIntervencionesComponent {
   @Input() esMesa: boolean = false
   @Input() pagination: any = {}
 
+  permisosPCM: boolean = false
+
   @Output() filters = new EventEmitter<Pagination>();
   @Output() visibleDrawer = new EventEmitter()
 
@@ -48,6 +50,10 @@ export class FiltroIntervencionesComponent {
     ubigeo: [null]
   })
 
+  ngOnInit(): void {
+    this.getPermisosPCM()
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     const pagination = { ...this.pagination }
     pagination.sectorId = pagination.sectorId ? Number(pagination.sectorId) : null
@@ -55,6 +61,11 @@ export class FiltroIntervencionesComponent {
     this.obtenerSectoresService()
     this.obtenerDepartamentoService()
     this.setParams()
+  }
+
+  getPermisosPCM(){
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    this.permisosPCM = JSON.parse(permisosStorage) ?? false
   }
 
   setParams(){
@@ -191,9 +202,6 @@ export class FiltroIntervencionesComponent {
     let nameFilter = ''
     if(this.esMesa){ nameFilter = 'filtrosMesaIntervenciones' }
     if(this.esAcuerdo){ nameFilter = 'filtrosEspacioIntervenciones' }
-    console.log(nameFilter);
-    console.log(this.esMesa);
-    console.log(this.esAcuerdo);
     
     saveFilterStorage(pagination,nameFilter,'intervencionEspacioId','DESC')
     this.changeVisibleDrawer()
