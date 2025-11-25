@@ -202,7 +202,7 @@ export class FormularioAtencionComponent {
     const fechaAtencion = !this.create ? new Date(this.atencion.fechaAtencion) : new Date()
     const sector = this.authUser.sector.label
     this.formAtencion.reset({ ...this.atencion, fechaAtencion, sector })
-    
+
     this.disabledControls()
     if(!this.permisosPCM){
       this.entidadesStore.listarEntidades(0, 1, Number(this.authUser.sector.value));
@@ -227,7 +227,23 @@ export class FormularioAtencionComponent {
       setTimeout(() => this.verificarCuiClasificacion());
       // setTimeout(() => this.changeTipoInversion(), 100);
     }
+
     if(!this.create){
+      if(this.atencion.tipoEntidadSlug?.toUpperCase() === 'MM' || this.atencion.tipoEntidadSlug?.toUpperCase() === 'MR'){
+        this.obtenerMancomunidadesService(this.atencion.tipoEntidadSlug!)
+        const controlDepartamento = this.formAtencion.get('departamentoNombre')
+        const controlProvincia = this.formAtencion.get('provinciaNombre')
+        const controlDistrito = this.formAtencion.get('distritoNombre')
+               
+        this.esMancomunidad =  true
+        controlDepartamento?.setValue(this.atencion.departamento)
+        controlDepartamento?.disable()
+        controlProvincia?.setValue(this.atencion.provincia)
+        controlProvincia?.disable()
+        controlDistrito?.setValue(this.atencion.distrito)
+        controlDistrito?.disable()
+      }
+
       this.formUbigeoAtencion()
       this.setCongresistasParams()
       this.setParticipantesParams()
@@ -714,8 +730,10 @@ export class FormularioAtencionComponent {
     const clasificacionControl = this.formControlValidate(this.formAtencion.get('clasificacion')!)
     const temaControl = this.formControlValidate(this.formAtencion.get('tema')!)
 
+
+
     return tipoControl && fechaAtencionControl && modalidadControl && lugarIdControl && tipoEntidadIdControl &&
-      departamentoControl && entidadIdControl && autoridadControl && espacioIdControl &&
+      entidadIdControl && autoridadControl && espacioIdControl &&
       clasificacionControl && temaControl
   }
 
