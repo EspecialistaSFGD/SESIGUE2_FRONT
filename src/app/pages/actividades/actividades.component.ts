@@ -3,11 +3,14 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { setParamsToObject } from '@core/helpers';
 import { ActividadResponse, Pagination } from '@core/interfaces';
+import { ActividadesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { distinctUntilChanged, filter } from 'rxjs';
+import { FormularioActividadComponent } from './formulario-actividad/formulario-actividad.component';
 
 @Component({
   selector: 'app-actividades',
@@ -19,6 +22,7 @@ import { distinctUntilChanged, filter } from 'rxjs';
 export class ActividadesComponent {
 
   actividades = signal<ActividadResponse[]>([]);
+  actividad = signal<ActividadResponse>({} as ActividadResponse);
 
   loading: boolean = false;
   openFilters: boolean = false;
@@ -31,8 +35,10 @@ export class ActividadesComponent {
     total: 0
   };
 
+  private actividadesService = inject(ActividadesService);
   private router = inject(Router);
   private route = inject(ActivatedRoute)
+  private modal = inject(NzModalService)
 
   ngOnInit(): void {
     this.getParams()
@@ -46,7 +52,7 @@ export class ActividadesComponent {
         distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
       )
       .subscribe( params => {   
-        let campo = params['campo'] ?? 'mesaId'
+        let campo = params['campo'] ?? 'actividadId'
 
         this.pagination.columnSort = campo
         this.pagination.currentPage = params['pagina']
@@ -65,7 +71,11 @@ export class ActividadesComponent {
   }
 
   obtenerActividadesService(){
-
+    this.actividadesService.ListarActividades(this.pagination)
+    .subscribe(resp => {
+      this.actividades.set(resp.data);
+      this.pagination.total = resp.info?.total;
+    })
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
@@ -99,6 +109,33 @@ export class ActividadesComponent {
 
 
   crearActividad(){
-    
+    this.actividadFormModal(true)
+  }
+
+  actividadFormModal(create: boolean): void{
+      const action = `${create ? 'Crear' : 'Actualizar' } actividad`
+      this.modal.create<FormularioActividadComponent>({
+        nzTitle: `${action.toUpperCase()}`,
+        nzWidth: '75%',
+        nzMaskClosable: false,
+        nzContent: FormularioActividadComponent,
+        nzData: {
+          create,
+          actividad: this.actividad
+        },
+        nzFooter: [
+          {
+            label: 'Cancelar',
+            type: 'default',
+            onClick: () => this.modal.closeAll(),
+          },
+          {
+            label: action,
+            type: 'primary',
+            onClick: (componentResponse) => {
+            }
+          },
+        ],
+      });
   }
 }

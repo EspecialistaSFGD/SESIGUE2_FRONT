@@ -9,7 +9,7 @@ import { catchError, map, Observable, of, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class ActividadesService {
-  private urlActividades: string = `${environment.api}/Actividades`
+  private urlActividades: string = `${environment.api}/Actividad`
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 

@@ -1,0 +1,40 @@
+<form [formGroup]="formActividad" class="grid grid-cols-1 md:grid-cols-3 gap-3" autocomplete="off">
+    <div class="flex flex-col">
+        <label for="nombre">Departamento</label>
+        <p-dropdown 
+            [options]="departamentos()"
+            formControlName="departamento"
+            optionLabel="departamento"
+            optionValue="departamentoId"
+            [showClear]="true" 
+            placeholder="Seleccionar departamento"
+            (onChange)="changeDepartamento()"/>
+        <div class="w-full text-danger" *ngIf="alertMessageError('departamento')">{{msgErrorControl('departamento','Departamento')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="nombre">Provincia</label>
+        <p-dropdown 
+        [options]="provincias()"
+        formControlName="provincia"
+        optionLabel="provincia"
+        optionValue="provinciaId"
+        [showClear]="true" 
+        placeholder="Seleccionar provincia"
+        (onChange)="changeProvincia()"/>
+        <div class="w-full text-danger" *ngIf="alertMessageError('provincia')">{{msgErrorControl('provincia','Provincia')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="nombre">Distrito</label>
+        <p-dropdown 
+        [options]="distritos()"
+        formControlName="distrito"
+        optionLabel="distrito"
+        optionValue="distritoId"
+        [showClear]="true" 
+        placeholder="Seleccionar distrito"
+        (onChange)="changeDistrito()"/>
+        <div class="w-full text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}</div>
+    </div>
+</form>
