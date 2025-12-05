@@ -1,0 +1,37 @@
+<app-page-header title="Actividades" backUrl="panel" />
+<div class="grid grid-cols-1">
+  <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
+    [nzData]="actividades()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+      <tr>
+        <th nzWidth="80px" nzAlign="center">Destacado</th>
+        <th nzRight nzWidth="120px" nzAlign="center"></th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      @for(actividad of actividades(); track $index){
+        <tr>
+          <td nzAlign="center"></td>
+          <td nzRight nzAlign="center">
+              <div class="flex justify-center">
+                
+              </div>
+          </td>
+        </tr>
+        }
+    </tbody>
+  </nz-table>
+  
+  <ng-template #HeaderMesas>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+      <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+      <div class="flex gap-2">
+        <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+
+        <app-boton [icono]="'plus'" [texto]="'Nueva Actividad'" (click)="crearActividad()"/>
+      </div>
+    </div>
+  </ng-template>
+</div>
