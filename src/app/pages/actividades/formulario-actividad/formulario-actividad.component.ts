@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { ActividadResponse, DataModalActividad, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { UbigeosService } from '@core/services';
+import { ActividadResponse, DataModalActividad, Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { EntidadesService, UbigeosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
@@ -22,11 +22,12 @@ export class FormularioActividadComponent {
   actividad = signal<ActividadResponse>(this.dataActividad.actividad)
 
   departamentos = signal<UbigeoDepartmentResponse[]>([])
-  provincias = signal<UbigeoProvinciaResponse[][]>([])
-  distritos = signal<UbigeoDistritoResponse[][]>([])
+  provincias = signal<UbigeoProvinciaResponse[]>([])
+  distritos = signal<UbigeoDistritoResponse[]>([])
 
   private fb = inject(FormBuilder)
   private ubigeosService = inject(UbigeosService)
+  private entidadesService = inject(EntidadesService)
 
   formActividad: FormGroup = this.fb.group({
     entidadId: ['', Validators.required],
@@ -59,14 +60,73 @@ export class FormularioActividadComponent {
   }
 
   changeDepartamento(){
-    const ControlDepartamento = this.formActividad.get('departamento')
+    const controlEntidadId = this.formActividad.get('entidadId')
+    const controlDepartamento = this.formActividad.get('departamento')
+    const controlProvincia = this.formActividad.get('provincia')
+    const controlDistrito = this.formActividad.get('distrito')
+    const departamentoValue = controlDepartamento?.value
+
+     if(departamentoValue){
+      const ubigeo = `${departamentoValue}0000`
+      this.obtenerProvinciaService(departamentoValue)
+      this.obtenerEntidadUbigeoService(ubigeo)
+      controlProvincia?.enable()
+    } else {
+      controlProvincia?.disable()
+      controlProvincia?.reset()
+      controlEntidadId?.reset()
+    }
+
+    controlDistrito?.disable()
+    controlDistrito?.reset()
+  }
+
+  obtenerProvinciaService(departamento: string){
+    this.ubigeosService.getProvinces(departamento).subscribe( resp => this.provincias.set(resp.data))
   }
 
   changeProvincia(){
-    const ControlProvincia = this.formActividad.get('provincia')
+    const controlDepartamento = this.formActividad.get('departamento')
+    const controlProvincia = this.formActividad.get('provincia')
+    const controlDistrito = this.formActividad.get('distrito')
+    const departamentoValue = controlDepartamento?.value
+    const provinciaValue = controlProvincia?.value
+   
+    let ubigeo = `${departamentoValue}0000`
+    if(provinciaValue){
+      ubigeo = provinciaValue
+      controlDistrito?.enable()
+      this.obtenerDistritosService(ubigeo)
+    } else {
+      controlDistrito?.disable()
+      controlDistrito?.reset()
+    }
+    this.obtenerEntidadUbigeoService(ubigeo)
+  }
+
+  obtenerDistritosService(provincia: string){
+    this.ubigeosService.getDistricts(provincia) .subscribe( resp => this.distritos.set(resp.data))
   }
 
   changeDistrito(){
-    const ControlDistrito = this.formActividad.get('distrito')
+    const controlProvincia = this.formActividad.get('provincia')
+    const controlDistrito = this.formActividad.get('distrito')
+    const provinciaValue = controlProvincia?.value
+    const distritoValue = controlDistrito?.value
+
+    const ubigeo = distritoValue ? distritoValue : provinciaValue
+    this.obtenerEntidadUbigeoService(ubigeo)
+  }
+
+  obtenerEntidadUbigeoService(ubigeo: string){
+    const controlEntidadId = this.formActividad.get('entidadId')
+    const pagination: Pagination = { ubigeo, columnSort: 'entidadId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
+    this.entidadesService.listarEntidades(pagination)
+      .subscribe( resp => {
+        const entidad = resp.data[0]
+        console.log(entidad);
+        
+        controlEntidadId?.setValue(entidad.entidadId || '')
+      })
   }
 }
