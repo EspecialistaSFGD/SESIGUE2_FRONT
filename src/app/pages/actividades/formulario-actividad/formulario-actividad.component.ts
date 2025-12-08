@@ -30,14 +30,22 @@ export class FormularioActividadComponent {
   private entidadesService = inject(EntidadesService)
 
   formActividad: FormGroup = this.fb.group({
-    entidadId: ['', Validators.required],
     departamento: [null, Validators.required],
     provincia: [{ value: null, disabled: true }],
     distrito: [{ value: null, disabled: true }],
+    entidadId: ['', Validators.required],
+    entidad: [{ value: null, disabled: true }],
     direccion: ['', Validators.required],
     latitud: ['', Validators.required],
     longitud: ['', Validators.required],
     distancia: ['', Validators.required],
+    horaInicio: ['', Validators.required],
+    horaFin: ['', Validators.required],
+    destacado: ['', Validators.required],
+    participante: ['', Validators.required],
+    actividad: ['', Validators.required],
+    descripcion: ['', Validators.required],
+    comentarios: ['', Validators.required],
   })
 
   ngOnInit(): void {
@@ -120,13 +128,13 @@ export class FormularioActividadComponent {
 
   obtenerEntidadUbigeoService(ubigeo: string){
     const controlEntidadId = this.formActividad.get('entidadId')
-    const pagination: Pagination = { ubigeo, columnSort: 'entidadId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
+    const controlEntidad = this.formActividad.get('entidad')
+    const pagination: Pagination = { ubigeo, tipo: '2', columnSort: 'entidadId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
     this.entidadesService.listarEntidades(pagination)
       .subscribe( resp => {
         const entidad = resp.data[0]
-        console.log(entidad);
-        
-        controlEntidadId?.setValue(entidad.entidadId || '')
+        controlEntidadId?.setValue(entidad.entidadId || null)
+        controlEntidad?.setValue(entidad.nombre || null)
       })
   }
 }

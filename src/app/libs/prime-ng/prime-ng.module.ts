@@ -13,6 +13,7 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { MenubarModule } from 'primeng/menubar';
 import { ToastModule } from 'primeng/toast';
 import { MessageModule } from 'primeng/message';
+import { CheckboxModule } from 'primeng/checkbox';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { MessageModule } from 'primeng/message';
     TooltipModule,
     MultiSelectModule,
     RadioButtonModule,
+    CheckboxModule,
     InputNumberModule,
     StepperModule,
     InputSwitchModule,
@@ -40,6 +42,7 @@ import { MessageModule } from 'primeng/message';
     TooltipModule,
     MultiSelectModule,
     RadioButtonModule,
+    CheckboxModule,
     InputNumberModule,
     StepperModule,
     InputSwitchModule,

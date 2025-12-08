@@ -19,6 +19,7 @@ export interface ActividadResponse {
     latitud: string,
     longitud: string,
     distancia: string,
+    participante: string,
     actividad: string,
     descripcion: string,
     comentarios: string,

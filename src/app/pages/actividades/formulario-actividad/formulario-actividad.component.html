@@ -25,8 +25,7 @@
         <div class="w-full text-danger" *ngIf="alertMessageError('provincia')">{{msgErrorControl('provincia','Provincia')}}</div>
     </div>
 
-    <div class="
-        |flex flex-col">
+    <div class="flex flex-col">
         <label for="nombre">Distrito</label>
         <p-dropdown 
         [options]="distritos()"
@@ -37,5 +36,86 @@
         placeholder="Seleccionar distrito"
         (onChange)="changeDistrito()"/>
         <div class="w-full text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}</div>
+    </div>
+
+    <div class="col-span-3 flex flex-col">
+        <label for="entidad">Entidad</label>
+        <input type="text" class="form-control" id="entidad" formControlName="entidad">
+        <div class="text-danger" *ngIf="alertMessageError('entidad')">{{msgErrorControl('entidad','Entidad')}}</div>
+    </div>
+
+    <div class="col-span-3 flex flex-col">
+        <label for="direccion">Dirección</label>
+        <input type="text" class="form-control" id="direccion" formControlName="direccion">
+        <div class="text-danger" *ngIf="alertMessageError('direccion')">{{msgErrorControl('direccion','Dirección')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="latitud">Latitud</label>
+        <input type="text" class="form-control" id="latitud" formControlName="latitud">
+        <div class="text-danger" *ngIf="alertMessageError('latitud')">{{msgErrorControl('latitud','Latitud')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="longitud">Longitud</label>
+        <input type="text" class="form-control" id="longitud" formControlName="longitud">
+        <div class="text-danger" *ngIf="alertMessageError('longitud')">{{msgErrorControl('longitud','Longitud')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="distancia">Distancia</label>
+        <input type="number" class="form-control" id="distancia" formControlName="distancia">
+        <div class="text-danger" *ngIf="alertMessageError('distancia')">{{msgErrorControl('distancia','Distancia')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="horaInicio">Hora inicio</label>
+        <p-calendar 
+        formControlName="horaInicio"
+        [timeOnly]="true"
+        inputId="calendar-timeonly"/>
+        <div class="text-danger" *ngIf="alertMessageError('horaInicio')">{{msgErrorControl('horaInicio','Hora inicio')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="horaFin">Hora fin</label>
+        <p-calendar 
+        formControlName="horaFin"
+        [timeOnly]="true"
+        inputId="calendar-timeonly2"/>
+        <div class="text-danger" *ngIf="alertMessageError('horaFin')">{{msgErrorControl('horaFin','Hora fin')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="destacado">Destacado</label>
+        <p-checkbox 
+        formControlName="destacado" 
+        value="Destacado" 
+        inputId="destacado" />
+        <div class="text-danger" *ngIf="alertMessageError('destacado')">{{msgErrorControl('destacado','Destacado')}}</div>
+    </div>
+
+    <div class="col-span-3 flex flex-col">
+        <label for="distancia">Participante</label>
+        <input type="text" class="form-control" id="participante" formControlName="participante">
+        <div class="text-danger" *ngIf="alertMessageError('participante')">{{msgErrorControl('participante','Participante')}}</div>
+    </div>
+
+    <div class="col-span-3 flex flex-col">
+        <label for="actividad">Actividad</label>
+        <input type="text" class="form-control" id="actividad" formControlName="actividad">
+        <div class="text-danger" *ngIf="alertMessageError('actividad')">{{msgErrorControl('actividad','Actividad')}}</div>
+    </div>
+
+    <div class="col-span-3 flex flex-col">
+        <label for="descripcion">Descripción</label>
+        <input type="text" class="form-control" id="descripcion" formControlName="descripcion">
+        <div class="text-danger" *ngIf="alertMessageError('descripcion')">{{msgErrorControl('descripcion','Descripción')}}</div>
+    </div>
+
+    <div class="col-span-3 flex flex-col">
+        <label for="comentarios">Comentarios</label>
+        <input type="text" class="form-control" id="comentarios" formControlName="comentarios">
+        <div class="text-danger" *ngIf="alertMessageError('comentarios')">{{msgErrorControl('comentarios','Comentarios')}}</div>
     </div>
 </form>

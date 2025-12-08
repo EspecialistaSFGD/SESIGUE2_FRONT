@@ -116,7 +116,7 @@ export class ActividadesComponent {
       const action = `${create ? 'Crear' : 'Actualizar' } actividad`
       this.modal.create<FormularioActividadComponent>({
         nzTitle: `${action.toUpperCase()}`,
-        nzWidth: '75%',
+        nzWidth: '50%',
         nzMaskClosable: false,
         nzContent: FormularioActividadComponent,
         nzData: {
@@ -133,6 +133,16 @@ export class ActividadesComponent {
             label: action,
             type: 'primary',
             onClick: (componentResponse) => {
+              const formActividad = componentResponse!.formActividad
+           
+              if (formActividad.invalid) {
+                const invalidFields = Object.keys(formActividad.controls).filter(field => formActividad.controls[field].invalid);
+                console.error('Invalid fields:', invalidFields);
+                return formActividad.markAllAsTouched();
+              }
+
+              console.log(formActividad.value);
+              
             }
           },
         ],
