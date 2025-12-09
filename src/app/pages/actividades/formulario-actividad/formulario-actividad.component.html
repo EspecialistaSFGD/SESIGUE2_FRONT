@@ -64,7 +64,10 @@
 
     <div class="flex flex-col">
         <label for="distancia">Distancia</label>
-        <input type="number" class="form-control" id="distancia" formControlName="distancia">
+        <p-inputNumber
+        formControlName="distancia"
+        [showButtons]="true"
+        buttonLayout="horizontal" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" />
         <div class="text-danger" *ngIf="alertMessageError('distancia')">{{msgErrorControl('distancia','Distancia')}}</div>
     </div>
 
@@ -88,10 +91,7 @@
 
     <div class="flex flex-col">
         <label for="destacado">Destacado</label>
-        <p-checkbox 
-        formControlName="destacado" 
-        value="Destacado" 
-        inputId="destacado" />
+        <p-inputSwitch formControlName="destacado" />
         <div class="text-danger" *ngIf="alertMessageError('destacado')">{{msgErrorControl('destacado','Destacado')}}</div>
     </div>
 

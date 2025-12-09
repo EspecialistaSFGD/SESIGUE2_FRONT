@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { setParamsToObject } from '@core/helpers';
+import { getDateFormat, setParamsToObject } from '@core/helpers';
 import { ActividadResponse, Pagination } from '@core/interfaces';
 import { ActividadesService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -11,11 +11,14 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { distinctUntilChanged, filter } from 'rxjs';
 import { FormularioActividadComponent } from './formulario-actividad/formulario-actividad.component';
+import { MessageService } from 'primeng/api';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
 @Component({
   selector: 'app-actividades',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, PageHeaderComponent, BotonComponent],
+  imports: [CommonModule, PrimeNgModule, NgZorroModule, PageHeaderComponent, BotonComponent],
+  providers: [MessageService],
   templateUrl: './actividades.component.html',
   styles: ``
 })
@@ -39,6 +42,7 @@ export class ActividadesComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private modal = inject(NzModalService)
+  private messageService = inject(MessageService)
 
   ngOnInit(): void {
     this.getParams()
@@ -71,7 +75,7 @@ export class ActividadesComponent {
   }
 
   obtenerActividadesService(){
-    this.actividadesService.ListarActividades(this.pagination)
+    this.actividadesService.listarActividades(this.pagination)
     .subscribe(resp => {
       this.actividades.set(resp.data);
       this.pagination.total = resp.info?.total;
@@ -141,11 +145,44 @@ export class ActividadesComponent {
                 return formActividad.markAllAsTouched();
               }
 
-              console.log(formActividad.value);
-              
+              const horaInicioFecha = new Date(formActividad.get('horaInicio')?.value);
+              const horaFinFecha = new Date(formActividad.get('horaFin')?.value);
+
+              const fechaInicio = getDateFormat(horaInicioFecha, 'month');
+              const fechaFin = getDateFormat(horaFinFecha, 'month');
+
+              const horaInicio = `${fechaInicio} ${horaInicioFecha.getHours()}:${horaInicioFecha.getMinutes()}`
+              const horaFin = `${fechaFin} ${horaFinFecha.getHours()}:${horaFinFecha.getMinutes()}`
+             
+              const usuarioId =localStorage.getItem('codigoUsuario')
+              const entidadSectorId =localStorage.getItem('entidad')
+              const actividadBody: ActividadResponse = { ...formActividad.value, horaInicio, horaFin, usuarioId, entidadSectorId }
+
+              if(create){
+                this.guardarActividadService(actividadBody)
+              }
             }
           },
         ],
       });
+  }
+
+  guardarActividadService(actividad: ActividadResponse){
+    this.actividadesService.registrarActividad(actividad)
+    .subscribe(resp => {
+      if(resp.success === false){
+        this.messageService.add({severity:'error', summary: 'Error', detail: resp.message});
+        return;
+      } else {
+        this.messageService.add({severity:'success', summary: 'Success', detail: 'Actividad creada correctamente'});
+        this.obtenerActividadesService()
+        this.modal.closeAll()
+      }
+    })
+  }
+
+
+  subirDesarrollo(actividad: ActividadResponse){
+    
   }
 }

@@ -13,7 +13,7 @@ export class ActividadesService {
   private http = inject(HttpClient)
   private helpersServices = inject(HelpersService);
 
-  ListarActividades(pagination: Pagination) {
+  listarActividades(pagination: Pagination) {
     let params = this.helpersServices.setParams(pagination)
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<ActividadesResponses>(`${this.urlActividades}/ListarActividades`, { headers, params })

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { typeErrorControl } from '@core/helpers';
 import { ActividadResponse, DataModalActividad, Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, UbigeosService } from '@core/services';
+import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
@@ -28,6 +29,7 @@ export class FormularioActividadComponent {
   private fb = inject(FormBuilder)
   private ubigeosService = inject(UbigeosService)
   private entidadesService = inject(EntidadesService)
+  private validatorsService = inject(ValidatorService)
 
   formActividad: FormGroup = this.fb.group({
     departamento: [null, Validators.required],
@@ -36,9 +38,9 @@ export class FormularioActividadComponent {
     entidadId: ['', Validators.required],
     entidad: [{ value: null, disabled: true }],
     direccion: ['', Validators.required],
-    latitud: ['', Validators.required],
-    longitud: ['', Validators.required],
-    distancia: ['', Validators.required],
+    latitud: ['', [Validators.required, Validators.pattern(this.validatorsService.latLongPattern)]],
+    longitud: ['', [Validators.required, Validators.pattern(this.validatorsService.latLongPattern)]],
+    distancia: ['', [Validators.required, Validators.min(1)]],
     horaInicio: ['', Validators.required],
     horaFin: ['', Validators.required],
     destacado: ['', Validators.required],

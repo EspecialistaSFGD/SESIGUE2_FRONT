@@ -5,7 +5,13 @@
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
       <tr>
-        <th nzWidth="80px" nzAlign="center">Destacado</th>
+        <th nzWidth="100px" nzAlign="center">Ubicación</th>
+        <th nzWidth="100px" nzAlign="center">Entidad</th>
+        <th nzWidth="100px" nzAlign="center">Sector</th>
+        <th nzWidth="100px" nzAlign="center">Latitud</th>
+        <th nzWidth="100px" nzAlign="center">Longitud</th>
+        <th nzWidth="100px" nzAlign="center">Distancia</th>
+        <th nzWidth="100px" nzAlign="center">Destacado</th>
         <th nzRight nzWidth="120px" nzAlign="center"></th>
       </tr>
     </thead>
@@ -13,10 +19,20 @@
     <tbody>
       @for(actividad of actividades(); track $index){
         <tr>
-          <td nzAlign="center"></td>
+          <td nzAlign="center">{{actividad.departamento}} {{actividad.provincia ? ' / ' + actividad.provincia : ''}}  {{actividad.distrito ? ' / ' + actividad.distrito : ''}}</td>
+          <td nzAlign="center">{{actividad.entidadTipo}} {{actividad.entidadSlug}}</td>
+          <td nzAlign="center">{{actividad.sector}}</td>
+          <td nzAlign="center">{{actividad.latitud}}</td>
+          <td nzAlign="center">{{actividad.longitud}}</td>
+          <td nzAlign="center">{{actividad.distancia}}</td>
+          <td nzAlign="center">
+            <div [ngClass]="actividad.destacado ? 'text-green-600' : 'text-slate-200'">
+                <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+            </div>
+          </td>
           <td nzRight nzAlign="center">
               <div class="flex justify-center">
-                
+                <app-boton icono="cloud-upload" [link]="true" tooltip="Subir desarrollo" (click)="subirDesarrollo(actividad)"/>
               </div>
           </td>
         </tr>
@@ -35,3 +51,5 @@
     </div>
   </ng-template>
 </div>
+
+<p-toast />
