@@ -204,7 +204,6 @@ export default class MesasComponent {
   reporteIntervencion(){
     this.loadingExport = true;
     this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '1' })
-    this.intervencionEspaciosServices.reporteIntervencionEspacios({ origenId: '1' })
       .subscribe( resp => {
         if(resp.data){
           const data = resp.data;

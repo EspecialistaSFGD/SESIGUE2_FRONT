@@ -1,0 +1,31 @@
+<form [formGroup]="formDesarolloActividad" class="grid grid-cols-1 gap-3" autocomplete="off">
+    <div class="flex flex-col">
+        <label for="descripcion">Descripción</label>
+        <textarea class="form-control" id="descripcion" formControlName="descripcion" rows="2"></textarea>
+        <div class="text-danger" *ngIf="alertMessageError('descripcion')">{{msgErrorControl('descripcion','Descripción')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <div class="max-h-max border border-solid border-gray-200 dark:border-gray-600">
+            <div class="flex justify-between items-center p-2 bg-gray-100 dark:bg-gray-900 ">
+                <h5 class="text-sm font-medium">Adjuntos</h5>
+                <app-boton icono="plus" texto="Nuevo" tooltip="Agregar nuevo adjunto" [outline]="true" (click)="addItemFormArray($event)" />
+            </div>
+            <div class="flex flex-col gap-4 px-4" formArrayName="adjuntos" [ngClass]="{ 'py-4' : adjuntos.length }">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4" *ngFor="let adjunto of adjuntos.controls; let i = index" [formGroupName]="i">
+                    <div class="col-span-4">
+                        <app-boton-upload (files)="changeFiles($event, i)" name="archivo{{i}}" accept=".jpg,.jpeg,.png,.pdf"  />
+                        <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('adjuntos',i,'archivo')"> {{msgErrorControlTwoNivel('adjuntos',i,'archivo','Archivo')}}</div>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <div *ngIf="i > 0" class="flex h-full justify-center">
+                            <i class="pi pi-minus-circle cursor-pointer text-2xl text-slate-600 hover:text-sky-700"(click)="removeItemFormArray(i)"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>

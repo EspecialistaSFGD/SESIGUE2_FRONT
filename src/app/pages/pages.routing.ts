@@ -20,5 +20,6 @@ export const PAGES_ROUTES: Routes = [
   { path: 'perfiles', loadChildren: () => import('./perfiles/perfiles.routes').then(r => r.PERFILES_ROUTES) },
   { path: 'accesos', loadChildren: () => import('./accesos/accesos.routes').then(r => r.ACCESOS_ROUTES) },
   { path: 'acceso_detalles', loadChildren: () => import('./acceso-detalles/acceso-detalles.routes').then(r => r.ACCESO_DETALLES_ROUTES) },
+  { path: 'actividades', loadComponent: () => import('./actividades/actividades.component').then(m => m.ActividadesComponent) },
   { path: '**', redirectTo: 'panel', pathMatch: 'full' },
 ];
