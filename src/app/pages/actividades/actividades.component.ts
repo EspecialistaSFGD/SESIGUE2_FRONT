@@ -13,6 +13,7 @@ import { distinctUntilChanged, filter } from 'rxjs';
 import { FormularioActividadComponent } from './formulario-actividad/formulario-actividad.component';
 import { MessageService } from 'primeng/api';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { FormularioDesarrolloActividadComponent } from './desarrollos-actividad/formulario-desarrollo-actividad/formulario-desarrollo-actividad.component';
 
 @Component({
   selector: 'app-actividades',
@@ -183,6 +184,33 @@ export class ActividadesComponent {
 
 
   subirDesarrollo(actividad: ActividadResponse){
-    
+      this.modal.create<FormularioDesarrolloActividadComponent>({
+        nzTitle: `Agregar Desarrollo`,
+        nzMaskClosable: false,
+        nzContent: FormularioDesarrolloActividadComponent,
+        nzFooter: [
+          {
+            label: 'Cancelar',
+            type: 'default',
+            onClick: () => this.modal.closeAll(),
+          },
+          {
+            label: 'Agregar desarrollo',
+            type: 'primary',
+            onClick: (componentResponse) => {
+              const formDesarolloActividad = componentResponse!.formDesarolloActividad
+           
+              if (formDesarolloActividad.invalid) {
+                const invalidFields = Object.keys(formDesarolloActividad.controls).filter(field => formDesarolloActividad.controls[field].invalid);
+                console.error('Invalid fields:', invalidFields);
+                return formDesarolloActividad.markAllAsTouched();
+              }
+              const usuarioId =localStorage.getItem('codigoUsuario')
+              const desarrolloBody = { ...formDesarolloActividad.value, actividadId: actividad.actividadId, usuarioId }
+              console.log(desarrolloBody);
+            }
+          }
+        ]
+      });
   }
 }
