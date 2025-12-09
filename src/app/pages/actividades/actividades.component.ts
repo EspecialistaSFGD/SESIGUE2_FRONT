@@ -14,6 +14,8 @@ import { MessageService } from 'primeng/api';
 import { distinctUntilChanged, filter } from 'rxjs';
 import { FormularioDesarrolloActividadComponent } from './desarrollos-actividad/formulario-desarrollo-actividad/formulario-desarrollo-actividad.component';
 import { FormularioActividadComponent } from './formulario-actividad/formulario-actividad.component';
+import { UtilesService } from '@libs/shared/services/utiles.service';
+import saveAs from 'file-saver';
 
 @Component({
   selector: 'app-actividades',
@@ -24,10 +26,10 @@ import { FormularioActividadComponent } from './formulario-actividad/formulario-
   styles: ``
 })
 export class ActividadesComponent {
-
   actividades = signal<ActividadResponse[]>([]);
   actividad = signal<ActividadResponse>({} as ActividadResponse);
 
+  loadingExport: boolean = false;
   loading: boolean = false;
   openFilters: boolean = false;
 
@@ -45,6 +47,7 @@ export class ActividadesComponent {
   private modal = inject(NzModalService)
   private messageService = inject(MessageService)
   private adjuntoService = inject(AdjuntosService)
+  private utilesService = inject(UtilesService)
 
   ngOnInit(): void {
     this.getParams()
@@ -113,6 +116,23 @@ export class ActividadesComponent {
     );
   }
 
+  reporteActividad(){
+    this.loadingExport = true;
+    this.actividadesService.reporteActividades(this.pagination)
+      .subscribe( resp => {
+        if(resp.data){
+          const data = resp.data;
+          this.generarExcel(data.archivo, data.nombreArchivo);
+        }
+        this.loadingExport = false
+      })
+  }
+
+  generarExcel(archivo: any, nombreArchivo: string): void {
+    const arrayBuffer = this.utilesService.base64ToArrayBuffer(archivo);
+    const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, nombreArchivo);
+  }
 
   crearActividad(){
     this.actividadFormModal(true)
@@ -235,12 +255,10 @@ export class ActividadesComponent {
   }
 
   guardarAdjuntoService(desarrolloActividad: DesarrolloActividadResponse){
-    console.log('desarrolloActividad', desarrolloActividad)
     for(let adjunto of desarrolloActividad.adjuntos){
       const adjuntoBody: AdjuntoResponse = {...adjunto, nombreTabla: 'actividad', tablaId: desarrolloActividad.actividadId!, usuarioId: desarrolloActividad.usuarioId!}
       this.adjuntoService.registrarAdjunto(adjuntoBody)
       .subscribe(resp => {
-        console.log('resp adjunto', resp)
         // if(resp.success === false){
         //   this.messageService.add({severity:'error', summary: 'Error', detail: resp.message});
         //   return;

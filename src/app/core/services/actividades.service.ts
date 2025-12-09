@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { HelpersService } from './helpers.service';
-import { ActividadesResponses, ActividadResponse, ActividadResponses, Pagination } from '@core/interfaces';
+import { ActividadesResponses, ActividadResponse, ActividadResponses, ExportResponses, Pagination } from '@core/interfaces';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({
@@ -59,4 +59,10 @@ export class ActividadesService {
         catchError(err => of(err))
       )
   }
+  
+  reporteActividades(pagination: Pagination){
+      const params = this.helpersServices.setParams(pagination)
+      const headers = this.helpersServices.getAutorizationToken()
+      return this.http.get<ExportResponses>(`${this.urlActividades}/ReporteActividades`, { headers, params })
+    }
 }
