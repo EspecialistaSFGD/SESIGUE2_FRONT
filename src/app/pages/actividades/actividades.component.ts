@@ -2,18 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { getDateFormat, setParamsToObject } from '@core/helpers';
-import { ActividadResponse, Pagination } from '@core/interfaces';
-import { ActividadesService } from '@core/services';
+import { ActividadResponse, AdjuntoResponse, DesarrolloActividadResponse, Pagination } from '@core/interfaces';
+import { ActividadesService, AdjuntosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { distinctUntilChanged, filter } from 'rxjs';
-import { FormularioActividadComponent } from './formulario-actividad/formulario-actividad.component';
 import { MessageService } from 'primeng/api';
-import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { distinctUntilChanged, filter } from 'rxjs';
 import { FormularioDesarrolloActividadComponent } from './desarrollos-actividad/formulario-desarrollo-actividad/formulario-desarrollo-actividad.component';
+import { FormularioActividadComponent } from './formulario-actividad/formulario-actividad.component';
 
 @Component({
   selector: 'app-actividades',
@@ -44,6 +44,7 @@ export class ActividadesComponent {
   private route = inject(ActivatedRoute)
   private modal = inject(NzModalService)
   private messageService = inject(MessageService)
+  private adjuntoService = inject(AdjuntosService)
 
   ngOnInit(): void {
     this.getParams()
@@ -182,35 +183,72 @@ export class ActividadesComponent {
     })
   }
 
+  actualizarActividadService(actividad: ActividadResponse){
+    this.actividadesService.actualizarActividad(actividad)
+    .subscribe(resp => {
+      if(resp.success === false){
+        this.messageService.add({severity:'error', summary: 'Error', detail: resp.message});
+        return;
+      } else {
+        this.messageService.add({severity:'success', summary: 'Success', detail: 'Actividad actualizada correctamente'});
+        this.obtenerActividadesService()
+        this.modal.closeAll()
+      }
+    })
+  }
+
 
   subirDesarrollo(actividad: ActividadResponse){
-      this.modal.create<FormularioDesarrolloActividadComponent>({
-        nzTitle: `Agregar Desarrollo`,
-        nzMaskClosable: false,
-        nzContent: FormularioDesarrolloActividadComponent,
-        nzFooter: [
-          {
-            label: 'Cancelar',
-            type: 'default',
-            onClick: () => this.modal.closeAll(),
-          },
-          {
-            label: 'Agregar desarrollo',
-            type: 'primary',
-            onClick: (componentResponse) => {
-              const formDesarolloActividad = componentResponse!.formDesarolloActividad
-           
-              if (formDesarolloActividad.invalid) {
-                const invalidFields = Object.keys(formDesarolloActividad.controls).filter(field => formDesarolloActividad.controls[field].invalid);
-                console.error('Invalid fields:', invalidFields);
-                return formDesarolloActividad.markAllAsTouched();
-              }
-              const usuarioId =localStorage.getItem('codigoUsuario')
-              const desarrolloBody = { ...formDesarolloActividad.value, actividadId: actividad.actividadId, usuarioId }
-              console.log(desarrolloBody);
+    this.modal.create<FormularioDesarrolloActividadComponent>({
+      nzTitle: `Agregar Desarrollo`,
+      nzMaskClosable: false,
+      nzContent: FormularioDesarrolloActividadComponent,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          type: 'default',
+          onClick: () => this.modal.closeAll(),
+        },
+        {
+          label: 'Agregar desarrollo',
+          type: 'primary',
+          onClick: (componentResponse) => {
+            const formDesarolloActividad = componentResponse!.formDesarolloActividad
+          
+            if (formDesarolloActividad.invalid) {
+              const invalidFields = Object.keys(formDesarolloActividad.controls).filter(field => formDesarolloActividad.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formDesarolloActividad.markAllAsTouched();
             }
+            const usuarioId =localStorage.getItem('codigoUsuario')!
+            const actividadId = actividad.actividadId
+
+            const desarrolloBody: DesarrolloActividadResponse = { ...formDesarolloActividad.value, usuarioId, actividadId, destacadoPCM: false }
+            this.guardarAdjuntoService(desarrolloBody)
+            
+            const actividadBody: ActividadResponse = { ...actividad, desarrollo: desarrolloBody.descripcion, usuarioId }
+            this.actualizarActividadService(actividadBody)
           }
-        ]
-      });
+        }
+      ]
+    });
+  }
+
+  guardarAdjuntoService(desarrolloActividad: DesarrolloActividadResponse){
+    console.log('desarrolloActividad', desarrolloActividad)
+    for(let adjunto of desarrolloActividad.adjuntos){
+      const adjuntoBody: AdjuntoResponse = {...adjunto, nombreTabla: 'actividad', tablaId: desarrolloActividad.actividadId!, usuarioId: desarrolloActividad.usuarioId!}
+      this.adjuntoService.registrarAdjunto(adjuntoBody)
+      .subscribe(resp => {
+        console.log('resp adjunto', resp)
+        // if(resp.success === false){
+        //   this.messageService.add({severity:'error', summary: 'Error', detail: resp.message});
+        //   return;
+        // } else {
+        //   this.messageService.add({severity:'success', summary: 'Success', detail: 'Adjunto registrado correctamente'});
+        //   this.obtenerActividadesService()
+        // }
+      })
+    }
   }
 }

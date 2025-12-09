@@ -1,3 +1,4 @@
+import { AdjuntoResponse } from "./adjunto.interface";
 import { DataResponses } from "./helpers.interface";
 
 export interface ActividadesResponses extends DataResponses {
@@ -11,7 +12,7 @@ export interface ActividadResponses extends DataResponses {
 export interface ActividadResponse {
     actividadId?: string,
     entidadSectorId: string,
-    entidadId: string,
+    entidadId?: string,
     entidad?: string,
     departamento?: string,
     provincia?: string,
@@ -37,6 +38,13 @@ export interface ActividadResponse {
     usuarioId: string,
     estado: boolean,
     fechaRegistro: string,
+}
+
+export interface DesarrolloActividadResponse {
+    actividadId: string,
+    descripcion: string,
+    adjuntos: AdjuntoResponse[],
+    usuarioId: string,
 }
 
 export interface DataModalActividad{
