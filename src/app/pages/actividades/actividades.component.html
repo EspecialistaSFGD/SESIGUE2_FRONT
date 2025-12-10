@@ -5,6 +5,7 @@
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
       <tr>
+        <th nzWidth="80px" nzAlign="center">Código</th>
         <th nzWidth="100px" nzAlign="center">Ubicación</th>
         <th nzWidth="100px" nzAlign="center">Entidad</th>
         <th nzWidth="100px" nzAlign="center">Sector</th>
@@ -12,6 +13,7 @@
         <th nzWidth="100px" nzAlign="center">Longitud</th>
         <th nzWidth="100px" nzAlign="center">Distancia</th>
         <th nzWidth="100px" nzAlign="center">Destacado</th>
+        <th nzWidth="100px" nzAlign="center">Destacado PCM</th>
         <th nzRight nzWidth="120px" nzAlign="center"></th>
       </tr>
     </thead>
@@ -19,6 +21,7 @@
     <tbody>
       @for(actividad of actividades(); track $index){
         <tr>
+          <td nzAlign="center">{{actividad.codigo}}</td>
           <td nzAlign="center">{{actividad.departamento}} {{actividad.provincia ? ' / ' + actividad.provincia : ''}}  {{actividad.distrito ? ' / ' + actividad.distrito : ''}}</td>
           <td nzAlign="center">{{actividad.entidadTipo}} {{actividad.entidadSlug}}</td>
           <td nzAlign="center">{{actividad.sector}}</td>
@@ -30,8 +33,15 @@
                 <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
             </div>
           </td>
+          <td nzAlign="center">
+            <div [ngClass]="actividad.destacadoPCM ? 'text-green-600' : 'text-slate-200'">
+                <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+            </div>
+          </td>
           <td nzRight nzAlign="center">
               <div class="flex justify-center">
+                <!-- <app-boton icono="check-circle" [link]="true" tooltip="Destacar PCM" (click)="destacarPcm(actividad)"/> -->
+
                 <app-boton icono="cloud-upload" [link]="true" tooltip="Subir desarrollo" (click)="subirDesarrollo(actividad)"/>
 
                 <app-boton icono="trash" color="red" [stepColor]="500" [tooltip]="'Eliminar Actividad'" [link]="true" (click)="eliminarActividad(actividad)" />

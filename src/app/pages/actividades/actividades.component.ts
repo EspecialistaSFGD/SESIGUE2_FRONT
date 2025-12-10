@@ -219,9 +219,21 @@ export class ActividadesComponent {
     })
   }
 
+  destacarPcm(actividad: ActividadResponse){
+    const actividadBody: ActividadResponse = { ...actividad, destacadoPCM: true }
+    this.modal.confirm({
+      nzTitle: `¿Está seguro de destacar la actividad ${actividad.codigo}?`,
+      nzContent: 'Esta acción no se puede deshacer.',
+      nzOkText: 'Destacar',
+      nzOkDanger: false,
+      nzOnOk: () => this.actualizarActividadService(actividadBody),
+      nzCancelText: 'Cancelar',
+    });
+  }
+
   eliminarActividad(actividad: ActividadResponse){
     this.modal.confirm({
-      nzTitle: `¿Está seguro de eliminar la actividad?`,
+      nzTitle: `¿Está seguro de eliminar la actividad ${actividad.codigo}?`,
       nzContent: 'Esta acción no se puede deshacer.',
       nzOkText: 'Eliminar',
       nzOkDanger: true,
@@ -243,7 +255,6 @@ export class ActividadesComponent {
           }
         })
   }
-
 
   subirDesarrollo(actividad: ActividadResponse){
     this.modal.create<FormularioDesarrolloActividadComponent>({

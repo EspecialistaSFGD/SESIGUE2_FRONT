@@ -11,6 +11,7 @@ export interface ActividadResponses extends DataResponses {
 
 export interface ActividadResponse {
     actividadId?: string,
+    codigo?: string,
     entidadSectorId: string,
     entidadId?: string,
     entidad?: string,
@@ -25,7 +26,7 @@ export interface ActividadResponse {
     horaInicio: string,
     horaFin: string,
     direccion: string,
-    destacado: string,
+    destacado: boolean,
     latitud: string,
     longitud: string,
     distancia: string,
@@ -34,7 +35,7 @@ export interface ActividadResponse {
     descripcion: string,
     comentarios: string,
     desarrollo: string,
-    destacadoPCM: string,
+    destacadoPCM: boolean,
     usuarioId: string,
     estado: boolean,
     fechaRegistro: string,
