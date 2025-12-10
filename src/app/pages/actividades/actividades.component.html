@@ -33,6 +33,8 @@
           <td nzRight nzAlign="center">
               <div class="flex justify-center">
                 <app-boton icono="cloud-upload" [link]="true" tooltip="Subir desarrollo" (click)="subirDesarrollo(actividad)"/>
+
+                <app-boton icono="trash" color="red" [stepColor]="500" [tooltip]="'Eliminar Actividad'" [link]="true" (click)="eliminarActividad(actividad)" />
               </div>
           </td>
         </tr>
