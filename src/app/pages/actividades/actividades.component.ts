@@ -80,8 +80,10 @@ export class ActividadesComponent {
   }
 
   obtenerActividadesService(){
+    this.loading = true;
     this.actividadesService.listarActividades(this.pagination)
     .subscribe(resp => {
+      this.loading = false;
       this.actividades.set(resp.data);
       this.pagination.total = resp.info?.total;
     })
@@ -217,6 +219,42 @@ export class ActividadesComponent {
     })
   }
 
+  destacarPcm(actividad: ActividadResponse){
+    const actividadBody: ActividadResponse = { ...actividad, destacadoPCM: true }
+    this.modal.confirm({
+      nzTitle: `¿Está seguro de destacar la actividad ${actividad.codigo}?`,
+      nzContent: 'Esta acción no se puede deshacer.',
+      nzOkText: 'Destacar',
+      nzOkDanger: false,
+      nzOnOk: () => this.actualizarActividadService(actividadBody),
+      nzCancelText: 'Cancelar',
+    });
+  }
+
+  eliminarActividad(actividad: ActividadResponse){
+    this.modal.confirm({
+      nzTitle: `¿Está seguro de eliminar la actividad ${actividad.codigo}?`,
+      nzContent: 'Esta acción no se puede deshacer.',
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      nzOnOk: () => this.eliminarActividadService(actividad),
+      nzCancelText: 'Cancelar',
+    });
+  }
+
+  eliminarActividadService(actividad: ActividadResponse){
+    this.actividadesService.eliminarActividad(actividad.actividadId!)
+        .subscribe(resp => {
+          if(resp.success === false){
+            this.messageService.add({severity:'error', summary: 'Error', detail: resp.message});
+            return;
+          } else {
+            this.messageService.add({severity:'success', summary: 'Success', detail: 'Actividad eliminada correctamente'});
+            this.obtenerActividadesService()
+            this.modal.closeAll()
+          }
+        })
+  }
 
   subirDesarrollo(actividad: ActividadResponse){
     this.modal.create<FormularioDesarrolloActividadComponent>({
