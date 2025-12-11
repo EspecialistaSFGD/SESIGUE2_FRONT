@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { getDateFormat, setParamsToObject } from '@core/helpers';
-import { ActividadResponse, AdjuntoResponse, DesarrolloActividadResponse, Pagination } from '@core/interfaces';
+import { getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
+import { ActividadResponse, AdjuntoResponse, ButtonsActions, DesarrolloActividadResponse, Pagination } from '@core/interfaces';
 import { ActividadesService, AdjuntosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -16,6 +16,7 @@ import { FormularioDesarrolloActividadComponent } from './desarrollos-actividad/
 import { FormularioActividadComponent } from './formulario-actividad/formulario-actividad.component';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
+import { AuthService } from '@libs/services/auth/auth.service';
 
 @Component({
   selector: 'app-actividades',
@@ -33,6 +34,10 @@ export class ActividadesComponent {
   loading: boolean = false;
   openFilters: boolean = false;
 
+  actividadesActions: ButtonsActions = {}
+  perfilAuth: number = 0
+  permisosPCM: boolean = false
+
   pagination: Pagination = {
     columnSort: 'actividadId',
     typeSort: 'DESC',
@@ -48,11 +53,26 @@ export class ActividadesComponent {
   private messageService = inject(MessageService)
   private adjuntoService = inject(AdjuntosService)
   private utilesService = inject(UtilesService)
+  private authStore = inject(AuthService)
 
   ngOnInit(): void {
+    this.getPermissions()
     this.getParams()
   }
 
+  getPermissions() {
+    const navigation = this.authStore.navigationAuth()!
+    const actividadesNav = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'actividades')
+    this.actividadesActions = actividadesNav && actividadesNav.botones ? obtenerPermisosBotones(actividadesNav!.botones!) : {}
+
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = this.setPermisosPCM()
+  }
+
+  setPermisosPCM(){
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    return JSON.parse(permisosStorage) ?? false
+  }
 
   getParams() {
     this.route.queryParams
@@ -81,6 +101,7 @@ export class ActividadesComponent {
 
   obtenerActividadesService(){
     this.loading = true;
+    this.pagination.usuarioId = localStorage.getItem('codigoUsuario') ?? ''
     this.actividadesService.listarActividades(this.pagination)
     .subscribe(resp => {
       this.loading = false;

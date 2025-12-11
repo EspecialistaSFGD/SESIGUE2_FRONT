@@ -11,7 +11,7 @@
         <th nzWidth="100px" nzAlign="center">Sector</th>
         <th nzWidth="100px" nzAlign="center">Latitud</th>
         <th nzWidth="100px" nzAlign="center">Longitud</th>
-        <th nzWidth="100px" nzAlign="center">Distancia</th>
+        <th nzWidth="100px" nzAlign="center">Distancia(Minutos)</th>
         <th nzWidth="100px" nzAlign="center">Destacado</th>
         <th nzWidth="100px" nzAlign="center">Destacado PCM</th>
         <th nzRight nzWidth="120px" nzAlign="center"></th>
@@ -40,11 +40,11 @@
           </td>
           <td nzRight nzAlign="center">
               <div class="flex justify-center">
-                <!-- <app-boton icono="check-circle" [link]="true" tooltip="Destacar PCM" (click)="destacarPcm(actividad)"/> -->
+                <app-boton *ngIf="actividadesActions.standout" icono="check-circle" [link]="true" tooltip="Destacar PCM" (click)="destacarPcm(actividad)"/>
 
-                <app-boton icono="cloud-upload" [link]="true" tooltip="Subir desarrollo" (click)="subirDesarrollo(actividad)"/>
+                <app-boton *ngIf="actividadesActions.upload" icono="cloud-upload" [link]="true" tooltip="Subir desarrollo" (click)="subirDesarrollo(actividad)"/>
 
-                <app-boton icono="trash" color="red" [stepColor]="500" [tooltip]="'Eliminar Actividad'" [link]="true" (click)="eliminarActividad(actividad)" />
+                <app-boton *ngIf="actividadesActions.delete" icono="trash" color="red" [stepColor]="500" [tooltip]="'Eliminar Actividad'" [link]="true" (click)="eliminarActividad(actividad)" />
               </div>
           </td>
         </tr>
@@ -58,9 +58,9 @@
       <div class="flex gap-2">
         <!-- <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/> -->
 
-        <app-boton icono="file-excel" [loading]="loadingExport" texto="Exportar" [outline]="true" (click)="reporteActividad()"/>
+        <app-boton *ngIf="actividadesActions.report" icono="file-excel" [loading]="loadingExport" texto="Exportar" [outline]="true" (click)="reporteActividad()"/>
 
-        <app-boton [icono]="'plus'" [texto]="'Nueva Actividad'" (click)="crearActividad()"/>
+        <app-boton *ngIf="actividadesActions.new" [icono]="'plus'" [texto]="'Nueva Actividad'" (click)="crearActividad()"/>
       </div>
     </div>
   </ng-template>
