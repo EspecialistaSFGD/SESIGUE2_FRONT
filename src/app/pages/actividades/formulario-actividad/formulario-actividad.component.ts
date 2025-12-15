@@ -47,7 +47,7 @@ export class FormularioActividadComponent {
     participante: ['', Validators.required],
     actividad: ['', Validators.required],
     descripcion: ['', Validators.required],
-    comentarios: ['', Validators.required],
+    comentarios: [''],
   })
 
   ngOnInit(): void {
