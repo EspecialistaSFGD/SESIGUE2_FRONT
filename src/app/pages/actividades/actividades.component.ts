@@ -161,6 +161,11 @@ export class ActividadesComponent {
     this.actividadFormModal(true)
   }
 
+  actualizarActividad(actividad: ActividadResponse){
+    actividad = actividad
+    this.actividadFormModal(false)
+  }
+
   actividadFormModal(create: boolean): void{
       const action = `${create ? 'Crear' : 'Actualizar' } actividad`
       this.modal.create<FormularioActividadComponent>({

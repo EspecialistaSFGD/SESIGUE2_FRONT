@@ -90,7 +90,8 @@
     </div>
 
     <div class="flex flex-col">
-        <label for="destacado">Destacado</label>
+        <label for="destacado">Destacado <i class="pi pi-info-circle" style="font-size: .8rem;" nz-tooltip="Destacado para la presencia del Sr. Presidente"></i>
+        </label>
         <p-inputSwitch formControlName="destacado" />
         <div class="text-danger" *ngIf="alertMessageError('destacado')">{{msgErrorControl('destacado','Destacado')}}</div>
     </div>

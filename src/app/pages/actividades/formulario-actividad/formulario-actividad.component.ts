@@ -43,7 +43,7 @@ export class FormularioActividadComponent {
     distancia: ['', [Validators.required, Validators.min(1)]],
     horaInicio: ['', Validators.required],
     horaFin: ['', Validators.required],
-    destacado: ['', Validators.required],
+    destacado: [false, Validators.required],
     participante: ['', Validators.required],
     actividad: ['', Validators.required],
     descripcion: ['', Validators.required],
@@ -51,6 +51,7 @@ export class FormularioActividadComponent {
   })
 
   ngOnInit(): void {
+    this.setFormActividad()
     this.obtenerDepartamentoService()
   }
 
@@ -63,6 +64,13 @@ export class FormularioActividadComponent {
     const errors = this.formActividad.get(control)?.errors;
 
     return typeErrorControl(text, errors)
+  }
+
+  setFormActividad(){
+    // console.log(this.dataActividad);
+    // console.log(this.dataActividad.actividad());
+    // console.log(this.actividad());
+    // this.formActividad.reset({...this.actividad()})
   }
 
   obtenerDepartamentoService(){
