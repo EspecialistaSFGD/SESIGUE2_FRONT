@@ -89,7 +89,6 @@ export class ActividadesComponent {
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
 
         setParamsToObject(params, this.pagination, 'nombre')
-        setParamsToObject(params, this.pagination, 'sectorId')
         setParamsToObject(params, this.pagination, 'sectorEntidadId')
         setParamsToObject(params, this.pagination, 'entidadId')
         setParamsToObject(params, this.pagination, 'ubigeo')
@@ -102,6 +101,7 @@ export class ActividadesComponent {
   obtenerActividadesService(){
     this.loading = true;
     this.pagination.usuarioId = localStorage.getItem('codigoUsuario') ?? ''
+    this.authStore.usuarioAuth().sector ? this.pagination.sectorId = Number(this.authStore.usuarioAuth().sector!.value) : delete this.pagination.sectorId
     this.actividadesService.listarActividades(this.pagination)
     .subscribe(resp => {
       this.loading = false;

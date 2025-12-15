@@ -45,19 +45,19 @@
     </div>
 
     <div class="col-span-3 flex flex-col">
-        <label for="direccion">Dirección</label>
+        <label for="direccion">Dirección (Incluir al final la localidad)</label>
         <input type="text" class="form-control" id="direccion" formControlName="direccion">
         <div class="text-danger" *ngIf="alertMessageError('direccion')">{{msgErrorControl('direccion','Dirección')}}</div>
     </div>
 
     <div class="flex flex-col">
-        <label for="latitud">Latitud</label>
+        <label for="latitud">Latitud (Ejm: -6.22966865)</label>
         <input type="text" class="form-control" id="latitud" formControlName="latitud">
         <div class="text-danger" *ngIf="alertMessageError('latitud')">{{msgErrorControl('latitud','Latitud')}}</div>
     </div>
 
     <div class="flex flex-col">
-        <label for="longitud">Longitud</label>
+        <label for="longitud">Longitud (Ejm: -77.87297654)</label>
         <input type="text" class="form-control" id="longitud" formControlName="longitud">
         <div class="text-danger" *ngIf="alertMessageError('longitud')">{{msgErrorControl('longitud','Longitud')}}</div>
     </div>
