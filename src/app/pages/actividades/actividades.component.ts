@@ -158,15 +158,16 @@ export class ActividadesComponent {
   }
 
   crearActividad(){
+    this.actividad.set({} as ActividadResponse)
     this.actividadFormModal(true)
   }
 
   actualizarActividad(actividad: ActividadResponse){
-    actividad = actividad
+    this.actividad.set(actividad)
     this.actividadFormModal(false)
   }
 
-  actividadFormModal(create: boolean): void{
+  actividadFormModal(create: boolean): void{    
       const action = `${create ? 'Crear' : 'Actualizar' } actividad`
       this.modal.create<FormularioActividadComponent>({
         nzTitle: `${action.toUpperCase()}`,
@@ -175,7 +176,7 @@ export class ActividadesComponent {
         nzContent: FormularioActividadComponent,
         nzData: {
           create,
-          actividad: this.actividad
+          actividad: this.actividad()
         },
         nzFooter: [
           {
@@ -206,10 +207,13 @@ export class ActividadesComponent {
              
               const usuarioId =localStorage.getItem('codigoUsuario')
               const entidadSectorId =localStorage.getItem('entidad')
-              const actividadBody: ActividadResponse = { ...formActividad.value, horaInicio, horaFin, usuarioId, entidadSectorId }
+              let actividadBody: ActividadResponse = { ...formActividad.value, horaInicio, horaFin, usuarioId, entidadSectorId }
 
               if(create){
                 this.guardarActividadService(actividadBody)
+              } else {
+                actividadBody.actividadId = this.actividad().actividadId
+                this.actualizarActividadService(actividadBody)
               }
             }
           },

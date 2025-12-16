@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { typeErrorControl } from '@core/helpers';
+import { obtenerUbigeoTipo, typeErrorControl } from '@core/helpers';
 import { ActividadResponse, DataModalActividad, Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
 import { EntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
@@ -67,10 +67,32 @@ export class FormularioActividadComponent {
   }
 
   setFormActividad(){
-    // console.log(this.dataActividad);
-    // console.log(this.dataActividad.actividad());
-    // console.log(this.actividad());
-    // this.formActividad.reset({...this.actividad()})
+    const horaInicio = this.create ? new Date() : new Date(this.actividad().horaInicio)
+    const horaFin = this.create ? new Date() : new Date(this.actividad().horaFin)
+    const destacado= this.create ? false : this.actividad().destacado
+
+    this.formActividad.reset({...this.actividad(), horaInicio, horaFin, destacado})
+    this.setFormUbigeo()
+  }
+
+  setFormUbigeo(){
+    const actividad = this.actividad()
+    
+    if(!this.create){
+      const tipoUbigeo = obtenerUbigeoTipo(actividad.ubigeo!)
+      const departamentoUbigeo = tipoUbigeo.departamento
+      this.formActividad.get('departamento')?.setValue(departamentoUbigeo)
+      this.obtenerProvinciaService(departamentoUbigeo)
+      this.formActividad.get('provincia')?.enable()
+      if(tipoUbigeo.provincia){
+        this.formActividad.get('provincia')?.setValue(tipoUbigeo.provincia)
+        this.formActividad.get('distrito')?.enable()
+        this.obtenerDistritosService(tipoUbigeo.provincia)
+        if(tipoUbigeo.distrito){
+          this.formActividad.get('distrito')?.setValue(tipoUbigeo.distrito)
+        }
+      }
+    }
   }
 
   obtenerDepartamentoService(){

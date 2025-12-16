@@ -48,7 +48,7 @@
 
                 <app-boton *ngIf="actividadesActions.upload" icono="cloud-upload" [link]="true" tooltip="Subir desarrollo" (click)="subirDesarrollo(actividad)"/>
 
-                <!-- <app-boton *ngIf="actividadesActions.edit" icono="pencil" [link]="true" tooltip="Actualizar evento" (click)="actualizarActividad(actividad)"/> -->
+                <app-boton *ngIf="actividadesActions.edit" icono="pencil" [link]="true" tooltip="Actualizar evento" (click)="actualizarActividad(actividad)"/>
 
                 <app-boton *ngIf="actividadesActions.delete" icono="trash" color="red" [stepColor]="500" [tooltip]="'Eliminar Actividad'" [link]="true" (click)="eliminarActividad(actividad)" />
               </div>
