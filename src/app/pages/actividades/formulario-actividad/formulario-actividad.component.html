@@ -1,4 +1,26 @@
 <form [formGroup]="formActividad" class="grid grid-cols-1 md:grid-cols-3 gap-3" autocomplete="off">
+    <div class="col-span-2 flex flex-col">
+        <label for="eventoId">Evento</label>
+        <p-dropdown
+        [options]="eventos()"
+        formControlName="eventoId"
+        optionLabel="nombre"
+        optionValue="eventoId"
+        [showClear]="true"
+        placeholder="Seleccionar evento"/>
+        <div class="text-danger" *ngIf="alertMessageError('eventoId')"> {{msgErrorControl('eventoId','Evento')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="entidadSlug">Entidad
+            @if(formActividad.get('entidadId')?.value){
+                <i class="pi pi-info-circle" style="font-size: .8rem;" [nz-tooltip]="formActividad.get('entidad')?.value"></i>
+            }
+        </label>
+        <input type="text" class="form-control" id="entidadSlug" formControlName="entidadSlug">
+        <div class="text-danger" *ngIf="alertMessageError('entidadSlug')">{{msgErrorControl('entidadSlug','Entidad')}}</div>
+    </div>
+
     <div class="flex flex-col">
         <label for="nombre">Departamento</label>
         <p-dropdown 
@@ -36,12 +58,6 @@
         placeholder="Seleccionar distrito"
         (onChange)="changeDistrito()"/>
         <div class="w-full text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}</div>
-    </div>
-
-    <div class="col-span-3 flex flex-col">
-        <label for="entidad">Entidad</label>
-        <input type="text" class="form-control" id="entidad" formControlName="entidad">
-        <div class="text-danger" *ngIf="alertMessageError('entidad')">{{msgErrorControl('entidad','Entidad')}}</div>
     </div>
 
     <div class="col-span-3 flex flex-col">

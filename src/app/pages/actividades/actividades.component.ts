@@ -167,10 +167,11 @@ export class ActividadesComponent {
     this.actividadFormModal(false)
   }
 
-  actividadFormModal(create: boolean): void{    
+  actividadFormModal(create: boolean): void{
+      const codigo = create ? '' : this.actividad().codigo
       const action = `${create ? 'Crear' : 'Actualizar' } actividad`
       this.modal.create<FormularioActividadComponent>({
-        nzTitle: `${action.toUpperCase()}`,
+        nzTitle: `${action.toUpperCase()} ${codigo}`,
         nzWidth: '50%',
         nzMaskClosable: false,
         nzContent: FormularioActividadComponent,

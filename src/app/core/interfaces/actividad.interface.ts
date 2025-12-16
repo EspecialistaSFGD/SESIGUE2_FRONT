@@ -10,6 +10,7 @@ export interface ActividadResponses extends DataResponses {
 }
 
 export interface ActividadResponse {
+    eventoId?: string,
     actividadId?: string,
     codigo?: string,
     entidadSectorId: string,

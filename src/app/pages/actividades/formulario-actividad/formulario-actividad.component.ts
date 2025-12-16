@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { obtenerUbigeoTipo, typeErrorControl } from '@core/helpers';
-import { ActividadResponse, DataModalActividad, Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { EntidadesService, UbigeosService } from '@core/services';
+import { ActividadResponse, DataModalActividad, EventoResponse, Pagination, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
+import { EntidadesService, EventosService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -22,21 +22,25 @@ export class FormularioActividadComponent {
   create: boolean = this.dataActividad.create
   actividad = signal<ActividadResponse>(this.dataActividad.actividad)
 
+  eventos = signal<EventoResponse[]>([])
   departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])
   distritos = signal<UbigeoDistritoResponse[]>([])
 
   private fb = inject(FormBuilder)
+  private eventosService = inject(EventosService)
   private ubigeosService = inject(UbigeosService)
   private entidadesService = inject(EntidadesService)
   private validatorsService = inject(ValidatorService)
 
   formActividad: FormGroup = this.fb.group({
+    eventoId: [null, Validators.required],
     departamento: [null, Validators.required],
     provincia: [{ value: null, disabled: true }],
     distrito: [{ value: null, disabled: true }],
     entidadId: ['', Validators.required],
     entidad: [{ value: null, disabled: true }],
+    entidadSlug: [{ value: null, disabled: true }],
     direccion: ['', Validators.required],
     latitud: ['', [Validators.required, Validators.pattern(this.validatorsService.latLongPattern)]],
     longitud: ['', [Validators.required, Validators.pattern(this.validatorsService.latLongPattern)]],
@@ -52,6 +56,7 @@ export class FormularioActividadComponent {
 
   ngOnInit(): void {
     this.setFormActividad()
+    this.obtenerEventoService()
     this.obtenerDepartamentoService()
   }
 
@@ -67,11 +72,17 @@ export class FormularioActividadComponent {
   }
 
   setFormActividad(){
+    let eventoId = null
+    if(!this.create){
+      eventoId = Number(this.actividad().eventoId) == 0 ? null : this.actividad().eventoId
+    }
+    // const eventoId = this.create ? null : this.actividad().eventoId
     const horaInicio = this.create ? new Date() : new Date(this.actividad().horaInicio)
     const horaFin = this.create ? new Date() : new Date(this.actividad().horaFin)
-    const destacado= this.create ? false : this.actividad().destacado
+    const destacado = this.create ? false : this.actividad().destacado
+    const entidadSlug = this.create ? null : `${this.actividad().entidadTipo} ${this.actividad().entidadSlug}`
 
-    this.formActividad.reset({...this.actividad(), horaInicio, horaFin, destacado})
+    this.formActividad.reset({...this.actividad(), horaInicio, horaFin, destacado, eventoId, entidadSlug})
     this.setFormUbigeo()
   }
 
@@ -93,6 +104,18 @@ export class FormularioActividadComponent {
         }
       }
     }
+  }
+
+  obtenerEventoService(){
+    const paginationEvento: Pagination = { estados: ['1','2'], columnSort: 'eventoId', typeSort: 'DESC', pageSize: 25, currentPage: 1 }
+    this.eventosService.ListarEventos(paginationEvento)
+      .subscribe( resp => {
+        const eventos = resp.data
+        if(this.create && eventos.length == 1){
+          this.formActividad.get('eventoId')?.setValue(eventos[0].eventoId)
+        }
+        this.eventos.set(eventos)
+      })
   }
 
   obtenerDepartamentoService(){
@@ -161,12 +184,14 @@ export class FormularioActividadComponent {
   obtenerEntidadUbigeoService(ubigeo: string){
     const controlEntidadId = this.formActividad.get('entidadId')
     const controlEntidad = this.formActividad.get('entidad')
+    const controlSlugEntidad = this.formActividad.get('entidadSlug')
     const pagination: Pagination = { ubigeo, tipo: '2', columnSort: 'entidadId', typeSort: 'ASC', pageSize: 100, currentPage: 1 }
     this.entidadesService.listarEntidades(pagination)
       .subscribe( resp => {
         const entidad = resp.data[0]
         controlEntidadId?.setValue(entidad.entidadId || null)
         controlEntidad?.setValue(entidad.nombre || null)
+        controlSlugEntidad?.setValue(`${entidad.entidadTipo} ${entidad.entidadSlug}` || null)
       })
   }
 }
