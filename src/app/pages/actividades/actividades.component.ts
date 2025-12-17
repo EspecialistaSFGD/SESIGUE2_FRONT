@@ -17,11 +17,12 @@ import { FormularioActividadComponent } from './formulario-actividad/formulario-
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
 import { AuthService } from '@libs/services/auth/auth.service';
+import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
 
 @Component({
   selector: 'app-actividades',
   standalone: true,
-  imports: [CommonModule, PrimeNgModule, NgZorroModule, PageHeaderComponent, BotonComponent],
+  imports: [CommonModule, PrimeNgModule, NgZorroModule, PageHeaderComponent, BotonComponent, BotonDescargarComponent],
   providers: [MessageService],
   templateUrl: './actividades.component.html',
   styles: ``

@@ -14,6 +14,8 @@
         <th nzWidth="100px" nzAlign="center">Hora inicio</th>
         <th nzWidth="100px" nzAlign="center">Hora fin</th>
         <th nzWidth="100px" nzAlign="center">Distancia(Minutos)</th>
+        <th nzWidth="120px" nzAlign="center">Desarrollo</th>
+        <th nzWidth="100px" nzAlign="center">Adjunto</th>
         <th nzWidth="100px" nzAlign="center">Destacado</th>
         <th nzWidth="100px" nzAlign="center">Destacado PCM</th>
         <th nzRight nzWidth="120px" nzAlign="center"></th>
@@ -32,6 +34,10 @@
           <td nzAlign="center">{{actividad.horaInicio | date:'HH:mm'}}</td>
           <td nzAlign="center">{{actividad.horaFin | date:'HH:mm'}}</td>
           <td nzAlign="center">{{actividad.distancia}}</td>
+          <td nzAlign="center">{{actividad.desarrollo}}</td>
+          <td nzAlign="center">
+            <app-boton-descargar *ngIf="actividad.primerAdjunto" [rutaArchivo]="actividad.primerAdjunto" [titulo]="'Descargar adjunto'" />
+          </td>
           <td nzAlign="center">
             <div [ngClass]="actividad.destacado ? 'text-green-600' : 'text-slate-200'">
                 <i class="pi pi-check-circle" style="font-size: .85rem;"></i>

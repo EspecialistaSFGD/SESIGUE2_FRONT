@@ -38,6 +38,8 @@ export interface ActividadResponse {
     desarrollo: string,
     destacadoPCM: boolean,
     usuarioId: string,
+    primerAdjunto?: string,
+    segundoAdjunto?: string,
     estado: boolean,
     fechaRegistro: string,
 }
