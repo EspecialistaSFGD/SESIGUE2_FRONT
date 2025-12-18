@@ -72,7 +72,7 @@
       <div class="flex gap-2">
         <app-boton icono="sync" [outline]="true" (click)="obtenerActividadesService()"/>
 
-        <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
+        <app-boton *ngIf="actividadesActions.report" [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
 
         <app-boton *ngIf="actividadesActions.report" icono="file-excel" [loading]="loadingExport" texto="Exportar" [outline]="true" (click)="reporteActividad()"/>
 
