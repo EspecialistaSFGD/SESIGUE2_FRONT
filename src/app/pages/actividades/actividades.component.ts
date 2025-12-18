@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
+import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { ActividadResponse, AdjuntoResponse, ButtonsActions, DesarrolloActividadResponse, Pagination } from '@core/interfaces';
 import { ActividadesService, AdjuntosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -18,11 +18,12 @@ import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
+import { FiltroActividadesComponent } from './filtro-actividades/filtro-actividades.component';
 
 @Component({
   selector: 'app-actividades',
   standalone: true,
-  imports: [CommonModule, PrimeNgModule, NgZorroModule, PageHeaderComponent, BotonComponent, BotonDescargarComponent],
+  imports: [CommonModule, PrimeNgModule, NgZorroModule, PageHeaderComponent, BotonComponent, BotonDescargarComponent, FiltroActividadesComponent],
   providers: [MessageService],
   templateUrl: './actividades.component.html',
   styles: ``
@@ -89,11 +90,8 @@ export class ActividadesComponent {
         this.pagination.pageSize = params['cantidad']
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
 
-        setParamsToObject(params, this.pagination, 'nombre')
-        setParamsToObject(params, this.pagination, 'sectorEntidadId')
-        setParamsToObject(params, this.pagination, 'entidadId')
-        setParamsToObject(params, this.pagination, 'ubigeo')
-        setParamsToObject(params, this.pagination, 'entidadUbigeoId')        
+        setParamsToObject(params, this.pagination, 'tipoEspacioId')        
+        setParamsToObject(params, this.pagination, 'espacioId')        
 
         this.obtenerActividadesService()
     })
@@ -129,6 +127,12 @@ export class ActividadesComponent {
     this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
   }
 
+  generateFilters(pagination: Pagination){
+    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total']
+    const params = deleteKeysToObject(pagination, paramsInvalid)
+    this.paramsNavigate(params)
+  }
+
   paramsNavigate(queryParams: Params){    
     this.router.navigate(
       [],
@@ -144,6 +148,9 @@ export class ActividadesComponent {
     this.loadingExport = true;
     this.actividadesService.reporteActividades(this.pagination)
       .subscribe( resp => {
+        if(!resp.success){
+          this.messageService.add({severity:'info', summary: 'Info', detail: resp.message});
+        }
         if(resp.data){
           const data = resp.data;
           this.generarExcel(data.archivo, data.nombreArchivo);

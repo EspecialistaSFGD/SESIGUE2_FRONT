@@ -1,0 +1,43 @@
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="'400px'" [nzClosable]="true" [nzVisible]="visible"
+	nzTitle="Filtrar los resultados" [nzFooter]="footerFilter" (nzOnClose)="changeVisibleDrawer()">
+    <form *nzDrawerContent [formGroup]="formActividadFilters" nz-form nzLayout="vertical" autocomplete="off" class="flex flex-col w-full gap-3">
+        <div class="flex flex-col">
+            <label for="tipoEspacioId">Tipo de espacio</label>
+            <p-dropdown 
+            [options]="tipoEventos()"
+            formControlName="tipoEspacioId"
+            optionLabel="descripcionTipoEvento"
+            optionValue="codigoTipoEvento"
+            [showClear]="true" 
+            placeholder="Seleccionar tipo de espacio"
+            (onChange)="changeEspacio()"/>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="espacioId">Espacios</label>
+            <p-dropdown 
+            [options]="eventos()"
+            formControlName="espacioId"
+            optionLabel="nombre"
+            optionValue="eventoId"
+            [showClear]="true" 
+            placeholder="Seleccionar espacio"
+            (onChange)="generateFilters()"/>
+        </div>
+    </form>
+</nz-drawer>
+
+<ng-template #footerFilter>
+    <div class="flex justify-end gap-2">
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 text-sky-700 hover:bg-sky-700 hover:text-white" (click)="cleanParams()">
+          <i class="pi pi-filter-slash" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Limpiar filtros</span>
+        </div>
+
+        <div class="cursor-pointer flex items-center gap-1 py-2 px-3 rounded border border-sky-700 bg-sky-700 text-white hover:bg-sky-800" (click)="saveFilter()">
+          <i class="pi pi-save" style="font-size: 0.75rem"></i>
+          <span class="hidden md:flex">Buscar filtros</span>
+        </div>
+    </div>
+</ng-template>
+

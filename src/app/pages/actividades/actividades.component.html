@@ -5,6 +5,7 @@
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
       <tr>
+        <th nzWidth="100px" nzAlign="center">Espacio</th>
         <th nzWidth="100px" nzAlign="center">Sector</th>
         <th nzWidth="80px" nzAlign="center">Código</th>
         <th nzWidth="100px" nzAlign="center">Actividad</th>
@@ -25,6 +26,7 @@
     <tbody>
       @for(actividad of actividades(); track $index){
         <tr>
+          <td nzAlign="center">{{actividad.evento}}</td>
           <td nzAlign="center">{{actividad.sector}}</td>
           <td nzAlign="center">{{actividad.codigo}}</td>
           <td nzAlign="center">{{actividad.actividad}}</td>
@@ -68,9 +70,9 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
-        <!-- <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/> -->
-
         <app-boton icono="sync" [outline]="true" (click)="obtenerActividadesService()"/>
+
+        <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
 
         <app-boton *ngIf="actividadesActions.report" icono="file-excel" [loading]="loadingExport" texto="Exportar" [outline]="true" (click)="reporteActividad()"/>
 
@@ -81,3 +83,5 @@
 </div>
 
 <p-toast />
+
+<app-filtro-actividades *ngIf="openFilters" [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" />
