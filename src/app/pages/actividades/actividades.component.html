@@ -76,8 +76,7 @@
 
         <app-boton *ngIf="actividadesActions.report" icono="file-excel" [loading]="loadingExport" texto="Exportar" [outline]="true" (click)="reporteActividad()"/>
 
-        <!-- <app-boton *ngIf="actividadesActions.new" [icono]="'plus'" [texto]="'Nueva Actividad'" (click)="crearActividad()"/> -->
-        <app-boton [icono]="'plus'" [disabled]="!nuevoActivo" texto="Nueva Actividad" (click)="nuevoActivo ? crearActividad() : null"/>
+        <app-boton *ngIf="actividadesActions.new" [disabled]="!nuevoActivo" [icono]="'plus'" texto="Nueva Actividad" (click)="nuevoActivo ? crearActividad() : null"/>
       </div>
     </div>
   </ng-template>

@@ -24,6 +24,18 @@
             placeholder="Seleccionar espacio"
             (onChange)="generateFilters()"/>
         </div>
+
+        <div *ngIf="permisosPCM" class="flex flex-col">
+            <label for="sectorId">Sectores</label>
+            <p-dropdown 
+            [options]="sectores()"
+            formControlName="sectorId"
+            optionLabel="nombre"
+            optionValue="grupoID"
+            [showClear]="true" 
+            placeholder="Seleccionar sector"
+            (onChange)="generateFilters()"/>
+        </div>
     </form>
 </nz-drawer>
 

@@ -83,9 +83,7 @@ export class ActividadesComponent {
     const paginationEvento: Pagination = { estados: ['1','2'], columnSort: 'eventoId', typeSort: 'DESC', pageSize: 25, currentPage: 1 }
     this.eventosService.ListarEventos(paginationEvento)
       .subscribe( resp => {
-        const eventos = resp.data
-        console.log(eventos);
-        this.nuevoActivo = eventos.length > 0
+        this.nuevoActivo = resp.data.length > 0
     })
   }
 
@@ -105,7 +103,7 @@ export class ActividadesComponent {
 
         setParamsToObject(params, this.pagination, 'tipoEspacioId')        
         setParamsToObject(params, this.pagination, 'espacioId')        
-
+        setParamsToObject(params, this.pagination, 'sectorId')
         this.obtenerActividadesService()
     })
   }
@@ -113,7 +111,10 @@ export class ActividadesComponent {
   obtenerActividadesService(){
     this.loading = true;
     this.pagination.usuarioId = localStorage.getItem('codigoUsuario') ?? ''
-    this.authStore.usuarioAuth().sector ? this.pagination.sectorId = Number(this.authStore.usuarioAuth().sector!.value) : delete this.pagination.sectorId
+    // this.authStore.usuarioAuth().sector ? this.pagination.sectorId = Number(this.authStore.usuarioAuth().sector!.value) : delete this.pagination.sectorId
+    if(!this.permisosPCM){
+      this.pagination.sectorId = Number(this.authStore.usuarioAuth().sector!.value)
+    }
     this.actividadesService.listarActividades(this.pagination)
     .subscribe(resp => {
       this.loading = false;
