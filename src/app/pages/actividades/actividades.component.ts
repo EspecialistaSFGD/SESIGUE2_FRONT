@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { ActividadResponse, AdjuntoResponse, ButtonsActions, DesarrolloActividadResponse, Pagination } from '@core/interfaces';
-import { ActividadesService, AdjuntosService } from '@core/services';
+import { ActividadesService, AdjuntosService, EventosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -35,6 +35,7 @@ export class ActividadesComponent {
   loadingExport: boolean = false;
   loading: boolean = false;
   openFilters: boolean = false;
+  nuevoActivo: boolean = false
 
   actividadesActions: ButtonsActions = {}
   perfilAuth: number = 0
@@ -56,8 +57,10 @@ export class ActividadesComponent {
   private adjuntoService = inject(AdjuntosService)
   private utilesService = inject(UtilesService)
   private authStore = inject(AuthService)
+  private eventosService = inject(EventosService)
 
   ngOnInit(): void {
+    this.obtenerEventosService()
     this.getPermissions()
     this.getParams()
   }
@@ -74,6 +77,16 @@ export class ActividadesComponent {
   setPermisosPCM(){
     const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
     return JSON.parse(permisosStorage) ?? false
+  }
+
+  obtenerEventosService(){
+    const paginationEvento: Pagination = { estados: ['1','2'], columnSort: 'eventoId', typeSort: 'DESC', pageSize: 25, currentPage: 1 }
+    this.eventosService.ListarEventos(paginationEvento)
+      .subscribe( resp => {
+        const eventos = resp.data
+        console.log(eventos);
+        this.nuevoActivo = eventos.length > 0
+    })
   }
 
   getParams() {
@@ -107,6 +120,16 @@ export class ActividadesComponent {
       this.actividades.set(resp.data);
       this.pagination.total = resp.info?.total;
     })
+  }
+
+  permisosVigenteActividad(actividad: ActividadResponse): boolean{
+    const vigentesActividad:string[] = ['pendiente','iniciado']
+    return vigentesActividad.includes(actividad.vigente!.toLowerCase())
+  }
+
+  permisosVigenteDesarrollo(actividad: ActividadResponse): boolean{
+    const vigentesActividad:string[] = ['iniciado','seguimiento']
+    return vigentesActividad.includes(actividad.vigente!.toLowerCase())
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {

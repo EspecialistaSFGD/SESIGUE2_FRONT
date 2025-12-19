@@ -8,17 +8,17 @@
         <th nzWidth="100px" nzAlign="center">Espacio</th>
         <th nzWidth="100px" nzAlign="center">Sector</th>
         <th nzWidth="80px" nzAlign="center">Código</th>
-        <th nzWidth="100px" nzAlign="center">Actividad</th>
+        <th nzWidth="160px" nzAlign="center">Actividad</th>
         <th nzWidth="100px" nzAlign="center">Participante</th>
-        <th nzWidth="100px" nzAlign="center">Ubicación</th>
+        <th nzWidth="120px" nzAlign="center">Ubicación</th>
         <th nzWidth="100px" nzAlign="center">Dirección</th>
-        <th nzWidth="100px" nzAlign="center">Hora inicio</th>
-        <th nzWidth="100px" nzAlign="center">Hora fin</th>
-        <th nzWidth="100px" nzAlign="center">Distancia(Minutos)</th>
-        <th nzWidth="120px" nzAlign="center">Desarrollo</th>
+        <th nzWidth="60px" nzAlign="center">Hora inicio</th>
+        <th nzWidth="60px" nzAlign="center">Hora fin</th>
+        <th nzWidth="80px" nzAlign="center">Distancia (Minutos)</th>
+        <th nzWidth="140px" nzAlign="center">Desarrollo</th>
         <th nzWidth="100px" nzAlign="center">Adjunto</th>
-        <th nzWidth="100px" nzAlign="center">Destacado</th>
-        <th nzWidth="100px" nzAlign="center">Destacado PCM</th>
+        <th nzWidth="80px" nzAlign="center">Destacado</th>
+        <th nzWidth="80px" nzAlign="center">Destacado PCM</th>
         <th nzRight nzWidth="120px" nzAlign="center"></th>
       </tr>
     </thead>
@@ -54,11 +54,11 @@
               <div class="flex justify-center">
                 <app-boton *ngIf="actividadesActions.standout" icono="check-circle" [link]="true" tooltip="Destacar PCM" (click)="destacarPcm(actividad)"/>
 
-                <app-boton *ngIf="actividadesActions.upload" icono="cloud-upload" [link]="true" tooltip="Subir desarrollo" (click)="subirDesarrollo(actividad)"/>
+                <app-boton *ngIf="actividadesActions.upload" icono="cloud-upload" [link]="true" [disabled]="!permisosVigenteDesarrollo(actividad)" [tooltip]="permisosVigenteDesarrollo(actividad) ? 'Subir desarrollo' : ''" (click)="permisosVigenteDesarrollo(actividad) ? subirDesarrollo(actividad) : null"/>
 
-                <app-boton *ngIf="actividadesActions.edit" icono="pencil" [link]="true" tooltip="Actualizar evento" (click)="actualizarActividad(actividad)"/>
+                <app-boton *ngIf="actividadesActions.edit" icono="pencil" [link]="true" [tooltip]="!permisosVigenteDesarrollo(actividad) ? 'Actualizar evento' : ''" [disabled]="!permisosVigenteActividad(actividad)" (click)="permisosVigenteActividad(actividad) ? actualizarActividad(actividad) : null"/>
 
-                <app-boton *ngIf="actividadesActions.delete" icono="trash" color="red" [stepColor]="500" [tooltip]="'Eliminar Actividad'" [link]="true" (click)="eliminarActividad(actividad)" />
+                <app-boton *ngIf="actividadesActions.delete" icono="trash" color="red" [stepColor]="500" [tooltip]="!permisosVigenteDesarrollo(actividad) ? 'Eliminar evento' : ''" [link]="true" [disabled]="!permisosVigenteActividad(actividad)" (click)="permisosVigenteActividad(actividad) ? eliminarActividad(actividad) : null" />
               </div>
           </td>
         </tr>
@@ -76,7 +76,8 @@
 
         <app-boton *ngIf="actividadesActions.report" icono="file-excel" [loading]="loadingExport" texto="Exportar" [outline]="true" (click)="reporteActividad()"/>
 
-        <app-boton *ngIf="actividadesActions.new" [icono]="'plus'" [texto]="'Nueva Actividad'" (click)="crearActividad()"/>
+        <!-- <app-boton *ngIf="actividadesActions.new" [icono]="'plus'" [texto]="'Nueva Actividad'" (click)="crearActividad()"/> -->
+        <app-boton [icono]="'plus'" [disabled]="!nuevoActivo" texto="Nueva Actividad" (click)="nuevoActivo ? crearActividad() : null"/>
       </div>
     </div>
   </ng-template>

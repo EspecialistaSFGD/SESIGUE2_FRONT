@@ -23,6 +23,7 @@ export interface ActividadResponse {
     sector?: string,
     eventoId?: string,
     evento?: string,
+    vigente?: string,
     entidadTipo: string,
     entidadSlug: string,
     horaInicio: string,
