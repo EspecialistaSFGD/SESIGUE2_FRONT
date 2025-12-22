@@ -66,6 +66,7 @@ export interface Pagination {
   modulo?: string,
   esSector?: string
   origenId?: string,
+  actividadId?: string,
   recursoId?: string,
   interaccionId?: string,
   tipoIntervencion?: string,
