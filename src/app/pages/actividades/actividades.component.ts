@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { getDateFormat, setParamsToObject } from '@core/helpers';
-import { ActividadResponse, AdjuntoResponse, DesarrolloActividadResponse, Pagination } from '@core/interfaces';
-import { ActividadesService, AdjuntosService } from '@core/services';
+import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
+import { ActividadResponse, AdjuntoResponse, ButtonsActions, DesarrolloActividadResponse, Pagination } from '@core/interfaces';
+import { ActividadesService, AdjuntosService, EventosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -16,11 +16,14 @@ import { FormularioDesarrolloActividadComponent } from './desarrollos-actividad/
 import { FormularioActividadComponent } from './formulario-actividad/formulario-actividad.component';
 import { UtilesService } from '@libs/shared/services/utiles.service';
 import saveAs from 'file-saver';
+import { AuthService } from '@libs/services/auth/auth.service';
+import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
+import { FiltroActividadesComponent } from './filtro-actividades/filtro-actividades.component';
 
 @Component({
   selector: 'app-actividades',
   standalone: true,
-  imports: [CommonModule, PrimeNgModule, NgZorroModule, PageHeaderComponent, BotonComponent],
+  imports: [CommonModule, PrimeNgModule, NgZorroModule, PageHeaderComponent, BotonComponent, BotonDescargarComponent, FiltroActividadesComponent],
   providers: [MessageService],
   templateUrl: './actividades.component.html',
   styles: ``
@@ -32,6 +35,11 @@ export class ActividadesComponent {
   loadingExport: boolean = false;
   loading: boolean = false;
   openFilters: boolean = false;
+  nuevoActivo: boolean = false
+
+  actividadesActions: ButtonsActions = {}
+  perfilAuth: number = 0
+  permisosPCM: boolean = false
 
   pagination: Pagination = {
     columnSort: 'actividadId',
@@ -48,11 +56,36 @@ export class ActividadesComponent {
   private messageService = inject(MessageService)
   private adjuntoService = inject(AdjuntosService)
   private utilesService = inject(UtilesService)
+  private authStore = inject(AuthService)
+  private eventosService = inject(EventosService)
 
   ngOnInit(): void {
+    this.obtenerEventosService()
+    this.getPermissions()
     this.getParams()
   }
 
+  getPermissions() {
+    const navigation = this.authStore.navigationAuth()!
+    const actividadesNav = navigation.find(nav => nav.descripcionItem.toLowerCase() == 'actividades')
+    this.actividadesActions = actividadesNav && actividadesNav.botones ? obtenerPermisosBotones(actividadesNav!.botones!) : {}
+
+    this.perfilAuth = this.authStore.usuarioAuth().codigoPerfil!
+    this.permisosPCM = this.setPermisosPCM()
+  }
+
+  setPermisosPCM(){
+    const permisosStorage = localStorage.getItem('permisosPcm') ?? ''
+    return JSON.parse(permisosStorage) ?? false
+  }
+
+  obtenerEventosService(){
+    const paginationEvento: Pagination = { estados: ['1','2'], columnSort: 'eventoId', typeSort: 'DESC', pageSize: 25, currentPage: 1 }
+    this.eventosService.ListarEventos(paginationEvento)
+      .subscribe( resp => {
+        this.nuevoActivo = resp.data.length > 0
+    })
+  }
 
   getParams() {
     this.route.queryParams
@@ -68,23 +101,36 @@ export class ActividadesComponent {
         this.pagination.pageSize = params['cantidad']
         this.pagination.typeSort = params['ordenar'] ?? 'DESC'
 
-        setParamsToObject(params, this.pagination, 'nombre')
+        setParamsToObject(params, this.pagination, 'tipoEspacioId')        
+        setParamsToObject(params, this.pagination, 'espacioId')        
         setParamsToObject(params, this.pagination, 'sectorId')
-        setParamsToObject(params, this.pagination, 'sectorEntidadId')
-        setParamsToObject(params, this.pagination, 'entidadId')
-        setParamsToObject(params, this.pagination, 'ubigeo')
-        setParamsToObject(params, this.pagination, 'entidadUbigeoId')        
-
         this.obtenerActividadesService()
     })
   }
 
   obtenerActividadesService(){
+    this.loading = true;
+    this.pagination.usuarioId = localStorage.getItem('codigoUsuario') ?? ''
+    // this.authStore.usuarioAuth().sector ? this.pagination.sectorId = Number(this.authStore.usuarioAuth().sector!.value) : delete this.pagination.sectorId
+    if(!this.permisosPCM){
+      this.pagination.sectorId = Number(this.authStore.usuarioAuth().sector!.value)
+    }
     this.actividadesService.listarActividades(this.pagination)
     .subscribe(resp => {
+      this.loading = false;
       this.actividades.set(resp.data);
       this.pagination.total = resp.info?.total;
     })
+  }
+
+  permisosVigenteActividad(actividad: ActividadResponse): boolean{
+    const vigentesActividad:string[] = ['pendiente','iniciado']
+    return vigentesActividad.includes(actividad.vigente!.toLowerCase())
+  }
+
+  permisosVigenteDesarrollo(actividad: ActividadResponse): boolean{
+    const vigentesActividad:string[] = ['iniciado','seguimiento']
+    return vigentesActividad.includes(actividad.vigente!.toLowerCase())
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
@@ -105,6 +151,12 @@ export class ActividadesComponent {
     this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
   }
 
+  generateFilters(pagination: Pagination){
+    const paramsInvalid: string[] = ['pageIndex','pageSize','columnSort','code','typeSort','currentPage','total']
+    const params = deleteKeysToObject(pagination, paramsInvalid)
+    this.paramsNavigate(params)
+  }
+
   paramsNavigate(queryParams: Params){    
     this.router.navigate(
       [],
@@ -120,6 +172,9 @@ export class ActividadesComponent {
     this.loadingExport = true;
     this.actividadesService.reporteActividades(this.pagination)
       .subscribe( resp => {
+        if(!resp.success){
+          this.messageService.add({severity:'info', summary: 'Info', detail: resp.message});
+        }
         if(resp.data){
           const data = resp.data;
           this.generarExcel(data.archivo, data.nombreArchivo);
@@ -135,19 +190,26 @@ export class ActividadesComponent {
   }
 
   crearActividad(){
+    this.actividad.set({} as ActividadResponse)
     this.actividadFormModal(true)
   }
 
+  actualizarActividad(actividad: ActividadResponse){
+    this.actividad.set(actividad)
+    this.actividadFormModal(false)
+  }
+
   actividadFormModal(create: boolean): void{
+      const codigo = create ? '' : this.actividad().codigo
       const action = `${create ? 'Crear' : 'Actualizar' } actividad`
       this.modal.create<FormularioActividadComponent>({
-        nzTitle: `${action.toUpperCase()}`,
+        nzTitle: `${action.toUpperCase()} ${codigo}`,
         nzWidth: '50%',
         nzMaskClosable: false,
         nzContent: FormularioActividadComponent,
         nzData: {
           create,
-          actividad: this.actividad
+          actividad: this.actividad()
         },
         nzFooter: [
           {
@@ -178,10 +240,13 @@ export class ActividadesComponent {
              
               const usuarioId =localStorage.getItem('codigoUsuario')
               const entidadSectorId =localStorage.getItem('entidad')
-              const actividadBody: ActividadResponse = { ...formActividad.value, horaInicio, horaFin, usuarioId, entidadSectorId }
+              let actividadBody: ActividadResponse = { ...formActividad.value, horaInicio, horaFin, usuarioId, entidadSectorId }
 
               if(create){
                 this.guardarActividadService(actividadBody)
+              } else {
+                actividadBody.actividadId = this.actividad().actividadId
+                this.actualizarActividadService(actividadBody)
               }
             }
           },
@@ -217,6 +282,42 @@ export class ActividadesComponent {
     })
   }
 
+  destacarPcm(actividad: ActividadResponse){
+    const actividadBody: ActividadResponse = { ...actividad, destacadoPCM: true }
+    this.modal.confirm({
+      nzTitle: `¿Está seguro de destacar la actividad ${actividad.codigo}?`,
+      nzContent: 'Esta acción no se puede deshacer.',
+      nzOkText: 'Destacar',
+      nzOkDanger: false,
+      nzOnOk: () => this.actualizarActividadService(actividadBody),
+      nzCancelText: 'Cancelar',
+    });
+  }
+
+  eliminarActividad(actividad: ActividadResponse){
+    this.modal.confirm({
+      nzTitle: `¿Está seguro de eliminar la actividad ${actividad.codigo}?`,
+      nzContent: 'Esta acción no se puede deshacer.',
+      nzOkText: 'Eliminar',
+      nzOkDanger: true,
+      nzOnOk: () => this.eliminarActividadService(actividad),
+      nzCancelText: 'Cancelar',
+    });
+  }
+
+  eliminarActividadService(actividad: ActividadResponse){
+    this.actividadesService.eliminarActividad(actividad.actividadId!)
+        .subscribe(resp => {
+          if(resp.success === false){
+            this.messageService.add({severity:'error', summary: 'Error', detail: resp.message});
+            return;
+          } else {
+            this.messageService.add({severity:'success', summary: 'Success', detail: 'Actividad eliminada correctamente'});
+            this.obtenerActividadesService()
+            this.modal.closeAll()
+          }
+        })
+  }
 
   subirDesarrollo(actividad: ActividadResponse){
     this.modal.create<FormularioDesarrolloActividadComponent>({

@@ -5,13 +5,20 @@
     [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
     <thead>
       <tr>
-        <th nzWidth="100px" nzAlign="center">Ubicación</th>
-        <th nzWidth="100px" nzAlign="center">Entidad</th>
+        <th nzWidth="100px" nzAlign="center">Espacio</th>
         <th nzWidth="100px" nzAlign="center">Sector</th>
-        <th nzWidth="100px" nzAlign="center">Latitud</th>
-        <th nzWidth="100px" nzAlign="center">Longitud</th>
-        <th nzWidth="100px" nzAlign="center">Distancia</th>
-        <th nzWidth="100px" nzAlign="center">Destacado</th>
+        <th nzWidth="80px" nzAlign="center">Código</th>
+        <th nzWidth="160px" nzAlign="center">Actividad</th>
+        <th nzWidth="100px" nzAlign="center">Participante</th>
+        <th nzWidth="120px" nzAlign="center">Ubicación</th>
+        <th nzWidth="100px" nzAlign="center">Dirección</th>
+        <th nzWidth="60px" nzAlign="center">Hora inicio</th>
+        <th nzWidth="60px" nzAlign="center">Hora fin</th>
+        <th nzWidth="80px" nzAlign="center">Distancia (Minutos)</th>
+        <th nzWidth="140px" nzAlign="center">Desarrollo</th>
+        <th nzWidth="100px" nzAlign="center">Adjunto</th>
+        <th nzWidth="80px" nzAlign="center">Destacado</th>
+        <th nzWidth="80px" nzAlign="center">Destacado PCM</th>
         <th nzRight nzWidth="120px" nzAlign="center"></th>
       </tr>
     </thead>
@@ -19,20 +26,39 @@
     <tbody>
       @for(actividad of actividades(); track $index){
         <tr>
-          <td nzAlign="center">{{actividad.departamento}} {{actividad.provincia ? ' / ' + actividad.provincia : ''}}  {{actividad.distrito ? ' / ' + actividad.distrito : ''}}</td>
-          <td nzAlign="center">{{actividad.entidadTipo}} {{actividad.entidadSlug}}</td>
+          <td nzAlign="center">{{actividad.evento}}</td>
           <td nzAlign="center">{{actividad.sector}}</td>
-          <td nzAlign="center">{{actividad.latitud}}</td>
-          <td nzAlign="center">{{actividad.longitud}}</td>
+          <td nzAlign="center">{{actividad.codigo}}</td>
+          <td nzAlign="center">{{actividad.actividad}}</td>
+          <td nzAlign="center">{{actividad.participante}}</td>
+          <td nzAlign="center">{{actividad.departamento}} {{actividad.provincia ? ' / ' + actividad.provincia : ''}}  {{actividad.distrito ? ' / ' + actividad.distrito : ''}}</td>
+          <td nzAlign="center">{{actividad.direccion}}</td>
+          <td nzAlign="center">{{actividad.horaInicio | date:'HH:mm'}}</td>
+          <td nzAlign="center">{{actividad.horaFin | date:'HH:mm'}}</td>
           <td nzAlign="center">{{actividad.distancia}}</td>
+          <td nzAlign="center">{{actividad.desarrollo}}</td>
+          <td nzAlign="center">
+            <app-boton-descargar *ngIf="actividad.primerAdjunto" [rutaArchivo]="actividad.primerAdjunto" [titulo]="'Descargar adjunto'" />
+          </td>
           <td nzAlign="center">
             <div [ngClass]="actividad.destacado ? 'text-green-600' : 'text-slate-200'">
                 <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
             </div>
           </td>
+          <td nzAlign="center">
+            <div [ngClass]="actividad.destacadoPCM ? 'text-green-600' : 'text-slate-200'">
+                <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+            </div>
+          </td>
           <td nzRight nzAlign="center">
               <div class="flex justify-center">
-                <app-boton icono="cloud-upload" [link]="true" tooltip="Subir desarrollo" (click)="subirDesarrollo(actividad)"/>
+                <app-boton *ngIf="actividadesActions.standout" icono="check-circle" [link]="true" tooltip="Destacar PCM" (click)="destacarPcm(actividad)"/>
+
+                <app-boton *ngIf="actividadesActions.upload" icono="cloud-upload" [link]="true" [disabled]="!permisosVigenteDesarrollo(actividad)" [tooltip]="permisosVigenteDesarrollo(actividad) ? 'Subir desarrollo' : ''" (click)="permisosVigenteDesarrollo(actividad) ? subirDesarrollo(actividad) : null"/>
+
+                <app-boton *ngIf="actividadesActions.edit" icono="pencil" [link]="true" [tooltip]="!permisosVigenteDesarrollo(actividad) ? 'Actualizar evento' : ''" [disabled]="!permisosVigenteActividad(actividad)" (click)="permisosVigenteActividad(actividad) ? actualizarActividad(actividad) : null"/>
+
+                <app-boton *ngIf="actividadesActions.delete" icono="trash" color="red" [stepColor]="500" [tooltip]="!permisosVigenteDesarrollo(actividad) ? 'Eliminar evento' : ''" [link]="true" [disabled]="!permisosVigenteActividad(actividad)" (click)="permisosVigenteActividad(actividad) ? eliminarActividad(actividad) : null" />
               </div>
           </td>
         </tr>
@@ -44,14 +70,18 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
-        <!-- <app-boton [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/> -->
+        <app-boton icono="sync" [outline]="true" (click)="obtenerActividadesService()"/>
 
-        <app-boton icono="file-excel" [loading]="loadingExport" texto="Exportar" [outline]="true" (click)="reporteActividad()"/>
+        <app-boton *ngIf="actividadesActions.report" [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/>
 
-        <app-boton [icono]="'plus'" [texto]="'Nueva Actividad'" (click)="crearActividad()"/>
+        <app-boton *ngIf="actividadesActions.report" icono="file-excel" [loading]="loadingExport" texto="Exportar" [outline]="true" (click)="reporteActividad()"/>
+
+        <app-boton *ngIf="actividadesActions.new" [disabled]="!nuevoActivo" [icono]="'plus'" texto="Nueva Actividad" (click)="nuevoActivo ? crearActividad() : null"/>
       </div>
     </div>
   </ng-template>
 </div>
 
 <p-toast />
+
+<app-filtro-actividades *ngIf="openFilters" [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="this.openFilters = false" (filters)="generateFilters($event)" />

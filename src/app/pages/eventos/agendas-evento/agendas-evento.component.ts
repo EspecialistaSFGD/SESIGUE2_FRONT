@@ -142,7 +142,7 @@ export default class AgendasEventoComponent {
     }
 
     this.eventoId = entidadIdNumber
-    // this.obtenerEventoService()
+    this.obtenerEventoService()
   }
 
   obtenerEventoService(){    
@@ -151,7 +151,8 @@ export default class AgendasEventoComponent {
         this.pagination.eventoId = `${this.eventoId}`,
         resp.success ? this.evento = resp.data : this.router.navigate(['/eventos'])
         if(resp.data){
-          this.obtenerIntervencionEspacioService()
+          this.pagination.tipoEventoId = resp.data.codigoTipoEvento
+          // this.obtenerIntervencionEspacioService()
         }
       })
   }
@@ -168,6 +169,7 @@ export default class AgendasEventoComponent {
   obtenerIntervencionEspacioService(){
     this.loading = true
     const eventoId = this.eventoId.toString()
+
     const pagination: Pagination = { ...this.pagination, eventoId }
     if(!this.permisosPCM){
       pagination.sectorId = this.sectorAuth

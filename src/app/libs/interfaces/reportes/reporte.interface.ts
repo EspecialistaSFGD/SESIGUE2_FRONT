@@ -6,6 +6,7 @@ export class TraerReportesInterface {
         public ubigeo?: string | null,
         public sector?: string | null,
         // public espacio?: string | null,
+        public tipoEspacioSeleccionado?: string | null,
         public espaciosSeleccionados?: SelectModel[] | null,
         public tipoAcuerdo?: string | null,
     ) { }

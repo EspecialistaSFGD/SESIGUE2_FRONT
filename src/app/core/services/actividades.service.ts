@@ -49,8 +49,10 @@ export class ActividadesService {
   }
 
   eliminarActividad(actividadId: string) {
+    const usuarioId =localStorage.getItem('codigoUsuario') ?? ''
+    const params = this.helpersServices.setParams({ actividadId, usuarioId })
     const headers = this.helpersServices.getAutorizationToken()
-    return this.http.delete<ActividadResponses>(`${this.urlActividades}/EliminarActividad/${actividadId}`, { headers })
+    return this.http.delete<ActividadResponses>(`${this.urlActividades}/EliminarActividad/${actividadId}`, { headers, params })
       .pipe(
         tap(resp => {
           return resp

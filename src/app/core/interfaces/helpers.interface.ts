@@ -39,6 +39,7 @@ export interface ButtonsActions {
   approve?:boolean
   comment?: boolean
   unvalidate?: boolean
+  standout?: boolean
   reactivate?: boolean
   servicejne?: boolean
 }
