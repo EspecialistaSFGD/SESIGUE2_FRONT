@@ -15,6 +15,7 @@ export const obtenerPermisosBotones = (botones: UsuarioPermisos[]) => {
 			case 'Subir': permisos.upload = true; break;
 			case 'Descargar': permisos.download = true; break;
 			case 'Invalidar': permisos.unvalidate = true; break;
+			case 'Destacar': permisos.standout = true; break;
 			case 'Reactivar': permisos.reactivate = true; break;
 			case 'ServicioJne': permisos.servicejne = true; break;
 		}

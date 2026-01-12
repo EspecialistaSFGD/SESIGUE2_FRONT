@@ -1,4 +1,26 @@
 <form [formGroup]="formActividad" class="grid grid-cols-1 md:grid-cols-3 gap-3" autocomplete="off">
+    <div class="col-span-2 flex flex-col">
+        <label for="eventoId">Evento</label>
+        <p-dropdown
+        [options]="eventos()"
+        formControlName="eventoId"
+        optionLabel="nombre"
+        optionValue="eventoId"
+        [showClear]="true"
+        placeholder="Seleccionar evento"/>
+        <div class="text-danger" *ngIf="alertMessageError('eventoId')"> {{msgErrorControl('eventoId','Evento')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="entidadSlug">Entidad
+            @if(formActividad.get('entidadId')?.value){
+                <i class="pi pi-info-circle" style="font-size: .8rem;" [nz-tooltip]="formActividad.get('entidad')?.value"></i>
+            }
+        </label>
+        <input type="text" class="form-control" id="entidadSlug" formControlName="entidadSlug">
+        <div class="text-danger" *ngIf="alertMessageError('entidadSlug')">{{msgErrorControl('entidadSlug','Entidad')}}</div>
+    </div>
+
     <div class="flex flex-col">
         <label for="nombre">Departamento</label>
         <p-dropdown 
@@ -39,31 +61,25 @@
     </div>
 
     <div class="col-span-3 flex flex-col">
-        <label for="entidad">Entidad</label>
-        <input type="text" class="form-control" id="entidad" formControlName="entidad">
-        <div class="text-danger" *ngIf="alertMessageError('entidad')">{{msgErrorControl('entidad','Entidad')}}</div>
-    </div>
-
-    <div class="col-span-3 flex flex-col">
-        <label for="direccion">Dirección</label>
+        <label for="direccion">Dirección (Incluir al final la localidad)</label>
         <input type="text" class="form-control" id="direccion" formControlName="direccion">
         <div class="text-danger" *ngIf="alertMessageError('direccion')">{{msgErrorControl('direccion','Dirección')}}</div>
     </div>
 
     <div class="flex flex-col">
-        <label for="latitud">Latitud</label>
+        <label for="latitud">Latitud (Ejm: -6.22966865)</label>
         <input type="text" class="form-control" id="latitud" formControlName="latitud">
         <div class="text-danger" *ngIf="alertMessageError('latitud')">{{msgErrorControl('latitud','Latitud')}}</div>
     </div>
 
     <div class="flex flex-col">
-        <label for="longitud">Longitud</label>
+        <label for="longitud">Longitud (Ejm: -77.87297654)</label>
         <input type="text" class="form-control" id="longitud" formControlName="longitud">
         <div class="text-danger" *ngIf="alertMessageError('longitud')">{{msgErrorControl('longitud','Longitud')}}</div>
     </div>
 
     <div class="flex flex-col">
-        <label for="distancia">Distancia</label>
+        <label for="distancia">Distancia(Minutos)</label>
         <p-inputNumber
         formControlName="distancia"
         [showButtons]="true"
@@ -90,7 +106,8 @@
     </div>
 
     <div class="flex flex-col">
-        <label for="destacado">Destacado</label>
+        <label for="destacado">Destacado <i class="pi pi-info-circle" style="font-size: .8rem;" nz-tooltip="Destacado para la presencia del Sr. Presidente"></i>
+        </label>
         <p-inputSwitch formControlName="destacado" />
         <div class="text-danger" *ngIf="alertMessageError('destacado')">{{msgErrorControl('destacado','Destacado')}}</div>
     </div>

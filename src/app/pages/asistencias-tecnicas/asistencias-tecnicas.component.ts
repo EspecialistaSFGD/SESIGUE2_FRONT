@@ -262,6 +262,7 @@ export default class AsistenciasTecnicasComponent {
 
   reporteExcelAtenciones(){
     this.loadingExport = true;
+    this.pagination.perfil = this.perfilAuth
     this.asistenciaTecnicaService.reporteAtenciones(this.pagination)
       .subscribe( resp => {
         if(resp.data){

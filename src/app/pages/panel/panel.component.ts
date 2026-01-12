@@ -206,6 +206,7 @@ export class PanelComponent {
     reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
     ubigeo = this.ubigeoSeleccionado?.value?.toString(),
     sector = this.sectorSeleccionado,
+    tipoEspacioSeleccionado = this.tipoEspacioSeleccionado?.value ? `${this.tipoEspacioSeleccionado?.value}` : null,
     espaciosSeleccionados = this.espaciosSeleccionados,
     tipoAcuerdo = this.tipoAcuerdoSeleccionado,
   }: TraerReportesInterface): void {
@@ -214,6 +215,7 @@ export class PanelComponent {
       reporteCabeceraId,
       ubigeo,
       sector,
+      tipoEspacioSeleccionado,
       espaciosSeleccionados,
       tipoAcuerdo
     });
@@ -222,6 +224,7 @@ export class PanelComponent {
       reporteCabeceraId,
       ubigeo,
       sector,
+      tipoEspacioSeleccionado,
       espaciosSeleccionados,
       tipoAcuerdo
     });
@@ -230,6 +233,7 @@ export class PanelComponent {
       reporteCabeceraId,
       ubigeo,
       sector,
+      tipoEspacioSeleccionado,
       espaciosSeleccionados,
       tipoAcuerdo
     });
@@ -238,6 +242,7 @@ export class PanelComponent {
       reporteCabeceraId,
       ubigeo,
       sector,
+      tipoEspacioSeleccionado,
       espaciosSeleccionados,
       tipoAcuerdo
     });
@@ -246,6 +251,7 @@ export class PanelComponent {
       reporteCabeceraId,
       ubigeo,
       sector,
+      tipoEspacioSeleccionado,
       espaciosSeleccionados,
       tipoAcuerdo
     });
@@ -289,21 +295,25 @@ export class PanelComponent {
   onTipoEspacioChange(value: SelectModel | null, skipNavigation = false): void {
     const wasPreviouslySelected = this.tipoEspacioSeleccionado != null;
 
-    this.tipoEspacioSeleccionado = value;
     // this.traerAcuerdos({ tipoEspacioSeleccionado: value });
     // debugger;
+    
     if (value != null) {
+      this.tipoEspacioSeleccionado = value;
       // this.espaciosStore.limpiarEspacios();
       this.espaciosStore.listarEventos([Number(value.value)]);
 
 
       if (this.espacioSeleccionado != null) {
-        this.espacioSeleccionado = null;
         this.filterReportForm.patchValue({ espacio: null });
       }
     } else {
+      this.tipoEspacioSeleccionado = null;
+      this.espacioSeleccionado = null;
       this.onEspacioChange(null);
     }
+
+    this.onRenderCharts({});
   }
 
   onEspacioChange(value: SelectModel[] | null): void {
@@ -348,8 +358,6 @@ export class PanelComponent {
   }
 
   onProvChange(value: SelectModel | null): void {
-    console.log(value);
-
     const provControl = this.filterReportForm.get('provinciaSelect');
     const depControl = this.filterReportForm.get('departamentoSelect');
     const disControl = this.filterReportForm.get('distritoSelect');
@@ -411,20 +419,20 @@ export class PanelComponent {
     reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
     ubigeo = this.ubigeoSeleccionado?.value?.toString(),
     sector = this.sectorSeleccionado,
+    tipoEspacioSeleccionado = `${this.tipoEspacioSeleccionado?.value}`,
     espaciosSeleccionados = this.espaciosSeleccionados,
     tipoAcuerdo = this.tipoAcuerdoSeleccionado,
   }: TraerReportesInterface): void {
 
     // Determina la URL del TopoJSON y el feature basado en el ubigeo
     const { topoJsonUrl, rqDataFeature } = this.getTopoJsonUrlAndFeature(ubigeo ?? null);
-    console.log(topoJsonUrl);
 
     this.geoChart = new Chart({
       container: 'container',
       autoFit: true,
     });
 
-    this.reportesService.obtenerReporteResultado(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo)
+    this.reportesService.obtenerReporteResultado(reporteCabeceraId, ubigeo, sector, tipoEspacioSeleccionado, espaciosSeleccionados, tipoAcuerdo)
       .then((response) => response.data)
       .then((data) => {
         this.acuerdos.set(data);
@@ -519,7 +527,7 @@ export class PanelComponent {
       const ubigeoLength = data.data.properties.ubigeo.length;
       const ubigeoValue = data.data.properties.ubigeo;
 
-      console.log(data.data.properties);
+      // console.log(data.data.properties);
 
 
       if (ubigeoLength === 2) {
@@ -554,6 +562,7 @@ export class PanelComponent {
     ubigeo = this.ubigeoSeleccionado?.value?.toString(),
     sector = this.sectorSeleccionado,
     // espacio = this.espacioSeleccionado,
+    tipoEspacioSeleccionado = `${this.tipoEspacioSeleccionado?.value}`,
     espaciosSeleccionados = this.espaciosSeleccionados,
     tipoAcuerdo = this.tipoAcuerdoSeleccionado
   }: TraerReportesInterface): void {
@@ -569,7 +578,7 @@ export class PanelComponent {
     // this.radialChart.coordinate({ type: 'theta', outerRadius: 0.8, innerRadius: 0.5 });
 
 
-    this.reportesService.obtenerReporteClasificacion(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo)
+    this.reportesService.obtenerReporteClasificacion(reporteCabeceraId, ubigeo, sector, tipoEspacioSeleccionado, espaciosSeleccionados, tipoAcuerdo)
       // .then((data) => data.data)
       .then((data) => {
         // console.log(data);
@@ -616,11 +625,12 @@ export class PanelComponent {
     reporteCabeceraId = this.reporteCabeceraIdSeleccionado,
     ubigeo = this.ubigeoSeleccionado?.value?.toString(),
     sector = this.sectorSeleccionado,
-    // espacio = this.espacioSeleccionado,
+    // espacio = this.espacioSeleccionado,    
+    tipoEspacioSeleccionado = `${this.tipoEspacioSeleccionado?.value}`,
     espaciosSeleccionados = this.espaciosSeleccionados,
     tipoAcuerdo = this.tipoAcuerdoSeleccionado
   }: TraerReportesInterface): void {
-    this.reportesService.obtenerReporteSector(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo).then((data) => {
+    this.reportesService.obtenerReporteSector(reporteCabeceraId, ubigeo, sector, tipoEspacioSeleccionado, espaciosSeleccionados, tipoAcuerdo).then((data) => {
       if (data.success) {
         this.reporteSectores.set(data.data);
 
@@ -653,10 +663,11 @@ export class PanelComponent {
     ubigeo = this.ubigeoSeleccionado?.value?.toString(),
     sector = this.sectorSeleccionado,
     // espacio = this.espacioSeleccionado,
+    tipoEspacioSeleccionado = `${this.tipoEspacioSeleccionado?.value}`,
     espaciosSeleccionados = this.espaciosSeleccionados,
     tipoAcuerdo = this.tipoAcuerdoSeleccionado
   }: TraerReportesInterface): void {
-    this.reportesService.obtenerReporteTotales(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo).then((data) => {
+    this.reportesService.obtenerReporteTotales(reporteCabeceraId, ubigeo, sector, tipoEspacioSeleccionado, espaciosSeleccionados, tipoAcuerdo).then((data) => {
       if (data.success) {
         this.totales.set(data.data[0]);
 
@@ -684,6 +695,7 @@ export class PanelComponent {
     ubigeo = this.ubigeoSeleccionado?.value?.toString(),
     sector = this.sectorSeleccionado,
     // espacio = this.espacioSeleccionado,
+    tipoEspacioSeleccionado = `${this.tipoEspacioSeleccionado?.value}`,
     espaciosSeleccionados = this.espaciosSeleccionados,
     tipoAcuerdo = this.tipoAcuerdoSeleccionado
   }: TraerReportesInterface): void {
@@ -694,7 +706,7 @@ export class PanelComponent {
       height: 275
     });
 
-    this.reportesService.obtenerReporteMensual(reporteCabeceraId, ubigeo, sector, espaciosSeleccionados, tipoAcuerdo)
+    this.reportesService.obtenerReporteMensual(reporteCabeceraId, ubigeo, sector, tipoEspacioSeleccionado, espaciosSeleccionados, tipoAcuerdo)
       // .then((data) => data.data)
       .then((data: ReporteMensualModel[]) => {
 
