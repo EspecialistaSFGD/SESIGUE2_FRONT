@@ -732,7 +732,6 @@ export class AcuerdosComponent implements OnInit {
           this.generarExcel(res.data.archivo, res.data.nombreArchivo);
         }
       })
-
   }
 
   reporteAcuerdosDesestimados(){
@@ -744,6 +743,7 @@ export class AcuerdosComponent implements OnInit {
     this.sectoresSeleccionados ? this.pagination.grupoId = this.sectoresSeleccionados!.map(item => Number(item.value)) : delete this.pagination.grupoId;
     this.tipoEspacioSeleccionado ? this.pagination.tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label! : delete this.pagination.tipoEspacio;
     this.espaciosSeleccionados ? this.pagination.eventosId = this.espaciosSeleccionados!.map(item => Number(item.value)).map(String) : delete this.pagination.eventosId;
+    this.estadosSelecionados ? this.pagination.estados = this.estadosSelecionados!.map(item => Number(item.value)).map(String) : delete this.pagination.estados;
 
     this.loading = true
     this.acuerdosService.reporteAcuerdosDesestimados(this.pagination)
