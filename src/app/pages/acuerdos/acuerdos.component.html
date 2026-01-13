@@ -154,12 +154,13 @@
                           <ul nz-menu>
                               <li nz-menu-item>
                                   <button (click)="onDescargarReporte('ACUERDO')" nz-button nzType="text"
-                                      type="button">Exportar
-                                      acuerdos</button>
+                                      type="button">Acuerdos</button>
                               </li>
                               <li nz-menu-item>
-                                  <button nz-button nzType="text" (click)="onDescargarReporte('HITO')" type="button">Exportar
-                                      hitos</button>
+                                  <button (click)="reporteAcuerdosDesestimados()" nz-button nzType="text" type="button">Acuerdos desestimados</button>
+                              </li>
+                              <li nz-menu-item>
+                                  <button nz-button nzType="text" (click)="onDescargarReporte('HITO')" type="button">Hitos</button>
                               </li>
                           </ul>
                       </nz-dropdown-menu>

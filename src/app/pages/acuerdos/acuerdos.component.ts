@@ -44,6 +44,7 @@ import { ReporteType } from '../../libs/shared/types/reporte.type';
 import { ReporteDescargaComponent } from '../../libs/shared/components/reporte-descarga/reporte-descarga.component';
 import { ReportesService } from '../../libs/shared/services/reportes.service';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { Pagination } from '@core/interfaces';
 
 @Component({
   selector: 'app-pedidos',
@@ -84,6 +85,7 @@ export class AcuerdosComponent implements OnInit {
   sortOrder: string = 'descend';
   isDrawervisible: boolean = false;
   isVisible: boolean = false;
+  pagination: Pagination = {};
 
 
   cui: string | null = null;
@@ -709,6 +711,7 @@ export class AcuerdosComponent implements OnInit {
     ubigeo = this.provSeleccionada ? `${this.provSeleccionada.value}` : ubigeo
     ubigeo = this.disSeleccionado ? `${this.disSeleccionado.value}` : ubigeo
 
+
     let tipoEspacio: string | null = null
     if (this.tipoEspacioSeleccionado) {
       tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label!;
@@ -725,11 +728,32 @@ export class AcuerdosComponent implements OnInit {
     this.reportesService.descargarReporteAcuerdos(tipo, this.pageIndex, 0, sortField, this.sortOrder, sectores, tipoEspacio, espacios, ubigeo, cui, estados, clasificaciones, tipos)
       .then((res) => {
         if (res.success == true) {
-          this.generarExcel(res.data.archivo, res.data.nombreArchivo);
           this.loading = false
+          this.generarExcel(res.data.archivo, res.data.nombreArchivo);
         }
       })
 
+  }
+
+  reporteAcuerdosDesestimados(){
+    this.pagination.piPageSize = 0
+    this.pagination.columnSort = 'acuerdoId'
+    this.pagination.typeSort = this.sortOrder
+    this.pagination.piCurrentPage = this.pageIndex
+
+    this.sectoresSeleccionados ? this.pagination.grupoId = this.sectoresSeleccionados!.map(item => Number(item.value)) : delete this.pagination.grupoId;
+    this.tipoEspacioSeleccionado ? this.pagination.tipoEspacio = this.espaciosStore.tiposEspacio().find(item => item.value == this.tipoEspacioSeleccionado?.value)?.label! : delete this.pagination.tipoEspacio;
+    this.espaciosSeleccionados ? this.pagination.eventosId = this.espaciosSeleccionados!.map(item => Number(item.value)).map(String) : delete this.pagination.eventosId;
+
+    this.loading = true
+    this.acuerdosService.reporteAcuerdosDesestimados(this.pagination)
+      .subscribe( resp => {
+        if (resp.success == true) {
+          this.loading = false
+          console.log(this.loading);
+          this.generarExcel(resp.data.archivo, resp.data.nombreArchivo);
+        }
+      })    
   }
 
   // onDescargarReporte(tipo: ReporteType): void {
