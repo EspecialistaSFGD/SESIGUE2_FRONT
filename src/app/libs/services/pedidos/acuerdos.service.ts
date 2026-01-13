@@ -1,17 +1,17 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { SelectModel } from '../../models/shared/select.model';
-import { environment } from '../../../../environments/environment';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
-import { AcuerdoPedidoModel } from '../../models/pedido';
-import { UtilesService } from '../../shared/services/utiles.service';
-import { AuthService } from '../auth/auth.service';
-import { AcuerdoPedidoExpressModel, DesestimacionModel } from '../../models/pedido/acuerdo.model';
-import { EstadoEventoType } from '../../shared/types/estado.type';
-import { AcuerdoDesestimacionResponse, AcuerdoDesestimacionResponses } from '@core/interfaces';
-import { catchError, map, of, tap } from 'rxjs';
+import { AcuerdoDesestimacionResponse, AcuerdoDesestimacionResponses, ExportResponses, Pagination } from '@core/interfaces';
 import { HelpersService } from '@core/services';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { catchError, map, of, tap } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { AcuerdoPedidoModel } from '../../models/pedido';
+import { AcuerdoPedidoExpressModel, DesestimacionModel } from '../../models/pedido/acuerdo.model';
+import { ResponseModel, ResponseModelPaginated } from '../../models/shared/response.model';
+import { SelectModel } from '../../models/shared/select.model';
+import { UtilesService } from '../../shared/services/utiles.service';
+import { EstadoEventoType } from '../../shared/types/estado.type';
+import { AuthService } from '../auth/auth.service';
 
 interface State {
     acuerdos: AcuerdoPedidoModel[];
@@ -455,4 +455,10 @@ export class AcuerdosService {
         //     isConverting: (isConverting !== null) ? isConverting : false,
         // }));
     }
+
+    reporteAcuerdosDesestimados(pagination: Pagination){
+    const params = this.helpersServices.setParams(pagination)
+    const headers = this.helpersServices.getAutorizationToken()
+    return this.http.get<ExportResponses>(`${this.urlAcuerdo}/ReporteAcuerdosDesestimados`, { headers, params })
+  }
 }

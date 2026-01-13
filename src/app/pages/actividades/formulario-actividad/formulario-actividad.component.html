@@ -1,5 +1,5 @@
 <form [formGroup]="formActividad" class="grid grid-cols-1 md:grid-cols-3 gap-3" autocomplete="off">
-    <div class="col-span-2 flex flex-col">
+    <div class="md:col-span-2 flex flex-col">
         <label for="eventoId">Evento</label>
         <p-dropdown
         [options]="eventos()"
@@ -60,7 +60,7 @@
         <div class="w-full text-danger" *ngIf="alertMessageError('distrito')">{{msgErrorControl('distrito','Distrito')}}</div>
     </div>
 
-    <div class="col-span-3 flex flex-col">
+    <div class="md:col-span-3 flex flex-col">
         <label for="direccion">Dirección (Incluir al final la localidad)</label>
         <input type="text" class="form-control" id="direccion" formControlName="direccion">
         <div class="text-danger" *ngIf="alertMessageError('direccion')">{{msgErrorControl('direccion','Dirección')}}</div>
@@ -112,25 +112,25 @@
         <div class="text-danger" *ngIf="alertMessageError('destacado')">{{msgErrorControl('destacado','Destacado')}}</div>
     </div>
 
-    <div class="col-span-3 flex flex-col">
+    <div class="md:col-span-3 flex flex-col">
         <label for="distancia">Participante</label>
         <input type="text" class="form-control" id="participante" formControlName="participante">
         <div class="text-danger" *ngIf="alertMessageError('participante')">{{msgErrorControl('participante','Participante')}}</div>
     </div>
 
-    <div class="col-span-3 flex flex-col">
+    <div class="md:col-span-3 flex flex-col">
         <label for="actividad">Actividad</label>
         <input type="text" class="form-control" id="actividad" formControlName="actividad">
         <div class="text-danger" *ngIf="alertMessageError('actividad')">{{msgErrorControl('actividad','Actividad')}}</div>
     </div>
 
-    <div class="col-span-3 flex flex-col">
+    <div class="md:col-span-3 flex flex-col">
         <label for="descripcion">Descripción</label>
         <input type="text" class="form-control" id="descripcion" formControlName="descripcion">
         <div class="text-danger" *ngIf="alertMessageError('descripcion')">{{msgErrorControl('descripcion','Descripción')}}</div>
     </div>
 
-    <div class="col-span-3 flex flex-col">
+    <div class="md:col-span-3 flex flex-col">
         <label for="comentarios">Comentarios</label>
         <input type="text" class="form-control" id="comentarios" formControlName="comentarios">
         <div class="text-danger" *ngIf="alertMessageError('comentarios')">{{msgErrorControl('comentarios','Comentarios')}}</div>
