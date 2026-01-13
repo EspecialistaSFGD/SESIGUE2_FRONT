@@ -19,6 +19,7 @@ import saveAs from 'file-saver';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
 import { FiltroActividadesComponent } from './filtro-actividades/filtro-actividades.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-actividades',
@@ -58,6 +59,7 @@ export class ActividadesComponent {
   private utilesService = inject(UtilesService)
   private authStore = inject(AuthService)
   private eventosService = inject(EventosService)
+  private breakpoint = inject(BreakpointObserver)
 
   ngOnInit(): void {
     this.obtenerEventosService()
@@ -202,9 +204,11 @@ export class ActividadesComponent {
   actividadFormModal(create: boolean): void{
       const codigo = create ? '' : this.actividad().codigo
       const action = `${create ? 'Crear' : 'Actualizar' } actividad`
+
+      const widthModal = (this.breakpoint.isMatched('(max-width: 767px)')) ? '90%' : '50%';
       this.modal.create<FormularioActividadComponent>({
         nzTitle: `${action.toUpperCase()} ${codigo}`,
-        nzWidth: '50%',
+        nzWidth: widthModal,
         nzMaskClosable: false,
         nzContent: FormularioActividadComponent,
         nzData: {
