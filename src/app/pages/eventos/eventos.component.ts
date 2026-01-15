@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
-import { ButtonsActions, EventoResponse, Pagination, TipoEventoResponse, UsuarioNavigation } from '@core/interfaces';
-import { EventosService, IntervencionEspacioService } from '@core/services';
+import { ButtonsActions, EventoDiaResponse, EventoResponse, Pagination, TipoEventoResponse, UsuarioNavigation } from '@core/interfaces';
+import { EventoDiasService, EventosService, IntervencionEspacioService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
@@ -50,6 +50,7 @@ export default class EventosComponent {
   confirmModal?: NzModalRef;
 
   private eventoService = inject(EventosService)
+  private eventoDiaService = inject(EventoDiasService)
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private modal = inject(NzModalService);
@@ -210,26 +211,44 @@ export default class EventosComponent {
               return formEvento.markAllAsTouched();
             }
 
-            const fechaEvento = getDateFormat(formEvento.get('fechaEvento')?.value, 'month')
-            const fechaFinEvento = getDateFormat(formEvento.get('fechaFinEvento')?.value, 'month')
+            // const fechaEvento = getDateFormat(formEvento.get('fechaEvento')?.value, 'month')
+            // const fechaFinEvento = getDateFormat(formEvento.get('fechaFinEvento')?.value, 'month')
+            
+            const horaInicioFecha = new Date(formEvento.get('fechaEvento')?.value);
+            const horaFinFecha = new Date(formEvento.get('fechaFinEvento')?.value);
 
-            const body:EventoResponse = { ...formEvento.value, fechaEvento, fechaFinEvento }
+            const fechaInicio = getDateFormat(horaInicioFecha, 'month');
+            const fechaFin = getDateFormat(horaFinFecha, 'month');
+
+            const fechaEvento = `${fechaInicio} ${horaInicioFecha.getHours()}:${horaInicioFecha.getMinutes()}`
+            const fechaFinEvento = `${fechaFin} ${horaFinFecha.getHours()}:${horaFinFecha.getMinutes()}`
+
+            const bodyDiasEvento = formEvento.get('diasevento')?.value
+
+            const bodyEvento:EventoResponse = { ...formEvento.value, fechaEvento, fechaFinEvento }
             if(!create){
-              body.eventoId = evento.eventoId
+              bodyEvento.eventoId = evento.eventoId
             }
-            create ? this.crearEventoService(body) : this.actualizarEventoService(body)
+            create ? this.crearEventoService(bodyEvento, bodyDiasEvento) : this.actualizarEventoService(bodyEvento)
           }
         }
       ]
     })
   }
 
-  crearEventoService(evento: EventoResponse){
+  crearEventoService(evento: EventoResponse, EventoDias: EventoDiaResponse[]){
     this.eventoService.registrarEvento(evento)
       .subscribe( resp => {        
         if(resp.success){
           this.messageService.add({ severity: 'success', summary: 'Evento registrado', detail: resp.message });
-          this.obtenerEventoService()
+          
+          for(let diaEvento of EventoDias){
+            diaEvento.eventoId = resp.data.eventoId!
+            const fechaEvento = new Date(diaEvento.fecha);
+            const fecha = getDateFormat(fechaEvento, 'month')
+            this.crearEventoDias({...diaEvento, fecha })
+          }
+          setTimeout(() => this.obtenerEventoService());
           this.modal.closeAll();
         } else {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
@@ -271,5 +290,9 @@ export default class EventosComponent {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
         }
       })
+  }
+
+  crearEventoDias(eventoDia: EventoDiaResponse){
+    this.eventoDiaService.registrarEventoDia(eventoDia).subscribe( resp => {} )
   }
 }

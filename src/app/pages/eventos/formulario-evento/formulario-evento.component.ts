@@ -121,26 +121,28 @@ export class FormularioEventoComponent {
     const fechaCreacion = new Date(fechaCreacionValue);
     const fechaVigencia = new Date(fechaVigenciaValue);
 
-    let fechas:Date[] = []
+    // let fechas:Date[] = []
 
     if(control == 'fechaEvento'){
       if (fechaCreacionValue && fechaVigenciaValue && fechaCreacion > fechaVigencia) {
         fechaEventoControl?.setErrors({ ...fechaEventoControl.errors, msgBack: 'La fecha de inicio debe ser menor o igual que la fecha de fin.' });
-        fechas = []
+        // fechas = []
       } else {
         fechaFinEventoControl?.setErrors(null)
       }
     } else if(control == 'fechaFinEvento'){
       if (fechaCreacionValue && fechaVigenciaValue && fechaVigencia < fechaCreacion) {
         fechaFinEventoControl?.setErrors({ ...fechaFinEventoControl.errors, msgBack: 'La fecha de fin debe ser mayor que la fecha de inicio.' });
-        fechas = []
+        // fechas = []
       } else {
         fechaEventoControl?.setErrors(null)
       }
     }
 
+    this.diasevento.clear();
+
     if(fechaCreacionValue && fechaVigenciaValue){
-      fechas = generarRangoFechas(fechaCreacion, fechaVigencia)
+      let fechas:Date[] = generarRangoFechas(fechaCreacion, fechaVigencia)
       this.agregarFechasEvento(fechas);
       console.log(this.diasevento.value);
     }
@@ -152,7 +154,7 @@ export class FormularioEventoComponent {
         fecha: [fecha, Validators.required],
         plenaria: [false, Validators.required],
         cantidadSector: [0, [Validators.required, Validators.min(0), Validators.max(30)]],
-        cantidadUbigeo: [0, [Validators.required, Validators.min(0), Validators.max(30)]],
+        cantidadRegionalLocal: [0, [Validators.required, Validators.min(0), Validators.max(30)]],
       })
       this.diasevento.push(diaEvento)            
     }
