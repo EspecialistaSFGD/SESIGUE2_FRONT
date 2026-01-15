@@ -1,96 +1,173 @@
-<form [formGroup]="formEvento" autocomplete="off">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="flex flex-col col-span-2">
-            <label for="nombre">Nombre</label>
-            <input type="text" class="form-control" id="nombre" placeholder="Nombre aquí" formControlName="nombre">
-            <div class="w-full text-danger" *ngIf="alertMessageError('nombre')">{{msgErrorControl('nombre','Nombre')}}</div>
-        </div>
+<form [formGroup]="formEvento" class="" autocomplete="off">
+    <p-stepper [linear]="true">
+        <p-stepperPanel header="Datos generales">
+            <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-3 flex flex-col ">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Nombre aquí" formControlName="nombre">
+                        <div class="w-full text-danger" *ngIf="alertMessageError('nombre')">{{msgErrorControl('nombre','Nombre')}}</div>
+                    </div>
+                
+                    <div class="flex flex-col">
+                        <label for="abreviatura">Código</label>
+                        <input type="text" class="form-control" id="abreviatura" placeholder="Código aquí" formControlName="abreviatura">
+                        <div class="w-full text-danger" *ngIf="alertMessageError('abreviatura')">{{msgErrorControl('abreviatura','Código')}}</div>
+                    </div>
+                
+                    <div class="flex flex-col">
+                        <label for="fechaEvento">Fecha de inicio</label>
+                        <p-calendar 
+                        inputId="calendar-24h" 
+                        formControlName="fechaEvento" 
+                        [showTime]="true" 
+                        hourFormat="24"
+                        [showIcon]="true"
+                        [iconDisplay]="'input'"
+                        (onSelect)="validateDate('fechaEvento')"/>
+                        <div class="w-full text-danger" *ngIf="alertMessageError('fechaEvento')">{{msgErrorControl('fechaEvento','Fecha de inicio')}}</div>
+                    </div>
+                
+                    <div class="flex flex-col">
+                        <label for="fechaFinEvento">Fecha de fin</label>
+                        <p-calendar 
+                        inputId="calendar-24h" 
+                        formControlName="fechaFinEvento" 
+                        [showTime]="true" 
+                        hourFormat="24"
+                        [showIcon]="true"
+                        [iconDisplay]="'input'"
+                        (onSelect)="validateDate('fechaFinEvento')"/>
+                        <div class="w-full text-danger" *ngIf="alertMessageError('fechaFinEvento')">{{msgErrorControl('fechaFinEvento','Fecha de fin')}}</div>
+                    </div>
+                
+                    <div class="flex flex-col">
+                        <label class="flex items-center gap-1" for="verificaAsistentes">Verifica asistente <i class="pi pi-info-circle" [nz-tooltip]="tooltipVerifyAssistant"></i></label>
+                            <p-inputSwitch formControlName="verificaAsistentes" class="mt-1"/>
+                        <div class="w-full text-danger" *ngIf="alertMessageError('verificaAsistentes')">{{msgErrorControl('verificaAsistentes','verifica asistente')}}</div>
+                    </div>
+                
+                    <div class="flex flex-col">
+                        <label class="flex items-center gap-1" for="primeraTarea">Primera tarea <i class="pi pi-info-circle" [nz-tooltip]="tooltipFirstTask"></i></label>
+                            <p-inputSwitch formControlName="primeraTarea" class="mt-1"/>
+                        <div class="w-full text-danger" *ngIf="alertMessageError('primeraTarea')">{{msgErrorControl('primeraTarea','tarea sector')}}</div>
+                    </div>
+                
+                    <div *ngIf="!create" class="flex flex-col">
+                        <label for="vigente">Estado</label>
+                        <p-dropdown 
+                        [options]="estados"
+                        formControlName="vigente"
+                        optionLabel="value"
+                        optionValue="text"
+                        [showClear]="true" 
+                        placeholder="Seleccionar estado"/>
+                        <div class="w-full text-danger" *ngIf="alertMessageError('vigente')">{{msgErrorControl('vigente','Estado')}}</div>
+                    </div>
+                
+                    <div class="flex flex-col">
+                        <label for="subTipoId">Tipo</label>
+                            <p-dropdown 
+                        [options]="subTipos()"
+                        formControlName="subTipoId"
+                        optionLabel="descripcionSubTipo"
+                        optionValue="codigoSubTipo"
+                        [showClear]="true" 
+                        placeholder="Seleccionar tipo"/>
+                        <div class="w-full text-danger" *ngIf="alertMessageError('subTipoId')">{{msgErrorControl('subTipoId','Tipo')}}</div>
+                    </div>
+                
+                    <div class="flex flex-col">
+                        <label for="codigoTipoEvento">Tipo de espacio</label>
+                        <p-dropdown 
+                        [options]="tipoEventos()"
+                        formControlName="codigoTipoEvento"
+                        optionLabel="descripcionTipoEvento"
+                        optionValue="codigoTipoEvento"
+                        [showClear]="true" 
+                        placeholder="Seleccionar tipo de espacio"/>
+                        <div class="w-full text-danger" *ngIf="alertMessageError('codigoTipoEvento')">{{msgErrorControl('codigoTipoEvento','Tipo de espacio')}}</div>
+                    </div>
+                
+                    <div class="flex flex-col">
+                        <label for="cantidadSectores">Cantidad de sectores</label>
+                        <p-inputNumber
+                        formControlName="cantidadSectores" 55ddd
+                        [showButtons]="true"
+                        [min]="0"
+                        buttonLayout="horizontal" incrementButtonIcon="pi pi-plus"
+                        decrementButtonIcon="pi pi-minus" />
+                        <div class="w-full text-danger" *ngIf="alertMessageError('cantidadSectores')">{{msgErrorControl('cantidadSectores','Cantidad de sectores')}}</div>
+                    </div>
+                
+                    <div class="flex flex-col">
+                        <label for="maximoPedidos">Máximo de pedidos</label>
+                        <p-inputNumber
+                        formControlName="maximoPedidos"
+                        [showButtons]="true"
+                        [min]="0"
+                        buttonLayout="horizontal" incrementButtonIcon="pi pi-plus"
+                        decrementButtonIcon="pi pi-minus" />
+                        <div class="w-full text-danger" *ngIf="alertMessageError('maximoPedidos')">{{msgErrorControl('maximoPedidos','Máximo de pedidos')}}</div>
+                    </div>
+                </div>
 
-        <div class="flex flex-col">
-            <label for="abreviatura">Código</label>
-            <input type="text" class="form-control" id="abreviatura" placeholder="Código aquí" formControlName="abreviatura">
-            <div class="w-full text-danger" *ngIf="alertMessageError('abreviatura')">{{msgErrorControl('abreviatura','Código')}}</div>
-        </div>
+                <div class="flex pt-6 justify-end">
+					<p-button label="Siguiente" icon="pi pi-arrow-right" [disabled]="!generalValidate()" iconPos="right"(onClick)="generalValidate() ? nextCallback.emit() : null" />
+				</div>
+            </ng-template>
+        </p-stepperPanel>
+        <p-stepperPanel header="Cantidad GN/GR/GL">
+            <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
+                <div class="w-full flex flex-col gap-6" formArrayName="diasevento" [ngClass]="{'py-4' : diasevento.length }">
+                    <div class="grid md:grid-cols-4 gap-4" [ngClass]="{'pt-4 border-t border-gray-200' : i > 0}" *ngFor="let diasevento of diasevento.controls; let i = index" [formGroupName]="i">
+                        <div class="flex flex-col">
+                            <label>Fecha</label>
+                            <label class="pt-2">{{ diasevento.get('fecha')?.value | date:'dd/MM/yyyy' }} </label>
+                        </div>
 
-        <div class="flex flex-col">
-            <label for="fechaEvento">Fecha de inicio</label>
-            <p-calendar 
-            formControlName="fechaEvento"
-            [iconDisplay]="'input'" 
-            [showIcon]="true"
-            [showButtonBar]="true"
-            dateFormat="dd/mm/yy"
-            inputId="icondisplay" 
-            (onSelect)="validateDate('fechaEvento')"/>
-            <div class="w-full text-danger" *ngIf="alertMessageError('fechaEvento')">{{msgErrorControl('fechaEvento','Fecha de inicio')}}</div>
-        </div>
+                         <div class="flex flex-col">
+                            <label class="flex items-center gap-1" for="plenaria">Plenaria</label>
+                                <p-inputSwitch formControlName="plenaria" class="mt-1"/>
+                            <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('diasevento',i,'plenaria')">{{msgErrorControlTwoNivel('diasevento',i,'plenaria','Plenaria')}}</div>
+                        </div>
 
-        <div class="flex flex-col">
-            <label for="fechaFinEvento">Fecha de fin</label>
-            <p-calendar 
-            formControlName="fechaFinEvento"
-            [iconDisplay]="'input'" 
-            [showIcon]="true"
-            [showButtonBar]="true"
-            dateFormat="dd/mm/yy"
-            inputId="icondisplay" 
-            (onSelect)="validateDate('fechaFinEvento')"/>
-            <div class="w-full text-danger" *ngIf="alertMessageError('fechaFinEvento')">{{msgErrorControl('fechaFinEvento','Fecha de fin')}}</div>
-        </div>
+                        <div class="flex flex-col">
+                            <label>Cantidad de sectores</label>
+                            <p-inputNumber
+                            formControlName="cantidadSector"
+                            [showButtons]="true"
+                            [min]="0"
+                            buttonLayout="horizontal" incrementButtonIcon="pi pi-plus"
+                            decrementButtonIcon="pi pi-minus" />
+                            <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('diasevento',i,'cantidadSector')">{{msgErrorControlTwoNivel('diasevento',i,'cantidadSector','Cantidad de sectores')}}</div>
+                        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="flex flex-col">
-                <label for="verificaAsistentes">Verifica asistente</label>
-                 <p-inputSwitch formControlName="verificaAsistentes" class="mt-1"/>
-                <div class="w-full text-danger" *ngIf="alertMessageError('verificaAsistentes')">{{msgErrorControl('verificaAsistentes','verifica asistente')}}</div>
-            </div>
-    
-            <div class="flex flex-col">
-                <label for="primeraTarea">
-                    Primera tarea
-                    <i class="pi pi-info-circle" [nz-tooltip]="tooltipFirstTask"></i>
-                </label>
-                 <p-inputSwitch formControlName="primeraTarea" class="mt-1"/>
-                <div class="w-full text-danger" *ngIf="alertMessageError('primeraTarea')">{{msgErrorControl('primeraTarea','tarea sector')}}</div>
-            </div>
-        </div>
+                        <div class="flex flex-col">
+                            <label>Cantidad de GR/GL</label>
+                             <p-inputNumber
+                            formControlName="cantidadUbigeo"
+                            [showButtons]="true"
+                            [min]="0"
+                            buttonLayout="horizontal" incrementButtonIcon="pi pi-plus"
+                            decrementButtonIcon="pi pi-minus" />
+                            <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('diasevento',i,'cantidadUbigeo')">{{msgErrorControlTwoNivel('diasevento',i,'cantidadUbigeo','Cantidad de ubigeos')}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex pt-4 justify-between">
+					<p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+				</div>	
+            </ng-template>
+        </p-stepperPanel>
+    </p-stepper>
 
-        <div *ngIf="!create" class="flex flex-col">
-            <label for="vigente">Estado</label>
-            <p-dropdown 
-            [options]="estados"
-            formControlName="vigente"
-            optionLabel="value"
-            optionValue="text"
-            [showClear]="true" 
-            placeholder="Seleccionar estado"/>
-            <div class="w-full text-danger" *ngIf="alertMessageError('vigente')">{{msgErrorControl('vigente','Estado')}}</div>
-        </div>
+    <ng-template #tooltipVerifyAssistant let-index="index">
+		<div>
+			<div>Al estar <strong>ACTIVADO</strong> verifica asistente en el modulo atenciones</div>
+		</div>
+	</ng-template>
 
-        <div class="flex flex-col">
-            <label for="subTipoId">Tipo</label>
-             <p-dropdown 
-            [options]="subTipos()"
-            formControlName="subTipoId"
-            optionLabel="descripcionSubTipo"
-            optionValue="codigoSubTipo"
-            [showClear]="true" 
-            placeholder="Seleccionar tipo"/>
-            <div class="w-full text-danger" *ngIf="alertMessageError('subTipoId')">{{msgErrorControl('subTipoId','Tipo')}}</div>
-        </div>
-
-        <div class="flex flex-col">
-            <label for="codigoTipoEvento">Tipo de espacio</label>
-            <p-dropdown 
-            [options]="tipoEventos()"
-            formControlName="codigoTipoEvento"
-            optionLabel="descripcionTipoEvento"
-            optionValue="codigoTipoEvento"
-            [showClear]="true" 
-            placeholder="Seleccionar tipo de espacio"/>
-            <div class="w-full text-danger" *ngIf="alertMessageError('codigoTipoEvento')">{{msgErrorControl('codigoTipoEvento','Tipo de espacio')}}</div>
-        </div>
-    </div>
     <ng-template #tooltipFirstTask let-index="index">
 		<div>
 			<div>Para iniciar la tarea como PCM debe estar en <strong>DESACTIVADO</strong></div>

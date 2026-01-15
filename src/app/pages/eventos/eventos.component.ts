@@ -1,22 +1,23 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { ButtonsActions, EventoResponse, Pagination, TipoEventoResponse, UsuarioNavigation } from '@core/interfaces';
 import { EventosService, IntervencionEspacioService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
-import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
-import { EstadoTagComponent } from '@shared/estado-tag/estado-tag.component';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { FiltroEventosComponent } from './filtro-eventos/filtro-eventos.component';
-import { deleteKeysToObject, getDateFormat, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
-import { distinctUntilChanged, filter } from 'rxjs';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { FormularioEventoComponent } from './formulario-evento/formulario-evento.component';
-import { MessageService } from 'primeng/api';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { UtilesService } from '@libs/shared/services/utiles.service';
-import saveAs from 'file-saver';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
+import { EstadoTagComponent } from '@shared/estado-tag/estado-tag.component';
+import saveAs from 'file-saver';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { MessageService } from 'primeng/api';
+import { distinctUntilChanged, filter } from 'rxjs';
+import { FiltroEventosComponent } from './filtro-eventos/filtro-eventos.component';
+import { FormularioEventoComponent } from './formulario-evento/formulario-evento.component';
 
 @Component({
   selector: 'app-eventos',
@@ -54,7 +55,8 @@ export default class EventosComponent {
   private modal = inject(NzModalService);
   private intervencionEspaciosServices = inject(IntervencionEspacioService)
   private messageService = inject(MessageService)  
-  private utilesService = inject(UtilesService);
+  private utilesService = inject(UtilesService)
+  private breakpoint = inject(BreakpointObserver)
 
   ngOnInit(): void {
     this.getParams()
@@ -183,9 +185,10 @@ export default class EventosComponent {
 
   eventoFormModal(evento: EventoResponse, create: boolean = true){    
     const action = `${create ? 'Crear' : 'Actualizar' } Espacio`
+    const widthModal = (this.breakpoint.isMatched('(max-width: 767px)')) ? '90%' : '50%';
     this.modal.create<FormularioEventoComponent>({
       nzTitle: `${action.toUpperCase()}`,
-      nzWidth: '50%',
+      nzWidth: widthModal,
       nzMaskClosable: false,
       nzContent: FormularioEventoComponent,
       nzData: { create, evento },

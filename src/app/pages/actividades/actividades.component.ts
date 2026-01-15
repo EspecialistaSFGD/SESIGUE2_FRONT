@@ -1,3 +1,4 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -6,20 +7,19 @@ import { ActividadResponse, AdjuntoResponse, ButtonsActions, DesarrolloActividad
 import { ActividadesService, AdjuntosService, EventosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { AuthService } from '@libs/services/auth/auth.service';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
+import { UtilesService } from '@libs/shared/services/utiles.service';
+import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
+import saveAs from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { MessageService } from 'primeng/api';
 import { distinctUntilChanged, filter } from 'rxjs';
 import { FormularioDesarrolloActividadComponent } from './desarrollos-actividad/formulario-desarrollo-actividad/formulario-desarrollo-actividad.component';
-import { FormularioActividadComponent } from './formulario-actividad/formulario-actividad.component';
-import { UtilesService } from '@libs/shared/services/utiles.service';
-import saveAs from 'file-saver';
-import { AuthService } from '@libs/services/auth/auth.service';
-import { BotonDescargarComponent } from '@shared/boton/boton-descargar/boton-descargar.component';
 import { FiltroActividadesComponent } from './filtro-actividades/filtro-actividades.component';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { FormularioActividadComponent } from './formulario-actividad/formulario-actividad.component';
 
 @Component({
   selector: 'app-actividades',

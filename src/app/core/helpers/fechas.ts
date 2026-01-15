@@ -11,15 +11,28 @@ export const convertDateStringToDate = (date:string, separator:string = '/' ):Da
 
 export const getBusinessDays = (fecha: Date, dias: number): Date => {
 	let contador = 0;
-		const nuevaFecha = new Date(fecha);
+	const nuevaFecha = new Date(fecha);
 
-		while (contador < dias) {
-			nuevaFecha.setDate(nuevaFecha.getDate() - 1);
-			const diaSemana = nuevaFecha.getDay();
-			if (diaSemana !== 0 && diaSemana !== 6) { // 0 = Domingo, 6 = Sábado
-				contador++;
-			}
+	while (contador < dias) {
+		nuevaFecha.setDate(nuevaFecha.getDate() - 1);
+		const diaSemana = nuevaFecha.getDay();
+		if (diaSemana !== 0 && diaSemana !== 6) { // 0 = Domingo, 6 = Sábado
+			contador++;
 		}
+	}
 
-		return nuevaFecha;
+	return nuevaFecha;
+}
+
+export const generarRangoFechas = (start: Date, end: Date): Date[] => {
+  const result: Date[] = [];
+  
+  const current = new Date(start);
+
+  while (current <= end) {
+    result.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+
+  return result;
 }
