@@ -7,11 +7,12 @@ import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { AuthService } from '@libs/services/auth/auth.service';
 import { EventoDetalleComponent } from './evento-detalle/evento-detalle.component';
 import { EventoSectoresComponent } from './evento-sectores/evento-sectores.component';
+import { EventoDiasComponent } from './evento-dias/evento-dias.component';
 
 @Component({
   selector: 'app-evento-detalles',
   standalone: true,
-  imports: [CommonModule, RouterModule, EventoDetalleComponent, NgZorroModule, EventoSectoresComponent],
+  imports: [CommonModule, RouterModule, EventoDetalleComponent, NgZorroModule, EventoSectoresComponent, EventoDiasComponent],
   templateUrl: './evento-detalles.component.html',
   styles: ``
 })

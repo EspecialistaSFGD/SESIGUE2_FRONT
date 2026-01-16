@@ -9,6 +9,9 @@
 
 <app-evento-detalle [evento]="evento" [esSsfgd]="esSsfgd" />
 
-<div *ngIf="evento.eventoId" class="grid grid-cols-1 md:grid-cols-2">
+<div *ngIf="evento.eventoId" class="grid md:grid-cols-2 gap-4">
+
 	<app-evento-sectores [evento]="evento" [esSsfgd]="esSsfgd" />
+
+	<app-evento-dias [evento]="evento" />
 </div>
