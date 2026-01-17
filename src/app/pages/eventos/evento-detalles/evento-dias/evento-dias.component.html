@@ -22,7 +22,7 @@
 				<tbody>
 					@for(diaEvento of eventoDias(); track $index){
 					<tr>
-						<td>{{diaEvento.fecha | date:'dd/MM/yyyy' }}</td>
+						<td>{{diaEvento.fecha}}</td>
 						<td nzAlign="center">
                             <div nz-tooltip [nzTooltipTitle]="diaEvento.plenaria ? 'Hay plenaria' : 'No hay plenaria'" [ngClass]="diaEvento.plenaria ? 'text-green-600' : 'text-slate-200'">
                                 <i class="pi pi-check-circle" style="font-size: .85rem;"></i>

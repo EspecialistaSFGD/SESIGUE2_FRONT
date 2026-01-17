@@ -53,7 +53,7 @@ export default class EventosComponent {
   private eventoDiaService = inject(EventoDiasService)
   private router = inject(Router);
   private route = inject(ActivatedRoute)
-  private modal = inject(NzModalService);
+  private modal = inject(NzModalService)
   private intervencionEspaciosServices = inject(IntervencionEspacioService)
   private messageService = inject(MessageService)  
   private utilesService = inject(UtilesService)
