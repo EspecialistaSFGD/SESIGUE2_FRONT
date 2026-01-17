@@ -56,7 +56,7 @@ export class EventoSectoresComponent {
 
   generarSectores(){
     const title = 'Generar Sectores'
-    const widthModal = (this.breakpoint.isMatched('(max-width: 767px)')) ? '90%' : '25%';
+    const widthModal = (this.breakpoint.isMatched('(max-width: 767px)')) ? '90%' : '50%';
     this.modal.create<FormularioEventoSectoresComponent>({
       nzTitle: title,
       nzWidth: widthModal,
