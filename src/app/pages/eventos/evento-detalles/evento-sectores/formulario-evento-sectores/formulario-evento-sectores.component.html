@@ -1,0 +1,19 @@
+<form [formGroup]="formEventoSectores" class="flex flex-col gap-2" autocomplete="off">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <div class="font-semibold pt-2">Departamentos</div>
+        <div class="flex items-center gap-2">Todos <p-inputSwitch formControlName="todos" class="mt-1"/></div>
+    </div>
+    <div class="grid md:grid-cols-3 gap-y-2 gap-x-8" formArrayName="departamentos" [ngClass]="{'py-2' : departamentos.length }">
+        <div class="grid grid-cols-2 gap-2 pt-1 border-t border-gray-100" *ngFor="let departamentos of departamentos.controls; let i = index" [formGroupName]="i">
+            <div class="flex gap-2">
+                <label class="pt-2 w-4">{{ i + 1 }}</label>
+                <label class="pt-2">{{ departamentos.get('departamento')?.value }}</label>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <p-inputSwitch formControlName="seleccionado" class="mt-1"/>
+                <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('departamentos',i,'seleccionado')">{{msgErrorControlTwoNivel('departamentos',i,'seleccionado','Seleccionado')}}</div>
+            </div>
+        </div>
+    </div>
+</form>

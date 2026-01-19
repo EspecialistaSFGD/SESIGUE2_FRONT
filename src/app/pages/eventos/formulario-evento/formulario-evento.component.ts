@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventoEstadoEnum } from '@core/enums';
-import { convertDateStringToDate, convertEnumToObject, typeErrorControl } from '@core/helpers';
+import { convertDateStringToDate, convertEnumToObject, generarRangoFechas, typeErrorControl } from '@core/helpers';
 import { DataModalEvento, EventoResponse, ItemEnum, Pagination, SubTipoResponse, TipoEventoResponse } from '@core/interfaces';
 import { SubTipoService, TipoEventosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -31,6 +31,10 @@ export class FormularioEventoComponent {
   private subTiposService = inject(SubTipoService)
   private tipoEventosServices = inject(TipoEventosService)
 
+  get diasevento(): FormArray {
+    return this.formEvento.get('diasevento') as FormArray;
+  }
+
   formEvento:FormGroup = this.fb.group({
     nombre: [null, Validators.required],
     abreviatura: [null, Validators.required],
@@ -41,6 +45,9 @@ export class FormularioEventoComponent {
     codigoTipoEvento: [ null, Validators.required ],
     verificaAsistentes: [ true, Validators.required ],
     primeraTarea: [ false, Validators.required ],
+    cantidadSectores: [ 0, [Validators.required, Validators.min(0), Validators.max(18)] ],
+    maximoPedidos: [ 0, [Validators.required, Validators.min(0), Validators.max(20)] ],
+    diasevento: this.fb.array([]),
   })
 
   ngOnInit(): void {
@@ -66,9 +73,38 @@ export class FormularioEventoComponent {
     return typeErrorControl(text, errors)
   }
 
+  alertMessageErrorTwoNivel(control: string, index: number, subcontrol: string) {
+    const getControl = this.formEvento.get(control) as FormArray
+    const levelControl = getControl.at(index).get(subcontrol)
+    return levelControl?.errors && levelControl?.touched
+  }
+
+  msgErrorControlTwoNivel(control: string, index: number, subcontrol: string, label?: string): string {
+    const getControl = this.formEvento.get(control) as FormArray
+    const levelControl = getControl.at(index).get(subcontrol)
+    const text = label ? label : subcontrol
+    const errors = levelControl?.errors;
+
+    return typeErrorControl(text, errors)
+  }
+
+  generalValidate(): boolean {
+    const nombreValue = this.formEvento.get('nombre')?.value
+    const abreviaturaValue = this.formEvento.get('abreviatura')?.value
+    const fechaEventoValue = this.formEvento.get('fechaEvento')?.value
+    const fechaFinEventoValue = this.formEvento.get('fechaFinEvento')?.value
+    const subTipoIdValue = this.formEvento.get('subTipoId')?.value
+    const codigoTipoEventoValue = this.formEvento.get('codigoTipoEvento')?.value
+    const cantidadSectoresValue = this.formEvento.get('cantidadSectores')?.value
+    const maximoPedidosValue = this.formEvento.get('maximoPedidos')?.value
+
+    return nombreValue && abreviaturaValue && fechaEventoValue && fechaFinEventoValue && subTipoIdValue && codigoTipoEventoValue && cantidadSectoresValue && maximoPedidosValue
+  }
+
   obtenerSubTiposService(){
     const pagination: Pagination = { columnSort: 'codigoSubTipo', typeSort: 'DESC', pageSize: 50, currentPage: 1 }
-    this.subTiposService.ListarSubTipo(pagination).subscribe(resp => this.subTipos.set(resp.data))
+    const codigoValidos:string[] = ['R','P','D']
+    this.subTiposService.ListarSubTipo(pagination).subscribe(resp => this.subTipos.set(resp.data.filter(item => codigoValidos.includes(item.codigo!))))
   }
 
   obtenerServicioTipoEspacio() {
@@ -98,5 +134,26 @@ export class FormularioEventoComponent {
         fechaEventoControl?.setErrors(null)
       }
     }
+
+    this.diasevento.clear();
+
+    if(fechaCreacionValue && fechaVigenciaValue){
+      let fechas:Date[] = generarRangoFechas(fechaCreacion, fechaVigencia)
+      this.agregarFechasEvento(fechas);
+      console.log(this.diasevento.value);
+    }
+  }
+
+  agregarFechasEvento(fechas:Date[]){
+    for (let fecha of fechas) {
+      const diaEvento = this.fb.group({
+        fecha: [fecha, Validators.required],
+        plenaria: [false, Validators.required],
+        cantidadSector: [0, [Validators.required, Validators.min(0), Validators.max(30)]],
+        cantidadRegionalLocal: [0, [Validators.required, Validators.min(0), Validators.max(30)]],
+      })
+      this.diasevento.push(diaEvento)            
+    }
+    
   }
 }

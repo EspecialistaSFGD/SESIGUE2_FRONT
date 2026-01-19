@@ -1,0 +1,43 @@
+<div class="flex flex-col bg-white border border-b-0 border-solid border-grey-200">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-solid border-grey-200">
+        <div class="flex flex-col">
+            <h5 class="m-0 text-base font-semibold">Dias del espacio</h5>
+            Resultados: {{pagination.total}}
+        </div>
+    </div>
+    <div class="w-full flex border-solid ">
+        <nz-table nzSize="small" [nzData]="eventoDias()"
+				[nzFrontPagination]="false" [nzShowPagination]="pagination.total! > 5"
+				[nzLoading]="loading" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
+				[nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+				<thead>
+					<tr>
+						<th>Fecha</th>
+						<th nzAlign="center">Plenaria</th>
+						<th nzAlign="center">Cantidad Sector</th>
+						<th nzAlign="center">Maximo de pedidos</th>
+						<th nzAlign="center" nzWidth="80px"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@for(diaEvento of eventoDias(); track $index){
+					<tr>
+						<td>{{diaEvento.fecha}}</td>
+						<td nzAlign="center">
+                            <div nz-tooltip [nzTooltipTitle]="diaEvento.plenaria ? 'Hay plenaria' : 'No hay plenaria'" [ngClass]="diaEvento.plenaria ? 'text-green-600' : 'text-slate-200'">
+                                <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+                            </div>
+                        </td>
+						<td nzAlign="center">{{diaEvento.cantidadSector}}</td>
+						<td nzAlign="center">{{diaEvento.cantidadRegionalLocal}}</td>
+						<td nzAlign="center">
+							<div class="flex justify-center">
+								<app-boton icono="pencil" [link]="true" tooltip="Actualizar dia" (click)="actualizarDiaEvento(diaEvento)"/>
+							</div>
+						</td>
+					<tr>
+					}
+				</tbody>
+			</nz-table>
+    </div>
+</div>
