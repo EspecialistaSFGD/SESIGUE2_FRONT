@@ -5,7 +5,8 @@
             Resultados: {{pagination.total}}
         </div>
 		<div class="flex items-center gap-2">
-			<app-boton [icono]="'plus'" [texto]="'Generar'" [outline]="true" (click)="generarSectores()"/>
+			<app-boton *ngIf="eventoSectores().length === 0" [icono]="'plus'" [texto]="'Generar'" [outline]="true" (click)="generarSectores()"/>
+			<app-boton *ngIf="eventoSectores().length > 0" [icono]="'list'" [texto]="'Botón detallado'" [outline]="true"/>
 		</div>
     </div>
     <div class="grid grid-cols-1 border-solid">
@@ -15,20 +16,44 @@
 			[nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
 			<thead>
 				<tr>
-					<th>Sector</th>
-					<th nzAlign="center">Entidad</th>
-					<th nzAlign="center" nzWidth="80px"></th>
+					<th nzLeft nzWidth="120px">Sectores</th>
+					<th nzAlign="center" nzWidth="120px" nzColumnKey="registraAtencion" [nzSortFn]="true">Atenciones</th>
+					<th nzAlign="center" nzWidth="160px" nzColumnKey="cantidadPedidos" [nzSortFn]="true">Pedidos</th>
+					<th nzWidth="10px"></th>
 				</tr>
 			</thead>
 			<tbody>
-				@for(sector of eventoSectores(); track $index){
+				@for(eventoSector of eventoSectores(); track $index){
 				<tr>
-					<td>{{sector.sector}}</td>
-					<td nzAlign="center">{{sector.entidad}}</td>
-					<td nzAlign="center"></td>
+					<td nzLeft>{{eventoSector.sector}}</td>
+					<td nzAlign="center">
+						<p-inputSwitch class="mt-1" [(ngModel)]="eventoSector.registraAtencion" (onChange)="showCantidadSectores(eventoSector, false)"/>
+					</td>
+					<td nzAlign="center">
+						<div class="flex justify-center gap-2">
+							<p-inputSwitch class="mt-1" [(ngModel)]="eventoSector.registraPedido" (onChange)="showCantidadSectores(eventoSector)"/>
+
+							<p-inputNumber
+							   [(ngModel)]="eventoSector.cantidadPedidos"
+							   (ngModelChange)="setCantidadSectores(eventoSector)"
+							   [showButtons]="true"
+							   [disabled]="!eventoSector.registraPedido"
+							   [min]="0"							   
+							   buttonLayout="horizontal"
+							   incrementButtonIcon="pi pi-plus"
+							   decrementButtonIcon="pi pi-minus"
+							   class="w-[140px]"/>
+						</div>
+					</td>
+					<td></td>
 				<tr>
 				}
 			</tbody>
 		</nz-table>
     </div>
 </div>
+
+
+							   <!-- [disabled]="!(eventoSector.cantidadPedidos === 0)" -->
+
+<p-toast />

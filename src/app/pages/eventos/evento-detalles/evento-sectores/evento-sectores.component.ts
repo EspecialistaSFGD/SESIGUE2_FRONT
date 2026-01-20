@@ -1,18 +1,22 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
-import { EventoResponse, EventoSectorResponse, Pagination } from '@core/interfaces';
-import { EventoSectoresService } from '@core/services';
+import { FormsModule } from '@angular/forms';
+import { EventoResponse, EventoSectorResponse, EventoSectorSwitchList, Pagination } from '@core/interfaces';
+import { EventoSectoresService, SectoresService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
+import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { MessageService } from 'primeng/api';
 import { FormularioEventoSectoresComponent } from './formulario-evento-sectores/formulario-evento-sectores.component';
-import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-evento-sectores',
   standalone: true,
-  imports: [CommonModule, NgZorroModule, BotonComponent],
+  imports: [CommonModule, FormsModule, NgZorroModule, BotonComponent, PrimeNgModule],
+  providers: [MessageService],
   templateUrl: './evento-sectores.component.html',
   styles: ``
 })
@@ -24,14 +28,16 @@ export class EventoSectoresComponent {
   pagination: Pagination = {
     columnSort: 'eventoSectorId',
     typeSort: 'DESC',
-    pageSize: 5,
+    pageSize: 10,
     currentPage: 1,
     total: 0
   }
   
-  eventoSectores = signal<EventoSectorResponse[]>([])
+  eventoSectores = signal<EventoSectorSwitchList[]>([])
   
   private eventoSectorService = inject(EventoSectoresService)
+  private sectorService = inject(SectoresService)
+  private messageService = inject(MessageService)  
   private modal = inject(NzModalService)
   private breakpoint = inject(BreakpointObserver)
 
@@ -42,13 +48,16 @@ export class EventoSectoresComponent {
   obtenerEventoSectoresService(){
     this.eventoSectorService.listarEventoSectores(this.pagination)
       .subscribe( resp => {        
-        this.eventoSectores.set(resp.data)
-        this.eventoSectores.set(resp.data)
+        const sectoresSwitchList: EventoSectorSwitchList[] = resp.data.map( eventoSector => ({ ...eventoSector, registraPedido: eventoSector.cantidadPedidos != 0 }))
+        this.eventoSectores.set(sectoresSwitchList)
         this.pagination.total = resp.info?.total        
       })
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
+    const sort = params.sort.find(item => item.value == 'ascend')
+    this.pagination.columnSort = sort ? sort.key : 'eventoSectorId'
+    
     this.pagination.pageSize = params.pageSize
     this.pagination.currentPage = params.pageIndex
     this.obtenerEventoSectoresService()
@@ -73,9 +82,70 @@ export class EventoSectoresComponent {
           label: title,
           type: 'primary',
           onClick: (componentResponse) => {
+            const formEventoSectores = componentResponse!.formEventoSectores;
+                       
+            if (formEventoSectores.invalid) {
+              const invalidFields = Object.keys(formEventoSectores.controls).filter(field => formEventoSectores.controls[field].invalid);
+              console.error('Invalid fields:', invalidFields);
+              return formEventoSectores.markAllAsTouched();
+            }
+
+            this.ListarSectoresService()
           }
         }
       ]
     })
+  }
+
+  ListarSectoresService(){
+    const pagination: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
+    this.sectorService.listarSectores(pagination).subscribe( resp => {
+      resp.data.forEach( sector => {
+        const eventoSector: EventoSectorResponse = {eventoId: this.evento.eventoId!, sectorId: sector.grupoID!, cantidadPedidos: 0, registraAtencion: false}
+        this.crearEventoSectoresService(eventoSector);
+      })  
+    })
+  }
+
+  crearEventoSectoresService(eventoSector: EventoSectorResponse){
+    this.eventoSectorService.registrarEventoSector(eventoSector)
+      .subscribe( resp => {
+        if(resp.success){
+          this.messageService.add({ severity: 'success', summary: 'Sectores del evento agregado', detail: resp.message });
+          this.obtenerEventoSectoresService()
+          this.modal.closeAll()
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
+        }
+      })
+  }
+
+  showCantidadSectores(eventoSector: EventoSectorSwitchList, pedido: boolean = true){
+    const cantidadPedidos = pedido ? eventoSector.registraPedido ? 5 : 0 : eventoSector.cantidadPedidos
+
+    this.eventoSectores.update(lista =>
+      lista.map(item => item.eventoSectorId === eventoSector.eventoSectorId
+        ? { ...item, cantidadPedidos }
+        : item )
+    )
+
+    const eventoSectorUpdate: EventoSectorResponse = {...eventoSector, cantidadPedidos}
+    this.actualizarEventoSectoresService(eventoSectorUpdate)
+  }
+
+  setCantidadSectores(eventoSector: EventoSectorResponse){
+    this.actualizarEventoSectoresService(eventoSector)
+  }
+
+  actualizarEventoSectoresService(eventoSector: EventoSectorResponse){
+    this.eventoSectorService.actualizarEventoSector(eventoSector)
+      .subscribe( resp => {
+        if(resp.success){
+          this.messageService.add({ severity: 'success', summary: 'Sector del evento actualizado', detail: resp.message });
+          this.obtenerEventoSectoresService()
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
+        }
+      })
   }
 }

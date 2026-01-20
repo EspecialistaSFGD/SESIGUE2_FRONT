@@ -10,11 +10,17 @@ export interface EventoSectorResponses extends DataResponses {
 
 export interface EventoSectorResponse {
     eventoSectorId?: string,
-    cantidadRegistros: string,
+    // cantidadRegistros: string,
     eventoId: string,
-    evento: string,
+    evento?: string,
     sectorId: string,
-    sector: string,
-    entidadId: string,
-    entidad: string,
+    sector?: string,
+    cantidadPedidos: number,
+    registraAtencion: boolean,
+    // entidadId: string,
+    // entidad: string,
+}
+
+export interface EventoSectorSwitchList extends EventoSectorResponse {
+    registraPedido: boolean,
 }
