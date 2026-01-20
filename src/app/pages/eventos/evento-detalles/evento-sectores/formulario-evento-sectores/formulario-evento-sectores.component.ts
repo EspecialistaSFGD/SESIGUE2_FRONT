@@ -57,4 +57,9 @@ export class FormularioEventoSectoresComponent {
 
     return typeErrorControl(text, errors)
   }
+
+  changeTodos(){
+    const todosSeleccionado = this.formEventoSectores.get('todos')?.value;
+    this.departamentos.controls.forEach( departamento => departamento.get('seleccionado')?.setValue(todosSeleccionado))
+  }
 }

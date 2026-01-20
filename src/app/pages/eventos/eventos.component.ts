@@ -78,8 +78,6 @@ export default class EventosComponent {
       )
       .subscribe( params => {
         this.loading = true
-        // const estado = params['estado'] ?? ''
-        // const tipoEspacioId = params['tipoEspacioId'] ?? ''
         this.estadosFilters = params['estado'] ?? null
         this.tipoEspacioIdFilters = params['tipoEspacioId'] ?? null
         let campo = params['campo'] ?? 'eventoId'

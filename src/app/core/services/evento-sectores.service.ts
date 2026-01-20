@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Pagination } from '@core/interfaces';
-import { EventoSectoresResponses } from '@core/interfaces/evento-sectores.interface';
+import { EventoSectoresResponses, EventoSectorResponse, EventoSectorResponses, Pagination } from '@core/interfaces';
 import { environment } from '@environments/environment';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { HelpersService } from './helpers.service';
 
 @Injectable({
@@ -19,4 +18,14 @@ export class EventoSectoresService {
     const headers = this.helpersServices.getAutorizationToken()
     return this.http.get<EventoSectoresResponses>(`${this.urlSector}/ListarEventoSectores`, { headers, params })
   }
+
+  registrarEventoSector(eventoSector: EventoSectorResponse) {
+      const headers = this.helpersServices.getAutorizationToken()
+      return this.http.post<EventoSectorResponses>(`${this.urlSector}/RegistrarEventoSector`, eventoSector, { headers })
+        .pipe(
+          tap(resp => resp),
+          map(valid => valid),
+          catchError(err => of(err))
+        )
+    }
 }

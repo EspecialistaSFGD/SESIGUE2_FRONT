@@ -5,7 +5,8 @@
             Resultados: {{pagination.total}}
         </div>
 		<div class="flex items-center gap-2">
-			<app-boton [icono]="'plus'" [texto]="'Generar'" [outline]="true" (click)="generarSectores()"/>
+			<app-boton *ngIf="eventoSectores().length === 0" [icono]="'plus'" [texto]="'Generar'" [outline]="true" (click)="generarSectores()"/>
+			<app-boton *ngIf="eventoSectores().length > 0" [icono]="'list'" [texto]="'Botón detallado'" [outline]="true"/>
 		</div>
     </div>
     <div class="grid grid-cols-1 border-solid">
@@ -15,20 +16,28 @@
 			[nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
 			<thead>
 				<tr>
-					<th>Sector</th>
-					<th nzAlign="center">Entidad</th>
+					<th>Sectores</th>
+					<th nzAlign="center">Atenciones</th>
+					<th nzAlign="center">Pedidos</th>
 					<th nzAlign="center" nzWidth="80px"></th>
 				</tr>
 			</thead>
 			<tbody>
-				@for(sector of eventoSectores(); track $index){
+				@for(eventoSector of eventoSectores(); track $index){
 				<tr>
-					<td>{{sector.sector}}</td>
-					<td nzAlign="center">{{sector.entidad}}</td>
-					<td nzAlign="center"></td>
+					<td>{{eventoSector.sector}}</td>
+					<td nzAlign="center">{{eventoSector.cantidadAtenciones}}</td>
+					<td nzAlign="center">{{eventoSector.cantidadPedidos}}</td>
+					<td nzAlign="center">
+						<div class="flex justify-center">
+							<app-boton icono="pencil" [link]="true" [tooltip]="'Actualizar cantidades de ' + eventoSector.sector" (click)="actualizarEventoSector(eventoSector)"/>
+						</div>
+					</td>
 				<tr>
 				}
 			</tbody>
 		</nz-table>
     </div>
 </div>
+
+<p-toast />
