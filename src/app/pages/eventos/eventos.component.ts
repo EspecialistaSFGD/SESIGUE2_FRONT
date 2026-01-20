@@ -208,9 +208,6 @@ export default class EventosComponent {
               console.error('Invalid fields:', invalidFields);
               return formEvento.markAllAsTouched();
             }
-
-            // const fechaEvento = getDateFormat(formEvento.get('fechaEvento')?.value, 'month')
-            // const fechaFinEvento = getDateFormat(formEvento.get('fechaFinEvento')?.value, 'month')
             
             const horaInicioFecha = new Date(formEvento.get('fechaEvento')?.value);
             const horaFinFecha = new Date(formEvento.get('fechaFinEvento')?.value);

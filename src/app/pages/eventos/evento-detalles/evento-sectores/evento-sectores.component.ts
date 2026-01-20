@@ -33,7 +33,6 @@ export class EventoSectoresComponent {
     total: 0
   }
   
-  // eventoSectores = signal<EventoSectorResponse[]>([])
   eventoSectores = signal<EventoSectorSwitchList[]>([])
   
   private eventoSectorService = inject(EventoSectoresService)
@@ -51,7 +50,6 @@ export class EventoSectoresComponent {
       .subscribe( resp => {        
         const sectoresSwitchList: EventoSectorSwitchList[] = resp.data.map( eventoSector => ({ ...eventoSector, registraPedido: eventoSector.cantidadPedidos != 0 }))
         this.eventoSectores.set(sectoresSwitchList)
-        // this.eventoSectores.set(resp.data)
         this.pagination.total = resp.info?.total        
       })
   }
