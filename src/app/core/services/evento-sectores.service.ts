@@ -28,4 +28,14 @@ export class EventoSectoresService {
           catchError(err => of(err))
         )
     }
+
+  actualizarEventoSector(eventoSector: EventoSectorResponse) {
+      const headers = this.helpersServices.getAutorizationToken()
+      return this.http.put<EventoSectorResponses>(`${this.urlSector}/ActualizarEventoSector/${eventoSector.eventoSectorId}`, eventoSector, { headers })
+        .pipe(
+          tap(resp => resp),
+          map(valid => valid),
+          catchError(err => of(err))
+        )
+    }
 }

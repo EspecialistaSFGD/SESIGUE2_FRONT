@@ -15,8 +15,12 @@ export interface EventoSectorResponse {
     evento?: string,
     sectorId: string,
     sector?: string,
-    cantidadPedidos?: number,
-    cantidadAtenciones?: number,
+    cantidadPedidos: number,
+    registraAtencion: boolean,
     // entidadId: string,
     // entidad: string,
+}
+
+export interface EventoSectorSwitchList extends EventoSectorResponse {
+    registraPedido: boolean,
 }

@@ -16,28 +16,44 @@
 			[nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
 			<thead>
 				<tr>
-					<th>Sectores</th>
-					<th nzAlign="center">Atenciones</th>
-					<th nzAlign="center">Pedidos</th>
-					<th nzAlign="center" nzWidth="80px"></th>
+					<th nzLeft nzWidth="120px">Sectores</th>
+					<th nzAlign="center" nzWidth="120px" nzColumnKey="registraAtencion" [nzSortFn]="true">Atenciones</th>
+					<th nzAlign="center" nzWidth="160px" nzColumnKey="cantidadPedidos" [nzSortFn]="true">Pedidos</th>
+					<th nzWidth="10px"></th>
 				</tr>
 			</thead>
 			<tbody>
 				@for(eventoSector of eventoSectores(); track $index){
 				<tr>
-					<td>{{eventoSector.sector}}</td>
-					<td nzAlign="center">{{eventoSector.cantidadAtenciones}}</td>
-					<td nzAlign="center">{{eventoSector.cantidadPedidos}}</td>
+					<td nzLeft>{{eventoSector.sector}}</td>
 					<td nzAlign="center">
-						<div class="flex justify-center">
-							<app-boton icono="pencil" [link]="true" [tooltip]="'Actualizar cantidades de ' + eventoSector.sector" (click)="actualizarEventoSector(eventoSector)"/>
+						<p-inputSwitch class="mt-1" [(ngModel)]="eventoSector.registraAtencion" (onChange)="showCantidadSectores(eventoSector, false)"/>
+					</td>
+					<td nzAlign="center">
+						<div class="flex justify-center gap-2">
+							<p-inputSwitch class="mt-1" [(ngModel)]="eventoSector.registraPedido" (onChange)="showCantidadSectores(eventoSector)"/>
+
+							<p-inputNumber
+							   [(ngModel)]="eventoSector.cantidadPedidos"
+							   (ngModelChange)="setCantidadSectores(eventoSector)"
+							   [showButtons]="true"
+							   [disabled]="!eventoSector.registraPedido"
+							   [min]="0"							   
+							   buttonLayout="horizontal"
+							   incrementButtonIcon="pi pi-plus"
+							   decrementButtonIcon="pi pi-minus"
+							   class="w-[140px]"/>
 						</div>
 					</td>
+					<td></td>
 				<tr>
 				}
 			</tbody>
 		</nz-table>
     </div>
 </div>
+
+
+							   <!-- [disabled]="!(eventoSector.cantidadPedidos === 0)" -->
 
 <p-toast />
