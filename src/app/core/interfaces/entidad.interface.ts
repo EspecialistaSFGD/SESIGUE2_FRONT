@@ -55,3 +55,9 @@ export interface EntidadPanelResponse {
 export interface EntidadPanelResponseUbigeo extends EntidadPanelResponse {
   ubigeo?: string
 }
+
+export interface SubTipoEntidad {
+  subTipo: string,
+  subTipoSlug: string,
+  cantidad: number,
+}
