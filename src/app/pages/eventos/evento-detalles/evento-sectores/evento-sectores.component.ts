@@ -44,7 +44,7 @@ export class EventoSectoresComponent {
   private breakpoint = inject(BreakpointObserver)
 
   ngOnInit(): void {
-    this.obtenerDetallesSector()    
+    // this.obtenerDetallesSector()    
     this.pagination.eventoId = this.evento.eventoId
   }
 
