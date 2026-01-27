@@ -13,5 +13,9 @@
 
 	<app-evento-sectores [evento]="evento" [esSsfgd]="esSsfgd" />
 
-	<app-evento-dias [evento]="evento" />
+	<div class="flex flex-col gap-4">
+		<app-evento-dias [evento]="evento" />
+
+		<app-evento-grupos [evento]="evento" />
+	</div>
 </div>

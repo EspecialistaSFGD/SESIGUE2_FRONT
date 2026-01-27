@@ -1,0 +1,46 @@
+<div class="flex flex-col gap-3">
+    <div class="flex flex-col bg-white border border-solid border-grey-200">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-solid border-grey-200">
+            <div class="flex flex-col">
+                <h5 class="m-0 text-base font-semibold">Gobierno Nacional</h5>
+            </div>
+        </div>
+        <div class="w-full flex border-solid">
+            <div class="flex flex-col w-full">
+                @for(gobierno of gobiernoNacional(); track $index){
+                    <div class="p-2" [ngClass]="{ 'border-t border-grey-200' : $index > 0 }">{{ gobierno.nombre }}</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col bg-white border border-solid border-grey-200">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-solid border-grey-200">
+            <div class="flex flex-col">
+                <h5 class="m-0 text-base font-semibold">Gobierno Regional o Local</h5>
+            </div>
+        </div>
+        <div class="w-full flex border-solid">
+            <div class="flex flex-col w-full">
+                <div class="p-2">{{ evento.subTipo }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col bg-white border border-solid border-grey-200">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-solid border-grey-200">
+            <div class="flex flex-col">
+                <h5 class="m-0 text-base font-semibold">PCM</h5>
+            </div>
+        </div>
+        <div class="w-full flex border-solid">
+            <div class="flex flex-col w-full">
+                @for(gobierno of pcm(); track $index){
+                    <div class="p-2" [ngClass]="{ 'border-t border-grey-200' : $index > 0 }">{{ gobierno.nombre }}</div>
+                }
+            </div>
+        </div>
+    </div>
+
+
+</div>
