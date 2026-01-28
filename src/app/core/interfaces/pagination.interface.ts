@@ -22,6 +22,7 @@ export interface Pagination {
   tipoId?: Number,
   tipo?: string,
   tipos?: string[],
+  subTipo?: string,
   sectorId?: Number,
   sectoresId?: Number[],
   grupoId?: Number[],
