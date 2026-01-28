@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { EventoResponse, GrupoResponse, Pagination } from '@core/interfaces';
 import { GrupoService } from '@core/services';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-evento-grupos',
   standalone: true,
   imports: [CommonModule, FormsModule, PrimeNgModule],
+  providers: [MessageService],
   templateUrl: './evento-grupos.component.html',
   styles: ``
 })
@@ -29,23 +31,29 @@ export class EventoGruposComponent {
   }
 
   private grupoService = inject(GrupoService)
+  private messageService = inject(MessageService)
 
   ngOnInit(): void {
-    this.obtenerGruposEvento()
-    this.obtenerGruposEvento(true)
+    this.obtenerGruposEvento('GN')
+    this.obtenerGruposEvento('GR')
+    this.obtenerGruposEvento('PCM')
   }
 
-  obtenerGruposEvento(subTipo: boolean = false){
-    subTipo ? this.pagination.subTipo = this.evento.subTipoId?.toString() : delete this.pagination.subTipo
-    this.loading = true
+  obtenerGruposEvento(tipo:string){
+    switch (tipo) {
+      case 'GN': this.pagination.subTipo = '2'; break
+      case 'GR': this.pagination.subTipo = this.evento.subTipoId?.toString(); break
+      case 'PCM': this.pagination.subTipo = '8'; break
+    }
 
+    this.loading = true
     this.grupoService.listarGrupos(this.pagination)
       .subscribe( resp => {
-        if(subTipo){
-          this.gobiernoRegionalLocal.set(resp.data.filter(grupo => grupo.subTipo === Number(this.evento.subTipoId)))
-        } else {
-          this.gobiernoNacional.set(resp.data.filter(grupo => grupo.abreviatura === 'GN'))
-          this.pcm.set(resp.data.filter(grupo => !grupo.abreviatura))
+        this.loading = false
+        switch (tipo) {
+          case 'GN': this.gobiernoNacional.set(resp.data.filter(grupo => grupo.abreviatura === 'GN')); break
+          case 'GR': this.gobiernoRegionalLocal.set(resp.data); break
+          case 'PCM': this.pcm.set(resp.data); break
         }
       })
   }
@@ -57,7 +65,11 @@ export class EventoGruposComponent {
   actualizarGruposServices(grupo: GrupoResponse){
     this.grupoService.actualizarGrupo(grupo)
       .subscribe( resp => {
-        console.log(resp.data);        
+        if(resp.success){
+          this.messageService.add({ severity: 'success', summary: `El grupo ${grupo.nombre} se ha actualizado`, detail: resp.message });
+        } else {
+          this.messageService.add({ severity: 'error', summary: `Error al actualizar el grupo ${grupo.nombre}`, detail: resp.message });
+        }
       })
   }
 }
