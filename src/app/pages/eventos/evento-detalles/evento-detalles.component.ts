@@ -8,11 +8,12 @@ import { AuthService } from '@libs/services/auth/auth.service';
 import { EventoDetalleComponent } from './evento-detalle/evento-detalle.component';
 import { EventoSectoresComponent } from './evento-sectores/evento-sectores.component';
 import { EventoDiasComponent } from './evento-dias/evento-dias.component';
+import { EventoGruposComponent } from './evento-grupos/evento-grupos.component';
 
 @Component({
   selector: 'app-evento-detalles',
   standalone: true,
-  imports: [CommonModule, RouterModule, EventoDetalleComponent, NgZorroModule, EventoSectoresComponent, EventoDiasComponent],
+  imports: [CommonModule, RouterModule, EventoDetalleComponent, NgZorroModule, EventoSectoresComponent, EventoDiasComponent, EventoGruposComponent],
   templateUrl: './evento-detalles.component.html',
   styles: ``
 })
