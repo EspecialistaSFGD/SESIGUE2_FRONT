@@ -51,7 +51,7 @@ export class EventoGruposComponent {
       .subscribe( resp => {
         this.loading = false
         switch (tipo) {
-          case 'GN': this.gobiernoNacional.set(resp.data.filter(grupo => grupo.abreviatura === 'GN')); break
+          case 'GN': this.gobiernoNacional.set(resp.data); break
           case 'GR': this.gobiernoRegionalLocal.set(resp.data); break
           case 'PCM': this.pcm.set(resp.data); break
         }
