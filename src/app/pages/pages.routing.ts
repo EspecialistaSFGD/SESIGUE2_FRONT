@@ -24,5 +24,9 @@ export const PAGES_ROUTES: Routes = [
     path: 'actividades', loadComponent: () => import('./actividades/actividades.component').then(m => m.ActividadesComponent),
     data: { title: 'Actividades' }
   },
+  {
+    path: 'parametros', loadComponent: () => import('./parametros/parametros.component').then(m => m.ParametrosComponent),
+    data: { title: 'Parámetros' }
+  },
   { path: '**', redirectTo: 'panel', pathMatch: 'full' },
 ];
