@@ -1,3 +1,7 @@
 <app-page-header [title]="'Detalles de entidad'" backUrl="entidades" />
 
 <app-entidad-detalle [entidad]="entidad" [esSsfgd]="esSsfgd" />
+
+<div *ngIf="entidad.entidadId" class="grid md:grid-cols-2 gap-4">
+    <app-entidad-autoridad [entidad]="entidad" />
+</div>
