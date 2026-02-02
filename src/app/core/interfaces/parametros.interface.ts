@@ -16,3 +16,8 @@ export interface ParametroResponse {
     descripcion: string,
     tipo: string,
 }
+
+export interface DataFormularioParametro {
+  create: boolean;
+  parametro?: ParametroResponse;
+}

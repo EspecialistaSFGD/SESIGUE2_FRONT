@@ -24,7 +24,7 @@
             <td nzAlign="center">{{parametro.tipo | titlecase}}</td>    
             <td nzRight nzAlign="center">
                 <div class="flex justify-center">
-                    <app-boton icono="pencil" [link]="true" [tooltip]="'Actualizar parametro '"/>
+                    <app-boton icono="pencil" [link]="true" [tooltip]="'Actualizar parametro'" (click)="parametroFormModal(parametro)"/>
                 </div>
             </td>
         </tr>
@@ -36,13 +36,7 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
-        <!-- <app-boton icono="sync" [outline]="true" (click)="obtenerparametrosService()"/> -->
-
-        <!-- <app-boton *ngIf="parametrosActions.report" [icono]="'filter'" [texto]="'Filtro'" [outline]="true" (click)="openFilters = true"/> -->
-
-        <!-- <app-boton *ngIf="parametrosActions.report" icono="file-excel" [loading]="loadingExport" texto="Exportar" [outline]="true" (click)="reporteActividad()"/> -->
-
-        <app-boton [icono]="'plus'" texto="Nuevo parametro" (click)="nuevoParametro()"/>
+        <app-boton [icono]="'plus'" texto="Nuevo parametro" (click)="parametroFormModal(null)"/>
       </div>
     </div>
   </ng-template>
