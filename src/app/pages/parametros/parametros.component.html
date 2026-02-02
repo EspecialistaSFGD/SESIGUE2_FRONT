@@ -1,0 +1,45 @@
+<app-page-header title="Parametros" backUrl="panel" />
+<div class="grid grid-cols-1">
+  <nz-table [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzTitle]="HeaderMesas" nzShowSizeChanger nzSize="small"
+    [nzData]="parametros()" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="pagination.total!"
+    [nzPageSize]="pagination.pageSize!" [nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+      <tr>
+        <th nzWidth="120px" nzAlign="center">Nombre</th>
+        <th nzWidth="120px" nzAlign="center">Valor texto</th>
+        <th nzWidth="80px" nzAlign="center">Valor entero</th>
+        <th nzWidth="120px" nzAlign="center">Descripción</th>
+        <th nzWidth="80px" nzAlign="center">Tipo</th>
+        <th nzRight nzWidth="80px" nzAlign="center"></th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      @for(parametro of parametros(); track $index){
+        <tr>
+            <td>{{parametro.nombre}}</td>
+            <td>{{parametro.valorTexto}}</td>
+            <td nzAlign="center">{{parametro.valorEntero}}</td>
+            <td nzAlign="center">{{parametro.descripcion}}</td>
+            <td nzAlign="center">{{obtenerTipo(parametro.tipo) | titlecase}}</td>    
+            <td nzRight nzAlign="center">
+                <div class="flex justify-center">
+                    <app-boton *ngIf="parametrosActions.edit" icono="pencil" [link]="true" [tooltip]="'Actualizar parametro'" (click)="parametroFormModal(parametro)"/>
+                </div>
+            </td>
+        </tr>
+        }
+    </tbody>
+  </nz-table>
+  
+  <ng-template #HeaderMesas>
+    <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
+      <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
+      <div class="flex gap-2">
+        <app-boton *ngIf="parametrosActions.new" [icono]="'plus'" texto="Nuevo parametro" (click)="parametroFormModal(null)"/>
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<p-toast />

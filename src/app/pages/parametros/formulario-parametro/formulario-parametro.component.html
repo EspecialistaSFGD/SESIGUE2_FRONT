@@ -1,0 +1,42 @@
+<form [formGroup]="formParametro" class="grid grid-cols-1 md:grid-cols-3 gap-4" autocomplete="off">
+    <div class="md:col-span-3 flex flex-col">
+        <label for="nombre">Nombre</label>
+        <input type="text" class="form-control" id="nombre" placeholder="Nombre aquí" formControlName="nombre">
+        <div class="w-full text-danger" *ngIf="alertMessageError('nombre')">{{msgErrorControl('nombre','Nombre')}}</div>
+    </div>
+
+    <div class="md:col-span-2 flex flex-col">
+        <label for="valorTexto">Valor Texto</label>
+        <input type="text" class="form-control" id="valorTexto" placeholder="Valor Texto aquí" formControlName="valorTexto">
+        <div class="w-full text-danger" *ngIf="alertMessageError('valorTexto')">{{msgErrorControl('valorTexto','Valor Texto')}}</div>
+    </div>
+
+    <div class="flex flex-col">
+        <label for="valorEntero">Valor Entero</label>        
+        <p-inputNumber
+        formControlName="valorEntero"
+        [showButtons]="true"
+        [min]="0"
+        buttonLayout="horizontal" incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus" />
+        <div class="w-full text-danger" *ngIf="alertMessageError('valorEntero')">{{msgErrorControl('valorEntero','Valor Entero')}}</div>
+    </div>
+
+    <div class="md:col-span-2 flex flex-col">
+        <label for="descripcion">Descripción</label>
+        <input type="text" class="form-control" id="descripcion" placeholder="Descripción aquí" formControlName="descripcion">
+        <div class="w-full text-danger" *ngIf="alertMessageError('descripcion')">{{msgErrorControl('descripcion','Descripción')}}</div>
+    </div>
+
+    <div class="flex flex-col ">
+        <label for="tipo">Tipo</label>
+        <p-dropdown 
+        [options]="tipos"
+        formControlName="tipo"
+        optionLabel="value"
+        optionValue="text"
+        [showClear]="true" 
+        placeholder="Seleccionar tipo"/>
+        <div class="w-full text-danger" *ngIf="alertMessageError('tipo')">{{msgErrorControl('tipo','Tipo')}}</div>
+    </div>
+</form>
