@@ -23,8 +23,8 @@ export class FormularioParametroComponent {
 
   formParametro:FormGroup = this.fb.group({
     nombre: [null, Validators.required],
-    valorTexto: [null, Validators.required],
-    valorEntero: [0, Validators.required],
+    valorTexto: [null],
+    valorEntero: [0, [Validators.required, Validators.min(0)]],
     descripcion: [null, Validators.required],
     tipo: [null, Validators.required],
   })

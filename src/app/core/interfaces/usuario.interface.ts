@@ -7,6 +7,7 @@ export interface UsuariosResponses extends DataResponses {
 export interface UsuarioNavigation {
 	codigoMenu?: string,
 	descripcionItem: string,
+	codigo: string,
 	direccionUrl: string,
 	parentMenu: number,
 	iconoMenu: string,

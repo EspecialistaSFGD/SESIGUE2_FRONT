@@ -21,10 +21,10 @@
             <td>{{parametro.valorTexto}}</td>
             <td nzAlign="center">{{parametro.valorEntero}}</td>
             <td nzAlign="center">{{parametro.descripcion}}</td>
-            <td nzAlign="center">{{parametro.tipo | titlecase}}</td>    
+            <td nzAlign="center">{{obtenerTipo(parametro.tipo) | titlecase}}</td>    
             <td nzRight nzAlign="center">
                 <div class="flex justify-center">
-                    <app-boton icono="pencil" [link]="true" [tooltip]="'Actualizar parametro'" (click)="parametroFormModal(parametro)"/>
+                    <app-boton *ngIf="parametrosActions.edit" icono="pencil" [link]="true" [tooltip]="'Actualizar parametro'" (click)="parametroFormModal(parametro)"/>
                 </div>
             </td>
         </tr>
@@ -36,7 +36,7 @@
     <div class="ant-table-header flex flex-col sm:flex-row justify-between items-center">
       <p class="mb-2 sm:mb-0">Resultados {{pagination.total}}</p>
       <div class="flex gap-2">
-        <app-boton [icono]="'plus'" texto="Nuevo parametro" (click)="parametroFormModal(null)"/>
+        <app-boton *ngIf="parametrosActions.new" [icono]="'plus'" texto="Nuevo parametro" (click)="parametroFormModal(null)"/>
       </div>
     </div>
   </ng-template>

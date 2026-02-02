@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Pagination, ParametroResponse } from '@core/interfaces';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ButtonsActions, ItemEnum, Pagination, ParametroResponse, UsuarioNavigation } from '@core/interfaces';
 import { ParametrosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -12,6 +12,9 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { MessageService } from 'primeng/api';
 import { FormularioParametroComponent } from './formulario-parametro/formulario-parametro.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { convertEnumToObject, obtenerPermisosBotones } from '@core/helpers';
+import { ParametroTipoEnum } from '@core/enums';
+import { distinctUntilChanged, filter } from 'rxjs';
 
 @Component({
   selector: 'app-parametros',
@@ -24,6 +27,9 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 export class ParametrosComponent {
 
   parametros = signal<ParametroResponse[]>([])
+  tipos: ItemEnum[] = convertEnumToObject(ParametroTipoEnum, true)
+
+  parametrosActions: ButtonsActions = {}
 
   loading: boolean = false
   pagination: Pagination = {
@@ -41,10 +47,35 @@ export class ParametrosComponent {
   private breakpoint = inject(BreakpointObserver)
 
   ngOnInit(): void {
-    this.ontenerParametrosService()
+    this.getPermissions()
+    this.getParams()
   }
 
-  ontenerParametrosService(){
+  getPermissions() {
+    const navigation:UsuarioNavigation[] = JSON.parse(localStorage.getItem('menus') || '')
+    const parametronav = navigation.find(nav => nav.codigo.toLowerCase() == 'parametros')    
+    this.parametrosActions = parametronav && parametronav.botones ? obtenerPermisosBotones(parametronav!.botones!) : {}
+  }
+
+  getParams() {
+    this.route.queryParams
+      .pipe(
+        filter(params => Object.keys(params).length > 0),
+        distinctUntilChanged((prev,curr) => JSON.stringify(prev) === JSON.stringify(curr))
+      )
+      .subscribe( params => {
+        this.loading = true
+        let campo = params['campo'] ?? 'parametroId'
+        this.pagination.columnSort = campo
+        this.pagination.currentPage = params['pagina']
+        this.pagination.pageSize = params['cantidad']
+        this.pagination.typeSort = params['ordenar'] ?? 'DESC'
+
+        this.obtenerParametrosService()
+      })
+  }
+
+  obtenerParametrosService(){
     this.loading = true
     this.parametroService.listarParametros(this.pagination)
       .subscribe( resp => {
@@ -54,8 +85,39 @@ export class ParametrosComponent {
       })
   }
 
+  obtenerTipo(tipo: string): string {
+    const tipoItem = this.tipos.find(t => t.text === tipo)    
+    return tipoItem ? tipoItem.value.toLowerCase() : tipo
+  }
+
   onQueryParamsChange(params: NzTableQueryParams): void {
-    
+    const sortsNames = ['ascend', 'descend']
+    const sorts = params.sort.find(item => sortsNames.includes(item.value!))
+    params.sort.reduce((total, item) => {
+      return sortsNames.includes(item.value!) ? total + 1 : total
+    }, 0)
+
+    const campo = sorts?.key
+    const ordenar = sorts?.value!.slice(0, -3)
+    const filterStorageExist = localStorage.getItem('filtrosParametros');
+    let filtros:any = {}
+    if(filterStorageExist){      
+      filtros = JSON.parse(filterStorageExist)
+      filtros.save = false      
+      localStorage.setItem('filtrosParametros', JSON.stringify(filtros))
+    }    
+    this.paramsNavigate({...filtros, pagina: params.pageIndex, cantidad: params.pageSize, campo, ordenar, save: null })
+  }
+
+  paramsNavigate(queryParams: Params){    
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: 'merge',
+      }
+    );
   }
 
   parametroFormModal(parametro: ParametroResponse | null){
@@ -87,7 +149,6 @@ export class ParametrosComponent {
               return formParametro.markAllAsTouched()
             }
 
-            console.log(formParametro.value);
             create ? this.guardarParametroService(formParametro.value) : this.actualizarParametroService({ ...parametro!, ...formParametro.value })
           }
         }
@@ -100,7 +161,7 @@ export class ParametrosComponent {
       .subscribe({
         next: (resp) => {
           this.messageService.add({ severity:'success', summary: 'Éxito', detail: 'Parámetro registrado correctamente' });
-          this.ontenerParametrosService()
+          this.obtenerParametrosService()
           this.modal.closeAll()
         },
         error: (err) => {
@@ -114,7 +175,7 @@ export class ParametrosComponent {
       .subscribe({
         next: (resp) => {
           this.messageService.add({ severity:'success', summary: 'Éxito', detail: 'Parámetro actualizado correctamente' });
-          this.ontenerParametrosService()
+          this.obtenerParametrosService()
           this.modal.closeAll()
         },
         error: (err) => {
