@@ -12,11 +12,12 @@ import { FiltroEntidadComponent } from './filtro-entidad/filtro-entidad.componen
 import { AuthService } from '@libs/services/auth/auth.service';
 import { JneAutoridadTipoEnum } from '@core/enums';
 import { forkJoin, of } from 'rxjs';
+import { BotonComponent } from '@shared/boton/boton/boton.component';
 
 @Component({
   selector: 'app-entidades',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgZorroModule, PageHeaderComponent, FiltroEntidadComponent],
+  imports: [CommonModule, RouterModule, NgZorroModule, PageHeaderComponent, FiltroEntidadComponent, BotonComponent],
   templateUrl: './entidades.component.html',
   styles: ``
 })
@@ -205,6 +206,7 @@ export default class EntidadesComponent {
               const entidadId = entidad.entidadId!
               const autoridad:AutoridadResponse = {
                 entidadId,
+                asistenteId: `${asistente.asistenteId}`,
                 cargo: autoridadDni.cargo,
                 foto: autoridadDni.rutaFoto,
                 partidoPolitico: autoridadDni.organizacionPolitica,
@@ -243,7 +245,7 @@ export default class EntidadesComponent {
                       this.autoridadService.actualizarAutoridad({...autoridad, autoridadId: autoridadSelected?.autoridadId})
                         .subscribe( resp => {})
                     } else {
-                      this.autoridadService.registarAutoridad({...autoridad, asistenteId: asistente.asistenteId})
+                      this.autoridadService.registarAutoridad({...autoridad })
                         .subscribe(resp => {})
                     }
                   })

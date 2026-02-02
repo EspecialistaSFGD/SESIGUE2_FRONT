@@ -12,10 +12,12 @@ export interface AutoridadResponses extends DataResponses {
 export interface AutoridadResponse extends AsistenteResponse {
     autoridadId?: string,
     entidadId: string,
+    asistenteId: string,
     cargo: string,
     foto: string,
     partidoPolitico: string,
     vigente: boolean,
+    fechaJne?: string,
     fechaInicia?: string,
     fechaCese?: string,
 }

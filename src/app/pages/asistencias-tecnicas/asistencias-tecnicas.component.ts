@@ -410,6 +410,7 @@ export default class AsistenciasTecnicasComponent {
 
               const autoridad:AutoridadResponse = {
                 entidadId,
+                asistenteId: `${asistente.asistenteId}`,
                 cargo: autoridadDni.cargo,
                 foto: autoridadDni.rutaFoto,
                 partidoPolitico: autoridadDni.organizacionPolitica,
@@ -449,7 +450,7 @@ export default class AsistenciasTecnicasComponent {
                       this.autoridadService.actualizarAutoridad({...autoridad, autoridadId: autoridadSelected?.autoridadId})
                         .subscribe( resp => {})
                     } else {
-                      this.autoridadService.registarAutoridad({...autoridad, asistenteId: asistente.asistenteId})
+                      this.autoridadService.registarAutoridad({...autoridad, asistenteId: `${asistente.asistenteId}`})
                         .subscribe(resp => {})
                     }
                   })
