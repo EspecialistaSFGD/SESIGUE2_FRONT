@@ -34,9 +34,9 @@
           <td nzAlign="center">{{entidad.sexoAutoridad}}</td>
           <td nzRight nzAlign="center">
             <div class="flex justify-center">
-              <app-boton *ngIf="entidadesActions.servicejne" icono="building-columns" [link]="true" [tooltip]="'Actualizar según JNE de ' + entidad.nombre" (click)="obtenerAutoridadJne(entidad)"/>
+              <app-boton *ngIf="entidadesActions.servicejne" icono="building-columns" [link]="true" [tooltip]="'Vincular autoridad con JNE '" (click)="obtenerAutoridadJne(entidad)"/>
 
-              <a *ngIf="entidadesActions.view" [routerLink]="[entidad.entidadId]" class="py-1 px-2 font-bold text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
+              <a *ngIf="entidadesActions.view" [routerLink]="[entidad.entidadId]" class="py-2 px-3 font-bold text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
                 <i class="pi pi-eye" style="font-size: 0.85rem"></i>
               </a>
             </div>
@@ -73,5 +73,7 @@
     </div>
   </ng-template>
 </div>
+
+<p-toast />
 
 <app-filtro-entidad *ngIf="openFilters" [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="openFilters = false" (save)="saveFilters($event)" (filters)="generateFilters($event)" />

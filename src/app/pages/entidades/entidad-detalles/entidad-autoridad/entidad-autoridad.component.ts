@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { JneAutoridadTipoEnum } from '@core/enums';
-import { obtenerAutoridadJne, obtenerPermisosBotones, obtenerUbigeoTipo } from '@core/helpers';
+import { obtenerAutoridadJnePorCargo, obtenerParamsAutoridadJne, obtenerPermisosBotones, obtenerUbigeoTipo } from '@core/helpers';
 import { AsistenteResponse, AutoridadResponse, ButtonsActions, EntidadResponse, JneAutoridadResponse, Pagination } from '@core/interfaces';
 import { AsistentesService, AutoridadesService, JneService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
@@ -71,29 +71,30 @@ export class EntidadAutoridadComponent {
   }
 
   obtenerAutoridadJneService(){
-    const entidadTipo = this.entidad.entidadTipo!.toUpperCase()
-    const tipoUbigeo = obtenerUbigeoTipo(this.entidad.ubigeo_jne!)
+    // const entidadTipo = this.entidad.entidadTipo!.toUpperCase()
+    // const tipoUbigeo = obtenerUbigeoTipo(this.entidad.ubigeo_jne!)
 
-    let ubigeo = this.entidad.ubigeo_jne || this.entidad.ubigeo_oficial
-    let tipo: JneAutoridadTipoEnum = JneAutoridadTipoEnum.REGION
-    switch (entidadTipo) {
-      case 'GR':
-        tipo = JneAutoridadTipoEnum.REGION;
-        ubigeo = `${tipoUbigeo.departamento}0000`;
-      break;
-      case 'MP':
-        tipo = JneAutoridadTipoEnum.PROVINCIA;
-        ubigeo = `${tipoUbigeo.provincia?.substring(0, 4)}00`;
-      break;
-      case 'MD':
-        tipo = JneAutoridadTipoEnum.DISTRITO;
-        ubigeo = tipoUbigeo.distrito!;
-      break;
-    }
+    // let ubigeo = this.entidad.ubigeo_jne || this.entidad.ubigeo_oficial
+    // let tipo: JneAutoridadTipoEnum = JneAutoridadTipoEnum.REGION
+    // switch (entidadTipo) {
+    //   case 'GR':
+    //     tipo = JneAutoridadTipoEnum.REGION;
+    //     ubigeo = `${tipoUbigeo.departamento}0000`;
+    //   break;
+    //   case 'MP':
+    //     tipo = JneAutoridadTipoEnum.PROVINCIA;
+    //     ubigeo = `${tipoUbigeo.provincia?.substring(0, 4)}00`;
+    //   break;
+    //   case 'MD':
+    //     tipo = JneAutoridadTipoEnum.DISTRITO;
+    //     ubigeo = tipoUbigeo.distrito!;
+    //   break;
+    // }
+    const tipoUbigeo = obtenerParamsAutoridadJne(this.entidad)
     
-    this.jneService.obtenerAutoridades({ ubigeo, tipo })
+    this.jneService.obtenerAutoridades(tipoUbigeo)
       .subscribe( resp => {
-        const autoridadJne = obtenerAutoridadJne(resp.data)
+        const autoridadJne = obtenerAutoridadJnePorCargo(resp.data)
         this.autoridadJne.set(autoridadJne)
       })
   }

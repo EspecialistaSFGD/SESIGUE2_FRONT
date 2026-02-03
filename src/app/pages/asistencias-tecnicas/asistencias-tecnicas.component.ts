@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { convertEnumToObject, deleteKeysToObject, getDateFormat, obtenerAutoridadJne, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
+import { convertEnumToObject, deleteKeysToObject, getDateFormat, obtenerAutoridadJnePorCargo, obtenerPermisosBotones, setParamsToObject } from '@core/helpers';
 import { AsistenciasTecnicasClasificacion, AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaAgendaResponse, AsistenciaTecnicaCompromisoResponse, AsistenciaTecnicaCongresistaResponse, AsistenciaTecnicaIntegranteResponse, AsistenciaTecnicaParticipanteResponse, AsistenciaTecnicaResponse, AsistenteResponse, AutoridadResponse, ButtonsActions, CongresistaResponse, EventoResponse, ItemEnum, JneAutoridadParams, OrientacionAtencion, Pagination } from '@core/interfaces';
 import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCompromisosService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaIntegrantesService, AsistenciaTecnicaParticipantesService, AsistentesService, AutoridadesService, CongresistasService, JneService } from '@core/services';
 import { EventosService } from '@core/services/eventos.service';
@@ -394,12 +394,12 @@ export default class AsistenciasTecnicasComponent {
       .pipe(
         switchMap( autoridadJneResp => 
           forkJoin({
-            autoridadJneDniResp: this.jneService.obtenerAutoridadPorDni(obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad),
-            asistenteResp: this.asistenteService.ListarAsistentes({ ...paginationAsistente, dni: obtenerAutoridadJne(autoridadJneResp.data).documentoIdentidad })
+            autoridadJneDniResp: this.jneService.obtenerAutoridadPorDni(obtenerAutoridadJnePorCargo(autoridadJneResp.data).documentoIdentidad),
+            asistenteResp: this.asistenteService.ListarAsistentes({ ...paginationAsistente, dni: obtenerAutoridadJnePorCargo(autoridadJneResp.data).documentoIdentidad })
           })
           .pipe(
             tap(({ autoridadJneDniResp, asistenteResp }) => {
-              const autoridadJne = obtenerAutoridadJne(autoridadJneResp.data)
+              const autoridadJne = obtenerAutoridadJnePorCargo(autoridadJneResp.data)
               const autoridadDni = autoridadJneDniResp.data
               const asistente = asistenteResp.data[0]
 
