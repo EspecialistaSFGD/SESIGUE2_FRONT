@@ -57,8 +57,8 @@ export default class EntidadesComponent {
 
   getPermissions() {
     const navigation = this.authStore.navigationAuth()!
-    const transferenciaRecursos = navigation.find(nav => nav.descripcionItem == 'Entidades')
-    this.entidadesActions = obtenerPermisosBotones(transferenciaRecursos!.botones!)   
+    const entidadesNav = navigation.find(nav => nav.codigo.toLowerCase() == 'entidades')
+    this.entidadesActions = entidadesNav!.botones ? obtenerPermisosBotones(entidadesNav!.botones) : {}
   }
 
   getPermisos(){    

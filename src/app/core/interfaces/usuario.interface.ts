@@ -22,6 +22,7 @@ export interface UsuarioNavigation {
 export interface UsuarioNavigationLevel {
 	codigoMenu?: string,
 	descripcionItem?: string,
+	codigo: string,
 	direccionUrl?: string,
 	paramsUrl?: string,
 	parentMenu?: string,

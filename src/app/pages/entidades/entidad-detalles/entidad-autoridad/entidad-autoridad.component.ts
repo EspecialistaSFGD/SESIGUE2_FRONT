@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { JneAutoridadTipoEnum } from '@core/enums';
-import { obtenerAutoridadJne, obtenerUbigeoTipo } from '@core/helpers';
-import { AsistenteResponse, AutoridadResponse, EntidadResponse, JneAutoridadResponse, Pagination } from '@core/interfaces';
+import { obtenerAutoridadJne, obtenerPermisosBotones, obtenerUbigeoTipo } from '@core/helpers';
+import { AsistenteResponse, AutoridadResponse, ButtonsActions, EntidadResponse, JneAutoridadResponse, Pagination } from '@core/interfaces';
 import { AsistentesService, AutoridadesService, JneService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
+import { AuthService } from '@libs/services/auth/auth.service';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
@@ -24,6 +25,8 @@ export class EntidadAutoridadComponent {
   autoridades = signal<AutoridadResponse[]>([])
   autoridadJne = signal<JneAutoridadResponse>({} as JneAutoridadResponse)
 
+  autoridadActions: ButtonsActions = {}
+
   pagination:Pagination = {
     columnSort: 'autoridadId',
     typeSort: 'asc',
@@ -34,12 +37,27 @@ export class EntidadAutoridadComponent {
   private autoridadService = inject(AutoridadesService)
   private jneService = inject(JneService)
   private asistenteService = inject(AsistentesService)
+  private authStore = inject(AuthService)
 
   ngOnInit(): void {
     this.pagination.entidadId = Number(this.entidad.entidadId)
+    this.getPermissions()
     this.obtenerAutoridadesService()
 
     setTimeout(() => this.obtenerAutoridadJneService());
+  }
+
+  getPermissions() {
+    const navigation = this.authStore.navigationAuth()!
+    const entidadNav = navigation.find(nav => nav.codigo.toLowerCase() == 'entidades')
+
+    if(entidadNav?.children){
+      const autoridadNav = entidadNav!.children!.find(nav => nav.codigo.toLowerCase() == 'autoridades')      
+      this.autoridadActions = autoridadNav!.botones ? obtenerPermisosBotones(autoridadNav!.botones) : {}
+    } else {
+      const autoridadNav = navigation.find(nav => nav.codigo.toLowerCase() == 'autoridades')
+      this.autoridadActions = autoridadNav!.botones ? obtenerPermisosBotones(autoridadNav!.botones) : {}
+    }
   }
 
   obtenerAutoridadesService(){
@@ -89,8 +107,7 @@ export class EntidadAutoridadComponent {
   }
 
   showVigente(autoridad: AutoridadResponse){
-    console.log(autoridad);
-    
+    this.actualizarAutoridadService(autoridad)
   }
 
   obtenerAutoridadJne(){

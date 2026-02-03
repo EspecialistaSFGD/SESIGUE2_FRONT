@@ -5,7 +5,7 @@
             Resultados: {{pagination.total}}
         </div>
 		<div class="flex items-center gap-2">
-            <app-boton icono="building-columns" texto="Vincular JNE" [tooltip]="'Vincular autoridad con JNE'" [outline]="true" (click)="obtenerAutoridadJne()"/>
+            <app-boton *ngIf="autoridadActions.servicejne" icono="building-columns" texto="Vincular JNE" [tooltip]="'Vincular autoridad con JNE'" [outline]="true" (click)="obtenerAutoridadJne()"/>
 		</div>
     </div>
     <div class="grid grid-cols-1 border-solid">
@@ -36,7 +36,13 @@
                          </span>
                     </td>
 					<td nzAlign="center">
-                        <p-inputSwitch class="mt-1" [(ngModel)]="autoridad.vigente" (onChange)="showVigente(autoridad)"/>
+                        @if(autoridadActions.edit){
+                            <p-inputSwitch class="mt-1" [(ngModel)]="autoridad.vigente" (onChange)="showVigente(autoridad)"/>
+                        } @else {
+                            <div nz-tooltip [nzTooltipTitle]="autoridad.vigente ? 'Esta vigente' : 'No esta vigente'" [ngClass]="autoridad.vigente ? 'text-green-600' : 'text-slate-200'">
+                                <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+                            </div>
+                        }
                     </td>
 				<tr>
 				}
