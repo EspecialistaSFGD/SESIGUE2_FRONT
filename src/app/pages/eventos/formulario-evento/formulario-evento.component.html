@@ -133,25 +133,25 @@
                         </div>
 
                         <div class="flex flex-col">
-                            <label>Cantidad de sectores</label>
+                            <label>Acreditados por sector</label>
                             <p-inputNumber
                             formControlName="cantidadSector"
                             [showButtons]="true"
                             [min]="0"
                             buttonLayout="horizontal" incrementButtonIcon="pi pi-plus"
                             decrementButtonIcon="pi pi-minus" />
-                            <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('diasevento',i,'cantidadSector')">{{msgErrorControlTwoNivel('diasevento',i,'cantidadSector','Cantidad de sectores')}}</div>
+                            <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('diasevento',i,'cantidadSector')">{{msgErrorControlTwoNivel('diasevento',i,'cantidadSector','Acreditados por sector')}}</div>
                         </div>
 
                         <div class="flex flex-col">
-                            <label>Cantidad de GR/GL</label>
+                            <label>Acreditados por GR/GL</label>
                              <p-inputNumber
                             formControlName="cantidadRegionalLocal"
                             [showButtons]="true"
                             [min]="0"
                             buttonLayout="horizontal" incrementButtonIcon="pi pi-plus"
                             decrementButtonIcon="pi pi-minus" />
-                            <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('diasevento',i,'cantidadRegionalLocal')">{{msgErrorControlTwoNivel('diasevento',i,'cantidadRegionalLocal','Cantidad de GR/GL')}}</div>
+                            <div class="text-danger" *ngIf="alertMessageErrorTwoNivel('diasevento',i,'cantidadRegionalLocal')">{{msgErrorControlTwoNivel('diasevento',i,'cantidadRegionalLocal','Acreditados por GR/GL')}}</div>
                         </div>
                     </div>
                 </div>

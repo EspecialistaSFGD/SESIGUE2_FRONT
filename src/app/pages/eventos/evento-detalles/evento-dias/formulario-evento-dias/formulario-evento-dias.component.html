@@ -6,24 +6,24 @@
     </div>
 
     <div class="flex flex-col">
-        <label for="cantidadSector">Cantidad de sectores</label>
+        <label for="cantidadSector">Acreditados por sector</label>
         <p-inputNumber
         formControlName="cantidadSector"
         [showButtons]="true"
         [min]="0"
         buttonLayout="horizontal" incrementButtonIcon="pi pi-plus"
         decrementButtonIcon="pi pi-minus" />
-        <div class="w-full text-danger" *ngIf="alertMessageError('cantidadSector')">{{msgErrorControl('cantidadSector','Cantidad de sectores')}}</div>
+        <div class="w-full text-danger" *ngIf="alertMessageError('cantidadSector')">{{msgErrorControl('cantidadSector','Acreditados por sector')}}</div>
     </div>
 
     <div class="flex flex-col">
-        <label for="cantidadRegionalLocal">Cantidad de GR/GL</label>
+        <label for="cantidadRegionalLocal">Acreditados por GR/GL</label>
         <p-inputNumber
         formControlName="cantidadRegionalLocal"
         [showButtons]="true"
         [min]="0"
         buttonLayout="horizontal" incrementButtonIcon="pi pi-plus"
         decrementButtonIcon="pi pi-minus" />
-        <div class="w-full text-danger" *ngIf="alertMessageError('cantidadRegionalLocal')">{{msgErrorControl('cantidadRegionalLocal','Máximo de pedidos')}}</div>
+        <div class="w-full text-danger" *ngIf="alertMessageError('cantidadRegionalLocal')">{{msgErrorControl('cantidadRegionalLocal','Acreditados por pedidos')}}</div>
     </div>
 </form>
