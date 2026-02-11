@@ -27,10 +27,12 @@ export interface EntidadResponse {
   nivelGobierno?: string,
   autoridadId?: string,
   asistenteId?: string,
-  dnAutoridad?: string,
+  dniAutoridad?: string,
   nombreAutoridad?: string,
   apellidosAutoridad?: string,
   cargoAutoridad?: string,
+  telefonoAutoridad?: string,
+  correoAutoridad?: string,
   sexoAutoridad?: string,
 }
 

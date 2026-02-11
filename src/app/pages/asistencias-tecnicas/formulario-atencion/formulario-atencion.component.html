@@ -53,7 +53,7 @@
 						<label>
 							{{ esMancomunidad ? 'Mancomunidad' : 'Entidad' }}
 							@if (formAtencion.get('entidadId')?.value) {
-								<span nz-icon nzType="info-circle" [nz-tooltip]="formAtencion.get('entidad')?.value"></span>
+								<span nz-icon nzType="info-circle" [nz-tooltip]="entidad().nombre!"></span>
 							}
 						</label>
 						@if(esMancomunidad){
@@ -68,7 +68,7 @@
 							(onChange)="changeMancomunidad()" />
 							<div class="text-danger" *ngIf="alertMessageError('entidadId')"> {{msgErrorControl('entidadId','Mancomunidad')}}</div>
 						} @else {
-							<input type="text" class="form-control" id="entidad" placeholder="Entidad" formControlName="entidadSlug">
+							<input type="text" class="form-control" id="entidad" placeholder="Entidad" formControlName="entidad">
 						}
 					</div>
 
@@ -623,10 +623,10 @@
 		<div class="flex flex-col col-span-2">
 			<label for="unidadId">Unidad orgánica</label>
 			<p-dropdown
-			[options]="this.entidadesStore.entidades()"
+			[options]="unidadesOrganicas()"
 			formControlName="unidadId"
-			optionLabel="label"
-			optionValue="value"
+			optionLabel="nombre"
+			optionValue="entidadId"
 			[showClear]="true"
 			placeholder="Seleccionar unidad organica" />
 			<div class="text-danger" *ngIf="alertMessageError('unidadId')">{{msgErrorControl('unidadId','unidad organica')}}</div>
