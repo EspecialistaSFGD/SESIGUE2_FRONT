@@ -2,7 +2,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { EventoResponse, EventoSectorResponse, EventoSectorSwitchList, Pagination, SubTipoEntidad } from '@core/interfaces';
+import { DepartamentoEventoDetalle, EventoResponse, EventoSectorDetalleResponse, EventoSectorResponse, EventoSectorSwitchList, Pagination, SubTipoEntidad } from '@core/interfaces';
 import { EntidadesService, EventoSectoresService, SectoresService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
@@ -11,7 +11,6 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { MessageService } from 'primeng/api';
 import { FormularioEventoSectoresComponent } from './formulario-evento-sectores/formulario-evento-sectores.component';
-import { EventoSectorDetalleResponse } from '@core/interfaces/evento-sector-detalle.interface';
 
 @Component({
   selector: 'app-evento-sectores',
@@ -93,7 +92,10 @@ export class EventoSectoresComponent {
               return formEventoSectores.markAllAsTouched();
             }
 
+            const departamentosDetalles = formEventoSectores.get('departamentos')?.value
+
             this.ListarSectoresService()
+            // this.listarEventoSectorService(departamentosDetalles)
 
             setTimeout(() => {
               this.obtenerEventoSectoresService()
@@ -108,25 +110,24 @@ export class EventoSectoresComponent {
 
   ListarSectoresService(){
     const pagination: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
-    this.sectorService.listarSectores(pagination).subscribe( resp => {
-      resp.data.forEach( sector => {
-        const eventoSector: EventoSectorResponse = {eventoId: this.evento.eventoId!, sectorId: sector.grupoID!, cantidadPedidos: 0, registraAtencion: false}
-        this.crearEventoSectoresService(eventoSector);
-      })  
-    })
+    this.sectorService.listarSectores(pagination)
+      .subscribe( resp => {
+        for(let sector of resp.data){
+          const eventoSector: EventoSectorResponse = {eventoId: this.evento.eventoId!, sectorId: sector.grupoID!, cantidadPedidos: 0, registraAtencion: false}
+          this.crearEventoSectoresService(eventoSector);
+        }
+      })
   }
 
   crearEventoSectoresService(eventoSector: EventoSectorResponse){
-    this.eventoSectorService.registrarEventoSector(eventoSector)
-      .subscribe( resp => {
-        if(resp.success){
-          // this.messageService.add({ severity: 'success', summary: 'Sectores del evento agregado', detail: resp.message });
-          // this.obtenerEventoSectoresService()
-          // this.modal.closeAll()
-        } else {
-          // this.messageService.add({ severity: 'error', summary: 'Error', detail: resp.message });
-        }
-      })
+    this.eventoSectorService.registrarEventoSector(eventoSector).subscribe( resp => {})
+  }
+
+  listarEventoSectorService(departamentos: DepartamentoEventoDetalle[]){
+    const departamentroValidos = departamentos.filter( item => item.seleccionado)
+    for(let departamentoEvento of departamentroValidos){
+      const eventoDetalle = { eventoId: this.evento.eventoId, entidadUbigeoId: departamentoEvento.entidadId, cantidadPedidos: this.evento.maximoPedidos }
+    }
   }
 
   obtenerDetallesSector(){

@@ -15,3 +15,9 @@ export interface EventoSectorDetalleResponse {
     entidadSectorId: string,
     cantidadPedidos: string,
 }
+
+export interface DepartamentoEventoDetalle {
+    entidadId?: string,
+    nombre: string,
+    seleccionado: boolean
+}

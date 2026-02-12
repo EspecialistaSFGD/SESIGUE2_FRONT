@@ -27,6 +27,8 @@ export interface EventoResponse {
 	codigoTipoEvento?: string,
 	tipoEvento?: string,
 	primeraTarea?: boolean,
+	cantidadSectores?: number,
+	maximoPedidos?: number
 }
 
 export interface DataModalEvento{
