@@ -69,7 +69,7 @@ export class FormularioEventoComponent {
   }
 
   setMinDate(){
-    const hoy = new Date();
+    const hoy = this.create ? new Date() : convertDateStringToDate(this.evento().fechaEvento!);
     hoy.setHours(0, 0, 0, 0);
     this.minDate = hoy;
   }
