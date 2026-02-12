@@ -134,7 +134,7 @@ export class EventoSectoresComponent {
             
 
             console.log(this.entidades());
-            const entidadesEventosDetalleFiltrado = this.entidades().filter( item => ubigeos.includes(item.ubigeo) )
+            const entidadesEventosDetalleFiltrado = this.entidades().filter( item => ubigeos.includes(item.ubigeo.substring(0,2)) )
             console.log(entidadesEventosDetalleFiltrado);
             
             this.entidades.set(entidadesEventosDetalleFiltrado)
