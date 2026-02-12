@@ -49,6 +49,7 @@ export class FormularioEventoSectoresComponent {
           const departamentoItem = this.fb.group({
             entidadId: [departamento.entidadId, Validators.required],
             nombre: [departamento.departamento, Validators.required],
+            ubigeo: [departamento.ubigeo, Validators.required],
             seleccionado: [false, Validators.required],
           })
           this.departamentos.push(departamentoItem)
