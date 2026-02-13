@@ -1,20 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { JneAutoridadTipoEnum, UbigeoTipoEnum } from '@core/enums';
+import { UbigeoTipoEnum } from '@core/enums';
 import { findEnumToText, getBusinessDays, typeErrorControl } from '@core/helpers';
 import { AsistenciasTecnicasModalidad, AsistenciasTecnicasTipos, AsistenciaTecnicaResponse, AsistenteAtencionResponse, ClasificacionResponse, DataFile, DataModalAtencion, EntidadResponse, EspacioResponse, EventoResponse, ItemEnum, LugarResponse, NivelGobiernoResponse, OrientacionAtencion, Pagination, SectorResponse, SSInversionTooltip, TipoEntidadResponse, UbigeoDepartmentResponse, UbigeoDistritoResponse, UbigeoProvinciaResponse } from '@core/interfaces';
-import { AlcaldesService, AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, CongresistasService, EntidadesService, EspaciosService, JneService, LugaresService, NivelGobiernosService, SectoresService, SsiService, TipoEntidadesService, UbigeosService } from '@core/services';
+import { AsistenciasTecnicasService, AsistenciaTecnicaAgendasService, AsistenciaTecnicaCongresistasService, AsistenciaTecnicaParticipantesService, ClasificacionesService, EntidadesService, EspaciosService, LugaresService, NivelGobiernosService, SectoresService, TipoEntidadesService, UbigeosService } from '@core/services';
 import { ValidatorService } from '@core/services/validators';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
-import { EntidadesStore } from '@libs/shared/stores/entidades.store';
 import { SectoresStore } from '@libs/shared/stores/sectores.store';
 import { BotonUploadComponent } from '@shared/boton/boton-upload/boton-upload.component';
 import { BotonComponent } from '@shared/boton/boton/boton.component';
 import { ProgressSpinerComponent } from '@shared/progress-spiner/progress-spiner.component';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
-import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 @Component({
   selector: 'app-formulario-atencion',
@@ -44,13 +42,13 @@ export class FormularioAtencionComponent {
   acuerdosCount = 900
   esMancomunidad: boolean = false
   esRegional: boolean = false
-  // fileListMeet: NzUploadFile[] = [];
-  // fileListAttendance: NzUploadFile[] = [];
   cuiClasificacion: boolean = false
   reNewFile: boolean = false
+  entidad = signal<EntidadResponse>({} as EntidadResponse)
   
   evento = signal<EventoResponse>(this.dataAtention.evento)
-  // departamentos = signal<UbigeoDepartmentResponse[]>(this.dataAtention.departamentos)
+  unidadesOrganicas = signal<EntidadResponse[]>([])
+
   departamentos = signal<UbigeoDepartmentResponse[]>([])
   provincias = signal<UbigeoProvinciaResponse[]>([])
   distritos = signal<UbigeoDistritoResponse[]>([])
@@ -76,13 +74,11 @@ export class FormularioAtencionComponent {
   listaCompromisoDistritos = signal<UbigeoDistritoResponse[][]>([])
 
   private fb = inject(FormBuilder)
-  private congresistaService = inject(CongresistasService)
   private atencionService = inject(AsistenciasTecnicasService)
   private asistenciaTecnicaCongresistaService = inject(AsistenciaTecnicaCongresistasService)
   private asistenciaTecnicaParticipanteService = inject(AsistenciaTecnicaParticipantesService)
   private asistenciaTecnicaAgendaService = inject(AsistenciaTecnicaAgendasService)
   private validatorService = inject(ValidatorService)
-  private ssiService = inject(SsiService)
   private lugarService = inject(LugaresService)
   private tipoEntidadService = inject(TipoEntidadesService)
   private espacioService = inject(EspaciosService)
@@ -90,13 +86,9 @@ export class FormularioAtencionComponent {
   private clasificacionService = inject(ClasificacionesService)
   private ubigeoService = inject(UbigeosService)
   private entidadService = inject(EntidadesService)
-  private alcaldeService = inject(AlcaldesService)
   private sectorService = inject(SectoresService)
 
-  private jneService = inject(JneService)
-
   public sectoresStore = inject(SectoresStore)
-  public entidadesStore = inject(EntidadesStore)
 
   private timeoutId: any;
   fechaMinAtencion = new Date
@@ -109,7 +101,14 @@ export class FormularioAtencionComponent {
     pageSize: 10,
     currentPage: 1,
     total: 0
-  }  
+  }
+
+  paginationEntidad: Pagination = {
+    columnSort: 'entidadId',
+    typeSort: 'ASC',
+    pageSize: 10,
+    currentPage: 1
+  }
 
   get congresistas(): FormArray {
     return this.formAtencion.get('congresistas') as FormArray;
@@ -158,7 +157,7 @@ export class FormularioAtencionComponent {
     nombreAutoridad: [{ value: '', disabled: true }, Validators.required],
     documentoTitulo: [{ value: '', disabled: true }],
     numeroExpediente: [{ value: '', disabled: true }],
-    cargoAutoridad: [{ value: '', disabled: true }],
+    cargoAutoridad: [{ value: '', disabled: true }, Validators.required],
     contactoAutoridad: [{ value: '', disabled: true }],
     espacioId: ['', Validators.required],
     unidadId: [''],
@@ -176,13 +175,15 @@ export class FormularioAtencionComponent {
     integrantes: this.fb.array([]),
     compromisos: this.fb.array([])
   })
-  // cargoAutoridad: ['', [Validators.required, Validators.maxLength(50)]],
 
   ngOnInit(): void {
     this.diasHabiles()
     this.setPermisosPCM()
     this.setTipoAtencion()
     this.setModalidades()
+    if(!this.permisosPCM){
+      this.obtenerUnidadOrganicaService()
+    }
     this.obtenerDepartamentos()
     this.obtenerTipoEntidadesService()
     this.obtenerEspaciosService()
@@ -190,7 +191,6 @@ export class FormularioAtencionComponent {
     this.obtenerClasificacionesService()
     this.obtenerLugaresService()
     this.setFormAtention()
-    // this.setFormValue()
   }
 
   setPermisosPCM(){
@@ -203,94 +203,85 @@ export class FormularioAtencionComponent {
     const sector = this.authUser.sector.label
     this.formAtencion.reset({ ...this.atencion, fechaAtencion, sector })
 
-    this.disabledControls()
-    if(!this.permisosPCM){
-      this.entidadesStore.listarEntidades(0, 1, Number(this.authUser.sector.value));
-      if(this.create){
-        this.formAtencion.get('tipo')?.setValue('atencion')
-        this.formAtencion.get('modalidad')?.setValue('presencial')
-      } else {
-        if(this.evento().verificaAsistentes){
-          this.formAtencion.get('autoridad')?.disable()
-          this.formAtencion.get('nombreAutoridad')?.disable()
-          this.formAtencion.get('cargoAutoridad')?.disable()
-          this.formAtencion.get('contactoAutoridad')?.disable()
-        }
-      }
+    const autoridadControl = this.formAtencion.get('autoridad')
+
+    if(this.create){
       if(this.evento().verificaAsistentes){
+        // this.formAtencion.get('fechaAtencion')?.disable()
+        this.formAtencion.get('lugarId')?.disable()
+        this.formAtencion.get('tipoEntidadId')?.disable()
+        this.formAtencion.get('departamento')?.disable()
+        autoridadControl?.disable()
         this.formAtencion.get('dniAutoridad')?.enable()
+        // this.formAtencion.get('espacioId')?.disable()
       }
-      this.formAtencion.get('dniAutoridad')?.setValidators([Validators.required])
-      this.formAtencion.get('orientacionId')?.setValidators([Validators.required])
-      this.formAtencion.get('unidadId')?.setValidators([Validators.required])
+    } else {
+      this.paginationEntidad.pageSize = 10
+      this.paginationEntidad.entidadId = Number(this.atencion.entidadId)
+      this.obtenerEntidadService('ENTIDAD')
+  
+      autoridadControl?.enable()
 
-      setTimeout(() => this.verificarCuiClasificacion());
-      // setTimeout(() => this.changeTipoInversion(), 100);
-    }
-
-    if(!this.create){
-      if(this.atencion.tipoEntidadSlug?.toUpperCase() === 'MM' || this.atencion.tipoEntidadSlug?.toUpperCase() === 'MR'){
+      this.esMancomunidad = this.mancomunidadSlug.includes(this.atencion.tipoEntidadSlug!.toUpperCase())
+      if(this.esMancomunidad){
+        this.formAtencion.get('departamentoNombre')?.disable()
+        this.formAtencion.get('provinciaNombre')?.disable()
+        this.formAtencion.get('distritoNombre')?.disable()
         this.obtenerMancomunidadesService(this.atencion.tipoEntidadSlug!)
-        const controlDepartamento = this.formAtencion.get('departamentoNombre')
-        const controlProvincia = this.formAtencion.get('provinciaNombre')
-        const controlDistrito = this.formAtencion.get('distritoNombre')
-               
-        this.esMancomunidad =  true
-        controlDepartamento?.setValue(this.atencion.departamento)
-        controlDepartamento?.disable()
-        controlProvincia?.setValue(this.atencion.provincia)
-        controlProvincia?.disable()
-        controlDistrito?.setValue(this.atencion.distrito)
-        controlDistrito?.disable()
       }
 
-      this.formUbigeoAtencion()
-      this.setCongresistasParams()
+      this.formUbigeoAtencion(this.atencion.ubigeo!, this.atencion.tipoEntidadSlug!)
       this.setParticipantesParams()
-      this.setAgendasParams() 
-    }
-  }
+      this.setAgendasParams()
+      this.setCongresistasParams()
 
-  disabledControls(){
-    const autoridad = this.formAtencion.get('autoridad')?.value
-    if(!this.permisosPCM){
-      this.formularioControlEnable('fechaAtencion', false)
-      this.formularioControlEnable('lugarId', false)
       if(this.evento().verificaAsistentes){
-        this.formularioControlEnable('tipoEntidadId', false)
-        this.formularioControlEnable('departamento', false)
-        this.formularioControlEnable('provincia', false)
-        this.formularioControlEnable('distrito', false)
+        this.formAtencion.get('tipoEntidadId')?.disable()
+        this.formAtencion.get('departamento')?.disable()
+        this.formAtencion.get('autoridad')?.disable()
+        // this.formAtencion.get('espacioId')?.disable()
       }
-      this.formularioControlEnable('dniAutoridad')
-      this.formularioControlEnable('espacioId', false) 
     }
+    
+    if(!this.permisosPCM){
+      this.formAtencion.get('fechaAtencion')?.disable()
+      this.formAtencion.get('lugarId')?.disable()
+        this.formAtencion.get('espacioId')?.disable()
+        
+      setTimeout(() => this.verificarCuiClasificacion());
+      const tipo = this.dataAtention.tipos.find(item => item.text === AsistenciasTecnicasTipos.ATENCION)
+      const modalidad = this.dataAtention.modalidades.find(item => item.text === AsistenciasTecnicasModalidad.PRESENCIAL)
+      this.formAtencion.get('tipo')?.setValue(tipo?.value.toLowerCase())
+      this.formAtencion.get('unidadId')?.setValidators([Validators.required])
+      this.formAtencion.get('modalidad')?.setValue(modalidad?.value.toLowerCase())
+      this.formAtencion.get('orientacionId')?.setValidators([Validators.required])
+      this.formAtencion.get('comentarios')?.setValidators([Validators.required])
 
-    this.formularioControlEnable('autoridad', !this.create)
-    this.formularioControlEnable('dniAutoridad', !this.create && !autoridad)
-    this.formularioControlEnable('nombreAutoridad', !this.create && !autoridad)
-    this.formularioControlEnable('cargoAutoridad', !this.create && !autoridad)
-    this.formularioControlEnable('contactoAutoridad', !this.create && !autoridad)
+    }
   }
 
-  formUbigeoAtencion(){
-    const ubigeoFirst = this.atencion.ubigeo?.slice(0,2)
-    const ubigeoFirstFour = this.atencion.ubigeo?.slice(0,4)
-    const ubigeoLast = this.atencion.ubigeo?.slice(-2)
+  formUbigeoAtencion(ubigeo: string, tipoEntidadSlug: string){
+    const ubigeoFirst = ubigeo.slice(0,2)
+    const ubigeoFirstFour = ubigeo.slice(0,4)
+    const ubigeoLast = ubigeo.slice(-2)
 
     const controlProvincia = this.formAtencion.get('provincia')
     const controlDistrito = this.formAtencion.get('distrito')
 
     this.formAtencion.get('departamento')?.setValue(ubigeoFirst)
     this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
-    if(this.atencion.tipoEntidadSlug == 'GL'){
+    if(tipoEntidadSlug == 'GL'){
       controlProvincia?.setValue(`${ubigeoFirstFour}01`)
-      controlProvincia?.enable()
+      if(!this.evento().verificaAsistentes){
+        controlProvincia?.enable()
+      }
       this.obtenerProvinciasService(ubigeoFirst!)
       if(ubigeoLast != '01'){
-        controlDistrito?.setValue(this.atencion.ubigeo)
-        controlDistrito?.enable()
-        this.obtenerDistritosService(this.atencion.ubigeo!)
+        controlDistrito?.setValue(ubigeo)
+        if(!this.evento().verificaAsistentes){
+          controlDistrito?.enable()
+        }
+        this.obtenerDistritosService(ubigeo!)
       }
     }
   }
@@ -336,6 +327,11 @@ export class FormularioAtencionComponent {
 
   setModalidades(){
     this.modalidades = this.modalidades.filter( item => item.text != AsistenciasTecnicasModalidad.DOCUMENTO )    
+  }
+
+  obtenerUnidadOrganicaService(){    
+    const pagination: Pagination = { tipo: '1', sectorId: this.authUser.sector.value, columnSort: 'entidadId', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
+    this.entidadService.listarEntidades(pagination).subscribe(resp => this.unidadesOrganicas.set(resp.data))
   }
 
   obtenerDepartamentos(){
@@ -649,14 +645,12 @@ export class FormularioAtencionComponent {
     const loadingEntidadControl = getControl.at(i).get('loadingEntidad')
     const entidadIdControl = getControl.at(i).get('entidadId')
     const entidadControl = getControl.at(i).get('entidad')
-    const entidadSlugControl = getControl.at(i).get('entidadSlug')
     const pagination:Pagination = { tipo: '2', ubigeo }
     loadingEntidadControl?.setValue(true)
     this.entidadService.obtenerEntidad(pagination).subscribe( resp => {
       loadingEntidadControl?.setValue(false)
       entidadIdControl?.setValue(resp.data ? resp.data.entidadId : null)
       entidadControl?.setValue(resp.data ? resp.data.nombre : null)
-      entidadSlugControl?.setValue(resp.data ? `${resp.data.entidadTipo} ${resp.data.entidadSlug}`  : null)
     })
   }
 
@@ -733,8 +727,7 @@ export class FormularioAtencionComponent {
 
 
     return tipoControl && fechaAtencionControl && modalidadControl && lugarIdControl && tipoEntidadIdControl &&
-      entidadIdControl && autoridadControl && espacioIdControl &&
-      clasificacionControl && temaControl
+      entidadIdControl && autoridadControl && espacioIdControl && clasificacionControl && temaControl
   }
 
   formControlValidate(control:AbstractControl ){
@@ -799,30 +792,6 @@ export class FormularioAtencionComponent {
         }
       })
   }
-
-  // obtenerFechaLaborales() {
-  //   const paginationLaboral: Pagination = {
-  //     code: 0,
-  //     columnSort: 'fecha',
-  //     typeSort: 'DESC',
-  //     pageSize: 6,
-  //     currentPage: 1,
-  //     total: 0
-  //   }
-
-  //   const getDay = this.today.getDate()
-  //   const getMonth = this.today.getMonth() + 1
-  //   const day = getDay < 10 ? `0${getDay}` : getDay
-  //   const month = getMonth < 10 ? `0${getMonth}` : getMonth
-  //   const fecha = `${day}/${month}/${this.today.getFullYear()}`
-  //   this.fechaService.fechasLaborales(fecha, paginationLaboral)
-  //     .subscribe(resp => {
-  //       if (resp.success == true) {
-  //         const fechas = resp.data
-  //         this.fechaMinAtencion = fechas[fechas.length - 1].fecha
-  //       }
-  //     })
-  // }
 
   diasHabiles(){
     this.fechaMinAtencion = getBusinessDays(this.today, 14)
@@ -897,6 +866,7 @@ export class FormularioAtencionComponent {
     
     this.esMancomunidad = this.mancomunidadSlug.includes(tipo!.abreviatura)
     this.esRegional = tipo!.abreviatura == 'GR'
+
     const departamentoNombreControl = this.formAtencion.get('departamentoNombre')
     const departamento = this.formAtencion.get('departamento')
     const provinciaNombreControl = this.formAtencion.get('provinciaNombre')
@@ -904,37 +874,29 @@ export class FormularioAtencionComponent {
     const distritoNombreControl = this.formAtencion.get('distritoNombre')
     const distritoControl = this.formAtencion.get('distrito')
     const autoridadControl = this.formAtencion.get('autoridad')
-    this.esMancomunidad ? departamentoNombreControl?.disable() : departamentoNombreControl?.enable()
-    this.esMancomunidad ? departamento?.disable() : departamento?.enable()
-    this.formAtencion.get('entidadId')?.reset()
-    this.formAtencion.get('entidad')?.reset()
+    const entidadControl = this.formAtencion.get('entidad')
+    const entidadIdControl = this.formAtencion.get('entidadId')
     if(this.esMancomunidad){
-      departamento?.reset()
-      departamentoNombreControl?.reset()
-      provinciaNombreControl?.disable()
-      provinciaNombreControl?.reset()
-      provinciaControl?.disable()
-      provinciaControl?.reset()
       this.obtenerMancomunidadesService(tipo!.abreviatura)
-    } else {
-      !this.esRegional && provinciaNombreControl?.value ? provinciaNombreControl?.enable() : provinciaNombreControl?.disable()
-      !this.esRegional && departamento?.value ? provinciaControl?.enable() : provinciaControl?.disable()
-      provinciaControl?.reset()
-      provinciaNombreControl?.reset()
-      if(departamento?.value){
-        const getUbigeo = departamento.value
-        const ubigeo = departamento.value.departamentoId
-        this.obtenerEntidadPorUbigeoService(`${getUbigeo}0000`) 
-      }
     }
-    distritoNombreControl?.disable()
-    distritoNombreControl?.reset()
+
     distritoControl?.disable()
     distritoControl?.reset()
+    provinciaControl?.disable()
+    provinciaControl?.reset()
+    departamento?.reset()
+    
+    distritoNombreControl?.reset()
+    distritoNombreControl?.disable()
+    provinciaNombreControl?.reset()
+    provinciaNombreControl?.disable()
+    departamentoNombreControl?.reset()
+    departamentoNombreControl?.disable()
+
+    entidadControl?.reset()
+    entidadIdControl?.reset()
     autoridadControl?.reset()
-    if(!tipoValue){
-      autoridadControl?.disable()
-    }
+    autoridadControl?.disable()
   }
 
   obtenerTipoEntidad(tipoId: number){
@@ -945,32 +907,32 @@ export class FormularioAtencionComponent {
     const tipoEntidadControl = this.formAtencion.get('tipoEntidadId')
     const ubigeoControl = this.formAtencion.get('ubigeo')
     const autoridadControl = this.formAtencion.get('autoridad')
-    const departamento = this.formAtencion.get('departamento')?.value
+    const departamentoValue = this.formAtencion.get('departamento')?.value
     const provinciaControl = this.formAtencion.get('provincia')
     const distritoControl = this.formAtencion.get('distrito')
     let ubigeo = null
 
-    departamento ? autoridadControl?.enable() : autoridadControl?.disable()
-    if(departamento){
-      ubigeo = `${departamento}0000`
-      this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
-      if(!this.esRegional){}
-      this.obtenerProvinciasService(departamento)
-      if(tipoEntidadControl?.value){
-        provinciaControl?.enable()
-      }
-      this.obtenerEntidadPorUbigeoService(ubigeo)
-    } else {
-      this.ubigeoTipo = UbigeoTipoEnum.PAIS
-      provinciaControl?.disable()
-    }
-    provinciaControl?.reset()
-    
-    ubigeoControl?.setValue(ubigeo)
-    this.changeAutoridad()
-    // this.obtenerEntidadPorUbigeoService(ubigeo ?? '0')
+    autoridadControl?.reset()
+
     distritoControl?.disable()
     distritoControl?.reset()
+    provinciaControl?.reset()
+
+    this.esRegional ? provinciaControl?.disable() : provinciaControl?.enable()
+    departamentoValue ? autoridadControl?.enable() : autoridadControl?.disable()
+
+    if(departamentoValue){
+      ubigeo = `${departamentoValue}0000`
+      if(!this.esRegional){
+        this.obtenerProvinciasService(departamentoValue)
+      }
+      
+      this.obtenerEntidadPorUbigeoService(ubigeo)
+    }
+
+    if(this.evento().verificaAsistentes){
+      provinciaControl?.disable()
+    }
   }
 
   obtenerProvinciasService(departamento: string) {
@@ -981,22 +943,23 @@ export class FormularioAtencionComponent {
     const departamento = this.formAtencion.get('departamento')?.value
     const provincia = this.formAtencion.get('provincia')?.value
     const distritoControl = this.formAtencion.get('distrito')
+    const autoridadControl = this.formAtencion.get('autoridad')
     
     let ubigeo = `${departamento}0000`
     if(provincia && !this.esRegional){
-      this.ubigeoTipo = UbigeoTipoEnum.PROVINCIA
       ubigeo = provincia
+      
       distritoControl?.enable()
       this.obtenerDistritosService(ubigeo)
     } else {
-      this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO
-      // ubigeo = `${departamento}0000`
       distritoControl?.disable()
     }
 
-    this.formAtencion.get('ubigeo')?.setValue(ubigeo)
+    if(this.evento().verificaAsistentes){
+      distritoControl?.disable()
+    }
     distritoControl?.reset()
-    this.changeAutoridad()
+    autoridadControl?.reset()
     this.obtenerEntidadPorUbigeoService(ubigeo)
   }
 
@@ -1007,185 +970,165 @@ export class FormularioAtencionComponent {
   changeDistrito(){
     const provincia = this.formAtencion.get('provincia')?.value
     const distrito = this.formAtencion.get('distrito')?.value   
+    const autoridadControl = this.formAtencion.get('autoridad')
+
     const ubigeo = distrito && !this.esRegional ? distrito : provincia
     this.formAtencion.get('ubigeo')?.setValue(ubigeo)
-    this.ubigeoTipo = distrito && !this.esRegional ? UbigeoTipoEnum.DISTRITO : UbigeoTipoEnum.PROVINCIA
-    this.changeAutoridad()
+    autoridadControl?.reset()
     this.obtenerEntidadPorUbigeoService(ubigeo) 
   }
 
   obtenerMancomunidadesService(mancomunidad: string) {
-    const paginationMancomunidad: Pagination = {...this.pagination, columnSort: 'entidad', pageSize: 300 }
-    this.entidadService.listarEntidades(paginationMancomunidad, [mancomunidad]).subscribe( resp => this.mancomunidades.set(resp.data))
-    // this.entidadService.getMancomunidades(mancomunidad, paginationMancomunidad)
-    //   .subscribe(resp => {
-    //     this.mancomunidades.set(resp.data)
-    //   })
+    this.paginationEntidad.subTipos = [mancomunidad]
+    this.paginationEntidad.pageSize = 250
+    delete this.paginationEntidad.entidadId
+    delete this.paginationEntidad.tipo
+    delete this.paginationEntidad.ubigeo
+    this.obtenerEntidadService('MANCOMUNIDAD')
+  }
+
+  obtenerEntidadService(tipo:string){
+    this.entidadService.listarEntidades(this.paginationEntidad)
+      .subscribe( resp => {
+        switch (tipo.toUpperCase()) {
+          case 'MANCOMUNIDAD':
+            this.mancomunidades.set(resp.data)
+          break;
+          case 'ENTIDAD':
+            this.entidadPorUbigeo(resp.data[0])
+          break;
+        }
+      })
   }
 
   obtenerEntidadPorUbigeoService(ubigeo: string) {
     if (ubigeo) {    
-      const tipoEntidadIdControl = this.formAtencion.get('tipoEntidadId')
-      const entidadControl = this.formAtencion.get('entidad')
-      const entidadSlugControl = this.formAtencion.get('entidadSlug')
-      const entidadIdControl = this.formAtencion.get('entidadId')
-
       let tipo = this.esMancomunidad ? '3' : '2'
-      this.entidadService.obtenerEntidad({ ubigeo, tipo })
-        .subscribe( resp => {
-          const entidad = resp.data
-          
-          entidadControl?.setValue(entidad ? entidad.nombre : null)
-          entidadSlugControl?.setValue(entidad ? `${entidad.entidadTipo} ${entidad.entidadSlug}` : null)
-          entidadIdControl?.setValue(entidad ? entidad.entidadId : null)
-          if(!this.permisosPCM){
-            const nivelGobierno = entidad.nivelGobierno ?? null
-            const tipoEntidad = this.tipoEntidades().find(item => item.abreviatura.toUpperCase() === nivelGobierno)
-            // tipoEntidadIdControl?.setValue(tipoEntidad?.tipoId ?? null)
-            if(this.evento().verificaAsistentes){
-              tipoEntidadIdControl?.setValue(tipoEntidad?.tipoId ?? null)
-            }
-          }
-        })
+
+      delete this.paginationEntidad.entidadId
+      delete this.paginationEntidad.subTipos
+      this.paginationEntidad.pageSize = 10
+      this.paginationEntidad.ubigeo = ubigeo
+      this.paginationEntidad.tipo = tipo
+      this.obtenerEntidadService('ENTIDAD')
     }
+  }
+
+  entidadPorUbigeo(entidad: EntidadResponse){
+    this.entidad.set(entidad)    
+    this.formAtencion.get('entidad')?.setValue(entidad ? `${entidad.entidadTipoSlug}` : null)
+    this.formAtencion.get('entidadId')?.setValue(entidad ? entidad.entidadId : null)
+    if(!this.permisosPCM){
+      const nivelGobierno = entidad.nivelGobierno ?? null
+      const tipoEntidad = this.tipoEntidades().find(item => item.abreviatura.toUpperCase() === nivelGobierno)
+      if(this.evento().verificaAsistentes){
+        this.formAtencion.get('tipoEntidadId')?.setValue(tipoEntidad?.tipoId ?? null)
+      }
+    }
+    if(this.esMancomunidad){      
+      this.formAtencion.get('departamento')?.setValue(`${entidad.ubigeo.substring(0,2)}`)
+      this.formAtencion.get('departamentoNombre')?.setValue(entidad.departamento)
+      this.formAtencion.get('provinciaNombre')?.setValue(entidad.provincia)
+      this.formAtencion.get('distritoNombre')?.setValue(entidad.distrito)
+    }
+    if(this.evento().verificaAsistentes){
+      this.asignarEntidadUbigeo(entidad)      
+    }
+  }
+
+  asignarEntidadUbigeo(entidad: EntidadResponse){
+    const tiposValidos:string[] = ['MP','MD']
+    const entidadTipo = tiposValidos.includes(entidad.entidadTipo!.toUpperCase()) ? 'GL' : entidad.entidadTipo!.toUpperCase()
+    const tipoEntidad = this.tipoEntidades().find(tipo => tipo.abreviatura.toUpperCase() === entidadTipo)
+    this.formAtencion.get('tipoEntidadId')?.setValue(tipoEntidad?.tipoId ?? null)
+    this.formUbigeoAtencion(entidad.ubigeo, entidadTipo)
   }
 
   changeMancomunidad(){
-    const tipoEntidadId = this.formAtencion.get('tipoEntidadId')?.value
-    const mancomunidad = this.formAtencion.get('entidadId')?.value
+    const mancomunidadValue = this.formAtencion.get('entidadId')?.value
     const autoridadControl = this.formAtencion.get('autoridad')
-    const dniControl = this.formAtencion.get('dniAutoridad')
-    const nombreControl = this.formAtencion.get('nombreAutoridad')
-    const cargoControl = this.formAtencion.get('cargoAutoridad') 
 
-    const ubigeoControl = this.formAtencion.get('ubigeo')
-    const entidadControl = this.formAtencion.get('entidad')
-    this.ubigeoTipo == UbigeoTipoEnum.PAIS;
-    if(mancomunidad){
-      const entidad = this.mancomunidades().find(item => item.entidadId == mancomunidad)
-      entidadControl?.setValue(entidad!.nombre)
-      const ubigeo = entidad!.ubigeo_oficial
-      const firstUbigeo = ubigeo.slice(0,2)
-      const lastUbigeo = ubigeo.slice(-2)
-      const setUbigeo = lastUbigeo == '01' ? `${ubigeo.slice(0,4)}00` : ubigeo
-      ubigeoControl?.setValue(ubigeo)
-      this.formAtencion.get('departamentoNombre')?.setValue(entidad?.departamento)
-      this.formAtencion.get('departamento')?.setValue(firstUbigeo)
-      this.formAtencion.get('provinciaNombre')?.setValue(entidad?.provincia)
-      this.formAtencion.get('provincia')?.setValue(setUbigeo)
-      this.formAtencion.get('distritoNombre')?.setValue(entidad?.distrito)
-      this.formAtencion.get('distrito')?.setValue(ubigeo)
-      const tipoEntidad = this.obtenerTipoEntidad(tipoEntidadId)
-      const tipoEntidadSlug = tipoEntidad?.abreviatura
-      switch (tipoEntidadSlug) {
-        case 'MR': this.ubigeoTipo = UbigeoTipoEnum.DEPARTAMENTO; break;
-        case 'MM':
-          this.ubigeoTipo = lastUbigeo == '01' ? UbigeoTipoEnum.PROVINCIA : UbigeoTipoEnum.DISTRITO;
-          this.obtenerProvinciasService(firstUbigeo)
-          if(lastUbigeo != '01'){
-            this.obtenerDistritosService(ubigeo)
-          }
-          break;        
-      }
-    } else {
-      entidadControl?.reset()
-      ubigeoControl?.setValue(null)
-    }
-
-    mancomunidad ? autoridadControl?.enable() : autoridadControl?.disable()
     autoridadControl?.reset()
-    dniControl?.reset()
-    nombreControl?.reset()
-    cargoControl?.reset()
+    if(mancomunidadValue){
+      this.paginationEntidad.entidadId = mancomunidadValue
+      this.paginationEntidad.pageSize = 10
+      delete this.paginationEntidad.subTipos
+      this.obtenerEntidadService('ENTIDAD')
+      autoridadControl?.enable()
+    } else {
+      autoridadControl?.enable()
+      this.entidad.set({} as EntidadResponse)
+    }
   }
 
   changeAutoridad(){
-    const autoridad = this.formAtencion.get('autoridad')?.value
-    const ubigeo = this.formAtencion.get('ubigeo')?.value
+    const autoridadValue = this.formAtencion.get('autoridad')?.value
+    const entidadIdValue = this.formAtencion.get('entidadId')?.value
     const dniControl = this.formAtencion.get('dniAutoridad')
     const nombreControl = this.formAtencion.get('nombreAutoridad')
     const cargoControl = this.formAtencion.get('cargoAutoridad')
     const contactoControl = this.formAtencion.get('contactoAutoridad')
 
-    // const consultarAlcalde = this.permisosPCM ? this.permisosPCM : !this.permisosPCM && !this.evento().verificaAsistentes  
-
-    // if(this.permisosPCM){
-    //   autoridad ? this.permisosPCM ? dniControl?.disable() : dniControl?.enable() : dniControl?.enable()
-    //   autoridad ? nombreControl?.disable() : nombreControl?.enable()
-    //   autoridad ? cargoControl?.disable() : cargoControl?.enable()
-    // }
-
-    if(autoridad){
-      if(ubigeo && !this.evento().verificaAsistentes){        
-        this.obtenerAlcaldePorUbigeo()
+    if(autoridadValue === true){
+      if(!this.evento().verificaAsistentes){
+        dniControl?.disable()
       }
-    } else {
-      if(this.permisosPCM && !this.evento().verificaAsistentes){
-        dniControl?.reset()
-        dniControl?.enable()
-        nombreControl?.disable()
-        nombreControl?.reset()
-        cargoControl?.disable()
-        cargoControl?.reset()
-        contactoControl?.disable()
-        contactoControl?.reset()
+      nombreControl?.disable()
+      cargoControl?.disable()
+      contactoControl?.disable()
+      if(entidadIdValue && !this.evento().verificaAsistentes){
+        this.asignarAutoridad()
       }
     }
-    // if(this.permisosPCM && !this.evento().verificaAsistentes){
-    //   dniControl?.reset()
-    //   nombreControl?.reset()
-    //   cargoControl?.reset()
-    // }
 
+    if(autoridadValue === false) {
+      if(!this.evento().verificaAsistentes){
+        dniControl?.reset()
+        nombreControl?.reset()
+        cargoControl?.reset()
+        contactoControl?.reset()
+      }
 
+      dniControl?.enable()
+      this.evento().verificaAsistentes ? nombreControl?.disable() : nombreControl?.enable()
+      this.evento().verificaAsistentes ? cargoControl?.disable() : cargoControl?.enable()
+      this.evento().verificaAsistentes ? contactoControl?.disable() : contactoControl?.enable()
+    }
 
-    // if(autoridad){
-    //   if(this.permisosPCM){
-    //     dniControl?.disable()
-    //   }
-    //   nombreControl?.disable()
-    //   cargoControl?.disable()
-    // } else {
-    //   dniControl?.enable()
-    //   if(this.permisosPCM){
-    //     nombreControl?.enable()
-    //     cargoControl?.enable()
-    //     dniControl?.reset()
-    //     nombreControl?.reset()
-    //     cargoControl?.reset()
-    //   } else {        
-    //     nombreControl?.disable()
-    //     cargoControl?.disable()
-    //   }
-    // }
+    if(autoridadValue === null) {
+      dniControl?.reset()
+      if(!this.evento().verificaAsistentes){
+        dniControl?.disable()
+      }
+      nombreControl?.reset()
+      nombreControl?.disable()
+      cargoControl?.reset()
+      cargoControl?.disable()
+      contactoControl?.reset()
+      contactoControl?.disable()
+    }
   }
 
   changeDocumentoAutoridad(){
     const dniControl = this.formAtencion.get('dniAutoridad')
     const dniValue = dniControl?.value
 
-    if(dniValue.length > 0){
-      dniControl?.setValidators([Validators.pattern(this.validatorService.DNIPattern)]);
-    } else {
-      dniControl?.setValidators( this.permisosPCM ? null : [Validators.required])
-    }
+    dniValue.length > 0 
+    ? dniControl?.setValidators([Validators.pattern(this.validatorService.DNIPattern)])
+    : dniControl?.setValidators( this.permisosPCM ? null : [Validators.required])
+
     dniControl?.updateValueAndValidity();
 
     if(dniValue.length == 8){
       this.obtenerAsistenteService(dniValue)
-    }else {
-      if(!this.permisosPCM && this.evento().verificaAsistentes){
-        this.formAtencion.get('tipoEntidadId')!.setValue(null)
-        this.formAtencion.get('entidad')!.setValue(null)
-        this.formAtencion.get('entidadId')!.setValue(null)
-        this.formAtencion.get('departamento')!.setValue(null)
-        this.formAtencion.get('provincia')!.setValue(null)
-        this.formAtencion.get('distrito')!.setValue(null)
-        this.formAtencion.get('autoridad')!.setValue(null)
-        this.formAtencion.get('nombreAutoridad')!.setValue(null)
-        this.formAtencion.get('cargoAutoridad')!.setValue(null)
-        this.formAtencion.get('contactoAutoridad')!.setValue(null)
-      }
+    } else {
+      this.formAtencion.get('nombreAutoridad')!.setValue(null)
+      this.formAtencion.get('cargoAutoridad')!.setValue(null)
+      this.formAtencion.get('contactoAutoridad')!.setValue(null)
+
+      this.evento().verificaAsistentes ? this.formAtencion.get('nombreAutoridad')!.disable() : this.formAtencion.get('nombreAutoridad')!.enable()
+      this.evento().verificaAsistentes ? this.formAtencion.get('cargoAutoridad')!.disable() : this.formAtencion.get('cargoAutoridad')!.enable()
+      this.evento().verificaAsistentes ? this.formAtencion.get('contactoAutoridad')!.disable() : this.formAtencion.get('contactoAutoridad')!.enable()
     }
   }
 
@@ -1200,101 +1143,48 @@ export class FormularioAtencionComponent {
     }
     this.atencionService.obtenerAsistente(dni, eventoId)
       .subscribe( resp => {
-        const asistente = resp.data        
+        this.loadingAutoridad = false
+        const asistente = resp.data
         if(asistente){
-          control === '' ? this.setAsistenteFormulario(asistente) : this.setAsistenteFormularioLista(asistente,control,i);
+          control === '' ? this.setAsistenteFormulario(asistente) : this.setAsistenteFormularioLista(asistente,control,i)
         } else {
           if(control === ''){
-            this.loadingAutoridad = false
             this.formAtencion.get('asistenteId')?.setValue(null)
+            this.evento().verificaAsistentes ? this.formAtencion.get('nombreAutoridad')?.disable() : this.formAtencion.get('nombreAutoridad')?.enable()
+            this.evento().verificaAsistentes ? this.formAtencion.get('cargoAutoridad')?.disable() : this.formAtencion.get('cargoAutoridad')?.enable()
+            this.evento().verificaAsistentes ? this.formAtencion.get('contactoAutoridad')?.disable() : this.formAtencion.get('contactoAutoridad')?.enable()
             this.formAtencion.get('nombreAutoridad')?.setValue(null)
             this.formAtencion.get('cargoAutoridad')?.setValue(null)
             this.formAtencion.get('contactoAutoridad')?.setValue(null)
-            if(this.permisosPCM && !this.evento().verificaAsistentes){
-              this.formAtencion.get('nombreAutoridad')?.enable()
-              this.formAtencion.get('cargoAutoridad')?.enable()
-            }
-            if(!this.esMancomunidad){
-              // this.formAtencion.get('entidadId')?.setValue(null)
-            }
             if(this.evento().verificaAsistentes){
-              this.formAtencion.get('tipoEntidadId')?.setValue(null)
-              this.formAtencion.get('departamento')?.setValue(null)
-              this.formAtencion.get('provincia')?.setValue(null)
-              this.formAtencion.get('distrito')?.setValue(null)           
               this.formAtencion.get('dniAutoridad')?.setErrors({ msgBack: 'Aún no asiste al evento' });
-            }
-          } else {
-            const getControl = this.formAtencion.get(control) as FormArray
-            getControl.at(i).get('asistenteId')?.setValue(null)
-            getControl.at(i).get('nombres')?.enable()
-            getControl.at(i).get('nombres')?.setValue(null)
-            getControl.at(i).get('cargo')?.enable()
-            getControl.at(i).get('cargo')?.setValue(null)
-            getControl.at(i).get('telefono')?.enable()
-            getControl.at(i).get('telefono')?.setValue(null)
-            getControl.at(i).get('email')?.setValue(null)
+            } 
           }
         }
-
-        // nombre?.setValue(asistente ? asistente.nombres : null)
-        // cargo?.setValue(asistente ? asistente.cargo : null)
-        
-        // if(this.permisosPCM){
-        //   this.formularioControlEnable('nombreAutoridad', !asistente)
-        //   this.formularioControlEnable('cargoAutoridad', !asistente)
-        // } else {
-        //   if(asistente){
-        //     contacto?.enable()
-        //     this.formularioControlEnable('nombreAutoridad', false)
-        //     this.formularioControlEnable('cargoAutoridad', false)
-        //     this.formularioControlEnable('contactoAutoridad', false)
-        //     ubigeoControl?.setValue(asistente.ubigeo)
-        //     entidadSlug?.setValue(asistente.entidad)
-        //     entidad?.setValue(asistente.entidad)
-        //     entidadId?.setValue(asistente.entidadId)
-        //     const telefono = asistente.telefono ? `${asistente.telefono} / ` : ''
-        //     contacto?.setValue(`${telefono}${asistente.email}`)
-        //      if(this.evento().verificaAsistentes){
-        //        this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
-        //      }
-        //     const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
-        //     if(this.evento().verificaAsistentes){
-        //       autoridadControl?.setValue(esAutoridad)
-        //     }
-        //   } else {
-        //     contacto?.reset()
-        //     this.formularioControlEnable('nombreAutoridad', true)
-        //     this.formularioControlEnable('cargoAutoridad', true)
-        //     this.formularioControlEnable('contactoAutoridad', true)
-        //     if(this.evento().verificaAsistentes){
-        //       tipoEntidadId?.reset()
-        //       departamentoControl?.reset()
-        //       provinciaControl?.reset()
-        //       distritoControl?.reset()            
-        //       dniControl?.setErrors({ msgBack: 'Aún no asiste al evento' });
-        //     }
-        //   }
-        // }
       })
   }
 
-  setAsistenteFormulario(asistente: AsistenteAtencionResponse){    
-    this.loadingAutoridad = false
+  setAsistenteFormulario(asistente: AsistenteAtencionResponse){
+    let contacto = asistente.telefono
+    if(asistente.telefono && asistente.telefono != '' && asistente.email && asistente.email != ''){
+      contacto = `${asistente.telefono} / ${asistente.email}`
+    }
+
     this.formAtencion.get('asistenteId')?.setValue(asistente.asistenteId)
     this.formAtencion.get('nombreAutoridad')?.setValue(asistente.nombres)
     this.formAtencion.get('cargoAutoridad')?.setValue(asistente.cargo)
-    this.formAtencion.get('contactoAutoridad')?.setValue(`${asistente.telefono ? `${asistente.telefono} / ` : ''}${asistente.email}`)
-    if(!this.esMancomunidad){
-    }
+    this.formAtencion.get('contactoAutoridad')?.setValue(contacto )
+    this.formAtencion.get('nombreAutoridad')?.disable()
+    this.formAtencion.get('cargoAutoridad')?.disable()
+    this.formAtencion.get('contactoAutoridad')?.disable()
     if(this.evento().verificaAsistentes){
-      this.formAtencion.get('ubigeo')?.setValue(asistente.ubigeo)
-      this.formAtencion.get('entidadId')?.setValue(asistente.entidadId)
-      this.formAtencion.get('entidad')?.setValue(asistente.entidad)
-      this.formAtencion.get('entidadSlug')?.setValue(asistente.entidad)
-      this.setUbigeoToAsistente(asistente.ubigeo, asistente.entidadTipo)
-      const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
-      this.formAtencion.get('autoridad')?.setValue(esAutoridad)
+        const esAutoridad = asistente.cargo.toLowerCase().includes('alcalde') || asistente.cargo.toLowerCase().includes('gobernador')
+        this.formAtencion.get('autoridad')?.setValue(esAutoridad)
+        this.formAtencion.get('entidadId')?.setValue(asistente.entidadId)
+        this.paginationEntidad.entidadId = asistente.entidadId
+        this.paginationEntidad.pageSize = 10
+        delete this.paginationEntidad.subTipos
+        this.obtenerEntidadService('ENTIDAD')
     }
   }
 
@@ -1329,59 +1219,21 @@ export class FormularioAtencionComponent {
     }
   }
 
-  obtenerAlcaldePorUbigeo() {
-    const departamentoControl = this.formAtencion.get('departamento')
-    const provinciaControl = this.formAtencion.get('provincia')
-    const distritoControl = this.formAtencion.get('distrito')
-    const dniControl = this.formAtencion.get('dniAutoridad')
-    const nombreControl = this.formAtencion.get('nombreAutoridad')
-    const cargoControl = this.formAtencion.get('cargoAutoridad')
-    const contactoControl = this.formAtencion.get('contactoAutoridad')
-    const tipoUbigeoControl = this.formAtencion.get('tipoUbigeo')
-    const ubigeoJneControl = this.formAtencion.get('ubigeoJne')
-
-    let ubigeo = ''
-    let tipo = JneAutoridadTipoEnum.DISTRITO
-    let valueProvincia =  provinciaControl?.value
-    if(this.ubigeoTipo == UbigeoTipoEnum.DEPARTAMENTO){
-      const dpto = this.departamentos().find( departamento => departamento.departamentoId == departamentoControl?.value )
-      ubigeo = dpto!.jne
-      tipo = ubigeo.slice(2, 4) == '01' ? JneAutoridadTipoEnum.PROVINCIA : JneAutoridadTipoEnum.REGION
-    }
-
-    if (this.ubigeoTipo == UbigeoTipoEnum.PROVINCIA) { 
-      const provincia = this.provincias().find( provincia => provincia.provinciaId == valueProvincia)
-      ubigeo = `${provincia!.jne.slice(0, 4)}00`
-      tipo = JneAutoridadTipoEnum.PROVINCIA
-    }
-
-    if (this.ubigeoTipo == UbigeoTipoEnum.DISTRITO) {    
-      const distrito = this.distritos().find( distrito => distrito.distritoId == distritoControl?.value )
-      const ubigeoDistrito = distrito!.jne
-      ubigeo = ubigeoDistrito.slice(-2) == '01' ? `${ubigeoDistrito.slice(0, 4)}00` : ubigeoDistrito
-      tipo = ubigeoDistrito.slice(-2) == '01' ? JneAutoridadTipoEnum.PROVINCIA : JneAutoridadTipoEnum.DISTRITO
-    }
-
-    tipoUbigeoControl?.setValue(tipo)
-    ubigeoJneControl?.setValue(ubigeo)
-
-    const tipocargo = tipo == JneAutoridadTipoEnum.REGION ? 'GOBERNADOR' : 'ALCALDE'
-
+  asignarAutoridad(){
     this.loadingAutoridad = true
-    this.jneService.obtenerAutoridades({ ubigeo, tipo})
-      .subscribe(resp => {
-        const existeAutoridad = resp.data.length > 0
-        const autoridad = existeAutoridad ? resp.data.find(item => item.cargo.split(' ')[0] == tipocargo ) : null
-        const dni = existeAutoridad ? autoridad?.documentoIdentidad : ''
-        const nombres = existeAutoridad ? `${autoridad?.nombres} ${autoridad?.apellidoPaterno} ${autoridad?.apellidoMaterno}` : null
-        const cargo = existeAutoridad ? autoridad?.cargo : null
-        dniControl?.setValue(dni) 
-        nombreControl?.setValue(nombres) 
-        cargoControl?.setValue(cargo)
-        dniControl?.disable() 
-        contactoControl?.enable() 
-        this.loadingAutoridad = false
-      })
+    setTimeout(() => {
+      this.loadingAutoridad = false
+      this.formAtencion.get('dniAutoridad')?.setValue(this.entidad().dniAutoridad)
+      this.formAtencion.get('nombreAutoridad')?.setValue(`${this.entidad().nombreAutoridad} ${this.entidad().apellidosAutoridad}` )
+
+      const cargoAutoridad = this.create ? this.entidad().cargoAutoridad : this.atencion.cargoAutoridad
+      const telefonoAutoridad = this.create ? this.entidad().telefonoAutoridad : this.atencion.contactoAutoridad
+      this.formAtencion.get('cargoAutoridad')?.setValue(cargoAutoridad)
+      this.formAtencion.get('contactoAutoridad')?.setValue(telefonoAutoridad)
+      if(this.esMancomunidad && !cargoAutoridad){
+        this.formAtencion.get('cargoAutoridad')?.enable()
+      }
+    }, 1500);
   }
 
   changeCongresista(index: number) {
@@ -1583,25 +1435,6 @@ export class FormularioAtencionComponent {
       cui?.setValue(newValue)
     }
 
-
-    // if (value.length === 7) {      
-    //   loadingControl?.setValue(true)
-    //   visibleControl?.setValue(false)
-    //   this.ssiService.obtenerInversion(value)
-    //   .subscribe( resp => {
-        
-    //       loadingControl?.setValue(false)
-    //       const inversion  = resp.data
-    //       visibleControl?.setValue(inversion ? true : false)
-    //       nombreControl?.setValue(inversion ? inversion.nombre : null)
-    //       costoActualizado?.setValue(inversion ? generateMillesAndDecimal(inversion.costoActualizado, 2) : null)
-    //     })
-    // } else {
-    //   loadingControl?.setValue(false)
-    //   visibleControl?.setValue(false)
-    //   nombreControl?.setValue(null)
-    //   costoActualizado?.setValue(null)
-    // }
     loadingControl?.setValue(false)
     visibleControl?.setValue(false)
     nombreControl?.setValue(null)
@@ -1629,43 +1462,26 @@ export class FormularioAtencionComponent {
       controlForm?.reset()
     }
   }
-  
-  //TODO: ELIMINAR LAS FUNCIONES DE CARGA DE ARCHIVOS
-  // beforeUploadMeet = (file: NzUploadFile): boolean => {
-  //   const evidenciaReunion = this.formAtencion.get('evidenciaReunion')
-  //   evidenciaReunion?.setValue(file)
-  //   this.fileListMeet = []
-  //   this.fileListMeet = this.fileListMeet.concat(file);
-  //   return false;
-  // };
-
-  //TODO: ELIMINAR LAS FUNCIONES DE CARGA DE ARCHIVOS
-  // beforeUploadAttendance = (file: NzUploadFile): boolean => {
-  //   const evidenciaAsistencia = this.formAtencion.get('evidenciaAsistencia')
-  //   evidenciaAsistencia?.setValue(file)
-  //   this.fileListAttendance = []
-  //   this.fileListAttendance = this.fileListAttendance.concat(file);
-  //   return false;
-  // };
 
   changeTipoInversion(){
     const orientacionId = this.formAtencion.get('orientacionId')?.value
 
-    
     if(orientacionId){
       const orientacion = this.orientaciones.find(item => item.orientacionId == orientacionId)
       const codigoOrientacion: string[] = ['PROYECTO','IDEA']
       this.cuiClasificacion = codigoOrientacion.includes(orientacion!.nombre.toUpperCase())  
       const getControl = this.formAtencion.get('agendas') as FormArray
+      
 
       if(this.agendas.length > 0 && this.create){
         this.agendas.clear()
       }
       
       if(this.cuiClasificacion){
-        if(this.agendas.length == 0 && this.create){
+        if(this.agendas.length == 0){
           this.addAgendadRow() 
         }
+
         const clasificacion = this.agendaClasificaciones().find(item => item.nombre.toUpperCase() == 'PROYECTO')
         const clasificacionId = clasificacion ? clasificacion.clasificacionId : this.agendaClasificaciones()[0].clasificacionId
 

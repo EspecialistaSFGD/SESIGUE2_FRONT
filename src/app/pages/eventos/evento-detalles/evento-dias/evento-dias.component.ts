@@ -63,7 +63,7 @@ export class EventoDiasComponent {
   modalFormActualizarDiaEvento(diaEvento: EventoDiaResponse){
     const widthModal = (this.breakpoint.isMatched('(max-width: 767px)')) ? '90%' : '50%';
     this.modal.create<FormularioEventoDiasComponent>({
-      nzTitle: `Actualizar el día del evento: ${diaEvento.fecha}`,
+      nzTitle: `Actualizar el día del espacio: ${diaEvento.fecha}`,
       nzWidth: widthModal,
       nzMaskClosable: false,
       nzContent: FormularioEventoDiasComponent,

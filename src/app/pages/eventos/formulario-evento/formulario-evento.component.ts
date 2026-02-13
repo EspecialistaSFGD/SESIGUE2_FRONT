@@ -3,8 +3,8 @@ import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventoEstadoEnum } from '@core/enums';
 import { convertDateStringToDate, convertEnumToObject, generarRangoFechas, typeErrorControl } from '@core/helpers';
-import { DataModalEvento, EventoResponse, ItemEnum, Pagination, SubTipoResponse, TipoEventoResponse } from '@core/interfaces';
-import { SubTipoService, TipoEventosService } from '@core/services';
+import { DataModalEvento, EventoDiaResponse, EventoResponse, ItemEnum, Pagination, SubTipoResponse, TipoEventoResponse } from '@core/interfaces';
+import { EventoDiasService, SubTipoService, TipoEventosService } from '@core/services';
 import { NgZorroModule } from '@libs/ng-zorro/ng-zorro.module';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
@@ -19,6 +19,9 @@ import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 export class FormularioEventoComponent {
 
   readonly dataEvento: DataModalEvento = inject(NZ_MODAL_DATA);
+
+  minDate: Date = new Date()
+  nextCallback: boolean = false
   
   create: boolean = this.dataEvento.create
   evento = signal<EventoResponse>(this.dataEvento.evento)
@@ -26,10 +29,12 @@ export class FormularioEventoComponent {
 
   subTipos = signal<SubTipoResponse[]>([])
   tipoEventos = signal<TipoEventoResponse[]>([])
+  eventoDias = signal<EventoDiaResponse[]>([])
   
   private fb = inject(FormBuilder)
   private subTiposService = inject(SubTipoService)
   private tipoEventosServices = inject(TipoEventosService)
+  private eventoDiaService = inject(EventoDiasService)
 
   get diasevento(): FormArray {
     return this.formEvento.get('diasevento') as FormArray;
@@ -38,7 +43,7 @@ export class FormularioEventoComponent {
   formEvento:FormGroup = this.fb.group({
     nombre: [null, Validators.required],
     abreviatura: [null, Validators.required],
-    fechaEvento: [ null, Validators.required ],
+    fechaEvento: [ null, Validators.required],
     fechaFinEvento: [ null, Validators.required ],
     vigente: [ EventoEstadoEnum.INICIADO, Validators.required ],
     subTipoId: [ null, Validators.required ],
@@ -51,6 +56,7 @@ export class FormularioEventoComponent {
   })
 
   ngOnInit(): void {
+    this.setMinDate()
    this.estados = this.estados.map(item => ({ ...item, text: item.value.toLowerCase() }))    
     if(!this.create){
       const evento = this.evento()
@@ -60,6 +66,12 @@ export class FormularioEventoComponent {
     }
     this.obtenerSubTiposService()
     this.obtenerServicioTipoEspacio()
+  }
+
+  setMinDate(){
+    const hoy = this.create ? new Date() : convertDateStringToDate(this.evento().fechaEvento!);
+    hoy.setHours(0, 0, 0, 0);
+    this.minDate = hoy;
   }
 
   alertMessageError(control: string) {
@@ -101,6 +113,34 @@ export class FormularioEventoComponent {
     return nombreValue && abreviaturaValue && fechaEventoValue && fechaFinEventoValue && subTipoIdValue && codigoTipoEventoValue && cantidadSectoresValue && maximoPedidosValue
   }
 
+  validateCallback(event: Event): boolean {
+    event.preventDefault()
+
+    const validate = this.generalValidate()
+
+    if(validate){
+      this.generarFechasDias()
+    }   
+   
+    return validate
+  }
+
+
+  generarFechasDias(){
+    const fechaCreacionValue = this.formEvento.get('fechaEvento')?.value
+    const fechaVigenciaValue = this.formEvento.get('fechaFinEvento')?.value
+
+    const fechaCreacion = new Date(fechaCreacionValue);
+    const fechaVigencia = new Date(fechaVigenciaValue);
+
+    this.diasevento.clear();
+
+    if(fechaCreacionValue && fechaVigenciaValue){
+      let fechas:Date[] = generarRangoFechas(fechaCreacion, fechaVigencia)
+      this.agregarFechasEvento(fechas);
+    }
+  }
+
   obtenerSubTiposService(){
     const pagination: Pagination = { columnSort: 'codigoSubTipo', typeSort: 'DESC', pageSize: 50, currentPage: 1 }
     const codigoValidos:string[] = ['R','P','D']
@@ -134,26 +174,49 @@ export class FormularioEventoComponent {
         fechaEventoControl?.setErrors(null)
       }
     }
-
-    this.diasevento.clear();
-
-    if(fechaCreacionValue && fechaVigenciaValue){
-      let fechas:Date[] = generarRangoFechas(fechaCreacion, fechaVigencia)
-      this.agregarFechasEvento(fechas);
-      console.log(this.diasevento.value);
-    }
   }
 
   agregarFechasEvento(fechas:Date[]){
-    for (let fecha of fechas) {
-      const diaEvento = this.fb.group({
-        fecha: [fecha, Validators.required],
-        plenaria: [false, Validators.required],
-        cantidadSector: [0, [Validators.required, Validators.min(0), Validators.max(30)]],
-        cantidadRegionalLocal: [0, [Validators.required, Validators.min(0), Validators.max(30)]],
-      })
-      this.diasevento.push(diaEvento)            
+    if(this.create){
+      for (let fecha of fechas) {
+        const diaEvento = this.fb.group({
+          fecha: [fecha, Validators.required],
+          plenaria: [false, Validators.required],
+          cantidadSector: [0, [Validators.required, Validators.min(0), Validators.max(30)]],
+          cantidadRegionalLocal: [0, [Validators.required, Validators.min(0), Validators.max(30)]],
+        })
+        this.diasevento.push(diaEvento)            
+      }
+    } else {
+      this.obtenerEventoDiasService()
     }
     
+  }
+
+  obtenerEventoDiasService(){
+    const paginationEventoDia: Pagination = {
+    columnSort: 'diaEventoId',
+    typeSort: 'asc',
+    currentPage: 1,
+    pageSize: 10,
+    eventoId: this.evento().eventoId?.toString()
+  }
+  this.eventoDiaService.ListarEventoDias(paginationEventoDia)
+    .subscribe( resp => {
+      for(let data of resp.data){          
+        const diaEvento = this.fb.group({
+          fecha: [data.fecha ],
+          plenaria: [data.plenaria ],
+          cantidadSector: [data.cantidadSector],
+          cantidadRegionalLocal: [data.cantidadRegionalLocal],
+        })
+        this.diasevento.push(diaEvento)         
+      }
+    })
+  }
+
+  obtenerControlValue(control: string, index: number, subcontrol: string){
+    const getControl = this.formEvento.get(control) as FormArray
+    return getControl.at(index).get(subcontrol)
   }
 }

@@ -28,16 +28,15 @@
           <td nzAlign="center"><p class="w-full" nz-tooltip [nzTooltipTitle]="esAdmin ? tooltipDistrito : null" [nzTooltipTitleContext]="{ entidad: entidad }">{{esAdmin ? entidad.distrito : entidad.distritoMef}}</p></td>
           <td nzAlign="center"><p class="w-full" nz-tooltip [nzTooltipTitle]="entidad.nombre">{{entidad.entidadTipoSlug}}</p></td>
           <td nzAlign="center">{{entidad.partidoPolitico}}</td>
-          <td nzAlign="center">{{entidad.dnAutoridad}}</td>
+          <td nzAlign="center">{{entidad.dniAutoridad}}</td>
           <td nzAlign="center">{{entidad.nombreAutoridad}} {{entidad.apellidosAutoridad}}</td>
           <td nzAlign="center">{{entidad.cargoAutoridad}}</td>
           <td nzAlign="center">{{entidad.sexoAutoridad}}</td>
           <td nzRight nzAlign="center">
             <div class="flex justify-center">
-              <div *ngIf="entidadesActions.servicejne" class="p-1 cursor-pointer font-bold text-sky-700 hover:text-sky-800" nz-tooltip [nzTooltipTitle]="'Actualizar según JNE de ' + entidad.nombre" (click)="obtenerAutoridadJne(entidad)">
-                <i class="pi pi-building-columns" style="font-size: .85rem;"></i>
-              </div>
-              <a *ngIf="entidadesActions.view" [routerLink]="[entidad.entidadId]" class="py-1 px-2 font-bold text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
+              <app-boton *ngIf="entidadesActions.servicejne" icono="building-columns" [link]="true" [tooltip]="'Vincular autoridad con JNE '" (click)="obtenerAutoridadJne(entidad)"/>
+
+              <a *ngIf="entidadesActions.view" [routerLink]="[entidad.entidadId]" class="py-2 px-3 font-bold text-sky-700 hover:text-sky-800" nz-tooltip nzTooltipTitle="Ver detalle">
                 <i class="pi pi-eye" style="font-size: 0.85rem"></i>
               </a>
             </div>
@@ -70,13 +69,11 @@
           <span class="hidden md:flex">Filtros</span>
         </div>
 
-        <!-- <div class="cursor-pointer flex items-center gap-1 py-1 px-3 rounded border border-sky-700 bg-sky-700 text-white hover:bg-sky-800 hover:border-sky-700">
-          <i class="pi pi-plus" style="font-size: 0.75rem"></i>
-          <span class="hidden md:flex">Nueva entidad</span>
-        </div> -->
       </div>
     </div>
   </ng-template>
 </div>
+
+<p-toast />
 
 <app-filtro-entidad *ngIf="openFilters" [visible]="openFilters" [pagination]="pagination" (visibleDrawer)="openFilters = false" (save)="saveFilters($event)" (filters)="generateFilters($event)" />

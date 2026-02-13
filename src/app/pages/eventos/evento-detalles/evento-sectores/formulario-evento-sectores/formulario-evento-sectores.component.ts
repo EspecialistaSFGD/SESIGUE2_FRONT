@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { typeErrorControl } from '@core/helpers';
-import { UbigeosService } from '@core/services';
+import { Pagination } from '@core/interfaces';
+import { EntidadesService, UbigeosService } from '@core/services';
 import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 
 @Component({
@@ -14,7 +15,16 @@ import { PrimeNgModule } from '@libs/prime-ng/prime-ng.module';
 })
 export class FormularioEventoSectoresComponent {
 
+  pagination: Pagination = {
+    columnSort: 'entidadId',
+    typeSort: 'ASC',
+    pageSize: 30,
+    currentPage: 1,
+    subTipos: ['R']
+  }
+
   private ubigeoService = inject(UbigeosService)
+  private entidadService = inject(EntidadesService)
   private fb = inject(FormBuilder)
 
   get departamentos(): FormArray {
@@ -27,7 +37,24 @@ export class FormularioEventoSectoresComponent {
   })
 
   ngOnInit(): void {
-    this.obtenerDepartamentos()
+    this.obtenerEntidadDepartamentosService()
+    // this.obtenerDepartamentos()
+  }
+
+  obtenerEntidadDepartamentosService(){
+    this.entidadService.listarEntidades(this.pagination)
+      .subscribe( resp => {
+        console.log(resp.data);
+        for(let departamento of resp.data){
+          const departamentoItem = this.fb.group({
+            entidadId: [departamento.entidadId, Validators.required],
+            nombre: [departamento.departamento, Validators.required],
+            ubigeo: [departamento.ubigeo, Validators.required],
+            seleccionado: [false, Validators.required],
+          })
+          this.departamentos.push(departamentoItem)
+        }
+      })
   }
 
   obtenerDepartamentos(){

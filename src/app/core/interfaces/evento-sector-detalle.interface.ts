@@ -11,7 +11,15 @@ export interface EventoSectorDetalleResponses extends DataResponses {
 export interface EventoSectorDetalleResponse {
     eventoSectorDetalleId?: string,
     eventoId: string,
-    entidadUbigeoId: string,
-    entidadSectorId: string,
-    cantidadPedidos: string,
+    entidadId: string,
+    sectorId: string,
+    cantidadPedidos: number,
+    usuarioId?:number
+}
+
+export interface DepartamentoEventoDetalle {
+    entidadId?: string,
+    nombre: string,
+    ubigeo: string,
+    seleccionado: boolean
 }

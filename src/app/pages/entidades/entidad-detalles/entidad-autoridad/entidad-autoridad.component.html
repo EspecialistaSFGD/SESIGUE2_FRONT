@@ -1,0 +1,62 @@
+<div class="flex flex-col bg-white border border-b-0 border-solid border-grey-200">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-solid border-grey-200">
+        <div class="flex flex-col">
+            <h5 class="m-0 text-base font-semibold"> Autoridades <i class="pi pi-user text-sky-700" [nz-tooltip]="tooltipAutoridadJne"  style="font-size: .85rem;"></i></h5>
+            Resultados: {{pagination.total}}
+        </div>
+		<div class="flex items-center gap-2">
+            <app-boton *ngIf="autoridadActions.servicejne" icono="building-columns" texto="Vincular JNE" [tooltip]="'Vincular autoridad con JNE'" [outline]="true" (click)="obtenerAutoridadJne()"/>
+		</div>
+    </div>
+    <div class="grid grid-cols-1 border-solid">
+        <nz-table  [nzScroll]="{ x: 'max-content' }" class="min-w-full" [nzData]="autoridades()"
+			[nzFrontPagination]="false" [nzShowPagination]="pagination.total! > 5"
+			[nzLoading]="loading" [nzTotal]="pagination.total!" [nzPageSize]="pagination.pageSize!"
+			[nzPageIndex]="pagination.currentPage!" (nzQueryParams)="onQueryParamsChange($event)">
+			<thead>
+                <tr>
+                    <th nzLeft nzWidth="60px">DNI</th>
+                    <th nzWidth="120px">Nombre</th>
+					<th nzWidth="120px">Cargo</th>
+					<th nzWidth="80px" nzAlign="center">fecha JNE</th>
+					<th nzWidth="80px" nzAlign="center">Genero</th>
+					<th nzWidth="100px" nzAlign="center">Vigente</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(autoridad of autoridades(); track $index){
+				<tr>
+					<td nzLeft>{{autoridad.dni}}</td>
+					<td>{{autoridad.nombres}} {{autoridad.apellidos}}</td>
+					<td>{{autoridad.cargo}}</td>
+					<td nzAlign="center">{{autoridad.fechaJne}}</td>
+					<td nzAlign="center">
+                         <span [nz-tooltip]="autoridad.sexo === 'M' ? 'Masculino' : 'Femenino'">
+                             <i class="pi" [ngClass]="{ 'pi-mars': autoridad.sexo === 'M', 'pi-venus' : autoridad.sexo === 'F' }" style="font-size: .85rem;"></i>
+                         </span>
+                    </td>
+					<td nzAlign="center">
+                        @if(autoridadActions.edit){
+                            <p-inputSwitch class="mt-1" [(ngModel)]="autoridad.vigente" (onChange)="showVigente(autoridad)"/>
+                        } @else {
+                            <div nz-tooltip [nzTooltipTitle]="autoridad.vigente ? 'Esta vigente' : 'No esta vigente'" [ngClass]="autoridad.vigente ? 'text-green-600' : 'text-slate-200'">
+                                <i class="pi pi-check-circle" style="font-size: .85rem;"></i>
+                            </div>
+                        }
+                    </td>
+				<tr>
+				}
+			</tbody>
+		</nz-table>
+    </div>
+</div>
+
+<ng-template #tooltipAutoridadJne let-index="index">
+    <div>
+        <div>DNI: {{autoridadJne().documentoIdentidad}}</div>
+        <div>Cargo: {{autoridadJne().cargo}}</div>
+        <div>Nombres: {{autoridadJne().nombres}}</div>
+        <div>Apellido paterno: {{autoridadJne().apellidoPaterno}}</div>
+        <div>Apellido materno: {{autoridadJne().apellidoMaterno}}</div>
+    </div>
+</ng-template>

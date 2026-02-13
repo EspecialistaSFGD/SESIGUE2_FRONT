@@ -6,11 +6,12 @@ import { EntidadesService } from '@core/services';
 import { PageHeaderComponent } from '@libs/shared/layout/page-header/page-header.component';
 import { EntidadDetalleComponent } from './entidad-detalle/entidad-detalle.component';
 import { AuthService } from '@libs/services/auth/auth.service';
+import { EntidadAutoridadComponent } from "./entidad-autoridad/entidad-autoridad.component";
 
 @Component({
   selector: 'app-entidad-detalles',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, EntidadDetalleComponent],
+  imports: [CommonModule, PageHeaderComponent, EntidadDetalleComponent, EntidadAutoridadComponent],
   templateUrl: './entidad-detalles.component.html',
   styles: ``
 })
