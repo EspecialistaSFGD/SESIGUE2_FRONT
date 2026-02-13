@@ -49,7 +49,6 @@ export class EventoSectoresComponent {
   private breakpoint = inject(BreakpointObserver)
 
   ngOnInit(): void {
-    // this.obtenerDetallesSector() 
     this.listarEntidadTipoEventoSector()   
     this.getPermission()
     this.pagination.eventoId = this.evento.eventoId
@@ -126,29 +125,20 @@ export class EventoSectoresComponent {
 
             const departamentosDetalles = formEventoSectores.get('departamentos')?.value
 
-            // this.ListarSectoresService('SECTOR')
             const seleccionados: DepartamentoEventoDetalle[] = departamentosDetalles.filter((item:DepartamentoEventoDetalle) => item.seleccionado)
             this.entidadesEventosDetalles.set(seleccionados)
             const ubigeos = seleccionados.map(item => item.ubigeo.substring(0,2))
-            console.log(ubigeos);
-            
-
-            console.log(this.entidades());
             const entidadesEventosDetalleFiltrado = this.entidades().filter( item => ubigeos.includes(item.ubigeo.substring(0,2)) )
-            console.log(entidadesEventosDetalleFiltrado);
-            
             this.entidades.set(entidadesEventosDetalleFiltrado)
             console.log(this.entidades());
-            // const copyEntidadesEventosDetalles = this.entidadesEventosDetalles()
 
+            this.ListarSectoresService('SECTOR')
+            this.ListarSectoresService('SECTOR_DETALLES')
 
-            // this.listarEventoSectorService()
-            // this.ListarSectoresService('SECTOR_DETALLES') //sector detalles
-
-            // setTimeout(() => {
-            //   this.obtenerEventoSectoresService()
-            //   this.modal.closeAll()
-            // }, 3000);
+            setTimeout(() => {
+              this.obtenerEventoSectoresService()
+              this.modal.closeAll()
+            }, 3000);
 
           }
         }
@@ -159,13 +149,6 @@ export class EventoSectoresComponent {
   crearEventoSectoresService(eventoSector: EventoSectorResponse){
     this.eventoSectorService.registrarEventoSector(eventoSector).subscribe( resp => {})
   }
-
-  // listarEventoSectorService(){
-  //   for(let departamentoEvento of this.entidadesEventosDetalles()){
-  //     // const eventoDetalle = { eventoId: this.evento.eventoId, entidadId: departamentoEvento.entidadId, cantidadPedidos: this.evento.maximoPedidos }
-
-  //   }
-  // }
 
   ListarSectoresService(tipo:string){
     const pagination: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
@@ -180,7 +163,6 @@ export class EventoSectoresComponent {
           break;
           case 'SECTOR_DETALLES':
             for(let sector of resp.data){
-              // const eventoSector: EventoSectorResponse = {eventoId: this.evento.eventoId!, sectorId: sector.grupoID!, cantidadPedidos: 0, registraAtencion: false}
               this.generarSectorEventoDetalles(sector);
             }
           break;
@@ -190,83 +172,22 @@ export class EventoSectoresComponent {
 
 
    generarSectorEventoDetalles(sector: SectorResponse){
-    // switch (this.subTipo().subTipoSlug) {
-    //   case 'R':
-    //     for(let entidadEvento of this.entidadesEventosDetalles()){
-    //       const eventoDetalle:EventoSectorDetalleResponse = { eventoId: this.evento.eventoId!, entidadId: entidadEvento.entidadId!, sectorId: sector.grupoID, cantidadPedidos: this.evento.maximoPedidos!, usuarioId: this.usuarioId }
-    //       this.crearEventoSectorDetalleService(eventoDetalle)
-    //     }
-    //   break;
-    //   case 'P':
-    //     break;
-    //     case 'D':
-    //   break;
-    // }
-
-    for(let entidadEvento of this.entidadesEventosDetalles()){
-      const eventoDetalle:EventoSectorDetalleResponse = { eventoId: this.evento.eventoId!, entidadId: entidadEvento.entidadId!, sectorId: sector.grupoID, cantidadPedidos: this.evento.maximoPedidos!, usuarioId: this.usuarioId }
-      if(this.subTipo().subTipoSlug == 'R'){
+    if(this.subTipo().subTipoSlug == 'R'){
+      for(let entidadEvento of this.entidadesEventosDetalles()){
+        const eventoDetalle:EventoSectorDetalleResponse = { eventoId: this.evento.eventoId!, entidadId: entidadEvento.entidadId!, sectorId: sector.grupoID, cantidadPedidos: this.evento.maximoPedidos!, usuarioId: this.usuarioId }
         this.crearEventoSectorDetalleService(eventoDetalle)
-      } else {
-
       }
-      console.log(eventoDetalle);
+    } else {
+      for(let entidad of this.entidades()){
+        const eventoDetalle:EventoSectorDetalleResponse = { eventoId: this.evento.eventoId!, entidadId: entidad.entidadId!, sectorId: sector.grupoID, cantidadPedidos: this.evento.maximoPedidos!, usuarioId: this.usuarioId }
+        this.crearEventoSectorDetalleService(eventoDetalle)
+      }
     }
   }
-
- 
 
   crearEventoSectorDetalleService(eventoDetalle:EventoSectorDetalleResponse){
     this.eventoSectorDetalleService.RegistrarEventoDetalleSector(eventoDetalle).subscribe( resp => {})
   }
-
-  // encontrarEntidadSector(eventodetalle: EventoSectorDetalleResponse){
-  //   const subTiposEntidad: SubTipoEntidad[] = [
-  //     { subTipo: 'REGION', subTipoSlug: 'R', cantidad: 30, },
-  //     { subTipo: 'PROVINCIAL', subTipoSlug: 'P', cantidad: 200, },
-  //     { subTipo: 'DISTRITAL', subTipoSlug: 'D', cantidad: 1700, },
-  //   ]
-
-
-  // }
-
-  // 
-  // obtenerDetallesSector(){
-  //   const subTiposEntidad: SubTipoEntidad[] = [
-  //     { subTipo: 'REGION', subTipoSlug: 'R', cantidad: 30, },
-  //     { subTipo: 'PROVINCIAL', subTipoSlug: 'P', cantidad: 200, },
-  //     { subTipo: 'DISTRITAL', subTipoSlug: 'D', cantidad: 1700, },
-  //   ];
-
-  //   const subTipo = subTiposEntidad.find( st => st.subTipo.toLowerCase() === this.evento.subTipo.toLowerCase() )
-    
-  //   if(subTipo?.subTipoSlug === 'D'){
-  //     const subTipoDistrital: SubTipoEntidad = subTiposEntidad.find( st => st.subTipoSlug === 'P' )!
-  //     this.listarEntidadesParaEventoSectores(subTipoDistrital)
-  //   }
-
-  //   this.listarEntidadesParaEventoSectores(subTipo!)
-  // }
-  
-  // listarEntidadesParaEventoSectores(subTipo: SubTipoEntidad){
-  //   const pagination: Pagination = { columnSort: 'entidadId', typeSort: 'ASC', pageSize: subTipo!.cantidad, currentPage: 1 }
-  //   this.entidadService.listarEntidades(pagination, [subTipo!.subTipoSlug])
-  //     .subscribe( resp => {
-  //       for(let entidad of resp.data){
-  //         this.ListarSectoresDetallesService(entidad.entidadId!)
-  //       }
-  //     } )
-  // }
-
-  // ListarSectoresDetallesService(entidadId: string){
-  //   const eventoId = this.evento.eventoId!
-  //   const pagination: Pagination = { columnSort: 'grupoID', typeSort: 'ASC', pageSize: 50, currentPage: 1 }
-  //   this.sectorService.listarSectores(pagination).subscribe( resp => {
-  //     resp.data.forEach( sector => {
-  //       const eventoSectorDetalle:EventoSectorDetalleResponse = { eventoId, entidadId, sectorId: sector.grupoID!, cantidadPedidos: '0' }
-  //     })
-  //   })    
-  // }
 
   showCantidadSectores(eventoSector: EventoSectorSwitchList, pedido: boolean = true){                                                               
     const cantidadPedidos = pedido ? eventoSector.registraPedido ? 5 : 0 : eventoSector.cantidadPedidos
@@ -286,6 +207,7 @@ export class EventoSectoresComponent {
   }
 
   actualizarEventoSectoresService(eventoSector: EventoSectorResponse){
+    eventoSector.registraAtencion  = eventoSector.registraAtencion ?? false
     this.eventoSectorService.actualizarEventoSector(eventoSector)
       .subscribe( resp => {
         if(resp.success){
