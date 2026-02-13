@@ -130,7 +130,6 @@ export class EventoSectoresComponent {
             const ubigeos = seleccionados.map(item => item.ubigeo.substring(0,2))
             const entidadesEventosDetalleFiltrado = this.entidades().filter( item => ubigeos.includes(item.ubigeo.substring(0,2)) )
             this.entidades.set(entidadesEventosDetalleFiltrado)
-            console.log(this.entidades());
 
             this.ListarSectoresService('SECTOR')
             this.ListarSectoresService('SECTOR_DETALLES')
@@ -172,14 +171,15 @@ export class EventoSectoresComponent {
 
 
    generarSectorEventoDetalles(sector: SectorResponse){
+    const cantidadPedidos = this.evento.maximoPedidos ? this.evento.maximoPedidos : 0
     if(this.subTipo().subTipoSlug == 'R'){
       for(let entidadEvento of this.entidadesEventosDetalles()){
-        const eventoDetalle:EventoSectorDetalleResponse = { eventoId: this.evento.eventoId!, entidadId: entidadEvento.entidadId!, sectorId: sector.grupoID, cantidadPedidos: this.evento.maximoPedidos!, usuarioId: this.usuarioId }
+        const eventoDetalle:EventoSectorDetalleResponse = { eventoId: this.evento.eventoId!, entidadId: entidadEvento.entidadId!, sectorId: sector.grupoID, cantidadPedidos, usuarioId: this.usuarioId }
         this.crearEventoSectorDetalleService(eventoDetalle)
       }
     } else {
       for(let entidad of this.entidades()){
-        const eventoDetalle:EventoSectorDetalleResponse = { eventoId: this.evento.eventoId!, entidadId: entidad.entidadId!, sectorId: sector.grupoID, cantidadPedidos: this.evento.maximoPedidos!, usuarioId: this.usuarioId }
+        const eventoDetalle:EventoSectorDetalleResponse = { eventoId: this.evento.eventoId!, entidadId: entidad.entidadId!, sectorId: sector.grupoID, cantidadPedidos, usuarioId: this.usuarioId }
         this.crearEventoSectorDetalleService(eventoDetalle)
       }
     }
