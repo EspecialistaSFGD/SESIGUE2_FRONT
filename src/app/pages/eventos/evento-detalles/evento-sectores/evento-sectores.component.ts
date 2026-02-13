@@ -132,7 +132,7 @@ export class EventoSectoresComponent {
             this.entidades.set(entidadesEventosDetalleFiltrado)
 
             this.ListarSectoresService('SECTOR')
-            this.ListarSectoresService('SECTOR_DETALLES')
+            // this.ListarSectoresService('SECTOR_DETALLES') //optimizar servicio al guardar los sectores evento detalles, no todos se registran, cae el servicio al guardar
 
             setTimeout(() => {
               this.obtenerEventoSectoresService()
@@ -143,10 +143,6 @@ export class EventoSectoresComponent {
         }
       ]
     })
-  }
-
-  crearEventoSectoresService(eventoSector: EventoSectorResponse){
-    this.eventoSectorService.registrarEventoSector(eventoSector).subscribe( resp => {})
   }
 
   ListarSectoresService(tipo:string){
@@ -169,6 +165,9 @@ export class EventoSectoresComponent {
       })
   }
 
+  crearEventoSectoresService(eventoSector: EventoSectorResponse){
+    this.eventoSectorService.registrarEventoSector(eventoSector).subscribe( resp => {})
+  }
 
    generarSectorEventoDetalles(sector: SectorResponse){
     const cantidadPedidos = this.evento.maximoPedidos ? this.evento.maximoPedidos : 0
